@@ -215,6 +215,9 @@ lda #>nametable_end
 cmp $41
 bne load_background
 
+jsr init_game_state
+jsr update_sprites
+
 ; Setup PPU
 lda #%10010000
 sta PPUCTRL
@@ -225,7 +228,8 @@ forever:
 
 jsr wait_next_frame
 jsr fetch_controllers
-jsr move_sprites
+jsr update_players
+jsr update_sprites
 
 jmp forever
 
