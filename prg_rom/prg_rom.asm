@@ -225,6 +225,7 @@ forever:
 
 jsr wait_next_frame
 jsr fetch_controllers
+jsr move_sprites
 
 jmp forever
 

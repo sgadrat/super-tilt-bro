@@ -8,3 +8,6 @@ controller_b_btns = $0003
 ;  $00 - NMI processed
 ;  $01 - Waiting for the next NMI to be processed
 nmi_processing = $0004
+
+sprite_0_x = $0203
+sprite_0_y = $0200
