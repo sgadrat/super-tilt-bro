@@ -18,8 +18,17 @@ player_a_y = $0007
 player_b_y = $0008
 player_a_direction = $0009 ; 0 - watching left
 player_b_direction = $000a ; 1 - watching right
+player_a_velocity_v = $000b
+player_b_velocity_v = $000c
+player_a_velocity_h = $000d
+player_b_velocity_h = $000e
+player_a_max_velocity = $000f
+player_b_max_velocity = $0010
 
 tmpfield1 = $00f0
+tmpfield2 = $00f1
+tmpfield3 = $00f2
+tmpfield4 = $00f3
 
 sprite_0_x = $0203
 sprite_0_y = $0200

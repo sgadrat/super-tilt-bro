@@ -82,9 +82,25 @@ bne player_updated
 jsr running_player
 
 player_updated:
+jsr move_player
 inx
 cpx #$02
 bne update_one_player
+
+rts
+.)
+
+move_player:
+.(
+lda player_a_velocity_v, x
+clc
+adc player_a_y, x
+sta player_a_y, x
+
+lda player_a_velocity_h, x
+clc
+adc player_a_x, x
+sta player_a_x, x
 
 rts
 .)
@@ -93,7 +109,12 @@ rts
 ;  register X must contain the player number
 standing_player:
 .(
-; Store the constroller state to a known location
+; Set the velocity to zero (do not move anymore)
+lda #$00
+sta player_a_velocity_v, x
+sta player_a_velocity_h, x
+
+; Store the controller state to a known location
 ;  it is needed to bitmask it, BIT opcode support only absolute addressing
 lda controller_a_btns, x
 sta tmpfield1
@@ -134,13 +155,29 @@ rts
 ;  register X must contain the player number
 running_player:
 .(
+; Set max velocity
+lda #$04
+sta player_a_max_velocity, x
+
 ; Move the player to the direction he is watching
 lda player_a_direction, x
 beq run_left
-inc player_a_x, x
+
+; Running right, add vector (1,0) to velocity
+lda #$01
+pha
+lda #$00
+pha
+jsr merge_player_velocity
 jmp check_state_changes
+
+; Running left, add vector (-1,0) to velocity
 run_left:
-dec player_a_x, x
+lda #$ff
+pha
+lda #$00
+pha
+jsr merge_player_velocity
 
 check_state_changes:
 
@@ -175,6 +212,92 @@ jmp end
 nothing_pressed:
 lda #$00
 sta player_a_state, x
+
+end:
+rts
+.)
+
+; Update the player's velocity
+;  X - player number
+;  Stack#0 - Y component of the vector to merge
+;  Stack#1 - X component of the vector to merge
+merge_player_velocity:
+.(
+; Save the return address
+pla
+sta tmpfield1
+pla
+sta tmpfield2
+
+; Store current player's max velocity to an address accessible
+; independently from X
+lda player_a_max_velocity, x
+sta tmpfield4
+
+; Count iteraction, one per vector's component
+ldy #$00
+
+add_component:
+
+; Store the value to add in A and int tmpfield3
+pla
+sta tmpfield3
+
+; Add the component to the player's velocity
+clc
+adc player_a_velocity_v, x
+sta player_a_velocity_v, x
+
+; If the new velocity is <= immediatly handle next component
+jsr absolute_a
+cmp tmpfield4
+bcc next_component
+
+; If the value to add is positive, go to set the component to it's positive maximum
+lda tmpfield3
+bpl set_positive_max_h
+
+; Set the component to it's negative maximum
+lda tmpfield4
+eor #%11111111
+clc
+adc #$01
+sta player_a_velocity_v, x
+jmp next_component
+
+; Set the component to it's positive maximum
+set_positive_max_h:
+lda tmpfield4
+sta player_a_velocity_v, x
+
+; Handle next component
+next_component:
+inx
+inx
+iny
+cpy #$02
+bne add_component
+dex
+dex
+dex
+dex
+
+; Restore return addr on stack and return
+lda tmpfield2
+pha
+lda tmpfield1
+pha
+rts
+.)
+
+; Change A to it's absolute unsigned value
+absolute_a:
+.(
+cmp #$00
+bpl end
+eor #%11111111
+clc
+adc #$01
 
 end:
 rts
