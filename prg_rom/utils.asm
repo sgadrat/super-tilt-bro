@@ -60,6 +60,10 @@ sta player_a_x
 lda #$a0
 sta player_b_x
 
+lda #$7f
+sta player_a_max_velocity
+sta player_b_max_velocity
+
 rts
 .)
 
