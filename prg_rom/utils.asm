@@ -89,6 +89,7 @@ jsr falling_player
 
 player_updated:
 jsr move_player
+jsr check_player_position
 inx
 cpx #$02
 bne update_one_player
@@ -109,7 +110,15 @@ clc
 adc player_a_x, x
 sta player_a_x, x
 
+rts
+.)
+
+; Check the player's position and modify the current state accordingly
+;  register X must contain the player number
+check_player_position:
+.(
 ; Check if on ground
+;  Not grounded characters must be falling
 lda player_a_x, x
 cmp #$30
 bcs end
