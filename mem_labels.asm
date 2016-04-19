@@ -1,6 +1,7 @@
 ; State of the player's character
 ;  $00 - Standing on ground
 ;  $01 - Running
+;  $02 - Falling
 player_a_state = $0000
 player_b_state = $0001
 

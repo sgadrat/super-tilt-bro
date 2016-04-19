@@ -78,8 +78,14 @@ jmp player_updated
 ; Check state 1 - running
 check_running:
 cmp #$01
-bne player_updated
+bne check_falling
 jsr running_player
+jmp player_updated
+
+check_falling:
+cmp #02
+bne player_updated
+jsr falling_player
 
 player_updated:
 jsr move_player
@@ -92,6 +98,7 @@ rts
 
 move_player:
 .(
+; Apply velocity to position
 lda player_a_velocity_v, x
 clc
 adc player_a_y, x
@@ -102,6 +109,14 @@ clc
 adc player_a_x, x
 sta player_a_x, x
 
+; Check if on ground
+lda player_a_x, x
+cmp #$30
+bcs end
+lda #$02
+sta player_a_state, x
+
+end:
 rts
 .)
 
@@ -217,6 +232,19 @@ end:
 rts
 .)
 
+; Update a player that is falling
+;  register X must contain the player number
+falling_player:
+.(
+; Temporary: forbid any movement
+lda #$00
+pha
+lda #$01
+pha
+jsr merge_player_velocity
+rts
+.)
+
 ; Update the player's velocity
 ;  X - player number
 ;  Stack#0 - Y component of the vector to merge
@@ -252,6 +280,7 @@ sta player_a_velocity_v, x
 jsr absolute_a
 cmp tmpfield4
 bcc next_component
+beq next_component
 
 ; If the value to add is positive, go to set the component to it's positive maximum
 lda tmpfield3
