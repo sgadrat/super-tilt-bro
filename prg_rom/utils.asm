@@ -120,8 +120,13 @@ check_player_position:
 ; Check if on ground
 ;  Not grounded characters must be falling
 lda player_a_x, x
-cmp #$30
-bcs end
+cmp STAGE_EDGE_LEFT
+bcc set_falling_state
+cmp STAGE_EDGE_RIGHT
+bcs set_falling_state
+jmp end
+
+set_falling_state:
 lda #$02
 sta player_a_state, x
 
