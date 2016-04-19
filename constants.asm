@@ -1,2 +1,3 @@
 #define STAGE_EDGE_LEFT #$30
 #define STAGE_EDGE_RIGHT #$b0
+#define STAGE_HEIGHT #$80

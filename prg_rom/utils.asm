@@ -128,6 +128,22 @@ cmp STAGE_EDGE_LEFT
 bcc set_falling_state
 cmp STAGE_EDGE_RIGHT
 bcs set_falling_state
+lda player_a_y, x
+cmp STAGE_HEIGHT
+bne set_falling_state
+
+; On ground
+;  Check if we are on a state that needs to be updated
+lda player_a_state, x
+cmp #$02
+beq set_standing_state
+
+; No state change is required
+jmp end
+
+set_standing_state:
+lda #$00
+sta player_a_state, x
 jmp end
 
 set_falling_state:
@@ -254,7 +270,6 @@ rts
 ;  register X must contain the player number
 falling_player:
 .(
-; Temporary: forbid any movement
 lda #$00
 pha
 lda #$01
