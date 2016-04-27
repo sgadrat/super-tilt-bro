@@ -107,49 +107,114 @@ rts
 move_player:
 .(
 ; Save old position
-lda player_a_y, x
-sta tmpfield1
 lda player_a_x, x
+sta tmpfield1
+lda player_a_y, x
 sta tmpfield2
 
 ; Apply velocity to position
-lda player_a_velocity_v, x
-clc
-adc player_a_y, x
-sta player_a_y, x
-
 lda player_a_velocity_h, x
 clc
 adc player_a_x, x
-sta player_a_x, x
+sta tmpfield3
 
-;
+lda player_a_velocity_v, x
+clc
+adc player_a_y, x
+sta tmpfield4
+
 ; Check collisions with stage plaform
-;
-
-; Do nothing if stage is lower or the same height than character final position
-lda STAGE_HEIGHT
-cmp player_a_y, x
-bcs end
-
-; Do nothing if the stage is higher than the original character position
-lda STAGE_HEIGHT
-cmp tmpfield1
-bcc end
-
-; Do nothing if stage is on the right of the character
-lda player_a_x, x
-cmp STAGE_EDGE_LEFT
-bcc end
-
-; Do nothing if stage is on the left of the character
+lda STAGE_EDGE_LEFT
+sta tmpfield5
+lda STAGE_EDGE_TOP
+sta tmpfield6
 lda STAGE_EDGE_RIGHT
-cmp player_a_x, x
-bcc end
+sta tmpfield7
+lda STAGE_EDGE_BOTTOM
+sta tmpfield8
 
-; The movement made player pass through ground, replace him on ground
-lda STAGE_HEIGHT
+jsr check_collision
+lda tmpfield3
+sta player_a_x, x
+lda tmpfield4
 sta player_a_y, x
+
+rts
+.)
+
+; Check if a movement collide with an obstacle
+;  tmpfield1 - Original position X
+;  tmpfield2 - Original position Y
+;  tmpfield3 - Final position X
+;  tmpfield4 - Final position Y
+;  tmpfield5 - Obstacle top-left X
+;  tmpfield6 - Obstacle top-left Y
+;  tmpfield7 - Obstacle bottom-right X
+;  tmpfield8 - Obstacle bottom-right Y
+;
+; tmpfield3 and tmpfield4 are rewritten with a final position that do not pass through obstacle.
+check_collision:
+.(
+; Better names for labels
+orig_x = tmpfield1
+orig_y = tmpfield2
+final_x = tmpfield3
+final_y = tmpfield4
+obstacle_left = tmpfield5
+obstacle_top = tmpfield6
+obstacle_right = tmpfield7
+obstacle_bottom = tmpfield8
+
+; Check collision with left edge
+lda final_y         ;
+cmp obstacle_top    ;
+bcc top_edge        ; Skip lateral edges collision checks if
+lda obstacle_bottom ; the player is over or under the obstacle
+cmp final_y         ;
+bcc top_edge        ;
+
+lda obstacle_left   ;
+cmp orig_x          ;
+bcc right_edge      ; Set final_x to obstacle_left if original position
+cmp final_x         ; is on the left of the edge and final position on
+bcs right_edge      ; the right of the edge
+sta final_x         ;
+
+; Check collision with right edge
+right_edge:
+lda orig_x
+cmp obstacle_right
+bcc top_edge
+lda obstacle_right
+cmp final_x
+bcc top_edge
+sta final_x
+
+; Check collision with top edge
+top_edge:
+lda final_x        ;
+cmp obstacle_left  ;
+bcc end            ; Skip horizontal edges collistion checks if
+lda obstacle_right ; the player is aside of the obstacle
+cmp final_x        ;
+bcc end            ;
+
+lda obstacle_top
+cmp orig_y
+bcc bot_edge
+cmp final_y
+bcs bot_edge
+sta final_y
+
+; Check collision with bottom edge
+bot_edge:
+lda orig_y
+cmp obstacle_bottom
+bcc end
+lda obstacle_bottom
+cmp final_y
+bcc end
+sta final_y
 
 end:
 rts
@@ -167,7 +232,7 @@ bcc set_falling_state
 cmp STAGE_EDGE_RIGHT
 bcs set_falling_state
 lda player_a_y, x
-cmp STAGE_HEIGHT
+cmp STAGE_EDGE_TOP
 bne set_falling_state
 
 ; On ground

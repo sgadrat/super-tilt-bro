@@ -30,6 +30,10 @@ tmpfield1 = $00f0
 tmpfield2 = $00f1
 tmpfield3 = $00f2
 tmpfield4 = $00f3
+tmpfield5 = $00f4
+tmpfield6 = $00f5
+tmpfield7 = $00f6
+tmpfield8 = $00f7
 
 sprite_0_x = $0203
 sprite_0_y = $0200

@@ -1,6 +1,7 @@
 #define STAGE_EDGE_LEFT #$30
 #define STAGE_EDGE_RIGHT #$b0
-#define STAGE_HEIGHT #$80
+#define STAGE_EDGE_TOP #$80
+#define STAGE_EDGE_BOTTOM #$ff
 
 #define PLAYER_STATE_STANDING #$00
 #define PLAYER_STATE_RUNNING #$01
