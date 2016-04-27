@@ -106,6 +106,12 @@ rts
 
 move_player:
 .(
+; Save old position
+lda player_a_y, x
+sta tmpfield1
+lda player_a_x, x
+sta tmpfield2
+
 ; Apply velocity to position
 lda player_a_velocity_v, x
 clc
@@ -117,6 +123,35 @@ clc
 adc player_a_x, x
 sta player_a_x, x
 
+;
+; Check collisions with stage plaform
+;
+
+; Do nothing if stage is lower or the same height than character final position
+lda STAGE_HEIGHT
+cmp player_a_y, x
+bcs end
+
+; Do nothing if the stage is higher than the original character position
+lda STAGE_HEIGHT
+cmp tmpfield1
+bcc end
+
+; Do nothing if stage is on the right of the character
+lda player_a_x, x
+cmp STAGE_EDGE_LEFT
+bcc end
+
+; Do nothing if stage is on the left of the character
+lda STAGE_EDGE_RIGHT
+cmp player_a_x, x
+bcc end
+
+; The movement made player pass through ground, replace him on ground
+lda STAGE_HEIGHT
+sta player_a_y, x
+
+end:
 rts
 .)
 
