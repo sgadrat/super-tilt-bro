@@ -91,8 +91,15 @@ jmp player_updated
 ; Check state 2 - falling
 check_falling:
 cmp PLAYER_STATE_FALLING
-bne player_updated
+bne check_jumping
 jsr falling_player
+jmp player_updated
+
+; Check state 3 - jumping
+check_jumping:
+cmp PLAYER_STATE_JUMPING
+bne player_updated
+jsr jumping_player
 
 player_updated:
 jsr move_player
@@ -224,8 +231,13 @@ rts
 ;  register X must contain the player number
 check_player_position:
 .(
+; Jumping players obey their own physics
+lda player_a_state, x
+cmp PLAYER_STATE_JUMPING
+beq end
+
 ; Check if on ground
-;  Not grounded characters must be falling
+;  Not grounded players must be falling
 lda player_a_x, x
 cmp STAGE_EDGE_LEFT
 bcc set_falling_state
@@ -284,13 +296,13 @@ sta player_a_direction, x
 lda PLAYER_STATE_RUNNING
 sta player_a_state, x
 
-jmp end
+jmp check_up
 
 ; check right button
 check_right:
 lda #%00000001
 bit tmpfield1
-beq end
+beq check_up
 
 ; Player is now watching right
 lda DIRECTION_RIGHT
@@ -298,6 +310,13 @@ sta player_a_direction, x
 
 ; Player is now running (running is #$01, the same as right direction)
 sta player_a_state, x
+
+; Check up button
+check_up:
+lda #%00001000
+bit tmpfield1
+beq end
+jsr start_jumping_player
 
 end:
 rts
@@ -346,22 +365,32 @@ beq check_right
 lda #$00
 sta player_a_direction, x
 
-jmp end
+jmp check_up
 
 ; check right button
 check_right:
 lda #%00000001
 bit tmpfield1
-beq nothing_pressed
+beq check_up
 
 ; Player is now watching right
 lda DIRECTION_RIGHT
 sta player_a_direction, x
 
+; Check up button
+check_up:
+lda #%00001000
+bit tmpfield1
+beq nothing_pressed
+jsr start_jumping_player
+
 jmp end
 
 ; When no direction button is pressed, return to standing state
 nothing_pressed:
+lda #%00001011
+bit tmpfield1
+bne end
 lda PLAYER_STATE_STANDING
 sta player_a_state, x
 
@@ -378,6 +407,33 @@ pha
 lda #$01
 pha
 jsr merge_player_velocity
+rts
+.)
+
+start_jumping_player:
+.(
+lda #$f7
+sta player_a_state_field1, x
+lda PLAYER_STATE_JUMPING
+sta player_a_state, x
+rts
+.)
+
+jumping_player:
+.(
+lda player_a_state_field1, x
+beq top_reached
+
+; The top is not reached, add up velocity
+sta player_a_velocity_v, x
+inc player_a_state_field1, x
+jmp end
+
+top_reached:
+lda PLAYER_STATE_FALLING
+sta player_a_state, x
+
+end:
 rts
 .)
 

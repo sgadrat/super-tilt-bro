@@ -2,6 +2,7 @@
 ;  $00 - Standing on ground
 ;  $01 - Running
 ;  $02 - Falling
+;  $03 - Jumping
 player_a_state = $0000
 player_b_state = $0001
 
@@ -25,6 +26,8 @@ player_a_velocity_h = $000d
 player_b_velocity_h = $000e
 player_a_max_velocity = $000f
 player_b_max_velocity = $0010
+player_a_state_field1 = $0011
+player_b_state_field1 = $0012
 
 tmpfield1 = $00f0
 tmpfield2 = $00f1
