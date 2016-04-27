@@ -203,6 +203,16 @@ jsr update_sprites
 jmp forever
 
 ;
+; Credits in the rom
+;
+
+.asc "Credits:",$0a
+.asc "Authors:",$0a
+.asc "    Sylvain Gadrat",$0a
+.asc "Art sources:",$0a
+.asc "    www.opengameart.org/content/bomb-party from Matt Hackett of Lost Decade Games"
+
+;
 ; Fill code bank and set entry points vectors (also from nesmine)
 ;
 
