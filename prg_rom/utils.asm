@@ -44,12 +44,14 @@ rts
 
 init_game_state:
 .(
-lda #$00
+lda PLAYER_STATE_STANDING
 sta player_a_state
 sta player_b_state
+
+; Player B direction set to left (same value as PLAYER_STATE_STANDING)
 sta player_b_direction
 
-lda #$01
+lda DIRECTION_RIGHT
 sta player_a_direction
 
 lda #$80
@@ -81,13 +83,14 @@ jmp player_updated
 
 ; Check state 1 - running
 check_running:
-cmp #$01
+cmp PLAYER_STATE_RUNNING
 bne check_falling
 jsr running_player
 jmp player_updated
 
+; Check state 2 - falling
 check_falling:
-cmp #02
+cmp PLAYER_STATE_FALLING
 bne player_updated
 jsr falling_player
 
@@ -135,19 +138,19 @@ bne set_falling_state
 ; On ground
 ;  Check if we are on a state that needs to be updated
 lda player_a_state, x
-cmp #$02
+cmp PLAYER_STATE_FALLING
 beq set_standing_state
 
 ; No state change is required
 jmp end
 
 set_standing_state:
-lda #$00
+lda PLAYER_STATE_STANDING
 sta player_a_state, x
 jmp end
 
 set_falling_state:
-lda #$02
+lda PLAYER_STATE_FALLING
 sta player_a_state, x
 
 end:
@@ -178,7 +181,7 @@ lda #$00
 sta player_a_direction, x
 
 ; Player is now running
-lda #$01
+lda PLAYER_STATE_RUNNING
 sta player_a_state, x
 
 jmp end
@@ -190,10 +193,10 @@ bit tmpfield1
 beq end
 
 ; Player is now watching right
-lda #$01
+lda DIRECTION_RIGHT
 sta player_a_direction, x
 
-; Player is now running
+; Player is now running (running is #$01, the same as right direction)
 sta player_a_state, x
 
 end:
@@ -252,14 +255,14 @@ bit tmpfield1
 beq nothing_pressed
 
 ; Player is now watching right
-lda #$01
+lda DIRECTION_RIGHT
 sta player_a_direction, x
 
 jmp end
 
 ; When no direction button is pressed, return to standing state
 nothing_pressed:
-lda #$00
+lda PLAYER_STATE_STANDING
 sta player_a_state, x
 
 end:
