@@ -246,7 +246,9 @@ jmp forever
 .asc "Authors:",$0a
 .asc "    Sylvain Gadrat",$0a
 .asc "Art sources:",$0a
-.asc "    www.opengameart.org/content/bomb-party from Matt Hackett of Lost Decade Games"
+.asc "    www.opengameart.org/content/bomb-party from Matt Hackett of Lost Decade Games",$0a
+.asc "    www.opengameart.org/content/twin-dragons from Surt",$0a
+.asc "    Sinbad from Zi Ye",$0a
 
 ;
 ; Fill code bank and set entry points vectors (also from nesmine)
