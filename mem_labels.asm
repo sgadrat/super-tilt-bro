@@ -28,6 +28,10 @@ player_a_max_velocity = $000f
 player_b_max_velocity = $0010
 player_a_state_field1 = $0011
 player_b_state_field1 = $0012
+player_a_animation = $0013
+player_b_animation = $0015
+player_a_anim_clock = $0017
+player_b_anim_clock = $0018
 
 tmpfield1 = $00f0
 tmpfield2 = $00f1
@@ -38,11 +42,4 @@ tmpfield6 = $00f5
 tmpfield7 = $00f6
 tmpfield8 = $00f7
 
-sprite_0_x = $0203
-sprite_0_y = $0200
-sprite_1_x = $0207
-sprite_1_y = $0204
-sprite_2_x = $020b
-sprite_2_y = $0208
-sprite_3_x = $020f
-sprite_3_y = $020c
+oam_mirror = $0200

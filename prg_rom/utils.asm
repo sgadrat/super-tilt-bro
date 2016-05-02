@@ -66,6 +66,13 @@ lda #$7f
 sta player_a_max_velocity
 sta player_b_max_velocity
 
+lda #<anim_sinbad_idle
+sta player_a_animation
+sta player_b_animation
+lda #>anim_sinbad_idle
+sta player_a_animation+1
+sta player_b_animation+1
+
 rts
 .)
 
@@ -526,25 +533,143 @@ rts
 
 update_sprites:
 .(
-; Place sprites 0 and 1 to the player A position
-lda player_a_x
-sta sprite_0_x
-sta sprite_1_x
-lda player_a_y
-sta sprite_0_y
-clc
-adc #$08
-sta sprite_1_y
+ldx #$00
 
-; Place sprites 2 and 3 to the player B position
-lda player_b_x
-sta sprite_2_x
-sta sprite_3_x
-lda player_b_y
-sta sprite_2_y
-clc
-adc #$08
-sta sprite_3_y
+player_animation:
+ldy #$00
+lda #$00
+sta tmpfield1
 
+; Store current player's animation vector to a player independent location
+cpx #$00
+bne select_anim_player_b
+lda player_a_animation
+sta tmpfield3
+lda player_a_animation+1
+sta tmpfield4
+lda #$00
+sta tmpfield5
+jmp new_frame
+select_anim_player_b:
+lda player_b_animation
+sta tmpfield3
+lda player_b_animation+1
+sta tmpfield4
+lda #$08
+sta tmpfield5
+
+; New frame (search for the frame on time with clock)
+new_frame:
+lda (tmpfield3), y ; Load frame duration
+beq loop_animation ; Frame of duration 0 means end of animation
+clc           ;
+adc tmpfield1 ; Store current frame clock end in tmpfield1
+sta tmpfield1 ;
+
+; If the current frame ends after the clock time, draw it, else search the next frame
+cmp player_a_anim_clock, x
+bcs draw_current_frame
+tya
+clc
+adc #$16 ; Hack, frames always are 22 bytes long (at least for now)
+tay
+jmp new_frame
+
+draw_current_frame:
+; Animation location is player's location
+lda player_a_x, x
+sta tmpfield1
+lda player_a_y, x
+sta tmpfield2
+
+; Add Y to the animation vector, to point to the good frame
+iny ; Inc Y to skip the frame duration field
+tya
+clc
+adc tmpfield3
+sta tmpfield3
+lda #$00
+adc tmpfield4
+sta tmpfield4
+
+txa
+pha
+jsr draw_anim_frame
+pla
+tax
+
+tick_clock:
+inc player_a_anim_clock, x
+jmp next_player
+
+loop_animation:
+lda #$00
+sta player_a_anim_clock, x
+
+next_player:
+inx
+cpx #$02
+bne player_animation
+
+rts
+.)
+
+; Draw an animation frame on screen
+;  tmpfield1 - Position X
+;  tmpfield2 - Position Y
+;  tmpfield3, tmpfield4 - Vector pointing to the frame to draw
+;  tmpfield5 - First sprite index to use
+;
+; Overwrites tmpfield5 and all registers
+draw_anim_frame:
+.(
+; Pretty names
+anim_pos_x = tmpfield1
+anim_pos_y = tmpfield2
+frame_vector = tmpfield3
+sprite_index = tmpfield5
+
+ldy #$00
+
+; Check continuity byte
+draw_one_sprite:
+lda (frame_vector), y
+beq end
+iny
+
+; Copy sprite data
+lda sprite_index
+asl
+asl
+tax
+; Y value, must be relative to animation Y position
+lda (frame_vector), y
+clc
+adc anim_pos_y
+sta oam_mirror, x
+inx
+iny
+; Tile number
+lda (frame_vector), y
+sta oam_mirror, x
+inx
+iny
+; Attributes
+lda (frame_vector), y
+sta oam_mirror, x
+inx
+iny
+; X value, must be relative to animation X position
+lda (frame_vector), y
+clc
+adc anim_pos_x
+sta oam_mirror, x
+iny
+
+; Next sprite
+inc sprite_index
+jmp draw_one_sprite
+
+end:
 rts
 .)

@@ -1,15 +1,8 @@
 * = $C000 ; $C000 is where the PRG rom is mapped in CPU space, so code position is relative to it
 
 palette_data:
-.db $21,$07,$1a,$2a,$21,$1a,$18,$09,$21,$39,$3A,$3B,$21,$00,$10,$30
-.db $21,$1C,$15,$14,$21,$02,$38,$3C,$21,$1C,$15,$14,$21,$02,$38,$3C
-
-sprites:
-;;  Y    tile attr X
-.db $80, $00, $00, $80
-.db $80, $01, $00, $88
-.db $88, $02, $00, $80
-.db $88, $03, $00, $88
+.byt $21,$07,$1a,$2a,$21,$1a,$18,$09,$21,$39,$3A,$3B,$21,$00,$10,$30
+.byt $21,$08,$1a,$20,$21,$08,$10,$37,$21,$1C,$15,$14,$21,$02,$38,$3C
 
 nametable:
 .byt $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00
@@ -59,6 +52,32 @@ nametable_attributes:
 .byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
 .byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
 nametable_end:
+
+anim_sinbad_idle:
+; Frame 1
+.byt 60 ; Frame duration
+.byt $01 ; Sprite 1 - Scimitar's blade
+.byt $07, $02, $01, $fc
+.byt $01 ; Sprite 2 - Scimitar's handle
+.byt $07, $03, $01, $04
+.byt $01 ; Sprite 3 - Sinbad's head
+.byt $00, $00, $00, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 4 - Sinbad's body
+.byt $08, $01, $00, $00
+.byt $00
+; Frame 2
+.byt 60 ; Frame duration
+.byt $01 ; Sprite 1 - Scimitar's blade
+.byt $06, $02, $01, $fc
+.byt $01 ; Sprite 2 - Scimitar's handle
+.byt $06, $03, $01, $04
+.byt $01 ; Sprite 3 - Sinbad's head
+.byt $00, $00, $00, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 4 - Sinbad's body
+.byt $08, $01, $00, $00
+.byt $00
+; End of animation
+.byt $00
 
 #include "prg_rom/utils.asm"
 
@@ -126,7 +145,7 @@ sta $0500, x
 sta $0600, x
 sta $0700, x
 lda #$FE
-sta $0200, x    ;move all sprites off screen
+sta oam_mirror, x    ;move all sprites off screen
 inx
 bne clrmem
 
@@ -149,15 +168,6 @@ sta PPUDATA
 inx
 cpx #$20
 bne copy_palette
-
-; Initialize sprites in CPU memory
-ldx #$00
-load_sprite:
-lda sprites, x
-sta $0200, x
-inx
-cpx #4*4
-bne load_sprite
 
 ; Copy background from PRG-rom to PPU nametable
 lda #<nametable
