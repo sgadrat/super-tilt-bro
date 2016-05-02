@@ -44,11 +44,7 @@ rts
 
 init_game_state:
 .(
-lda PLAYER_STATE_STANDING
-sta player_a_state
-sta player_b_state
-
-; Player B direction set to left (same value as PLAYER_STATE_STANDING)
+lda DIRECTION_LEFT
 sta player_b_direction
 
 lda DIRECTION_RIGHT
@@ -66,12 +62,10 @@ lda #$7f
 sta player_a_max_velocity
 sta player_b_max_velocity
 
-lda #<anim_sinbad_idle
-sta player_a_animation
-sta player_b_animation
-lda #>anim_sinbad_idle
-sta player_a_animation+1
-sta player_b_animation+1
+ldx #$00
+jsr start_standing_player
+ldx #$01
+jsr start_standing_player
 
 rts
 .)
@@ -264,8 +258,7 @@ beq set_standing_state
 jmp end
 
 set_standing_state:
-lda PLAYER_STATE_STANDING
-sta player_a_state, x
+jsr start_standing_player
 jmp end
 
 set_falling_state:
@@ -273,6 +266,53 @@ lda PLAYER_STATE_FALLING
 sta player_a_state, x
 
 end:
+rts
+.)
+
+start_standing_player:
+.(
+; Set the appropriate animation (depending on player's direction)
+lda player_a_direction, x
+beq set_anim_left
+
+txa ;
+asl ; X = X * 2 (we use it to reference a 2 bytes field)
+tax ;
+
+lda #<anim_sinbad_idle_right
+sta player_a_animation, x
+lda #>anim_sinbad_idle_right
+inx
+sta player_a_animation, x
+dex
+
+jmp reset_anim_clock
+
+set_anim_left:
+
+txa ;
+asl ; X = X * 2 (we use it to reference a 2 bytes field)
+tax ;
+
+lda #<anim_sinbad_idle_left
+sta player_a_animation, x
+lda #>anim_sinbad_idle_left
+inx
+sta player_a_animation, x
+dex
+
+reset_anim_clock:
+
+txa ;
+lsr ; Reset X to it's original value
+tax ;
+
+lda #$00
+sta player_a_anim_clock, x
+
+; Set the player's state
+lda PLAYER_STATE_STANDING
+sta player_a_state, x
 rts
 .)
 
@@ -398,8 +438,7 @@ nothing_pressed:
 lda #%00001011
 bit tmpfield1
 bne end
-lda PLAYER_STATE_STANDING
-sta player_a_state, x
+jsr start_standing_player
 
 end:
 rts
