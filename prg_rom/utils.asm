@@ -340,8 +340,7 @@ lda #$00
 sta player_a_direction, x
 
 ; Player is now running
-lda PLAYER_STATE_RUNNING
-sta player_a_state, x
+jsr start_running_player
 
 jmp check_up
 
@@ -355,8 +354,8 @@ beq check_up
 lda DIRECTION_RIGHT
 sta player_a_direction, x
 
-; Player is now running (running is #$01, the same as right direction)
-sta player_a_state, x
+; Player is now running
+jsr start_running_player
 
 ; Check up button
 check_up:
@@ -366,6 +365,53 @@ beq end
 jsr start_jumping_player
 
 end:
+rts
+.)
+
+start_running_player:
+lda PLAYER_STATE_RUNNING
+sta player_a_state, x
+set_running_anmation:
+.(
+; Set the appropriate animation (depending on player's direction)
+lda player_a_direction, x
+beq set_anim_left
+
+txa ;
+asl ; X = X * 2 (we use it to reference a 2 bytes field)
+tax ;
+
+lda #<anim_sinbad_run_right
+sta player_a_animation, x
+lda #>anim_sinbad_run_right
+inx
+sta player_a_animation, x
+dex
+
+jmp reset_anim_clock
+
+set_anim_left:
+
+txa ;
+asl ; X = X * 2 (we use it to reference a 2 bytes field)
+tax ;
+
+lda #<anim_sinbad_run_left
+sta player_a_animation, x
+lda #>anim_sinbad_run_left
+inx
+sta player_a_animation, x
+dex
+
+reset_anim_clock:
+
+txa ;
+lsr ; Reset X to it's original value
+tax ;
+
+lda #$00
+sta player_a_anim_clock, x
+
 rts
 .)
 
@@ -409,8 +455,11 @@ bit tmpfield1
 beq check_right
 
 ; Player is now watching left
-lda #$00
+lda DIRECTION_LEFT
+cmp player_a_direction, x
+beq check_up
 sta player_a_direction, x
+jsr set_running_anmation
 
 jmp check_up
 
@@ -422,7 +471,10 @@ beq check_up
 
 ; Player is now watching right
 lda DIRECTION_RIGHT
+cmp player_a_direction, x
+beq check_up
 sta player_a_direction, x
+jsr set_running_anmation
 
 ; Check up button
 check_up:
