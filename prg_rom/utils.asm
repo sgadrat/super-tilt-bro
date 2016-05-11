@@ -657,13 +657,22 @@ clc           ;
 adc tmpfield1 ; Store current frame clock end in tmpfield1
 sta tmpfield1 ;
 
-; If the current frame ends after the clock time, draw it, else search the next frame
+; If the current frame ends after the clock time, draw it
 cmp player_a_anim_clock, x
 bcs draw_current_frame
-tya
-clc
-adc #$16 ; Hack, frames always are 22 bytes long (at least for now)
-tay
+
+; Search the next frame
+iny ; Skip frame duration field
+skip_sprite:
+lda (tmpfield3), y ; Check current sprite continuation byte
+beq end_skip_frame ;
+tya      ;
+clc      ; Add 5 to Y, to point on the next continuation byte
+adc #$05 ;
+tay      ;
+jmp skip_sprite
+end_skip_frame:
+iny ; Skip the last continuation byte
 jmp new_frame
 
 draw_current_frame:
