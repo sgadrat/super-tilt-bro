@@ -720,7 +720,7 @@ rts
 ;  tmpfield3, tmpfield4 - Vector pointing to the frame to draw
 ;  tmpfield5 - First sprite index to use
 ;
-; Overwrites tmpfield5 and all registers
+; Overwrites tmpfield5, tmpfield6, tmpfield7 and all registers
 draw_anim_frame:
 .(
 ; Pretty names
@@ -728,6 +728,8 @@ anim_pos_x = tmpfield1
 anim_pos_y = tmpfield2
 frame_vector = tmpfield3
 sprite_index = tmpfield5
+sprite_orig_x = tmpfield6
+sprite_orig_y = tmpfield7
 
 ldy #$00
 
@@ -735,6 +737,18 @@ ldy #$00
 draw_one_sprite:
 lda (frame_vector), y
 beq end
+cmp #$02
+bne set_relative
+lda #$00
+sta sprite_orig_x
+sta sprite_orig_y
+jmp end_continuation_byte
+set_relative:
+lda anim_pos_x
+sta sprite_orig_x
+lda anim_pos_y
+sta sprite_orig_y
+end_continuation_byte:
 iny
 
 ; Copy sprite data
@@ -745,7 +759,7 @@ tax
 ; Y value, must be relative to animation Y position
 lda (frame_vector), y
 clc
-adc anim_pos_y
+adc sprite_orig_y
 sta oam_mirror, x
 inx
 iny
@@ -762,7 +776,7 @@ iny
 ; X value, must be relative to animation X position
 lda (frame_vector), y
 clc
-adc anim_pos_x
+adc sprite_orig_x
 sta oam_mirror, x
 iny
 
