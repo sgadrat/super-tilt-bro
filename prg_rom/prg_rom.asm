@@ -146,35 +146,35 @@ anim_sinbad_run_right:
 ; Frame 1
 .byt 5 ; Frame duration
 .byt $01
-.byt $00, $04, $40, $08 ; Y, tile, attr, X
+.byt $00, $04, $40, $00 ; Y, tile, attr, X
 .byt $01
-.byt $00, $05, $40, $00
+.byt $00, $05, $40, $f8
 .byt $01
-.byt $08, $06, $40, $08
+.byt $08, $06, $40, $00
 .byt $01
-.byt $08, $07, $40, $00
+.byt $08, $07, $40, $f8
 .byt $00
 ; Frame 2
 .byt 5 ; Frame duration
 .byt $01
-.byt $00, $08, $40, $08 ; Y, tile, attr, X
+.byt $00, $08, $40, $00 ; Y, tile, attr, X
 .byt $01
-.byt $00, $05, $40, $00
+.byt $00, $05, $40, $f8
 .byt $01
-.byt $08, $09, $40, $08
+.byt $08, $09, $40, $00
 .byt $01
-.byt $08, $0a, $40, $00
+.byt $08, $0a, $40, $f8
 .byt $00
 ; Frame 3
 .byt 5 ; Frame duration
 .byt $01
-.byt $00, $04, $40, $08 ; Y, tile, attr, X
+.byt $00, $04, $40, $00 ; Y, tile, attr, X
 .byt $01
-.byt $00, $05, $40, $00
+.byt $00, $05, $40, $f8
 .byt $01
-.byt $08, $0b, $40, $08
+.byt $08, $0b, $40, $00
 .byt $01
-.byt $08, $0c, $40, $00
+.byt $08, $0c, $40, $f8
 .byt $00
 ; End of animation
 .byt $00
