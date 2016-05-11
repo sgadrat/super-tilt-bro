@@ -6,13 +6,28 @@ sta player_b_direction
 lda DIRECTION_RIGHT
 sta player_a_direction
 
+lda HITBOX_DISABLED
+sta player_a_hitbox_enabled
+sta player_b_hitbox_enabled
+
 lda #$80
 sta player_a_y
 sta player_b_y
+sta player_a_hurtbox_top
+sta player_b_hurtbox_top
 lda #$40
 sta player_a_x
+sta player_a_hurtbox_left
 lda #$a0
 sta player_b_x
+sta player_a_hurtbox_left
+lda #$88
+sta player_a_hurtbox_bottom
+sta player_b_hurtbox_bottom
+lda #$48
+sta player_a_hurtbox_right
+lda #$a8
+sta player_b_hurtbox_right
 
 lda #$7f
 sta player_a_max_velocity
@@ -237,6 +252,8 @@ inx
 cpx #$02
 bne player_animation
 
+jsr show_hitboxes
+
 rts
 .)
 
@@ -245,8 +262,9 @@ rts
 ;  tmpfield2 - Position Y
 ;  tmpfield3, tmpfield4 - Vector pointing to the frame to draw
 ;  tmpfield5 - First sprite index to use
+;  X register - player number (ignored if the animation is not related to a player)
 ;
-; Overwrites tmpfield5, tmpfield6, tmpfield7 and all registers
+; Overwrites tmpfield5, tmpfield7, tmpfield8, tmpfield9 and all registers
 draw_anim_frame:
 .(
 ; Pretty names
@@ -254,29 +272,43 @@ anim_pos_x = tmpfield1
 anim_pos_y = tmpfield2
 frame_vector = tmpfield3
 sprite_index = tmpfield5
-sprite_orig_x = tmpfield6
-sprite_orig_y = tmpfield7
+player_number = tmpfield6
+sprite_orig_x = tmpfield7
+sprite_orig_y = tmpfield8
+continuation_byte = tmpfield9
 
 ldy #$00
+stx player_number
 
-; Check continuity byte
+; Check continuation byte - zero value means end of data
 draw_one_sprite:
 lda (frame_vector), y
 beq end
-cmp #$02
-bne set_relative
+iny
+
+; Check positioning mode from continuation byte
+sta continuation_byte
+lda #%00000010
+bit continuation_byte
+beq set_relative
 lda #$00
 sta sprite_orig_x
 sta sprite_orig_y
-jmp end_continuation_byte
+jmp check_hurtbox
 set_relative:
 lda anim_pos_x
 sta sprite_orig_x
 lda anim_pos_y
 sta sprite_orig_y
-end_continuation_byte:
-iny
 
+; Check if next data is hurtbox position or sprite data from continuation byte
+check_hurtbox:
+lda #%00000100
+bit continuation_byte
+beq move_sprite
+jmp move_hurtbox
+
+move_sprite:
 ; Copy sprite data
 lda sprite_index
 asl
@@ -310,6 +342,117 @@ iny
 inc sprite_index
 jmp draw_one_sprite
 
+move_hurtbox:
+; Left
+ldx player_number
+lda (frame_vector), y
+clc
+adc sprite_orig_x
+sta player_a_hurtbox_left, x
+iny
+; Right
+lda (frame_vector), y
+clc
+adc sprite_orig_x
+sta player_a_hurtbox_right, x
+iny
+; Top
+lda (frame_vector), y
+clc
+adc sprite_orig_y
+sta player_a_hurtbox_top, x
+iny
+; Top
+lda (frame_vector), y
+clc
+adc sprite_orig_y
+sta player_a_hurtbox_bottom, x
+iny
+
+; Next sprite
+jmp draw_one_sprite
+
 end:
+rts
+.)
+
+; Debug subroutine to show hitboxes and hurtboxes
+show_hitboxes:
+.(
+pha
+txa
+pha
+tya
+pha
+
+; Player A hurtbox
+ldx #$fc
+lda player_a_hurtbox_top
+sta oam_mirror, x
+inx
+lda #$0d
+sta oam_mirror, x
+inx
+lda #$03
+sta oam_mirror, x
+inx
+lda player_a_hurtbox_left
+sta oam_mirror, x
+inx
+ldx #$f8
+lda player_a_hurtbox_bottom
+sec
+sbc #$08
+sta oam_mirror, x
+inx
+lda #$0d
+sta oam_mirror, x
+inx
+lda #$03
+sta oam_mirror, x
+inx
+lda player_a_hurtbox_right
+sec
+sbc #$08
+sta oam_mirror, x
+inx
+
+; Player B hurtbox
+ldx #$f4
+lda player_b_hurtbox_top
+sta oam_mirror, x
+inx
+lda #$0d
+sta oam_mirror, x
+inx
+lda #$03
+sta oam_mirror, x
+inx
+lda player_b_hurtbox_left
+sta oam_mirror, x
+inx
+ldx #$f0
+lda player_b_hurtbox_bottom
+sec
+sbc #$08
+sta oam_mirror, x
+inx
+lda #$0d
+sta oam_mirror, x
+inx
+lda #$03
+sta oam_mirror, x
+inx
+lda player_b_hurtbox_right
+sec
+sbc #$08
+sta oam_mirror, x
+inx
+
+pla
+tay
+pla
+tax
+pla
 rts
 .)

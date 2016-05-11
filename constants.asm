@@ -10,3 +10,6 @@
 
 #define DIRECTION_LEFT #$00
 #define DIRECTION_RIGHT #$01
+
+#define HITBOX_DISABLED #$00
+#define HITBOX_ENABLED #$01

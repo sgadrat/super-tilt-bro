@@ -1,8 +1,10 @@
 * = $C000 ; $C000 is where the PRG rom is mapped in CPU space, so code position is relative to it
 
 palette_data:
+; Background
 .byt $21,$07,$1a,$2a,$21,$1a,$18,$09,$21,$39,$3A,$3B,$21,$00,$10,$30
-.byt $21,$08,$1a,$20,$21,$08,$10,$37,$21,$1C,$15,$14,$21,$02,$38,$3C
+; Sprites
+.byt $21,$08,$1a,$20,$21,$08,$10,$37,$21,$1C,$15,$14,$21,$16,$38,$3C
 
 nametable:
 .byt $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00
@@ -56,6 +58,8 @@ nametable_end:
 anim_sinbad_idle_left:
 ; Frame 1
 .byt 60 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $01 ; Sprite 1 - Scimitar's blade
 .byt $07, $02, $01, $fc
 .byt $01 ; Sprite 2 - Scimitar's handle
@@ -67,6 +71,8 @@ anim_sinbad_idle_left:
 .byt $00
 ; Frame 2
 .byt 60 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $01 ; Sprite 1 - Scimitar's blade
 .byt $06, $02, $01, $fc
 .byt $01 ; Sprite 2 - Scimitar's handle
@@ -82,6 +88,8 @@ anim_sinbad_idle_left:
 anim_sinbad_idle_right:
 ; Frame 1
 .byt 60 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $01 ; Sprite 1 - Sinbad's head
 .byt $00, $00, $40, $00 ; Y, tile, attr, X
 .byt $01 ; Sprite 2 - Sinbad's body
@@ -93,6 +101,8 @@ anim_sinbad_idle_right:
 .byt $00
 ; Frame 2
 .byt 60 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $01 ; Sprite 1 - Sinbad's head
 .byt $00, $00, $40, $00 ; Y, tile, attr, X
 .byt $01 ; Sprite 2 - Sinbad's body
@@ -108,6 +118,8 @@ anim_sinbad_idle_right:
 anim_sinbad_run_left:
 ; Frame 1
 .byt 5 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $10, $00, $10 ; left, right, top, bottom
 .byt $01
 .byt $00, $04, $00, $00 ; Y, tile, attr, X
 .byt $01
@@ -119,6 +131,8 @@ anim_sinbad_run_left:
 .byt $00
 ; Frame 2
 .byt 5 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $10, $00, $10 ; left, right, top, bottom
 .byt $01
 .byt $00, $08, $00, $00 ; Y, tile, attr, X
 .byt $01
@@ -130,6 +144,8 @@ anim_sinbad_run_left:
 .byt $00
 ; Frame 3
 .byt 5 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $10, $00, $10 ; left, right, top, bottom
 .byt $01
 .byt $00, $04, $00, $00 ; Y, tile, attr, X
 .byt $01
@@ -145,6 +161,8 @@ anim_sinbad_run_left:
 anim_sinbad_run_right:
 ; Frame 1
 .byt 5 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $f8, $08, $00, $10 ; left, right, top, bottom
 .byt $01
 .byt $00, $04, $40, $00 ; Y, tile, attr, X
 .byt $01
@@ -156,6 +174,8 @@ anim_sinbad_run_right:
 .byt $00
 ; Frame 2
 .byt 5 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $f8, $08, $00, $10 ; left, right, top, bottom
 .byt $01
 .byt $00, $08, $40, $00 ; Y, tile, attr, X
 .byt $01
@@ -167,6 +187,8 @@ anim_sinbad_run_right:
 .byt $00
 ; Frame 3
 .byt 5 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $f8, $08, $00, $10 ; left, right, top, bottom
 .byt $01
 .byt $00, $04, $40, $00 ; Y, tile, attr, X
 .byt $01
