@@ -242,6 +242,7 @@ beq end
 lda player_a_x, x
 cmp STAGE_EDGE_LEFT
 bcc set_falling_state
+beq set_falling_state
 cmp STAGE_EDGE_RIGHT
 bcs set_falling_state
 lda player_a_y, x
