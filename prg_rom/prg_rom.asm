@@ -180,6 +180,9 @@ anim_sinbad_run_right:
 .byt $00
 
 #include "prg_rom/utils.asm"
+#include "prg_rom/game.asm"
+#include "prg_rom/player_states.asm"
+#include "prg_rom/collisions.asm"
 
 cursed:
 rti
