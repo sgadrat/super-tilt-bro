@@ -90,8 +90,14 @@ jsr start_running_player
 check_up:
 lda #%00001000
 bit tmpfield1
-beq end
+beq check_a
 jsr start_jumping_player
+
+check_a:
+lda #%10000000
+bit tmpfield1
+beq end
+jsr start_jabbing_player
 
 end:
 rts
@@ -259,6 +265,64 @@ jmp end
 top_reached:
 lda PLAYER_STATE_FALLING
 sta player_a_state, x
+
+end:
+rts
+.)
+
+start_jabbing_player:
+lda PLAYER_STATE_JABBING
+sta player_a_state, x
+set_jabbing_animation:
+.(
+; Set the appropriate animation (depending on player's direction)
+lda player_a_direction, x
+beq set_anim_left
+
+txa ;
+asl ; X = X * 2 (we use it to reference a 2 bytes field)
+tax ;
+
+lda #<anim_sinbad_jab_right
+sta player_a_animation, x
+lda #>anim_sinbad_jab_right
+inx
+sta player_a_animation, x
+dex
+
+jmp reset_anim_clock
+
+set_anim_left:
+
+txa ;
+asl ; X = X * 2 (we use it to reference a 2 bytes field)
+tax ;
+
+lda #<anim_sinbad_jab_left
+sta player_a_animation, x
+lda #>anim_sinbad_jab_left
+inx
+sta player_a_animation, x
+dex
+
+reset_anim_clock:
+
+txa ;
+lsr ; Reset X to it's original value
+tax ;
+
+lda #$00
+sta player_a_anim_clock, x
+
+rts
+.)
+
+jabbing_player:
+.(
+lda player_a_anim_clock, x
+cmp ANIM_SINBAD_JAB_DURATION
+bne end
+jsr start_standing_player
 
 end:
 rts

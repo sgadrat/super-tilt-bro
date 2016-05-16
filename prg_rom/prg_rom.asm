@@ -4,7 +4,7 @@ palette_data:
 ; Background
 .byt $21,$07,$1a,$2a,$21,$1a,$18,$09,$21,$39,$3A,$3B,$21,$00,$10,$30
 ; Sprites
-.byt $21,$08,$1a,$20,$21,$08,$10,$37,$21,$1C,$15,$14,$21,$16,$38,$3C
+.byt $21,$08,$1a,$20,$21,$08,$10,$37,$21,$1C,$15,$14,$21,$16,$37,$3C
 
 nametable:
 .byt $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00,  $00, $00, $00, $00
@@ -197,6 +197,255 @@ anim_sinbad_run_right:
 .byt $08, $0b, $40, $00
 .byt $01
 .byt $08, $0c, $40, $f8
+.byt $00
+; End of animation
+.byt $00
+
+#define ANIM_SINBAD_JAB_DURATION #8
+anim_sinbad_jab_left:
+; Frame 1
+.byt 1 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $08 ; Hitbox positioning
+.byt $01, $01, $ff, $fc, $00, $02, $0a ; enabled, force_h, force_v, left, right, top, bottom
+.byt $01 ; Sprite 3 - Scimitar's blade
+.byt $02, $02, $01, $f8
+.byt $01 ; Sprite 4 - Scimitar's handle
+.byt $02, $03, $01, $00
+.byt $01 ; Sprite 1 - Sinbad's head
+.byt $00, $00, $00, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 2 - Sinbad's body
+.byt $08, $01, $00, $00
+.byt $00
+; Frame 2
+.byt 1 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $08 ; Hitbox positioning
+.byt $01, $01, $ff, $fc, $00, $03, $0b ; enabled, force_h, force_v, left, right, top, bottom
+.byt $01 ; Sprite 3 - Scimitar's blade
+.byt $03, $02, $01, $f8
+.byt $01 ; Sprite 4 - Scimitar's handle
+.byt $03, $03, $01, $00
+.byt $01 ; Sprite 1 - Sinbad's head
+.byt $00, $00, $00, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 2 - Sinbad's body
+.byt $08, $01, $00, $00
+.byt $00
+; Frame 3
+.byt 1 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $08 ; Hitbox positioning
+.byt $01, $01, $ff, $fc, $00, $04, $0c ; enabled, force_h, force_v, left, right, top, bottom
+.byt $01 ; Sprite 3 - Scimitar's blade
+.byt $04, $02, $01, $f8
+.byt $01 ; Sprite 4 - Scimitar's handle
+.byt $04, $03, $01, $00
+.byt $01 ; Sprite 1 - Sinbad's head
+.byt $00, $00, $00, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 2 - Sinbad's body
+.byt $08, $01, $00, $00
+.byt $00
+; Frame 4
+.byt 1 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $08 ; Hitbox positioning
+.byt $01, $01, $ff, $fc, $00, $05, $0d ; enabled, force_h, force_v, left, right, top, bottom
+.byt $01 ; Sprite 3 - Scimitar's blade
+.byt $05, $02, $01, $f8
+.byt $01 ; Sprite 4 - Scimitar's handle
+.byt $05, $03, $01, $00
+.byt $01 ; Sprite 1 - Sinbad's head
+.byt $00, $00, $00, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 2 - Sinbad's body
+.byt $08, $01, $00, $00
+.byt $00
+; Frame 5
+.byt 1 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $08 ; Hitbox positioning
+.byt $01, $01, $ff, $fc, $00, $06, $0e ; enabled, force_h, force_v, left, right, top, bottom
+.byt $01 ; Sprite 3 - Scimitar's blade
+.byt $06, $02, $01, $f8
+.byt $01 ; Sprite 4 - Scimitar's handle
+.byt $06, $03, $01, $00
+.byt $01 ; Sprite 1 - Sinbad's head
+.byt $00, $00, $00, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 2 - Sinbad's body
+.byt $08, $01, $00, $00
+.byt $00
+; Frame 6
+.byt 1 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $08 ; Hitbox positioning
+.byt $01, $01, $ff, $fc, $00, $07, $0f ; enabled, force_h, force_v, left, right, top, bottom
+.byt $01 ; Sprite 3 - Scimitar's blade
+.byt $07, $02, $01, $f8
+.byt $01 ; Sprite 4 - Scimitar's handle
+.byt $07, $03, $01, $00
+.byt $01 ; Sprite 1 - Sinbad's head
+.byt $00, $00, $00, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 2 - Sinbad's body
+.byt $08, $01, $00, $00
+.byt $00
+; Frame 7
+.byt 1 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $08 ; Hitbox positioning
+.byt $01, $01, $ff, $fc, $00, $08, $10 ; enabled, force_h, force_v, left, right, top, bottom
+.byt $01 ; Sprite 3 - Scimitar's blade
+.byt $08, $02, $01, $f8
+.byt $01 ; Sprite 4 - Scimitar's handle
+.byt $08, $03, $01, $00
+.byt $01 ; Sprite 1 - Sinbad's head
+.byt $00, $00, $00, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 2 - Sinbad's body
+.byt $08, $01, $00, $00
+.byt $00
+; Frame 8
+.byt 1 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $08 ; Hitbox positioning
+.byt $01, $01, $ff, $fc, $00, $09, $11 ; enabled, force_h, force_v, left, right, top, bottom
+.byt $01 ; Sprite 3 - Scimitar's blade
+.byt $09, $02, $01, $f8
+.byt $01 ; Sprite 4 - Scimitar's handle
+.byt $09, $03, $01, $00
+.byt $01 ; Sprite 1 - Sinbad's head
+.byt $00, $00, $00, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 2 - Sinbad's body
+.byt $08, $01, $00, $00
+.byt $00
+; End of animation
+.byt $00
+
+anim_sinbad_jab_right:
+; Frame 1
+.byt 1 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $08 ; Hitbox positioning
+.byt $01, $01, $ff, $04, $14, $02, $0a ; enabled, force_h, force_v, left, right, top, bottom
+.byt $01 ; Sprite 1 - Sinbad's head
+.byt $00, $00, $40, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 2 - Sinbad's body
+.byt $08, $01, $40, $00
+.byt $01 ; Sprite 3 - Scimitar's blade
+.byt $02, $02, $41, $0c
+.byt $01 ; Sprite 4 - Scimitar's handle
+.byt $02, $03, $41, $04
+.byt $00
+; Frame 2
+.byt 1 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $08 ; Hitbox positioning
+.byt $01, $01, $ff, $04, $14, $03, $0b ; enabled, force_h, force_v, left, right, top, bottom
+.byt $01 ; Sprite 1 - Sinbad's head
+.byt $00, $00, $40, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 2 - Sinbad's body
+.byt $08, $01, $40, $00
+.byt $01 ; Sprite 3 - Scimitar's blade
+.byt $03, $02, $41, $0c
+.byt $01 ; Sprite 4 - Scimitar's handle
+.byt $03, $03, $41, $04
+.byt $00
+; Frame 3
+.byt 1 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $08 ; Hitbox positioning
+.byt $01, $01, $ff, $04, $14, $04, $0c ; enabled, force_h, force_v, left, right, top, bottom
+.byt $01 ; Sprite 1 - Sinbad's head
+.byt $00, $00, $40, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 2 - Sinbad's body
+.byt $08, $01, $40, $00
+.byt $01 ; Sprite 3 - Scimitar's blade
+.byt $04, $02, $41, $0c
+.byt $01 ; Sprite 4 - Scimitar's handle
+.byt $04, $03, $41, $04
+.byt $00
+; Frame 4
+.byt 1 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $08 ; Hitbox positioning
+.byt $01, $01, $ff, $04, $14, $05, $0d ; enabled, force_h, force_v, left, right, top, bottom
+.byt $01 ; Sprite 1 - Sinbad's head
+.byt $00, $00, $40, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 2 - Sinbad's body
+.byt $08, $01, $40, $00
+.byt $01 ; Sprite 3 - Scimitar's blade
+.byt $05, $02, $41, $0c
+.byt $01 ; Sprite 4 - Scimitar's handle
+.byt $05, $03, $41, $04
+.byt $00
+; Frame 5
+.byt 1 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $08 ; Hitbox positioning
+.byt $01, $01, $ff, $04, $14, $06, $0e ; enabled, force_h, force_v, left, right, top, bottom
+.byt $01 ; Sprite 1 - Sinbad's head
+.byt $00, $00, $40, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 2 - Sinbad's body
+.byt $08, $01, $40, $00
+.byt $01 ; Sprite 3 - Scimitar's blade
+.byt $06, $02, $41, $0c
+.byt $01 ; Sprite 4 - Scimitar's handle
+.byt $06, $03, $41, $04
+.byt $00
+; Frame 6
+.byt 1 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $08 ; Hitbox positioning
+.byt $01, $01, $ff, $04, $14, $07, $0f ; enabled, force_h, force_v, left, right, top, bottom
+.byt $01 ; Sprite 1 - Sinbad's head
+.byt $00, $00, $40, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 2 - Sinbad's body
+.byt $08, $01, $40, $00
+.byt $01 ; Sprite 3 - Scimitar's blade
+.byt $07, $02, $41, $0c
+.byt $01 ; Sprite 4 - Scimitar's handle
+.byt $07, $03, $41, $04
+.byt $00
+; Frame 7
+.byt 1 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $08 ; Hitbox positioning
+.byt $01, $01, $ff, $04, $14, $08, $10 ; enabled, force_h, force_v, left, right, top, bottom
+.byt $01 ; Sprite 1 - Sinbad's head
+.byt $00, $00, $40, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 2 - Sinbad's body
+.byt $08, $01, $40, $00
+.byt $01 ; Sprite 3 - Scimitar's blade
+.byt $08, $02, $41, $0c
+.byt $01 ; Sprite 4 - Scimitar's handle
+.byt $08, $03, $41, $04
+.byt $00
+; Frame 8
+.byt 1 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $08 ; Hitbox positioning
+.byt $01, $01, $ff, $04, $14, $09, $11 ; enabled, force_h, force_v, left, right, top, bottom
+.byt $01 ; Sprite 1 - Sinbad's head
+.byt $00, $00, $40, $00 ; Y, tile, attr, X
+.byt $01 ; Sprite 2 - Sinbad's body
+.byt $08, $01, $40, $00
+.byt $01 ; Sprite 3 - Scimitar's blade
+.byt $09, $02, $41, $0c
+.byt $01 ; Sprite 4 - Scimitar's handle
+.byt $09, $03, $41, $04
 .byt $00
 ; End of animation
 .byt $00

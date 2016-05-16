@@ -43,6 +43,11 @@ rts
 
 update_players:
 .(
+; Clean hitboxes
+lda HITBOX_DISABLED
+sta player_a_hitbox_enabled
+sta player_b_hitbox_enabled
+
 ldx #$00 ; player number
 
 update_one_player:
@@ -70,8 +75,15 @@ jmp player_updated
 ; Check state 3 - jumping
 check_jumping:
 cmp PLAYER_STATE_JUMPING
-bne player_updated
+bne check_jabbing
 jsr jumping_player
+jmp player_updated
+
+; Check state 4 - jabbing
+check_jabbing:
+cmp PLAYER_STATE_JABBING
+bne player_updated
+jsr jabbing_player
 
 player_updated:
 jsr move_player
@@ -207,10 +219,19 @@ iny ; Skip frame duration field
 skip_sprite:
 lda (tmpfield3), y ; Check current sprite continuation byte
 beq end_skip_frame ;
-tya      ;
-clc      ; Add 5 to Y, to point on the next continuation byte
-adc #$05 ;
-tay      ;
+sta tmpfield6  ;
+lda #$05       ;
+sta tmpfield7  ; Set data length in tmpfield7
+lda #%00001000 ; hitbox data is 8 bytes long
+bit tmpfield6  ; other data are 5 bytes long
+beq inc_cursor ; (counting the continuation byte)
+lda #$08       ;
+sta tmpfield7  ;
+inc_cursor:
+tya           ;
+clc           ; Add data length to Y, to point on the next continuation byte
+adc tmpfield7 ;
+tay           ;
 jmp skip_sprite
 end_skip_frame:
 iny ; Skip the last continuation byte
@@ -264,7 +285,7 @@ rts
 ;  tmpfield5 - First sprite index to use
 ;  X register - player number (ignored if the animation is not related to a player)
 ;
-; Overwrites tmpfield5, tmpfield7, tmpfield8, tmpfield9 and all registers
+; Overwrites tmpfield5, tmpfield6, tmpfield7, tmpfield8, tmpfield9 and all registers
 draw_anim_frame:
 .(
 ; Pretty names
@@ -277,6 +298,7 @@ sprite_orig_x = tmpfield7
 sprite_orig_y = tmpfield8
 continuation_byte = tmpfield9
 
+.(
 ldy #$00
 stx player_number
 
@@ -305,10 +327,27 @@ sta sprite_orig_y
 check_hurtbox:
 lda #%00000100
 bit continuation_byte
+beq check_hitbox
+jsr anim_frame_move_hurtbox
+jmp draw_one_sprite
+
+check_hitbox:
+lda #%00001000
+bit continuation_byte
 beq move_sprite
-jmp move_hurtbox
+jsr anim_frame_move_hitbox
+jmp draw_one_sprite
 
 move_sprite:
+jsr anim_frame_move_sprite
+jmp draw_one_sprite
+
+end:
+rts
+.)
+
+anim_frame_move_sprite:
+.(
 ; Copy sprite data
 lda sprite_index
 asl
@@ -340,9 +379,12 @@ iny
 
 ; Next sprite
 inc sprite_index
-jmp draw_one_sprite
 
-move_hurtbox:
+rts
+.)
+
+anim_frame_move_hurtbox:
+.(
 ; Left
 ldx player_number
 lda (frame_vector), y
@@ -369,11 +411,53 @@ adc sprite_orig_y
 sta player_a_hurtbox_bottom, x
 iny
 
-; Next sprite
-jmp draw_one_sprite
-
-end:
 rts
+.)
+
+anim_frame_move_hitbox:
+.(
+; Enabled
+ldx player_number
+lda (frame_vector), y
+sta player_a_hitbox_enabled, x
+iny
+; Force_h
+lda (frame_vector), y
+sta player_a_hitbox_force_h, x
+iny
+; Force_v
+lda (frame_vector), y
+sta player_a_hitbox_force_v, x
+iny
+; Left
+ldx player_number
+lda (frame_vector), y
+clc
+adc sprite_orig_x
+sta player_a_hitbox_left, x
+iny
+; Right
+lda (frame_vector), y
+clc
+adc sprite_orig_x
+sta player_a_hitbox_right, x
+iny
+; Top
+lda (frame_vector), y
+clc
+adc sprite_orig_y
+sta player_a_hitbox_top, x
+iny
+; Top
+lda (frame_vector), y
+clc
+adc sprite_orig_y
+sta player_a_hitbox_bottom, x
+iny
+
+rts
+.)
+
 .)
 
 ; Debug subroutine to show hitboxes and hurtboxes
@@ -448,6 +532,98 @@ sec
 sbc #$08
 sta oam_mirror, x
 inx
+
+; Player A hitbox
+lda player_a_hitbox_enabled
+bne show_player_a_hitbox
+lda #$fe  ;
+sta $02e8 ;
+sta $02e9 ;
+sta $02ea ;
+sta $02eb ; Hide disabled hitbox
+sta $02ec ;
+sta $02ed ;
+sta $02ee ;
+sta $02ef ;
+jmp end_player_a_hitbox
+show_player_a_hitbox:
+ldx #$ec
+lda player_a_hitbox_top
+sta oam_mirror, x
+inx
+lda #$0e
+sta oam_mirror, x
+inx
+lda #$03
+sta oam_mirror, x
+inx
+lda player_a_hitbox_left
+sta oam_mirror, x
+inx
+ldx #$e8
+lda player_a_hitbox_bottom
+sec
+sbc #$08
+sta oam_mirror, x
+inx
+lda #$0e
+sta oam_mirror, x
+inx
+lda #$03
+sta oam_mirror, x
+inx
+lda player_a_hitbox_right
+sec
+sbc #$08
+sta oam_mirror, x
+inx
+end_player_a_hitbox
+
+; Player B hitbox
+lda player_b_hitbox_enabled
+bne show_player_b_hitbox
+lda #$fe  ;
+sta $02e0 ;
+sta $02e1 ;
+sta $02e2 ;
+sta $02e3 ; Hide disabled hitbox
+sta $02e4 ;
+sta $02e5 ;
+sta $02e6 ;
+sta $02e7 ;
+jmp end_player_b_hitbox
+show_player_b_hitbox:
+ldx #$e4
+lda player_b_hitbox_top
+sta oam_mirror, x
+inx
+lda #$0e
+sta oam_mirror, x
+inx
+lda #$03
+sta oam_mirror, x
+inx
+lda player_b_hitbox_left
+sta oam_mirror, x
+inx
+ldx #$e8
+lda player_b_hitbox_bottom
+sec
+sbc #$08
+sta oam_mirror, x
+inx
+lda #$0e
+sta oam_mirror, x
+inx
+lda #$03
+sta oam_mirror, x
+inx
+lda player_b_hitbox_right
+sec
+sbc #$08
+sta oam_mirror, x
+inx
+end_player_b_hitbox
 
 pla
 tay
