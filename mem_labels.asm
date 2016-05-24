@@ -1,8 +1,5 @@
 ; State of the player's character
-;  $00 - Standing on ground
-;  $01 - Running
-;  $02 - Falling
-;  $03 - Jumping
+;  May take any value from PLAYER_STATE_XXX constants
 player_a_state = $0000
 player_b_state = $0001
 
@@ -64,5 +61,7 @@ tmpfield6 = $00f5
 tmpfield7 = $00f6
 tmpfield8 = $00f7
 tmpfield9 = $00f8
+tmpfield10 = $00f9
+tmpfield11 = $00fa
 
 oam_mirror = $0200

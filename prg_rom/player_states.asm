@@ -327,3 +327,15 @@ jsr start_standing_player
 end:
 rts
 .)
+
+start_thrown_player:
+.(
+lda PLAYER_STATE_THROWN
+sta player_a_state, x
+rts
+.)
+
+thrown_player:
+.(
+rts
+.)

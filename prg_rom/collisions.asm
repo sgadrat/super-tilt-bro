@@ -75,3 +75,59 @@ sta final_y
 end:
 rts
 .)
+
+; Check if two rectangles collide
+;  tmpfield1 - Rectangle 1 left
+;  tmpfield2 - Rectangle 1 right
+;  tmpfield3 - Rectangle 1 top
+;  tmpfield4 - Rectangle 1 bottom
+;  tmpfield5 - Rectangle 2 left
+;  tmpfield6 - Rectangle 2 right
+;  tmpfield7 - Rectangle 2 top
+;  tmpfield8 - Rectangle 2 botto
+;
+; tmpfield9 is set to #$00 if rectangles overlap, or to #$01 otherwise
+boxes_overlap:
+.(
+rect1_left = tmpfield1
+rect1_right = tmpfield2
+rect1_top = tmpfield3
+rect1_bottom = tmpfield4
+rect2_left = tmpfield5
+rect2_right = tmpfield6
+rect2_top = tmpfield7
+rect2_bottom = tmpfield8
+
+; No overlap possible if left of rect1 is on the right of rect2
+lda rect1_left
+cmp rect2_right
+bcs no_overlap
+
+; No overlap possible if left of rect2 is on the right of rect1
+lda rect2_left
+cmp rect1_right
+bcs no_overlap
+
+; No overlap possible if top of rect1 is lower than bottom of rect2
+lda rect1_top
+cmp rect2_bottom
+bcs no_overlap
+
+; No overlap possible if top of rect1 is lower than bottom of rect2
+lda rect2_top
+cmp rect1_bottom
+bcs no_overlap
+
+; No impossibility found, rectangles overlap at least partially
+lda #$00
+sta tmpfield9
+jmp end
+
+; No overlap found
+no_overlap:
+lda #$01
+sta tmpfield9
+
+end:
+rts
+.)

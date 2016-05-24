@@ -43,6 +43,14 @@ rts
 
 update_players:
 .(
+; Check hitbox collisions
+ldx #$00
+hitbox_one_player:
+jsr check_player_hit
+inx
+cpx #$02
+bne hitbox_one_player
+
 ; Clean hitboxes
 lda HITBOX_DISABLED
 sta player_a_hitbox_enabled
@@ -82,8 +90,15 @@ jmp player_updated
 ; Check state 4 - jabbing
 check_jabbing:
 cmp PLAYER_STATE_JABBING
-bne player_updated
+bne check_thrown
 jsr jabbing_player
+jmp player_updated
+
+; Check state 5 - thrown
+check_thrown:
+cmp PLAYER_STATE_THROWN
+bne player_updated
+jsr thrown_player
 
 player_updated:
 jsr move_player
@@ -92,6 +107,75 @@ inx
 cpx #$02
 bne update_one_player
 
+rts
+.)
+
+check_player_hit:
+.(
+current_player = tmpfield10
+opponent_player = tmpfield11
+
+; Store current player number
+stx current_player
+
+; Check that player's hitbox is enabled
+lda player_a_hitbox_enabled, x
+beq end
+
+; Store current player's hitbox
+lda player_a_hitbox_left, x
+sta tmpfield1
+lda player_a_hitbox_right, x
+sta tmpfield2
+lda player_a_hitbox_top, x
+sta tmpfield3
+lda player_a_hitbox_bottom, x
+sta tmpfield4
+
+; Switch current player to select the opponent
+.(
+cpx #$00
+beq select_player_b
+dex
+jmp end_switch_player
+select_player_b:
+inx
+end_switch_player:
+.)
+
+; Store opponent player number
+stx opponent_player
+
+; Store opponent's hurtbox
+lda player_a_hurtbox_left, x
+sta tmpfield5
+lda player_a_hurtbox_right, x
+sta tmpfield6
+lda player_a_hurtbox_top, x
+sta tmpfield7
+lda player_a_hurtbox_bottom, x
+sta tmpfield8
+
+; Check collisions between hitbox and hurtbox
+jsr boxes_overlap
+lda tmpfield9
+bne end
+
+; Apply force vector to the oponent
+ldx current_player
+lda player_a_hitbox_force_h, x
+pha
+lda player_a_hitbox_force_v, x
+pha
+ldx opponent_player
+jsr merge_player_velocity
+
+; Set opponent to thrown state
+jsr start_thrown_player
+
+end:
+; Reset register X to the current player
+ldx current_player
 rts
 .)
 
