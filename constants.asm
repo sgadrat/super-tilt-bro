@@ -15,3 +15,5 @@
 
 #define HITBOX_DISABLED #$00
 #define HITBOX_ENABLED #$01
+
+#define TILENUM_NT_CHAR_0 #$13

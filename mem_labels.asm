@@ -51,6 +51,8 @@ player_a_hitbox_force_v = $002b
 player_b_hitbox_force_v = $002c
 player_a_hitbox_force_h = $002d
 player_b_hitbox_force_h = $002e
+player_a_damages = $002f
+player_b_damages = $0030
 
 tmpfield1 = $00f0
 tmpfield2 = $00f1
@@ -65,3 +67,4 @@ tmpfield10 = $00f9
 tmpfield11 = $00fa
 
 oam_mirror = $0200
+nametable_buffers = $0300

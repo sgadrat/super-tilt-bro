@@ -43,6 +43,10 @@ rts
 
 update_players:
 .(
+; Remove processed nametable buffers
+lda #$00
+sta nametable_buffers
+
 ; Check hitbox collisions
 ldx #$00
 hitbox_one_player:
@@ -103,6 +107,7 @@ jsr thrown_player
 player_updated:
 jsr move_player
 jsr check_player_position
+jsr write_player_damages
 inx
 cpx #$02
 bne update_one_player
@@ -256,6 +261,69 @@ lda PLAYER_STATE_FALLING
 sta player_a_state, x
 
 end:
+rts
+.)
+
+; Show on screen player's damages
+;  register X must contain the player number
+write_player_damages:
+.(
+ppu_position = tmpfield4
+
+; Save X
+txa
+pha
+
+; Set on-screen text position depending on the player
+cpx #$00
+beq prepare_player_a
+lda #$91
+sta ppu_position
+jmp end_player_variables
+prepare_player_a:
+lda #$88
+sta ppu_position
+end_player_variables:
+
+; Put damages value parameter for number_to_tile_indexes
+lda player_a_damages, x
+sta tmpfield1
+
+; Write the begining of the buffer
+jsr last_nt_buffer
+lda #$01                 ; Continuation byte
+sta nametable_buffers, x ;
+inx
+lda #$23                 ; PPU address MSB
+sta nametable_buffers, x ;
+inx
+lda ppu_position         ; PPU address LSB
+sta nametable_buffers, x ;
+inx
+lda #$03                 ; Tiles count
+sta nametable_buffers, x ;
+inx
+
+; Store the tiles address as destination parameter for number_to_tile_indexes
+txa
+sta tmpfield2
+lda #>nametable_buffers
+sta tmpfield3
+
+; Set the next continuation byte to 0
+inx
+inx
+inx
+lda #$00
+sta nametable_buffers, x
+
+; Populate tiles data
+jsr number_to_tile_indexes
+
+; Restore X
+pla
+tax
+
 rts
 .)
 

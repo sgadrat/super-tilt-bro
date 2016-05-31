@@ -128,3 +128,122 @@ adc #$01
 end:
 rts
 .)
+
+; Set register X to the offset of the continuation byte of the first empty
+; nametable buffer
+;
+; Overwrites register A
+last_nt_buffer:
+.(
+ldx #$00
+
+handle_buff:
+
+; Check continuation byte
+lda nametable_buffers, x
+beq end
+
+; Point to the tiles counter
+inx
+inx
+inx
+
+; Add tile counts to X (effectively points on the last tile)
+txa
+clc
+adc nametable_buffers, x
+tax
+
+; Next
+inx
+jmp handle_buff
+
+end:
+rts
+.)
+
+; Produce a list of three tile indexes representing a number
+;  tmpfield1 - Number to represent
+;  tmpfield2 - Destination address LSB
+;  tmpfield3 - Destionation address MSB
+;
+;  Overwrites timfield1, timpfield2, tmpfield3, tmpfield4, tmpfield5, tmpfield6
+;  and all registers.
+number_to_tile_indexes:
+.(
+number = tmpfield1
+destination = tmpfield2
+coefficient = tmpfield4
+digit_value = tmpfield5
+next_multiple = tmpfield6
+
+; Start with a coefficient of 100 to find hundred's digit
+lda #100
+sta coefficient
+
+find_one_digit:
+
+; Reset internal counters
+lda #$00
+sta digit_value
+lda coefficient
+sta next_multiple
+
+try_digit_value:
+
+; Check if next multiple value is greater than the number
+lda number
+cmp next_multiple
+bcs next_digit_value
+
+; Next multiple value is greater than the number, we found this digit
+lda TILENUM_NT_CHAR_0 ; Store the corresponding tile number at destination
+clc                   ;
+adc digit_value       ;
+ldy #$00              ;
+sta (destination), y  ;
+
+                      ; Keep only the modulo in number
+lda next_multiple     ; -.
+sec                   ;  | Remove one time coefficient to next_multiple, so
+sbc coefficient       ;  | next_multiple equals to "digit_value * coefficient"
+sta next_multiple     ; -*
+lda number            ; -.
+sec                   ;  | "number = number - (digit_value * coefficient)"
+sbc next_multiple     ;  | That's actually the modulo of "number / coefficient"
+sta number            ; -*
+
+lda coefficient        ; Set next coefficient
+cmp #100               ;  100 -> 10
+bne test_coeff_10      ;   10 ->  1
+lda #10                ;    1 -> we found the last digit
+sta coefficient        ;
+jmp coefficent_changed ;
+test_coeff_10:         ;
+cmp #10                ;
+bne end                ;
+lda #1                 ;
+sta coefficient        ;
+jmp coefficent_changed ;
+coefficent_changed:    ;
+
+inc destination         ; Update destination address
+bne destination_updated ;
+inc destination+1       ;
+destination_updated:    ;
+
+jmp find_one_digit
+
+; Next multiple value is lower or equal to the number,
+; increase digit value, update next_multiple and recheck
+next_digit_value:
+inc digit_value
+lda next_multiple
+clc
+adc coefficient
+sta next_multiple
+jmp try_digit_value
+
+end:
+rts
+.)
