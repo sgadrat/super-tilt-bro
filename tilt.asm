@@ -1,3 +1,6 @@
+; Building the project
+;  xa tilt.asm -C -o tilt.nes
+
 #include "ines_header.asm"
 #include "constants.asm"
 #include "nes_labels.asm"
