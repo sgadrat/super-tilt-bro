@@ -129,6 +129,53 @@ end:
 rts
 .)
 
+; Multiply tmpfield1 by tmpfield2 in tmpfield3
+;  tmpfield1 - multiplicand
+;  tmpfield2 - multiplier
+;  Result stored in tmpfield3
+;
+;  Overwrites register A and tmpfield3
+multiply:
+.(
+multiplicand = tmpfield1
+multiplier = tmpfield2
+result = tmpfield3
+
+; Save X, we do not want it to be altered by this subroutine
+txa
+pha
+
+; Set multiplier to X to be used as a loop count
+lda multiplier
+tax
+
+; Store current result in A
+lda #$00
+
+additions_loop:
+; Check if we finished
+cpx #$00
+beq end
+
+; Add multiplicand to the result
+clc
+adc multiplicand
+
+; Iterate until we looped "multiplier" times
+dex
+jmp additions_loop
+
+end:
+; Save result
+sta result
+
+; Restore X
+pla
+tax
+
+rts
+.)
+
 ; Set register X to the offset of the continuation byte of the first empty
 ; nametable buffer
 ;

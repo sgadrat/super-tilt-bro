@@ -67,6 +67,8 @@ tmpfield8 = $00f7
 tmpfield9 = $00f8
 tmpfield10 = $00f9
 tmpfield11 = $00fa
+tmpfield12 = $00fb
+tmpfield13 = $00fc
 
 oam_mirror = $0200
 nametable_buffers = $0300

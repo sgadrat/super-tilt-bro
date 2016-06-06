@@ -119,6 +119,8 @@ check_player_hit:
 .(
 current_player = tmpfield10
 opponent_player = tmpfield11
+force_h = tmpfield12
+force_v = tmpfield13
 
 ; Store current player number
 stx current_player
@@ -166,13 +168,36 @@ jsr boxes_overlap
 lda tmpfield9
 bne end
 
-; Apply force vector and damages to the opponent
+; Apply force vector to the opponent
 ldx current_player
 lda player_a_hitbox_force_h, x ;
-pha                            ; Push force vector to stack
-lda player_a_hitbox_force_v, x ;
-pha                            ;
-lda player_a_hitbox_damages, x  ; Put hitbox damages in A
+sta force_h                    ; Save force vector to a player independent
+lda player_a_hitbox_force_v, x ; location
+sta force_v                    ;
+ldx opponent_player
+lda player_a_damages, x ;
+lsr                     ;
+lsr                     ; Get force multiplier
+lsr                     ; "(damages / 16) + 1"
+lsr                     ;
+clc                     ;
+adc #$01                ;
+sta tmpfield2           ;
+lda force_h   ;
+sta tmpfield1 ;
+jsr multiply  ; Push "force_h * multiplier"
+lda tmpfield3 ;
+pha           ;
+lda force_v    ;
+sta tmpfield1  ;
+jsr multiply   ; Push "force_v * multiplier"
+lda tmpfield3  ;
+pha            ;
+jsr merge_player_velocity ; Apply force vector from stack
+
+; Apply damages to the opponent
+ldx current_player
+lda player_a_hitbox_damages, x ; Put hitbox damages in A
 ldx opponent_player
 clc                     ;
 adc player_a_damages, x ;
@@ -183,7 +208,6 @@ cap_damages:            ;
 lda #199                ;
 apply_damages:          ;
 sta player_a_damages, x ;
-jsr merge_player_velocity ; Apply force vector from stack
 
 ; Set opponent to thrown state
 jsr start_thrown_player
