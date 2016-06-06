@@ -51,8 +51,10 @@ player_a_hitbox_force_v = $002b
 player_b_hitbox_force_v = $002c
 player_a_hitbox_force_h = $002d
 player_b_hitbox_force_h = $002e
-player_a_damages = $002f
-player_b_damages = $0030
+player_a_hitbox_damages = $002f
+player_b_hitbox_damages = $0030
+player_a_damages = $0031
+player_b_damages = $0032
 
 tmpfield1 = $00f0
 tmpfield2 = $00f1

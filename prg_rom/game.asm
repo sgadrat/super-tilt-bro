@@ -166,14 +166,24 @@ jsr boxes_overlap
 lda tmpfield9
 bne end
 
-; Apply force vector to the oponent
+; Apply force vector and damages to the opponent
 ldx current_player
-lda player_a_hitbox_force_h, x
-pha
-lda player_a_hitbox_force_v, x
-pha
+lda player_a_hitbox_force_h, x ;
+pha                            ; Push force vector to stack
+lda player_a_hitbox_force_v, x ;
+pha                            ;
+lda player_a_hitbox_damages, x  ; Put hitbox damages in A
 ldx opponent_player
-jsr merge_player_velocity
+clc                     ;
+adc player_a_damages, x ;
+cmp #200                ;
+bcs cap_damages         ; Apply damages, capped to 199
+jmp apply_damages:      ;
+cap_damages:            ;
+lda #199                ;
+apply_damages:          ;
+sta player_a_damages, x ;
+jsr merge_player_velocity ; Apply force vector from stack
 
 ; Set opponent to thrown state
 jsr start_thrown_player
@@ -374,10 +384,10 @@ beq end_skip_frame ;
 sta tmpfield6  ;
 lda #$05       ;
 sta tmpfield7  ; Set data length in tmpfield7
-lda #%00001000 ; hitbox data is 8 bytes long
+lda #%00001000 ; hitbox data is 9 bytes long
 bit tmpfield6  ; other data are 5 bytes long
 beq inc_cursor ; (counting the continuation byte)
-lda #$08       ;
+lda #$09       ;
 sta tmpfield7  ;
 inc_cursor:
 tya           ;
@@ -475,7 +485,7 @@ sta sprite_orig_x
 lda anim_pos_y
 sta sprite_orig_y
 
-; Check if next data is hurtbox position or sprite data from continuation byte
+; Check if next data is hurtbox position, hitbox definition or sprite data from continuation byte
 check_hurtbox:
 lda #%00000100
 bit continuation_byte
@@ -568,10 +578,14 @@ rts
 
 anim_frame_move_hitbox:
 .(
-; Enabled
 ldx player_number
+; Enabled
 lda (frame_vector), y
 sta player_a_hitbox_enabled, x
+iny
+; Damages
+lda (frame_vector), y
+sta player_a_hitbox_damages, x
 iny
 ; Force_h
 lda (frame_vector), y
