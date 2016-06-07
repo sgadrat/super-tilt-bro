@@ -339,3 +339,22 @@ thrown_player:
 .(
 rts
 .)
+
+start_respawn_player:
+.(
+lda PLAYER_STATE_RESPAWN
+sta player_a_state, x
+lda RESPAWN_X
+sta player_a_x, x
+lda RESPAWN_Y
+sta player_a_y, x
+lda #$00
+sta player_a_velocity_h, x
+sta player_a_velocity_v, x
+rts
+.)
+
+respawn_player:
+.(
+rts
+.)

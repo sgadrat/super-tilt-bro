@@ -218,6 +218,11 @@ ldx current_player
 rts
 .)
 
+; Move the player according to it's velocity and collisions with obstacles
+;  register X - player number
+;
+;  When returning player's position is updated, tmpfield1 contains it's old X
+;  and tmpfield2 contains it's old Y
 move_player:
 .(
 ; Save old position
@@ -257,9 +262,38 @@ rts
 .)
 
 ; Check the player's position and modify the current state accordingly
-;  register X must contain the player number
+;  register X - player number
+;  tmpfield1 - player's old X
+;  tmpfield2 - player's old Y
 check_player_position:
 .(
+old_x = tmpfield1
+old_y = tmpfield2
+
+; Check death
+lda player_a_velocity_h, x
+bpl check_right_blast
+lda old_x           ; Horizontal velocity is negative
+cmp player_a_x, x   ; die if "old X < new X"
+bcc set_death_state ;
+jmp check_vertical_blasts
+check_right_blast:
+lda player_a_x, x   ; Horizontal velocity is positive
+cmp old_x           ; die if "new X < old X"
+bcc set_death_state ;
+check_vertical_blasts
+lda player_a_velocity_v, x
+bpl check_bottom_blast
+lda old_y           ; Vertical velocity is negative
+cmp player_a_y, x   ; die if "old Y < new Y"
+bcc set_death_state ;
+jmp end_death_checks
+check_bottom_blast:
+lda player_a_y, x   ; Vertical velocity is positive
+cmp old_y           ; die if "new Y < old Y"
+bcc set_death_state ;
+end_death_checks:
+
 ; Jumping players obey their own physics
 lda player_a_state, x
 cmp PLAYER_STATE_JUMPING
@@ -284,6 +318,10 @@ cmp PLAYER_STATE_FALLING
 beq set_standing_state
 
 ; No state change is required
+jmp end
+
+set_death_state:
+jsr start_respawn_player
 jmp end
 
 set_standing_state:
