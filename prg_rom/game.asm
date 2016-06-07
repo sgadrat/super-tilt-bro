@@ -29,10 +29,6 @@ sta player_a_hurtbox_right
 lda #$a8
 sta player_b_hurtbox_right
 
-lda #$7f
-sta player_a_max_velocity
-sta player_b_max_velocity
-
 ldx #$00
 jsr start_standing_player
 ldx #$01
@@ -193,7 +189,7 @@ sta tmpfield1  ;
 jsr multiply   ; Push "force_v * multiplier"
 lda tmpfield3  ;
 pha            ;
-jsr merge_player_velocity ; Apply force vector from stack
+jsr add_to_player_velocity ; Apply force vector from stack
 
 ; Apply damages to the opponent
 ldx current_player

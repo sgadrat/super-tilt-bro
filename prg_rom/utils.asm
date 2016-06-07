@@ -42,11 +42,11 @@ bne waiting
 rts
 .)
 
-; Update the player's velocity
+; Add a vector to the player's velocity
 ;  X - player number
-;  Stack#0 - Y component of the vector to merge
-;  Stack#1 - X component of the vector to merge
-merge_player_velocity:
+;  Stack#0 - Y component of the vector to add
+;  Stack#1 - X component of the vector to add
+add_to_player_velocity:
 .(
 ; Save the return address
 pla
@@ -54,50 +54,18 @@ sta tmpfield1
 pla
 sta tmpfield2
 
-; Store current player's max velocity to an address accessible
-; independently from X
-lda player_a_max_velocity, x
-sta tmpfield4
-
-; Count iteraction, one per vector's component
+; Count iterations, one per vector's component
 ldy #$00
 
 add_component:
 
-; Store the value to add in A and int tmpfield3
-pla
-sta tmpfield3
-
 ; Add the component to the player's velocity
+pla
 clc
 adc player_a_velocity_v, x
 sta player_a_velocity_v, x
 
-; If the new velocity is <= immediatly handle next component
-jsr absolute_a
-cmp tmpfield4
-bcc next_component
-beq next_component
-
-; If the value to add is positive, go to set the component to it's positive maximum
-lda tmpfield3
-bpl set_positive_max_h
-
-; Set the component to it's negative maximum
-lda tmpfield4
-eor #%11111111
-clc
-adc #$01
-sta player_a_velocity_v, x
-jmp next_component
-
-; Set the component to it's positive maximum
-set_positive_max_h:
-lda tmpfield4
-sta player_a_velocity_v, x
-
 ; Handle next component
-next_component:
 inx
 inx
 iny
@@ -113,6 +81,68 @@ lda tmpfield2
 pha
 lda tmpfield1
 pha
+rts
+.)
+
+; Change the player's velocity to be closer to a vector
+;  X - player number
+;  tmpfield1 - Y component of the vector to merge
+;  tmpfield2 - X component of the vector to merge
+;
+; Overwrites tmpfield3
+merge_to_player_velocity:
+.(
+merged_components = tmpfield1
+
+; Count iterations, one per vector's component
+ldy #$00
+
+add_component:
+
+; Compare the merged vector to the current velocity
+lda player_a_velocity_v, x
+cmp merged_components, y
+beq next_component
+sta tmpfield3
+lda merged_components, y
+jsr signed_cmp
+bmi decrement
+
+inc player_a_velocity_v, x
+jmp next_component
+
+decrement:
+dec player_a_velocity_v, x
+
+; Handle next component
+next_component:
+inx
+inx
+iny
+cpy #$02
+bne add_component
+dex
+dex
+dex
+dex
+
+rts
+.)
+
+; Perform signed comparison
+;  register A - a
+;  tmpfield3 - b
+;
+; Output - N flag set if "a < b", unset otherwise
+; Overwrites register A
+signed_cmp:
+.(
+; Trick from http://www.6502.org/tutorials/compare_beyond.html#5
+sec
+sbc tmpfield3
+bvc end
+eor #%10000000
+end:
 rts
 .)
 

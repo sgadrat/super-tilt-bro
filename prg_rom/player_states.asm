@@ -154,29 +154,25 @@ rts
 ;  register X must contain the player number
 running_player:
 .(
-; Set max velocity
-lda #$04
-sta player_a_max_velocity, x
-
 ; Move the player to the direction he is watching
 lda player_a_direction, x
 beq run_left
 
-; Running right, add vector (1,0) to velocity
-lda #$01
-pha
+; Running right, velocity tends toward vector (4,0)
+lda #$04
+sta tmpfield2
 lda #$00
-pha
-jsr merge_player_velocity
+sta tmpfield1
+jsr merge_to_player_velocity
 jmp check_state_changes
 
-; Running left, add vector (-1,0) to velocity
+; Running left, velocity tends toward vector (-4,0)
 run_left:
-lda #$ff
-pha
+lda #$fc
+sta tmpfield2
 lda #$00
-pha
-jsr merge_player_velocity
+sta tmpfield1
+jsr merge_to_player_velocity
 
 check_state_changes:
 
@@ -239,7 +235,7 @@ lda #$00
 pha
 lda #$01
 pha
-jsr merge_player_velocity
+jsr add_to_player_velocity
 rts
 .)
 
