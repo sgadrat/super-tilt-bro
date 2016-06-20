@@ -54,49 +54,55 @@ lda #$00
 sta player_a_velocity_v, x
 sta player_a_velocity_h, x
 
-; Store the controller state to a known location
-;  it is needed to bitmask it, BIT opcode support only absolute addressing
+; Check left input
 lda controller_a_btns, x
-sta tmpfield1
+cmp CONTROLLER_INPUT_LEFT
+bne check_right
 
-; check left button
-lda #%00000010
-bit tmpfield1
-beq check_right
-
-; Player is now watching left
-lda #$00
+; Player is now running left
+lda DIRECTION_LEFT
 sta player_a_direction, x
-
-; Player is now running
 jsr start_running_player
+jmp end
 
-jmp check_up
-
-; check right button
+; Check right input
 check_right:
-lda #%00000001
-bit tmpfield1
-beq check_up
+cmp CONTROLLER_INPUT_RIGHT
+bne check_jump
 
-; Player is now watching right
+; Player is now running right
 lda DIRECTION_RIGHT
 sta player_a_direction, x
-
-; Player is now running
 jsr start_running_player
+jmp end
 
-; Check up button
-check_up:
-lda #%00001000
-bit tmpfield1
-beq check_a
+; Check jump input
+check_jump:
+cmp CONTROLLER_INPUT_JUMP
+beq jump_input
+cmp CONTROLLER_INPUT_JUMP_RIGHT
+beq jump_input_right
+cmp CONTROLLER_INPUT_JUMP_LEFT
+bne check_jab
+
+; Player is now jumping
+jump_input_left:
+lda DIRECTION_LEFT
+sta player_a_direction, x
+jmp jump_input
+jump_input_right:
+lda DIRECTION_RIGHT
+sta player_a_direction, x
+jump_input:
 jsr start_jumping_player
+jmp end
 
-check_a:
-lda #%10000000
-bit tmpfield1
-beq end
+; Check jab input
+check_jab:
+cmp CONTROLLER_INPUT_JAB
+bne end
+
+; Player is now jabbing
 jsr start_jabbing_player
 
 end:
@@ -176,51 +182,48 @@ jsr merge_to_player_velocity
 
 check_state_changes:
 
-; Store the constroller state to a known location
+; Check left input
 lda controller_a_btns, x
-sta tmpfield1
-
-; check left button
-lda #%00000010
-bit tmpfield1
-beq check_right
+cmp CONTROLLER_INPUT_LEFT
+bne check_right
 
 ; Player is now watching left
 lda DIRECTION_LEFT
 cmp player_a_direction, x
-beq check_up
+beq end
 sta player_a_direction, x
 jsr set_running_anmation
+jmp end
 
-jmp check_up
-
-; check right button
+; Check right input
 check_right:
-lda #%00000001
-bit tmpfield1
-beq check_up
+cmp CONTROLLER_INPUT_RIGHT
+bne check_jump
 
 ; Player is now watching right
 lda DIRECTION_RIGHT
 cmp player_a_direction, x
-beq check_up
+beq end
 sta player_a_direction, x
 jsr set_running_anmation
-
-; Check up button
-check_up:
-lda #%00001000
-bit tmpfield1
-beq nothing_pressed
-jsr start_jumping_player
-
 jmp end
 
-; When no direction button is pressed, return to standing state
-nothing_pressed:
-lda #%00001011
-bit tmpfield1
-bne end
+; Check jump input
+check_jump:
+cmp CONTROLLER_INPUT_JUMP
+beq jump_input
+cmp CONTROLLER_INPUT_JUMP_RIGHT
+beq jump_input
+cmp CONTROLLER_INPUT_JUMP_LEFT
+bne no_input
+
+; Player is now jumping
+jump_input:
+jsr start_jumping_player
+jmp end
+
+; When no input is handled return to standing state
+no_input:
 jsr start_standing_player
 
 end:
