@@ -347,6 +347,7 @@ sta player_a_y, x
 lda #$00
 sta player_a_velocity_h, x
 sta player_a_velocity_v, x
+sta player_a_damages, x
 rts
 .)
 
