@@ -450,6 +450,30 @@ anim_sinbad_jab_right:
 ; End of animation
 .byt $00
 
+#define ANIM_SINBAD_SIDE_TILT_DURATION #15
+anim_sinbad_side_tilt_left:
+; Frame 1
+.byt 15 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $0c, $00, $10 ; left, right, top, bottom
+.byt $08 ; Hitbox positioning
+.byt $01, $0a, $fc, $ff, $04, $0a, $f4, $00 ; enabled, damages, force_h, force_v, left, right, top, bottom
+.byt $01 ; Sprite - Scimitar's blade
+.byt $f4, $0f, $01, $02
+.byt $01 ; Sprite - Scimitar's handle
+.byt $fc, $10, $01, $02
+.byt $01 ; Sprite - Sinbad
+.byt $00, $13, $00, $fc ; Y, tile, attr, X
+.byt $01 ; Sprite - Sinbad
+.byt $00, $14, $00, $04
+.byt $01 ; Sprite - Sinbad
+.byt $08, $15, $00, $fc
+.byt $01 ; Sprite - Sinbad
+.byt $08, $16, $00, $04
+.byt $00
+; End of animation
+.byt $00
+
 #include "prg_rom/utils.asm"
 #include "prg_rom/game.asm"
 #include "prg_rom/player_states.asm"
