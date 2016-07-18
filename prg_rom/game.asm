@@ -97,8 +97,15 @@ jmp player_updated
 ; Check state 5 - thrown
 check_thrown:
 cmp PLAYER_STATE_THROWN
-bne player_updated
+bne check_side_tilting
 jsr thrown_player
+jmp player_updated
+
+; Check state 6 - side tilting
+check_side_tilting:
+cmp PLAYER_STATE_SIDE_TILT
+bne player_updated
+jsr side_tilt_player
 
 player_updated:
 jsr move_player
@@ -295,6 +302,10 @@ lda player_a_state, x
 cmp PLAYER_STATE_JUMPING
 beq end
 
+; Side tilting players obey their own physics
+cmp PLAYER_STATE_SIDE_TILT
+beq end
+
 ; Check if on ground
 ;  Not grounded players must be falling
 lda player_a_x, x
@@ -397,6 +408,12 @@ rts
 
 update_sprites:
 .(
+; Pretty names
+animation_vector = tmpfield3   ; Not movable - Used as parameter for draw_anim_frame subroutine
+first_sprite_index = tmpfield5 ; Not movable - Used as parameter for draw_anim_frame subroutine
+last_sprite_index = tmpfield6  ; Not movable - Used as parameter for draw_anim_frame subroutine
+
+.(
 ldx #$00
 
 player_animation:
@@ -404,27 +421,12 @@ ldy #$00
 lda #$00
 sta tmpfield1
 
-; Store current player's animation vector to a player independent location
-cpx #$00
-bne select_anim_player_b
-lda player_a_animation
-sta tmpfield3
-lda player_a_animation+1
-sta tmpfield4
-lda #$00
-sta tmpfield5
-jmp new_frame
-select_anim_player_b:
-lda player_b_animation
-sta tmpfield3
-lda player_b_animation+1
-sta tmpfield4
-lda #$08
-sta tmpfield5
+; Store current player's animation information to a player independent location
+jsr store_player_anim_parameters
 
 ; New frame (search for the frame on time with clock)
 new_frame:
-lda (tmpfield3), y ; Load frame duration
+lda (animation_vector), y ; Load frame duration
 beq loop_animation ; Frame of duration 0 means end of animation
 clc           ;
 adc tmpfield1 ; Store current frame clock end in tmpfield1
@@ -437,13 +439,13 @@ bcs draw_current_frame
 ; Search the next frame
 iny ; Skip frame duration field
 skip_sprite:
-lda (tmpfield3), y ; Check current sprite continuation byte
-beq end_skip_frame ;
-sta tmpfield6  ;
+lda (animation_vector), y ; Check current sprite continuation byte
+beq end_skip_frame        ;
+sta tmpfield8  ;
 lda #$05       ;
 sta tmpfield7  ; Set data length in tmpfield7
 lda #%00001000 ; hitbox data is 9 bytes long
-bit tmpfield6  ; other data are 5 bytes long
+bit tmpfield8  ; other data are 5 bytes long
 beq inc_cursor ; (counting the continuation byte)
 lda #$09       ;
 sta tmpfield7  ;
@@ -468,11 +470,11 @@ sta tmpfield2
 iny ; Inc Y to skip the frame duration field
 tya
 clc
-adc tmpfield3
-sta tmpfield3
+adc animation_vector
+sta animation_vector
 lda #$00
-adc tmpfield4
-sta tmpfield4
+adc animation_vector+1
+sta animation_vector+1
 
 txa
 pha
@@ -498,14 +500,43 @@ jsr show_hitboxes
 rts
 .)
 
+store_player_anim_parameters:
+.(
+cpx #$00
+bne select_anim_player_b
+lda player_a_animation
+sta animation_vector
+lda player_a_animation+1
+sta animation_vector+1
+lda #$00
+sta first_sprite_index
+lda #$07
+sta last_sprite_index
+jmp end
+select_anim_player_b:
+lda player_b_animation
+sta animation_vector
+lda player_b_animation+1
+sta animation_vector+1
+lda #$08
+sta first_sprite_index
+lda #$0f
+sta last_sprite_index
+end:
+rts
+.)
+
+.)
+
 ; Draw an animation frame on screen
 ;  tmpfield1 - Position X
 ;  tmpfield2 - Position Y
 ;  tmpfield3, tmpfield4 - Vector pointing to the frame to draw
 ;  tmpfield5 - First sprite index to use
+;  tmpfield6 - Last sprite index to use
 ;  X register - player number (ignored if the animation is not related to a player)
 ;
-; Overwrites tmpfield5, tmpfield6, tmpfield7, tmpfield8, tmpfield9 and all registers
+; Overwrites tmpfield5, tmpfield7, tmpfield8, tmpfield9, tmpfield10 and all registers
 draw_anim_frame:
 .(
 ; Pretty names
@@ -513,10 +544,11 @@ anim_pos_x = tmpfield1
 anim_pos_y = tmpfield2
 frame_vector = tmpfield3
 sprite_index = tmpfield5
-player_number = tmpfield6
-sprite_orig_x = tmpfield7
-sprite_orig_y = tmpfield8
-continuation_byte = tmpfield9
+last_sprite_index = tmpfield6
+player_number = tmpfield7
+sprite_orig_x = tmpfield8
+sprite_orig_y = tmpfield9
+continuation_byte = tmpfield10
 
 .(
 ldy #$00
@@ -525,7 +557,7 @@ stx player_number
 ; Check continuation byte - zero value means end of data
 draw_one_sprite:
 lda (frame_vector), y
-beq end
+beq clear_unused_sprites
 iny
 
 ; Check positioning mode from continuation byte
@@ -561,6 +593,29 @@ jmp draw_one_sprite
 move_sprite:
 jsr anim_frame_move_sprite
 jmp draw_one_sprite
+
+; Place unused sprites off screen
+clear_unused_sprites:
+lda last_sprite_index
+cmp sprite_index
+bcc end
+
+lda sprite_index ;
+asl              ; Set X to the byte offset of the sprite in OAM memory
+asl              ;
+tax              ;
+
+lda #$fe
+sta oam_mirror, x
+inx
+sta oam_mirror, x
+inx
+sta oam_mirror, x
+inx
+sta oam_mirror, x
+
+inc sprite_index
+jmp clear_unused_sprites
 
 end:
 rts

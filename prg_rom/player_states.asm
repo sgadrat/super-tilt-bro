@@ -100,10 +100,29 @@ jmp end
 ; Check jab input
 check_jab:
 cmp CONTROLLER_INPUT_JAB
-bne end
+bne check_tilt
 
 ; Player is now jabbing
 jsr start_jabbing_player
+jmp end
+
+; Check tilt input
+check_tilt:
+cmp CONTROLLER_INPUT_ATTACK_RIGHT
+beq tilt_input_right
+cmp CONTROLLER_INPUT_ATTACK_LEFT
+bne end
+
+; Player is now tilting
+tilt_input_left:
+lda DIRECTION_LEFT
+sta player_a_direction, x
+jmp tilt_input
+tilt_input_right:
+lda DIRECTION_RIGHT
+sta player_a_direction, x
+tilt_input:
+jsr start_side_tilt_player
 
 end:
 rts
@@ -215,11 +234,30 @@ beq jump_input
 cmp CONTROLLER_INPUT_JUMP_RIGHT
 beq jump_input
 cmp CONTROLLER_INPUT_JUMP_LEFT
-bne no_input
+bne check_tilt
 
 ; Player is now jumping
 jump_input:
 jsr start_jumping_player
+jmp end
+
+; Check tilt input
+check_tilt:
+cmp CONTROLLER_INPUT_ATTACK_RIGHT
+beq tilt_input_right
+cmp CONTROLLER_INPUT_ATTACK_LEFT
+bne no_input
+
+; Player is now tilting
+tilt_input_left:
+lda DIRECTION_LEFT
+sta player_a_direction, x
+jmp tilt_input
+tilt_input_right:
+lda DIRECTION_RIGHT
+sta player_a_direction, x
+tilt_input:
+jsr start_side_tilt_player
 jmp end
 
 ; When no input is handled return to standing state
@@ -356,5 +394,80 @@ rts
 
 respawn_player:
 .(
+rts
+.)
+
+start_side_tilt_player:
+.(
+; Set the appropriate animation (depending on player's direction)
+lda player_a_direction, x
+beq set_anim_left
+
+txa ;
+asl ; X = X * 2 (we use it to reference a 2 bytes field)
+tax ;
+
+lda #<anim_sinbad_side_tilt_right
+sta player_a_animation, x
+lda #>anim_sinbad_side_tilt_right
+inx
+sta player_a_animation, x
+dex
+
+jmp reset_anim_clock
+
+set_anim_left:
+
+txa ;
+asl ; X = X * 2 (we use it to reference a 2 bytes field)
+tax ;
+
+lda #<anim_sinbad_side_tilt_left
+sta player_a_animation, x
+lda #>anim_sinbad_side_tilt_left
+inx
+sta player_a_animation, x
+dex
+
+reset_anim_clock:
+
+txa ;
+lsr ; Reset X to it's original value
+tax ;
+
+lda #$00
+sta player_a_anim_clock, x
+
+; Set the player's state
+lda PLAYER_STATE_SIDE_TILT
+sta player_a_state, x
+
+; Set initial velocity
+lda #$fe
+sta player_a_velocity_v, x
+
+rts
+.)
+
+; Update a player that is performing a side tilt
+;  register X must contain the player number
+side_tilt_player:
+.(
+lda player_a_anim_clock, x
+cmp ANIM_SINBAD_SIDE_TILT_DURATION
+bne update_velocity
+jsr start_standing_player
+jmp end
+
+update_velocity:
+cmp ANIM_SINBAD_SIDE_TILT_JUMP_FRAMES
+bcc end
+lda #$01
+sta tmpfield1
+lda #$00
+sta tmpfield2
+jsr merge_to_player_velocity
+
+end:
 rts
 .)
