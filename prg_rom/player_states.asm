@@ -272,10 +272,13 @@ rts
 ;  register X must contain the player number
 falling_player:
 .(
-lda #$00
-pha
-lda #$01
-pha
+lda #$00 ; Horizontal component
+pha      ; - high
+pha      ; - low
+lda #$01  ; Vertical component
+pha       ; - high
+lda #$00  ;
+pha       ; - low
 jsr add_to_player_velocity
 rts
 .)

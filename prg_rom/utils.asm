@@ -44,8 +44,10 @@ rts
 
 ; Add a vector to the player's velocity
 ;  X - player number
-;  Stack#0 - Y component of the vector to add
-;  Stack#1 - X component of the vector to add
+;  Stack#0 - Y component of the vector to add (low byte)  ; pop first
+;  Stack#1 - Y component of the vector to add (high byte)
+;  Stack#2 - X component of the vector to add (low byte)
+;  Stack#3 - X component of the vector to add (high byte) ; push first
 add_to_player_velocity:
 .(
 ; Save the return address
@@ -62,6 +64,9 @@ add_component:
 ; Add the component to the player's velocity
 pla
 clc
+adc player_a_velocity_v_low, x
+sta player_a_velocity_v_low, x
+pla
 adc player_a_velocity_v, x
 sta player_a_velocity_v, x
 
@@ -160,16 +165,19 @@ rts
 .)
 
 ; Multiply tmpfield1 by tmpfield2 in tmpfield3
-;  tmpfield1 - multiplicand
-;  tmpfield2 - multiplier
-;  Result stored in tmpfield3
+;  tmpfield1 - multiplicand (low byte)
+;  tmpfield2 - multiplicand (high byte)
+;  tmpfield3 - multiplier
+;  Result stored in tmpfield4 (low byte) and tmpfield5 (high byte)
 ;
-;  Overwrites register A and tmpfield3
+;  Overwrites register A, tmpfield4 and tmpfield5
 multiply:
 .(
-multiplicand = tmpfield1
-multiplier = tmpfield2
-result = tmpfield3
+multiplicand_low = tmpfield1
+multiplicand_high = tmpfield2
+multiplier = tmpfield3
+result_low = tmpfield4
+result_high = tmpfield5
 
 ; Save X, we do not want it to be altered by this subroutine
 txa
@@ -179,8 +187,10 @@ pha
 lda multiplier
 tax
 
-; Store current result in A
+; Initialize result's value
 lda #$00
+sta result_low
+sta result_high
 
 additions_loop:
 ; Check if we finished
@@ -188,17 +198,19 @@ cpx #$00
 beq end
 
 ; Add multiplicand to the result
+lda result_low
 clc
-adc multiplicand
+adc multiplicand_low
+sta result_low
+lda result_high
+adc multiplicand_high
+sta result_high
 
 ; Iterate until we looped "multiplier" times
 dex
 jmp additions_loop
 
 end:
-; Save result
-sta result
-
 ; Restore X
 pla
 tax
@@ -321,6 +333,22 @@ adc coefficient
 sta next_multiple
 jmp try_digit_value
 
+end:
+rts
+.)
+
+
+; Switch current player
+;  register X - Current player number
+;  Result is stored in register X
+switch_selected_player:
+.(
+cpx #$00
+beq select_player_b
+dex
+jmp end
+select_player_b:
+inx
 end:
 rts
 .)

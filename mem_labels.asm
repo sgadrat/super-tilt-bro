@@ -55,6 +55,18 @@ player_a_hitbox_damages = $002f
 player_b_hitbox_damages = $0030
 player_a_damages = $0031
 player_b_damages = $0032
+player_a_x_low = $0033
+player_b_x_low = $0034
+player_a_y_low = $0035
+player_b_y_low = $0036
+player_a_velocity_v_low = $0037
+player_b_velocity_v_low = $0038
+player_a_velocity_h_low = $0039
+player_b_velocity_h_low = $003a
+player_a_hitbox_force_v_low = $003b
+player_b_hitbox_force_v_low = $003c
+player_a_hitbox_force_h_low = $003d
+player_b_hitbox_force_h_low = $003e
 
 tmpfield1 = $00f0
 tmpfield2 = $00f1
@@ -69,6 +81,8 @@ tmpfield10 = $00f9
 tmpfield11 = $00fa
 tmpfield12 = $00fb
 tmpfield13 = $00fc
+tmpfield14 = $00fd
+tmpfield15 = $00fe
 
 oam_mirror = $0200
 nametable_buffers = $0300

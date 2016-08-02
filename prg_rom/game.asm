@@ -124,7 +124,10 @@ current_player = tmpfield10
 opponent_player = tmpfield11
 force_h = tmpfield12
 force_v = tmpfield13
+force_h_low = tmpfield14
+force_v_low = tmpfield15
 
+.(
 ; Store current player number
 stx current_player
 
@@ -143,15 +146,7 @@ lda player_a_hitbox_bottom, x
 sta tmpfield4
 
 ; Switch current player to select the opponent
-.(
-cpx #$00
-beq select_player_b
-dex
-jmp end_switch_player
-select_player_b:
-inx
-end_switch_player:
-.)
+jsr switch_selected_player
 
 ; Store opponent player number
 stx opponent_player
@@ -172,31 +167,7 @@ lda tmpfield9
 bne end
 
 ; Apply force vector to the opponent
-ldx current_player
-lda player_a_hitbox_force_h, x ;
-sta force_h                    ; Save force vector to a player independent
-lda player_a_hitbox_force_v, x ; location
-sta force_v                    ;
-ldx opponent_player
-lda player_a_damages, x ;
-lsr                     ;
-lsr                     ; Get force multiplier
-lsr                     ; "(damages / 16) + 1"
-lsr                     ;
-clc                     ;
-adc #$01                ;
-sta tmpfield2           ;
-lda force_h   ;
-sta tmpfield1 ;
-jsr multiply  ; Push "force_h * multiplier"
-lda tmpfield3 ;
-pha           ;
-lda force_v    ;
-sta tmpfield1  ;
-jsr multiply   ; Push "force_v * multiplier"
-lda tmpfield3  ;
-pha            ;
-jsr add_to_player_velocity ; Apply force vector from stack
+jsr apply_force_vector
 
 ; Apply damages to the opponent
 ldx current_player
@@ -219,6 +190,51 @@ end:
 ; Reset register X to the current player
 ldx current_player
 rts
+.)
+
+; Apply force in current player's hitbox to it's opponent
+;
+; Overwrites timpfield1, tmpfield2, tmpfield3, tmpfield4, tmpfield5,
+; register A and register X (set to the opponent player's number)
+apply_force_vector:
+.(
+; Apply force vector to the opponent
+ldx current_player
+lda player_a_hitbox_force_h, x     ;
+sta force_h                        ;
+lda player_a_hitbox_force_h_low, x ;
+sta force_h_low                    ; Save force vector to a player independent
+lda player_a_hitbox_force_v, x     ; location
+sta force_v                        ;
+lda player_a_hitbox_force_v_low, x ;
+sta force_v_low                    ;
+ldx opponent_player
+lda player_a_damages, x ; Get force multiplier
+clc                     ; "damages + 1"
+adc #$01                ;
+sta tmpfield3           ;
+lda force_h     ;
+sta tmpfield2   ;
+lda force_h_low ;
+sta tmpfield1   ;
+jsr multiply    ; Push "force_h * multiplier"
+lda tmpfield5   ;
+pha             ;
+lda tmpfield4   ;
+pha             ;
+lda force_v      ;
+sta tmpfield2    ;
+lda force_v_low  ;
+sta tmpfield1    ;
+jsr multiply     ; Push "force_v * multiplier"
+lda tmpfield5    ;
+pha              ;
+lda tmpfield4    ;
+pha              ;
+jsr add_to_player_velocity ; Apply force vector from stack
+
+rts
+.)
 .)
 
 ; Move the player according to it's velocity and collisions with obstacles
@@ -444,10 +460,10 @@ beq end_skip_frame        ;
 sta tmpfield8  ;
 lda #$05       ;
 sta tmpfield7  ; Set data length in tmpfield7
-lda #%00001000 ; hitbox data is 9 bytes long
+lda #%00001000 ; hitbox data is 11 bytes long
 bit tmpfield8  ; other data are 5 bytes long
 beq inc_cursor ; (counting the continuation byte)
-lda #$09       ;
+lda #11        ;
 sta tmpfield7  ;
 inc_cursor:
 tya           ;
@@ -704,9 +720,15 @@ iny
 lda (frame_vector), y
 sta player_a_hitbox_force_h, x
 iny
+lda (frame_vector), y
+sta player_a_hitbox_force_h_low, x
+iny
 ; Force_v
 lda (frame_vector), y
 sta player_a_hitbox_force_v, x
+iny
+lda (frame_vector), y
+sta player_a_hitbox_force_v_low, x
 iny
 ; Left
 ldx player_number
