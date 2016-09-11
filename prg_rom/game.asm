@@ -453,7 +453,8 @@ cmp player_a_anim_clock, x
 bcs draw_current_frame
 
 ; Search the next frame
-iny ; Skip frame duration field
+lda #$01
+jsr add_to_anim_vector
 skip_sprite:
 lda (animation_vector), y ; Check current sprite continuation byte
 beq end_skip_frame        ;
@@ -466,13 +467,12 @@ beq inc_cursor ; (counting the continuation byte)
 lda #11        ;
 sta tmpfield7  ;
 inc_cursor:
-tya           ;
-clc           ; Add data length to Y, to point on the next continuation byte
-adc tmpfield7 ;
-tay           ;
+lda tmpfield7          ; Add data length to the animation vector, to point
+jsr add_to_anim_vector ; on the next continuation byte
 jmp skip_sprite
 end_skip_frame:
-iny ; Skip the last continuation byte
+lda #$01               ; Skip the last continuation byte
+jsr add_to_anim_vector ;
 jmp new_frame
 
 draw_current_frame:
@@ -482,15 +482,9 @@ sta tmpfield1
 lda player_a_y, x
 sta tmpfield2
 
-; Add Y to the animation vector, to point to the good frame
-iny ; Inc Y to skip the frame duration field
-tya
-clc
-adc animation_vector
-sta animation_vector
-lda #$00
-adc animation_vector+1
-sta animation_vector+1
+; Increment animation_vector to skip the frame duration field
+lda #$01
+jsr add_to_anim_vector
 
 txa
 pha
@@ -539,6 +533,17 @@ sta first_sprite_index
 lda #$0f
 sta last_sprite_index
 end:
+rts
+.)
+
+add_to_anim_vector:
+.(
+clc
+adc animation_vector
+sta animation_vector
+lda #$00
+adc animation_vector+1
+sta animation_vector+1
 rts
 .)
 
