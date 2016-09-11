@@ -91,33 +91,90 @@ rts
 
 ; Change the player's velocity to be closer to a vector
 ;  X - player number
-;  tmpfield1 - Y component of the vector to merge
-;  tmpfield2 - X component of the vector to merge
+;  tmpfield1 - Y component of the vector to merge (low byte)
+;  tmpfield2 - X component of the vector to merge (low byte)
+;  tmpfield3 - Y component of the vector to merge (high byte)
+;  tmpfield4 - X component of the vector to merge (high byte)
+;  tmpfield5 - Step size
 ;
-; Overwrites tmpfield3
+; Overwrites register Y, tmpfield6, tmpfield7, tmpfield8 and tmpfield9
 merge_to_player_velocity:
 .(
-merged_components = tmpfield1
+merged_components_lows = tmpfield1
+merged_components_highs = tmpfield3
+step_size = tmpfield5
+player_velocity_low = tmpfield6
+player_velocity_high = tmpfield7
+current_component_low = tmpfield8
+current_component_high = tmpfield9
 
 ; Count iterations, one per vector's component
 ldy #$00
 
 add_component:
+; Avoid to pass through merged velocity
+lda player_a_velocity_v_low, x ;
+sec                            ;
+sbc merged_components_lows, y  ; Get difference between player's velocity
+sta tmpfield8                  ; component and merged component
+lda player_a_velocity_v, x     ;
+sbc merged_components_highs, y ;
 
-; Compare the merged vector to the current velocity
-lda player_a_velocity_v, x
-cmp merged_components, y
-beq next_component
-sta tmpfield3
-lda merged_components, y
-jsr signed_cmp
-bmi decrement
+bpl check_diff                 ;
+eor #%11111111                 ;
+sta tmpfield9                  ;
+lda tmpfield8                  ;
+eor #%11111111                 ; Make the difference absolute
+clc                            ;
+adc #$01                       ;
+sta tmpfield8                  ;
+lda #$00                       ;
+adc tmpfield9                  ;
 
-inc player_a_velocity_v, x
+check_diff:                    ;
+cmp #$00                       ; Go add step_size if the difference is superior
+bne add_step_size              ; (or equal) than step_size
+lda tmpfield8                  ;
+cmp step_size                  ; Note - diference is in register A (high byte)
+bcs add_step_size              ; and tmpfield8 (low byte). tmpfield9 is garbage.
+
+lda merged_components_lows, y  ;
+sta player_a_velocity_v_low, x ; Rewrite player velocity's component with merged
+lda merged_components_highs, y ; and got to next component
+sta player_a_velocity_v, x     ;
+jmp next_component             ;
+
+; Add or substract step size from velocity component to be closer to
+; the merged component
+add_step_size:
+lda player_a_velocity_v_low, x ;
+sta player_velocity_low        ;
+lda player_a_velocity_v, x     ;
+sta player_velocity_high       ;
+lda merged_components_lows, y  ; Compare the merged vector to the current velocity
+sta current_component_low      ;
+lda merged_components_highs, y ;
+sta current_component_high     ;
+jsr signed_cmp                 ;
+bpl decrement                  ;
+
+lda step_size                  ;
+clc                            ;
+adc player_a_velocity_v_low, x ;
+sta player_a_velocity_v_low, x ; Add step_size to velocity
+lda #$00                       ;
+adc player_a_velocity_v, x     ;
+sta player_a_velocity_v, x     ;
 jmp next_component
 
 decrement:
-dec player_a_velocity_v, x
+lda player_a_velocity_v_low, x ;
+sec                            ;
+sbc step_size                  ;
+sta player_a_velocity_v_low, x ; Substract step_size from velocity
+lda player_a_velocity_v, x     ;
+sbc #$00                       ;
+sta player_a_velocity_v, x     ;
 
 ; Handle next component
 next_component:
@@ -134,17 +191,27 @@ dex
 rts
 .)
 
-; Perform signed comparison
-;  register A - a
-;  tmpfield3 - b
+; Perform multibyte signed comparison
+;  tmpfield6 - a (low)
+;  tmpfield7 - a (high)
+;  tmpfield8 - b (low)
+;  tmpfield9 - b (high)
 ;
 ; Output - N flag set if "a < b", unset otherwise
+;          C flag set if "(unsigned)a < (unsigned)b", unset otherwise
 ; Overwrites register A
 signed_cmp:
 .(
-; Trick from http://www.6502.org/tutorials/compare_beyond.html#5
-sec
-sbc tmpfield3
+; Trick from http://www.6502.org/tutorials/compare_beyond.html
+a_low = tmpfield6
+a_high = tmpfield7
+b_low = tmpfield8
+b_high = tmpfield9
+
+lda a_low
+cmp b_low
+lda a_high
+sbc b_high
 bvc end
 eor #%10000000
 end:

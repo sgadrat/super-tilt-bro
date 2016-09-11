@@ -185,18 +185,26 @@ beq run_left
 
 ; Running right, velocity tends toward vector (4,0)
 lda #$04
-sta tmpfield2
+sta tmpfield4
 lda #$00
+sta tmpfield3
+sta tmpfield2
 sta tmpfield1
+lda #$ff
+sta tmpfield5
 jsr merge_to_player_velocity
 jmp check_state_changes
 
 ; Running left, velocity tends toward vector (-4,0)
 run_left:
 lda #$fc
-sta tmpfield2
+sta tmpfield4
 lda #$00
+sta tmpfield3
+sta tmpfield2
 sta tmpfield1
+lda #$ff
+sta tmpfield5
 jsr merge_to_player_velocity
 
 check_state_changes:
@@ -466,9 +474,13 @@ update_velocity:
 cmp ANIM_SINBAD_SIDE_TILT_JUMP_FRAMES
 bcc end
 lda #$01
-sta tmpfield1
+sta tmpfield3
 lda #$00
+sta tmpfield4
+sta tmpfield1
 sta tmpfield2
+lda #$ff
+sta tmpfield5
 jsr merge_to_player_velocity
 
 end:
