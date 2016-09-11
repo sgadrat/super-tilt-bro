@@ -516,7 +516,7 @@ inx
 cpx #$02
 bne player_animation
 
-jsr show_hitboxes
+;jsr show_hitboxes
 
 rts
 .)
