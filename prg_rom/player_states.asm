@@ -111,7 +111,7 @@ check_tilt:
 cmp CONTROLLER_INPUT_ATTACK_RIGHT
 beq tilt_input_right
 cmp CONTROLLER_INPUT_ATTACK_LEFT
-bne end
+bne check_special
 
 ; Player is now tilting
 tilt_input_left:
@@ -123,6 +123,15 @@ lda DIRECTION_RIGHT
 sta player_a_direction, x
 tilt_input:
 jsr start_side_tilt_player
+jmp end
+
+; Check special
+check_special:
+cmp CONTROLLER_INPUT_SPECIAL
+bne end
+
+; Player is now specialing
+jsr start_special_player
 
 end:
 rts
@@ -254,7 +263,7 @@ check_tilt:
 cmp CONTROLLER_INPUT_ATTACK_RIGHT
 beq tilt_input_right
 cmp CONTROLLER_INPUT_ATTACK_LEFT
-bne no_input
+bne check_special
 
 ; Player is now tilting
 tilt_input_left:
@@ -266,6 +275,15 @@ lda DIRECTION_RIGHT
 sta player_a_direction, x
 tilt_input:
 jsr start_side_tilt_player
+jmp end
+
+; Check special
+check_special:
+cmp CONTROLLER_INPUT_SPECIAL
+bne no_input
+
+; Player is now specialing
+jsr start_special_player
 jmp end
 
 ; When no input is handled return to standing state
@@ -482,6 +500,54 @@ sta tmpfield2
 lda #$ff
 sta tmpfield5
 jsr merge_to_player_velocity
+
+end:
+rts
+.)
+
+start_special_player:
+.(
+; Set the appropriate animation
+txa ;
+asl ; X = X * 2 (we use it to reference a 2 bytes field)
+tax ;
+
+lda #<anim_sinbad_special
+sta player_a_animation, x
+lda #>anim_sinbad_special
+inx
+sta player_a_animation, x
+dex
+
+txa ;
+lsr ; Reset X to it's original value
+tax ;
+
+; Reset the animation's clock
+lda #$00
+sta player_a_anim_clock, x
+
+; Set the player's state
+lda PLAYER_STATE_SPECIAL
+sta player_a_state, x
+
+; Place the player above ground
+lda player_a_y, x
+sec
+sbc #$10
+sta player_a_y, x
+
+rts
+.)
+
+; Update a player that is performing a grounded neutral special move
+;  register X must contain the player number
+special_player:
+.(
+lda controller_a_btns, x
+cmp CONTROLLER_INPUT_SPECIAL
+beq end
+jsr start_standing_player
 
 end:
 rts

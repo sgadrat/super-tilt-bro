@@ -104,8 +104,15 @@ jmp player_updated
 ; Check state 6 - side tilting
 check_side_tilting:
 cmp PLAYER_STATE_SIDE_TILT
-bne player_updated
+bne check_special
 jsr side_tilt_player
+jmp player_updated
+
+; Check state 7 - neutral special
+check_special:
+cmp PLAYER_STATE_SPECIAL
+bne player_updated
+jsr special_player
 
 player_updated:
 jsr move_player
@@ -320,6 +327,10 @@ beq end
 
 ; Side tilting players obey their own physics
 cmp PLAYER_STATE_SIDE_TILT
+beq end
+
+; Specialing players obey their own physics
+cmp PLAYER_STATE_SPECIAL
 beq end
 
 ; Check if on ground
