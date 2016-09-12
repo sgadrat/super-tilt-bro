@@ -67,6 +67,14 @@ player_a_hitbox_force_v_low = $003b
 player_b_hitbox_force_v_low = $003c
 player_a_hitbox_force_h_low = $003d
 player_b_hitbox_force_h_low = $003e
+player_a_hitbox_base_knock_up_v_high = $003f
+player_b_hitbox_base_knock_up_v_high = $0040
+player_a_hitbox_base_knock_up_h_high = $0041
+player_b_hitbox_base_knock_up_h_high = $0042
+player_a_hitbox_base_knock_up_v_low = $0043
+player_b_hitbox_base_knock_up_v_low = $0044
+player_a_hitbox_base_knock_up_h_low = $0045
+player_b_hitbox_base_knock_up_h_low = $0046
 
 tmpfield1 = $00f0
 tmpfield2 = $00f1

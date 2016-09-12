@@ -208,7 +208,7 @@ anim_sinbad_jab_left:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $01, $ff, $f8, $ff, $f8, $f4, $04, $02, $0a ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $01, $01, $fe, $00, $fe, $00, $ff, $fc, $ff, $fc, $f4, $04, $02, $0a ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite 3 - Scimitar's blade
 .byt $02, $02, $01, $f4
 .byt $01 ; Sprite 4 - Scimitar's handle
@@ -223,7 +223,7 @@ anim_sinbad_jab_left:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $01, $ff, $f8, $ff, $f8, $f4, $04, $03, $0b ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $00, $01, $fe, $00, $fe, $00, $ff, $fc, $ff, $fc, $f4, $04, $03, $0b ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite 3 - Scimitar's blade
 .byt $03, $02, $01, $f4
 .byt $01 ; Sprite 4 - Scimitar's handle
@@ -238,7 +238,7 @@ anim_sinbad_jab_left:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $01, $ff, $f8, $ff, $f8, $f4, $04, $04, $0c ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $00, $01, $fe, $00, $fe, $00, $ff, $fc, $ff, $fc, $f4, $04, $04, $0c ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite 3 - Scimitar's blade
 .byt $04, $02, $01, $f4
 .byt $01 ; Sprite 4 - Scimitar's handle
@@ -253,7 +253,7 @@ anim_sinbad_jab_left:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $01, $ff, $f8, $ff, $f8, $f4, $04, $05, $0d ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $00, $01, $fe, $00, $fe, $00, $ff, $fc, $ff, $fc, $f4, $04, $05, $0d ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite 3 - Scimitar's blade
 .byt $05, $02, $01, $f4
 .byt $01 ; Sprite 4 - Scimitar's handle
@@ -268,7 +268,7 @@ anim_sinbad_jab_left:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $01, $ff, $f8, $ff, $f8, $f4, $04, $06, $0e ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $00, $01, $fe, $00, $fe, $00, $ff, $fc, $ff, $fc, $f4, $04, $06, $0e ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite 3 - Scimitar's blade
 .byt $06, $02, $01, $f4
 .byt $01 ; Sprite 4 - Scimitar's handle
@@ -283,7 +283,7 @@ anim_sinbad_jab_left:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $01, $ff, $f8, $ff, $f8, $f4, $04, $07, $0f ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $00, $01, $fe, $00, $fe, $00, $ff, $fc, $ff, $fc, $f4, $04, $07, $0f ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite 3 - Scimitar's blade
 .byt $07, $02, $01, $f4
 .byt $01 ; Sprite 4 - Scimitar's handle
@@ -298,7 +298,7 @@ anim_sinbad_jab_left:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $01, $ff, $f8, $ff, $f8, $f4, $04, $08, $10 ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $00, $01, $fe, $00, $fe, $00, $ff, $fc, $ff, $fc, $f4, $04, $08, $10 ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite 3 - Scimitar's blade
 .byt $08, $02, $01, $f4
 .byt $01 ; Sprite 4 - Scimitar's handle
@@ -313,7 +313,7 @@ anim_sinbad_jab_left:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $01, $ff, $f8, $ff, $f8, $f4, $04, $09, $11 ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $00, $01, $fe, $00, $fe, $00, $ff, $fc, $ff, $fc, $f4, $04, $09, $11 ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite 3 - Scimitar's blade
 .byt $09, $02, $01, $f4
 .byt $01 ; Sprite 4 - Scimitar's handle
@@ -332,7 +332,7 @@ anim_sinbad_jab_right:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $01, $00, $08, $ff, $f8, $04, $14, $02, $0a ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $01, $01, $02, $00, $fe, $00, $00, $04, $ff, $fc, $04, $14, $02, $0a ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite 1 - Sinbad's head
 .byt $00, $00, $40, $00 ; Y, tile, attr, X
 .byt $01 ; Sprite 2 - Sinbad's body
@@ -347,7 +347,7 @@ anim_sinbad_jab_right:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $01, $00, $08, $ff, $f8, $04, $14, $03, $0b ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $00, $01, $02, $00, $fe, $00, $00, $04, $ff, $fc, $04, $14, $03, $0b ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite 1 - Sinbad's head
 .byt $00, $00, $40, $00 ; Y, tile, attr, X
 .byt $01 ; Sprite 2 - Sinbad's body
@@ -362,7 +362,7 @@ anim_sinbad_jab_right:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $01, $00, $08, $ff, $f8, $04, $14, $04, $0c ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $00, $01, $02, $00, $fe, $00, $00, $04, $ff, $fc, $04, $14, $04, $0c ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite 1 - Sinbad's head
 .byt $00, $00, $40, $00 ; Y, tile, attr, X
 .byt $01 ; Sprite 2 - Sinbad's body
@@ -377,7 +377,7 @@ anim_sinbad_jab_right:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $01, $00, $08, $ff, $f8, $04, $14, $05, $0d ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $00, $01, $02, $00, $fe, $00, $00, $04, $ff, $fc, $04, $14, $05, $0d ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite 1 - Sinbad's head
 .byt $00, $00, $40, $00 ; Y, tile, attr, X
 .byt $01 ; Sprite 2 - Sinbad's body
@@ -392,7 +392,7 @@ anim_sinbad_jab_right:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $01, $00, $08, $ff, $f8, $04, $14, $06, $0e ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $00, $01, $02, $00, $fe, $00, $00, $04, $ff, $fc, $04, $14, $06, $0e ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite 1 - Sinbad's head
 .byt $00, $00, $40, $00 ; Y, tile, attr, X
 .byt $01 ; Sprite 2 - Sinbad's body
@@ -407,7 +407,7 @@ anim_sinbad_jab_right:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $01, $00, $08, $ff, $f8, $04, $14, $07, $0f ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $00, $01, $02, $00, $fe, $00, $00, $04, $ff, $fc, $04, $14, $07, $0f ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite 1 - Sinbad's head
 .byt $00, $00, $40, $00 ; Y, tile, attr, X
 .byt $01 ; Sprite 2 - Sinbad's body
@@ -422,7 +422,7 @@ anim_sinbad_jab_right:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $01, $00, $08, $ff, $f8, $04, $14, $08, $10 ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $00, $01, $02, $00, $fe, $00, $00, $04, $ff, $fc, $04, $14, $08, $10 ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite 1 - Sinbad's head
 .byt $00, $00, $40, $00 ; Y, tile, attr, X
 .byt $01 ; Sprite 2 - Sinbad's body
@@ -437,7 +437,7 @@ anim_sinbad_jab_right:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $01, $00, $08, $ff, $f8, $04, $14, $09, $11 ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $00, $01, $02, $00, $fe, $00, $00, $04, $ff, $fc, $04, $14, $09, $11 ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite 1 - Sinbad's head
 .byt $00, $00, $40, $00 ; Y, tile, attr, X
 .byt $01 ; Sprite 2 - Sinbad's body
@@ -458,7 +458,7 @@ anim_sinbad_side_tilt_left:
 .byt $04 ; Hurtbox positioning
 .byt $00, $0c, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $0a, $ff, $f4, $ff, $f8, $04, $0a, $f4, $00 ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $01, $0a, $00, $00, $00, $00, $ff, $f4, $ff, $f8, $04, $0a, $f4, $00 ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite - Scimitar's blade
 .byt $f4, $0f, $01, $02
 .byt $01 ; Sprite - Scimitar's handle
@@ -477,7 +477,7 @@ anim_sinbad_side_tilt_left:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $0a, $ff, $f4, $ff, $f8, $f9, $01, $fc, $08 ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $01, $0a, $00, $00, $00, $00, $ff, $f4, $ff, $f8, $f9, $01, $fc, $08 ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite - Scimitar's blade
 .byt $fc, $11, $01, $f9 ; Y, tile, attr, X
 .byt $01 ; Sprite - Scimitar's handle
@@ -492,7 +492,7 @@ anim_sinbad_side_tilt_left:
 .byt $04 ; Hurtbox positioning
 .byt $fc, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $0a, $ff, $f4, $ff, $f8, $f4, $00, $06, $0c ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $01, $0a, $00, $00, $00, $00, $ff, $f4, $ff, $f8, $f4, $00, $06, $0c ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite - Scimitar's blade
 .byt $06, $02, $01, $f4 ; Y, tile, attr, X
 .byt $01 ; Sprite - Scimitar's handle
@@ -513,7 +513,7 @@ anim_sinbad_side_tilt_right:
 .byt $04 ; Hurtbox positioning
 .byt $fc, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $0a, $00, $0c, $ff, $f8, $fe, $04, $f4, $00 ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $01, $0a, $00, $00, $00, $00, $00, $0c, $ff, $f8, $fe, $04, $f4, $00 ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite - Sinbad
 .byt $00, $13, $40, $04 ; Y, tile, attr, X
 .byt $01 ; Sprite - Sinbad
@@ -532,7 +532,7 @@ anim_sinbad_side_tilt_right:
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $0a, $00, $0c, $ff, $f8, $07, $0f, $fc, $08 ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $01, $0a, $00, $00, $00, $00, $00, $0c, $ff, $f8, $07, $0f, $fc, $08 ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite - Sinbad
 .byt $00, $17, $40, $00 ; Y, tile, attr, X
 .byt $01 ; Sprite - Sinbad
@@ -547,7 +547,7 @@ anim_sinbad_side_tilt_right:
 .byt $04 ; Hurtbox positioning
 .byt $f8, $04, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $0a, $00, $0c, $ff, $f8, $00, $0c, $06, $0c ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $01, $0a, $00, $00, $00, $00, $00, $0c, $ff, $f8, $00, $0c, $06, $0c ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite - Sinbad
 .byt $00, $19, $40, $00 ; Y, tile, attr, X
 .byt $01 ; Sprite - Sinbad
@@ -568,7 +568,7 @@ anim_sinbad_special:
 .byt $04 ; Hurtbox positioning
 .byt $f8, $08, $02, $0d ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $0a, $ff, $f4, $ff, $f8, $e9, $f6, $05, $0b ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $01, $0a, $00, $00, $00, $00, $ff, $f4, $ff, $f8, $e9, $f6, $05, $0b ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite - Sinbad
 .byt $00, $1c, $00, $f8 ; Y, tile, attr, X
 .byt $01 ; Sprite - Sinbad
@@ -587,7 +587,7 @@ anim_sinbad_special:
 .byt $04 ; Hurtbox positioning
 .byt $f8, $08, $02, $0d ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $0a, $ff, $f4, $ff, $f8, $ee, $f9, $10, $18 ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $01, $0a, $00, $00, $00, $00, $ff, $f4, $ff, $f8, $ee, $f9, $10, $18 ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite - Sinbad
 .byt $00, $1c, $00, $f8 ; Y, tile, attr, X
 .byt $01 ; Sprite - Sinbad
@@ -606,7 +606,7 @@ anim_sinbad_special:
 .byt $04 ; Hurtbox positioning
 .byt $fa, $05, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $0a, $ff, $f4, $ff, $f8, $fd, $03, $13, $1f ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $01, $0a, $00, $00, $00, $00, $ff, $f4, $ff, $f8, $fd, $03, $13, $1f ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite - Sinbad
 .byt $00, $21, $00, $f8 ; Y, tile, attr, X
 .byt $01 ; Sprite - Sinbad
@@ -625,7 +625,7 @@ anim_sinbad_special:
 .byt $04 ; Hurtbox positioning
 .byt $fa, $05, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $0a, $ff, $f4, $ff, $f8, $08, $10, $0f, $1b ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $01, $0a, $00, $00, $00, $00, $ff, $f4, $ff, $f8, $08, $10, $0f, $1b ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite - Sinbad
 .byt $00, $21, $00, $f8 ; Y, tile, attr, X
 .byt $01 ; Sprite - Sinbad
@@ -644,7 +644,7 @@ anim_sinbad_special:
 .byt $04 ; Hurtbox positioning
 .byt $f8, $08, $03, $0e ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $0a, $ff, $f4, $ff, $f8, $0b, $17, $05, $0b ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $01, $0a, $00, $00, $00, $00, $ff, $f4, $ff, $f8, $0b, $17, $05, $0b ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite - Sinbad
 .byt $00, $1f, $c0, $f8 ; Y, tile, attr, X
 .byt $01 ; Sprite - Sinbad
@@ -663,7 +663,7 @@ anim_sinbad_special:
 .byt $04 ; Hurtbox positioning
 .byt $f8, $08, $03, $0e ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $0a, $ff, $f4, $ff, $f8, $07, $13, $f8, $00 ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $01, $0a, $00, $00, $00, $00, $ff, $f4, $ff, $f8, $07, $13, $f8, $00 ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite - Sinbad
 .byt $00, $1f, $c0, $f8 ; Y, tile, attr, X
 .byt $01 ; Sprite - Sinbad
@@ -682,7 +682,7 @@ anim_sinbad_special:
 .byt $04 ; Hurtbox positioning
 .byt $fb, $06, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $0a, $ff, $f4, $ff, $f8, $fd, $02, $f1, $fd ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $01, $0a, $00, $00, $00, $00, $ff, $f4, $ff, $f8, $fd, $02, $f1, $fd ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite - Sinbad
 .byt $00, $22, $c0, $f8 ; Y, tile, attr, X
 .byt $01 ; Sprite - Sinbad
@@ -701,7 +701,7 @@ anim_sinbad_special:
 .byt $04 ; Hurtbox positioning
 .byt $fb, $06, $00, $10 ; left, right, top, bottom
 .byt $08 ; Hitbox positioning
-.byt $01, $0a, $ff, $f4, $ff, $f8, $f0, $f8, $f5, $01 ; enabled, damages, force_h (high), force_h (low), force_v (high), force_v (low), left, right, top, bottom
+.byt $01, $0a, $00, $00, $00, $00, $ff, $f4, $ff, $f8, $f0, $f8, $f5, $01 ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 .byt $01 ; Sprite - Sinbad
 .byt $00, $22, $c0, $f8 ; Y, tile, attr, X
 .byt $01 ; Sprite - Sinbad

@@ -201,10 +201,15 @@ rts
 
 ; Apply force in current player's hitbox to it's opponent
 ;
-; Overwrites timpfield1, tmpfield2, tmpfield3, tmpfield4, tmpfield5,
-; register A and register X (set to the opponent player's number)
+; Overwrites every tmpfields except "current_player" and "opponent_player".
+; Overwrites registers A and  X (set to the opponent player's number).
 apply_force_vector:
 .(
+base_h_low = tmpfield6
+base_h_high = tmpfield7
+base_v_low = tmpfield8
+base_v_high = tmpfield9
+
 ; Apply force vector to the opponent
 ldx current_player
 lda player_a_hitbox_force_h, x     ;
@@ -215,6 +220,14 @@ lda player_a_hitbox_force_v, x     ; location
 sta force_v                        ;
 lda player_a_hitbox_force_v_low, x ;
 sta force_v_low                    ;
+lda player_a_hitbox_base_knock_up_h_high, x ;
+sta base_h_high                             ;
+lda player_a_hitbox_base_knock_up_h_low, x  ;
+sta base_h_low                              ; Save base knock up to a player independent
+lda player_a_hitbox_base_knock_up_v_high, x ; location
+sta base_v_high                             ;
+lda player_a_hitbox_base_knock_up_v_low, x  ;
+sta base_v_low                              ;
 ldx opponent_player
 lda player_a_damages, x ; Get force multiplier
 clc                     ; "damages + 1"
@@ -224,8 +237,13 @@ lda force_h     ;
 sta tmpfield2   ;
 lda force_h_low ;
 sta tmpfield1   ;
-jsr multiply    ; Push "force_h * multiplier"
-lda tmpfield5   ;
+jsr multiply    ; Push "force_h * multiplier + base_h"
+lda base_h_low  ;
+clc             ;
+adc tmpfield4   ;
+sta tmpfield4   ;
+lda base_h_high ;
+adc tmpfield5   ;
 pha             ;
 lda tmpfield4   ;
 pha             ;
@@ -233,8 +251,12 @@ lda force_v      ;
 sta tmpfield2    ;
 lda force_v_low  ;
 sta tmpfield1    ;
-jsr multiply     ; Push "force_v * multiplier"
-lda tmpfield5    ;
+jsr multiply     ; Push "force_v * multiplier + base_v"
+lda base_v_low   ;
+clc              ;
+adc tmpfield4    ;
+lda base_v_high  ;
+adc tmpfield5    ;
 pha              ;
 lda tmpfield4    ;
 pha              ;
@@ -473,10 +495,10 @@ beq end_skip_frame        ;
 sta tmpfield8  ;
 lda #$05       ;
 sta tmpfield7  ; Set data length in tmpfield7
-lda #%00001000 ; hitbox data is 11 bytes long
+lda #%00001000 ; hitbox data is 15 bytes long
 bit tmpfield8  ; other data are 5 bytes long
 beq inc_cursor ; (counting the continuation byte)
-lda #11        ;
+lda #15        ;
 sta tmpfield7  ;
 inc_cursor:
 lda tmpfield7          ; Add data length to the animation vector, to point
@@ -746,6 +768,20 @@ iny
 ; Damages
 lda (frame_vector), y
 sta player_a_hitbox_damages, x
+iny
+; Base_h
+lda (frame_vector), y
+sta player_a_hitbox_base_knock_up_h_high, x
+iny
+lda (frame_vector), y
+sta player_a_hitbox_base_knock_up_h_low, x
+iny
+; Base_v
+lda (frame_vector), y
+sta player_a_hitbox_base_knock_up_v_high, x
+iny
+lda (frame_vector), y
+sta player_a_hitbox_base_knock_up_v_low, x
 iny
 ; Force_h
 lda (frame_vector), y
