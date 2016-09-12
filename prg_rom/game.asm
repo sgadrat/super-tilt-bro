@@ -51,11 +51,6 @@ inx
 cpx #$02
 bne hitbox_one_player
 
-; Clean hitboxes
-lda HITBOX_DISABLED
-sta player_a_hitbox_enabled
-sta player_b_hitbox_enabled
-
 ldx #$00 ; player number
 
 update_one_player:
@@ -192,6 +187,11 @@ sta player_a_damages, x ;
 
 ; Set opponent to thrown state
 jsr start_thrown_player
+
+; Disable the hitbox to avoid multi-hits
+ldx current_player
+lda HITBOX_DISABLED
+sta player_a_hitbox_enabled, x
 
 end:
 ; Reset register X to the current player
@@ -460,8 +460,9 @@ adc tmpfield1 ; Store current frame clock end in tmpfield1
 sta tmpfield1 ;
 
 ; If the current frame ends after the clock time, draw it
-cmp player_a_anim_clock, x
-bcs draw_current_frame
+lda player_a_anim_clock, x
+cmp tmpfield1
+bcc draw_current_frame
 
 ; Search the next frame
 lda #$01
@@ -566,7 +567,7 @@ rts
 ;  tmpfield3, tmpfield4 - Vector pointing to the frame to draw
 ;  tmpfield5 - First sprite index to use
 ;  tmpfield6 - Last sprite index to use
-;  X register - player number (ignored if the animation is not related to a player)
+;  X register - player number
 ;
 ; Overwrites tmpfield5, tmpfield7, tmpfield8, tmpfield9, tmpfield10 and all registers
 draw_anim_frame:
@@ -581,10 +582,13 @@ player_number = tmpfield7
 sprite_orig_x = tmpfield8
 sprite_orig_y = tmpfield9
 continuation_byte = tmpfield10
+got_hitbox = tmpfield11
 
 .(
 ldy #$00
 stx player_number
+lda #$00
+sta got_hitbox
 
 ; Check continuation byte - zero value means end of data
 draw_one_sprite:
@@ -620,6 +624,8 @@ lda #%00001000
 bit continuation_byte
 beq move_sprite
 jsr anim_frame_move_hitbox
+lda #$01
+sta got_hitbox
 jmp draw_one_sprite
 
 move_sprite:
@@ -630,7 +636,7 @@ jmp draw_one_sprite
 clear_unused_sprites:
 lda last_sprite_index
 cmp sprite_index
-bcc end
+bcc clear_unused_hitbox
 
 lda sprite_index ;
 asl              ; Set X to the byte offset of the sprite in OAM memory
@@ -648,6 +654,14 @@ sta oam_mirror, x
 
 inc sprite_index
 jmp clear_unused_sprites
+
+; Deactivate the hitbox if it was not placed by this frame
+clear_unused_hitbox:
+lda got_hitbox
+cmp #$01
+beq end
+ldx player_number
+sta player_a_hitbox_enabled, x
 
 end:
 rts
@@ -726,6 +740,7 @@ anim_frame_move_hitbox:
 ldx player_number
 ; Enabled
 lda (frame_vector), y
+ora player_a_hitbox_enabled, x
 sta player_a_hitbox_enabled, x
 iny
 ; Damages
