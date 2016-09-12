@@ -477,8 +477,21 @@ lda PLAYER_STATE_SIDE_TILT
 sta player_a_state, x
 
 ; Set initial velocity
-lda #$fe
+lda #$fd
 sta player_a_velocity_v, x
+lda #$80
+sta player_a_velocity_v_low, x
+lda player_a_direction, x
+beq set_velocity_left
+lda #$04
+sta player_a_velocity_h, x
+jmp end_set_velocity
+set_velocity_left:
+lda #$fb
+sta player_a_velocity_h, x
+end_set_velocity:
+lda #$80
+sta player_a_velocity_h_low, x
 
 rts
 .)
@@ -494,15 +507,13 @@ jsr start_standing_player
 jmp end
 
 update_velocity:
-cmp ANIM_SINBAD_SIDE_TILT_JUMP_FRAMES
-bcc end
 lda #$01
 sta tmpfield3
 lda #$00
 sta tmpfield4
 sta tmpfield1
 sta tmpfield2
-lda #$ff
+lda #$80
 sta tmpfield5
 jsr merge_to_player_velocity
 
