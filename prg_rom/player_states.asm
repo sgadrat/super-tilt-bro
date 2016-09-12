@@ -316,7 +316,7 @@ rts
 
 start_jumping_player:
 .(
-lda #$f7
+lda #$fa
 sta player_a_state_field1, x
 lda PLAYER_STATE_JUMPING
 sta player_a_state, x
