@@ -49,10 +49,15 @@ rts
 ;  register X must contain the player number
 standing_player:
 .(
-; Set the velocity to zero (do not move anymore)
+; Do not move, velocity tends toward vector (0,0)
 lda #$00
-sta player_a_velocity_v, x
-sta player_a_velocity_h, x
+sta tmpfield4
+sta tmpfield3
+sta tmpfield2
+sta tmpfield1
+lda #$ff
+sta tmpfield5
+jsr merge_to_player_velocity
 
 ; Check left input
 lda controller_a_btns, x
