@@ -181,6 +181,11 @@ tax ;
 lda #$00
 sta player_a_anim_clock, x
 
+; Set initial velocity
+sta player_a_velocity_h_low, x
+lda #$01
+sta player_a_velocity_h, x
+
 rts
 .)
 
@@ -192,27 +197,27 @@ running_player:
 lda player_a_direction, x
 beq run_left
 
-; Running right, velocity tends toward vector (4,0)
-lda #$04
+; Running right, velocity tends toward vector (2,0)
+lda #$02
 sta tmpfield4
 lda #$00
 sta tmpfield3
 sta tmpfield2
 sta tmpfield1
-lda #$ff
+lda #$40
 sta tmpfield5
 jsr merge_to_player_velocity
 jmp check_state_changes
 
-; Running left, velocity tends toward vector (-4,0)
+; Running left, velocity tends toward vector (-2,0)
 run_left:
-lda #$fc
+lda #$fe
 sta tmpfield4
 lda #$00
 sta tmpfield3
 sta tmpfield2
 sta tmpfield1
-lda #$ff
+lda #$40
 sta tmpfield5
 jsr merge_to_player_velocity
 
