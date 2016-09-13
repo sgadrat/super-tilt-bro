@@ -15,7 +15,7 @@ tilt.asm uses xa's preprocessor to directly output a valid iNES ROM file. The "-
 
 ## Playing
 
-You will need a NES emulator with two controller configured. Each controller controls a character and the goal is to send the other out of screen.
+You will need a NES emulator with two controllers configured. Each controller controls a character and the goal is to send the other out of screen.
 
 Controller mapping:
 ```
