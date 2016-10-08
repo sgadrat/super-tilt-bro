@@ -55,6 +55,18 @@ nametable_attributes:
 .byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
 nametable_end:
 
+#define STATE_ROUTINE(x) .byt >(x-1), <(x-1)
+sinbad_state_routines:
+STATE_ROUTINE(standing_player)
+STATE_ROUTINE(running_player)
+STATE_ROUTINE(falling_player)
+STATE_ROUTINE(jumping_player)
+STATE_ROUTINE(jabbing_player)
+STATE_ROUTINE(thrown_player)
+STATE_ROUTINE(respawn_player)
+STATE_ROUTINE(side_tilt_player)
+STATE_ROUTINE(special_player)
+
 anim_sinbad_idle_left:
 ; Frame 1
 .byt 60 ; Frame duration

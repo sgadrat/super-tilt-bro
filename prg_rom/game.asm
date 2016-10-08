@@ -39,6 +39,7 @@ rts
 
 update_players:
 .(
+.(
 ; Remove processed nametable buffers
 lda #$00
 sta nametable_buffers
@@ -51,65 +52,10 @@ inx
 cpx #$02
 bne hitbox_one_player
 
+; Update both players
 ldx #$00 ; player number
-
 update_one_player:
-
-; Check state 0 - standing
-lda player_a_state, x
-bne check_running
-jsr standing_player
-jmp player_updated
-
-; Check state 1 - running
-check_running:
-cmp PLAYER_STATE_RUNNING
-bne check_falling
-jsr running_player
-jmp player_updated
-
-; Check state 2 - falling
-check_falling:
-cmp PLAYER_STATE_FALLING
-bne check_jumping
-jsr falling_player
-jmp player_updated
-
-; Check state 3 - jumping
-check_jumping:
-cmp PLAYER_STATE_JUMPING
-bne check_jabbing
-jsr jumping_player
-jmp player_updated
-
-; Check state 4 - jabbing
-check_jabbing:
-cmp PLAYER_STATE_JABBING
-bne check_thrown
-jsr jabbing_player
-jmp player_updated
-
-; Check state 5 - thrown
-check_thrown:
-cmp PLAYER_STATE_THROWN
-bne check_side_tilting
-jsr thrown_player
-jmp player_updated
-
-; Check state 6 - side tilting
-check_side_tilting:
-cmp PLAYER_STATE_SIDE_TILT
-bne check_special
-jsr side_tilt_player
-jmp player_updated
-
-; Check state 7 - neutral special
-check_special:
-cmp PLAYER_STATE_SPECIAL
-bne player_updated
-jsr special_player
-
-player_updated:
+jsr state_update
 jsr move_player
 jsr check_player_position
 jsr write_player_damages
@@ -118,6 +64,25 @@ cpx #$02
 bne update_one_player
 
 rts
+.)
+
+state_update:
+.(
+; Convert player state number to vector address (relative to table begining)
+lda player_a_state, x       ; Y = state * 2
+asl                         ; (as each element is 2 bytes long)
+tay                         ;
+
+; Push the state's routine address to the stack
+lda sinbad_state_routines, y
+pha
+iny
+lda sinbad_state_routines, y
+pha
+
+; Return to the state's routine, it will itself return to update_one_player's caller
+rts
+.)
 .)
 
 check_player_hit:
