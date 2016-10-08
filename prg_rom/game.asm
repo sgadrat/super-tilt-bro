@@ -80,7 +80,7 @@ iny
 lda sinbad_state_routines, y
 pha
 
-; Return to the state's routine, it will itself return to update_one_player's caller
+; Return to the state's routine, it will itself return to state_update's caller
 rts
 .)
 .)
