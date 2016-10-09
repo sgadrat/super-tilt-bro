@@ -55,6 +55,72 @@ jsr set_player_animation
 rts
 .)
 
+; Jump to a callback according to player's controller state
+;  X - Player number
+;  tmpfield1 - Callbacks table (high byte)
+;  tmpfield2 - Callbacks table (low byte)
+;  tmpfield3 - number of states in the callbacks table
+;
+;  Overwrites register Y, tmpfield4, tmpfield5 and tmpfield6
+;
+;  Note - The callback is called with jmp, controller_callbacks never
+;         returns using rts.
+controller_callbacks:
+.(
+callbacks_table = tmpfield1
+num_states = tmpfield3
+callback_addr = tmpfield4
+matching_index = tmpfield6
+
+; Initialize loop, Y on first element and A on controller's state
+ldy #$00
+lda controller_a_btns, x
+
+check_controller_state:
+; Compare controller state to the current table element
+cmp (callbacks_table), y
+bne next_controller_state
+
+; Store the low byte of the callback address
+tya                ;
+sta matching_index ; Save Y, it contains the index of the matching entry
+clc                       ;
+adc num_states            ;
+tay                       ; low_byte = callbacks_table[y + num_states]
+lda (callbacks_table), y  ;
+sta callback_addr         ;
+
+; Store the high byte of the callback address
+tya                       ;
+clc                       ;
+adc num_states            ; high_byte = callbacks_table[matching_index + num_states * 2]
+tay                       ;
+lda (callbacks_table), y  ;
+sta callback_addr+1       ;
+
+; Controller state is current element, jump to the callback
+jmp (callback_addr)
+
+next_controller_state:
+; Check next element on the state table
+iny
+cpy num_states
+bne check_controller_state
+
+; The state was not listed on the table, call the default callback at table's end
+tya            ;
+asl            ;
+clc            ; Y = num_states * 3
+adc num_states ;
+tay            ;
+lda (callbacks_table), y ;
+sta callback_addr        ;
+iny                      ; Store default callback address
+lda (callbacks_table), y ;
+sta callback_addr+1      ;
+jmp (callback_addr) ; Jump to stored address
+.)
+
 start_standing_player:
 .(
 ; Set the appropriate animation (depending on player's direction)
@@ -88,36 +154,28 @@ lda #$ff
 sta tmpfield5
 jsr merge_to_player_velocity
 
-; Check left input
-lda controller_a_btns, x
-cmp CONTROLLER_INPUT_LEFT
-bne check_right
+; Check state changes
+lda #<controller_inputs
+sta tmpfield1
+lda #>controller_inputs
+sta tmpfield2
+lda #$09
+sta tmpfield3
+jmp controller_callbacks
 
 ; Player is now running left
+input_left:
 lda DIRECTION_LEFT
 sta player_a_direction, x
 jsr start_running_player
 jmp end
 
-; Check right input
-check_right:
-cmp CONTROLLER_INPUT_RIGHT
-bne check_jump
-
 ; Player is now running right
+input_right:
 lda DIRECTION_RIGHT
 sta player_a_direction, x
 jsr start_running_player
 jmp end
-
-; Check jump input
-check_jump:
-cmp CONTROLLER_INPUT_JUMP
-beq jump_input
-cmp CONTROLLER_INPUT_JUMP_RIGHT
-beq jump_input_right
-cmp CONTROLLER_INPUT_JUMP_LEFT
-bne check_jab
 
 ; Player is now jumping
 jump_input_left:
@@ -131,22 +189,6 @@ jump_input:
 jsr start_jumping_player
 jmp end
 
-; Check jab input
-check_jab:
-cmp CONTROLLER_INPUT_JAB
-bne check_tilt
-
-; Player is now jabbing
-jsr start_jabbing_player
-jmp end
-
-; Check tilt input
-check_tilt:
-cmp CONTROLLER_INPUT_ATTACK_RIGHT
-beq tilt_input_right
-cmp CONTROLLER_INPUT_ATTACK_LEFT
-bne check_special
-
 ; Player is now tilting
 tilt_input_left:
 lda DIRECTION_LEFT
@@ -159,16 +201,23 @@ tilt_input:
 jsr start_side_tilt_player
 jmp end
 
-; Check special
-check_special:
-cmp CONTROLLER_INPUT_SPECIAL
-bne end
-
-; Player is now specialing
-jsr start_special_player
-
 end:
 rts
+
+; Impactful controller states and associated callbacks
+; Note - We can put subroutines as callbacks because we have nothing to do after calling it
+;        (sourboutines return to our caller since "called" with jmp)
+controller_inputs:
+.byt CONTROLLER_INPUT_LEFT,        CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP,         CONTROLLER_INPUT_JUMP_RIGHT, CONTROLLER_INPUT_JUMP_LEFT
+.byt CONTROLLER_INPUT_JAB,         CONTROLLER_INPUT_ATTACK_LEFT,  CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL
+controller_callbacks_lo:
+.byt <input_left,                  <input_right,                  <jump_input,                   <jump_input_right,           <jump_input_left
+.byt <start_jabbing_player,        <tilt_input_left,              <tilt_input_right,             <start_special_player
+controller_callbacks_hi:
+.byt >input_left,                  >input_right,                  >jump_input,                   >jump_input_right,           >jump_input_left
+.byt >start_jabbing_player,        >tilt_input_left,              >tilt_input_right,             >start_special_player
+controller_default_callback:
+.word end
 .)
 
 start_running_player:
@@ -228,13 +277,16 @@ sta tmpfield5
 jsr merge_to_player_velocity
 
 check_state_changes:
-
-; Check left input
-lda controller_a_btns, x
-cmp CONTROLLER_INPUT_LEFT
-bne check_right
+lda #<controller_inputs
+sta tmpfield1
+lda #>controller_inputs
+sta tmpfield2
+lda #$08
+sta tmpfield3
+jmp controller_callbacks
 
 ; Player is now watching left
+input_left:
 lda DIRECTION_LEFT
 cmp player_a_direction, x
 beq end
@@ -242,39 +294,14 @@ sta player_a_direction, x
 jsr set_running_animation
 jmp end
 
-; Check right input
-check_right:
-cmp CONTROLLER_INPUT_RIGHT
-bne check_jump
-
 ; Player is now watching right
+input_right:
 lda DIRECTION_RIGHT
 cmp player_a_direction, x
 beq end
 sta player_a_direction, x
 jsr set_running_animation
 jmp end
-
-; Check jump input
-check_jump:
-cmp CONTROLLER_INPUT_JUMP
-beq jump_input
-cmp CONTROLLER_INPUT_JUMP_RIGHT
-beq jump_input
-cmp CONTROLLER_INPUT_JUMP_LEFT
-bne check_tilt
-
-; Player is now jumping
-jump_input:
-jsr start_jumping_player
-jmp end
-
-; Check tilt input
-check_tilt:
-cmp CONTROLLER_INPUT_ATTACK_RIGHT
-beq tilt_input_right
-cmp CONTROLLER_INPUT_ATTACK_LEFT
-bne check_special
 
 ; Player is now tilting
 tilt_input_left:
@@ -288,21 +315,23 @@ tilt_input:
 jsr start_side_tilt_player
 jmp end
 
-; Check special
-check_special:
-cmp CONTROLLER_INPUT_SPECIAL
-bne no_input
-
-; Player is now specialing
-jsr start_special_player
-jmp end
-
-; When no input is handled return to standing state
-no_input:
-jsr start_standing_player
-
 end:
 rts
+
+; Impactful controller states and associated callbacks
+; Note - We can put subroutines as callbacks because we have nothing to do after calling it
+;        (sourboutines return to our caller since "called" with jmp)
+controller_inputs:
+.byt CONTROLLER_INPUT_LEFT,        CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP,    CONTROLLER_INPUT_JUMP_RIGHT, CONTROLLER_INPUT_JUMP_LEFT
+.byt CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL
+controller_callbacks_lo:
+.byt <input_left,                  <input_right,                  <start_jumping_player,    <start_jumping_player,       <start_jumping_player
+.byt <tilt_input_left,             <tilt_input_right,             <start_special_player
+controller_callbacks_hi:
+.byt >input_left,                  >input_right,                  >start_jumping_player,    >start_jumping_player,       >start_jumping_player
+.byt >tilt_input_left,             >tilt_input_right,             >start_special_player
+controller_default_callback:
+.word start_standing_player
 .)
 
 ; Update a player that is falling
@@ -498,7 +527,7 @@ rts
 special_player:
 .(
 lda controller_a_btns, x
-cmp CONTROLLER_INPUT_SPECIAL
+cmp #CONTROLLER_INPUT_SPECIAL
 beq end
 jsr start_standing_player
 
