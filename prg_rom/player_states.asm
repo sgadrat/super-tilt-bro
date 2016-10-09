@@ -1,43 +1,72 @@
+; Start a new animation for the player
+;  X - Player number
+;  tmpfield1 - Animation's vector (low byte)
+;  tmpfield2 - Animation's vector (high byte)
+set_player_animation:
+.(
+new_animation = tmpfield1
+
+; X = X * 2 (we use it to reference a 2 bytes field)
+txa
+asl
+tax
+
+; Set the player's animation
+lda new_animation
+sta player_a_animation, x
+lda new_animation+1
+sta player_a_animation+1, x
+
+; Reset x to it's original value
+txa
+lsr
+tax
+
+; Reset animation's clock
+lda #$00
+sta player_a_anim_clock, x
+
+rts
+.)
+
+; Start a new animation for the player depending on the player's direction
+;  X - Player number
+;  tmpfield1 - Animation's vector for left-facing player (low byte)
+;  tmpfield2 - Animation's vector for left-facing player (high byte)
+;  tmpfield3 - Animation's vector for right-facing player (low byte)
+;  tmpfield4 - Animation's vector for right-facing player (high byte)
+set_player_animation_oriented:
+.(
+right_animation = tmpfield3
+shown_animation = tmpfield1
+
+; If the player is right-facing, set the right animation as shown
+lda player_a_direction, x
+beq set_anim
+lda right_animation
+sta shown_animation
+lda right_animation+1
+sta shown_animation+1
+
+; Start the selected animation
+set_anim:
+jsr set_player_animation
+
+rts
+.)
+
 start_standing_player:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda player_a_direction, x
-beq set_anim_left
-
-txa ;
-asl ; X = X * 2 (we use it to reference a 2 bytes field)
-tax ;
-
-lda #<anim_sinbad_idle_right
-sta player_a_animation, x
-lda #>anim_sinbad_idle_right
-inx
-sta player_a_animation, x
-dex
-
-jmp reset_anim_clock
-
-set_anim_left:
-
-txa ;
-asl ; X = X * 2 (we use it to reference a 2 bytes field)
-tax ;
-
 lda #<anim_sinbad_idle_left
-sta player_a_animation, x
+sta tmpfield1
 lda #>anim_sinbad_idle_left
-inx
-sta player_a_animation, x
-dex
-
-reset_anim_clock:
-
-txa ;
-lsr ; Reset X to it's original value
-tax ;
-
-lda #$00
-sta player_a_anim_clock, x
+sta tmpfield2
+lda #<anim_sinbad_idle_right
+sta tmpfield3
+lda #>anim_sinbad_idle_right
+sta tmpfield4
+jsr set_player_animation_oriented
 
 ; Set the player's state
 lda PLAYER_STATE_STANDING
@@ -145,46 +174,18 @@ rts
 start_running_player:
 lda PLAYER_STATE_RUNNING
 sta player_a_state, x
-set_running_anmation:
+set_running_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda player_a_direction, x
-beq set_anim_left
-
-txa ;
-asl ; X = X * 2 (we use it to reference a 2 bytes field)
-tax ;
-
-lda #<anim_sinbad_run_right
-sta player_a_animation, x
-lda #>anim_sinbad_run_right
-inx
-sta player_a_animation, x
-dex
-
-jmp reset_anim_clock
-
-set_anim_left:
-
-txa ;
-asl ; X = X * 2 (we use it to reference a 2 bytes field)
-tax ;
-
 lda #<anim_sinbad_run_left
-sta player_a_animation, x
+sta tmpfield1
 lda #>anim_sinbad_run_left
-inx
-sta player_a_animation, x
-dex
-
-reset_anim_clock:
-
-txa ;
-lsr ; Reset X to it's original value
-tax ;
-
-lda #$00
-sta player_a_anim_clock, x
+sta tmpfield2
+lda #<anim_sinbad_run_right
+sta tmpfield3
+lda #>anim_sinbad_run_right
+sta tmpfield4
+jsr set_player_animation_oriented
 
 ; Set initial velocity
 sta player_a_velocity_h_low, x
@@ -238,7 +239,7 @@ lda DIRECTION_LEFT
 cmp player_a_direction, x
 beq end
 sta player_a_direction, x
-jsr set_running_anmation
+jsr set_running_animation
 jmp end
 
 ; Check right input
@@ -251,7 +252,7 @@ lda DIRECTION_RIGHT
 cmp player_a_direction, x
 beq end
 sta player_a_direction, x
-jsr set_running_anmation
+jsr set_running_animation
 jmp end
 
 ; Check jump input
@@ -352,43 +353,15 @@ sta player_a_state, x
 set_jabbing_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda player_a_direction, x
-beq set_anim_left
-
-txa ;
-asl ; X = X * 2 (we use it to reference a 2 bytes field)
-tax ;
-
-lda #<anim_sinbad_jab_right
-sta player_a_animation, x
-lda #>anim_sinbad_jab_right
-inx
-sta player_a_animation, x
-dex
-
-jmp reset_anim_clock
-
-set_anim_left:
-
-txa ;
-asl ; X = X * 2 (we use it to reference a 2 bytes field)
-tax ;
-
 lda #<anim_sinbad_jab_left
-sta player_a_animation, x
+sta tmpfield1
 lda #>anim_sinbad_jab_left
-inx
-sta player_a_animation, x
-dex
-
-reset_anim_clock:
-
-txa ;
-lsr ; Reset X to it's original value
-tax ;
-
-lda #$00
-sta player_a_anim_clock, x
+sta tmpfield2
+lda #<anim_sinbad_jab_right
+sta tmpfield3
+lda #>anim_sinbad_jab_right
+sta tmpfield4
+jsr set_player_animation_oriented
 
 rts
 .)
@@ -439,43 +412,15 @@ rts
 start_side_tilt_player:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda player_a_direction, x
-beq set_anim_left
-
-txa ;
-asl ; X = X * 2 (we use it to reference a 2 bytes field)
-tax ;
-
-lda #<anim_sinbad_side_tilt_right
-sta player_a_animation, x
-lda #>anim_sinbad_side_tilt_right
-inx
-sta player_a_animation, x
-dex
-
-jmp reset_anim_clock
-
-set_anim_left:
-
-txa ;
-asl ; X = X * 2 (we use it to reference a 2 bytes field)
-tax ;
-
 lda #<anim_sinbad_side_tilt_left
-sta player_a_animation, x
+sta tmpfield1
 lda #>anim_sinbad_side_tilt_left
-inx
-sta player_a_animation, x
-dex
-
-reset_anim_clock:
-
-txa ;
-lsr ; Reset X to it's original value
-tax ;
-
-lda #$00
-sta player_a_anim_clock, x
+sta tmpfield2
+lda #<anim_sinbad_side_tilt_right
+sta tmpfield3
+lda #>anim_sinbad_side_tilt_right
+sta tmpfield4
+jsr set_player_animation_oriented
 
 ; Set the player's state
 lda PLAYER_STATE_SIDE_TILT
@@ -529,24 +474,11 @@ rts
 start_special_player:
 .(
 ; Set the appropriate animation
-txa ;
-asl ; X = X * 2 (we use it to reference a 2 bytes field)
-tax ;
-
 lda #<anim_sinbad_special
-sta player_a_animation, x
+sta tmpfield1
 lda #>anim_sinbad_special
-inx
-sta player_a_animation, x
-dex
-
-txa ;
-lsr ; Reset X to it's original value
-tax ;
-
-; Reset the animation's clock
-lda #$00
-sta player_a_anim_clock, x
+sta tmpfield2
+jsr set_player_animation
 
 ; Set the player's state
 lda PLAYER_STATE_SPECIAL
