@@ -39,7 +39,6 @@ rts
 
 update_players:
 .(
-.(
 ; Remove processed nametable buffers
 lda #$00
 sta nametable_buffers
@@ -55,10 +54,19 @@ bne hitbox_one_player
 ; Update both players
 ldx #$00 ; player number
 update_one_player:
-jsr state_update
+
+; Call the state update routine
+lda #<sinbad_state_update_routines
+sta tmpfield1
+lda #>sinbad_state_update_routines
+sta tmpfield2
+jsr player_state_action
+
+; Call generic update routines
 jsr move_player
 jsr check_player_position
 jsr write_player_damages
+
 inx
 cpx #$02
 bne update_one_player
@@ -66,23 +74,28 @@ bne update_one_player
 rts
 .)
 
-state_update:
+; Calls a subroutine depending on player's state
+;  register X - Player number
+;  tmpfield1 - Jump table address (low byte)
+;  tmpfield2 - Jump table address (high bute)
+player_state_action:
 .(
+jump_table = tmpfield1
+
 ; Convert player state number to vector address (relative to table begining)
 lda player_a_state, x       ; Y = state * 2
 asl                         ; (as each element is 2 bytes long)
 tay                         ;
 
 ; Push the state's routine address to the stack
-lda sinbad_state_routines, y
+lda (jump_table), y
 pha
 iny
-lda sinbad_state_routines, y
+lda (jump_table), y
 pha
 
-; Return to the state's routine, it will itself return to state_update's caller
+; Return to the state's routine, it will itself return to player_state_action's caller
 rts
-.)
 .)
 
 check_player_hit:
@@ -278,6 +291,8 @@ rts
 ;  register X - player number
 ;  tmpfield1 - player's old X
 ;  tmpfield2 - player's old Y
+;
+;  Overwrites tmpfield1 and tmpfield2
 check_player_position:
 .(
 old_x = tmpfield1
@@ -307,36 +322,25 @@ cmp old_y           ; die if "new Y < old Y"
 bcc set_death_state ;
 end_death_checks:
 
-; Jumping players obey their own physics
-lda player_a_state, x
-cmp PLAYER_STATE_JUMPING
-beq end
-
-; Side tilting players obey their own physics
-cmp PLAYER_STATE_SIDE_TILT
-beq end
-
-; Specialing players obey their own physics
-cmp PLAYER_STATE_SPECIAL
-beq end
-
 ; Check if on ground
 ;  Not grounded players must be falling
 lda player_a_x, x
 cmp STAGE_EDGE_LEFT
-bcc set_falling_state
-beq set_falling_state
+bcc offground
+beq offground
 cmp STAGE_EDGE_RIGHT
-bcs set_falling_state
+bcs offground
 lda player_a_y, x
 cmp STAGE_EDGE_TOP
-bne set_falling_state
+bne offground
 
 ; On ground
 ;  Check if we are on a state that needs to be updated
-lda player_a_state, x
-cmp PLAYER_STATE_FALLING
-beq set_standing_state
+lda #<sinbad_state_onground_routines
+sta tmpfield1
+lda #>sinbad_state_onground_routines
+sta tmpfield2
+jsr player_state_action
 
 ; No state change is required
 jmp end
@@ -345,13 +349,12 @@ set_death_state:
 jsr start_respawn_player
 jmp end
 
-set_standing_state:
-jsr start_standing_player
-jmp end
-
-set_falling_state:
-lda PLAYER_STATE_FALLING
-sta player_a_state, x
+offground:
+lda #<sinbad_state_offground_routines
+sta tmpfield1
+lda #>sinbad_state_offground_routines
+sta tmpfield2
+jsr player_state_action
 
 end:
 rts

@@ -419,3 +419,9 @@ inx
 end:
 rts
 .)
+
+; A routine doing nothing, it can be used as dummy entry in jump tables
+dummy_routine:
+.(
+rts
+.)

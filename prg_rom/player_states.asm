@@ -334,6 +334,13 @@ controller_default_callback:
 .word start_standing_player
 .)
 
+start_falling_player:
+.(
+lda PLAYER_STATE_FALLING
+sta player_a_state, x
+rts
+.)
+
 ; Update a player that is falling
 ;  register X must contain the player number
 falling_player:
