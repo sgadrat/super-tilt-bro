@@ -121,6 +121,87 @@ sta callback_addr+1      ;
 jmp (callback_addr) ; Jump to stored address
 .)
 
+; Change the player's state if an aerial move is input on the controller
+;  register X - Player number
+;
+;  Overwrites tmpfield15 and tmpfield2 plus the ones overriten by the state starting subroutine
+check_aerial_inputs:
+.(
+input_marker = tmpfield15
+player_btn = tmpfield2
+
+.(
+; Save current direction
+lda player_a_direction, x
+pha
+
+; Change player's direction according to input direction
+lda controller_a_btns, x
+sta player_btn
+lda #CONTROLLER_BTN_LEFT
+bit player_btn
+beq check_direction_right
+lda DIRECTION_LEFT
+jmp set_direction
+check_direction_right:
+lda #CONTROLLER_BTN_RIGHT
+bit player_btn
+beq no_direction
+lda DIRECTION_RIGHT
+set_direction:
+sta player_a_direction, x
+no_direction:
+
+; Start the good state according to input
+jsr take_input
+
+; Restore player's direction if there was no input, else discard saved direction
+lda input_marker
+beq restore_direction
+pla
+jmp end
+restore_direction:
+pla
+sta player_a_direction, x
+
+end:
+rts
+.)
+
+take_input:
+.(
+; Mark input
+lda #01
+sta input_marker
+
+; Call aerial subroutines, in case of input it will return with input marked
+lda #<controller_inputs
+sta tmpfield1
+lda #>controller_inputs
+sta tmpfield2
+lda #$02
+sta tmpfield3
+jmp controller_callbacks
+
+; If no input, unmark the input flag and return
+no_input:
+lda #$00
+sta input_marker
+rts
+
+; Impactful controller states and associated callbacks
+; Note - We have to put subroutines as callbacks since we do not expect a return unless we used the default callback
+controller_inputs:
+.byt CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT
+controller_callbacks_lo:
+.byt <start_side_special_player,     <start_side_special_player
+controller_callbacks_hi:
+.byt >start_side_special_player,     >start_side_special_player
+controller_default_callback:
+.word no_input
+.)
+.)
+
 start_standing_player:
 .(
 ; Set the appropriate animation (depending on player's direction)
@@ -159,7 +240,7 @@ lda #<controller_inputs
 sta tmpfield1
 lda #>controller_inputs
 sta tmpfield2
-lda #$09
+lda #$0b
 sta tmpfield3
 jmp controller_callbacks
 
@@ -201,6 +282,18 @@ tilt_input:
 jsr start_side_tilt_player
 jmp end
 
+; Player is now side specialing
+side_special_input_left:
+lda DIRECTION_LEFT
+sta player_a_direction, x
+jmp side_special_input
+side_special_input_right:
+lda DIRECTION_RIGHT
+sta player_a_direction, x
+side_special_input:
+jsr start_side_special_player
+jmp end
+
 end:
 rts
 
@@ -209,13 +302,16 @@ rts
 ;        (sourboutines return to our caller since "called" with jmp)
 controller_inputs:
 .byt CONTROLLER_INPUT_LEFT,        CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP,         CONTROLLER_INPUT_JUMP_RIGHT, CONTROLLER_INPUT_JUMP_LEFT
-.byt CONTROLLER_INPUT_JAB,         CONTROLLER_INPUT_ATTACK_LEFT,  CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL
+.byt CONTROLLER_INPUT_JAB,         CONTROLLER_INPUT_ATTACK_LEFT,  CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL,    CONTROLLER_INPUT_SPECIAL_RIGHT
+.byt CONTROLLER_INPUT_SPECIAL_LEFT
 controller_callbacks_lo:
 .byt <input_left,                  <input_right,                  <jump_input,                   <jump_input_right,           <jump_input_left
-.byt <start_jabbing_player,        <tilt_input_left,              <tilt_input_right,             <start_special_player
+.byt <start_jabbing_player,        <tilt_input_left,              <tilt_input_right,             <start_special_player,       <side_special_input_right
+.byt <side_special_input_left
 controller_callbacks_hi:
 .byt >input_left,                  >input_right,                  >jump_input,                   >jump_input_right,           >jump_input_left
-.byt >start_jabbing_player,        >tilt_input_left,              >tilt_input_right,             >start_special_player
+.byt >start_jabbing_player,        >tilt_input_left,              >tilt_input_right,             >start_special_player,       >side_special_input_right
+.byt >side_special_input_left
 controller_default_callback:
 .word end
 .)
@@ -281,7 +377,7 @@ lda #<controller_inputs
 sta tmpfield1
 lda #>controller_inputs
 sta tmpfield2
-lda #$08
+lda #$0a
 sta tmpfield3
 jmp controller_callbacks
 
@@ -322,14 +418,14 @@ rts
 ; Note - We can put subroutines as callbacks because we have nothing to do after calling it
 ;        (sourboutines return to our caller since "called" with jmp)
 controller_inputs:
-.byt CONTROLLER_INPUT_LEFT,        CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP,    CONTROLLER_INPUT_JUMP_RIGHT, CONTROLLER_INPUT_JUMP_LEFT
-.byt CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL
+.byt CONTROLLER_INPUT_LEFT,        CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP,    CONTROLLER_INPUT_JUMP_RIGHT,    CONTROLLER_INPUT_JUMP_LEFT
+.byt CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL, CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT
 controller_callbacks_lo:
-.byt <input_left,                  <input_right,                  <start_jumping_player,    <start_jumping_player,       <start_jumping_player
-.byt <tilt_input_left,             <tilt_input_right,             <start_special_player
+.byt <input_left,                  <input_right,                  <start_jumping_player,    <start_jumping_player,          <start_jumping_player
+.byt <tilt_input_left,             <tilt_input_right,             <start_special_player,    <start_side_special_player,     <start_side_special_player
 controller_callbacks_hi:
-.byt >input_left,                  >input_right,                  >start_jumping_player,    >start_jumping_player,       >start_jumping_player
-.byt >tilt_input_left,             >tilt_input_right,             >start_special_player
+.byt >input_left,                  >input_right,                  >start_jumping_player,    >start_jumping_player,          >start_jumping_player
+.byt >tilt_input_left,             >tilt_input_right,             >start_special_player,    >start_side_special_player,     >start_side_special_player
 controller_default_callback:
 .word start_standing_player
 .)
@@ -353,6 +449,8 @@ pha       ; - high
 lda #$00  ;
 pha       ; - low
 jsr add_to_player_velocity
+
+jsr check_aerial_inputs
 rts
 .)
 
@@ -537,6 +635,75 @@ lda controller_a_btns, x
 cmp #CONTROLLER_INPUT_SPECIAL
 beq end
 jsr start_standing_player
+
+end:
+rts
+.)
+
+start_side_special_player:
+.(
+; Set state
+lda PLAYER_STATE_SIDE_SPECIAL
+sta player_a_state, x
+
+; Set initial velocity
+lda #$00
+sta player_a_velocity_h_low, x
+sta player_a_velocity_h, x
+sta player_a_velocity_v_low, x
+sta player_a_velocity_v, x
+
+; Fallthrough to set the animation
+.)
+set_side_special_animation:
+.(
+; Set the appropriate animation (depending on player's direction)
+lda #<anim_sinbad_side_special_left
+sta tmpfield1
+lda #>anim_sinbad_side_special_left
+sta tmpfield2
+lda #<anim_sinbad_side_special_right
+sta tmpfield3
+lda #>anim_sinbad_side_special_right
+sta tmpfield4
+jsr set_player_animation_oriented
+
+rts
+.)
+
+side_special_player:
+.(
+; Nothing to in first part of the move (sinbad does not move)
+lda player_a_anim_clock, x
+cmp ANIM_SINBAD_SIDE_SPECIAL_PREPARATION_DURATION
+bcs moving
+jmp end
+
+moving:
+; Set vertical velocity (fixed)
+lda #$ff
+sta player_a_velocity_v, x
+lda #$80
+sta player_a_velocity_v_low, x
+
+; Set horizontal velocity (depending on direction)
+lda player_a_direction, x
+cmp DIRECTION_LEFT
+bne right_velocity
+lda #$fc
+jmp set_h_velocity
+right_velocity:
+lda #$04
+set_h_velocity:
+sta player_a_velocity_h, x
+lda #$00
+sta player_a_velocity_h_low, x
+
+; Return to falling state when the animation's time is out
+lda player_a_anim_clock, x
+cmp ANIM_SINBAD_SIDE_SPECIAL_FLY_DURATION
+bne end
+jsr start_falling_player
 
 end:
 rts
