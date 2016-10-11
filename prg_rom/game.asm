@@ -689,8 +689,11 @@ lda (frame_vector), y
 sta oam_mirror, x
 inx
 iny
-; Attributes
-lda (frame_vector), y
+; Attributes (add "2 * player_num" to select 3rd and 4th palette for player B)
+lda player_number
+asl
+clc
+adc (frame_vector), y
 sta oam_mirror, x
 inx
 iny
