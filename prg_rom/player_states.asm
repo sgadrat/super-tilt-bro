@@ -508,10 +508,11 @@ jsr set_player_animation_oriented
 rts
 .)
 
+#define STATE_SINBAD_JAB_DURATION #8
 jabbing_player:
 .(
 lda player_a_anim_clock, x
-cmp ANIM_SINBAD_JAB_DURATION
+cmp STATE_SINBAD_JAB_DURATION
 bne end
 jsr start_standing_player
 
@@ -590,10 +591,11 @@ rts
 
 ; Update a player that is performing a side tilt
 ;  register X must contain the player number
+#define STATE_SINBAD_SIDE_TILT_DURATION #21
 side_tilt_player:
 .(
 lda player_a_anim_clock, x
-cmp ANIM_SINBAD_SIDE_TILT_DURATION
+cmp STATE_SINBAD_SIDE_TILT_DURATION
 bne update_velocity
 jsr start_standing_player
 jmp end
@@ -679,11 +681,13 @@ jsr set_player_animation_oriented
 rts
 .)
 
+#define STATE_SINBAD_SIDE_SPECIAL_PREPARATION_DURATION #30
+#define STATE_SINBAD_SIDE_SPECIAL_FLY_DURATION #45
 side_special_player:
 .(
 ; Nothing to in first part of the move (sinbad does not move)
 lda player_a_anim_clock, x
-cmp ANIM_SINBAD_SIDE_SPECIAL_PREPARATION_DURATION
+cmp STATE_SINBAD_SIDE_SPECIAL_PREPARATION_DURATION
 bcs moving
 jmp end
 
@@ -709,7 +713,7 @@ sta player_a_velocity_h_low, x
 
 ; After move's time is out, go to helpless state
 lda player_a_anim_clock, x
-cmp ANIM_SINBAD_SIDE_SPECIAL_FLY_DURATION
+cmp STATE_SINBAD_SIDE_SPECIAL_FLY_DURATION
 bne end
 jsr start_helpless_player
 
