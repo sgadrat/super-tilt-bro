@@ -338,7 +338,6 @@ bcc set_death_state ;
 end_death_checks:
 
 ; Check if on ground
-;  Not grounded players must be falling
 lda player_a_x, x
 cmp STAGE_EDGE_LEFT
 bcc offground
@@ -352,18 +351,11 @@ lda player_a_y_low, x
 bne offground
 
 ; On ground
-;  Check if we are on a state that needs to be updated
 lda #<sinbad_state_onground_routines
 sta tmpfield1
 lda #>sinbad_state_onground_routines
 sta tmpfield2
 jsr player_state_action
-
-; No state change is required
-jmp end
-
-set_death_state:
-jsr start_respawn_player
 jmp end
 
 offground:
@@ -372,6 +364,10 @@ sta tmpfield1
 lda #>sinbad_state_offground_routines
 sta tmpfield2
 jsr player_state_action
+jmp end
+
+set_death_state:
+jsr start_respawn_player
 
 end:
 rts
