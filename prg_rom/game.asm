@@ -10,6 +10,11 @@ lda HITBOX_DISABLED
 sta player_a_hitbox_enabled
 sta player_b_hitbox_enabled
 
+lda #$00
+sta player_a_y_low
+sta player_b_y_low
+sta player_a_x_low
+sta player_b_x_low
 lda #$80
 sta player_a_y
 sta player_b_y
@@ -258,13 +263,19 @@ lda player_a_y, x
 sta tmpfield2
 
 ; Apply velocity to position
-lda player_a_velocity_h, x
+lda player_a_velocity_h_low, x
 clc
+adc player_a_x_low, x
+sta tmpfield9
+lda player_a_velocity_h, x
 adc player_a_x, x
 sta tmpfield3
 
-lda player_a_velocity_v, x
+lda player_a_velocity_v_low, x
 clc
+adc player_a_y_low, x
+sta tmpfield10
+lda player_a_velocity_v, x
 adc player_a_y, x
 sta tmpfield4
 
@@ -283,6 +294,10 @@ lda tmpfield3
 sta player_a_x, x
 lda tmpfield4
 sta player_a_y, x
+lda tmpfield9
+sta player_a_x_low, x
+lda tmpfield10
+sta player_a_y_low, x
 
 rts
 .)
@@ -327,11 +342,13 @@ end_death_checks:
 lda player_a_x, x
 cmp STAGE_EDGE_LEFT
 bcc offground
-beq offground
-cmp STAGE_EDGE_RIGHT
-bcs offground
+lda STAGE_EDGE_RIGHT
+cmp player_a_x, x
+bcc offground
 lda player_a_y, x
 cmp STAGE_EDGE_TOP
+bne offground
+lda player_a_y_low, x
 bne offground
 
 ; On ground
