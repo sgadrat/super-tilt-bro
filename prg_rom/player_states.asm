@@ -707,12 +707,51 @@ sta player_a_velocity_h, x
 lda #$00
 sta player_a_velocity_h_low, x
 
-; Return to falling state when the animation's time is out
+; After move's time is out, go to helpless state
 lda player_a_anim_clock, x
 cmp ANIM_SINBAD_SIDE_SPECIAL_FLY_DURATION
 bne end
-jsr start_falling_player
+jsr start_helpless_player
 
 end:
+rts
+.)
+
+start_helpless_player:
+.(
+; Set state
+lda PLAYER_STATE_HELPLESS
+sta player_a_state, x
+
+; Fallthrough to set the animation
+.)
+set_helpless_animation:
+.(
+; Set the appropriate animation (depending on player's direction)
+lda #<anim_sinbad_helpless_left
+sta tmpfield1
+lda #>anim_sinbad_helpless_left
+sta tmpfield2
+lda #<anim_sinbad_helpless_right
+sta tmpfield3
+lda #>anim_sinbad_helpless_right
+sta tmpfield4
+jsr set_player_animation_oriented
+
+rts
+.)
+
+; Update a player that is helplessly falling
+helpless_player:
+.(
+lda #$00 ; Horizontal component
+pha      ; - high
+pha      ; - low
+lda #$01  ; Vertical component
+pha       ; - high
+lda #$00  ;
+pha       ; - low
+jsr add_to_player_velocity
+
 rts
 .)

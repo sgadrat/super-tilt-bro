@@ -67,6 +67,7 @@ STATE_ROUTINE(respawn_player)
 STATE_ROUTINE(side_tilt_player)
 STATE_ROUTINE(special_player)
 STATE_ROUTINE(side_special_player)
+STATE_ROUTINE(helpless_player)
 
 sinbad_state_offground_routines:
 STATE_ROUTINE(start_falling_player) ; Standing
@@ -79,6 +80,7 @@ STATE_ROUTINE(start_falling_player) ; Respawn
 STATE_ROUTINE(dummy_routine) ; Side tilt
 STATE_ROUTINE(dummy_routine) ; Special
 STATE_ROUTINE(dummy_routine) ; Side special
+STATE_ROUTINE(dummy_routine) ; Helpless
 
 sinbad_state_onground_routines:
 STATE_ROUTINE(dummy_routine) ; Standing
@@ -91,6 +93,7 @@ STATE_ROUTINE(dummy_routine) ; Respawn
 STATE_ROUTINE(dummy_routine) ; Side tilt
 STATE_ROUTINE(dummy_routine) ; Special
 STATE_ROUTINE(dummy_routine) ; Side special
+STATE_ROUTINE(start_standing_player) ; Helpless
 
 anim_sinbad_idle_left:
 ; Frame 1
@@ -1048,6 +1051,32 @@ anim_sinbad_side_special_right:
 .byt $08, $06, $40, $00
 .byt $01
 .byt $08, $07, $40, $f8
+.byt $00
+; End of animation
+.byt $00
+
+anim_sinbad_helpless_left:
+; Frame 1
+.byt 60 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $01 ; Sprite 1 - Sinbad's body
+.byt $00, $01, $80, $00
+.byt $01 ; Sprite 2 - Sinbad's head
+.byt $08, $00, $80, $00 ; Y, tile, attr, X
+.byt $00
+; End of animation
+.byt $00
+
+anim_sinbad_helpless_right:
+; Frame 1
+.byt 60 ; Frame duration
+.byt $04 ; Hurtbox positioning
+.byt $00, $08, $00, $10 ; left, right, top, bottom
+.byt $01 ; Sprite 1 - Sinbad's body
+.byt $00, $01, $c0, $00
+.byt $01 ; Sprite 2 - Sinbad's head
+.byt $08, $00, $c0, $00 ; Y, tile, attr, X
 .byt $00
 ; End of animation
 .byt $00
