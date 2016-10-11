@@ -333,8 +333,16 @@ sta tmpfield4
 jsr set_player_animation_oriented
 
 ; Set initial velocity
+lda #$00
 sta player_a_velocity_h_low, x
+lda player_a_direction, x
+cmp DIRECTION_LEFT
+bne direction_right
+lda #$ff
+jmp set_high_byte
+direction_right
 lda #$01
+set_high_byte:
 sta player_a_velocity_h, x
 
 rts
