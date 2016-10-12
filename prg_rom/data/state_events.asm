@@ -31,7 +31,7 @@ STATE_ROUTINE(dummy_routine) ; Running
 STATE_ROUTINE(start_standing_player) ; Falling
 STATE_ROUTINE(dummy_routine) ; Jumping
 STATE_ROUTINE(dummy_routine) ; Jabbing
-STATE_ROUTINE(dummy_routine) ; Thrown
+STATE_ROUTINE(start_standing_player) ; Thrown
 STATE_ROUTINE(dummy_routine) ; Respawn
 STATE_ROUTINE(dummy_routine) ; Side tilt
 STATE_ROUTINE(dummy_routine) ; Special
