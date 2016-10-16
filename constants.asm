@@ -24,7 +24,7 @@
 #define HITBOX_DISABLED #$00
 #define HITBOX_ENABLED #$01
 
-#define TILENUM_NT_CHAR_0 #$13
+#define TILENUM_NT_CHAR_0 #$14
 
 #define CONTROLLER_BTN_A      %10000000
 #define CONTROLLER_BTN_B      %01000000

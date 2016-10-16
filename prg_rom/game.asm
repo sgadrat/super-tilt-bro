@@ -386,7 +386,7 @@ pha
 ; Set on-screen text position depending on the player
 cpx #$00
 beq prepare_player_a
-lda #$91
+lda #$94
 sta ppu_position
 jmp end_player_variables
 prepare_player_a:
