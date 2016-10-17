@@ -797,3 +797,50 @@ jsr add_to_player_velocity
 
 rts
 .)
+
+start_landing_player:
+.(
+; Set state
+lda PLAYER_STATE_LANDING
+sta player_a_state, x
+
+; Fallthrough to set the animation
+.)
+set_landing_animation:
+.(
+; Set the appropriate animation (depending on player's direction)
+lda #<anim_sinbad_landing_left
+sta tmpfield1
+lda #>anim_sinbad_landing_left
+sta tmpfield2
+lda #<anim_sinbad_landing_right
+sta tmpfield3
+lda #>anim_sinbad_landing_right
+sta tmpfield4
+jsr set_player_animation_oriented
+
+rts
+.)
+
+#define STATE_SINBAD_LANDING_DURATION #30
+landing_player:
+.(
+; Do not move, velocity tends toward vector (0,0)
+lda #$00
+sta tmpfield4
+sta tmpfield3
+sta tmpfield2
+sta tmpfield1
+lda #$ff
+sta tmpfield5
+jsr merge_to_player_velocity
+
+; After move's time is out, go to standing state
+lda player_a_anim_clock, x
+cmp STATE_SINBAD_LANDING_DURATION
+bne end
+jsr start_standing_player
+
+end:
+rts
+.)

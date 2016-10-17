@@ -5,3 +5,4 @@
 #include "prg_rom/data/state_animations/sinbad_special.asm
 #include "prg_rom/data/state_animations/sinbad_side_special.asm
 #include "prg_rom/data/state_animations/sinbad_helpless.asm
+#include "prg_rom/data/state_animations/sinbad_landing.asm
