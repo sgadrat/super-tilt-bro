@@ -804,6 +804,26 @@ start_landing_player:
 lda PLAYER_STATE_LANDING
 sta player_a_state, x
 
+; Cap initial velocity
+lda player_a_velocity_h, x
+jsr absolute_a
+cmp #$03
+bcs set_cap
+jmp set_landing_animation
+set_cap:
+lda player_a_velocity_h, x
+bmi negative_cap
+lda #$02
+sta player_a_velocity_h, x
+lda #$00
+sta player_a_velocity_h_low, x
+jmp set_landing_animation
+negative_cap:
+lda #$fe
+sta player_a_velocity_h, x
+lda #$00
+sta player_a_velocity_h_low, x
+
 ; Fallthrough to set the animation
 .)
 set_landing_animation:
@@ -822,7 +842,7 @@ jsr set_player_animation_oriented
 rts
 .)
 
-#define STATE_SINBAD_LANDING_DURATION #30
+#define STATE_SINBAD_LANDING_DURATION #20
 landing_player:
 .(
 ; Do not move, velocity tends toward vector (0,0)
@@ -831,7 +851,7 @@ sta tmpfield4
 sta tmpfield3
 sta tmpfield2
 sta tmpfield1
-lda #$ff
+lda #$40
 sta tmpfield5
 jsr merge_to_player_velocity
 
