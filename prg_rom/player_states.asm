@@ -663,33 +663,71 @@ sta player_a_velocity_h, x
 sta player_a_velocity_v_low, x
 sta player_a_velocity_v, x
 
+; Set substate to "charging"
+sta player_a_state_field1, x
+
 ; Fallthrough to set the animation
 .)
 set_side_special_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_side_special_left
+lda #<anim_sinbad_side_special_left_charge
 sta tmpfield1
-lda #>anim_sinbad_side_special_left
+lda #>anim_sinbad_side_special_left_charge
 sta tmpfield2
-lda #<anim_sinbad_side_special_right
+lda #<anim_sinbad_side_special_right_charge
 sta tmpfield3
-lda #>anim_sinbad_side_special_right
+lda #>anim_sinbad_side_special_right_charge
 sta tmpfield4
 jsr set_player_animation_oriented
 
 rts
 .)
 
-#define STATE_SINBAD_SIDE_SPECIAL_PREPARATION_DURATION #30
-#define STATE_SINBAD_SIDE_SPECIAL_FLY_DURATION #45
+#define STATE_SINBAD_SIDE_SPECIAL_PREPARATION_DURATION #120
 side_special_player:
 .(
-; Nothing to in first part of the move (sinbad does not move)
+; Move if the substate is set to moving
+lda player_a_state_field1, x
+bne moving
+
+; Check if there is reason to begin to move
 lda player_a_anim_clock, x
 cmp STATE_SINBAD_SIDE_SPECIAL_PREPARATION_DURATION
-bcs moving
+bcs start_moving
+lda controller_a_btns, x
+cmp #CONTROLLER_INPUT_SPECIAL_RIGHT
+beq not_moving
+cmp #CONTROLLER_INPUT_SPECIAL_LEFT
+bne start_moving
+
+not_moving:
 jmp end
+
+start_moving:
+; Set substate to "moving"
+lda #$01
+sta player_a_state_field1, x
+
+; Store fly duration (fly_duration = 5 + charge_duration / 8)
+lda player_a_anim_clock, x
+lsr
+lsr
+lsr
+clc
+adc #5
+sta player_a_state_field2, x
+
+; Set the movement animation
+lda #<anim_sinbad_side_special_left_jump
+sta tmpfield1
+lda #>anim_sinbad_side_special_left_jump
+sta tmpfield2
+lda #<anim_sinbad_side_special_right_jump
+sta tmpfield3
+lda #>anim_sinbad_side_special_right_jump
+sta tmpfield4
+jsr set_player_animation_oriented
 
 moving:
 ; Set vertical velocity (fixed)
@@ -713,7 +751,7 @@ sta player_a_velocity_h_low, x
 
 ; After move's time is out, go to helpless state
 lda player_a_anim_clock, x
-cmp STATE_SINBAD_SIDE_SPECIAL_FLY_DURATION
+cmp player_a_state_field2, x
 bne end
 jsr start_helpless_player
 
