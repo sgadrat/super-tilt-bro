@@ -525,11 +525,32 @@ start_thrown_player:
 ; Set player's state
 lda PLAYER_STATE_THROWN
 sta player_a_state, x
-rts
 
 ; Initialize tech counter
 lda #0
 sta player_a_state_field1, x
+
+; Fallthrough to set the animation
+.)
+set_thrown_animation:
+.(
+; Set the appropriate animation (depending on player's velocity)
+lda player_a_velocity_h, x
+bmi set_anim_left
+lda #<anim_sinbad_thrown_right
+sta tmpfield1
+lda #>anim_sinbad_thrown_right
+sta tmpfield2
+jmp set_anim
+set_anim_left:
+lda #<anim_sinbad_thrown_left
+sta tmpfield1
+lda #>anim_sinbad_thrown_left
+sta tmpfield2
+set_anim:
+jsr set_player_animation
+
+rts
 .)
 
 thrown_player:

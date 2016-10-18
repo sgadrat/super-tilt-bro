@@ -7,3 +7,4 @@
 #include "prg_rom/data/state_animations/sinbad_helpless.asm"
 #include "prg_rom/data/state_animations/sinbad_landing.asm"
 #include "prg_rom/data/state_animations/sinbad_crashing.asm"
+#include "prg_rom/data/state_animations/sinbad_thrown.asm"
