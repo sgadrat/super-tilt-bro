@@ -12,6 +12,7 @@ STATE_ROUTINE(special_player)
 STATE_ROUTINE(side_special_player)
 STATE_ROUTINE(helpless_player)
 STATE_ROUTINE(landing_player)
+STATE_ROUTINE(crashing_player)
 
 sinbad_state_offground_routines:
 STATE_ROUTINE(start_falling_player) ; Standing
@@ -26,6 +27,7 @@ STATE_ROUTINE(dummy_routine) ; Special
 STATE_ROUTINE(dummy_routine) ; Side special
 STATE_ROUTINE(dummy_routine) ; Helpless
 STATE_ROUTINE(start_helpless_player) ; Landing
+STATE_ROUTINE(start_helpless_player) ; Crashing
 
 sinbad_state_onground_routines:
 STATE_ROUTINE(dummy_routine) ; Standing
@@ -33,10 +35,11 @@ STATE_ROUTINE(dummy_routine) ; Running
 STATE_ROUTINE(start_landing_player) ; Falling
 STATE_ROUTINE(dummy_routine) ; Jumping
 STATE_ROUTINE(dummy_routine) ; Jabbing
-STATE_ROUTINE(start_landing_player) ; Thrown
+STATE_ROUTINE(start_crashing_player) ; Thrown
 STATE_ROUTINE(dummy_routine) ; Respawn
 STATE_ROUTINE(dummy_routine) ; Side tilt
 STATE_ROUTINE(dummy_routine) ; Special
 STATE_ROUTINE(dummy_routine) ; Side special
 STATE_ROUTINE(start_landing_player) ; Helpless
 STATE_ROUTINE(dummy_routine) ; Landing
+STATE_ROUTINE(dummy_routine) ; Crashing

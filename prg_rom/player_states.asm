@@ -864,3 +864,50 @@ jsr start_standing_player
 end:
 rts
 .)
+
+start_crashing_player:
+.(
+; Set state
+lda PLAYER_STATE_CRASHING
+sta player_a_state, x
+
+; Fallthrough to set the animation
+.)
+set_crashing_animation:
+.(
+; Set the appropriate animation (depending on player's direction)
+lda #<anim_sinbad_crashing_left
+sta tmpfield1
+lda #>anim_sinbad_crashing_left
+sta tmpfield2
+lda #<anim_sinbad_crashing_right
+sta tmpfield3
+lda #>anim_sinbad_crashing_right
+sta tmpfield4
+jsr set_player_animation_oriented
+
+rts
+.)
+
+#define STATE_SINBAD_CRASHING_DURATION #60
+crashing_player:
+.(
+; Do not move, velocity tends toward vector (0,0)
+lda #$00
+sta tmpfield4
+sta tmpfield3
+sta tmpfield2
+sta tmpfield1
+lda #$80
+sta tmpfield5
+jsr merge_to_player_velocity
+
+; After move's time is out, go to standing state
+lda player_a_anim_clock, x
+cmp STATE_SINBAD_CRASHING_DURATION
+bne end
+jsr start_standing_player
+
+end:
+rts
+.)
