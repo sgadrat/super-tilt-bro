@@ -553,6 +553,10 @@ jsr set_player_animation
 rts
 .)
 
+; To tech successfully the tech must be input at maximum TECH_MAX_FRAMES_BEFORE_COLLISION frames before hitting the ground.
+; After expiration of a tech input, it is not possible to input another tech for TECH_NB_FORBIDDEN_FRAMES frames.
+#define TECH_MAX_FRAMES_BEFORE_COLLISION 5
+#define TECH_NB_FORBIDDEN_FRAMES 60
 thrown_player:
 .(
 ; Add gravity to velocity
@@ -594,7 +598,7 @@ tech_common:
 sta player_a_state_field2, x
 lda player_a_state_field1, x
 bne end
-lda #40
+lda #TECH_MAX_FRAMES_BEFORE_COLLISION+TECH_NB_FORBIDDEN_FRAMES
 sta player_a_state_field1, x
 
 end:
@@ -617,7 +621,7 @@ controller_default_callback:
 thrown_player_on_ground:
 .(
 ; If the tech counter is bellow the threshold, just crash
-lda #20
+lda #TECH_NB_FORBIDDEN_FRAMES
 cmp player_a_state_field1, x
 bcs crash
 
