@@ -34,7 +34,7 @@ Move left   |      Unused   Unused
 |      +-|-+ |                           |       |      |
 +--------|---|---------------------------|-------|------+
          |   +---+                       |       +---+
-       Crouch    |                 Special moves     |
+        Tech     |                 Special moves     |
                  |                                   |
             Move right                            Attacks
 ```

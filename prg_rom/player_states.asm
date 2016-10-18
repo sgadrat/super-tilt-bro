@@ -522,13 +522,111 @@ rts
 
 start_thrown_player:
 .(
+; Set player's state
 lda PLAYER_STATE_THROWN
 sta player_a_state, x
 rts
+
+; Initialize tech counter
+lda #0
+sta player_a_state_field1, x
 .)
 
 thrown_player:
 .(
+; Add gravity to velocity
+lda #$00 ; Horizontal component
+pha      ; - high
+pha      ; - low
+lda #$01  ; Vertical component
+pha       ; - high
+lda #$00  ;
+pha       ; - low
+jsr add_to_player_velocity
+
+; Decrement tech counter (to zero minimum)
+lda player_a_state_field1, x
+beq end_dec_tech_cnt
+dec player_a_state_field1, x
+end_dec_tech_cnt:
+
+; Handle controller inputs
+lda #<controller_inputs
+sta tmpfield1
+lda #>controller_inputs
+sta tmpfield2
+lda #$03
+sta tmpfield3
+jmp controller_callbacks
+
+; If a tech is entered, store it's direction in state_field2
+; and if the counter is at 0, reset it to it's max value.
+tech_neutral:
+lda #$00
+jmp tech_common
+tech_right:
+lda #$01
+jmp tech_common
+tech_left:
+lda #$02
+tech_common:
+sta player_a_state_field2, x
+lda player_a_state_field1, x
+bne end
+lda #40
+sta player_a_state_field1, x
+
+end:
+rts
+
+; Impactful controller states and associated callbacks
+; Note - We can put subroutines as callbacks because we have nothing to do after calling it
+;        (sourboutines return to our caller since "called" with jmp)
+controller_inputs:
+.byt CONTROLLER_INPUT_TECH,        CONTROLLER_INPUT_TECH_RIGHT,   CONTROLLER_INPUT_TECH_LEFT
+controller_callbacks_lo:
+.byt <tech_neutral,                <tech_right,                   <tech_left
+controller_callbacks_hi:
+.byt >tech_neutral,                >tech_right,                   >tech_left
+controller_default_callback:
+.word end
+.)
+
+; Routine to be called when hitting the ground from thrown state
+thrown_player_on_ground:
+.(
+; If the tech counter is bellow the threshold, just crash
+lda #20
+cmp player_a_state_field1, x
+bcs crash
+
+; A valid tech was entered, land with momentum depending on tech's direction
+jsr start_landing_player
+lda player_a_state_field2, x
+beq no_momentum
+cmp #$01
+beq momentum_right
+lda #$fc
+sta player_a_velocity_h, x
+lda #$00
+sta player_a_velocity_h_low, x
+jmp end
+no_momentum:
+lda #$00
+sta player_a_velocity_h, x
+sta player_a_velocity_h_low, x
+jmp end
+momentum_right:
+lda #$04
+sta player_a_velocity_h, x
+lda #$00
+sta player_a_velocity_h_low, x
+jmp end
+
+crash:
+jsr start_crashing_player
+
+end:
 rts
 .)
 

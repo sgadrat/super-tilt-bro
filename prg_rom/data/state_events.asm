@@ -20,7 +20,7 @@ STATE_ROUTINE(start_falling_player) ; Running
 STATE_ROUTINE(dummy_routine) ; Falling
 STATE_ROUTINE(dummy_routine) ; Jumping
 STATE_ROUTINE(start_falling_player) ; Jabbing
-STATE_ROUTINE(start_falling_player) ; Thrown
+STATE_ROUTINE(dummy_routine) ; Thrown
 STATE_ROUTINE(start_falling_player) ; Respawn
 STATE_ROUTINE(dummy_routine) ; Side tilt
 STATE_ROUTINE(dummy_routine) ; Special
@@ -35,7 +35,7 @@ STATE_ROUTINE(dummy_routine) ; Running
 STATE_ROUTINE(start_landing_player) ; Falling
 STATE_ROUTINE(dummy_routine) ; Jumping
 STATE_ROUTINE(dummy_routine) ; Jabbing
-STATE_ROUTINE(start_crashing_player) ; Thrown
+STATE_ROUTINE(thrown_player_on_ground) ; Thrown
 STATE_ROUTINE(dummy_routine) ; Respawn
 STATE_ROUTINE(dummy_routine) ; Side tilt
 STATE_ROUTINE(dummy_routine) ; Special
