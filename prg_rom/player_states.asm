@@ -251,6 +251,36 @@ lda #$ff
 sta tmpfield5
 jsr merge_to_player_velocity
 
+; Force the handling of directional controls
+lda controller_a_btns, x
+cmp #CONTROLLER_INPUT_LEFT
+bne no_left
+jsr standing_player_input_left
+jmp end
+no_left:
+cmp #CONTROLLER_INPUT_RIGHT
+bne end
+jsr standing_player_input_right
+
+end:
+rts
+.)
+
+; Player is now running left
+standing_player_input_left:
+.(
+lda DIRECTION_LEFT
+sta player_a_direction, x
+jsr start_running_player
+rts
+.)
+
+; Player is now running right
+standing_player_input_right:
+.(
+lda DIRECTION_RIGHT
+sta player_a_direction, x
+jsr start_running_player
 rts
 .)
 
@@ -264,20 +294,6 @@ sta tmpfield2
 lda #$0b
 sta tmpfield3
 jmp controller_callbacks
-
-; Player is now running left
-input_left:
-lda DIRECTION_LEFT
-sta player_a_direction, x
-jsr start_running_player
-jmp end
-
-; Player is now running right
-input_right:
-lda DIRECTION_RIGHT
-sta player_a_direction, x
-jsr start_running_player
-jmp end
 
 ; Player is now jumping
 jump_input_left:
@@ -326,11 +342,11 @@ controller_inputs:
 .byt CONTROLLER_INPUT_JAB,         CONTROLLER_INPUT_ATTACK_LEFT,  CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL,    CONTROLLER_INPUT_SPECIAL_RIGHT
 .byt CONTROLLER_INPUT_SPECIAL_LEFT
 controller_callbacks_lo:
-.byt <input_left,                  <input_right,                  <jump_input,                   <jump_input_right,           <jump_input_left
+.byt <standing_player_input_left,  <standing_player_input_right,  <jump_input,                   <jump_input_right,           <jump_input_left
 .byt <start_jabbing_player,        <tilt_input_left,              <tilt_input_right,             <start_special_player,       <side_special_input_right
 .byt <side_special_input_left
 controller_callbacks_hi:
-.byt >input_left,                  >input_right,                  >jump_input,                   >jump_input_right,           >jump_input_left
+.byt >standing_player_input_left,  >standing_player_input_right,  >jump_input,                   >jump_input_right,           >jump_input_left
 .byt >start_jabbing_player,        >tilt_input_left,              >tilt_input_right,             >start_special_player,       >side_special_input_right
 .byt >side_special_input_left
 controller_default_callback:
