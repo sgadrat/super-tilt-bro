@@ -387,7 +387,7 @@ sta tmpfield1
 lda #$40
 sta tmpfield5
 jsr merge_to_player_velocity
-jmp check_state_changes
+jmp end
 
 ; Running left, velocity tends toward vector (-2,0)
 run_left:
@@ -401,7 +401,12 @@ lda #$40
 sta tmpfield5
 jsr merge_to_player_velocity
 
-check_state_changes:
+end:
+rts
+.)
+
+running_player_input:
+.(
 lda #<controller_inputs
 sta tmpfield1
 lda #>controller_inputs
