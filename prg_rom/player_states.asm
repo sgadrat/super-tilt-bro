@@ -492,7 +492,6 @@ rts
 falling_player:
 .(
 jsr apply_gravity
-jsr check_aerial_inputs
 rts
 .)
 
