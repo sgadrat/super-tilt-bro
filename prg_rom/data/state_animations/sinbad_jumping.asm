@@ -25,7 +25,7 @@ anim_sinbad_jumping_left:
 .byt $01 ; Sprite - Sinbad
 .byt $08, $3c, $00, $00
 .byt $00
-; Frame 2
+; Frame 3
 .byt 100 ; Frame duration
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom
@@ -68,7 +68,7 @@ anim_sinbad_jumping_right:
 .byt $01 ; Sprite - Scimitar's handle
 .byt $06, $12, $41, $03
 .byt $00
-; Frame 2
+; Frame 3
 .byt 100 ; Frame duration
 .byt $04 ; Hurtbox positioning
 .byt $00, $08, $00, $10 ; left, right, top, bottom

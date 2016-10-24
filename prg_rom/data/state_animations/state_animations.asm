@@ -9,3 +9,4 @@
 #include "prg_rom/data/state_animations/sinbad_crashing.asm"
 #include "prg_rom/data/state_animations/sinbad_thrown.asm"
 #include "prg_rom/data/state_animations/sinbad_jumping.asm"
+#include "prg_rom/data/state_animations/sinbad_falling.asm"

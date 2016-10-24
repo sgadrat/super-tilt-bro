@@ -458,6 +458,22 @@ start_falling_player:
 .(
 lda PLAYER_STATE_FALLING
 sta player_a_state, x
+
+; Fallthrough to set the animation
+.)
+set_falling_animation:
+.(
+; Set the appropriate animation (depending on player's direction)
+lda #<anim_sinbad_falling_left
+sta tmpfield1
+lda #>anim_sinbad_falling_left
+sta tmpfield2
+lda #<anim_sinbad_falling_right
+sta tmpfield3
+lda #>anim_sinbad_falling_right
+sta tmpfield4
+jsr set_player_animation_oriented
+
 rts
 .)
 
