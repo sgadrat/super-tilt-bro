@@ -46,15 +46,15 @@ STATE_ROUTINE(dummy_routine) ; Crashing
 
 sinbad_state_input_routines:
 STATE_ROUTINE(standing_player_input) ; Standing
-STATE_ROUTINE(dummy_routine) ; Running
-STATE_ROUTINE(dummy_routine) ; Falling
-STATE_ROUTINE(dummy_routine) ; Jumping
-STATE_ROUTINE(dummy_routine) ; Jabbing
-STATE_ROUTINE(dummy_routine) ; Thrown
-STATE_ROUTINE(dummy_routine) ; Respawn
-STATE_ROUTINE(dummy_routine) ; Side tilt
-STATE_ROUTINE(dummy_routine) ; Special
-STATE_ROUTINE(dummy_routine) ; Side special
-STATE_ROUTINE(dummy_routine) ; Helpless
-STATE_ROUTINE(dummy_routine) ; Landing
-STATE_ROUTINE(dummy_routine) ; Crashing
+STATE_ROUTINE(keep_input_dirty) ; Running
+STATE_ROUTINE(keep_input_dirty) ; Falling
+STATE_ROUTINE(keep_input_dirty) ; Jumping
+STATE_ROUTINE(keep_input_dirty) ; Jabbing
+STATE_ROUTINE(keep_input_dirty) ; Thrown
+STATE_ROUTINE(keep_input_dirty) ; Respawn
+STATE_ROUTINE(keep_input_dirty) ; Side tilt
+STATE_ROUTINE(keep_input_dirty) ; Special
+STATE_ROUTINE(keep_input_dirty) ; Side special
+STATE_ROUTINE(keep_input_dirty) ; Helpless
+STATE_ROUTINE(keep_input_dirty) ; Landing
+STATE_ROUTINE(keep_input_dirty) ; Crashing

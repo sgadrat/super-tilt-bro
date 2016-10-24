@@ -424,6 +424,14 @@ end:
 rts
 .)
 
+; Indicate that the input modification on this frame has not been consumed
+keep_input_dirty:
+.(
+lda #$ff ; Impossible buttons combo
+sta controller_a_btns, x
+rts
+.)
+
 ; A routine doing nothing, it can be used as dummy entry in jump tables
 dummy_routine:
 .(
