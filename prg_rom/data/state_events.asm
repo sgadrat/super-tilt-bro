@@ -54,7 +54,7 @@ STATE_ROUTINE(thrown_player_input) ; Thrown
 STATE_ROUTINE(keep_input_dirty) ; Respawn
 STATE_ROUTINE(keep_input_dirty) ; Side tilt
 STATE_ROUTINE(special_player_input) ; Special
-STATE_ROUTINE(keep_input_dirty) ; Side special
+STATE_ROUTINE(dummy_routine) ; Side special
 STATE_ROUTINE(keep_input_dirty) ; Helpless
 STATE_ROUTINE(keep_input_dirty) ; Landing
 STATE_ROUTINE(keep_input_dirty) ; Crashing
