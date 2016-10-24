@@ -202,6 +202,22 @@ controller_default_callback:
 .)
 .)
 
+; Simple way to apply the standard gravity effect
+;  register X - player number
+apply_gravity:
+.(
+lda #$00 ; Horizontal component
+pha      ; - high
+pha      ; - low
+lda #$01  ; Vertical component
+pha       ; - high
+lda #$00  ;
+pha       ; - low
+jsr add_to_player_velocity
+
+rts
+.)
+
 start_standing_player:
 .(
 ; Set the appropriate animation (depending on player's direction)
@@ -449,41 +465,61 @@ rts
 ;  register X must contain the player number
 falling_player:
 .(
-lda #$00 ; Horizontal component
-pha      ; - high
-pha      ; - low
-lda #$01  ; Vertical component
-pha       ; - high
-lda #$00  ;
-pha       ; - low
-jsr add_to_player_velocity
-
+jsr apply_gravity
 jsr check_aerial_inputs
 rts
 .)
 
 start_jumping_player:
 .(
-lda #$fa
-sta player_a_state_field1, x
 lda PLAYER_STATE_JUMPING
 sta player_a_state, x
+
+; Fallthrough to set the animation
+.)
+set_jumping_animation:
+.(
+; Set the appropriate animation (depending on player's direction)
+lda #<anim_sinbad_jumping_left
+sta tmpfield1
+lda #>anim_sinbad_jumping_left
+sta tmpfield2
+lda #<anim_sinbad_jumping_right
+sta tmpfield3
+lda #>anim_sinbad_jumping_right
+sta tmpfield4
+jsr set_player_animation_oriented
+
 rts
 .)
 
+#define STATE_SINBAD_JUMP_PREPARATION_END #4
 jumping_player:
 .(
-lda player_a_state_field1, x
-beq top_reached
+; Wait for the preparation to end to begin to jump
+lda player_a_anim_clock, x
+cmp STATE_SINBAD_JUMP_PREPARATION_END
+bcc end
+beq begin_to_jump
 
-; The top is not reached, add up velocity
-sta player_a_velocity_v, x
-inc player_a_state_field1, x
+; Return to falling when the top is reached
+lda player_a_velocity_v, x
+beq top_reached
+bmi top_reached
+
+; The top is not reached, stay in jumping state but apply gravity
+jsr apply_gravity
 jmp end
 
 top_reached:
-lda PLAYER_STATE_FALLING
-sta player_a_state, x
+jsr start_falling_player
+jmp end
+
+begin_to_jump:
+lda #$fa
+sta player_a_velocity_v, x
+lda #$00
+sta player_a_velocity_v_low, x
 
 end:
 rts
@@ -560,14 +596,7 @@ rts
 thrown_player:
 .(
 ; Add gravity to velocity
-lda #$00 ; Horizontal component
-pha      ; - high
-pha      ; - low
-lda #$01  ; Vertical component
-pha       ; - high
-lda #$00  ;
-pha       ; - low
-jsr add_to_player_velocity
+jsr apply_gravity
 
 ; Decrement tech counter (to zero minimum)
 lda player_a_state_field1, x
@@ -909,15 +938,7 @@ rts
 ; Update a player that is helplessly falling
 helpless_player:
 .(
-lda #$00 ; Horizontal component
-pha      ; - high
-pha      ; - low
-lda #$01  ; Vertical component
-pha       ; - high
-lda #$00  ;
-pha       ; - low
-jsr add_to_player_velocity
-
+jsr apply_gravity
 rts
 .)
 
