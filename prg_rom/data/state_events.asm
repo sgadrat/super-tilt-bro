@@ -50,7 +50,7 @@ STATE_ROUTINE(running_player_input) ; Running
 STATE_ROUTINE(check_aerial_inputs) ; Falling
 STATE_ROUTINE(keep_input_dirty) ; Jumping
 STATE_ROUTINE(keep_input_dirty) ; Jabbing
-STATE_ROUTINE(keep_input_dirty) ; Thrown
+STATE_ROUTINE(thrown_player_input) ; Thrown
 STATE_ROUTINE(keep_input_dirty) ; Respawn
 STATE_ROUTINE(keep_input_dirty) ; Side tilt
 STATE_ROUTINE(keep_input_dirty) ; Special

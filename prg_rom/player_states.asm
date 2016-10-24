@@ -629,6 +629,11 @@ beq end_dec_tech_cnt
 dec player_a_state_field1, x
 end_dec_tech_cnt:
 
+rts
+.)
+
+thrown_player_input:
+.(
 ; Handle controller inputs
 lda #<controller_inputs
 sta tmpfield1
