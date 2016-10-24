@@ -45,7 +45,7 @@ STATE_ROUTINE(dummy_routine) ; Landing
 STATE_ROUTINE(dummy_routine) ; Crashing
 
 sinbad_state_input_routines:
-STATE_ROUTINE(dummy_routine) ; Standing
+STATE_ROUTINE(standing_player_input) ; Standing
 STATE_ROUTINE(dummy_routine) ; Running
 STATE_ROUTINE(dummy_routine) ; Falling
 STATE_ROUTINE(dummy_routine) ; Jumping

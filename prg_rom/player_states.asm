@@ -251,6 +251,11 @@ lda #$ff
 sta tmpfield5
 jsr merge_to_player_velocity
 
+rts
+.)
+
+standing_player_input:
+.(
 ; Check state changes
 lda #<controller_inputs
 sta tmpfield1
