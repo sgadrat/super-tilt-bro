@@ -823,6 +823,11 @@ rts
 ;  register X must contain the player number
 special_player:
 .(
+rts
+.)
+
+special_player_input:
+.(
 lda controller_a_btns, x
 cmp #CONTROLLER_INPUT_SPECIAL
 beq end
