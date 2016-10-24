@@ -11,6 +11,10 @@ ldx #$00
 
 fetch_one_controller:
 
+; Save previous state of the controller
+lda controller_a_btns, x
+sta controller_a_last_frame_btns, x
+
 ; Reset the controller's byte
 lda #$00
 sta controller_a_btns, x

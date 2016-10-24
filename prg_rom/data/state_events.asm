@@ -43,3 +43,18 @@ STATE_ROUTINE(dummy_routine) ; Side special
 STATE_ROUTINE(start_landing_player) ; Helpless
 STATE_ROUTINE(dummy_routine) ; Landing
 STATE_ROUTINE(dummy_routine) ; Crashing
+
+sinbad_state_input_routines:
+STATE_ROUTINE(dummy_routine) ; Standing
+STATE_ROUTINE(dummy_routine) ; Running
+STATE_ROUTINE(dummy_routine) ; Falling
+STATE_ROUTINE(dummy_routine) ; Jumping
+STATE_ROUTINE(dummy_routine) ; Jabbing
+STATE_ROUTINE(dummy_routine) ; Thrown
+STATE_ROUTINE(dummy_routine) ; Respawn
+STATE_ROUTINE(dummy_routine) ; Side tilt
+STATE_ROUTINE(dummy_routine) ; Special
+STATE_ROUTINE(dummy_routine) ; Side special
+STATE_ROUTINE(dummy_routine) ; Helpless
+STATE_ROUTINE(dummy_routine) ; Landing
+STATE_ROUTINE(dummy_routine) ; Crashing

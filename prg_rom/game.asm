@@ -67,6 +67,17 @@ lda #>sinbad_state_update_routines
 sta tmpfield2
 jsr player_state_action
 
+; Call the state input routine if input changed
+lda controller_a_btns, x
+cmp controller_a_last_frame_btns, x
+beq end_input_event
+lda #<sinbad_state_input_routines
+sta tmpfield1
+lda #>sinbad_state_input_routines
+sta tmpfield2
+jsr player_state_action
+end_input_event:
+
 ; Call generic update routines
 jsr move_player
 jsr check_player_position
