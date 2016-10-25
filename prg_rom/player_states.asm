@@ -209,9 +209,9 @@ apply_gravity:
 lda #$00 ; Horizontal component
 pha      ; - high
 pha      ; - low
-lda #$01  ; Vertical component
+lda #$00  ; Vertical component
 pha       ; - high
-lda #$00  ;
+lda #$80  ;
 pha       ; - low
 jsr add_to_player_velocity
 
@@ -559,7 +559,7 @@ jmp end
 begin_to_jump:
 lda #$fa
 sta player_a_velocity_v, x
-lda #$00
+lda #$80
 sta player_a_velocity_v_low, x
 
 end:
