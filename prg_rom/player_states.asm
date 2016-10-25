@@ -582,6 +582,11 @@ inc player_a_num_aerial_jumps, x
 lda PLAYER_STATE_JUMPING
 sta player_a_state, x
 
+lda #$00
+sta player_a_velocity_v, x
+lda #$00
+sta player_a_velocity_v_low, x
+
 ; Fallthrough to set the animation
 .)
 set_aerial_jumping_animation:
