@@ -1076,7 +1076,7 @@ jsr set_player_animation_oriented
 rts
 .)
 
-#define STATE_SINBAD_LANDING_DURATION #20
+#define STATE_SINBAD_LANDING_DURATION #6
 landing_player:
 .(
 ; Do not move, velocity tends toward vector (0,0)
