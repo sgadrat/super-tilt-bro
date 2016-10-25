@@ -1,631 +1,383 @@
 anim_sinbad_side_special_left_charge:
 ; Frame 1
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $26, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $26, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_TINY_1, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_TINY_1, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; Frame 2
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $27, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $27, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_TINY_2, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_TINY_2, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; Frame 3
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $26, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $26, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_TINY_1, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_TINY_1, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; Frame 4
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $27, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $27, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_TINY_2, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_TINY_2, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; Frame 5
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $28, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $28, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LITTLE_1, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LITTLE_1, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; Frame 6
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $29, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $29, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LITTLE_2, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LITTLE_2, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; Frame 7
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $28, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $28, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LITTLE_1, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LITTLE_1, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; Frame 8
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $29, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $29, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LITTLE_2, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LITTLE_2, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; Frame 9
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2a, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $2a, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_MEDIUM_1, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_MEDIUM_1, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; Frame 10
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2b, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $2b, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_MEDIUM_2, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_MEDIUM_2, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; Frame 11
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2a, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $2a, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_MEDIUM_1, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_MEDIUM_1, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; Frame 12
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2b, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $2b, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_MEDIUM_2, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_MEDIUM_2, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; Frame 13
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2c, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $2c, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_1, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_1, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; Frame 14
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2d, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $2d, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_2, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_2, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; Frame 15
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2c, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $2c, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_1, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_1, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; Frame 16
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2d, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $2d, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_2, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_2, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; Frame 17
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2c, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $2c, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_1, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_1, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; Frame 18
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2d, $01, $f9
-.byt $01 ; Sprite - power flame right
-.byt $08, $2d, $41, $07
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_2, $01, $f9)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_2, $41, $07)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; End of animation
-.byt $00
+ANIM_ANIMATION_END
 
 anim_sinbad_side_special_left_jump:
 ; Frame 1a
 .byt 1; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $00, $10, $00, $10 ; left, right, top, bottom
-.byt $08 ; Hitbox positioning
-.byt $01, $0a, $01, $00, $02, $00, $00, $00, $00, $00, $f8, $04, $06, $0c ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
-.byt $01 ; Sprite - Scimitar's blade
-.byt $06, $02, $01, $f8
-.byt $01 ; Sprite - Scimitar's handle
-.byt $06, $03, $01, $00
-.byt $01
-.byt $00, $04, $00, $00 ; Y, tile, attr, X
-.byt $01
-.byt $00, $05, $00, $08
-.byt $01
-.byt $08, $06, $00, $00
-.byt $01
-.byt $08, $07, $00, $08
-.byt $00
+ANIM_HURTBOX($00, $10, $00, $10)
+ANIM_HITBOX($01, $0a, $0100, $0200, $0000, $0000, $f8, $04, $06, $0c)
+ANIM_SPRITE($06, TILE_SCIMITAR_BLADE, $01, $f8)
+ANIM_SPRITE($06, TILE_SCIMITAR_HANDLE, $01, $00)
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_1, $00, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_2, $00, $08)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_1_3, $00, $00)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_1_4, $00, $08)
+ANIM_FRAME_END
 ; Frame 1b
 .byt 60; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $00, $10, $00, $10 ; left, right, top, bottom
-.byt $08 ; Hitbox positioning
-.byt $00, $0a, $01, $00, $02, $00, $00, $00, $00, $00, $f8, $04, $06, $0c ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
-.byt $01 ; Sprite - Scimitar's blade
-.byt $06, $02, $01, $f8
-.byt $01 ; Sprite - Scimitar's handle
-.byt $06, $03, $01, $00
-.byt $01
-.byt $00, $04, $00, $00 ; Y, tile, attr, X
-.byt $01
-.byt $00, $05, $00, $08
-.byt $01
-.byt $08, $06, $00, $00
-.byt $01
-.byt $08, $07, $00, $08
-.byt $00
+ANIM_HURTBOX($00, $10, $00, $10)
+ANIM_HITBOX($00, $0a, $0100, $0200, $0000, $0000, $f8, $04, $06, $0c)
+ANIM_SPRITE($06, TILE_SCIMITAR_BLADE, $01, $f8)
+ANIM_SPRITE($06, TILE_SCIMITAR_HANDLE, $01, $00)
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_1, $00, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_2, $00, $08)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_1_3, $00, $00)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_1_4, $00, $08)
+ANIM_FRAME_END
 ; End of animation
-.byt $00
+ANIM_ANIMATION_END
 
 anim_sinbad_side_special_right_charge:
 ; Frame 1
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $26, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $26, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_TINY_1, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_TINY_1, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 2
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $27, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $27, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_TINY_2, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_TINY_2, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 3
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $26, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $26, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_TINY_1, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_TINY_1, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 4
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $27, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $27, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_TINY_2, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_TINY_2, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 5
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $28, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $28, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LITTLE_1, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LITTLE_1, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 6
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $29, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $29, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LITTLE_2, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LITTLE_2, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 7
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $28, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $28, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LITTLE_1, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LITTLE_1, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 8
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $29, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $29, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LITTLE_2, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LITTLE_2, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 9
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2a, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $2a, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_MEDIUM_1, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_MEDIUM_1, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 10
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2b, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $2b, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_MEDIUM_2, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_MEDIUM_2, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 11
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2a, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $2a, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_MEDIUM_1, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_MEDIUM_1, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 12
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2b, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $2b, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_MEDIUM_2, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_MEDIUM_2, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 13
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2c, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $2c, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_1, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_1, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 14
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2d, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $2d, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_2, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_2, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 15
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2c, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $2c, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_1, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_1, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 16
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2d, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $2d, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_2, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_2, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 17
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2c, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $2c, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_1, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_1, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 18
-.byt 8 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - power flame left
-.byt $08, $2d, $01, $f1
-.byt $01 ; Sprite - power flame right
-.byt $08, $2d, $41, $ff
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(8)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_2, $01, $f1)
+ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_2, $41, $ff)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_FRAME_END
 ; End of animation
-.byt $00
+ANIM_ANIMATION_END
 
 anim_sinbad_side_special_right_jump:
 ; Frame 1a
-.byt 1 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $08, $00, $10 ; left, right, top, bottom
-.byt $08 ; Hitbox positioning
-.byt $01, $0a, $ff, $00, $02, $00, $00, $00, $00, $00, $04, $10, $06, $0c ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
-.byt $01
-.byt $00, $04, $40, $00 ; Y, tile, attr, X
-.byt $01
-.byt $00, $05, $40, $f8
-.byt $01
-.byt $08, $06, $40, $00
-.byt $01
-.byt $08, $07, $40, $f8
-.byt $01 ; Sprite - Scimitar's blade
-.byt $06, $02, $41, $08
-.byt $01 ; Sprite - Scimitar's handle
-.byt $06, $03, $41, $00
-.byt $00
+ANIM_FRAME_BEGIN(1)
+ANIM_HURTBOX($f8, $08, $00, $10)
+ANIM_HITBOX($01, $0a, $ff00, $0200, $0000, $0000, $04, $10, $06, $0c)
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_2, $40, $f8)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_1_3, $40, $00)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_1_4, $40, $f8)
+ANIM_SPRITE($06, TILE_SCIMITAR_BLADE, $41, $08)
+ANIM_SPRITE($06, TILE_SCIMITAR_HANDLE, $41, $00)
+ANIM_FRAME_END
 ; Frame 1b
-.byt 60 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $08, $00, $10 ; left, right, top, bottom
-.byt $08 ; Hitbox positioning
-.byt $00, $0a, $ff, $00, $02, $00, $00, $00, $00, $00, $04, $10, $06, $0c ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
-.byt $01
-.byt $00, $04, $40, $00 ; Y, tile, attr, X
-.byt $01
-.byt $00, $05, $40, $f8
-.byt $01
-.byt $08, $06, $40, $00
-.byt $01
-.byt $08, $07, $40, $f8
-.byt $01 ; Sprite - Scimitar's blade
-.byt $06, $02, $41, $08
-.byt $01 ; Sprite - Scimitar's handle
-.byt $06, $03, $41, $00
-.byt $00
+ANIM_FRAME_BEGIN(60)
+ANIM_HURTBOX($f8, $08, $00, $10)
+ANIM_HITBOX($00, $0a, $ff00, $0200, $0000, $0000, $04, $10, $06, $0c)
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_2, $40, $f8)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_1_3, $40, $00)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_1_4, $40, $f8)
+ANIM_SPRITE($06, TILE_SCIMITAR_BLADE, $41, $08)
+ANIM_SPRITE($06, TILE_SCIMITAR_HANDLE, $41, $00)
+ANIM_FRAME_END
 ; End of animation
-.byt $00
+ANIM_ANIMATION_END

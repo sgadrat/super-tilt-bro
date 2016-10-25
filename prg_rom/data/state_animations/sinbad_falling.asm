@@ -1,33 +1,23 @@
 anim_sinbad_falling_left:
 ; Frame 1
-.byt 100 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $00, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - Scimitar's blade
-.byt $fa, $0f, $01, $01
-.byt $01 ; Sprite - Scimitar's handle
-.byt $02, $10, $01, $01
-.byt $01 ; Sprite - Sinbad
-.byt $00, $3d, $00, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $08, $3e, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(100)
+ANIM_HURTBOX($00, $08, $00, $10)
+ANIM_SPRITE($fa, TILE_VERTICAL_SCIMITAR_BLADE, $01, $01)
+ANIM_SPRITE($02, TILE_VERTICAL_SCIMITAR_HANDLE, $01, $01)
+ANIM_SPRITE($00, TILE_JUMPING_SINBAD_3_HEAD, $00, $00) ; Y, tile, attr, X
+ANIM_SPRITE($08, TILE_JUMPING_SINBAD_3_BODY, $00, $00)
+ANIM_FRAME_END
 ; End of animation
-.byt $00
+ANIM_ANIMATION_END
 
 anim_sinbad_falling_right:
 ; Frame 1
-.byt 100 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $00, $08, $00, $10 ; left, right, top, bottom
-.byt $01 ; Sprite - Sinbad
-.byt $00, $3d, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $08, $3e, $40, $00
-.byt $01 ; Sprite - Scimitar's blade
-.byt $fa, $0f, $41, $ff
-.byt $01 ; Sprite - Scimitar's handle
-.byt $02, $10, $41, $ff
-.byt $00
+ANIM_FRAME_BEGIN(100)
+ANIM_HURTBOX($00, $08, $00, $10)
+ANIM_SPRITE($00, TILE_JUMPING_SINBAD_3_HEAD, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($08, TILE_JUMPING_SINBAD_3_BODY, $40, $00)
+ANIM_SPRITE($fa, TILE_VERTICAL_SCIMITAR_BLADE, $41, $ff)
+ANIM_SPRITE($02, TILE_VERTICAL_SCIMITAR_HANDLE, $41, $ff)
+ANIM_FRAME_END
 ; End of animation
-.byt $00
+ANIM_ANIMATION_END

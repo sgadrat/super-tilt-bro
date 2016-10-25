@@ -1,147 +1,89 @@
 anim_sinbad_side_tilt_left:
 ; Frame 1a (first tick of the Frame 1, enables the hitbox)
-.byt 1 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $00, $0c, $00, $10 ; left, right, top, bottom
-.byt $08 ; Hitbox positioning
-.byt $01, $0a, $fd, $00, $fd, $00, $ff, $fb, $ff, $fe, $04, $0a, $f4, $00 ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
-.byt $01 ; Sprite - Scimitar's blade
-.byt $f4, $0f, $01, $02
-.byt $01 ; Sprite - Scimitar's handle
-.byt $fc, $10, $01, $02
-.byt $01 ; Sprite - Sinbad
-.byt $00, $13, $00, $fc ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $14, $00, $04
-.byt $01 ; Sprite - Sinbad
-.byt $08, $15, $00, $fc
-.byt $01 ; Sprite - Sinbad
-.byt $08, $16, $00, $04
-.byt $00
+ANIM_FRAME_BEGIN(1)
+ANIM_HURTBOX($00, $0c, $00, $10)
+ANIM_HITBOX($01, $0a, $fd00, $fd00, $fffb, $fffe, $04, $0a, $f4, $00)
+ANIM_SPRITE($f4, TILE_VERTICAL_SCIMITAR_BLADE, $01, $02)
+ANIM_SPRITE($fc, TILE_VERTICAL_SCIMITAR_HANDLE, $01, $02)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_1_1, $00, $fc) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_1_2, $00, $04)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_1_3, $00, $fc)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_1_4, $00, $04)
+ANIM_FRAME_END
 ; Frame 1b
-.byt 6 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $00, $0c, $00, $10 ; left, right, top, bottom
-.byt $08 ; Hitbox positioning
-.byt $00, $0a, $fd, $00, $fd, $00, $ff, $fb, $ff, $fe, $04, $0a, $f4, $00 ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
-.byt $01 ; Sprite - Scimitar's blade
-.byt $f4, $0f, $01, $02
-.byt $01 ; Sprite - Scimitar's handle
-.byt $fc, $10, $01, $02
-.byt $01 ; Sprite - Sinbad
-.byt $00, $13, $00, $fc ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $14, $00, $04
-.byt $01 ; Sprite - Sinbad
-.byt $08, $15, $00, $fc
-.byt $01 ; Sprite - Sinbad
-.byt $08, $16, $00, $04
-.byt $00
+ANIM_FRAME_BEGIN(6)
+ANIM_HURTBOX($00, $0c, $00, $10)
+ANIM_HITBOX($00, $0a, $fd00, $fd00, $fffb, $fffe, $04, $0a, $f4, $00)
+ANIM_SPRITE($f4, TILE_VERTICAL_SCIMITAR_BLADE, $01, $02)
+ANIM_SPRITE($fc, TILE_VERTICAL_SCIMITAR_HANDLE, $01, $02)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_1_1, $00, $fc) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_1_2, $00, $04)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_1_3, $00, $fc)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_1_4, $00, $04)
+ANIM_FRAME_END
 ; Frame 2
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $00, $08, $00, $10 ; left, right, top, bottom
-.byt $08 ; Hitbox positioning
-.byt $00, $0a, $fd, $00, $fd, $00, $ff, $fb, $ff, $fe, $f9, $01, $fc, $08 ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
-.byt $01 ; Sprite - Scimitar's blade
-.byt $fc, $11, $01, $f9 ; Y, tile, attr, X
-.byt $01 ; Sprite - Scimitar's handle
-.byt $04, $12, $01, $f9
-.byt $01 ; Sprite - Sinbad
-.byt $00, $17, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $18, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($00, $08, $00, $10)
+ANIM_HITBOX($00, $0a, $fd00, $fd00, $fffb, $fffe, $f9, $01, $fc, $08)
+ANIM_SPRITE($fc, TILE_ANGLED_SCIMITAR_BLADE, $01, $f9) ; Y, tile, attr, X
+ANIM_SPRITE($04, TILE_ANGLED_SCIMITAR_HANDLE, $01, $f9)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_2_1, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_2_2, $00, $00)
+ANIM_FRAME_END
 ; Frame 3
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $08 ; Hitbox positioning
-.byt $00, $0a, $fd, $00, $fd, $00, $ff, $fb, $ff, $fe, $f4, $00, $06, $0c ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
-.byt $01 ; Sprite - Scimitar's blade
-.byt $06, $02, $01, $f4 ; Y, tile, attr, X
-.byt $01 ; Sprite - Scimitar's handle
-.byt $06, $03, $01, $fc
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $00, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $00, $00
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $00, $00
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_HITBOX($00, $0a, $fd00, $fd00, $fffb, $fffe, $f4, $00, $06, $0c)
+ANIM_SPRITE($06, TILE_SCIMITAR_BLADE, $01, $f4) ; Y, tile, attr, X
+ANIM_SPRITE($06, TILE_SCIMITAR_HANDLE, $01, $fc)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $00, $f8)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $00, $00)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $00, $00)
+ANIM_FRAME_END
 ; End of animation
-.byt $00
+ANIM_ANIMATION_END
 
 anim_sinbad_side_tilt_right:
 ; Frame 1a
-.byt 1 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $08 ; Hitbox positioning
-.byt $01, $0a, $04, $00, $fd, $00, $00, $05, $ff, $fe, $fe, $04, $f4, $00 ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
-.byt $01 ; Sprite - Sinbad
-.byt $00, $13, $40, $04 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $14, $40, $fc
-.byt $01 ; Sprite - Sinbad
-.byt $08, $15, $40, $04
-.byt $01 ; Sprite - Sinbad
-.byt $08, $16, $40, $fc
-.byt $01 ; Sprite - Scimitar's blade
-.byt $f4, $0f, $41, $fe
-.byt $01 ; Sprite - Scimitar's handle
-.byt $fc, $10, $41, $fe
-.byt $00
+ANIM_FRAME_BEGIN(1)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_HITBOX($01, $0a, $0400, $fd00, $0005, $fffe, $fe, $04, $f4, $00)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_1_1, $40, $04) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_1_2, $40, $fc)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_1_3, $40, $04)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_1_4, $40, $fc)
+ANIM_SPRITE($f4, TILE_VERTICAL_SCIMITAR_BLADE, $41, $fe)
+ANIM_SPRITE($fc, TILE_VERTICAL_SCIMITAR_HANDLE, $41, $fe)
+ANIM_FRAME_END
 ; Frame 1
-.byt 6 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $fc, $08, $00, $10 ; left, right, top, bottom
-.byt $08 ; Hitbox positioning
-.byt $00, $0a, $04, $00, $fd, $00, $00, $05, $ff, $fe, $fe, $04, $f4, $00 ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
-.byt $01 ; Sprite - Sinbad
-.byt $00, $13, $40, $04 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $14, $40, $fc
-.byt $01 ; Sprite - Sinbad
-.byt $08, $15, $40, $04
-.byt $01 ; Sprite - Sinbad
-.byt $08, $16, $40, $fc
-.byt $01 ; Sprite - Scimitar's blade
-.byt $f4, $0f, $41, $fe
-.byt $01 ; Sprite - Scimitar's handle
-.byt $fc, $10, $41, $fe
-.byt $00
+ANIM_FRAME_BEGIN(6)
+ANIM_HURTBOX($fc, $08, $00, $10)
+ANIM_HITBOX($00, $0a, $0400, $fd00, $0005, $fffe, $fe, $04, $f4, $00)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_1_1, $40, $04) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_1_2, $40, $fc)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_1_3, $40, $04)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_1_4, $40, $fc)
+ANIM_SPRITE($f4, TILE_VERTICAL_SCIMITAR_BLADE, $41, $fe)
+ANIM_SPRITE($fc, TILE_VERTICAL_SCIMITAR_HANDLE, $41, $fe)
+ANIM_FRAME_END
 ; Frame 2
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $00, $08, $00, $10 ; left, right, top, bottom
-.byt $08 ; Hitbox positioning
-.byt $00, $0a, $04, $00, $fd, $00, $00, $05, $ff, $fe, $07, $0f, $fc, $08 ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
-.byt $01 ; Sprite - Sinbad
-.byt $00, $17, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $08, $18, $40, $00
-.byt $01 ; Sprite - Scimitar's blade
-.byt $fc, $11, $41, $07
-.byt $01 ; Sprite - Scimitar's handle
-.byt $04, $12, $41, $07
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($00, $08, $00, $10)
+ANIM_HITBOX($00, $0a, $0400, $fd00, $0005, $fffe, $07, $0f, $fc, $08)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_2_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_2_2, $40, $00)
+ANIM_SPRITE($fc, TILE_ANGLED_SCIMITAR_BLADE, $41, $07)
+ANIM_SPRITE($04, TILE_ANGLED_SCIMITAR_HANDLE, $41, $07)
+ANIM_FRAME_END
 ; Frame 3
-.byt 7 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $04, $00, $10 ; left, right, top, bottom
-.byt $08 ; Hitbox positioning
-.byt $00, $0a, $04, $00, $fd, $00, $00, $05, $ff, $fe, $00, $0c, $06, $0c ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
-.byt $01 ; Sprite - Sinbad
-.byt $00, $19, $40, $00 ; Y, tile, attr, X
-.byt $01 ; Sprite - Sinbad
-.byt $00, $1a, $40, $f8
-.byt $01 ; Sprite - Sinbad
-.byt $08, $1b, $40, $f8
-.byt $01 ; Sprite - Scimitar's blade
-.byt $06, $02, $41, $04
-.byt $01 ; Sprite - Scimitar's handle
-.byt $06, $03, $41, $fc
-.byt $00
+ANIM_FRAME_BEGIN(7)
+ANIM_HURTBOX($f8, $04, $00, $10)
+ANIM_HITBOX($00, $0a, $0400, $fd00, $0005, $fffe, $00, $0c, $06, $0c)
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_3_2, $40, $f8)
+ANIM_SPRITE($08, TILE_SIDE_TILT_SINBAD_3_3, $40, $f8)
+ANIM_SPRITE($06, TILE_SCIMITAR_BLADE, $41, $04)
+ANIM_SPRITE($06, TILE_SCIMITAR_HANDLE, $41, $fc)
+ANIM_FRAME_END
 ; End of animation
-.byt $00
+ANIM_ANIMATION_END

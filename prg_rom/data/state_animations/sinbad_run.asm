@@ -1,85 +1,55 @@
 anim_sinbad_run_left:
 ; Frame 1
-.byt 5 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $00, $10, $00, $10 ; left, right, top, bottom
-.byt $01
-.byt $00, $04, $00, $00 ; Y, tile, attr, X
-.byt $01
-.byt $00, $05, $00, $08
-.byt $01
-.byt $08, $06, $00, $00
-.byt $01
-.byt $08, $07, $00, $08
-.byt $00
+ANIM_FRAME_BEGIN(5)
+ANIM_HURTBOX($00, $10, $00, $10)
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_1, $00, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_2, $00, $08)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_1_3, $00, $00)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_1_4, $00, $08)
+ANIM_FRAME_END
 ; Frame 2
-.byt 5 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $00, $10, $00, $10 ; left, right, top, bottom
-.byt $01
-.byt $00, $08, $00, $00 ; Y, tile, attr, X
-.byt $01
-.byt $00, $05, $00, $08
-.byt $01
-.byt $08, $09, $00, $00
-.byt $01
-.byt $08, $0a, $00, $08
-.byt $00
+ANIM_FRAME_BEGIN(5)
+ANIM_HURTBOX($00, $10, $00, $10)
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_2_1, $00, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_2, $00, $08)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_2_2, $00, $00)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_2_3, $00, $08)
+ANIM_FRAME_END
 ; Frame 3
-.byt 5 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $00, $10, $00, $10 ; left, right, top, bottom
-.byt $01
-.byt $00, $04, $00, $00 ; Y, tile, attr, X
-.byt $01
-.byt $00, $05, $00, $08
-.byt $01
-.byt $08, $0b, $00, $00
-.byt $01
-.byt $08, $0c, $00, $08
-.byt $00
+ANIM_FRAME_BEGIN(5)
+ANIM_HURTBOX($00, $10, $00, $10)
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_1, $00, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_2, $00, $08)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_3_1, $00, $00)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_3_2, $00, $08)
+ANIM_FRAME_END
 ; End of animation
-.byt $00
+ANIM_ANIMATION_END
 
 anim_sinbad_run_right:
 ; Frame 1
-.byt 5 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $08, $00, $10 ; left, right, top, bottom
-.byt $01
-.byt $00, $04, $40, $00 ; Y, tile, attr, X
-.byt $01
-.byt $00, $05, $40, $f8
-.byt $01
-.byt $08, $06, $40, $00
-.byt $01
-.byt $08, $07, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(5)
+ANIM_HURTBOX($f8, $08, $00, $10)
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_2, $40, $f8)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_1_3, $40, $00)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_1_4, $40, $f8)
+ANIM_FRAME_END
 ; Frame 2
-.byt 5 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $08, $00, $10 ; left, right, top, bottom
-.byt $01
-.byt $00, $08, $40, $00 ; Y, tile, attr, X
-.byt $01
-.byt $00, $05, $40, $f8
-.byt $01
-.byt $08, $09, $40, $00
-.byt $01
-.byt $08, $0a, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(5)
+ANIM_HURTBOX($f8, $08, $00, $10)
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_2_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_2, $40, $f8)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_2_2, $40, $00)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_2_3, $40, $f8)
+ANIM_FRAME_END
 ; Frame 3
-.byt 5 ; Frame duration
-.byt $04 ; Hurtbox positioning
-.byt $f8, $08, $00, $10 ; left, right, top, bottom
-.byt $01
-.byt $00, $04, $40, $00 ; Y, tile, attr, X
-.byt $01
-.byt $00, $05, $40, $f8
-.byt $01
-.byt $08, $0b, $40, $00
-.byt $01
-.byt $08, $0c, $40, $f8
-.byt $00
+ANIM_FRAME_BEGIN(5)
+ANIM_HURTBOX($f8, $08, $00, $10)
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_1, $40, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_2, $40, $f8)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_3_1, $40, $00)
+ANIM_SPRITE($08, TILE_RUNNING_SINBAD_3_2, $40, $f8)
+ANIM_FRAME_END
 ; End of animation
-.byt $00
+ANIM_ANIMATION_END
