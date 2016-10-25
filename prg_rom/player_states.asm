@@ -587,13 +587,13 @@ sta player_a_state, x
 set_aerial_jumping_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_jumping_left
+lda #<anim_sinbad_aerial_jumping_left
 sta tmpfield1
-lda #>anim_sinbad_jumping_left
+lda #>anim_sinbad_aerial_jumping_left
 sta tmpfield2
-lda #<anim_sinbad_jumping_right
+lda #<anim_sinbad_aerial_jumping_right
 sta tmpfield3
-lda #>anim_sinbad_jumping_right
+lda #>anim_sinbad_aerial_jumping_right
 sta tmpfield4
 jsr set_player_animation_oriented
 
