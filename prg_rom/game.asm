@@ -15,6 +15,8 @@ sta player_a_y_low
 sta player_b_y_low
 sta player_a_x_low
 sta player_b_x_low
+sta player_a_num_aerial_jumps
+sta player_b_num_aerial_jumps
 lda #$80
 sta player_a_y
 sta player_b_y
@@ -362,11 +364,13 @@ lda player_a_y_low, x
 bne offground
 
 ; On ground
-lda #<sinbad_state_onground_routines
-sta tmpfield1
-lda #>sinbad_state_onground_routines
-sta tmpfield2
-jsr player_state_action
+lda #$00                         ; Reset aerial jumps counter
+sta player_a_num_aerial_jumps, x ;
+lda #<sinbad_state_onground_routines ;
+sta tmpfield1                        ;
+lda #>sinbad_state_onground_routines ; Fire on-ground event
+sta tmpfield2                        ;
+jsr player_state_action              ;
 jmp end
 
 offground:
@@ -378,6 +382,8 @@ jsr player_state_action
 jmp end
 
 set_death_state:
+lda #$00                         ; Reset aerial jumps counter
+sta player_a_num_aerial_jumps, x ;
 jsr start_respawn_player
 
 end:

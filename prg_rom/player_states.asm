@@ -179,7 +179,7 @@ lda #<controller_inputs
 sta tmpfield1
 lda #>controller_inputs
 sta tmpfield2
-lda #$02
+lda #$05
 sta tmpfield3
 jmp controller_callbacks
 
@@ -192,11 +192,11 @@ rts
 ; Impactful controller states and associated callbacks
 ; Note - We have to put subroutines as callbacks since we do not expect a return unless we used the default callback
 controller_inputs:
-.byt CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT
+.byt CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_JUMP,        CONTROLLER_INPUT_JUMP_RIGHT,  CONTROLLER_INPUT_JUMP_LEFT
 controller_callbacks_lo:
-.byt <start_side_special_player,     <start_side_special_player
+.byt <start_side_special_player,     <start_side_special_player,    <start_aerial_jumping_player, <start_aerial_jumping_player, <start_aerial_jumping_player
 controller_callbacks_hi:
-.byt >start_side_special_player,     >start_side_special_player
+.byt >start_side_special_player,     >start_side_special_player,    >start_aerial_jumping_player, >start_aerial_jumping_player, >start_aerial_jumping_player
 controller_default_callback:
 .word no_input
 .)
@@ -563,6 +563,40 @@ lda #$00
 sta player_a_velocity_v_low, x
 
 end:
+rts
+.)
+
+#define MAX_NUM_AERIAL_JUMPS 1
+start_aerial_jumping_player:
+.(
+; Deny to start jump state if the player used all it's jumps
+lda #MAX_NUM_AERIAL_JUMPS
+cmp player_a_num_aerial_jumps, x
+bne jump_ok
+rts
+jump_ok:
+inc player_a_num_aerial_jumps, x
+
+; Trick - aerial_jumping set the state to jumping. It is the same state with
+; the starting conditions as the only differences
+lda PLAYER_STATE_JUMPING
+sta player_a_state, x
+
+; Fallthrough to set the animation
+.)
+set_aerial_jumping_animation:
+.(
+; Set the appropriate animation (depending on player's direction)
+lda #<anim_sinbad_jumping_left
+sta tmpfield1
+lda #>anim_sinbad_jumping_left
+sta tmpfield2
+lda #<anim_sinbad_jumping_right
+sta tmpfield3
+lda #>anim_sinbad_jumping_right
+sta tmpfield4
+jsr set_player_animation_oriented
+
 rts
 .)
 

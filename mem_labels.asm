@@ -77,6 +77,8 @@ player_a_hitbox_base_knock_up_h_low = $0045
 player_b_hitbox_base_knock_up_h_low = $0046
 controller_a_last_frame_btns = $0047
 controller_b_last_frame_btns = $0048
+player_a_num_aerial_jumps = $0049
+player_b_num_aerial_jumps = $004a
 
 tmpfield1 = $00f0
 tmpfield2 = $00f1
