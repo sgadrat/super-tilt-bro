@@ -1123,7 +1123,7 @@ jsr set_player_animation_oriented
 rts
 .)
 
-#define STATE_SINBAD_CRASHING_DURATION #60
+#define STATE_SINBAD_CRASHING_DURATION #30
 crashing_player:
 .(
 ; Do not move, velocity tends toward vector (0,0)
