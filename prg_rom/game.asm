@@ -855,7 +855,7 @@ inx
 ldx #$f8
 lda player_a_hurtbox_bottom
 sec
-sbc #$08
+sbc #$07
 sta oam_mirror, x
 inx
 lda #$0d
@@ -866,7 +866,7 @@ sta oam_mirror, x
 inx
 lda player_a_hurtbox_right
 sec
-sbc #$08
+sbc #$07
 sta oam_mirror, x
 inx
 
@@ -887,7 +887,7 @@ inx
 ldx #$f0
 lda player_b_hurtbox_bottom
 sec
-sbc #$08
+sbc #$07
 sta oam_mirror, x
 inx
 lda #$0d
@@ -898,7 +898,7 @@ sta oam_mirror, x
 inx
 lda player_b_hurtbox_right
 sec
-sbc #$08
+sbc #$07
 sta oam_mirror, x
 inx
 
@@ -932,7 +932,7 @@ inx
 ldx #$e8
 lda player_a_hitbox_bottom
 sec
-sbc #$08
+sbc #$07
 sta oam_mirror, x
 inx
 lda #$0e
@@ -943,7 +943,7 @@ sta oam_mirror, x
 inx
 lda player_a_hitbox_right
 sec
-sbc #$08
+sbc #$07
 sta oam_mirror, x
 inx
 end_player_a_hitbox
@@ -978,7 +978,7 @@ inx
 ldx #$e8
 lda player_b_hitbox_bottom
 sec
-sbc #$08
+sbc #$07
 sta oam_mirror, x
 inx
 lda #$0e
@@ -989,7 +989,7 @@ sta oam_mirror, x
 inx
 lda player_b_hitbox_right
 sec
-sbc #$08
+sbc #$07
 sta oam_mirror, x
 inx
 end_player_b_hitbox
