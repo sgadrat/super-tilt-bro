@@ -195,6 +195,8 @@ credits_begin:
 .asc "    www.opengameart.org/content/bomb-party from Matt Hackett of Lost Decade Games",$0a
 .asc "    www.opengameart.org/content/twin-dragons from Surt",$0a
 .asc "    Sinbad from Zi Ye",$0a
+.asc "Thanks:",$0a
+.asc "    Benoît Ryder for dev-tools and gameplay feedbacks",$0a
 credits_end:
 
 ;
