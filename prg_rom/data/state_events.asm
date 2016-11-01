@@ -51,7 +51,7 @@ sinbad_state_input_routines:
 STATE_ROUTINE(standing_player_input) ; Standing
 STATE_ROUTINE(running_player_input) ; Running
 STATE_ROUTINE(check_aerial_inputs) ; Falling
-STATE_ROUTINE(keep_input_dirty) ; Jumping
+STATE_ROUTINE(check_aerial_inputs) ; Jumping
 STATE_ROUTINE(keep_input_dirty) ; Jabbing
 STATE_ROUTINE(thrown_player_input) ; Thrown
 STATE_ROUTINE(keep_input_dirty) ; Respawn

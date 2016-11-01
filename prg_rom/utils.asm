@@ -427,7 +427,7 @@ rts
 ; Indicate that the input modification on this frame has not been consumed
 keep_input_dirty:
 .(
-lda #$ff ; Impossible buttons combo
+lda controller_a_last_frame_btns, x
 sta controller_a_btns, x
 rts
 .)

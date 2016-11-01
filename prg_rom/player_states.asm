@@ -131,6 +131,13 @@ input_marker = tmpfield15
 player_btn = tmpfield2
 
 .(
+; Assuming we are called from an input event
+; Do nothing if the only changes concern the left-right buttons
+lda controller_a_btns, x
+eor controller_a_last_frame_btns, x
+and #CONTROLLER_BTN_A | CONTROLLER_BTN_B | CONTROLLER_BTN_UP | CONTROLLER_BTN_DOWN
+beq end
+
 ; Save current direction
 lda player_a_direction, x
 pha
@@ -507,6 +514,67 @@ rts
 ;  register X must contain the player number
 falling_player:
 .(
+lda controller_a_btns, x
+and #CONTROLLER_INPUT_LEFT
+bne go_left
+
+lda controller_a_btns, x
+and #CONTROLLER_INPUT_RIGHT
+bne go_right
+
+jmp end
+
+go_left:
+lda #$00
+sta tmpfield6
+lda #$ff
+sta tmpfield7
+lda player_a_velocity_h_low, x
+sta tmpfield8
+lda player_a_velocity_h, x
+sta tmpfield9
+jsr signed_cmp
+bpl end
+
+lda player_a_velocity_v_low, x
+sta tmpfield1
+lda player_a_velocity_v, x
+sta tmpfield3
+lda #$00
+sta tmpfield2
+lda #$ff
+sta tmpfield4
+lda #$80
+sta tmpfield5
+jsr merge_to_player_velocity
+jmp end
+
+go_right:
+lda player_a_velocity_h_low, x
+sta tmpfield6
+lda player_a_velocity_h, x
+sta tmpfield7
+lda #$00
+sta tmpfield8
+lda #$01
+sta tmpfield9
+jsr signed_cmp
+bpl end
+
+lda player_a_velocity_v_low, x
+sta tmpfield1
+lda player_a_velocity_v, x
+sta tmpfield3
+lda #$00
+sta tmpfield2
+lda #$01
+sta tmpfield4
+lda #$80
+sta tmpfield5
+jsr merge_to_player_velocity
+; Fallthrough to end
+
+end:
 jsr apply_gravity
 rts
 .)
@@ -546,10 +614,10 @@ beq begin_to_jump
 ; Return to falling when the top is reached
 lda player_a_velocity_v, x
 beq top_reached
-bmi top_reached
+bpl top_reached
 
-; The top is not reached, stay in jumping state but apply gravity
-jsr apply_gravity
+; The top is not reached, stay in jumping state but apply gravity and directional influence
+jsr falling_player ; Hack - We just use falling_player which do exactly what we want
 jmp end
 
 top_reached:
@@ -1028,7 +1096,7 @@ rts
 ; Update a player that is helplessly falling
 helpless_player:
 .(
-jsr apply_gravity
+jsr falling_player
 rts
 .)
 
