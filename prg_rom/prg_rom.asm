@@ -178,12 +178,16 @@ jmp forever
 #include "prg_rom/game.asm"
 #include "prg_rom/player_states.asm"
 #include "prg_rom/collisions.asm"
+code_end:
+data_begin:
 #include "prg_rom/data/data.asm"
+data_end:
 
 ;
 ; Credits in the rom
 ;
 
+credits_begin:
 .asc "Credits:",$0a
 .asc "Authors:",$0a
 .asc "    Sylvain Gadrat",$0a
@@ -191,6 +195,22 @@ jmp forever
 .asc "    www.opengameart.org/content/bomb-party from Matt Hackett of Lost Decade Games",$0a
 .asc "    www.opengameart.org/content/twin-dragons from Surt",$0a
 .asc "    Sinbad from Zi Ye",$0a
+credits_end:
+
+;
+; Print some PRG-ROM space usage information
+;
+
+#echo PRG-ROM total space:
+#print $10000-$C000
+#echo PRG-ROM code size:
+#print code_end-$C000
+#echo PRG-ROM data size:
+#print data_end-data_begin
+#echo PRG-ROM credits size:
+#print credits_end-credits_begin
+#echo PRG-ROM free space:
+#print $fffa-*
 
 ;
 ; Fill code bank and set entry points vectors (also from nesmine)
