@@ -459,6 +459,7 @@ update_sprites:
 animation_vector = tmpfield3   ; Not movable - Used as parameter for draw_anim_frame subroutine
 first_sprite_index = tmpfield5 ; Not movable - Used as parameter for draw_anim_frame subroutine
 last_sprite_index = tmpfield6  ; Not movable - Used as parameter for draw_anim_frame subroutine
+frame_first_tick = tmpfield7  ; Not movable - Used as parameter for draw_anim_frame subroutine
 
 .(
 ldx #$00
@@ -466,7 +467,7 @@ ldx #$00
 player_animation:
 ldy #$00
 lda #$00
-sta tmpfield1
+sta frame_first_tick
 
 ; Store current player's animation information to a player independent location
 jsr store_player_anim_parameters
@@ -475,14 +476,13 @@ jsr store_player_anim_parameters
 new_frame:
 lda (animation_vector), y ; Load frame duration
 beq loop_animation ; Frame of duration 0 means end of animation
-clc           ;
-adc tmpfield1 ; Store current frame clock end in tmpfield1
-sta tmpfield1 ;
-
-; If the current frame ends after the clock time, draw it
-lda player_a_anim_clock, x
-cmp tmpfield1
-bcc draw_current_frame
+clc                        ; Compute current frame's clock end
+adc frame_first_tick       ;
+cmp player_a_anim_clock, x  ;
+beq search_next_frame       ; If the current frame ends after the clock time, draw it
+bcs draw_current_frame      ;
+search_next_frame:
+sta frame_first_tick ; Store next frame's clock begin (= current frame's clock end)
 
 ; Search the next frame
 lda #$01
@@ -492,14 +492,14 @@ lda (animation_vector), y ; Check current sprite continuation byte
 beq end_skip_frame        ;
 sta tmpfield8  ;
 lda #$05       ;
-sta tmpfield7  ; Set data length in tmpfield7
+sta tmpfield9  ; Set data length in tmpfield9
 lda #%00001000 ; hitbox data is 15 bytes long
 bit tmpfield8  ; other data are 5 bytes long
 beq inc_cursor ; (counting the continuation byte)
 lda #15        ;
-sta tmpfield7  ;
+sta tmpfield9  ;
 inc_cursor:
-lda tmpfield7          ; Add data length to the animation vector, to point
+lda tmpfield9          ; Add data length to the animation vector, to point
 jsr add_to_anim_vector ; on the next continuation byte
 jmp skip_sprite
 end_skip_frame:
@@ -587,6 +587,7 @@ rts
 ;  tmpfield3, tmpfield4 - Vector pointing to the frame to draw
 ;  tmpfield5 - First sprite index to use
 ;  tmpfield6 - Last sprite index to use
+;  tmpfield7 - Frame's first tick
 ;  X register - player number
 ;
 ; Overwrites tmpfield5, tmpfield7, tmpfield8, tmpfield9, tmpfield10 and all registers
@@ -603,8 +604,16 @@ sprite_orig_x = tmpfield8
 sprite_orig_y = tmpfield9
 continuation_byte = tmpfield10
 got_hitbox = tmpfield11
+is_first_tick = tmpfield12
 
 .(
+; Compute is_first_tick (set to $00 on the first apparition of this frame)
+lda player_a_anim_clock, x
+sec
+sbc tmpfield7
+sta is_first_tick
+
+; Initialization
 ldy #$00
 stx player_number
 lda #$00
@@ -762,9 +771,12 @@ anim_frame_move_hitbox:
 .(
 ldx player_number
 ; Enabled
+lda is_first_tick
+bne end_enabled
 lda (frame_vector), y
 ora player_a_hitbox_enabled, x
 sta player_a_hitbox_enabled, x
+end_enabled:
 iny
 ; Damages
 lda (frame_vector), y
