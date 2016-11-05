@@ -186,7 +186,7 @@ lda #<controller_inputs
 sta tmpfield1
 lda #>controller_inputs
 sta tmpfield2
-lda #$05
+lda #$07
 sta tmpfield3
 jmp controller_callbacks
 
@@ -200,10 +200,13 @@ rts
 ; Note - We have to put subroutines as callbacks since we do not expect a return unless we used the default callback
 controller_inputs:
 .byt CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_JUMP,        CONTROLLER_INPUT_JUMP_RIGHT,  CONTROLLER_INPUT_JUMP_LEFT
+.byt CONTROLLER_INPUT_ATTACK_LEFT,   CONTROLLER_INPUT_ATTACK_RIGHT
 controller_callbacks_lo:
 .byt <start_side_special_player,     <start_side_special_player,    <start_aerial_jumping_player, <start_aerial_jumping_player, <start_aerial_jumping_player
+.byt <start_aerial_side_player,      <start_aerial_side_player
 controller_callbacks_hi:
 .byt >start_side_special_player,     >start_side_special_player,    >start_aerial_jumping_player, >start_aerial_jumping_player, >start_aerial_jumping_player
+.byt >start_aerial_side_player,      >start_aerial_side_player
 controller_default_callback:
 .word no_input
 .)
@@ -1256,6 +1259,45 @@ lda player_a_anim_clock, x
 cmp STATE_SINBAD_DOWNTILT_DURATION
 bne end
 jsr start_standing_player
+
+end:
+rts
+.)
+
+start_aerial_side_player:
+.(
+; Set state
+lda PLAYER_STATE_AERIAL_SIDE
+sta player_a_state, x
+
+; Fallthrough to set the animation
+.)
+set_aerial_side_animation:
+.(
+; Set the appropriate animation (depending on player's direction)
+lda #<anim_sinbad_aerial_side_left
+sta tmpfield1
+lda #>anim_sinbad_aerial_side_left
+sta tmpfield2
+lda #<anim_sinbad_aerial_side_right
+sta tmpfield3
+lda #>anim_sinbad_aerial_side_right
+sta tmpfield4
+jsr set_player_animation_oriented
+
+rts
+.)
+
+#define STATE_SINBAD_AERIAL_SIDE_DURATION #12
+aerial_side_tilt_player:
+.(
+jsr apply_gravity
+
+; After move's time is out, go to standing state
+lda player_a_anim_clock, x
+cmp STATE_SINBAD_AERIAL_SIDE_DURATION
+bne end
+jsr start_falling_player
 
 end:
 rts
