@@ -15,3 +15,4 @@
 #include "prg_rom/data/state_animations/sinbad_aerial_jumping.asm"
 #include "prg_rom/data/state_animations/sinbad_down_tilt.asm"
 #include "prg_rom/data/state_animations/sinbad_aerial_side.asm"
+#include "prg_rom/data/state_animations/sinbad_aerial_down.asm"
