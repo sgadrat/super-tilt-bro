@@ -1,5 +1,51 @@
 init_game_state:
 .(
+; Ensure that the global game state is "ingame" from now on
+lda #GAME_STATE_INGAME
+sta global_game_state
+
+; Point PPU to Background palette 0 (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
+lda PPUSTATUS
+lda #$3f
+sta PPUADDR
+lda #$00
+sta PPUADDR
+
+; Write palette_data in actual ppu palettes
+ldx $00
+copy_palette:
+lda palette_data, x
+sta PPUDATA
+inx
+cpx #$20
+bne copy_palette
+
+; Copy background from PRG-rom to PPU nametable
+lda #<nametable
+sta $40
+lda #>nametable
+sta $41
+lda PPUSTATUS
+lda #$20
+sta PPUADDR
+lda #$00
+sta PPUADDR
+ldy #$00
+load_background:
+lda ($40), y
+sta PPUDATA
+inc $40
+bne end_inc_vector
+inc $41
+end_inc_vector:
+lda #<nametable_end
+cmp $40
+bne load_background
+lda #>nametable_end
+cmp $41
+bne load_background
+
+; Setup logical game state to the game startup configuration
 lda DIRECTION_LEFT
 sta player_b_direction
 
@@ -40,6 +86,9 @@ ldx #$00
 jsr start_standing_player
 ldx #$01
 jsr start_standing_player
+
+; Move sprites according to the initial state
+jsr update_sprites
 
 rts
 .)

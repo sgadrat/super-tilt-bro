@@ -80,6 +80,8 @@ controller_b_last_frame_btns = $0048
 player_a_num_aerial_jumps = $0049
 player_b_num_aerial_jumps = $004a
 
+global_game_state = $e0
+
 tmpfield1 = $00f0
 tmpfield2 = $00f1
 tmpfield3 = $00f2

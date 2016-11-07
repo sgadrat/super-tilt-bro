@@ -115,49 +115,7 @@ vblankwait2:      ; Second wait for vblank, PPU is ready after this
 bit PPUSTATUS
 bpl vblankwait2
 
-; Point PPU to Background palette 0 (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
-lda PPUSTATUS
-lda #$3f
-sta PPUADDR
-lda #$00
-sta PPUADDR
-
-; Write palette_data in actual ppu palettes
-ldx $00
-copy_palette:
-lda palette_data, x
-sta PPUDATA
-inx
-cpx #$20
-bne copy_palette
-
-; Copy background from PRG-rom to PPU nametable
-lda #<nametable
-sta $40
-lda #>nametable
-sta $41
-lda PPUSTATUS
-lda #$20
-sta PPUADDR
-lda #$00
-sta PPUADDR
-ldy #$00
-load_background:
-lda ($40), y
-sta PPUDATA
-inc $40
-bne end_inc_vector
-inc $41
-end_inc_vector:
-lda #<nametable_end
-cmp $40
-bne load_background
-lda #>nametable_end
-cmp $41
-bne load_background
-
-jsr init_game_state
-jsr update_sprites
+jsr init_title_screen
 
 ; Setup PPU
 lda #%10010000
@@ -167,17 +125,25 @@ sta PPUMASK
 
 forever:
 
+; Call common routines to all states
 jsr wait_next_frame
 jsr fetch_controllers
-jsr update_players
-jsr update_sprites
 
-jmp forever
+; Call routines apropriation for the current game state
+lda global_game_state
+bne check_title
+jsr update_players ; In game
+jsr update_sprites ;
+jmp forever        ;
+check_title:
+jsr title_screen_tick ; Title screen
+jmp forever           ;
 
 #include "prg_rom/utils.asm"
 #include "prg_rom/game.asm"
 #include "prg_rom/player_states.asm"
 #include "prg_rom/collisions.asm"
+#include "prg_rom/title_screen.asm"
 code_end:
 data_begin:
 #include "prg_rom/data/data.asm"
