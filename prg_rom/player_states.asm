@@ -186,7 +186,7 @@ lda #<controller_inputs
 sta tmpfield1
 lda #>controller_inputs
 sta tmpfield2
-lda #11
+lda #12
 sta tmpfield3
 jmp controller_callbacks
 
@@ -201,15 +201,15 @@ rts
 controller_inputs:
 .byt CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_JUMP,        CONTROLLER_INPUT_JUMP_RIGHT,  CONTROLLER_INPUT_JUMP_LEFT
 .byt CONTROLLER_INPUT_ATTACK_LEFT,   CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_DOWN_TILT,   CONTROLLER_INPUT_ATTACK_UP,   CONTROLLER_INPUT_JAB
-.byt CONTROLLER_INPUT_SPECIAL_DOWN
+.byt CONTROLLER_INPUT_SPECIAL_DOWN,  CONTROLLER_INPUT_SPECIAL_UP
 controller_callbacks_lo:
 .byt <start_side_special_player,     <start_side_special_player,    <start_aerial_jumping_player, <start_aerial_jumping_player, <start_aerial_jumping_player
 .byt <start_aerial_side_player,      <start_aerial_side_player,     <start_aerial_down_player,    <start_aerial_up_player,      <start_aerial_neutral_player
-.byt <start_aerial_spe_down_player
+.byt <start_aerial_spe_down_player,  <start_spe_up_player
 controller_callbacks_hi:
 .byt >start_side_special_player,     >start_side_special_player,    >start_aerial_jumping_player, >start_aerial_jumping_player, >start_aerial_jumping_player
 .byt >start_aerial_side_player,      >start_aerial_side_player,     >start_aerial_down_player,    >start_aerial_up_player,      >start_aerial_neutral_player
-.byt >start_aerial_spe_down_player
+.byt >start_aerial_spe_down_player,  >start_spe_up_player
 controller_default_callback:
 .word no_input
 .)
@@ -369,7 +369,7 @@ lda #<controller_inputs
 sta tmpfield1
 lda #>controller_inputs
 sta tmpfield2
-lda #$0c
+lda #13
 sta tmpfield3
 jmp controller_callbacks
 
@@ -418,15 +418,15 @@ rts
 controller_inputs:
 .byt CONTROLLER_INPUT_LEFT,         CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP,         CONTROLLER_INPUT_JUMP_RIGHT, CONTROLLER_INPUT_JUMP_LEFT
 .byt CONTROLLER_INPUT_JAB,          CONTROLLER_INPUT_ATTACK_LEFT,  CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL,    CONTROLLER_INPUT_SPECIAL_RIGHT
-.byt CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_DOWN_TILT
+.byt CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_DOWN_TILT,    CONTROLLER_INPUT_SPECIAL_UP
 controller_callbacks_lo:
 .byt <standing_player_input_left,  <standing_player_input_right,  <jump_input,                   <jump_input_right,           <jump_input_left
 .byt <start_jabbing_player,        <tilt_input_left,              <tilt_input_right,             <start_special_player,       <side_special_input_right
-.byt <side_special_input_left,     <start_down_tilt_player
+.byt <side_special_input_left,     <start_down_tilt_player,       <start_spe_up_player
 controller_callbacks_hi:
 .byt >standing_player_input_left,  >standing_player_input_right,  >jump_input,                   >jump_input_right,           >jump_input_left
 .byt >start_jabbing_player,        >tilt_input_left,              >tilt_input_right,             >start_special_player,       >side_special_input_right
-.byt >side_special_input_left,     >start_down_tilt_player
+.byt >side_special_input_left,     >start_down_tilt_player,       >start_spe_up_player
 controller_default_callback:
 .word end
 .)
@@ -505,7 +505,7 @@ lda #<controller_inputs
 sta tmpfield1
 lda #>controller_inputs
 sta tmpfield2
-lda #$0a
+lda #11
 sta tmpfield3
 jmp controller_callbacks
 
@@ -548,12 +548,15 @@ rts
 controller_inputs:
 .byt CONTROLLER_INPUT_LEFT,        CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP,    CONTROLLER_INPUT_JUMP_RIGHT,    CONTROLLER_INPUT_JUMP_LEFT
 .byt CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL, CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT
+.byt CONTROLLER_INPUT_SPECIAL_UP
 controller_callbacks_lo:
 .byt <input_left,                  <input_right,                  <start_jumping_player,    <start_jumping_player,          <start_jumping_player
 .byt <tilt_input_left,             <tilt_input_right,             <start_special_player,    <start_side_special_player,     <start_side_special_player
+.byt <start_spe_up_player
 controller_callbacks_hi:
 .byt >input_left,                  >input_right,                  >start_jumping_player,    >start_jumping_player,          >start_jumping_player
 .byt >tilt_input_left,             >tilt_input_right,             >start_special_player,    >start_side_special_player,     >start_side_special_player
+.byt >start_spe_up_player
 controller_default_callback:
 .word start_standing_player
 .)
@@ -1466,5 +1469,96 @@ lda #$40  ;
 pha       ; - low
 jsr add_to_player_velocity
 
+rts
+.)
+
+start_spe_up_player:
+.(
+; Set state
+lda PLAYER_STATE_SPE_UP
+sta player_a_state, x
+
+; Set initial velocity
+lda #$00
+sta player_a_velocity_h_low, x
+sta player_a_velocity_h, x
+sta player_a_velocity_v_low, x
+sta player_a_velocity_v, x
+
+; Set substate to "charging"
+sta player_a_state_field1, x
+
+; Fallthrough to set the animation
+.)
+set_spe_up_animation:
+.(
+; Set the appropriate animation (depending on player's direction)
+lda #<anim_sinbad_spe_up_left_prepare
+sta tmpfield1
+lda #>anim_sinbad_spe_up_left_prepare
+sta tmpfield2
+lda #<anim_sinbad_spe_up_right_prepare
+sta tmpfield3
+lda #>anim_sinbad_spe_up_right_prepare
+sta tmpfield4
+jsr set_player_animation_oriented
+
+rts
+.)
+
+#define STATE_SINBAD_SPE_UP_PREPARATION_DURATION #3
+spe_up_player:
+.(
+; Move if the substate is set to moving
+lda player_a_state_field1, x
+bne moving
+
+; Check if there is reason to begin to move
+lda player_a_anim_clock, x
+cmp STATE_SINBAD_SPE_UP_PREPARATION_DURATION
+bcs start_moving
+
+not_moving:
+jmp end
+
+start_moving:
+; Set substate to "moving"
+lda #$01
+sta player_a_state_field1, x
+
+; Set jumping velocity
+lda #$f8
+sta player_a_velocity_v, x
+lda #$80
+sta player_a_velocity_v_low, x
+
+; Set the movement animation
+lda #<anim_sinbad_spe_up_left_jump
+sta tmpfield1
+lda #>anim_sinbad_spe_up_left_jump
+sta tmpfield2
+lda #<anim_sinbad_spe_up_right_jump
+sta tmpfield3
+lda #>anim_sinbad_spe_up_right_jump
+sta tmpfield4
+jsr set_player_animation_oriented
+
+moving:
+
+; Return to falling when the top is reached
+lda player_a_velocity_v, x
+beq top_reached
+bpl top_reached
+
+; The top is not reached, stay in special upward state but apply gravity and directional influence
+jsr aerial_directional_influence
+jsr apply_gravity
+jmp end
+
+top_reached:
+jsr start_helpless_player
+jmp end
+
+end:
 rts
 .)
