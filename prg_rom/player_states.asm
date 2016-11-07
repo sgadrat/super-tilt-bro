@@ -186,7 +186,7 @@ lda #<controller_inputs
 sta tmpfield1
 lda #>controller_inputs
 sta tmpfield2
-lda #10
+lda #11
 sta tmpfield3
 jmp controller_callbacks
 
@@ -201,12 +201,15 @@ rts
 controller_inputs:
 .byt CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_JUMP,        CONTROLLER_INPUT_JUMP_RIGHT,  CONTROLLER_INPUT_JUMP_LEFT
 .byt CONTROLLER_INPUT_ATTACK_LEFT,   CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_DOWN_TILT,   CONTROLLER_INPUT_ATTACK_UP,   CONTROLLER_INPUT_JAB
+.byt CONTROLLER_INPUT_SPECIAL_DOWN
 controller_callbacks_lo:
 .byt <start_side_special_player,     <start_side_special_player,    <start_aerial_jumping_player, <start_aerial_jumping_player, <start_aerial_jumping_player
 .byt <start_aerial_side_player,      <start_aerial_side_player,     <start_aerial_down_player,    <start_aerial_up_player,      <start_aerial_neutral_player
+.byt <start_aerial_spe_down_player
 controller_callbacks_hi:
 .byt >start_side_special_player,     >start_side_special_player,    >start_aerial_jumping_player, >start_aerial_jumping_player, >start_aerial_jumping_player
 .byt >start_aerial_side_player,      >start_aerial_side_player,     >start_aerial_down_player,    >start_aerial_up_player,      >start_aerial_neutral_player
+.byt >start_aerial_spe_down_player
 controller_default_callback:
 .word no_input
 .)
@@ -225,6 +228,71 @@ lda #$80  ;
 pha       ; - low
 jsr add_to_player_velocity
 
+rts
+.)
+
+aerial_directional_influence:
+.(
+lda controller_a_btns, x
+and #CONTROLLER_INPUT_LEFT
+bne go_left
+
+lda controller_a_btns, x
+and #CONTROLLER_INPUT_RIGHT
+bne go_right
+
+jmp end
+
+go_left:
+lda #$00
+sta tmpfield6
+lda #$ff
+sta tmpfield7
+lda player_a_velocity_h_low, x
+sta tmpfield8
+lda player_a_velocity_h, x
+sta tmpfield9
+jsr signed_cmp
+bpl end
+
+lda player_a_velocity_v_low, x
+sta tmpfield1
+lda player_a_velocity_v, x
+sta tmpfield3
+lda #$00
+sta tmpfield2
+lda #$ff
+sta tmpfield4
+lda #$80
+sta tmpfield5
+jsr merge_to_player_velocity
+jmp end
+
+go_right:
+lda player_a_velocity_h_low, x
+sta tmpfield6
+lda player_a_velocity_h, x
+sta tmpfield7
+lda #$00
+sta tmpfield8
+lda #$01
+sta tmpfield9
+jsr signed_cmp
+bpl end
+
+lda player_a_velocity_v_low, x
+sta tmpfield1
+lda player_a_velocity_v, x
+sta tmpfield3
+lda #$00
+sta tmpfield2
+lda #$01
+sta tmpfield4
+lda #$80
+sta tmpfield5
+jsr merge_to_player_velocity
+
+end:
 rts
 .)
 
@@ -517,67 +585,7 @@ rts
 ;  register X must contain the player number
 falling_player:
 .(
-lda controller_a_btns, x
-and #CONTROLLER_INPUT_LEFT
-bne go_left
-
-lda controller_a_btns, x
-and #CONTROLLER_INPUT_RIGHT
-bne go_right
-
-jmp end
-
-go_left:
-lda #$00
-sta tmpfield6
-lda #$ff
-sta tmpfield7
-lda player_a_velocity_h_low, x
-sta tmpfield8
-lda player_a_velocity_h, x
-sta tmpfield9
-jsr signed_cmp
-bpl end
-
-lda player_a_velocity_v_low, x
-sta tmpfield1
-lda player_a_velocity_v, x
-sta tmpfield3
-lda #$00
-sta tmpfield2
-lda #$ff
-sta tmpfield4
-lda #$80
-sta tmpfield5
-jsr merge_to_player_velocity
-jmp end
-
-go_right:
-lda player_a_velocity_h_low, x
-sta tmpfield6
-lda player_a_velocity_h, x
-sta tmpfield7
-lda #$00
-sta tmpfield8
-lda #$01
-sta tmpfield9
-jsr signed_cmp
-bpl end
-
-lda player_a_velocity_v_low, x
-sta tmpfield1
-lda player_a_velocity_v, x
-sta tmpfield3
-lda #$00
-sta tmpfield2
-lda #$01
-sta tmpfield4
-lda #$80
-sta tmpfield5
-jsr merge_to_player_velocity
-; Fallthrough to end
-
-end:
+jsr aerial_directional_influence
 jsr apply_gravity
 rts
 .)
@@ -1417,5 +1425,46 @@ bne end
 jsr start_falling_player
 
 end:
+rts
+.)
+
+start_aerial_spe_down_player:
+.(
+; Set state
+lda PLAYER_STATE_AERIAL_SPE_DOWN
+sta player_a_state, x
+
+; Fallthrough to set the animation
+.)
+set_aerial_spe_down_animation:
+.(
+; Set the appropriate animation (depending on player's direction)
+lda #<anim_sinbad_aerial_spe_down_left
+sta tmpfield1
+lda #>anim_sinbad_aerial_spe_down_left
+sta tmpfield2
+lda #<anim_sinbad_aerial_spe_down_right
+sta tmpfield3
+lda #>anim_sinbad_aerial_spe_down_right
+sta tmpfield4
+jsr set_player_animation_oriented
+
+rts
+.)
+
+aerial_spe_down_player:
+.(
+jsr aerial_directional_influence
+
+; Special fall speed
+lda #$00 ; Horizontal component
+pha      ; - high
+pha      ; - low
+lda #$00  ; Vertical component
+pha       ; - high
+lda #$40  ;
+pha       ; - low
+jsr add_to_player_velocity
+
 rts
 .)
