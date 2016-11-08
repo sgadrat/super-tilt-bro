@@ -79,6 +79,8 @@ controller_a_last_frame_btns = $0047
 controller_b_last_frame_btns = $0048
 player_a_num_aerial_jumps = $0049
 player_b_num_aerial_jumps = $004a
+player_a_stocks = $004b
+player_b_stocks = $004c
 
 global_game_state = $e0
 

@@ -124,7 +124,7 @@ lda #%00011110
 sta PPUMASK
 
 forever:
-
+.(
 ; Call common routines to all states
 jsr wait_next_frame
 jsr fetch_controllers
@@ -138,6 +138,7 @@ jmp forever        ;
 check_title:
 jsr title_screen_tick ; Title screen
 jmp forever           ;
+.)
 
 #include "prg_rom/utils.asm"
 #include "prg_rom/game.asm"

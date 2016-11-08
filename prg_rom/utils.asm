@@ -322,6 +322,14 @@ end:
 rts
 .)
 
+; Empty the list of nametable buffers
+reset_nt_buffers:
+.(
+lda #$00
+sta nametable_buffers
+rts
+.)
+
 ; Produce a list of three tile indexes representing a number
 ;  tmpfield1 - Number to represent
 ;  tmpfield2 - Destination address LSB
@@ -436,4 +444,37 @@ rts
 dummy_routine:
 .(
 rts
+.)
+
+; Effectively set the game state in the value pointed by "global_game_state"
+;
+; WARNING - This routine never returns. It changes the state then restarts the main loop.
+change_global_game_state:
+.(
+; Disable rendering
+lda #$00
+sta PPUCTRL
+sta PPUMASK
+
+; Call the appropriate initialization routine
+lda global_game_state
+bne check_title
+jsr init_game_state
+jmp end_initialization
+check_title:
+jsr init_title_screen
+end_initialization:
+
+; Enable rendering
+lda #%10010000
+sta PPUCTRL
+lda #%00011110
+sta PPUMASK
+
+; Clear stack
+ldx #$ff
+txs
+
+; Go straight to the main loop
+jmp forever
 .)

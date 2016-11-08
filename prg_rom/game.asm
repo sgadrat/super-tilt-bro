@@ -12,7 +12,7 @@ lda #$00
 sta PPUADDR
 
 ; Write palette_data in actual ppu palettes
-ldx $00
+ldx #$00
 copy_palette:
 lda palette_data, x
 sta PPUDATA
@@ -81,6 +81,9 @@ lda #$48
 sta player_a_hurtbox_right
 lda #$a8
 sta player_b_hurtbox_right
+lda #$04
+sta player_a_stocks
+sta player_b_stocks
 
 ldx #$00
 jsr start_standing_player
@@ -433,7 +436,15 @@ jmp end
 set_death_state:
 lda #$00                         ; Reset aerial jumps counter
 sta player_a_num_aerial_jumps, x ;
-jsr start_respawn_player
+dec player_a_stocks, x ; Decrement stocks counter and check for gameover
+bmi gameover           ;
+jsr start_respawn_player ; Respawn
+jmp end
+
+gameover:
+lda #GAME_STATE_TITLE
+sta global_game_state
+jsr change_global_game_state
 
 end:
 rts
@@ -443,7 +454,9 @@ rts
 ;  register X must contain the player number
 write_player_damages:
 .(
-ppu_position = tmpfield4
+damages_ppu_position = tmpfield4
+stocks_ppu_position = tmpfield7
+player_stocks = tmpfield8
 
 ; Save X
 txa
@@ -453,18 +466,24 @@ pha
 cpx #$00
 beq prepare_player_a
 lda #$94
-sta ppu_position
+sta damages_ppu_position
+lda #$54
+sta stocks_ppu_position
 jmp end_player_variables
 prepare_player_a:
 lda #$88
-sta ppu_position
+sta damages_ppu_position
+lda #$48
+sta stocks_ppu_position
 end_player_variables:
 
 ; Put damages value parameter for number_to_tile_indexes
 lda player_a_damages, x
 sta tmpfield1
+lda player_a_stocks, x
+sta player_stocks
 
-; Write the begining of the buffer
+; Write the begining of the damage buffer
 jsr last_nt_buffer
 lda #$01                 ; Continuation byte
 sta nametable_buffers, x ;
@@ -472,7 +491,7 @@ inx
 lda #$23                 ; PPU address MSB
 sta nametable_buffers, x ;
 inx
-lda ppu_position         ; PPU address LSB
+lda damages_ppu_position ; PPU address LSB
 sta nametable_buffers, x ;
 inx
 lda #$03                 ; Tiles count
@@ -492,14 +511,50 @@ inx
 lda #$00
 sta nametable_buffers, x
 
-; Populate tiles data
+; Populate tiles data for damage buffer
 jsr number_to_tile_indexes
+
+; Construct stocks buffers
+ldy #$00
+jsr last_nt_buffer
+stocks_buffer:
+lda #$01                 ; Continuation byte
+sta nametable_buffers, x ;
+inx
+lda #$23                 ; PPU address MSB
+sta nametable_buffers, x ;
+inx
+lda stocks_ppu_position  ; PPU address LSB
+clc                      ;
+adc stocks_positions, y  ;
+sta nametable_buffers, x ;
+inx
+lda #$01                 ; Tiles count
+sta nametable_buffers, x ;
+inx
+cpy player_stocks        ;
+bcs empty_stock          ;
+lda #$dd                 ;
+jmp set_stock_tile       ; Set stock tile depending of the
+empty_stock:             ; stock's availability
+lda #$00                 ;
+set_stock_tile:          ;
+sta nametable_buffers, x ;
+inx
+iny               ;
+cpy #$04          ; Loop for each stock to print
+bne stocks_buffer ;
+lda #$00                 ; Next continuation byte to 0
+sta nametable_buffers, x ;
 
 ; Restore X
 pla
 tax
 
 rts
+
+stocks_positions:
+.byt 0, 3, 32, 35
 .)
 
 update_sprites:
