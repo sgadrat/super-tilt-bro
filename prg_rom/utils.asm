@@ -462,7 +462,12 @@ bne check_title
 jsr init_game_state
 jmp end_initialization
 check_title:
+cmp #GAME_STATE_TITLE
+bne check_gameover
 jsr init_title_screen
+jmp end_initialization
+check_gameover:
+jsr init_gameover_screen
 end_initialization:
 
 ; Enable rendering

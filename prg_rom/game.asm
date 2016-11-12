@@ -442,8 +442,11 @@ jsr start_respawn_player ; Respawn
 jmp end
 
 gameover:
-lda #GAME_STATE_TITLE
+lda #GAME_STATE_GAMEOVER
 sta global_game_state
+jsr switch_selected_player
+txa
+sta gameover_winner
 jsr change_global_game_state
 
 end:

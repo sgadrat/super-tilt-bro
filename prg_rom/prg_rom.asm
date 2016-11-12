@@ -136,8 +136,13 @@ jsr update_players ; In game
 jsr update_sprites ;
 jmp forever        ;
 check_title:
+cmp #GAME_STATE_TITLE
+bne check_gamover
 jsr title_screen_tick ; Title screen
 jmp forever           ;
+check_gamover:
+jsr gameover_screen_tick
+jmp forever
 .)
 
 #include "prg_rom/utils.asm"
@@ -145,6 +150,7 @@ jmp forever           ;
 #include "prg_rom/player_states.asm"
 #include "prg_rom/collisions.asm"
 #include "prg_rom/title_screen.asm"
+#include "prg_rom/gameover_screen.asm"
 code_end:
 data_begin:
 #include "prg_rom/data/data.asm"
