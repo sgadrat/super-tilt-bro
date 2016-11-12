@@ -61,11 +61,14 @@ rts
 
 title_screen_tick:
 .(
-; If any button of anny controller is pressed, got to the next screen
+; If all buttons of any controller are released on this frame, got to the next screen
 lda controller_a_btns
+bne check_controller_b
 cmp controller_a_last_frame_btns
 bne next_screen
+check_controller_b:
 lda controller_b_btns
+bne end
 cmp controller_b_last_frame_btns
 bne next_screen
 jmp end
