@@ -141,7 +141,12 @@ bne check_gamover
 jsr title_screen_tick ; Title screen
 jmp forever           ;
 check_gamover:
+cmp #GAME_STATE_GAMEOVER
+bne check_credits
 jsr gameover_screen_tick
+jmp forever
+check_credits:
+jsr credits_screen_tick
 jmp forever
 .)
 
@@ -151,6 +156,7 @@ jmp forever
 #include "prg_rom/collisions.asm"
 #include "prg_rom/title_screen.asm"
 #include "prg_rom/gameover_screen.asm"
+#include "prg_rom/credits_screen.asm"
 code_end:
 data_begin:
 #include "prg_rom/data/data.asm"
@@ -161,15 +167,26 @@ data_end:
 ;
 
 credits_begin:
-.asc "Credits:",$0a
-.asc "Authors:",$0a
-.asc "    Sylvain Gadrat",$0a
-.asc "Art sources:",$0a
-.asc "    www.opengameart.org/content/bomb-party from Matt Hackett of Lost Decade Games",$0a
-.asc "    www.opengameart.org/content/twin-dragons from Surt",$0a
-.asc "    Sinbad from Zi Ye",$0a
-.asc "Thanks:",$0a
-.asc "    Benoît Ryder for dev-tools and gameplay feedbacks",$0a
+.asc "             credits",$0a
+.asc $0a
+.asc "             authors",$0a
+.asc $0a
+.asc "sylvain gadrat",$0a
+.asc $0a
+.asc "           art sources",$0a
+.asc $0a
+.asc "bomb party", $0a 
+.asc "    by matt hackett of", $0a
+.asc "    lost decade games",$0a
+.asc "twin dragons",$0a
+.asc "    by surt", $0a
+.asc "sinbad",$0a
+.asc "    by zi ye",$0a
+.asc $0a
+.asc "             thanks",$0a
+.asc $0a
+.asc "benoit ryder",$0a
+.byt $00
 credits_end:
 
 ;

@@ -1,3 +1,5 @@
+title_cheatstate = $ff
+
 init_title_screen:
 .(
 ; Ensure that the global game state is "title" from now on
@@ -56,12 +58,39 @@ sta oam_mirror, x    ;move all sprites off screen
 inx
 bne clr_sprites
 
+; Reinit cheat code state
+lda #0
+sta title_cheatstate
+
 rts
 .)
 
 title_screen_tick:
 .(
+; Check for cheat code (controller A only)
+ldx title_cheatstate
+lda controller_a_btns
+cmp controller_a_last_frame_btns
+beq press_any_key
+cmp cheatcode, x
+beq update_cheatcode
+jmp press_any_key
+
+update_cheatcode:
+cpx #19
+beq cheat_succeed
+inx
+txa
+sta title_cheatstate
+jmp end
+
+cheat_succeed:
+lda #GAME_STATE_CREDITS
+sta global_game_state
+jsr change_global_game_state
+
 ; If all buttons of any controller are released on this frame, got to the next screen
+press_any_key:
 lda controller_a_btns
 bne check_controller_b
 cmp controller_a_last_frame_btns
@@ -80,4 +109,9 @@ jsr change_global_game_state
 
 end:
 rts
+
+cheatcode:
+.byt CONTROLLER_BTN_UP, 0, CONTROLLER_BTN_UP, 0, CONTROLLER_BTN_DOWN, 0, CONTROLLER_BTN_DOWN, 0
+.byt CONTROLLER_BTN_LEFT, 0, CONTROLLER_BTN_RIGHT, 0, CONTROLLER_BTN_LEFT, 0, CONTROLLER_BTN_RIGHT, 0
+.byt CONTROLLER_BTN_B, 0, CONTROLLER_BTN_A, 0
 .)
