@@ -1,16 +1,15 @@
+;
+; INGAME labels
+;
+
 ; State of the player's character
 ;  May take any value from PLAYER_STATE_XXX constants
 player_a_state = $0000
 player_b_state = $0001
 
-controller_a_btns = $0002
-controller_b_btns = $0003
-
-; State of the NMI processing
-;  $00 - NMI processed
-;  $01 - Waiting for the next NMI to be processed
-nmi_processing = $0004
-
+; $02 free
+; $03 free
+; $04 free
 player_a_x = $0005
 player_b_x = $0006
 player_a_y = $0007
@@ -75,14 +74,39 @@ player_a_hitbox_base_knock_up_v_low = $0043
 player_b_hitbox_base_knock_up_v_low = $0044
 player_a_hitbox_base_knock_up_h_low = $0045
 player_b_hitbox_base_knock_up_h_low = $0046
-controller_a_last_frame_btns = $0047
-controller_b_last_frame_btns = $0048
+; $46 free
+; $47 free
 player_a_num_aerial_jumps = $0049
 player_b_num_aerial_jumps = $004a
 player_a_stocks = $004b
 player_b_stocks = $004c
 
-global_game_state = $e0
+;
+; TITLE labels
+;
+
+title_cheatstate = $00
+
+;
+; GAMEOVER labels
+;
+
+gameover_winner = $00
+
+;
+; Global labels
+;
+
+controller_a_btns = $e0
+controller_b_btns = $e1
+controller_a_last_frame_btns = $e2
+controller_b_last_frame_btns = $e3
+global_game_state = $e4
+
+; State of the NMI processing
+;  $00 - NMI processed
+;  $01 - Waiting for the next NMI to be processed
+nmi_processing = $0004
 
 tmpfield1 = $00f0
 tmpfield2 = $00f1

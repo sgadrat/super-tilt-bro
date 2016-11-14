@@ -1,5 +1,3 @@
-gameover_winner = $50
-
 init_gameover_screen:
 .(
 ; Ensure that the global game state is "gameover" from now on

@@ -1,5 +1,3 @@
-title_cheatstate = $ff
-
 init_title_screen:
 .(
 ; Ensure that the global game state is "title" from now on
