@@ -224,7 +224,7 @@ pha      ; - high
 pha      ; - low
 lda #$00  ; Vertical component
 pha       ; - high
-lda #$80  ;
+lda #$60  ;
 pha       ; - low
 jsr add_to_player_velocity
 
@@ -639,9 +639,9 @@ jsr start_falling_player
 jmp end
 
 begin_to_jump:
-lda #$fa
+lda #$fb
 sta player_a_velocity_v, x
-lda #$80
+lda #$00
 sta player_a_velocity_v_low, x
 
 end:
@@ -1459,15 +1459,26 @@ aerial_spe_down_player:
 .(
 jsr aerial_directional_influence
 
-; Special fall speed
-lda #$00 ; Horizontal component
-pha      ; - high
-pha      ; - low
-lda #$00  ; Vertical component
-pha       ; - high
-lda #$40  ;
-pha       ; - low
-jsr add_to_player_velocity
+; Never move upward in this state
+lda player_a_velocity_v, x
+bpl end_max_velocity
+lda #$00
+sta player_a_velocity_v, x
+sta player_a_velocity_v_low, x
+end_max_velocity:
+
+; Special fall speed - particularily slow
+lda player_a_velocity_h, x
+sta tmpfield4
+lda player_a_velocity_h_low, x
+sta tmpfield2
+lda #$01
+sta tmpfield3
+lda #$00
+sta tmpfield1
+lda #$10
+sta tmpfield5
+jsr merge_to_player_velocity
 
 rts
 .)
@@ -1527,9 +1538,9 @@ lda #$01
 sta player_a_state_field1, x
 
 ; Set jumping velocity
-lda #$f8
+lda #$fa
 sta player_a_velocity_v, x
-lda #$80
+lda #$00
 sta player_a_velocity_v_low, x
 
 ; Set the movement animation
