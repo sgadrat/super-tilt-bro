@@ -45,6 +45,15 @@ lda #>nametable_end
 cmp $41
 bne load_background
 
+; Ensure game state is zero
+ldx #$00
+lda #$00
+zero_game_state:
+sta $00, x
+inx
+cpx #ZERO_PAGE_GLOBAL_FIELDS_BEGIN
+bne zero_game_state
+
 ; Setup logical game state to the game startup configuration
 lda DIRECTION_LEFT
 sta player_b_direction
@@ -56,13 +65,6 @@ lda HITBOX_DISABLED
 sta player_a_hitbox_enabled
 sta player_b_hitbox_enabled
 
-lda #$00
-sta player_a_y_low
-sta player_b_y_low
-sta player_a_x_low
-sta player_b_x_low
-sta player_a_num_aerial_jumps
-sta player_b_num_aerial_jumps
 lda #$80
 sta player_a_y
 sta player_b_y
