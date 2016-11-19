@@ -203,6 +203,36 @@ jsr switch_selected_player
 ; Store opponent player number
 stx opponent_player
 
+; If opponent's hitbox is enabled, check hitbox on hitbox collisions
+lda player_a_hitbox_enabled, x
+beq check_hitbox_hurtbox
+
+; Store opponent's hitbox
+lda player_a_hitbox_left, x
+sta tmpfield5
+lda player_a_hitbox_right, x
+sta tmpfield6
+lda player_a_hitbox_top, x
+sta tmpfield7
+lda player_a_hitbox_bottom, x
+sta tmpfield8
+
+; Check collisions between hitbox and hitbox
+jsr boxes_overlap
+lda tmpfield9
+bne check_hitbox_hurtbox
+
+; Hitboxes collide, set opponent in thrown mode without momentum
+lda #$00
+sta player_a_velocity_h, x
+sta player_a_velocity_h_low, x
+sta player_a_velocity_v, x
+sta player_a_velocity_v_low, x
+jsr start_thrown_player
+jmp end
+
+check_hitbox_hurtbox:
+
 ; Store opponent's hurtbox
 lda player_a_hurtbox_left, x
 sta tmpfield5
