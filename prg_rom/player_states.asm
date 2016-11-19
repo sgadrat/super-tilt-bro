@@ -757,7 +757,8 @@ rts
 #define TECH_NB_FORBIDDEN_FRAMES 60
 thrown_player:
 .(
-; Add gravity to velocity
+; Update velocity
+jsr aerial_directional_influence
 jsr apply_gravity
 
 ; Decrement tech counter (to zero minimum)
@@ -797,12 +798,13 @@ bne end
 lda #TECH_MAX_FRAMES_BEFORE_COLLISION+TECH_NB_FORBIDDEN_FRAMES
 sta player_a_state_field1, x
 
+no_tech:
+jsr check_aerial_inputs
+
 end:
 rts
 
 ; Impactful controller states and associated callbacks
-; Note - We can put subroutines as callbacks because we have nothing to do after calling it
-;        (sourboutines return to our caller since "called" with jmp)
 controller_inputs:
 .byt CONTROLLER_INPUT_TECH,        CONTROLLER_INPUT_TECH_RIGHT,   CONTROLLER_INPUT_TECH_LEFT
 controller_callbacks_lo:
@@ -810,7 +812,7 @@ controller_callbacks_lo:
 controller_callbacks_hi:
 .byt >tech_neutral,                >tech_right,                   >tech_left
 controller_default_callback:
-.word end
+.word no_tech
 .)
 
 ; Routine to be called when hitting the ground from thrown state
