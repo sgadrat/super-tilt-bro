@@ -487,7 +487,7 @@ lda knockback_h_high ;
 adc knockback_v_high ;
 sta knockback_h_high ;
 
-lsr knockback_h_low     ;
+asl knockback_h_low     ;
 lda knockback_h_high    ; Oponent player hitstun = high byte of 2 * knockback_h
 rol                     ;
 sta player_a_hitstun, x ;
