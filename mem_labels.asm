@@ -8,8 +8,8 @@ player_a_state = $00
 player_b_state = $01
 
 ; $02 free
-; $03 free
-; $04 free
+player_a_hitstun = $03
+player_b_hitstun = $04
 player_a_x = $05
 player_b_x = $06
 player_a_y = $07
@@ -74,8 +74,8 @@ player_a_hitbox_base_knock_up_v_low = $43
 player_b_hitbox_base_knock_up_v_low = $44
 player_a_hitbox_base_knock_up_h_low = $45
 player_b_hitbox_base_knock_up_h_low = $46
-; $46 free
 ; $47 free
+; $48 free
 player_a_num_aerial_jumps = $49
 player_b_num_aerial_jumps = $4a
 player_a_stocks = $4b
@@ -106,7 +106,7 @@ global_game_state = $e4
 ; State of the NMI processing
 ;  $00 - NMI processed
 ;  $01 - Waiting for the next NMI to be processed
-nmi_processing = $04
+nmi_processing = $e5
 
 tmpfield1 = $f0
 tmpfield2 = $f1

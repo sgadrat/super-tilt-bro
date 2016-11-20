@@ -131,6 +131,10 @@ input_marker = tmpfield15
 player_btn = tmpfield2
 
 .(
+; Refuse to do anything if under hitstun
+lda player_a_hitstun, x
+bne end
+
 ; Assuming we are called from an input event
 ; Do nothing if the only changes concern the left-right buttons
 lda controller_a_btns, x
@@ -364,6 +368,10 @@ rts
 
 standing_player_input:
 .(
+; Do not handle any input if under hitstun
+lda player_a_hitstun, x
+bne end
+
 ; Check state changes
 lda #<controller_inputs
 sta tmpfield1
@@ -501,6 +509,13 @@ rts
 
 running_player_input:
 .(
+; If in hitstun, stop running
+lda player_a_hitstun, x
+beq take_input
+jsr start_standing_player
+jmp end
+take_input:
+
 lda #<controller_inputs
 sta tmpfield1
 lda #>controller_inputs

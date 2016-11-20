@@ -222,7 +222,7 @@ end:
 rts
 .)
 
-; Change A to it's absolute unsigned value
+; Change A to its absolute unsigned value
 absolute_a:
 .(
 cmp #$00

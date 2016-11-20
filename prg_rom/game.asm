@@ -104,6 +104,17 @@ update_players:
 lda #$00
 sta nametable_buffers
 
+; Decrement hitstun counters
+ldx #$00
+hitstun_one_player:
+lda player_a_hitstun, x
+beq hitstun_next_player
+dec player_a_hitstun, x
+hitstun_next_player:
+inx
+cpx #$02
+bne hitstun_one_player
+
 ; Check hitbox collisions
 ldx #$00
 hitbox_one_player:
@@ -223,6 +234,8 @@ lda tmpfield9
 bne check_hitbox_hurtbox
 
 ; Hitboxes collide, set opponent in thrown mode without momentum
+lda #HITSTUN_PARRY_NB_FRAMES
+sta player_a_hitstun, x
 lda #$00
 sta player_a_velocity_h, x
 sta player_a_velocity_h_low, x
@@ -289,6 +302,10 @@ base_h_low = tmpfield6
 base_h_high = tmpfield7
 base_v_low = tmpfield8
 base_v_high = tmpfield9
+knockback_h_high = force_h    ; knockback_h reuses force_h memory location
+knockback_h_low = force_h_low ; it is only writen after the last read of force_h
+knockback_v_high = force_v     ; knockback_v reuses force_v memory location
+knockback_v_low = force_v_low  ; it is only writen after the last read of force_v
 
 ; Apply force vector to the opponent
 ldx current_player
@@ -317,30 +334,75 @@ lda force_h     ;
 sta tmpfield2   ;
 lda force_h_low ;
 sta tmpfield1   ;
-jsr multiply    ; Push "force_h * multiplier + base_h"
-lda base_h_low  ;
+jsr multiply    ; Compute horizontal knockback
+lda base_h_low  ; "force_h * multiplier + base_h"
 clc             ;
 adc tmpfield4   ;
 sta tmpfield4   ;
 lda base_h_high ;
 adc tmpfield5   ;
-pha             ;
-lda tmpfield4   ;
-pha             ;
+pha                  ;
+sta knockback_h_high ;
+lda tmpfield4        ; Save horizontal knockback and push it
+pha                  ;
+sta knockback_h_low  ;
 lda force_v      ;
 sta tmpfield2    ;
 lda force_v_low  ;
 sta tmpfield1    ;
-jsr multiply     ; Push "force_v * multiplier + base_v"
-lda base_v_low   ;
+jsr multiply     ; Compute vertical knockback
+lda base_v_low   ; "force_v * multiplier + base_v"
 clc              ;
 adc tmpfield4    ;
 lda base_v_high  ;
 adc tmpfield5    ;
-pha              ;
-lda tmpfield4    ;
-pha              ;
+pha                  ;
+sta knockback_v_high ;
+lda tmpfield4        ; Save vertical knockback and push it
+sta knockback_v_low  ;
+pha                  ;
 jsr add_to_player_velocity ; Apply force vector from stack
+
+; Apply hitstun to the opponent
+; hitstun duration = high byte of 2 * (abs(knockback_v) + abs(knockback_h))
+lda knockback_h_high ;
+bpl end_abs_kb_h     ;
+lda knockback_h_low  ;
+eor #%11111111       ;
+clc                  ;
+adc #$01             ; knockback_h = abs(knockback_h)
+sta knockback_h_low  ;
+lda knockback_h_high ;
+eor #%11111111       ;
+adc #$00             ;
+sta knockback_h_high ;
+end_abs_kb_h:        ;
+
+lda knockback_v_high ;
+bpl end_abs_kb_v     ;
+lda knockback_v_low  ;
+eor #%11111111       ;
+clc                  ;
+adc #$01             ; knockback_v = abs(knockback_v)
+sta knockback_v_low  ;
+lda knockback_v_high ;
+eor #%11111111       ;
+adc #$00             ;
+sta knockback_v_high ;
+end_abs_kb_v:        ;
+
+lda knockback_h_low  ;
+clc                  ;
+adc knockback_v_low  ;
+sta knockback_h_low  ; knockback_h = knockback_v + knockback_h
+lda knockback_h_high ;
+adc knockback_v_high ;
+sta knockback_h_high ;
+
+lsr knockback_h_low     ;
+lda knockback_h_high    ; Oponent player hitstun = high byte of 2 * knockback_h
+rol                     ;
+sta player_a_hitstun, x ;
 
 rts
 .)
@@ -468,6 +530,7 @@ jmp end
 set_death_state:
 lda #$00                         ; Reset aerial jumps counter
 sta player_a_num_aerial_jumps, x ;
+sta player_a_hitstun, x ; Reset hitstun counter
 dec player_a_stocks, x ; Decrement stocks counter and check for gameover
 bmi gameover           ;
 jsr start_respawn_player ; Respawn
@@ -1126,7 +1189,7 @@ inx
 lda player_b_hitbox_left
 sta oam_mirror, x
 inx
-ldx #$e8
+ldx #$e0
 lda player_b_hitbox_bottom
 sec
 sbc #$07
@@ -1144,6 +1207,47 @@ sbc #$07
 sta oam_mirror, x
 inx
 end_player_b_hitbox
+
+; Player A hitstun indicator
+lda player_a_hitstun
+bne show_player_a_hitstun
+lda #$fe  ;
+sta $02dc ;
+sta $02dd ; Hide disabled hitstun
+sta $02de ;
+sta $02df ;
+jmp end_player_a_hitstun
+show_player_a_hitstun:
+ldx #$dc
+lda #$10
+sta oam_mirror, x
+sta oam_mirror+3, x
+lda #$0e
+sta oam_mirror+1, x
+lda #$03
+sta oam_mirror+2, x
+end_player_a_hitstun:
+
+; Player B hitstun indicator
+lda player_b_hitstun
+bne show_player_b_hitstun
+lda #$fe  ;
+sta $02d8 ;
+sta $02d9 ; Hide disabled hitstun
+sta $02da ;
+sta $02db ;
+jmp end_player_b_hitstun
+show_player_b_hitstun:
+ldx #$d8
+lda #$10
+sta oam_mirror, x
+lda #$20
+sta oam_mirror+3, x
+lda #$0e
+sta oam_mirror+1, x
+lda #$03
+sta oam_mirror+2, x
+end_player_b_hitstun:
 
 pla
 tay
