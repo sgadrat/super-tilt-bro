@@ -81,6 +81,9 @@ player_b_num_aerial_jumps = $4a
 player_a_stocks = $4b
 player_b_stocks = $4c
 
+screen_shake_counter = $70
+screen_shake_nextval = $71
+
 ;
 ; TITLE labels
 ;
@@ -107,6 +110,10 @@ global_game_state = $e4
 ;  $00 - NMI processed
 ;  $01 - Waiting for the next NMI to be processed
 nmi_processing = $e5
+
+scroll_x = $e6
+scroll_y = $e7
+ppuctrl_val = $e8
 
 tmpfield1 = $f0
 tmpfield2 = $f1

@@ -7,6 +7,11 @@ sta global_game_state
 ; Ensure there is no drawing to be processed
 jsr reset_nt_buffers
 
+; Reset scrolling
+lda #$00
+sta scroll_x
+sta scroll_y
+
 ; Point PPU to Background palette 0 (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
 lda PPUSTATUS
 lda #$3f

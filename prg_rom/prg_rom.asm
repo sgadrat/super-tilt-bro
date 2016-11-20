@@ -60,9 +60,13 @@ jmp write_one_tile       ;
 end_buffers:
 .)
 
-; no scroll
-lda #$00
+; Scroll
+lda ppuctrl_val
+sta PPUCTRL
+lda PPUSTATUS
+lda scroll_x
 sta PPUSCROLL
+lda scroll_y
 sta PPUSCROLL
 
 ; Inform that NMI is handled
@@ -90,6 +94,7 @@ ldx #$FF
 txs               ; Set up stack
 inx               ; now X = 0
 stx PPUCTRL       ; disable NMI
+stx ppuctrl_val   ;
 stx PPUMASK       ; disable rendering
 stx APU_DMC_FLAGS ; disable DMC IRQs
 
@@ -119,6 +124,7 @@ jsr init_title_screen
 
 ; Setup PPU
 lda #%10010000
+sta ppuctrl_val
 sta PPUCTRL
 lda #%00011110
 sta PPUMASK
@@ -132,9 +138,8 @@ jsr fetch_controllers
 ; Call routines apropriation for the current game state
 lda global_game_state
 bne check_title
-jsr update_players ; In game
-jsr update_sprites ;
-jmp forever        ;
+jsr game_tick ; In game
+jmp forever   ;
 check_title:
 cmp #GAME_STATE_TITLE
 bne check_gamover

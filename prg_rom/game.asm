@@ -4,6 +4,31 @@ init_game_state:
 lda #GAME_STATE_INGAME
 sta global_game_state
 
+; Clear background of nametable 2
+.(
+lda #$00
+sta $40
+sta $41
+lda PPUSTATUS
+lda #$28
+sta PPUADDR
+lda #$00
+sta PPUADDR
+load_background:
+lda #$00
+sta PPUDATA
+inc $40
+bne end_inc_vector
+inc $41
+end_inc_vector:
+lda #$04
+cmp $41
+bne load_background
+lda #$00
+cmp $40
+bne load_background
+.)
+
 ; Point PPU to Background palette 0 (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
 lda PPUSTATUS
 lda #$3f
@@ -54,6 +79,13 @@ inx
 cpx #ZERO_PAGE_GLOBAL_FIELDS_BEGIN
 bne zero_game_state
 
+; Reset scrolling
+sta scroll_x
+sta scroll_y
+sta screen_shake_counter
+lda #1
+sta screen_shake_nextval
+
 ; Setup logical game state to the game startup configuration
 lda DIRECTION_LEFT
 sta player_b_direction
@@ -95,6 +127,65 @@ jsr start_standing_player
 ; Move sprites according to the initial state
 jsr update_sprites
 
+rts
+.)
+
+game_tick:
+.(
+; Shake screen and do nothing until shaking is over
+lda screen_shake_counter
+beq no_screen_shake
+jsr shake_screen
+rts
+no_screen_shake:
+
+; Update game state
+jsr update_players
+
+; Update screen
+jsr update_sprites
+
+rts
+.)
+
+shake_screen:
+.(
+; Change scrolling possition a little
+lda screen_shake_nextval
+eor #%11111111
+clc
+adc #1
+sta screen_shake_nextval
+sta scroll_x
+sta scroll_y
+
+; Adapt screen number to Y scrolling
+;  Litle negative values are set at the end of screen 2
+lda scroll_y
+cmp #240
+bcs set_screen_two
+lda #%10010000
+jmp set_screen
+set_screen_two:
+clc
+adc #240
+sta scroll_y
+lda #%10010010
+set_screen:
+sta ppuctrl_val
+
+; Decrement screen shake counter
+dec screen_shake_counter
+bne end
+
+; Shaking is over, reset the scrolling
+lda #$00
+sta scroll_y
+sta scroll_x
+lda #%10010000
+sta ppuctrl_val
+
+end:
 rts
 .)
 
@@ -242,6 +333,8 @@ sta player_a_velocity_h_low, x
 sta player_a_velocity_v, x
 sta player_a_velocity_v_low, x
 jsr start_thrown_player
+lda #SCREENSHAKE_PARRY_NB_FRAMES
+sta screen_shake_counter
 jmp end
 
 check_hitbox_hurtbox:
@@ -398,6 +491,10 @@ lsr knockback_h_low     ;
 lda knockback_h_high    ; Oponent player hitstun = high byte of 2 * knockback_h
 rol                     ;
 sta player_a_hitstun, x ;
+
+; Start screenshake of duration = hitstun / 2
+lsr
+sta screen_shake_counter
 
 rts
 .)

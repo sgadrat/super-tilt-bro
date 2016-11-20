@@ -455,6 +455,7 @@ change_global_game_state:
 lda #$00
 sta PPUCTRL
 sta PPUMASK
+sta ppuctrl_val
 
 ; Call the appropriate initialization routine
 lda global_game_state
@@ -477,6 +478,7 @@ end_initialization:
 
 ; Enable rendering
 lda #%10010000
+sta ppuctrl_val
 sta PPUCTRL
 lda #%00011110
 sta PPUMASK
