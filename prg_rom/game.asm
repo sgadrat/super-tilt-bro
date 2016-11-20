@@ -341,11 +341,9 @@ adc tmpfield4   ;
 sta tmpfield4   ;
 lda base_h_high ;
 adc tmpfield5   ;
-pha                  ;
-sta knockback_h_high ;
-lda tmpfield4        ; Save horizontal knockback and push it
-pha                  ;
-sta knockback_h_low  ;
+sta player_a_velocity_h, x     ;
+lda tmpfield4                  ; Apply horizontal knockback
+sta player_a_velocity_h_low, x ;
 lda force_v      ;
 sta tmpfield2    ;
 lda force_v_low  ;
@@ -356,40 +354,37 @@ clc              ;
 adc tmpfield4    ;
 lda base_v_high  ;
 adc tmpfield5    ;
-pha                  ;
-sta knockback_v_high ;
-lda tmpfield4        ; Save vertical knockback and push it
-sta knockback_v_low  ;
-pha                  ;
-jsr add_to_player_velocity ; Apply force vector from stack
+sta player_a_velocity_v, x     ;
+lda tmpfield4                  ; Apply vertical knockback
+sta player_a_velocity_v_low, x ;
 
 ; Apply hitstun to the opponent
-; hitstun duration = high byte of 2 * (abs(knockback_v) + abs(knockback_h))
-lda knockback_h_high ;
-bpl end_abs_kb_h     ;
-lda knockback_h_low  ;
-eor #%11111111       ;
-clc                  ;
-adc #$01             ; knockback_h = abs(knockback_h)
-sta knockback_h_low  ;
-lda knockback_h_high ;
-eor #%11111111       ;
-adc #$00             ;
-sta knockback_h_high ;
-end_abs_kb_h:        ;
+; hitstun duration = high byte of 2 * (abs(velotcity_v) + abs(velocity_h))
+lda player_a_velocity_h, x     ;
+bpl end_abs_kb_h               ;
+lda player_a_velocity_h_low, x ;
+eor #%11111111                 ;
+clc                            ;
+adc #$01                       ; knockback_h = abs(velocity_h)
+sta knockback_h_low            ;
+lda player_a_velocity_h, x     ;
+eor #%11111111                 ;
+adc #$00                       ;
+sta knockback_h_high           ;
+end_abs_kb_h:                  ;
 
-lda knockback_v_high ;
-bpl end_abs_kb_v     ;
-lda knockback_v_low  ;
-eor #%11111111       ;
-clc                  ;
-adc #$01             ; knockback_v = abs(knockback_v)
-sta knockback_v_low  ;
-lda knockback_v_high ;
-eor #%11111111       ;
-adc #$00             ;
-sta knockback_v_high ;
-end_abs_kb_v:        ;
+lda player_a_velocity_v, x      ;
+bpl end_abs_kb_v                ;
+lda player_a_velocity_v_low, x  ;
+eor #%11111111                  ;
+clc                             ;
+adc #$01                        ; knockback_v = abs(velocity_v)
+sta knockback_v_low             ;
+lda player_a_velocity_v, x      ;
+eor #%11111111                  ;
+adc #$00                        ;
+sta knockback_v_high            ;
+end_abs_kb_v:                   ;
 
 lda knockback_h_low  ;
 clc                  ;
