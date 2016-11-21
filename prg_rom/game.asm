@@ -463,8 +463,8 @@ sta knockback_h_low            ;
 lda player_a_velocity_h, x     ;
 eor #%11111111                 ;
 adc #$00                       ;
-sta knockback_h_high           ;
 end_abs_kb_h:                  ;
+sta knockback_h_high           ;
 
 lda player_a_velocity_v, x      ;
 bpl end_abs_kb_v                ;
@@ -476,8 +476,8 @@ sta knockback_v_low             ;
 lda player_a_velocity_v, x      ;
 eor #%11111111                  ;
 adc #$00                        ;
-sta knockback_v_high            ;
 end_abs_kb_v:                   ;
+sta knockback_v_high            ;
 
 lda knockback_h_low  ;
 clc                  ;
