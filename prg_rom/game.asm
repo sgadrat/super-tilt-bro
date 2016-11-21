@@ -419,9 +419,9 @@ sta base_v_high                             ;
 lda player_a_hitbox_base_knock_up_v_low, x  ;
 sta base_v_low                              ;
 ldx opponent_player
-lda player_a_damages, x ; Get force multiplier
-clc                     ; "damages + 1"
-adc #$01                ;
+lda player_a_damages, x ;
+lsr                     ; Get force multiplier
+lsr                     ; "damages / 4"
 sta tmpfield3           ;
 lda force_h     ;
 sta tmpfield2   ;

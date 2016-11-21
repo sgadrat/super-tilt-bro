@@ -168,7 +168,7 @@ anim_sinbad_side_special_left_jump:
 ; Frame 1
 ANIM_FRAME_BEGIN(61)
 ANIM_HURTBOX($00, $10, $00, $10)
-ANIM_HITBOX($01, $0a, $0100, $0200, $0000, $0000, $f8, $04, $06, $0c)
+ANIM_HITBOX($01, $04, $0100, $0200, $0000, $0000, $f8, $04, $06, $0c) ; enabled, damages, base_h, base_v, force_h, force_v, left, right, top, bottom
 ANIM_SPRITE($06, TILE_SCIMITAR_BLADE, $01, $f8)
 ANIM_SPRITE($06, TILE_SCIMITAR_HANDLE, $01, $00)
 ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_1, $00, $00) ; Y, tile, attr, X
@@ -349,7 +349,7 @@ anim_sinbad_side_special_right_jump:
 ; Frame 1
 ANIM_FRAME_BEGIN(61)
 ANIM_HURTBOX($f8, $08, $00, $10)
-ANIM_HITBOX($01, $0a, $ff00, $0200, $0000, $0000, $04, $10, $06, $0c)
+ANIM_HITBOX($01, $04, $ff00, $0200, $0000, $0000, $04, $10, $06, $0c)
 ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_1, $40, $00) ; Y, tile, attr, X
 ANIM_SPRITE($00, TILE_RUNNING_SINBAD_1_2, $40, $f8)
 ANIM_SPRITE($08, TILE_RUNNING_SINBAD_1_3, $40, $00)
