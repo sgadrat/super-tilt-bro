@@ -773,7 +773,10 @@ rts
 thrown_player:
 .(
 ; Update velocity
+lda player_a_hitstun, x
+bne gravity
 jsr aerial_directional_influence
+gravity:
 jsr apply_gravity
 
 ; Decrement tech counter (to zero minimum)
