@@ -199,6 +199,8 @@ credits_begin:
 .asc "    by surt", $0a
 .asc "sinbad",$0a
 .asc "    by zi ye",$0a
+.asc "perihelium",$0a
+.asc "    by ozzed"
 .asc $0a
 .asc "             thanks",$0a
 .asc $0a

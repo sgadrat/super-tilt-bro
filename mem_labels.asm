@@ -97,6 +97,15 @@ title_cheatstate = $00
 gameover_winner = $00
 
 ;
+; Audio engine labels
+;
+
+audio_square1_counter = $d0
+audio_square1_note_counter = $d1
+audio_square2_counter = $d2
+audio_square2_note_counter = $d3
+
+;
 ; Global labels
 ;
 
@@ -114,9 +123,6 @@ nmi_processing = $e5
 scroll_x = $e6
 scroll_y = $e7
 ppuctrl_val = $e8
-
-audio_counter = $e9
-audio_note_counter = $ea
 
 tmpfield1 = $f0
 tmpfield2 = $f1
