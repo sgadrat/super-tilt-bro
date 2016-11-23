@@ -115,6 +115,9 @@ scroll_x = $e6
 scroll_y = $e7
 ppuctrl_val = $e8
 
+audio_counter = $e9
+audio_note_counter = $ea
+
 tmpfield1 = $f0
 tmpfield2 = $f1
 tmpfield3 = $f2
