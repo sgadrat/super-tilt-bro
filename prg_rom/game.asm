@@ -287,7 +287,9 @@ stx current_player
 
 ; Check that player's hitbox is enabled
 lda player_a_hitbox_enabled, x
-beq end
+bne process_checks
+jmp end
+process_checks:
 
 ; Store current player's hitbox
 lda player_a_hitbox_left, x
@@ -353,6 +355,9 @@ sta tmpfield8
 jsr boxes_overlap
 lda tmpfield9
 bne end
+
+; Play hit sound
+jsr audio_play_hit
 
 ; Apply force vector to the opponent
 jsr apply_force_vector

@@ -120,6 +120,7 @@ vblankwait2:      ; Second wait for vblank, PPU is ready after this
 bit PPUSTATUS
 bpl vblankwait2
 
+jsr audio_init
 jsr init_title_screen
 
 ; Setup PPU
@@ -159,6 +160,7 @@ jmp forever
 #include "prg_rom/game.asm"
 #include "prg_rom/player_states.asm"
 #include "prg_rom/collisions.asm"
+#include "prg_rom/audio.asm"
 #include "prg_rom/title_screen.asm"
 #include "prg_rom/gameover_screen.asm"
 #include "prg_rom/credits_screen.asm"
