@@ -326,6 +326,9 @@ jsr boxes_overlap
 lda tmpfield9
 bne check_hitbox_hurtbox
 
+; Play parry sound
+jsr audio_play_parry
+
 ; Hitboxes collide, set opponent in thrown mode without momentum
 lda #HITSTUN_PARRY_NB_FRAMES
 sta player_a_hitstun, x
