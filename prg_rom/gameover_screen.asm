@@ -110,8 +110,8 @@ jsr set_player_animation     ;
 
 jsr update_sprites ; First animation frame
 
-; Change for music for main theme
-jsr audio_music_weak
+; Change for music for gameover theme
+jsr audio_music_gameover
 
 rts
 

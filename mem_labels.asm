@@ -109,6 +109,12 @@ audio_triangle_note_counter = $d5
 
 audio_channel_mode = $d6
 
+audio_square1_track = $d7
+audio_square2_track = $d9
+audio_triangle_track = $db
+
+audio_duty = $dd
+
 ;
 ; Global labels
 ;

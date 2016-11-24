@@ -1,9 +1,7 @@
 audio_init:
 .(
-; Enable used channels but triangle (we need it only ingame)
-lda #%00001011 ; ---DNT21
-sta APU_STATUS ;
-
+; Start with main music
+jsr audio_music_weak
 rts
 .)
 
@@ -11,6 +9,27 @@ audio_music_power:
 .(
 lda #%00001111 ; ---DNT21
 sta APU_STATUS ;
+
+lda #%10000000
+sta audio_duty
+
+lda #<music_main_square1
+sta audio_square1_track
+lda #>music_main_square1
+sta audio_square1_track+1
+
+lda #<music_main_square2
+sta audio_square2_track
+lda #>music_main_square2
+sta audio_square2_track+1
+
+lda #<music_main_triangle
+sta audio_triangle_track
+lda #>music_main_triangle
+sta audio_triangle_track+1
+
+jsr audio_reset_music
+
 rts
 .)
 
@@ -18,6 +37,68 @@ audio_music_weak:
 .(
 lda #%00001011 ; ---DNT21
 sta APU_STATUS ;
+
+lda #%10000000
+sta audio_duty
+
+lda #<music_main_square1
+sta audio_square1_track
+lda #>music_main_square1
+sta audio_square1_track+1
+
+lda #<music_main_square2
+sta audio_square2_track
+lda #>music_main_square2
+sta audio_square2_track+1
+
+lda #<music_main_triangle
+sta audio_triangle_track
+lda #>music_main_triangle
+sta audio_triangle_track+1
+
+jsr audio_reset_music
+
+rts
+.)
+
+audio_music_gameover:
+.(
+lda #%00001111 ; ---DNT21
+sta APU_STATUS ;
+
+lda #%00000000
+sta audio_duty
+
+lda #<music_gameover_square1
+sta audio_square1_track
+lda #>music_gameover_square1
+sta audio_square1_track+1
+
+lda #<music_gameover_square2
+sta audio_square2_track
+lda #>music_gameover_square2
+sta audio_square2_track+1
+
+lda #<music_gameover_triangle
+sta audio_triangle_track
+lda #>music_gameover_triangle
+sta audio_triangle_track+1
+
+jsr audio_reset_music
+
+rts
+.)
+
+audio_reset_music:
+.(
+lda #$00
+ldx #0
+reset_counter:
+sta audio_square1_counter, x
+inx
+cpx #6
+bne reset_counter
+
 rts
 .)
 
@@ -64,9 +145,9 @@ square_registers = tmpfield7
 lda #AUDIO_CHANNEL_SQUARE
 sta audio_channel_mode
 
-lda #<music_square1
+lda audio_square1_track
 sta music
-lda #>music_square1
+lda audio_square1_track+1
 sta music+1
 lda audio_square1_counter
 sta audio_counter
@@ -80,9 +161,9 @@ sta audio_square1_counter
 lda audio_note_counter
 sta audio_square1_note_counter
 
-lda #<music_square2
+lda audio_square2_track
 sta music
-lda #>music_square2
+lda audio_square2_track+1
 sta music+1
 lda audio_square2_counter
 sta audio_counter
@@ -99,9 +180,9 @@ sta audio_square2_note_counter
 lda #AUDIO_CHANNEL_TRIANGLE
 sta audio_channel_mode
 
-lda #<music_triangle
+lda audio_triangle_track
 sta music
-lda #>music_triangle
+lda audio_triangle_track+1
 sta music+1
 lda audio_triangle_counter
 sta audio_counter
@@ -173,12 +254,14 @@ jmp next_entry
 play_note:
 .(
 ; Play the note
-;  Hack this works in triangle because the bit 7 of register 0 is set, so
-;  the only used value is the timer that is at the same place for squares
-;  and triangle.
+lda audio_channel_mode
+cmp #AUDIO_CHANNEL_TRIANGLE
+beq play_triangle
+
 lda #$00
 jsr point_to_register
-lda #%10111100 ; DDLCVVVV
+lda #%00111100 ; DDLCVVVV
+ora audio_duty ;
 sta $4000, x   ;
 lda #$01
 jsr point_to_register
@@ -195,8 +278,27 @@ lda #$03
 jsr point_to_register
 lda (music), y ; LLLLLTTT
 sta $4000, x   ;
+jmp save_duration
+
+play_triangle:
+lda #$00
+jsr point_to_register
+lda #%10000001 ; CRRRRRRR
+sta $4000, x   ;
+iny
+iny
+lda #$02
+jsr point_to_register
+lda (music), y ; TTTTTTTT
+sta $4000, x   ;
+dey
+lda #$03
+jsr point_to_register
+lda (music), y ; LLLLLTTT
+sta $4000, x   ;
 
 ; Save duration to note counter
+save_duration:
 lsr
 lsr
 lsr

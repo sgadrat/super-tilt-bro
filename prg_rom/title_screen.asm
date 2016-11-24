@@ -65,6 +65,9 @@ bne clr_sprites
 lda #0
 sta title_cheatstate
 
+; Change music for the main theme
+jsr audio_music_weak
+
 rts
 .)
 
