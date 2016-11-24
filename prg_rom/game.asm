@@ -628,6 +628,7 @@ jsr player_state_action
 jmp end
 
 set_death_state:
+jsr audio_play_death ; Play death sound
 lda #$00                         ; Reset aerial jumps counter
 sta player_a_num_aerial_jumps, x ;
 sta player_a_hitstun, x ; Reset hitstun counter
