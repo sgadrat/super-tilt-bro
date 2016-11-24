@@ -178,7 +178,7 @@ play_note:
 ;  and triangle.
 lda #$00
 jsr point_to_register
-lda #%10110100 ; DDLCVVVV
+lda #%10111100 ; DDLCVVVV
 sta $4000, x   ;
 lda #$01
 jsr point_to_register
