@@ -127,6 +127,9 @@ jsr start_standing_player
 ; Move sprites according to the initial state
 jsr update_sprites
 
+; Change for ingame music
+jsr audio_music_power
+
 rts
 .)
 

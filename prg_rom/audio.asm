@@ -1,9 +1,23 @@
 audio_init:
 .(
-; Enable used channels
+; Enable used channels but triangle (we need it only ingame)
 lda #%00001011 ; ---DNT21
 sta APU_STATUS ;
 
+rts
+.)
+
+audio_music_power:
+.(
+lda #%00001111 ; ---DNT21
+sta APU_STATUS ;
+rts
+.)
+
+audio_music_weak:
+.(
+lda #%00001011 ; ---DNT21
+sta APU_STATUS ;
 rts
 .)
 
@@ -47,6 +61,9 @@ audio_counter = tmpfield5
 audio_note_counter = tmpfield6
 square_registers = tmpfield7
 
+lda #AUDIO_CHANNEL_SQUARE
+sta audio_channel_mode
+
 lda #<music_square1
 sta music
 lda #>music_square1
@@ -79,6 +96,25 @@ sta audio_square2_counter
 lda audio_note_counter
 sta audio_square2_note_counter
 
+lda #AUDIO_CHANNEL_TRIANGLE
+sta audio_channel_mode
+
+lda #<music_triangle
+sta music
+lda #>music_triangle
+sta music+1
+lda audio_triangle_counter
+sta audio_counter
+lda audio_triangle_note_counter
+sta audio_note_counter
+lda #$08
+sta square_registers
+jsr square_channel_tick
+lda audio_counter
+sta audio_triangle_counter
+lda audio_note_counter
+sta audio_triangle_note_counter
+
 rts
 
 square_channel_tick:
@@ -91,9 +127,11 @@ cmp #$ff
 beq next_note
 cmp #0
 bne dec_note_counter
-ldx #$00
-lda #%10110000
-sta $4000, x
+
+lda audio_channel_mode ; Hack, do not mute for triangle at the end of a note
+bne next_note          ;
+jsr mute_current_channel
+
 dec_note_counter:
 dec audio_note_counter
 jmp end
@@ -116,23 +154,28 @@ sta tmpfield2
 jmp (tmpfield1)
 
 loop:
+.(
 lda #$ff
 sta audio_counter
 sta audio_note_counter
 jmp next_entry
+.)
 
 silence:
-lda #$00
-jsr point_to_register
-lda #%10110000 ; DDLCVVVV
-sta $4000, x   ;
+.(
+jsr mute_current_channel
 iny
 lda (music), y
 sta audio_note_counter
 jmp next_entry
+.)
 
 play_note:
+.(
 ; Play the note
+;  Hack this works in triangle because the bit 7 of register 0 is set, so
+;  the only used value is the timer that is at the same place for squares
+;  and triangle.
 lda #$00
 jsr point_to_register
 lda #%10110100 ; DDLCVVVV
@@ -158,6 +201,7 @@ lsr
 lsr
 lsr
 sta audio_note_counter
+.)
 
 next_entry:
 ; Prepare next entry
@@ -176,6 +220,30 @@ point_to_register:
 clc
 adc square_registers
 tax
+rts
+.)
+
+mute_current_channel:
+.(
+lda audio_channel_mode
+cmp #AUDIO_CHANNEL_TRIANGLE
+beq mute_triangle
+
+; Mute a square channel
+lda #$00
+jsr point_to_register
+lda #%10110000 ; DDLCVVVV
+sta $4000, x   ;
+jmp end
+
+mute_triangle:
+;lda #%00001011 ; ---DNT21
+;sta APU_STATUS ;
+lda #%00000000
+sta APU_TRIANGLE_LINEAR_CNT ; CRRRRRRR
+sta APU_TRIANGLE_LENGTH_CNT ; LLLLLTTT
+
+end:
 rts
 .)
 .)

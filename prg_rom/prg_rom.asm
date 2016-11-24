@@ -123,15 +123,6 @@ bpl vblankwait2
 jsr audio_init
 jsr init_title_screen
 
-;lda #%00111111           ; DDLCVVVV
-;sta APU_SQUARE1_ENVELOPE ;
-;lda #%01000000         ; EPPPNSSS
-;sta APU_SQUARE1_PERIOD ;
-;lda #$b0                  ; TTTTTTTT
-;sta APU_SQUARE1_TIMER_LOW ;
-;lda #$03                   ; LLLLLTTT
-;sta APU_SQUARE1_LENGTH_CNT ;
-
 ; Setup PPU
 lda #%10010000
 sta ppuctrl_val

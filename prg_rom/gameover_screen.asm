@@ -110,6 +110,9 @@ jsr set_player_animation     ;
 
 jsr update_sprites ; First animation frame
 
+; Change for music for main theme
+jsr audio_music_weak
+
 rts
 
 player_names:

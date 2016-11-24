@@ -104,6 +104,10 @@ audio_square1_counter = $d0
 audio_square1_note_counter = $d1
 audio_square2_counter = $d2
 audio_square2_note_counter = $d3
+audio_triangle_counter = $d4
+audio_triangle_note_counter = $d5
+
+audio_channel_mode = $d6
 
 ;
 ; Global labels

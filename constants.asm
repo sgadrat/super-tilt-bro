@@ -73,6 +73,9 @@
 
 #define ZERO_PAGE_GLOBAL_FIELDS_BEGIN $d0
 
+#define AUDIO_CHANNEL_SQUARE $00
+#define AUDIO_CHANNEL_TRIANGLE $01
+
 #define NOTE_O1_A $760
 #define NOTE_O1_B $692
 #define NOTE_O1_C $634
