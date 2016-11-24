@@ -135,7 +135,7 @@ play_note:
 ; Play the note
 lda #$00
 jsr point_to_register
-lda #%10111111 ; DDLCVVVV
+lda #%10110100 ; DDLCVVVV
 sta $4000, x   ;
 lda #$01
 jsr point_to_register
