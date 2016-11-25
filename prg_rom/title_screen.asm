@@ -72,7 +72,7 @@ bne next_screen
 jmp end
 
 next_screen:
-lda #GAME_STATE_INGAME
+lda #GAME_STATE_CONFIG
 sta global_game_state
 jsr change_global_game_state
 

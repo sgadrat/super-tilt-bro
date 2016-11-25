@@ -120,6 +120,7 @@ vblankwait2:      ; Second wait for vblank, PPU is ready after this
 bit PPUSTATUS
 bpl vblankwait2
 
+jsr default_config
 jsr audio_init
 
 lda #GAME_STATE_TITLE
@@ -156,7 +157,11 @@ bne check_credits
 jsr gameover_screen_tick
 jmp forever
 check_credits:
+cmp #GAME_STATE_CREDITS
+bne check_config
 jsr credits_screen_tick
+check_config:
+jsr config_screen_tick
 jmp forever
 .)
 
@@ -166,6 +171,7 @@ jmp forever
 #include "prg_rom/collisions.asm"
 #include "prg_rom/audio.asm"
 #include "prg_rom/title_screen.asm"
+#include "prg_rom/config_screen.asm"
 #include "prg_rom/gameover_screen.asm"
 #include "prg_rom/credits_screen.asm"
 code_end:

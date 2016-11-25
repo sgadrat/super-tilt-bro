@@ -1,14 +1,47 @@
 audio_init:
 .(
+; Enable music by default
+lda #$01
+sta audio_music_enabled
+
 ; Start with main music
 jsr audio_music_weak
+
+rts
+.)
+
+audio_mute_music:
+.(
+lda #$00
+sta audio_music_enabled
+
+lda #%00001000 ; ---DNT21
+sta APU_STATUS ;
+
+rts
+.)
+
+audio_unmute_music:
+.(
+lda #$01
+sta audio_music_enabled
+
+lda #%00001011 ; ---DNT21
+sta APU_STATUS ;
 rts
 .)
 
 audio_music_power:
 .(
+lda audio_music_enabled
+beq disabled
 lda #%00001111 ; ---DNT21
 sta APU_STATUS ;
+jmp end_enabled_check
+disabled:
+lda #%00001000 ; ---DNT21
+sta APU_STATUS ;
+end_enabled_check:
 
 lda #%10000000
 sta audio_duty
@@ -35,8 +68,15 @@ rts
 
 audio_music_weak:
 .(
+lda audio_music_enabled
+beq disabled
 lda #%00001011 ; ---DNT21
 sta APU_STATUS ;
+jmp end_enabled_check
+disabled:
+lda #%00001000 ; ---DNT21
+sta APU_STATUS ;
+end_enabled_check:
 
 lda #%10000000
 sta audio_duty
@@ -63,8 +103,15 @@ rts
 
 audio_music_gameover:
 .(
+lda audio_music_enabled
+beq disabled
 lda #%00001111 ; ---DNT21
 sta APU_STATUS ;
+jmp end_enabled_check
+disabled:
+lda #%00001000 ; ---DNT21
+sta APU_STATUS ;
+end_enabled_check:
 
 lda #%00000000
 sta audio_duty

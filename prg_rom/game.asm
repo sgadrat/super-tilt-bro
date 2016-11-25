@@ -91,7 +91,7 @@ lda #$48
 sta player_a_hurtbox_right
 lda #$a8
 sta player_b_hurtbox_right
-lda #$04
+lda config_initial_stocks
 sta player_a_stocks
 sta player_b_stocks
 
@@ -171,8 +171,7 @@ rts
 update_players:
 .(
 ; Remove processed nametable buffers
-lda #$00
-sta nametable_buffers
+jsr reset_nt_buffers
 
 ; Decrement hitstun counters
 ldx #$00

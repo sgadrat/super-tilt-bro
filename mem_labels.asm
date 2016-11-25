@@ -91,6 +91,13 @@ screen_shake_nextval = $71
 title_cheatstate = $00
 
 ;
+; CONFIG labels
+;
+
+config_selected_option = $00
+config_music_enabled = $01
+
+;
 ; GAMEOVER labels
 ;
 
@@ -114,6 +121,7 @@ audio_square2_track = $d9
 audio_triangle_track = $db
 
 audio_duty = $dd
+audio_music_enabled = $de
 
 ;
 ; Global labels
@@ -133,6 +141,8 @@ nmi_processing = $e5
 scroll_x = $e6
 scroll_y = $e7
 ppuctrl_val = $e8
+
+config_initial_stocks = $e9
 
 tmpfield1 = $f0
 tmpfield2 = $f1

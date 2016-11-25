@@ -16,6 +16,12 @@ palette_gameover:
 ; Sprites
 .byt $21,$08,$1a,$20, $21,$08,$10,$37, $21,$08,$16,$10, $21,$08,$28,$37
 
+palette_config:
+; Background
+.byt $21,$0d,$10,$00, $21,$20,$0d,$00, $21,$0d,$28,$00, $21,$00,$00,$00
+; Sprites
+.byt $21,$00,$00,$00, $21,$28,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00
+
 #define ZIPNT_ZEROS(n) $00, n
 #define ZIPZ $00, $01
 #define ZIPNT_END $00, $00

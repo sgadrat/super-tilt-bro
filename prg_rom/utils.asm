@@ -489,7 +489,12 @@ bne check_credits
 jsr init_gameover_screen
 jmp end_initialization
 check_credits:
+cmp #GAME_STATE_CREDITS
+bne check_config
 jsr init_credits_screen
+jmp end_initialization
+check_config:
+jsr init_config_screen
 end_initialization:
 
 ; Enable rendering
