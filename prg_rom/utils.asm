@@ -506,3 +506,57 @@ txs
 ; Go straight to the main loop
 jmp forever
 .)
+
+; Copy a compressed nametable to PPU
+;  tmpfield1 - compressed nametable address (low)
+;  tmpfield2 - compressed nametable address (high)
+;
+; Overwrites all registers, tmpfield1 and tmpfield2
+draw_zipped_nametable:
+.(
+compressed_nametable = tmpfield1
+
+lda PPUSTATUS
+lda #$20
+sta PPUADDR
+lda #$00
+sta PPUADDR
+ldy #$00
+
+load_background:
+lda (compressed_nametable), y
+beq opcode
+
+; Standard byte, just write it to PPUDATA
+sta PPUDATA
+jsr next_byte
+jmp load_background
+
+; Got the opcode
+opcode:
+jsr next_byte                 ;
+lda (compressed_nametable), y ; Load parameter in a, if it is zero it means that
+beq end                       ; the nametable is over
+
+tax                ;
+lda #$00           ;
+write_one_byte:    ; Write 0 the number of times specified by parameter
+sta PPUDATA        ;
+dex                ;
+bne write_one_byte ;
+
+jsr next_byte       ; Continue reading the table
+jmp load_background ;
+
+end:
+rts
+
+next_byte:
+.(
+inc compressed_nametable
+bne end_inc_vector
+inc compressed_nametable+1
+end_inc_vector:
+rts
+.)
+.)
