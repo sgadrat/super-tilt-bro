@@ -121,7 +121,10 @@ bit PPUSTATUS
 bpl vblankwait2
 
 jsr audio_init
-jsr init_title_screen
+
+lda #GAME_STATE_TITLE
+sta global_game_state
+jsr change_global_game_state
 
 ; Setup PPU
 lda #%10010000

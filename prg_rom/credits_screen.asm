@@ -5,18 +5,6 @@ line_num = $0005
 char_cursor_low = $0006
 char_cursor_high = $0007
 
-; Ensure that the global game state is "credits" from now on
-lda #GAME_STATE_CREDITS
-sta global_game_state
-
-; Ensure there is no drawing to be processed
-jsr reset_nt_buffers
-
-; Reset scrolling
-lda #$00
-sta scroll_x
-sta scroll_y
-
 ; Point PPU to Background palette 0 (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
 lda PPUSTATUS
 lda #$3f
@@ -137,14 +125,6 @@ inc line_num       ; Increment line number and loop
 jmp write_one_line ; to the new line
 
 end_write_credits:
-
-; Move all sprites offscreen
-ldx #$00
-clr_sprites:
-lda #$FE
-sta oam_mirror, x    ;move all sprites off screen
-inx
-bne clr_sprites
 
 rts
 .)

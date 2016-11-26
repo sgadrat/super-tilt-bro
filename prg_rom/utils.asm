@@ -457,6 +457,22 @@ sta PPUCTRL
 sta PPUMASK
 sta ppuctrl_val
 
+; Clear not processed drawings
+jsr reset_nt_buffers
+
+; Reset scrolling
+lda #$00
+sta scroll_x
+sta scroll_y
+
+; Move all sprites offscreen
+ldx #$00
+clr_sprites:
+lda #$FE
+sta oam_mirror, x    ;move all sprites off screen
+inx
+bne clr_sprites
+
 ; Call the appropriate initialization routine
 lda global_game_state
 bne check_title

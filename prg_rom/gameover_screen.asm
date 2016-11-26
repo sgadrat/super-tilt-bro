@@ -1,17 +1,5 @@
 init_gameover_screen:
 .(
-; Ensure that the global game state is "gameover" from now on
-lda #GAME_STATE_GAMEOVER
-sta global_game_state
-
-; Ensure there is no drawing to be processed
-jsr reset_nt_buffers
-
-; Reset scrolling
-lda #$00
-sta scroll_x
-sta scroll_y
-
 ; Point PPU to Background palette 0 (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
 lda PPUSTATUS
 lda #$3f
@@ -69,14 +57,6 @@ inx
 iny
 cpy #3
 bne winner_name_writing
-
-; Move all sprites offscreen
-ldx #$00
-clr_sprites:
-lda #$FE
-sta oam_mirror, x    ;move all sprites off screen
-inx
-bne clr_sprites
 
 ; Players state using "ingame" state variable to show winning animation
 ldx gameover_winner        ;

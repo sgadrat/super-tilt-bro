@@ -1,9 +1,5 @@
 init_game_state:
 .(
-; Ensure that the global game state is "ingame" from now on
-lda #GAME_STATE_INGAME
-sta global_game_state
-
 ; Clear background of nametable 2
 .(
 lda #$00
@@ -79,9 +75,7 @@ inx
 cpx #ZERO_PAGE_GLOBAL_FIELDS_BEGIN
 bne zero_game_state
 
-; Reset scrolling
-sta scroll_x
-sta scroll_y
+; Reset screen shaking
 sta screen_shake_counter
 lda #1
 sta screen_shake_nextval

@@ -1,16 +1,5 @@
 init_title_screen:
 .(
-; Ensure that the global game state is "title" from now on
-lda #GAME_STATE_TITLE
-sta global_game_state
-
-; Ensure there is no drawing to be processed
-jsr reset_nt_buffers
-
-; Reset scrolling
-lda #$00
-sta scroll_x
-sta scroll_y
 
 ; Point PPU to Background palette 0 (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
 lda PPUSTATUS
@@ -52,14 +41,6 @@ bne load_background
 lda #>nametable_title_end
 cmp $41
 bne load_background
-
-; Move all sprites offscreen
-ldx #$00
-clr_sprites:
-lda #$FE
-sta oam_mirror, x    ;move all sprites off screen
-inx
-bne clr_sprites
 
 ; Reinit cheat code state
 lda #0
