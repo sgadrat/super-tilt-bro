@@ -18,28 +18,10 @@ bne copy_palette
 
 ; Copy background from PRG-rom to PPU nametable
 lda #<nametable_gameover
-sta $40
+sta tmpfield1
 lda #>nametable_gameover
-sta $41
-lda PPUSTATUS
-lda #$20
-sta PPUADDR
-lda #$00
-sta PPUADDR
-ldy #$00
-load_background:
-lda ($40), y
-sta PPUDATA
-inc $40
-bne end_inc_vector
-inc $41
-end_inc_vector:
-lda #<nametable_gameover_end
-cmp $40
-bne load_background
-lda #>nametable_gameover_end
-cmp $41
-bne load_background
+sta tmpfield2
+jsr draw_zipped_nametable
 
 ; Write winner's name
 lda PPUSTATUS
