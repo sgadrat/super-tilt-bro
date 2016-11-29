@@ -1222,6 +1222,9 @@ lda #>anim_sinbad_crashing_right
 sta tmpfield4
 jsr set_player_animation_oriented
 
+; Play crash sound
+jsr audio_play_crash
+
 rts
 .)
 

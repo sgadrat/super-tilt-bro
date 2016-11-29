@@ -149,6 +149,17 @@ bne reset_counter
 rts
 .)
 
+audio_play_crash:
+.(
+lda #%00000100         ; --LCVVVV
+sta APU_NOISE_ENVELOPE ;
+lda #%00001100       ; L---PPPP
+sta APU_NOISE_PERIOD ;
+lda #%00001000           ; LLLLL---
+sta APU_NOISE_LENGTH_CNT
+rts
+.)
+
 audio_play_death:
 .(
 lda #%00000100         ; --LCVVVV
