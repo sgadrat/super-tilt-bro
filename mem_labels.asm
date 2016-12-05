@@ -102,6 +102,39 @@ config_music_enabled = $01
 ;
 
 gameover_winner = $00
+gameover_balloon0_x = $30
+gameover_balloon1_x = $31
+gameover_balloon2_x = $32
+gameover_balloon3_x = $33
+gameover_balloon4_x = $34
+gameover_balloon5_x = $35
+gameover_balloon0_x_low = $36
+gameover_balloon1_x_low = $37
+gameover_balloon2_x_low = $38
+gameover_balloon3_x_low = $39
+gameover_balloon4_x_low = $3a
+gameover_balloon5_x_low = $3b
+gameover_balloon0_y = $3c
+gameover_balloon1_y = $3d
+gameover_balloon2_y = $3e
+gameover_balloon3_y = $3f
+gameover_balloon4_y = $40
+gameover_balloon5_y = $41
+gameover_balloon0_y_low = $42
+gameover_balloon1_y_low = $43
+gameover_balloon2_y_low = $44
+gameover_balloon3_y_low = $45
+gameover_balloon4_y_low = $46
+gameover_balloon5_y_low = $47
+
+gameover_balloon0_velocity_h = $48
+gameover_balloon1_velocity_h = $49
+gameover_balloon2_velocity_h = $4a
+gameover_balloon3_velocity_h = $4b
+gameover_balloon4_velocity_h = $4c
+gameover_balloon5_velocity_h = $4d
+
+gameover_random = $4e
 
 ;
 ; Audio engine labels
