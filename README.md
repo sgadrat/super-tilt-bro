@@ -1,6 +1,8 @@
 # Super Tilt Bro
 
-A first NES hombrew project aiming at porting the "versus platformer fighting" to this good old system that made our childhood.
+Nintendo's consoles before the N64 do not have their Super Smash Bros game. Let's fix it! Super Tilt Bro is a NES hombrew project aiming at porting the "versus platformer fighting" to this good old system that made our childhood.
+
+Last tagged build is [playable here](https://sgadrat.itch.io/super-tilt-bro).
 
 ## Building
 
@@ -8,7 +10,7 @@ You will need the XA cross assembler for 6502. It may be found on Archlinux in t
 
 From the source repository run
 ```
-xa tilt.asm -C -o tilt.nes
+xa tilt.asm -C -o 'Super_Tilt_Bro_(E).nes'
 ```
 
 tilt.asm uses xa's preprocessor to directly output a valid iNES ROM file. The "-C" option is not mandatory but make xa stop assembling when using opcodes too recent for the NES.
