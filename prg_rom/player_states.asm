@@ -223,14 +223,17 @@ controller_default_callback:
 ;  register X - player number
 apply_gravity:
 .(
-lda #$00 ; Horizontal component
-pha      ; - high
-pha      ; - low
-lda #$00  ; Vertical component
-pha       ; - high
-lda #$60  ;
-pha       ; - low
-jsr add_to_player_velocity
+lda player_a_velocity_h_low, x
+sta tmpfield2
+lda player_a_velocity_h, x
+sta tmpfield4
+lda #$00
+sta tmpfield1
+lda #$04
+sta tmpfield3
+lda #$60
+sta tmpfield5
+jsr merge_to_player_velocity
 
 rts
 .)
