@@ -213,6 +213,19 @@ lda gameover_balloon0_x, x
 sta oam_mirror+OAM_BALLOONS+3, y
 sta oam_mirror+OAM_BALLOONS+7, y
 
+lda gameover_balloon0_y, x
+cmp #$40
+bcs background
+lda #$03
+sta oam_mirror+OAM_BALLOONS+2, y
+sta oam_mirror+OAM_BALLOONS+6, y
+jmp end_sprite_layer
+background:
+lda #$23
+sta oam_mirror+OAM_BALLOONS+2, y
+sta oam_mirror+OAM_BALLOONS+6, y
+end_sprite_layer:
+
 ; Loop
 tya
 clc
