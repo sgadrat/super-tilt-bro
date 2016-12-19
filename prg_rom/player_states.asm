@@ -1325,7 +1325,7 @@ jsr set_player_animation_oriented
 rts
 .)
 
-#define STATE_SINBAD_AERIAL_SIDE_DURATION #12
+#define STATE_SINBAD_AERIAL_SIDE_DURATION #25
 aerial_side_player:
 .(
 jsr apply_gravity
