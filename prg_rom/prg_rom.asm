@@ -160,6 +160,7 @@ check_credits:
 cmp #GAME_STATE_CREDITS
 bne check_config
 jsr credits_screen_tick
+jmp forever
 check_config:
 jsr config_screen_tick
 jmp forever
