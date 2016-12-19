@@ -833,7 +833,7 @@ lda player_a_animation+1
 sta animation_vector+1
 lda #$00
 sta first_sprite_index
-lda #$07
+lda #$0f
 sta last_sprite_index
 jmp end
 select_anim_player_b:
@@ -841,9 +841,9 @@ lda player_b_animation
 sta animation_vector
 lda player_b_animation+1
 sta animation_vector+1
-lda #$08
+lda #$10
 sta first_sprite_index
-lda #$0f
+lda #$1f
 sta last_sprite_index
 end:
 rts

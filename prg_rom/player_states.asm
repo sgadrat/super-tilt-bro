@@ -1403,7 +1403,7 @@ jsr set_player_animation_oriented
 rts
 .)
 
-#define STATE_SINBAD_AERIAL_UP_DURATION #20
+#define STATE_SINBAD_AERIAL_UP_DURATION #32
 aerial_up_player:
 .(
 jsr apply_gravity
