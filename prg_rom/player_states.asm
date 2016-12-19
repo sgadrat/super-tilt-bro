@@ -229,7 +229,7 @@ lda player_a_velocity_h, x
 sta tmpfield4
 lda #$00
 sta tmpfield1
-lda #$04
+lda #$03
 sta tmpfield3
 lda #$60
 sta tmpfield5
