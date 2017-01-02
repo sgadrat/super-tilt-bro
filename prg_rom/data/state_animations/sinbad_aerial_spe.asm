@@ -1,4 +1,4 @@
-anim_sinbad_aerial_spe_down_left:
+anim_sinbad_aerial_spe_left:
 ; Frame 1
 ANIM_FRAME_BEGIN(4)
 ANIM_HURTBOX($00, $07, $01, $0f) ; left, right, top, bottom
@@ -42,7 +42,7 @@ ANIM_FRAME_END
 ; End of animation
 ANIM_ANIMATION_END
 
-anim_sinbad_aerial_spe_down_right:
+anim_sinbad_aerial_spe_right:
 ; Frame 1
 ANIM_FRAME_BEGIN(4)
 ANIM_HURTBOX($00, $07, $01, $0f)

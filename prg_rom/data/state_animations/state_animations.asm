@@ -18,6 +18,6 @@
 #include "prg_rom/data/state_animations/sinbad_aerial_down.asm"
 #include "prg_rom/data/state_animations/sinbad_aerial_up.asm"
 #include "prg_rom/data/state_animations/sinbad_aerial_neutral.asm"
-#include "prg_rom/data/state_animations/sinbad_aerial_spe_down.asm"
+#include "prg_rom/data/state_animations/sinbad_aerial_spe.asm"
 #include "prg_rom/data/state_animations/sinbad_spe_up.asm"
 #include "prg_rom/data/state_animations/gameover.asm"

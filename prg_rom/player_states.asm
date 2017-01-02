@@ -205,15 +205,15 @@ rts
 controller_inputs:
 .byt CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_JUMP,        CONTROLLER_INPUT_JUMP_RIGHT,  CONTROLLER_INPUT_JUMP_LEFT
 .byt CONTROLLER_INPUT_ATTACK_LEFT,   CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_DOWN_TILT,   CONTROLLER_INPUT_ATTACK_UP,   CONTROLLER_INPUT_JAB
-.byt CONTROLLER_INPUT_SPECIAL_DOWN,  CONTROLLER_INPUT_SPECIAL_UP
+.byt CONTROLLER_INPUT_SPECIAL,       CONTROLLER_INPUT_SPECIAL_UP
 controller_callbacks_lo:
 .byt <start_side_special_player,     <start_side_special_player,    <start_aerial_jumping_player, <start_aerial_jumping_player, <start_aerial_jumping_player
 .byt <start_aerial_side_player,      <start_aerial_side_player,     <start_aerial_down_player,    <start_aerial_up_player,      <start_aerial_neutral_player
-.byt <start_aerial_spe_down_player,  <start_spe_up_player
+.byt <start_aerial_spe_player,       <start_spe_up_player
 controller_callbacks_hi:
 .byt >start_side_special_player,     >start_side_special_player,    >start_aerial_jumping_player, >start_aerial_jumping_player, >start_aerial_jumping_player
 .byt >start_aerial_side_player,      >start_aerial_side_player,     >start_aerial_down_player,    >start_aerial_up_player,      >start_aerial_neutral_player
-.byt >start_aerial_spe_down_player,  >start_spe_up_player
+.byt >start_aerial_spe_player,       >start_spe_up_player
 controller_default_callback:
 .word no_input
 .)
@@ -1457,31 +1457,31 @@ end:
 rts
 .)
 
-start_aerial_spe_down_player:
+start_aerial_spe_player:
 .(
 ; Set state
-lda PLAYER_STATE_AERIAL_SPE_DOWN
+lda PLAYER_STATE_AERIAL_SPE_NEUTRAL
 sta player_a_state, x
 
 ; Fallthrough to set the animation
 .)
-set_aerial_spe_down_animation:
+set_aerial_spe_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_aerial_spe_down_left
+lda #<anim_sinbad_aerial_spe_left
 sta tmpfield1
-lda #>anim_sinbad_aerial_spe_down_left
+lda #>anim_sinbad_aerial_spe_left
 sta tmpfield2
-lda #<anim_sinbad_aerial_spe_down_right
+lda #<anim_sinbad_aerial_spe_right
 sta tmpfield3
-lda #>anim_sinbad_aerial_spe_down_right
+lda #>anim_sinbad_aerial_spe_right
 sta tmpfield4
 jsr set_player_animation_oriented
 
 rts
 .)
 
-aerial_spe_down_player:
+aerial_spe_player:
 .(
 jsr aerial_directional_influence
 
