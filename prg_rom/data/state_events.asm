@@ -21,6 +21,7 @@ STATE_ROUTINE(aerial_neutral_player)
 STATE_ROUTINE(aerial_spe_player)
 STATE_ROUTINE(spe_up_player)
 STATE_ROUTINE(spe_down_player)
+STATE_ROUTINE(up_tilt_player)
 
 sinbad_state_offground_routines:
 STATE_ROUTINE(start_falling_player) ; Standing
@@ -44,6 +45,7 @@ STATE_ROUTINE(dummy_routine) ; Aerial neutral
 STATE_ROUTINE(dummy_routine) ; Aerial special neutral
 STATE_ROUTINE(dummy_routine) ; Special up
 STATE_ROUTINE(dummy_routine) ; Special down
+STATE_ROUTINE(dummy_routine) ; Up tilt
 
 sinbad_state_onground_routines:
 STATE_ROUTINE(dummy_routine) ; Standing
@@ -67,6 +69,7 @@ STATE_ROUTINE(start_landing_player) ; Aerial neutral
 STATE_ROUTINE(start_landing_player) ; Aerial special neutral
 STATE_ROUTINE(dummy_routine) ; Special up
 STATE_ROUTINE(dummy_routine) ; Special down
+STATE_ROUTINE(dummy_routine) ; Up tilt
 
 sinbad_state_input_routines:
 STATE_ROUTINE(standing_player_input) ; Standing
@@ -90,3 +93,4 @@ STATE_ROUTINE(keep_input_dirty) ; Aerial neutral
 STATE_ROUTINE(dummy_routine) ; Aerial special neutral
 STATE_ROUTINE(dummy_routine) ; Special up
 STATE_ROUTINE(dummy_routine) ; Special down
+STATE_ROUTINE(keep_input_dirty) ; Up tilt
