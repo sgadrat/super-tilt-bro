@@ -666,6 +666,42 @@ end:
 rts
 .)
 
+jumping_player_input:
+.(
+; The jump is cancellable by grounded movements during preparation
+; and by aerial movements after that
+lda player_a_anim_clock, x
+cmp STATE_SINBAD_JUMP_PREPARATION_END
+bcc grounded
+
+jsr check_aerial_inputs
+jmp end
+
+grounded:
+lda #<controller_inputs
+sta tmpfield1
+lda #>controller_inputs
+sta tmpfield2
+lda #2
+sta tmpfield3
+jmp controller_callbacks
+
+end:
+rts
+
+; Impactful controller states and associated callbacks (when still grounded)
+; Note - We can put subroutines as callbacks because we have nothing to do after calling it
+;        (sourboutines return to our caller since "called" with jmp)
+controller_inputs:
+.byt CONTROLLER_INPUT_ATTACK_UP, CONTROLLER_INPUT_SPECIAL_UP
+controller_callbacks_lo:
+.byt <start_up_tilt_player, <start_spe_up_player
+controller_callbacks_hi:
+.byt >start_up_tilt_player, >start_spe_up_player
+controller_default_callback:
+.word end
+.)
+
 #define MAX_NUM_AERIAL_JUMPS 1
 start_aerial_jumping_player:
 .(
