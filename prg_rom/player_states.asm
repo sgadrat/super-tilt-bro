@@ -1699,7 +1699,7 @@ jsr set_player_animation_oriented
 rts
 .)
 
-#define STATE_SINBAD_UPTILT_DURATION #30
+#define STATE_SINBAD_UPTILT_DURATION #20
 up_tilt_player:
 .(
 ; Do not move, velocity tends toward vector (0,0)
