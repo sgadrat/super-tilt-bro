@@ -994,19 +994,25 @@ anim_frame_move_sprite:
 
 attributes_modifier = tmpfield14
 
-; Compute attributes modifier, to flip the animation if needed
+; Compute direction dependent information
+;  attributes modifier - to flip the animation if needed
+;  A - sprite index to use
 lda animation_direction
 beq default_direction
+
 lda #$40
 sta attributes_modifier
+lda last_sprite_index
 jmp end_init_attributes_modifier
+
 default_direction:
 lda #$00
 sta attributes_modifier
+lda sprite_index
+
 end_init_attributes_modifier:
 
-; X points on sprite data to modify
-lda sprite_index
+; X points on sprite data to modify, (note - register A must contain the sprite index)
 asl
 asl
 tax
@@ -1052,7 +1058,13 @@ sta oam_mirror, x
 iny
 
 ; Next sprite
+lda animation_direction
+beq inc_sprite_index
+dec last_sprite_index
+jmp end_next_sprite
+inc_sprite_index:
 inc sprite_index
+end_next_sprite:
 
 rts
 .)
