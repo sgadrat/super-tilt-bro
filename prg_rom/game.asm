@@ -827,7 +827,7 @@ inx
 cpx #$02
 bne player_animation
 
-jsr show_hitboxes
+;jsr show_hitboxes
 
 rts
 .)
@@ -993,6 +993,7 @@ anim_frame_move_sprite:
 ; Copy sprite data
 
 attributes_modifier = tmpfield14
+sprite_used = tmpfield15 ; 0 - first sprite, 1 - last sprite
 
 ; Compute direction dependent information
 ;  attributes modifier - to flip the animation if needed
@@ -1000,19 +1001,35 @@ attributes_modifier = tmpfield14
 lda animation_direction
 beq default_direction
 
-lda #$40
-sta attributes_modifier
-lda last_sprite_index
-jmp end_init_attributes_modifier
+lda #$40                ; Flip horizontally attributes
+sta attributes_modifier ;
+
+lda #%00010000              ;
+bit continuation_byte       ;
+beq use_last_sprite         ;
+lda #0                      ;
+jmp set_sprite_used         ; Use the last sprite unless explicitely foreground
+use_last_sprite:            ;
+lda #1                      ;
+set_sprite_used:            ;
+sta sprite_used             ;
+jmp end_init_direction_data ;
 
 default_direction:
-lda #$00
-sta attributes_modifier
+lda #$00                ;
+sta attributes_modifier ; Do not flip attributes
+sta sprite_used         ; Always use the first sprite
+
+end_init_direction_data:
+
+; X points on sprite data to modify
+lda sprite_used
+beq use_first_sprite
+lda last_sprite_index
+jmp sprite_index_set
+use_first_sprite:
 lda sprite_index
-
-end_init_attributes_modifier:
-
-; X points on sprite data to modify, (note - register A must contain the sprite index)
+sprite_index_set:
 asl
 asl
 tax
@@ -1058,7 +1075,7 @@ sta oam_mirror, x
 iny
 
 ; Next sprite
-lda animation_direction
+lda sprite_used
 beq inc_sprite_index
 dec last_sprite_index
 jmp end_next_sprite
