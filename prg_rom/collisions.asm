@@ -10,7 +10,7 @@
 ;  tmpfield9 - Final position X (low byte)
 ;  tmpfield10 - Final position Y (low byte)
 ;
-; tmpfield3, tmpfield4, tmpfield5 and tmpfield6 are rewritten with a final position that do not pass through obstacle.
+; tmpfield3, tmpfield4, tmpfield9 and tmpfield10 are rewritten with a final position that do not pass through obstacle.
 check_collision:
 .(
 ; Better names for labels
@@ -33,26 +33,28 @@ lda obstacle_bottom ; the player is over or under the obstacle
 cmp final_y         ;
 bcc top_edge        ;
 
-lda obstacle_left   ; Set final_x to obstacle_left if original position
-cmp orig_x          ; is on the left of the edge and final position on
-bcc right_edge      ; the right of the edge.
+lda orig_x          ; Set final_x to obstacle_left if original position
+cmp obstacle_left   ; is on the left of the edge and final position on
+bcs right_edge      ; the right of the edge.
 lda final_x         ;
 cmp obstacle_left   ; When high bytes are equal to obstacle_left ensure low byte
 bcc right_edge      ; is 0, this is a limitation if origx_x_low differs from 0
 lda obstacle_left   ; since the point is already inside the obstacle. Should
 sta final_x         ; work as long as points never fo in obstacles. Else inside
-lda #$00            ; obstacle for less than one pixel is considered outside.
+dec final_x         ; obstacle for less than one pixel is considered outside.
+lda #$ff            ;
 sta final_x_low     ;
 
 ; Check collision with right edge
 right_edge:
-lda orig_x
-cmp obstacle_right
-bcc top_edge
+lda obstacle_right
+cmp orig_x
+bcs top_edge
 lda obstacle_right
 cmp final_x
 bcc top_edge
 sta final_x
+inc final_x
 lda #$00
 sta final_x_low
 
@@ -65,26 +67,28 @@ lda obstacle_right ; the player is aside of the obstacle
 cmp final_x        ;
 bcc end            ;
 
-lda obstacle_top
-cmp orig_y
-bcc bot_edge
+lda orig_y
+cmp obstacle_top
+bcs bot_edge
 lda final_y
 cmp obstacle_top
 bcc bot_edge
 lda obstacle_top
 sta final_y
-lda #$00
+dec final_y
+lda #$ff
 sta final_y_low
 
 ; Check collision with bottom edge
 bot_edge:
-lda orig_y
-cmp obstacle_bottom
-bcc end
+lda obstacle_bottom
+cmp orig_y
+bcs end
 lda obstacle_bottom
 cmp final_y
 bcc end
 sta final_y
+inc final_y
 lda #$00
 sta final_y_low
 

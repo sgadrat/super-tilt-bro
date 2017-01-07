@@ -1,6 +1,6 @@
-#define STAGE_EDGE_LEFT #$20
-#define STAGE_EDGE_RIGHT #$d8
-#define STAGE_EDGE_TOP #$80
+#define STAGE_EDGE_LEFT #$21
+#define STAGE_EDGE_RIGHT #$d7
+#define STAGE_EDGE_TOP #$81
 #define STAGE_EDGE_BOTTOM #$ff
 
 #define RESPAWN_X #$70

@@ -78,6 +78,9 @@ sta player_a_y
 sta player_b_y
 sta player_a_hurtbox_top
 sta player_b_hurtbox_top
+lda #$ff
+sta player_a_y_low
+sta player_b_y_low
 lda #$40
 sta player_a_x
 sta player_a_hurtbox_left
@@ -561,7 +564,7 @@ check_right_blast:
 lda player_a_x, x   ; Horizontal velocity is positive
 cmp old_x           ; die if "new X < old X"
 bcc set_death_state ;
-check_vertical_blasts
+check_vertical_blasts:
 lda player_a_velocity_v, x
 bpl check_bottom_blast
 lda old_y           ; Vertical velocity is negative
@@ -576,15 +579,16 @@ end_death_checks:
 
 ; Check if on ground
 lda player_a_x, x
-cmp STAGE_EDGE_LEFT
+cmp STAGE_EDGE_LEFT-1
 bcc offground
-lda STAGE_EDGE_RIGHT
+lda STAGE_EDGE_RIGHT+1
 cmp player_a_x, x
 bcc offground
 lda player_a_y, x
-cmp STAGE_EDGE_TOP
+cmp STAGE_EDGE_TOP-1
 bne offground
 lda player_a_y_low, x
+cmp #$ff
 bne offground
 
 ; On ground
