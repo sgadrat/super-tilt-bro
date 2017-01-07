@@ -155,6 +155,8 @@ bne sprite_loop
 ; Init local options values from global state
 lda audio_music_enabled
 sta config_music_enabled
+lda #0
+sta config_selected_option
 
 ; Adapt to configuration's state
 jsr config_update_screen
