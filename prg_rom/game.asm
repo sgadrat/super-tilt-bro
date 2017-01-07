@@ -822,7 +822,7 @@ inx
 cpx #$02
 bne player_animation
 
-;jsr show_hitboxes
+jsr show_hitboxes
 
 rts
 .)
@@ -875,7 +875,7 @@ rts
 ;  tmpfield7 - Frame's first tick
 ;  X register - player number
 ;
-; Overwrites tmpfield5, tmpfield7, tmpfield8, tmpfield9, tmpfield10 and all registers
+; Overwrites tmpfield5, tmpfield7, tmpfield8, tmpfield9, tmpfield10, tmpfield11, tmpfield12 and all registers
 draw_anim_frame:
 .(
 ; Pretty names
@@ -890,6 +890,7 @@ sprite_orig_y = tmpfield9
 continuation_byte = tmpfield10
 got_hitbox = tmpfield11
 is_first_tick = tmpfield12
+player_direction = tmpfield13
 
 .(
 ; Compute is_first_tick (set to $00 on the first apparition of this frame)
@@ -903,6 +904,8 @@ ldy #$00
 stx player_number
 lda #$00
 sta got_hitbox
+lda player_a_direction, x
+sta player_direction
 
 ; Check continuation byte - zero value means end of data
 draw_one_sprite:
@@ -984,10 +987,26 @@ rts
 anim_frame_move_sprite:
 .(
 ; Copy sprite data
+
+attributes_modifier = tmpfield14
+
+; Compute player dependent modifications
+lda player_direction
+beq default_direction
+lda #$40
+sta attributes_modifier
+jmp end_init_attributes_modifier
+default_direction:
+lda #$00
+sta attributes_modifier
+end_init_attributes_modifier:
+
+; X points on sprite data to modify
 lda sprite_index
 asl
 asl
 tax
+
 ; Y value, must be relative to animation Y position
 lda (frame_vector), y
 clc
@@ -1000,16 +1019,29 @@ lda (frame_vector), y
 sta oam_mirror, x
 inx
 iny
-; Attributes (add "2 * player_num" to select 3rd and 4th palette for player B)
+; Attributes
+;  Add "2 * player_num" to select 3rd and 4th palette for player B
+;  Flip horizontally (eor $40) if oriented to the right
 lda player_number
 asl
 clc
 adc (frame_vector), y
+eor attributes_modifier
 sta oam_mirror, x
 inx
 iny
 ; X value, must be relative to animation X position
+;  Flip symetrically to the vertical axe if oriented to the right
+lda player_direction
+bne flip_x
 lda (frame_vector), y
+jmp got_relative_pos
+flip_x:
+lda (frame_vector), y
+eor #%11111111
+clc
+adc #1
+got_relative_pos:
 clc
 adc sprite_orig_x
 sta oam_mirror, x
@@ -1023,37 +1055,77 @@ rts
 
 anim_frame_move_hurtbox:
 .(
-; Left
+width = tmpfield14
+
+; Extract relative position
 ldx player_number
+; Left
 lda (frame_vector), y
-clc
-adc sprite_orig_x
 sta player_a_hurtbox_left, x
 iny
 ; Right
 lda (frame_vector), y
-clc
-adc sprite_orig_x
 sta player_a_hurtbox_right, x
 iny
 ; Top
 lda (frame_vector), y
-clc
-adc sprite_orig_y
 sta player_a_hurtbox_top, x
 iny
-; Top
+; Bottom
 lda (frame_vector), y
-clc
-adc sprite_orig_y
 sta player_a_hurtbox_bottom, x
 iny
 
+; If the player if right facing, flip the box
+lda player_direction ; Nothing to do for left facing players
+beq apply_offset     ;
+
+lda player_a_hurtbox_right, x ;
+sec                           ; Compute box width
+sbc player_a_hurtbox_left, x  ;
+sta width                     ;
+
+lda player_a_hurtbox_left, x  ;
+eor #%11111111                ;
+clc                           ; right = -left + 7
+adc #8                        ;
+sta player_a_hurtbox_right, x ;
+
+sec                          ;
+sbc width                    ; left = right - width
+sta player_a_hurtbox_left, x ;
+
+; Apply offset to the box
+apply_offset:
+; Left
+lda player_a_hurtbox_left, x
+clc
+adc sprite_orig_x
+sta player_a_hurtbox_left, x
+; Right
+lda player_a_hurtbox_right, x
+clc
+adc sprite_orig_x
+sta player_a_hurtbox_right, x
+; Top
+lda player_a_hurtbox_top, x
+clc
+adc sprite_orig_y
+sta player_a_hurtbox_top, x
+; Bottom
+lda player_a_hurtbox_bottom, x
+clc
+adc sprite_orig_y
+sta player_a_hurtbox_bottom, x
+
+end:
 rts
 .)
 
 anim_frame_move_hitbox:
 .(
+width = tmpfield14
+
 ldx player_number
 ; Enabled
 lda is_first_tick
@@ -1096,30 +1168,85 @@ lda (frame_vector), y
 sta player_a_hitbox_force_v_low, x
 iny
 ; Left
-ldx player_number
 lda (frame_vector), y
-clc
-adc sprite_orig_x
 sta player_a_hitbox_left, x
 iny
 ; Right
 lda (frame_vector), y
-clc
-adc sprite_orig_x
 sta player_a_hitbox_right, x
 iny
 ; Top
 lda (frame_vector), y
-clc
-adc sprite_orig_y
 sta player_a_hitbox_top, x
 iny
 ; Top
 lda (frame_vector), y
+sta player_a_hitbox_bottom, x
+iny
+
+; If the player if right facing, flip the box
+lda player_direction ; Nothing to do for left facing players
+beq apply_offset     ;
+
+; Flip box position
+lda player_a_hitbox_right, x ;
+sec                          ; Compute box width
+sbc player_a_hitbox_left, x  ;
+sta width                    ;
+
+lda player_a_hitbox_left, x  ;
+eor #%11111111               ;
+clc                          ; right = -left + 7
+adc #8                       ;
+sta player_a_hitbox_right, x ;
+
+sec                         ;
+sbc width                   ; left = right - width
+sta player_a_hitbox_left, x ;
+
+; Flip box knockback
+lda player_a_hitbox_base_knock_up_h_low, x  ;
+eor #%11111111                              ;
+clc                                         ;
+adc #1                                      ;
+sta player_a_hitbox_base_knock_up_h_low, x  ; base_h = -base_h
+lda player_a_hitbox_base_knock_up_h_high, x ;
+eor #%11111111                              ;
+adc #0                                      ;
+sta player_a_hitbox_base_knock_up_h_high, x ;
+
+lda player_a_hitbox_force_h_low, x ;
+eor #%11111111                     ;
+clc                                ;
+adc #1                             ;
+sta player_a_hitbox_force_h_low, x ; force_h = -force_h
+lda player_a_hitbox_force_h, x     ;
+eor #%11111111                     ;
+adc #0                             ;
+sta player_a_hitbox_force_h, x     ;
+
+; Apply offset to the box
+apply_offset:
+; Left
+lda player_a_hitbox_left, x
+clc
+adc sprite_orig_x
+sta player_a_hitbox_left, x
+; Right
+lda player_a_hitbox_right, x
+clc
+adc sprite_orig_x
+sta player_a_hitbox_right, x
+; Top
+lda player_a_hitbox_top, x
+clc
+adc sprite_orig_y
+sta player_a_hitbox_top, x
+; Top
+lda player_a_hitbox_bottom, x
 clc
 adc sprite_orig_y
 sta player_a_hitbox_bottom, x
-iny
 
 rts
 .)

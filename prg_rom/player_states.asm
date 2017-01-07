@@ -29,32 +29,6 @@ sta player_a_anim_clock, x
 rts
 .)
 
-; Start a new animation for the player depending on the player's direction
-;  X - Player number
-;  tmpfield1 - Animation's vector for left-facing player (low byte)
-;  tmpfield2 - Animation's vector for left-facing player (high byte)
-;  tmpfield3 - Animation's vector for right-facing player (low byte)
-;  tmpfield4 - Animation's vector for right-facing player (high byte)
-set_player_animation_oriented:
-.(
-right_animation = tmpfield3
-shown_animation = tmpfield1
-
-; If the player is right-facing, set the right animation as shown
-lda player_a_direction, x
-beq set_anim
-lda right_animation
-sta shown_animation
-lda right_animation+1
-sta shown_animation+1
-
-; Start the selected animation
-set_anim:
-jsr set_player_animation
-
-rts
-.)
-
 ; Jump to a callback according to player's controller state
 ;  X - Player number
 ;  tmpfield1 - Callbacks table (high byte)
@@ -306,15 +280,11 @@ rts
 start_standing_player:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_idle_left
+lda #<anim_sinbad_idle
 sta tmpfield1
-lda #>anim_sinbad_idle_left
+lda #>anim_sinbad_idle
 sta tmpfield2
-lda #<anim_sinbad_idle_right
-sta tmpfield3
-lda #>anim_sinbad_idle_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 ; Set the player's state
 lda PLAYER_STATE_STANDING
@@ -448,15 +418,11 @@ sta player_a_state, x
 set_running_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_run_left
+lda #<anim_sinbad_run
 sta tmpfield1
-lda #>anim_sinbad_run_left
+lda #>anim_sinbad_run
 sta tmpfield2
-lda #<anim_sinbad_run_right
-sta tmpfield3
-lda #>anim_sinbad_run_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 ; Set initial velocity
 lda #$00
@@ -589,15 +555,11 @@ sta player_a_state, x
 set_falling_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_falling_left
+lda #<anim_sinbad_falling
 sta tmpfield1
-lda #>anim_sinbad_falling_left
+lda #>anim_sinbad_falling
 sta tmpfield2
-lda #<anim_sinbad_falling_right
-sta tmpfield3
-lda #>anim_sinbad_falling_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 rts
 .)
@@ -621,15 +583,11 @@ sta player_a_state, x
 set_jumping_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_jumping_left
+lda #<anim_sinbad_jumping
 sta tmpfield1
-lda #>anim_sinbad_jumping_left
+lda #>anim_sinbad_jumping
 sta tmpfield2
-lda #<anim_sinbad_jumping_right
-sta tmpfield3
-lda #>anim_sinbad_jumping_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 rts
 .)
@@ -728,15 +686,11 @@ sta player_a_velocity_v_low, x
 set_aerial_jumping_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_aerial_jumping_left
+lda #<anim_sinbad_aerial_jumping
 sta tmpfield1
-lda #>anim_sinbad_aerial_jumping_left
+lda #>anim_sinbad_aerial_jumping
 sta tmpfield2
-lda #<anim_sinbad_aerial_jumping_right
-sta tmpfield3
-lda #>anim_sinbad_aerial_jumping_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 rts
 .)
@@ -747,15 +701,11 @@ sta player_a_state, x
 set_jabbing_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_jab_left
+lda #<anim_sinbad_jab
 sta tmpfield1
-lda #>anim_sinbad_jab_left
+lda #>anim_sinbad_jab
 sta tmpfield2
-lda #<anim_sinbad_jab_right
-sta tmpfield3
-lda #>anim_sinbad_jab_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 rts
 .)
@@ -787,19 +737,10 @@ sta player_a_state_field1, x
 set_thrown_animation:
 .(
 ; Set the appropriate animation (depending on player's velocity)
-lda player_a_velocity_h, x
-bmi set_anim_left
-lda #<anim_sinbad_thrown_right
+lda #<anim_sinbad_thrown
 sta tmpfield1
-lda #>anim_sinbad_thrown_right
+lda #>anim_sinbad_thrown
 sta tmpfield2
-jmp set_anim
-set_anim_left:
-lda #<anim_sinbad_thrown_left
-sta tmpfield1
-lda #>anim_sinbad_thrown_left
-sta tmpfield2
-set_anim:
 jsr set_player_animation
 
 rts
@@ -933,15 +874,11 @@ rts
 start_side_tilt_player:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_side_tilt_left
+lda #<anim_sinbad_side_tilt
 sta tmpfield1
-lda #>anim_sinbad_side_tilt_left
+lda #>anim_sinbad_side_tilt
 sta tmpfield2
-lda #<anim_sinbad_side_tilt_right
-sta tmpfield3
-lda #>anim_sinbad_side_tilt_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 ; Set the player's state
 lda PLAYER_STATE_SIDE_TILT
@@ -1054,15 +991,11 @@ sta player_a_state_field1, x
 set_side_special_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_side_special_left_charge
+lda #<anim_sinbad_side_special_charge
 sta tmpfield1
-lda #>anim_sinbad_side_special_left_charge
+lda #>anim_sinbad_side_special_charge
 sta tmpfield2
-lda #<anim_sinbad_side_special_right_charge
-sta tmpfield3
-lda #>anim_sinbad_side_special_right_charge
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 rts
 .)
@@ -1102,15 +1035,11 @@ adc #5
 sta player_a_state_field2, x
 
 ; Set the movement animation
-lda #<anim_sinbad_side_special_left_jump
+lda #<anim_sinbad_side_special_jump
 sta tmpfield1
-lda #>anim_sinbad_side_special_left_jump
+lda #>anim_sinbad_side_special_jump
 sta tmpfield2
-lda #<anim_sinbad_side_special_right_jump
-sta tmpfield3
-lda #>anim_sinbad_side_special_right_jump
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 moving:
 ; Set vertical velocity (fixed)
@@ -1153,15 +1082,11 @@ sta player_a_state, x
 set_helpless_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_helpless_left
+lda #<anim_sinbad_helpless
 sta tmpfield1
-lda #>anim_sinbad_helpless_left
+lda #>anim_sinbad_helpless
 sta tmpfield2
-lda #<anim_sinbad_helpless_right
-sta tmpfield3
-lda #>anim_sinbad_helpless_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 rts
 .)
@@ -1204,15 +1129,11 @@ sta player_a_velocity_h_low, x
 set_landing_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_landing_left
+lda #<anim_sinbad_landing
 sta tmpfield1
-lda #>anim_sinbad_landing_left
+lda #>anim_sinbad_landing
 sta tmpfield2
-lda #<anim_sinbad_landing_right
-sta tmpfield3
-lda #>anim_sinbad_landing_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 rts
 .)
@@ -1251,15 +1172,11 @@ sta player_a_state, x
 set_crashing_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_crashing_left
+lda #<anim_sinbad_crashing
 sta tmpfield1
-lda #>anim_sinbad_crashing_left
+lda #>anim_sinbad_crashing
 sta tmpfield2
-lda #<anim_sinbad_crashing_right
-sta tmpfield3
-lda #>anim_sinbad_crashing_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 ; Play crash sound
 jsr audio_play_crash
@@ -1301,15 +1218,11 @@ sta player_a_state, x
 set_down_tilt_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_down_tilt_left
+lda #<anim_sinbad_down_tilt
 sta tmpfield1
-lda #>anim_sinbad_down_tilt_left
+lda #>anim_sinbad_down_tilt
 sta tmpfield2
-lda #<anim_sinbad_down_tilt_right
-sta tmpfield3
-lda #>anim_sinbad_down_tilt_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 rts
 .)
@@ -1348,15 +1261,11 @@ sta player_a_state, x
 set_aerial_side_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_aerial_side_left
+lda #<anim_sinbad_aerial_side
 sta tmpfield1
-lda #>anim_sinbad_aerial_side_left
+lda #>anim_sinbad_aerial_side
 sta tmpfield2
-lda #<anim_sinbad_aerial_side_right
-sta tmpfield3
-lda #>anim_sinbad_aerial_side_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 rts
 .)
@@ -1387,15 +1296,11 @@ sta player_a_state, x
 set_aerial_down_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_aerial_down_left
+lda #<anim_sinbad_aerial_down
 sta tmpfield1
-lda #>anim_sinbad_aerial_down_left
+lda #>anim_sinbad_aerial_down
 sta tmpfield2
-lda #<anim_sinbad_aerial_down_right
-sta tmpfield3
-lda #>anim_sinbad_aerial_down_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 rts
 .)
@@ -1426,15 +1331,11 @@ sta player_a_state, x
 set_aerial_up_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_aerial_up_left
+lda #<anim_sinbad_aerial_up
 sta tmpfield1
-lda #>anim_sinbad_aerial_up_left
+lda #>anim_sinbad_aerial_up
 sta tmpfield2
-lda #<anim_sinbad_aerial_up_right
-sta tmpfield3
-lda #>anim_sinbad_aerial_up_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 rts
 .)
@@ -1465,15 +1366,11 @@ sta player_a_state, x
 set_aerial_neutral_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_aerial_neutral_left
+lda #<anim_sinbad_aerial_neutral
 sta tmpfield1
-lda #>anim_sinbad_aerial_neutral_left
+lda #>anim_sinbad_aerial_neutral
 sta tmpfield2
-lda #<anim_sinbad_aerial_neutral_right
-sta tmpfield3
-lda #>anim_sinbad_aerial_neutral_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 rts
 .)
@@ -1504,15 +1401,11 @@ sta player_a_state, x
 set_aerial_spe_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_aerial_spe_left
+lda #<anim_sinbad_aerial_spe
 sta tmpfield1
-lda #>anim_sinbad_aerial_spe_left
+lda #>anim_sinbad_aerial_spe
 sta tmpfield2
-lda #<anim_sinbad_aerial_spe_right
-sta tmpfield3
-lda #>anim_sinbad_aerial_spe_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 rts
 .)
@@ -1566,15 +1459,11 @@ sta player_a_state_field1, x
 set_spe_up_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_spe_up_left_prepare
+lda #<anim_sinbad_spe_up_prepare
 sta tmpfield1
-lda #>anim_sinbad_spe_up_left_prepare
+lda #>anim_sinbad_spe_up_prepare
 sta tmpfield2
-lda #<anim_sinbad_spe_up_right_prepare
-sta tmpfield3
-lda #>anim_sinbad_spe_up_right_prepare
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 rts
 .)
@@ -1606,15 +1495,11 @@ lda #$00
 sta player_a_velocity_v_low, x
 
 ; Set the movement animation
-lda #<anim_sinbad_spe_up_left_jump
+lda #<anim_sinbad_spe_up_jump
 sta tmpfield1
-lda #>anim_sinbad_spe_up_left_jump
+lda #>anim_sinbad_spe_up_jump
 sta tmpfield2
-lda #<anim_sinbad_spe_up_right_jump
-sta tmpfield3
-lda #>anim_sinbad_spe_up_right_jump
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 moving:
 
@@ -1647,15 +1532,11 @@ sta player_a_state, x
 set_spe_down_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_spe_down_left
+lda #<anim_sinbad_spe_down
 sta tmpfield1
-lda #>anim_sinbad_spe_down_left
+lda #>anim_sinbad_spe_down
 sta tmpfield2
-lda #<anim_sinbad_spe_down_right
-sta tmpfield3
-lda #>anim_sinbad_spe_down_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 rts
 .)
@@ -1686,15 +1567,11 @@ sta player_a_state, x
 set_up_tilt_animation:
 .(
 ; Set the appropriate animation (depending on player's direction)
-lda #<anim_sinbad_up_tilt_left
+lda #<anim_sinbad_up_tilt
 sta tmpfield1
-lda #>anim_sinbad_up_tilt_left
+lda #>anim_sinbad_up_tilt
 sta tmpfield2
-lda #<anim_sinbad_up_tilt_right
-sta tmpfield3
-lda #>anim_sinbad_up_tilt_right
-sta tmpfield4
-jsr set_player_animation_oriented
+jsr set_player_animation
 
 rts
 .)
