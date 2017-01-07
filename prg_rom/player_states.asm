@@ -26,6 +26,10 @@ tax
 lda #$00
 sta player_a_anim_clock, x
 
+; Set animation's direction
+lda player_a_direction, x
+sta player_a_animation_direction, x
+
 rts
 .)
 
@@ -279,7 +283,7 @@ rts
 
 start_standing_player:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_idle
 sta tmpfield1
 lda #>anim_sinbad_idle
@@ -417,7 +421,7 @@ lda PLAYER_STATE_RUNNING
 sta player_a_state, x
 set_running_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_run
 sta tmpfield1
 lda #>anim_sinbad_run
@@ -554,7 +558,7 @@ sta player_a_state, x
 .)
 set_falling_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_falling
 sta tmpfield1
 lda #>anim_sinbad_falling
@@ -582,7 +586,7 @@ sta player_a_state, x
 .)
 set_jumping_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_jumping
 sta tmpfield1
 lda #>anim_sinbad_jumping
@@ -685,7 +689,7 @@ sta player_a_velocity_v_low, x
 .)
 set_aerial_jumping_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_aerial_jumping
 sta tmpfield1
 lda #>anim_sinbad_aerial_jumping
@@ -700,7 +704,7 @@ lda PLAYER_STATE_JABBING
 sta player_a_state, x
 set_jabbing_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_jab
 sta tmpfield1
 lda #>anim_sinbad_jab
@@ -736,12 +740,21 @@ sta player_a_state_field1, x
 .)
 set_thrown_animation:
 .(
-; Set the appropriate animation (depending on player's velocity)
 lda #<anim_sinbad_thrown
 sta tmpfield1
 lda #>anim_sinbad_thrown
 sta tmpfield2
 jsr set_player_animation
+
+; Set the appropriate animation direction (depending on player's velocity)
+lda player_a_velocity_h, x
+bmi set_anim_left
+lda DIRECTION_RIGHT
+jmp set_anim_dir
+set_anim_left:
+lda DIRECTION_LEFT
+set_anim_dir:
+sta player_a_animation_direction, x
 
 rts
 .)
@@ -873,7 +886,7 @@ rts
 
 start_side_tilt_player:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_side_tilt
 sta tmpfield1
 lda #>anim_sinbad_side_tilt
@@ -990,7 +1003,7 @@ sta player_a_state_field1, x
 .)
 set_side_special_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_side_special_charge
 sta tmpfield1
 lda #>anim_sinbad_side_special_charge
@@ -1081,7 +1094,7 @@ sta player_a_state, x
 .)
 set_helpless_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_helpless
 sta tmpfield1
 lda #>anim_sinbad_helpless
@@ -1128,7 +1141,7 @@ sta player_a_velocity_h_low, x
 .)
 set_landing_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_landing
 sta tmpfield1
 lda #>anim_sinbad_landing
@@ -1171,7 +1184,7 @@ sta player_a_state, x
 .)
 set_crashing_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_crashing
 sta tmpfield1
 lda #>anim_sinbad_crashing
@@ -1217,7 +1230,7 @@ sta player_a_state, x
 .)
 set_down_tilt_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_down_tilt
 sta tmpfield1
 lda #>anim_sinbad_down_tilt
@@ -1260,7 +1273,7 @@ sta player_a_state, x
 .)
 set_aerial_side_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_aerial_side
 sta tmpfield1
 lda #>anim_sinbad_aerial_side
@@ -1295,7 +1308,7 @@ sta player_a_state, x
 .)
 set_aerial_down_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_aerial_down
 sta tmpfield1
 lda #>anim_sinbad_aerial_down
@@ -1330,7 +1343,7 @@ sta player_a_state, x
 .)
 set_aerial_up_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_aerial_up
 sta tmpfield1
 lda #>anim_sinbad_aerial_up
@@ -1365,7 +1378,7 @@ sta player_a_state, x
 .)
 set_aerial_neutral_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_aerial_neutral
 sta tmpfield1
 lda #>anim_sinbad_aerial_neutral
@@ -1400,7 +1413,7 @@ sta player_a_state, x
 .)
 set_aerial_spe_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_aerial_spe
 sta tmpfield1
 lda #>anim_sinbad_aerial_spe
@@ -1458,7 +1471,7 @@ sta player_a_state_field1, x
 .)
 set_spe_up_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_spe_up_prepare
 sta tmpfield1
 lda #>anim_sinbad_spe_up_prepare
@@ -1531,7 +1544,7 @@ sta player_a_state, x
 .)
 set_spe_down_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_spe_down
 sta tmpfield1
 lda #>anim_sinbad_spe_down
@@ -1566,7 +1579,7 @@ sta player_a_state, x
 .)
 set_up_tilt_animation:
 .(
-; Set the appropriate animation (depending on player's direction)
+; Set the appropriate animation
 lda #<anim_sinbad_up_tilt
 sta tmpfield1
 lda #>anim_sinbad_up_tilt

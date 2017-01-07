@@ -745,6 +745,7 @@ animation_vector = tmpfield3   ; Not movable - Used as parameter for draw_anim_f
 first_sprite_index = tmpfield5 ; Not movable - Used as parameter for draw_anim_frame subroutine
 last_sprite_index = tmpfield6  ; Not movable - Used as parameter for draw_anim_frame subroutine
 frame_first_tick = tmpfield7  ; Not movable - Used as parameter for draw_anim_frame subroutine
+animation_direction = tmpfield8 ; Not movable - Used as parameter for draw_anim_frame subroutine
 
 .(
 ldx #$00
@@ -802,6 +803,10 @@ sta tmpfield2
 ; Increment animation_vector to skip the frame duration field
 lda #$01
 jsr add_to_anim_vector
+
+; Set animation's direction
+lda player_a_animation_direction, x
+sta animation_direction
 
 txa
 pha
@@ -873,6 +878,7 @@ rts
 ;  tmpfield5 - First sprite index to use
 ;  tmpfield6 - Last sprite index to use
 ;  tmpfield7 - Frame's first tick
+;  tmpfield8 - Animation's direction (0 normal, 1 flipped)
 ;  X register - player number
 ;
 ; Overwrites tmpfield5, tmpfield7, tmpfield8, tmpfield9, tmpfield10, tmpfield11, tmpfield12 and all registers
@@ -885,12 +891,12 @@ frame_vector = tmpfield3
 sprite_index = tmpfield5
 last_sprite_index = tmpfield6
 player_number = tmpfield7
-sprite_orig_x = tmpfield8
-sprite_orig_y = tmpfield9
-continuation_byte = tmpfield10
-got_hitbox = tmpfield11
-is_first_tick = tmpfield12
-player_direction = tmpfield13
+animation_direction = tmpfield8
+sprite_orig_x = tmpfield9
+sprite_orig_y = tmpfield10
+continuation_byte = tmpfield11
+got_hitbox = tmpfield12
+is_first_tick = tmpfield13
 
 .(
 ; Compute is_first_tick (set to $00 on the first apparition of this frame)
@@ -904,8 +910,6 @@ ldy #$00
 stx player_number
 lda #$00
 sta got_hitbox
-lda player_a_direction, x
-sta player_direction
 
 ; Check continuation byte - zero value means end of data
 draw_one_sprite:
@@ -990,8 +994,8 @@ anim_frame_move_sprite:
 
 attributes_modifier = tmpfield14
 
-; Compute player dependent modifications
-lda player_direction
+; Compute attributes modifier, to flip the animation if needed
+lda animation_direction
 beq default_direction
 lda #$40
 sta attributes_modifier
@@ -1031,8 +1035,8 @@ sta oam_mirror, x
 inx
 iny
 ; X value, must be relative to animation X position
-;  Flip symetrically to the vertical axe if oriented to the right
-lda player_direction
+;  Flip symetrically to the vertical axe if needed
+lda animation_direction
 bne flip_x
 lda (frame_vector), y
 jmp got_relative_pos
@@ -1076,9 +1080,9 @@ lda (frame_vector), y
 sta player_a_hurtbox_bottom, x
 iny
 
-; If the player if right facing, flip the box
-lda player_direction ; Nothing to do for left facing players
-beq apply_offset     ;
+; If the animation is flipped, flip the box
+lda animation_direction ; Nothing to do for non-flipped animation
+beq apply_offset        ;
 
 lda player_a_hurtbox_right, x ;
 sec                           ; Compute box width
@@ -1184,9 +1188,9 @@ lda (frame_vector), y
 sta player_a_hitbox_bottom, x
 iny
 
-; If the player if right facing, flip the box
-lda player_direction ; Nothing to do for left facing players
-beq apply_offset     ;
+; If the player is right facing, flip the box
+lda animation_direction ; Nothing to do for left facing players
+beq apply_offset        ;
 
 ; Flip box position
 lda player_a_hitbox_right, x ;

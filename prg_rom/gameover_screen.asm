@@ -62,19 +62,23 @@ sta player_a_x, x ;
 lda #$3c          ;
 sta player_a_x, y ;
 
-lda #<anim_sinbad_victory ;
-sta tmpfield1             ;
-lda #>anim_sinbad_victory ; Set winner's animation
-sta tmpfield2             ;
-jsr set_player_animation  ;
+lda #<anim_sinbad_victory           ;
+sta tmpfield1                       ;
+lda #>anim_sinbad_victory           ; Set winner's animation
+sta tmpfield2                       ;
+jsr set_player_animation            ;
+lda #0                              ;
+sta player_a_animation_direction, x ;
 
-tya                      ;
-tax                      ;
-lda #<anim_sinbad_defeat ;
-sta tmpfield1            ; Set looser's animation
-lda #>anim_sinbad_defeat ;
-sta tmpfield2            ;
-jsr set_player_animation ;
+tya                                 ;
+tax                                 ;
+lda #<anim_sinbad_defeat            ;
+sta tmpfield1                       ; Set looser's animation
+lda #>anim_sinbad_defeat            ;
+sta tmpfield2                       ;
+jsr set_player_animation            ;
+lda #0                              ;
+sta player_a_animation_direction, x ;
 
 jsr update_sprites ; First animation frame
 
