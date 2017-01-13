@@ -23,3 +23,4 @@
 #include "prg_rom/data/state_animations/sinbad_spe_down.asm"
 #include "prg_rom/data/state_animations/sinbad_up_tilt.asm"
 #include "prg_rom/data/state_animations/gameover.asm"
+#include "prg_rom/data/state_animations/sinbad_shielding.asm"

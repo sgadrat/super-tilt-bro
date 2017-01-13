@@ -354,7 +354,7 @@ lda #<controller_inputs
 sta tmpfield1
 lda #>controller_inputs
 sta tmpfield2
-lda #15
+lda #16
 sta tmpfield3
 jmp controller_callbacks
 
@@ -404,14 +404,17 @@ controller_inputs:
 .byt CONTROLLER_INPUT_LEFT,         CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP,         CONTROLLER_INPUT_JUMP_RIGHT,   CONTROLLER_INPUT_JUMP_LEFT
 .byt CONTROLLER_INPUT_JAB,          CONTROLLER_INPUT_ATTACK_LEFT,  CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL,      CONTROLLER_INPUT_SPECIAL_RIGHT
 .byt CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_DOWN_TILT,    CONTROLLER_INPUT_SPECIAL_UP,   CONTROLLER_INPUT_SPECIAL_DOWN, CONTROLLER_INPUT_ATTACK_UP
+.byt CONTROLLER_INPUT_TECH
 controller_callbacks_lo:
 .byt <standing_player_input_left,  <standing_player_input_right,  <jump_input,                   <jump_input_right,             <jump_input_left
 .byt <start_jabbing_player,        <tilt_input_left,              <tilt_input_right,             <start_special_player,         <side_special_input_right
 .byt <side_special_input_left,     <start_down_tilt_player,       <start_spe_up_player,          <start_spe_down_player,        <start_up_tilt_player
+.byt <start_shielding_player
 controller_callbacks_hi:
 .byt >standing_player_input_left,  >standing_player_input_right,  >jump_input,                   >jump_input_right,             >jump_input_left
 .byt >start_jabbing_player,        >tilt_input_left,              >tilt_input_right,             >start_special_player,         >side_special_input_right
 .byt >side_special_input_left,     >start_down_tilt_player,       >start_spe_up_player,          >start_spe_down_player,        >start_up_tilt_player
+.byt >start_shielding_player
 controller_default_callback:
 .word end
 .)
@@ -1609,5 +1612,105 @@ bne end
 jsr start_standing_player
 
 end:
+rts
+.)
+
+start_shielding_player:
+.(
+; Set state
+lda PLAYER_STATE_SHIELDING
+sta player_a_state, x
+
+; Fallthrough to set the animation
+.)
+set_shielding_animation:
+.(
+; Set the appropriate animation
+lda #<anim_sinbad_shielding_full
+sta tmpfield1
+lda #>anim_sinbad_shielding_full
+sta tmpfield2
+jsr set_player_animation
+
+; Cancel momentum
+lda #$00
+sta player_a_velocity_h_low
+sta player_a_velocity_h
+
+; Set shield as full life
+lda #2
+sta player_a_state_field1, x
+
+rts
+.)
+
+shielding_player:
+.(
+; After move's time is out, go to standing state
+lda player_a_anim_clock, x
+cmp STATE_SINBAD_UPTILT_DURATION
+bne end
+jsr start_standing_player
+
+end:
+rts
+.)
+
+shielding_player_input:
+.(
+; Do the same as standing player, except all buttons are released (start standing in this case)
+lda controller_a_btns, x
+beq end_shield
+
+jsr standing_player_input
+jmp end
+
+end_shield:
+jsr start_standing_player
+
+end:
+rts
+.)
+
+shielding_player_hurt:
+.(
+; Reduce shield's life
+dec player_a_state_field1, x
+
+; Select what to do according to shield's life
+lda player_a_state_field1, x
+beq limit_shield
+cmp #1
+beq partial_shield
+
+; Break the shield
+jsr start_crashing_player
+jmp end
+
+; Get the animation corresponding to the shield's life
+partial_shield:
+lda #<anim_sinbad_shielding_partial
+sta tmpfield1
+lda #>anim_sinbad_shielding_partial
+jmp still_shield
+limit_shield:
+lda #<anim_sinbad_shielding_limit
+sta tmpfield1
+lda #>anim_sinbad_shielding_limit
+
+still_shield:
+; Set the new shield animation
+sta tmpfield2
+jsr set_player_animation
+
+; Play sound
+jsr audio_play_shield_hit
+
+end:
+; Disable the hitbox to avoid multi-hits
+jsr switch_selected_player
+lda HITBOX_DISABLED
+sta player_a_hitbox_enabled, x
+
 rts
 .)

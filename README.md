@@ -36,7 +36,7 @@ Move left   |      Unused   Unused
 |      +-|-+ |                           |       |      |
 +--------|---|---------------------------|-------|------+
          |   +---+                       |       +---+
-        Tech     |                 Special moves     |
+       Shield    |                 Special moves     |
                  |                                   |
             Move right                            Attacks
 ```
