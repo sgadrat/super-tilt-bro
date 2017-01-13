@@ -1681,6 +1681,8 @@ rts
 
 shielding_player_hurt:
 .(
+stroke_player = tmpfield11
+
 ; Reduce shield's life
 dec player_a_state_field1, x
 
@@ -1690,8 +1692,20 @@ beq limit_shield
 cmp #1
 beq partial_shield
 
-; Break the shield
-jsr start_crashing_player
+; Break the shield, derived from normal hurt with:
+;  Knockback * 2
+;  Screen shaking * 4
+;  Special sound
+jsr hurt_player
+ldx stroke_player
+asl player_a_velocity_h_low, x
+rol player_a_velocity_h, x
+asl player_a_velocity_v_low, x
+rol player_a_velocity_v, x
+asl player_a_hitstun, x
+asl screen_shake_counter
+asl screen_shake_counter
+jsr audio_play_shield_break
 jmp end
 
 ; Get the animation corresponding to the shield's life

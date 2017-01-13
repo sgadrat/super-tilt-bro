@@ -204,6 +204,17 @@ sta APU_NOISE_LENGTH_CNT
 rts
 .)
 
+audio_play_shield_break:
+.(
+lda #%00000100         ; --LCVVVV
+sta APU_NOISE_ENVELOPE ;
+lda #%00001011       ; L---PPPP
+sta APU_NOISE_PERIOD ;
+lda #%10110000           ; LLLLL---
+sta APU_NOISE_LENGTH_CNT
+rts
+.)
+
 audio_music_tick:
 .(
 music = tmpfield3
