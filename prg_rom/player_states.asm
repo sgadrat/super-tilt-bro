@@ -1566,7 +1566,14 @@ jsr apply_gravity
 lda player_a_anim_clock, x
 cmp STATE_SINBAD_SPE_DOWN_DURATION
 bne end
+
+; Return to falling or standing
+jsr check_on_ground
+beq on_ground
 jsr start_falling_player
+jmp end
+on_ground
+jsr start_standing_player
 
 end:
 rts

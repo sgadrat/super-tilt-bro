@@ -1,3 +1,33 @@
+; Check if the player is on ground
+;  register X - Player number
+;
+; Sets Z flag if on ground, else unset it
+;
+; Overwrites register A
+check_on_ground:
+.(
+lda player_a_x, x
+cmp STAGE_EDGE_LEFT-1
+bcc offground
+lda STAGE_EDGE_RIGHT+1
+cmp player_a_x, x
+bcc offground
+lda player_a_y, x
+cmp STAGE_EDGE_TOP-1
+bne offground
+lda player_a_y_low, x
+cmp #$ff
+;bne offground ; useless as we do nothing anyway
+
+; Z flag is already set if on ground (ensured by passing the last "bne")
+; Z flag is already unset if off gound (ensured by "bcc" and "bne")
+;  So there is nothing more to do
+offground:
+
+end:
+rts
+.)
+
 ; Check if a movement collide with an obstacle
 ;  tmpfield1 - Original position X
 ;  tmpfield2 - Original position Y

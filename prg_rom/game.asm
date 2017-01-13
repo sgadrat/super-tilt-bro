@@ -598,17 +598,7 @@ bcc set_death_state ;
 end_death_checks:
 
 ; Check if on ground
-lda player_a_x, x
-cmp STAGE_EDGE_LEFT-1
-bcc offground
-lda STAGE_EDGE_RIGHT+1
-cmp player_a_x, x
-bcc offground
-lda player_a_y, x
-cmp STAGE_EDGE_TOP-1
-bne offground
-lda player_a_y_low, x
-cmp #$ff
+jsr check_on_ground
 bne offground
 
 ; On ground

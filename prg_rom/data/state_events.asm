@@ -95,7 +95,7 @@ STATE_ROUTINE(keep_input_dirty) ; Aerial up
 STATE_ROUTINE(keep_input_dirty) ; Aerial neutral
 STATE_ROUTINE(dummy_routine) ; Aerial special neutral
 STATE_ROUTINE(dummy_routine) ; Special up
-STATE_ROUTINE(dummy_routine) ; Special down
+STATE_ROUTINE(keep_input_dirty) ; Special down
 STATE_ROUTINE(keep_input_dirty) ; Up tilt
 STATE_ROUTINE(shielding_player_input) ; Shielding
 
