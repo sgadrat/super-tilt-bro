@@ -94,3 +94,27 @@ STATE_ROUTINE(dummy_routine) ; Aerial special neutral
 STATE_ROUTINE(dummy_routine) ; Special up
 STATE_ROUTINE(dummy_routine) ; Special down
 STATE_ROUTINE(keep_input_dirty) ; Up tilt
+
+sinbad_state_onhurt_routines:
+STATE_ROUTINE(hurt_player) ; Standing
+STATE_ROUTINE(hurt_player) ; Running
+STATE_ROUTINE(hurt_player) ; Falling
+STATE_ROUTINE(hurt_player) ; Jumping
+STATE_ROUTINE(hurt_player) ; Jabbing
+STATE_ROUTINE(hurt_player) ; Thrown
+STATE_ROUTINE(hurt_player) ; Respawn
+STATE_ROUTINE(hurt_player) ; Side tilt
+STATE_ROUTINE(hurt_player) ; Special
+STATE_ROUTINE(hurt_player) ; Side special
+STATE_ROUTINE(hurt_player) ; Helpless
+STATE_ROUTINE(hurt_player) ; Landing
+STATE_ROUTINE(hurt_player) ; Crashing
+STATE_ROUTINE(hurt_player) ; Down tilt
+STATE_ROUTINE(hurt_player) ; Aerial side
+STATE_ROUTINE(hurt_player) ; Aerial down
+STATE_ROUTINE(hurt_player) ; Aerial up
+STATE_ROUTINE(hurt_player) ; Aerial neutral
+STATE_ROUTINE(hurt_player) ; Aerial special neutral
+STATE_ROUTINE(hurt_player) ; Special up
+STATE_ROUTINE(hurt_player) ; Special down
+STATE_ROUTINE(hurt_player) ; Up tilt

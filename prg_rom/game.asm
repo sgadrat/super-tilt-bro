@@ -257,12 +257,7 @@ check_player_hit:
 .(
 current_player = tmpfield10
 opponent_player = tmpfield11
-force_h = tmpfield12
-force_v = tmpfield13
-force_h_low = tmpfield14
-force_v_low = tmpfield15
 
-.(
 ; Store current player number
 stx current_player
 
@@ -340,6 +335,29 @@ jsr boxes_overlap
 lda tmpfield9
 bne end
 
+lda #<sinbad_state_onhurt_routines ;
+sta tmpfield1                      ;
+lda #>sinbad_state_onhurt_routines ; Fire on-hurt event
+sta tmpfield2                      ;
+jsr player_state_action            ;
+
+end:
+; Reset register X to the current player
+ldx current_player
+rts
+.)
+
+; Throw the hurted player depending on the hitbox hurting him
+;  tmpfield10 - Player number of the striker
+;  tmpfield11 - Player number of the stroke
+;  register X - Player number of the stroke (equals to tmpfield11)
+;
+;  Can overwrite any register and any tmpfield except tmpfield10 and tmpfield11.
+hurt_player:
+.(
+current_player = tmpfield10
+opponent_player = tmpfield11
+
 ; Play hit sound
 jsr audio_play_hit
 
@@ -368,9 +386,6 @@ ldx current_player
 lda HITBOX_DISABLED
 sta player_a_hitbox_enabled, x
 
-end:
-; Reset register X to the current player
-ldx current_player
 rts
 .)
 
@@ -384,6 +399,12 @@ base_h_low = tmpfield6
 base_h_high = tmpfield7
 base_v_low = tmpfield8
 base_v_high = tmpfield9
+current_player = tmpfield10
+opponent_player = tmpfield11
+force_h = tmpfield12
+force_v = tmpfield13
+force_h_low = tmpfield14
+force_v_low = tmpfield15
 knockback_h_high = force_h    ; knockback_h reuses force_h memory location
 knockback_h_low = force_h_low ; it is only writen after the last read of force_h
 knockback_v_high = force_v     ; knockback_v reuses force_v memory location
@@ -486,7 +507,6 @@ lsr
 sta screen_shake_counter
 
 rts
-.)
 .)
 
 ; Move the player according to it's velocity and collisions with obstacles
