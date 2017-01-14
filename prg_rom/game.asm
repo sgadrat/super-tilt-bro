@@ -94,6 +94,9 @@ lda #$48
 sta player_a_hurtbox_right
 lda #$a8
 sta player_b_hurtbox_right
+lda #DEFAULT_GRAVITY
+sta player_a_gravity
+sta player_b_gravity
 lda config_initial_stocks
 sta player_a_stocks
 sta player_b_stocks
@@ -604,6 +607,8 @@ bne offground
 ; On ground
 lda #$00                         ; Reset aerial jumps counter
 sta player_a_num_aerial_jumps, x ;
+lda #DEFAULT_GRAVITY    ; Reset gravity modifications
+sta player_a_gravity, x ;
 lda #<sinbad_state_onground_routines ;
 sta tmpfield1                        ;
 lda #>sinbad_state_onground_routines ; Fire on-ground event

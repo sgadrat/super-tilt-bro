@@ -80,6 +80,8 @@ player_a_num_aerial_jumps = $49
 player_b_num_aerial_jumps = $4a
 player_a_stocks = $4b
 player_b_stocks = $4c
+player_a_gravity = $4d
+player_b_gravity = $4e
 
 screen_shake_counter = $70
 screen_shake_nextval = $71

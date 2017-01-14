@@ -168,30 +168,41 @@ lda #<controller_inputs
 sta tmpfield1
 lda #>controller_inputs
 sta tmpfield2
-lda #13
+lda #14
 sta tmpfield3
 jmp controller_callbacks
+
+; Fast fall, gravity * 1.5
+fast_fall:
+lda #DEFAULT_GRAVITY*2-DEFAULT_GRAVITY/2
+sta player_a_gravity, x
+sta player_a_velocity_v, x
+lda #$00
+sta player_a_velocity_v_low, x
+jmp end
 
 ; If no input, unmark the input flag and return
 no_input:
 lda #$00
 sta input_marker
+
+end:
 rts
 
 ; Impactful controller states and associated callbacks
 ; Note - We have to put subroutines as callbacks since we do not expect a return unless we used the default callback
 controller_inputs:
-.byt CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_JUMP,        CONTROLLER_INPUT_JUMP_RIGHT,  CONTROLLER_INPUT_JUMP_LEFT
-.byt CONTROLLER_INPUT_ATTACK_LEFT,   CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_DOWN_TILT,   CONTROLLER_INPUT_ATTACK_UP,   CONTROLLER_INPUT_JAB
-.byt CONTROLLER_INPUT_SPECIAL,       CONTROLLER_INPUT_SPECIAL_UP,   CONTROLLER_INPUT_SPECIAL_DOWN
+.byt CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_JUMP,         CONTROLLER_INPUT_JUMP_RIGHT,  CONTROLLER_INPUT_JUMP_LEFT
+.byt CONTROLLER_INPUT_ATTACK_LEFT,   CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_DOWN_TILT,    CONTROLLER_INPUT_ATTACK_UP,   CONTROLLER_INPUT_JAB
+.byt CONTROLLER_INPUT_SPECIAL,       CONTROLLER_INPUT_SPECIAL_UP,   CONTROLLER_INPUT_SPECIAL_DOWN, CONTROLLER_INPUT_TECH
 controller_callbacks_lo:
-.byt <start_side_special_player,     <start_side_special_player,    <start_aerial_jumping_player, <start_aerial_jumping_player, <start_aerial_jumping_player
-.byt <start_aerial_side_player,      <start_aerial_side_player,     <start_aerial_down_player,    <start_aerial_up_player,      <start_aerial_neutral_player
-.byt <start_aerial_spe_player,       <start_spe_up_player,          <start_spe_down_player
+.byt <start_side_special_player,     <start_side_special_player,    <start_aerial_jumping_player,  <start_aerial_jumping_player, <start_aerial_jumping_player
+.byt <start_aerial_side_player,      <start_aerial_side_player,     <start_aerial_down_player,     <start_aerial_up_player,      <start_aerial_neutral_player
+.byt <start_aerial_spe_player,       <start_spe_up_player,          <start_spe_down_player,        <fast_fall
 controller_callbacks_hi:
-.byt >start_side_special_player,     >start_side_special_player,    >start_aerial_jumping_player, >start_aerial_jumping_player, >start_aerial_jumping_player
-.byt >start_aerial_side_player,      >start_aerial_side_player,     >start_aerial_down_player,    >start_aerial_up_player,      >start_aerial_neutral_player
-.byt >start_aerial_spe_player,       >start_spe_up_player,          >start_spe_down_player
+.byt >start_side_special_player,     >start_side_special_player,    >start_aerial_jumping_player,  >start_aerial_jumping_player, >start_aerial_jumping_player
+.byt >start_aerial_side_player,      >start_aerial_side_player,     >start_aerial_down_player,     >start_aerial_up_player,      >start_aerial_neutral_player
+.byt >start_aerial_spe_player,       >start_spe_up_player,          >start_spe_down_player,        >fast_fall
 controller_default_callback:
 .word no_input
 .)
@@ -207,7 +218,7 @@ lda player_a_velocity_h, x
 sta tmpfield4
 lda #$00
 sta tmpfield1
-lda #$03
+lda player_a_gravity, x
 sta tmpfield3
 lda #$60
 sta tmpfield5

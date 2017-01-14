@@ -3,6 +3,8 @@
 #define STAGE_EDGE_TOP #$81
 #define STAGE_EDGE_BOTTOM #$ff
 
+#define DEFAULT_GRAVITY $03
+
 #define RESPAWN_X #$70
 #define RESPAWN_Y #$60
 
