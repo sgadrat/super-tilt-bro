@@ -585,6 +585,9 @@ start_jumping_player:
 lda PLAYER_STATE_JUMPING
 sta player_a_state, x
 
+lda #0
+sta player_a_state_field1, x
+
 ; Fallthrough to set the animation
 .)
 set_jumping_animation:
@@ -608,24 +611,47 @@ cmp STATE_SINBAD_JUMP_PREPARATION_END
 bcc end
 beq begin_to_jump
 
-; Return to falling when the top is reached
+; Check if the top of the jump is reached
 lda player_a_velocity_v, x
 beq top_reached
 bpl top_reached
 
 ; The top is not reached, stay in jumping state but apply gravity and directional influence
 jsr falling_player ; Hack - We just use falling_player which do exactly what we want
+
+; Check if it is time to stop a short-hop
+lda player_a_velocity_v, x
+cmp #$fd
+bcs stop_short_hop
 jmp end
 
+; The top is reached, return to falling
 top_reached:
 jsr start_falling_player
 jmp end
 
+; If the jump button is no more pressed mid jump, convert the jump to a short-hop
+stop_short_hop:
+lda player_a_state_field1, x ;
+bne end                      ; Check for short hop only once
+inc player_a_state_field1, x ;
+
+lda controller_a_btns, x   ;
+and #CONTROLLER_INPUT_JUMP ; If the jump button is still pressed, this is not a short-hop
+bne end                    ;
+
+lda #$fe                       ;
+sta player_a_velocity_v, x     ;
+sta player_a_velocity_v_low, x ; Reduce upward momentum to end the jump earlier
+jmp end                        ;
+
+; Put initial jumping velocity
 begin_to_jump:
-lda #$fb
+lda #$fa
 sta player_a_velocity_v, x
-lda #$00
+lda #$c0
 sta player_a_velocity_v_low, x
+jmp end
 
 end:
 rts
