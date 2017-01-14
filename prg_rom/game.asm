@@ -628,6 +628,8 @@ set_death_state:
 jsr audio_play_death ; Play death sound
 lda #$00                         ; Reset aerial jumps counter
 sta player_a_num_aerial_jumps, x ;
+lda #DEFAULT_GRAVITY     ; Reset gravity
+sta player_a_gravity, x  ;
 sta player_a_hitstun, x ; Reset hitstun counter
 dec player_a_stocks, x ; Decrement stocks counter and check for gameover
 bmi gameover           ;
