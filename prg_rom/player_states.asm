@@ -904,23 +904,69 @@ end:
 rts
 .)
 
+#define RESPAWN_PLAYER_MAX_DURATION 250
 start_respawn_player:
 .(
+; Set the player's state
 lda PLAYER_STATE_RESPAWN
 sta player_a_state, x
+
+; Place player to the respawn spot
 lda RESPAWN_X
 sta player_a_x, x
 lda RESPAWN_Y
 sta player_a_y, x
 lda #$00
 sta player_a_velocity_h, x
+sta player_a_velocity_h_low, x
 sta player_a_velocity_v, x
+sta player_a_velocity_v_low, x
 sta player_a_damages, x
+
+; Initialise state's timer
+lda #RESPAWN_PLAYER_MAX_DURATION
+sta player_a_state_field1, x
+
+; Set the appropriate animation
+lda #<anim_sinbad_respawn
+sta tmpfield1
+lda #>anim_sinbad_respawn
+sta tmpfield2
+jsr set_player_animation
+
 rts
 .)
 
 respawn_player:
 .(
+; Check for timeout
+dec player_a_state_field1, x
+bne end
+jsr start_falling_player
+
+end:
+rts
+.)
+
+respawn_player_input:
+.(
+; Avoid doing anything until controller has returned to neutral since after
+; death the player can release buttons without expecting to take action
+lda controller_a_last_frame_btns, x
+bne end
+
+; Call check_aerial_inputs
+;  If it does not change the player state, go to falling state
+;  so that any button press makes the player falls from revival
+;  platform
+jsr check_aerial_inputs
+lda player_a_state, x
+cmp PLAYER_STATE_RESPAWN
+bne end
+
+jsr start_falling_player
+
+end:
 rts
 .)
 

@@ -31,7 +31,7 @@ STATE_ROUTINE(dummy_routine) ; Falling
 STATE_ROUTINE(dummy_routine) ; Jumping
 STATE_ROUTINE(start_falling_player) ; Jabbing
 STATE_ROUTINE(dummy_routine) ; Thrown
-STATE_ROUTINE(start_falling_player) ; Respawn
+STATE_ROUTINE(dummy_routine) ; Respawn
 STATE_ROUTINE(dummy_routine) ; Side tilt
 STATE_ROUTINE(dummy_routine) ; Special
 STATE_ROUTINE(dummy_routine) ; Side special
@@ -81,7 +81,7 @@ STATE_ROUTINE(check_aerial_inputs) ; Falling
 STATE_ROUTINE(jumping_player_input) ; Jumping
 STATE_ROUTINE(keep_input_dirty) ; Jabbing
 STATE_ROUTINE(thrown_player_input) ; Thrown
-STATE_ROUTINE(keep_input_dirty) ; Respawn
+STATE_ROUTINE(respawn_player_input) ; Respawn
 STATE_ROUTINE(keep_input_dirty) ; Side tilt
 STATE_ROUTINE(special_player_input) ; Special
 STATE_ROUTINE(dummy_routine) ; Side special
@@ -106,7 +106,7 @@ STATE_ROUTINE(hurt_player) ; Falling
 STATE_ROUTINE(hurt_player) ; Jumping
 STATE_ROUTINE(hurt_player) ; Jabbing
 STATE_ROUTINE(hurt_player) ; Thrown
-STATE_ROUTINE(hurt_player) ; Respawn
+STATE_ROUTINE(dummy_routine) ; Respawn
 STATE_ROUTINE(hurt_player) ; Side tilt
 STATE_ROUTINE(hurt_player) ; Special
 STATE_ROUTINE(hurt_player) ; Side special
