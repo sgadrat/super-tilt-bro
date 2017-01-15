@@ -1056,6 +1056,12 @@ lda (frame_vector), y
 clc
 adc sprite_orig_y
 sta oam_mirror, x
+eor sprite_orig_y ;
+bpl continue      ;
+lda sprite_orig_y ; Skip the sprite if it wraps the screen from
+cmp #%11000000    ; bottom to top
+bcs skip          ;
+continue:         ;
 inx
 iny
 ; Tile number
@@ -1099,7 +1105,18 @@ jmp end_next_sprite
 inc_sprite_index:
 inc sprite_index
 end_next_sprite:
+jmp end
 
+; Skip sprite
+skip:
+lda #$fe          ; Reset OAM sprite's Y position
+sta oam_mirror, x ;
+iny ;
+iny ; Advance to the next frame's sprite
+iny ;
+iny ;
+
+end:
 rts
 .)
 
