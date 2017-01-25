@@ -672,10 +672,13 @@ jumping_player_input:
 .(
 ; The jump is cancellable by grounded movements during preparation
 ; and by aerial movements after that
-lda player_a_anim_clock, x
-cmp STATE_SINBAD_JUMP_PREPARATION_END
-bcc grounded
+lda player_a_num_aerial_jumps, x ; performing aerial jump, not
+bne not_grounded                 ; grounded
+lda player_a_anim_clock, x            ;
+cmp STATE_SINBAD_JUMP_PREPARATION_END ; Still preparing the jump
+bcc grounded                          ;
 
+not_grounded:
 jsr check_aerial_inputs
 jmp end
 
