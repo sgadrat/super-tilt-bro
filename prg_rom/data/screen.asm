@@ -6,7 +6,7 @@ palette_data:
 
 palette_title:
 ; Background
-.byt $21,$0d,$21,$30, $21,$00,$21,$00, $21,$00,$21,$00, $21,$20,$1c,$0c
+.byt $21,$0d,$21,$30, $21,$0d,$21,$21, $21,$00,$21,$00, $21,$20,$1c,$0c
 ; Sprites
 .byt $21,$00,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00
 
@@ -138,7 +138,7 @@ nametable_title:
 
 .byt                      $2b, $2c, $2d, $2e
 .byt ZIPNT_ZEROS(24+4)
-.byt                      $2f, $30, $31, $32,  ZIPNT_ZEROS(15),                                                              $37,  $42, $46, $3e, $37,  $1a
+.byt                      $2f, $30, $31, $32,  ZIPNT_ZEROS(11),                                         $44,  $3b, $49, $3a, $3b,  $4c, $16, $14, $15,  $1a
 .byt ZIPNT_ZEROS(3+64+6)
 nametable_title_attributes:
 .byt                                                                   %11110000, ZIPZ
@@ -148,8 +148,8 @@ nametable_title_attributes:
 .byt ZIPNT_ZEROS(5+4)
 .byt                                             %00001100, %00000011, %11000000, %00110000
 .byt ZIPNT_ZEROS(8+1)
-.byt            %11110000
-.byt ZIPNT_ZEROS(6+8)
+.byt            %11110000, ZIPNT_ZEROS(4),                             %01010101, %01010101
+.byt ZIPNT_ZEROS(8)
 nametable_title_end:
 .byt ZIPNT_END
 
