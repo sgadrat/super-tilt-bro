@@ -178,6 +178,7 @@ scroll_y = $e7
 ppuctrl_val = $e8
 
 config_initial_stocks = $e9
+config_ai_enabled = $ea
 
 tmpfield1 = $f0
 tmpfield2 = $f1

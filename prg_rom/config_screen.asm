@@ -1,7 +1,11 @@
+#define NB_OPTIONS 3
+
 default_config:
 .(
 lda #MAX_STOCKS
 sta config_initial_stocks
+lda #$01
+sta config_ai_enabled
 rts
 .)
 
@@ -70,6 +74,8 @@ lda #$23
 sta PPUADDR
 lda #$cd
 sta PPUADDR
+ldy #NB_OPTIONS
+one_box_attributes:
 lda #%01010000
 sta PPUDATA
 sta PPUDATA
@@ -79,9 +85,8 @@ attributes_byte:
 sta PPUDATA
 dex
 bne attributes_byte
-lda #%01010000
-sta PPUDATA
-sta PPUDATA
+dey
+bne one_box_attributes
 
 ; Draw configuration boxes
 ppu_addr = tmpfield1
@@ -130,9 +135,12 @@ lda ppu_addr+1 ;
 adc #$00       ;
 sta ppu_addr+1 ;
 
+lda ppu_addr+1   ;
+cmp #$22         ;
+bne draw_one_box ; Loop
 lda ppu_addr     ;
-cmp #$44         ; Loop
-beq draw_one_box ;
+cmp #$44         ;
+bne draw_one_box ;
 
 ; Write labels
 ldx #0
@@ -140,7 +148,7 @@ labels_loop:
 lda screen_labels, x
 sta nametable_buffers, x
 inx
-cpx #36
+cpx #48
 bne labels_loop
 
 ; Place sprites
@@ -149,7 +157,7 @@ sprite_loop:
 lda sprites, x
 sta oam_mirror, x
 inx
-cpx #16
+cpx #24
 bne sprite_loop
 
 ; Init local options values from global state
@@ -168,6 +176,8 @@ sprites:
 .byt $2f, $3f, $40, $d0
 .byt $4f, $3f, $00, $a0
 .byt $4f, $3f, $40, $d0
+.byt $6f, $3f, $00, $a0
+.byt $6f, $3f, $40, $d0
 .)
 
 screen_labels:
@@ -175,6 +185,8 @@ music_label:
 .byt $01, $20, $c7, $05, $43, $4b, $49, $3f, $39
 stocks_label:
 .byt $01, $21, $47, $06, $49, $4a, $45, $39, $41, $49
+ai_label:
+.byt $01, $21, $c7, $08, $46, $42, $37, $4f, $3b, $48, $02, $16
 start_label:
 .byt $01, $22, $8a, $0c, $46, $48, $3b, $49, $49, $02, $02, $49, $4a, $37, $48, $4a
 .byt $00
@@ -255,13 +267,11 @@ jmp end
 
 next_option:
 .(
+inc config_selected_option
 lda config_selected_option
-beq set_one
+cmp #NB_OPTIONS
+bne end
 lda #0
-jmp store_value
-set_one:
-lda #1
-store_value:
 sta config_selected_option
 
 jmp end
@@ -269,7 +279,10 @@ jmp end
 
 previous_option:
 .(
-jmp next_option
+dec config_selected_option
+bpl end
+lda #NB_OPTIONS-1
+sta config_selected_option
 jmp end
 .)
 
@@ -298,6 +311,14 @@ sta config_initial_stocks
 jmp end
 .)
 
+ai_next_value:
+.(
+lda config_ai_enabled
+eor #%00000001
+sta config_ai_enabled
+jmp end
+.)
+
 music_previous_value:
 .(
 jmp music_next_value
@@ -315,6 +336,12 @@ sta config_initial_stocks
 ;jmp end ; Not needed, we are here
 .)
 
+ai_previous_value:
+.(
+jmp ai_next_value
+;jmp end ; Not needed, handled by ai_next_value
+.)
+
 end:
 jsr config_update_screen
 rts
@@ -325,10 +352,10 @@ buttons_actions:
 .word next_value,          previous_value,      next_option,         previous_option,   next_screen,          previous_value,   next_value
 
 next_value_handlers:
-.word music_next_value, stocks_next_value
+.word music_next_value, stocks_next_value, ai_next_value
 
 previous_value_handlers:
-.word music_previous_value, stocks_previous_value
+.word music_previous_value, stocks_previous_value, ai_previous_value
 .)
 .)
 
@@ -344,7 +371,7 @@ jsr config_highligh_option
 jsr config_draw_value
 inc option_num
 lda option_num
-cmp #2
+cmp #NB_OPTIONS
 bne values
 
 rts
@@ -445,6 +472,7 @@ rts
 options_buffer_headers:
 .byt $01, $23, $c9, $04
 .byt $01, $23, $d1, $04
+.byt $01, $23, $d9, $04
 .)
 
 config_draw_value:
@@ -522,11 +550,44 @@ bne loop_value
 ;jmp end ; Not needed
 .)
 
+draw_ai:
+.(
+; Store good buffer's address int tmpfield1
+lda config_ai_enabled
+beq ai_disabled
+
+lda #<buffer_cpu
+sta tmpfield1
+lda #>buffer_cpu
+sta tmpfield2
+jmp send_buffer
+
+ai_disabled:
+lda #<buffer_human
+sta tmpfield1
+lda #>buffer_human
+sta tmpfield2
+
+; Copy stored buffer
+send_buffer:
+jsr last_nt_buffer
+ldy #0
+loop_value:
+lda (tmpfield1), y
+sta nametable_buffers, x
+iny
+inx
+cpy #10
+bne loop_value
+
+jmp end
+.)
+
 end:
 rts
 
 values_handlers:
-.word draw_music, draw_stocks
+.word draw_music, draw_stocks, draw_ai
 
 buffer_on:
 .byt $01, $20, $d5, $03, $45, $44, $02, $00
@@ -543,5 +604,10 @@ buffer_four:
 .byt $01, $21, $55, $05, $3c, $45, $4b, $48, $02, $00
 buffer_five:
 .byt $01, $21, $55, $05, $3c, $3f, $4c, $3b, $02, $00
+
+buffer_human:
+.byt $01, $21, $d5, $05, $3e, $4b, $43, $37, $44, $00
+buffer_cpu:
+.byt $01, $21, $d5, $05, $39, $46, $4b, $02, $02, $00
 .)
 .)

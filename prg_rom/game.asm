@@ -124,6 +124,12 @@ jsr shake_screen
 rts
 no_screen_shake:
 
+; Process AI - this override controller B state
+lda config_ai_enabled
+beq end_ai
+jsr ai_tick
+end_ai:
+
 ; Update game state
 jsr update_players
 
