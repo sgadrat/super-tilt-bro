@@ -175,6 +175,7 @@ jmp forever
 #include "prg_rom/config_screen.asm"
 #include "prg_rom/gameover_screen.asm"
 #include "prg_rom/credits_screen.asm"
+#include "prg_rom/ai.asm"
 code_end:
 data_begin:
 #include "prg_rom/data/data.asm"
