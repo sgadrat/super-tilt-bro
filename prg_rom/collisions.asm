@@ -3,20 +3,70 @@
 ;
 ; Sets Z flag if on ground, else unset it
 ;
-; Overwrites register A
+; Overwrites register A, register Y, tmpfield1, tmpfield2 and tmpfield3
 check_on_ground:
 .(
-lda player_a_x, x
-cmp STAGE_EDGE_LEFT-1
-bcc offground
-lda STAGE_EDGE_RIGHT+1
-cmp player_a_x, x
-bcc offground
-lda player_a_y, x
-cmp STAGE_EDGE_TOP-1
-bne offground
-lda player_a_y_low, x
-cmp #$ff
+platfrom_left = tmpfield1 ; Not movable - parameter of check_on_platform
+platform_right = tmpfield2 ; Not movable - parameter of check_on_platform
+platform_top = tmpfield3 ; Not movable - parameter of check_on_platform
+
+ldy #0
+
+check_current_platform:
+lda stage_plateau_platforms, y
+beq offground
+
+lda stage_plateau_platforms+STAGE_PLATFORM_OFFSET_LEFT, y
+sta tmpfield1
+lda stage_plateau_platforms+STAGE_PLATFORM_OFFSET_RIGHT, y
+sta tmpfield2
+lda stage_plateau_platforms+STAGE_PLATFORM_OFFSET_TOP, y
+sta tmpfield3
+jsr check_on_platform
+beq end
+
+tya
+clc
+adc #STAGE_PLATFORM_LENGTH
+tay
+jmp check_current_platform
+
+offground:
+lda #1 ; unset Z flag
+
+end:
+rts
+.)
+
+; Check if the player is grounded on a specific platform
+;  register X - Player number
+;  tmpfield1 - platform left
+;  tmpfield2 - platform right
+;  tmpfield3 - platform top
+;
+; Sets Z flag if on ground, else unset it
+;
+; Ovewrites register A, tmpfield1, tmpfield2 and tmpfield3
+check_on_platform:
+.(
+platfrom_left = tmpfield1
+platform_right = tmpfield2
+platform_top = tmpfield3
+
+lda player_a_x, x ;
+dec platfrom_left ; if (X < platform_left - 1) then offground
+cmp platfrom_left ;
+bcc offground     ;
+inc platform_right ;
+lda platform_right ; if (platform_right + 1 < X) then offground
+cmp player_a_x, x  ;
+bcc offground      ;
+lda player_a_y, x ;
+dec platform_top  ; if (Y != platform_top - 1) then offground
+cmp platform_top  ;
+bne offground     ;
+lda player_a_y_low, x ; To be onground, the character has to be on the bottom
+cmp #$ff              ; subpixel of the (Y ground pixel - 1)
 ;bne offground ; useless as we do nothing anyway
 
 ; Z flag is already set if on ground (ensured by passing the last "bne")

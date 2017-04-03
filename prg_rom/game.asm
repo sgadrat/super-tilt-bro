@@ -548,14 +548,20 @@ lda player_a_velocity_v, x
 adc player_a_y, x
 sta tmpfield4
 
-; Check collisions with stage plaform
-lda STAGE_EDGE_LEFT
+; Check collisions with stage plaforms
+ldy #0
+
+check_platform_colision:
+lda stage_plateau_platforms, y
+beq end
+
+lda stage_plateau_platforms+STAGE_PLATFORM_OFFSET_LEFT, y
 sta tmpfield5
-lda STAGE_EDGE_TOP
+lda stage_plateau_platforms+STAGE_PLATFORM_OFFSET_TOP, y
 sta tmpfield6
-lda STAGE_EDGE_RIGHT
+lda stage_plateau_platforms+STAGE_PLATFORM_OFFSET_RIGHT, y
 sta tmpfield7
-lda STAGE_EDGE_BOTTOM
+lda stage_plateau_platforms+STAGE_PLATFORM_OFFSET_BOTTOM, y
 sta tmpfield8
 
 jsr check_collision
@@ -568,6 +574,13 @@ sta player_a_x_low, x
 lda tmpfield10
 sta player_a_y_low, x
 
+tya
+clc
+adc #STAGE_PLATFORM_LENGTH
+tay
+jmp check_platform_colision
+
+end:
 rts
 .)
 
