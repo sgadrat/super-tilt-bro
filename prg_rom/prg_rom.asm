@@ -169,6 +169,7 @@ jmp forever
 #include "prg_rom/utils.asm"
 #include "prg_rom/game.asm"
 #include "prg_rom/player_states.asm"
+#include "prg_rom/stages.asm"
 #include "prg_rom/collisions.asm"
 #include "prg_rom/audio.asm"
 #include "prg_rom/title_screen.asm"

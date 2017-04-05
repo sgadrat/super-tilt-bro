@@ -25,28 +25,15 @@ cmp $40
 bne load_background
 .)
 
-; Point PPU to Background palette 0 (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
-lda PPUSTATUS
-lda #$3f
-sta PPUADDR
-lda #$00
-sta PPUADDR
-
-; Write palette_data in actual ppu palettes
-ldx #$00
-copy_palette:
-lda palette_data, x
-sta PPUDATA
-inx
-cpx #$20
-bne copy_palette
-
-; Copy background from PRG-rom to PPU nametable
-lda #<nametable
+; Call stage initialization routine
+lda config_selected_stage
+asl
+tax
+lda stages_init_routine, x
 sta tmpfield1
-lda #>nametable
+lda stages_init_routine+1, x
 sta tmpfield2
-jsr draw_zipped_nametable
+jsr call_pointed_subroutine
 
 ; Ensure game state is zero
 ldx #$00
@@ -113,6 +100,11 @@ jsr update_sprites
 jsr audio_music_power
 
 rts
+
+call_pointed_subroutine:
+.(
+jmp (tmpfield1)
+.)
 .)
 
 game_tick:
@@ -552,16 +544,16 @@ sta tmpfield4
 ldy #0
 
 check_platform_colision:
-lda stage_plateau_platforms, y
+lda stage_data, y
 beq end
 
-lda stage_plateau_platforms+STAGE_PLATFORM_OFFSET_LEFT, y
+lda stage_data+STAGE_PLATFORM_OFFSET_LEFT, y
 sta tmpfield5
-lda stage_plateau_platforms+STAGE_PLATFORM_OFFSET_TOP, y
+lda stage_data+STAGE_PLATFORM_OFFSET_TOP, y
 sta tmpfield6
-lda stage_plateau_platforms+STAGE_PLATFORM_OFFSET_RIGHT, y
+lda stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
 sta tmpfield7
-lda stage_plateau_platforms+STAGE_PLATFORM_OFFSET_BOTTOM, y
+lda stage_data+STAGE_PLATFORM_OFFSET_BOTTOM, y
 sta tmpfield8
 
 jsr check_collision

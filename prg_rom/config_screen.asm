@@ -6,6 +6,8 @@ lda #MAX_STOCKS
 sta config_initial_stocks
 lda #$01
 sta config_ai_enabled
+lda #$00
+sta config_selected_stage
 rts
 .)
 

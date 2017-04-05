@@ -179,6 +179,7 @@ ppuctrl_val = $e8
 
 config_initial_stocks = $e9
 config_ai_enabled = $ea
+config_selected_stage = $eb
 
 tmpfield1 = $f0
 tmpfield2 = $f1
@@ -198,3 +199,4 @@ tmpfield15 = $fe
 
 oam_mirror = $0200
 nametable_buffers = $0300
+stage_data = $0400
