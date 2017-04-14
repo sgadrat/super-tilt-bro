@@ -335,7 +335,7 @@ cmp #$ff
 bne end
 lda #MAX_STOCKS
 sta config_initial_stocks
-;jmp end ; Not needed, we are here
+jmp end
 .)
 
 ai_previous_value:
@@ -549,7 +549,7 @@ inx
 cpy tmpfield1
 bne loop_value
 
-;jmp end ; Not needed
+jmp end
 .)
 
 draw_ai:
