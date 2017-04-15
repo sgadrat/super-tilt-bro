@@ -13,52 +13,18 @@ pha
 tya
 pha
 
+; Do not draw anything if not ready
+lda nmi_processing
+beq end
+
 ; reload PPU OAM (Objects Attributes Memory) with fresh data from cpu memory
 lda #$00
 sta OAMADDR
 lda #$02
 sta OAMDMA
 
-; Copy nametable buffers to PPU nametable
-; A nametable buffer has the following pattern:
-;   continuation (1 byte), address (2 bytes), number of tiles (1 byte), tiles (N bytes)
-;   continuation - 1 there is a buffer, 0 work done
-;   address - address where to write in PPU address space (big endian)
-;   number of tiles - Number of tiles in this buffer
-;   tiles - One byte per tile, representing the tile number
-.(
-ldx #$00
-handle_nt_buffer:
-
-lda nametable_buffers, x ; Check continuation byte
-beq end_buffers          ;
-inx                      ;
-
-lda PPUSTATUS            ; Set PPU destination address
-lda nametable_buffers, x ;
-sta PPUADDR              ;
-inx                      ;
-lda nametable_buffers, x ;
-sta PPUADDR              ;
-inx                      ;
-
-lda nametable_buffers, x ; Save tiles counter to tmpfield1
-sta tmpfield1            ;
-inx                      ;
-
-write_one_tile:
-lda tmpfield1            ; Check if there is still a tile to write
-beq handle_nt_buffer     ;
-
-lda nametable_buffers, x ; Write current tile to PPU
-sta PPUDATA              ;
-
-dec tmpfield1            ; Next tile
-inx                      ;
-jmp write_one_tile       ;
-
-end_buffers:
-.)
+; Rewrite nametable based on nt_buffers
+jsr process_nt_buffers
 
 ; Scroll
 lda ppuctrl_val
@@ -72,6 +38,8 @@ sta PPUSCROLL
 ; Inform that NMI is handled
 lda #$00
 sta nmi_processing
+
+end:
 
 ; Restore CPU registers
 pla
