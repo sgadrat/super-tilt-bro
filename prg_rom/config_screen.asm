@@ -171,6 +171,10 @@ sta config_selected_option
 ; Adapt to configuration's state
 jsr config_update_screen
 
+; Process the batch of nt buffers immediately (while the PPU is disabled)
+jsr process_nt_buffers
+jsr reset_nt_buffers
+
 rts
 
 sprites:
