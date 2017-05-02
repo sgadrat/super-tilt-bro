@@ -539,7 +539,12 @@ bne check_config
 jsr init_credits_screen
 jmp end_initialization
 check_config:
+cmp #GAME_STATE_CONFIG
+bne check_stage_selection
 jsr init_config_screen
+jmp end_initialization
+check_stage_selection:
+jsr init_stage_selection_screen
 end_initialization:
 
 ; Enable rendering

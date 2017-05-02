@@ -239,7 +239,7 @@ jmp (tmpfield1)
 ; Go to the next screen
 next_screen:
 .(
-lda #GAME_STATE_INGAME
+lda #GAME_STATE_STAGE_SELECTION
 sta global_game_state
 jsr change_global_game_state
 ; jmp end ; not needed, change_global_game_state does not return

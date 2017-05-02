@@ -130,7 +130,12 @@ bne check_config
 jsr credits_screen_tick
 jmp forever
 check_config:
+cmp #GAME_STATE_CONFIG
+bne check_stage_selection
 jsr config_screen_tick
+jmp forever
+check_stage_selection:
+jsr stage_selection_screen_tick
 jmp forever
 .)
 
@@ -144,6 +149,7 @@ jmp forever
 #include "prg_rom/config_screen.asm"
 #include "prg_rom/gameover_screen.asm"
 #include "prg_rom/credits_screen.asm"
+#include "prg_rom/stage_selection_screen.asm"
 #include "prg_rom/ai.asm"
 code_end:
 data_begin:
