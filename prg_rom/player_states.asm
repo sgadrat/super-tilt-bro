@@ -915,13 +915,13 @@ lda PLAYER_STATE_RESPAWN
 sta player_a_state, x
 
 ; Place player to the respawn spot
-lda stage_data+STAGE_HEADER_OFFSET_RESPAWNX_HIGH, x
+lda stage_data+STAGE_HEADER_OFFSET_RESPAWNX_HIGH
 sta player_a_x, x
-lda stage_data+STAGE_HEADER_OFFSET_RESPAWNX_LOW, x
+lda stage_data+STAGE_HEADER_OFFSET_RESPAWNX_LOW
 sta player_a_x_low, x
-lda stage_data+STAGE_HEADER_OFFSET_RESPAWNY_HIGH, x
+lda stage_data+STAGE_HEADER_OFFSET_RESPAWNY_HIGH
 sta player_a_y, x
-lda stage_data+STAGE_HEADER_OFFSET_RESPAWNY_LOW, x
+lda stage_data+STAGE_HEADER_OFFSET_RESPAWNY_LOW
 sta player_a_y_low, x
 lda #$00
 sta player_a_velocity_h, x
