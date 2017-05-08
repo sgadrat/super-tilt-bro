@@ -13,14 +13,14 @@ platform_top = tmpfield3 ; Not movable - parameter of check_on_platform
 ldy #0
 
 check_current_platform:
-lda stage_data, y
+lda stage_data+STAGE_OFFSET_PLATFORMS, y
 beq offground
 
-lda stage_data+STAGE_PLATFORM_OFFSET_LEFT, y
+lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_LEFT, y
 sta tmpfield1
-lda stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
+lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT, y
 sta tmpfield2
-lda stage_data+STAGE_PLATFORM_OFFSET_TOP, y
+lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_TOP, y
 sta tmpfield3
 jsr check_on_platform
 beq end

@@ -60,27 +60,20 @@ lda HITBOX_DISABLED
 sta player_a_hitbox_enabled
 sta player_b_hitbox_enabled
 
-lda #$80
-sta player_a_y
-sta player_b_y
-sta player_a_hurtbox_top
-sta player_b_hurtbox_top
-lda #$ff
-sta player_a_y_low
-sta player_b_y_low
-lda #$40
-sta player_a_x
-sta player_a_hurtbox_left
-lda #$a0
-sta player_b_x
-sta player_a_hurtbox_left
-lda #$88
-sta player_a_hurtbox_bottom
-sta player_b_hurtbox_bottom
-lda #$48
-sta player_a_hurtbox_right
-lda #$a8
-sta player_b_hurtbox_right
+ldx #0
+position_player_loop:
+lda stage_data+STAGE_HEADER_OFFSET_PAY_HIGH, x
+sta player_a_y, x
+lda stage_data+STAGE_HEADER_OFFSET_PAY_LOW, x
+sta player_a_y_low, x
+lda stage_data+STAGE_HEADER_OFFSET_PAX_HIGH, x
+sta player_a_x, x
+lda stage_data+STAGE_HEADER_OFFSET_PAX_LOW, x
+sta player_a_x_low, x
+inx
+cpx #2
+bne position_player_loop
+
 lda #DEFAULT_GRAVITY
 sta player_a_gravity
 sta player_b_gravity
@@ -544,16 +537,16 @@ sta tmpfield4
 ldy #0
 
 check_platform_colision:
-lda stage_data, y
+lda stage_data+STAGE_OFFSET_PLATFORMS, y
 beq end
 
-lda stage_data+STAGE_PLATFORM_OFFSET_LEFT, y
+lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_LEFT, y
 sta tmpfield5
-lda stage_data+STAGE_PLATFORM_OFFSET_TOP, y
+lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_TOP, y
 sta tmpfield6
-lda stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
+lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT, y
 sta tmpfield7
-lda stage_data+STAGE_PLATFORM_OFFSET_BOTTOM, y
+lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_BOTTOM, y
 sta tmpfield8
 
 jsr check_collision

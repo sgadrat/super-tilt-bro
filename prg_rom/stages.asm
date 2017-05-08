@@ -40,7 +40,15 @@ sta tmpfield2
 
 ldx #0
 ldy #0
-copy_data_loop:
+copy_header_loop:
+lda (tmpfield1), y
+sta stage_data, x
+inx
+iny
+cpy #STAGE_OFFSET_PLATFORMS
+bne copy_header_loop
+
+copy_platforms_loop:
 lda (tmpfield1), y
 sta stage_data, x
 beq copy_data_end
@@ -62,7 +70,7 @@ lda (tmpfield1), y
 sta stage_data, x
 iny
 inx
-jmp copy_data_loop
+jmp copy_platforms_loop
 copy_data_end:
 
 rts

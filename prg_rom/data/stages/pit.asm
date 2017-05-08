@@ -1,3 +1,5 @@
+stage_pit_data:
+STAGE_HEADER($4000, $bc00, $90ff, $90ff, $7cbc, $3800) ; player_a_x, player_b_x, player_a_y, player_b_y, respawn_x, respawn_y
 stage_pit_platforms:
 PLATFORM($69, $8f, $41, $5f) ; top
 PLATFORM($09, $2f, $81, $ff) ; left 3
