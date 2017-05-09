@@ -93,11 +93,6 @@ jsr update_sprites
 jsr audio_music_power
 
 rts
-
-call_pointed_subroutine:
-.(
-jmp (tmpfield1)
-.)
 .)
 
 game_tick:
@@ -510,53 +505,83 @@ rts
 ;  and tmpfield2 contains it's old Y
 move_player:
 .(
+old_x = tmpfield1 ; Not movable, return value and parameter of check_collision
+old_y = tmpfield2 ; Not movable, return value and parameter of check_collision
+final_x_low = tmpfield9 ; Not movable, parameter of check_collision
+final_x_high = tmpfield3 ; Not movable, parameter of check_collision
+final_y_low = tmpfield10 ; Not movable, parameter of check_collision
+final_y_high = tmpfield4 ; Not movable, parameter of check_collision
+obstacle_left = tmpfield5 ; Not movable, parameter of check_collision
+obstacle_top = tmpfield6 ; Not movable, parameter of check_collision
+obstacle_right = tmpfield7 ; Not movable, parameter of check_collision
+obstacle_bottom = tmpfield8 ; Not movable, parameter of check_collision
+action_vector = tmpfield14
+
 ; Save old position
 lda player_a_x, x
-sta tmpfield1
+sta old_x
 lda player_a_y, x
-sta tmpfield2
+sta old_y
 
 ; Apply velocity to position
 lda player_a_velocity_h_low, x
 clc
 adc player_a_x_low, x
-sta tmpfield9
+sta final_x_low
 lda player_a_velocity_h, x
 adc player_a_x, x
-sta tmpfield3
+sta final_x_high
 
 lda player_a_velocity_v_low, x
 clc
 adc player_a_y_low, x
-sta tmpfield10
+sta final_y_low
 lda player_a_velocity_v, x
 adc player_a_y, x
-sta tmpfield4
+sta final_y_high
 
 ; Check collisions with stage plaforms
 ldy #0
 
 check_platform_colision:
-lda stage_data+STAGE_OFFSET_PLATFORMS, y
-beq end
+txa
+pha
+ldx stage_data+STAGE_OFFSET_PLATFORMS, y
+lda platform_actions_low, x
+sta action_vector
+lda platform_actions_high, x
+sta action_vector+1
+pla
+tax
+jmp (action_vector)
 
+end:
+rts
+
+end_platforms:
+.(
+jmp end
+.)
+
+solid_platform_collision:
+.(
 lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_LEFT, y
-sta tmpfield5
+sta obstacle_left
 lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_TOP, y
-sta tmpfield6
+sta obstacle_top
 lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT, y
-sta tmpfield7
+sta obstacle_right
 lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_BOTTOM, y
-sta tmpfield8
+sta obstacle_bottom
 
 jsr check_collision
-lda tmpfield3
+lda final_x_high
 sta player_a_x, x
-lda tmpfield4
+lda final_y_high
 sta player_a_y, x
-lda tmpfield9
+lda final_x_low
 sta player_a_x_low, x
-lda tmpfield10
+lda final_y_low
 sta player_a_y_low, x
 
 tya
@@ -564,9 +589,42 @@ clc
 adc #STAGE_PLATFORM_LENGTH
 tay
 jmp check_platform_colision
+.)
 
-end:
-rts
+smooth_platform_collision:
+.(
+lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_LEFT, y
+sta obstacle_left
+lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_TOP, y
+sta obstacle_top
+lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT, y
+sta obstacle_right
+
+jsr check_top_collision
+lda final_x_high
+sta player_a_x, x
+lda final_y_high
+sta player_a_y, x
+lda final_x_low
+sta player_a_x_low, x
+lda final_y_low
+sta player_a_y_low, x
+
+tya
+clc
+adc #STAGE_SMOOTH_PLATFORM_LENGTH
+tay
+jmp check_platform_colision
+.)
+
+platform_actions_low:
+.byt <end_platforms
+.byt <solid_platform_collision
+.byt <smooth_platform_collision
+platform_actions_high:
+.byt >end_platforms
+.byt >solid_platform_collision
+.byt >smooth_platform_collision
 .)
 
 ; Check the player's position and modify the current state accordingly

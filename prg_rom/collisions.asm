@@ -25,6 +25,17 @@ sta tmpfield3
 jsr check_on_platform
 beq end
 
+lda stage_data+STAGE_OFFSET_PLATFORMS, y
+cmp #$01
+beq skip_solid_platform
+
+tya
+clc
+adc #STAGE_SMOOTH_PLATFORM_LENGTH
+tay
+jmp check_current_platform
+
+skip_solid_platform:
 tya
 clc
 adc #STAGE_PLATFORM_LENGTH
@@ -170,6 +181,50 @@ bcc end
 sta final_y
 inc final_y
 lda #$00
+sta final_y_low
+
+end:
+rts
+.)
+
+; Check if a movement passes through a line from above to under
+;  tmpfield2 - Original position Y
+;  tmpfield3 - Final position X (high byte)
+;  tmpfield4 - Final position Y (high byte)
+;  tmpfield5 - Obstacle top-left X
+;  tmpfield6 - Obstacle top-left Y
+;  tmpfield7 - Obstacle bottom-right X
+;  tmpfield10 - Final position Y (low byte)
+;
+; tmpfield3, tmpfield4, tmpfield9 and tmpfield10 are rewritten with a final position that do not pass through obstacle.
+check_top_collision:
+.(
+; Better names for labels
+orig_y = tmpfield2
+final_x = tmpfield3
+final_y = tmpfield4
+obstacle_left = tmpfield5
+obstacle_top = tmpfield6
+obstacle_right = tmpfield7
+final_y_low = tmpfield10
+
+lda final_x        ;
+cmp obstacle_left  ;
+bcc end            ; Skip horizontal edges collision checks if
+lda obstacle_right ; the player is aside of the obstacle
+cmp final_x        ;
+bcc end            ;
+
+lda orig_y
+cmp obstacle_top
+bcs end
+lda final_y
+cmp obstacle_top
+bcc end
+lda obstacle_top
+sta final_y
+dec final_y
+lda #$ff
 sta final_y_low
 
 end:

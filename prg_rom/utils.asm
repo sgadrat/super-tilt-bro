@@ -615,3 +615,10 @@ end_inc_vector:
 rts
 .)
 .)
+
+; Allows to inderectly call a pointed subroutine normally with jsr
+;  tmpfield1,tmpfield2 - subroutine to call
+call_pointed_subroutine:
+.(
+jmp (tmpfield1)
+.)
