@@ -1,6 +1,6 @@
 #define AI_ATTACK_HITBOX(left,right,top,bottom) .byt left, right, top, bottom
 
-#define AI_NB_ATTACKS 3
+#define AI_NB_ATTACKS 4
 attacks:
 AI_ATTACK_HITBOX($f0, $fd, $f4, $0c)
 .byt CONTROLLER_INPUT_ATTACK_LEFT
@@ -8,6 +8,8 @@ AI_ATTACK_HITBOX($0a, $17, $f4, $0c)
 .byt CONTROLLER_INPUT_ATTACK_RIGHT
 AI_ATTACK_HITBOX($f1, $17, $08, $0f)
 .byt CONTROLLER_INPUT_DOWN_TILT
+AI_ATTACK_HITBOX($f1, $17, $d0, $f8)
+.byt CONTROLLER_INPUT_SPECIAL_UP
 
 ; Set controller B state
 ;
