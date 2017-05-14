@@ -141,7 +141,7 @@ lda buttons_numbering, y
 cmp controller_a_last_frame_btns, x
 beq jump_from_table
 iny
-cpy #5
+cpy #6
 bne btn_search_loop
 
 next_controller:
@@ -173,6 +173,16 @@ bcs end
 
 ; Start the game
 lda #GAME_STATE_INGAME
+sta global_game_state
+jsr change_global_game_state
+; jmp end ; not needed, change_global_game_state does not return
+.)
+
+; Go to the previous screen
+previous_screen:
+.(
+; Return to config screen
+lda #GAME_STATE_CONFIG
 sta global_game_state
 jsr change_global_game_state
 ; jmp end ; not needed, change_global_game_state does not return
@@ -282,8 +292,10 @@ jmp end
 
 buttons_numbering:
 .byt CONTROLLER_BTN_RIGHT, CONTROLLER_BTN_LEFT, CONTROLLER_BTN_DOWN, CONTROLLER_BTN_UP, CONTROLLER_BTN_START
+.byt CONTROLLER_BTN_B
 buttons_actions:
-.word go_right,            go_left,             go_down,             go_up,             next_screen,
+.word go_right,            go_left,             go_down,             go_up,             next_screen
+.word previous_screen
 .)
 
 ; Modify highlighting of the selected level
