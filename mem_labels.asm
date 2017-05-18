@@ -84,7 +84,8 @@ player_a_gravity = $4d
 player_b_gravity = $4e
 
 screen_shake_counter = $70
-screen_shake_nextval = $71
+screen_shake_nextval_x = $71
+screen_shake_nextval_y = $72
 
 ;
 ; TITLE labels

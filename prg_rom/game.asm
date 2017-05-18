@@ -46,8 +46,6 @@ bne zero_game_state
 
 ; Reset screen shaking
 sta screen_shake_counter
-lda #1
-sta screen_shake_nextval
 
 ; Setup logical game state to the game startup configuration
 lda DIRECTION_LEFT
@@ -122,12 +120,17 @@ rts
 shake_screen:
 .(
 ; Change scrolling possition a little
-lda screen_shake_nextval
+lda screen_shake_nextval_x
 eor #%11111111
 clc
 adc #1
-sta screen_shake_nextval
+sta screen_shake_nextval_x
 sta scroll_x
+lda screen_shake_nextval_y
+eor #%11111111
+clc
+adc #1
+sta screen_shake_nextval_y
 sta scroll_y
 
 ; Adapt screen number to Y scrolling
@@ -303,6 +306,9 @@ sta player_a_velocity_h_low, x
 sta player_a_velocity_v, x
 sta player_a_velocity_v_low, x
 jsr start_thrown_player
+lda #SCREENSHAKE_PARRY_INTENSITY
+sta screen_shake_nextval_x
+sta screen_shake_nextval_y
 lda #SCREENSHAKE_PARRY_NB_FRAMES
 sta screen_shake_counter
 jmp end
@@ -494,6 +500,10 @@ sta player_a_hitstun, x ;
 ; Start screenshake of duration = hitstun / 2
 lsr
 sta screen_shake_counter
+lda player_a_velocity_h, x
+sta screen_shake_nextval_x
+lda player_a_velocity_v, x
+sta screen_shake_nextval_y
 
 rts
 .)
