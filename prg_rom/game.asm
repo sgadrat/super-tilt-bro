@@ -213,6 +213,7 @@ end_input_event:
 jsr move_player
 jsr check_player_position
 jsr write_player_damages
+jsr player_effects
 
 inx
 cpx #$02
@@ -825,6 +826,72 @@ rts
 
 stocks_positions:
 .byt 0, 3, 32, 35
+.)
+
+; Change palette according to player's state
+;  register X must contain the player number
+player_effects:
+.(
+palette_buffer = tmpfield1
+;                tmpfield2
+palette_buffer_size = tmpfield3
+#define PLAYER_EFFECTS_PALLETTE_SIZE 8
+
+lda #<players_palettes ;
+sta palette_buffer     ; palette_buffer points on the first players' palette
+lda #>players_palettes ;
+sta palette_buffer+1   ;
+
+; Add palette offset related to hitstun state
+lda player_a_hitstun, x
+and #%00000010
+beq no_hitstun
+lda palette_buffer
+clc
+adc #PLAYER_EFFECTS_PALLETTE_SIZE
+sta palette_buffer
+lda palette_buffer+1
+adc #0
+sta palette_buffer+1
+no_hitstun:
+
+; Add palette offset related to player number
+cpx #1
+bne player_one
+lda palette_buffer
+clc
+adc #PLAYER_EFFECTS_PALLETTE_SIZE*2
+sta palette_buffer
+lda palette_buffer+1
+adc #0
+sta palette_buffer+1
+player_one:
+
+; Copy pointed palette to a nametable buffer
+txa                ;
+pha                ; Initialize working values
+jsr last_nt_buffer ; X = destination's offset (from nametable_buffers)
+ldy #0             ; Y = source's offset (from (palette_buffer) origin)
+
+copy_one_byte:
+lda (palette_buffer), y  ; Copy a byte
+sta nametable_buffers, x ;
+
+inx                               ;
+iny                               ; Prepare next byte
+cpy #PLAYER_EFFECTS_PALLETTE_SIZE ;
+bne copy_one_byte                 ;
+
+pla ; Restore X
+tax ;
+
+rts
+
+players_palettes:
+.byt $01, $3f, $11, $03, $08, $1a, $20, $00 ; player A normal
+.byt $01, $3f, $11, $03, $37, $3a, $20, $00 ; player A hitstun
+.byt $01, $3f, $19, $03, $08, $16, $10, $00 ; player B normal
+.byt $01, $3f, $19, $03, $37, $33, $20, $00 ; player B hitstun
 .)
 
 update_sprites:
