@@ -151,6 +151,7 @@ jmp forever
 #include "prg_rom/credits_screen.asm"
 #include "prg_rom/stage_selection_screen.asm"
 #include "prg_rom/ai.asm"
+#include "prg_rom/particle.asm"
 code_end:
 data_begin:
 #include "prg_rom/data/data.asm"

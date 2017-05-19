@@ -904,6 +904,10 @@ frame_first_tick = tmpfield7  ; Not movable - Used as parameter for draw_anim_fr
 animation_direction = tmpfield8 ; Not movable - Used as parameter for draw_anim_frame subroutine
 
 .(
+;
+; Players animation
+;
+
 ldx #$00
 
 player_animation:
@@ -983,6 +987,11 @@ inx
 cpx #$02
 bne player_animation
 
+;
+; Enhancement sprites
+;
+
+jsr particle_draw
 ;jsr show_hitboxes
 
 rts
