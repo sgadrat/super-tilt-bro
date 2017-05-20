@@ -87,6 +87,17 @@ screen_shake_counter = $70
 screen_shake_nextval_x = $71
 screen_shake_nextval_y = $72
 
+directional_indicator_player_a_counter = $73
+directional_indicator_player_b_counter = $74
+directional_indicator_player_a_direction_x_high = $75
+directional_indicator_player_b_direction_x_high = $76
+directional_indicator_player_a_direction_x_low = $77
+directional_indicator_player_b_direction_x_low = $78
+directional_indicator_player_a_direction_y_high = $79
+directional_indicator_player_b_direction_y_high = $7a
+directional_indicator_player_a_direction_y_low = $7b
+directional_indicator_player_b_direction_y_low = $7c
+
 ;
 ; TITLE labels
 ;

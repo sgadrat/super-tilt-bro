@@ -99,6 +99,11 @@ game_tick:
 lda screen_shake_counter
 beq no_screen_shake
 jsr shake_screen
+ldx #0
+jsr player_effects
+ldx #1
+jsr player_effects
+jsr particle_draw
 rts
 no_screen_shake:
 
@@ -506,6 +511,9 @@ sta screen_shake_nextval_x
 lda player_a_velocity_v, x
 sta screen_shake_nextval_y
 
+; Start directional indicator particles
+jsr particle_directional_indicator_start
+
 rts
 .)
 
@@ -828,9 +836,19 @@ stocks_positions:
 .byt 0, 3, 32, 35
 .)
 
-; Change palette according to player's state
+; Update comestic effects on the player
 ;  register X must contain the player number
 player_effects:
+.(
+.(
+jsr blinking
+jsr particle_directional_indicator_tick
+rts
+.)
+
+; Change palette according to player's state
+;  register X must contain the player number
+blinking:
 .(
 palette_buffer = tmpfield1
 ;                tmpfield2
@@ -892,6 +910,7 @@ players_palettes:
 .byt $01, $3f, $11, $03, $37, $3a, $20, $00 ; player A hitstun
 .byt $01, $3f, $19, $03, $08, $16, $10, $00 ; player B normal
 .byt $01, $3f, $19, $03, $37, $33, $20, $00 ; player B hitstun
+.)
 .)
 
 update_sprites:
@@ -1469,215 +1488,215 @@ rts
 .)
 
 ; Debug subroutine to show hitboxes and hurtboxes
-show_hitboxes:
-.(
-pha
-txa
-pha
-tya
-pha
-
-; Player A hurtbox
-ldx #$fc
-lda player_a_hurtbox_top
-sta oam_mirror, x
-inx
-lda #$0d
-sta oam_mirror, x
-inx
-lda #$03
-sta oam_mirror, x
-inx
-lda player_a_hurtbox_left
-sta oam_mirror, x
-inx
-ldx #$f8
-lda player_a_hurtbox_bottom
-sec
-sbc #$07
-sta oam_mirror, x
-inx
-lda #$0d
-sta oam_mirror, x
-inx
-lda #$03
-sta oam_mirror, x
-inx
-lda player_a_hurtbox_right
-sec
-sbc #$07
-sta oam_mirror, x
-inx
-
-; Player B hurtbox
-ldx #$f4
-lda player_b_hurtbox_top
-sta oam_mirror, x
-inx
-lda #$0d
-sta oam_mirror, x
-inx
-lda #$03
-sta oam_mirror, x
-inx
-lda player_b_hurtbox_left
-sta oam_mirror, x
-inx
-ldx #$f0
-lda player_b_hurtbox_bottom
-sec
-sbc #$07
-sta oam_mirror, x
-inx
-lda #$0d
-sta oam_mirror, x
-inx
-lda #$03
-sta oam_mirror, x
-inx
-lda player_b_hurtbox_right
-sec
-sbc #$07
-sta oam_mirror, x
-inx
-
-; Player A hitbox
-lda player_a_hitbox_enabled
-bne show_player_a_hitbox
-lda #$fe  ;
-sta $02e8 ;
-sta $02e9 ;
-sta $02ea ;
-sta $02eb ; Hide disabled hitbox
-sta $02ec ;
-sta $02ed ;
-sta $02ee ;
-sta $02ef ;
-jmp end_player_a_hitbox
-show_player_a_hitbox:
-ldx #$ec
-lda player_a_hitbox_top
-sta oam_mirror, x
-inx
-lda #$0e
-sta oam_mirror, x
-inx
-lda #$03
-sta oam_mirror, x
-inx
-lda player_a_hitbox_left
-sta oam_mirror, x
-inx
-ldx #$e8
-lda player_a_hitbox_bottom
-sec
-sbc #$07
-sta oam_mirror, x
-inx
-lda #$0e
-sta oam_mirror, x
-inx
-lda #$03
-sta oam_mirror, x
-inx
-lda player_a_hitbox_right
-sec
-sbc #$07
-sta oam_mirror, x
-inx
-end_player_a_hitbox
-
-; Player B hitbox
-lda player_b_hitbox_enabled
-bne show_player_b_hitbox
-lda #$fe  ;
-sta $02e0 ;
-sta $02e1 ;
-sta $02e2 ;
-sta $02e3 ; Hide disabled hitbox
-sta $02e4 ;
-sta $02e5 ;
-sta $02e6 ;
-sta $02e7 ;
-jmp end_player_b_hitbox
-show_player_b_hitbox:
-ldx #$e4
-lda player_b_hitbox_top
-sta oam_mirror, x
-inx
-lda #$0e
-sta oam_mirror, x
-inx
-lda #$03
-sta oam_mirror, x
-inx
-lda player_b_hitbox_left
-sta oam_mirror, x
-inx
-ldx #$e0
-lda player_b_hitbox_bottom
-sec
-sbc #$07
-sta oam_mirror, x
-inx
-lda #$0e
-sta oam_mirror, x
-inx
-lda #$03
-sta oam_mirror, x
-inx
-lda player_b_hitbox_right
-sec
-sbc #$07
-sta oam_mirror, x
-inx
-end_player_b_hitbox
-
-; Player A hitstun indicator
-lda player_a_hitstun
-bne show_player_a_hitstun
-lda #$fe  ;
-sta $02dc ;
-sta $02dd ; Hide disabled hitstun
-sta $02de ;
-sta $02df ;
-jmp end_player_a_hitstun
-show_player_a_hitstun:
-ldx #$dc
-lda #$10
-sta oam_mirror, x
-sta oam_mirror+3, x
-lda #$0e
-sta oam_mirror+1, x
-lda #$03
-sta oam_mirror+2, x
-end_player_a_hitstun:
-
-; Player B hitstun indicator
-lda player_b_hitstun
-bne show_player_b_hitstun
-lda #$fe  ;
-sta $02d8 ;
-sta $02d9 ; Hide disabled hitstun
-sta $02da ;
-sta $02db ;
-jmp end_player_b_hitstun
-show_player_b_hitstun:
-ldx #$d8
-lda #$10
-sta oam_mirror, x
-lda #$20
-sta oam_mirror+3, x
-lda #$0e
-sta oam_mirror+1, x
-lda #$03
-sta oam_mirror+2, x
-end_player_b_hitstun:
-
-pla
-tay
-pla
-tax
-pla
-rts
-.)
+;show_hitboxes:
+;.(
+;pha
+;txa
+;pha
+;tya
+;pha
+;
+;; Player A hurtbox
+;ldx #$fc
+;lda player_a_hurtbox_top
+;sta oam_mirror, x
+;inx
+;lda #$0d
+;sta oam_mirror, x
+;inx
+;lda #$03
+;sta oam_mirror, x
+;inx
+;lda player_a_hurtbox_left
+;sta oam_mirror, x
+;inx
+;ldx #$f8
+;lda player_a_hurtbox_bottom
+;sec
+;sbc #$07
+;sta oam_mirror, x
+;inx
+;lda #$0d
+;sta oam_mirror, x
+;inx
+;lda #$03
+;sta oam_mirror, x
+;inx
+;lda player_a_hurtbox_right
+;sec
+;sbc #$07
+;sta oam_mirror, x
+;inx
+;
+;; Player B hurtbox
+;ldx #$f4
+;lda player_b_hurtbox_top
+;sta oam_mirror, x
+;inx
+;lda #$0d
+;sta oam_mirror, x
+;inx
+;lda #$03
+;sta oam_mirror, x
+;inx
+;lda player_b_hurtbox_left
+;sta oam_mirror, x
+;inx
+;ldx #$f0
+;lda player_b_hurtbox_bottom
+;sec
+;sbc #$07
+;sta oam_mirror, x
+;inx
+;lda #$0d
+;sta oam_mirror, x
+;inx
+;lda #$03
+;sta oam_mirror, x
+;inx
+;lda player_b_hurtbox_right
+;sec
+;sbc #$07
+;sta oam_mirror, x
+;inx
+;
+;; Player A hitbox
+;lda player_a_hitbox_enabled
+;bne show_player_a_hitbox
+;lda #$fe  ;
+;sta $02e8 ;
+;sta $02e9 ;
+;sta $02ea ;
+;sta $02eb ; Hide disabled hitbox
+;sta $02ec ;
+;sta $02ed ;
+;sta $02ee ;
+;sta $02ef ;
+;jmp end_player_a_hitbox
+;show_player_a_hitbox:
+;ldx #$ec
+;lda player_a_hitbox_top
+;sta oam_mirror, x
+;inx
+;lda #$0e
+;sta oam_mirror, x
+;inx
+;lda #$03
+;sta oam_mirror, x
+;inx
+;lda player_a_hitbox_left
+;sta oam_mirror, x
+;inx
+;ldx #$e8
+;lda player_a_hitbox_bottom
+;sec
+;sbc #$07
+;sta oam_mirror, x
+;inx
+;lda #$0e
+;sta oam_mirror, x
+;inx
+;lda #$03
+;sta oam_mirror, x
+;inx
+;lda player_a_hitbox_right
+;sec
+;sbc #$07
+;sta oam_mirror, x
+;inx
+;end_player_a_hitbox
+;
+;; Player B hitbox
+;lda player_b_hitbox_enabled
+;bne show_player_b_hitbox
+;lda #$fe  ;
+;sta $02e0 ;
+;sta $02e1 ;
+;sta $02e2 ;
+;sta $02e3 ; Hide disabled hitbox
+;sta $02e4 ;
+;sta $02e5 ;
+;sta $02e6 ;
+;sta $02e7 ;
+;jmp end_player_b_hitbox
+;show_player_b_hitbox:
+;ldx #$e4
+;lda player_b_hitbox_top
+;sta oam_mirror, x
+;inx
+;lda #$0e
+;sta oam_mirror, x
+;inx
+;lda #$03
+;sta oam_mirror, x
+;inx
+;lda player_b_hitbox_left
+;sta oam_mirror, x
+;inx
+;ldx #$e0
+;lda player_b_hitbox_bottom
+;sec
+;sbc #$07
+;sta oam_mirror, x
+;inx
+;lda #$0e
+;sta oam_mirror, x
+;inx
+;lda #$03
+;sta oam_mirror, x
+;inx
+;lda player_b_hitbox_right
+;sec
+;sbc #$07
+;sta oam_mirror, x
+;inx
+;end_player_b_hitbox
+;
+;; Player A hitstun indicator
+;lda player_a_hitstun
+;bne show_player_a_hitstun
+;lda #$fe  ;
+;sta $02dc ;
+;sta $02dd ; Hide disabled hitstun
+;sta $02de ;
+;sta $02df ;
+;jmp end_player_a_hitstun
+;show_player_a_hitstun:
+;ldx #$dc
+;lda #$10
+;sta oam_mirror, x
+;sta oam_mirror+3, x
+;lda #$0e
+;sta oam_mirror+1, x
+;lda #$03
+;sta oam_mirror+2, x
+;end_player_a_hitstun:
+;
+;; Player B hitstun indicator
+;lda player_b_hitstun
+;bne show_player_b_hitstun
+;lda #$fe  ;
+;sta $02d8 ;
+;sta $02d9 ; Hide disabled hitstun
+;sta $02da ;
+;sta $02db ;
+;jmp end_player_b_hitstun
+;show_player_b_hitstun:
+;ldx #$d8
+;lda #$10
+;sta oam_mirror, x
+;lda #$20
+;sta oam_mirror+3, x
+;lda #$0e
+;sta oam_mirror+1, x
+;lda #$03
+;sta oam_mirror+2, x
+;end_player_b_hitstun:
+;
+;pla
+;tay
+;pla
+;tax
+;pla
+;rts
+;.)
