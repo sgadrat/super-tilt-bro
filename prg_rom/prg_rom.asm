@@ -197,6 +197,10 @@ credits_end:
 #print code_end-$C000
 #echo PRG-ROM data size:
 #print data_end-data_begin
+#echo PRG-ROM nametables size:
+#print data_nt_end-data_nt_begin
+#echo PRG-ROM animations size:
+#print data_anim_end-data_anim_begin
 #echo PRG-ROM credits size:
 #print credits_end-credits_begin
 #echo PRG-ROM free space:
