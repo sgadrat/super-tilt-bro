@@ -1,4 +1,4 @@
-* = $C000 ; $C000 is where the PRG rom is mapped in CPU space, so code position is relative to it
+* = $8000 ; $8000 is where the PRG rom is mapped in CPU space, so code position is relative to it
 
 cursed:
 rti
@@ -192,9 +192,9 @@ credits_end:
 ;
 
 #echo PRG-ROM total space:
-#print $10000-$C000
+#print $10000-$8000
 #echo PRG-ROM code size:
-#print code_end-$C000
+#print code_end-$8000
 #echo PRG-ROM data size:
 #print data_end-data_begin
 #echo PRG-ROM nametables size:
