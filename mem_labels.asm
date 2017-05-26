@@ -98,6 +98,9 @@ directional_indicator_player_b_direction_y_high = $7a
 directional_indicator_player_a_direction_y_low = $7b
 directional_indicator_player_b_direction_y_low = $7c
 
+death_particles_player_a_counter = $7d
+death_particles_player_b_counter = $7e
+
 ;
 ; TITLE labels
 ;

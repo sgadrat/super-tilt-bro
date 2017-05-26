@@ -47,6 +47,11 @@ bne zero_game_state
 ; Reset screen shaking
 sta screen_shake_counter
 
+; TODO need a better place
+lda #12
+sta death_particles_player_a_counter
+sta death_particles_player_b_counter
+
 ; Setup logical game state to the game startup configuration
 lda DIRECTION_LEFT
 sta player_b_direction
@@ -714,6 +719,7 @@ sta player_a_gravity, x  ;
 sta player_a_hitstun, x ; Reset hitstun counter
 dec player_a_stocks, x ; Decrement stocks counter and check for gameover
 bmi gameover           ;
+jsr particle_death_start ; Death particles animation
 jsr start_respawn_player ; Respawn
 jmp end
 
@@ -843,6 +849,7 @@ player_effects:
 .(
 jsr blinking
 jsr particle_directional_indicator_tick
+jsr particle_death_tick
 rts
 .)
 
