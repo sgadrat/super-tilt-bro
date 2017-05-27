@@ -1,11 +1,111 @@
+; Deactivate all particle handlers
+particle_handlers_reinit:
+.(
+; Deactivate directional indicator
+lda #0
+sta directional_indicator_player_a_counter
+sta directional_indicator_player_b_counter
+
+; Deactivate death particles
+lda #12
+sta death_particles_player_a_counter
+sta death_particles_player_b_counter
+
+; Deactivate particle blocks
+lda #<deactivate_particle_block
+sta tmpfield1
+lda #>deactivate_particle_block
+sta tmpfield2
+jsr loop_on_particle_boxes
+
+rts
+.)
+
+; Call a subroutine for each block
+;  tmpfield1, tmpfield2 - adress of the subroutine to call
+;
+;  For each call, Y is the offset of the block's first byte from particle_blocks
+loop_on_particle_boxes:
+.(
+action = tmpfield1
+
+ldy #0
+loop:
+jsr call_pointed_subroutine
+tya
+clc
+adc #PARTICLE_BLOCK_SIZE
+tay
+cmp #PARTICLE_NB_BLOCKS * PARTICLE_BLOCK_SIZE
+bne loop
+
+rts
+.)
+
+; Call a subroutine for each particle in a block
+;  tmpfield1, tmpfield2 - adress of the subroutine to call
+;  Y - offset of the block's first byte from particle_blocks
+;
+;  For each call, Y is the offset of the particle's first byte and
+;  tmpfield3 is the particle number (from 1)
+loop_on_particles:
+.(
+action = tmpfield1
+particle_counter = tmpfield3
+
+lda #0                           ;
+sta particle_counter             ;
+next_particle:                   ;
+lda particle_counter             ; Loop on each particle position
+cmp #PARTICLE_BLOCK_NB_PARTICLES ;
+beq end                          ;
+inc particle_counter             ;
+
+iny ;
+iny ; Y points on the current particle
+iny ;
+iny ;
+
+jsr call_pointed_subroutine
+
+jmp next_particle
+end:
+rts
+.)
+
+; Deactivate the particle block begining at "particle_blocks, y"
+deactivate_particle_block:
+.(
+lda #0
+sta particle_blocks+PARTICLE_BLOCK_OFFSET_PARAM, y
+rts
+.)
+
+; Hide all particles in the block begining at "particle_blocks, y"
+hide_particles:
+.(
+lda #<hide_one_particle
+sta tmpfield1
+lda #>hide_one_particle
+sta tmpfield2
+jsr loop_on_particles
+rts
+
+hide_one_particle:
+.(
+lda #$fe                                              ;
+sta particle_blocks+PARTICLE_POSITION_OFFSET_X_MSB, y ; Move the particle out of screen
+sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, y ;
+rts
+.)
+.)
+
 ; Start directional indicator particles for a player
 ;  X - player number
 ;
 ; Uses particle box number 0 for player A or 1 for player B
 particle_directional_indicator_start:
 .(
-particle_counter = tmpfield1
-
 ; Initialize handler state
 lda #10
 sta directional_indicator_player_a_counter, x
@@ -35,40 +135,33 @@ txa                                                   ;
 asl                                                   ;
 sta particle_blocks+PARTICLE_BLOCK_OFFSET_TILEATTR, y ;
 
-lda #0                           ;
-sta particle_counter             ;
-next_particle:                   ;
-lda particle_counter             ; Loop on each particle position
-cmp #PARTICLE_BLOCK_NB_PARTICLES ;
-beq end                          ;
-inc particle_counter             ;
+lda #<set_particle_position ;
+sta tmpfield1               ;
+lda #>set_particle_position ; Set particles initial position
+sta tmpfield2               ;
+jsr loop_on_particles       ;
 
-iny ;
-iny ; Y points on the current particle
-iny ;
-iny ;
-
-lda player_a_x_low, x                                 ;
-sta particle_blocks+PARTICLE_POSITION_OFFSET_X_LSB, y ;
-lda player_a_x, x                                     ;
-sta particle_blocks+PARTICLE_POSITION_OFFSET_X_MSB, y ;
-lda player_a_y_low, x                                 ; Set particle's initial position
-sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_LSB, y ;
-lda player_a_y, x                                     ;
-sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, y ;
-
-jmp next_particle
-
-end:
 rts
+
+set_particle_position:
+.(
+; Position all particles on the player
+lda player_a_x_low, x
+sta particle_blocks+PARTICLE_POSITION_OFFSET_X_LSB, y
+lda player_a_x, x
+sta particle_blocks+PARTICLE_POSITION_OFFSET_X_MSB, y
+lda player_a_y_low, x
+sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_LSB, y
+lda player_a_y, x
+sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, y
+rts
+.)
 .)
 
 ; Move directional indicator particles of a player
 ;  X - player number
 particle_directional_indicator_tick:
 .(
-particle_counter = tmpfield1
-
 ; Avoid doing anything if not activated (counter at zero)
 lda directional_indicator_player_a_counter, x
 bne do_something
@@ -94,25 +187,24 @@ cmp #1
 bne move_particles
 jmp hide_particles
 go_disable_box:
-jmp disable_box
+jmp deactivate_particle_block
 
 move_particles:
 .(
-particle_y_direction_low = tmpfield2
-particle_y_direction_high = tmpfield3
+particle_y_direction_low = tmpfield4
+particle_y_direction_high = tmpfield5
 
-lda #0                           ;
-sta particle_counter             ;
-next_particle:                   ;
-lda particle_counter             ; Loop on each particle position
-cmp #PARTICLE_BLOCK_NB_PARTICLES ;
-beq end                          ;
-inc particle_counter             ;
+lda #<move_one_particle
+sta tmpfield1
+lda #>move_one_particle
+sta tmpfield2
+jsr loop_on_particles
 
-iny ;
-iny ; Y points on the current particle
-iny ;
-iny ;
+rts
+
+move_one_particle:
+.(
+particle_counter = tmpfield3
 
 lda directional_indicator_player_a_direction_x_low, x  ;
 clc                                                    ;
@@ -143,42 +235,8 @@ sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_LSB, y  ; Apply vertical velocity
 lda particle_y_direction_high                          ;
 adc particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, y  ;
 sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, y  ;
-
-
-jmp next_particle
-end:
 rts
 .)
-
-hide_particles:
-.(
-lda #0                           ;
-sta particle_counter             ;
-next_particle:                   ;
-lda particle_counter             ; Loop on each particle position
-cmp #PARTICLE_BLOCK_NB_PARTICLES ;
-beq end                          ;
-inc particle_counter             ;
-
-iny ;
-iny ; Y points on the current particle
-iny ;
-iny ;
-
-lda #$fe                                              ;
-sta particle_blocks+PARTICLE_POSITION_OFFSET_X_MSB, y ; Move the particle out of screen
-sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, y ;
-
-jmp next_particle
-end:
-rts
-.)
-
-disable_box:
-.(
-lda #0
-sta particle_blocks+PARTICLE_BLOCK_OFFSET_PARAM, y
-rts
 .)
 .)
 
@@ -190,15 +248,23 @@ rts
 ; Uses particle box number 2 for player A or 3 for player B
 particle_death_start:
 .(
-position_x = tmpfield1
-position_y = tmpfield2
-orientation_x = tmpfield3
-orientation_y = tmpfield4
-particle_counter = tmpfield5
+position_x_param = tmpfield1
+position_y_param = tmpfield2
+; tmpfiel3 used by loop on particles
+orientation_x = tmpfield4
+orientation_y = tmpfield5
+position_x_store = tmpfield6
+position_y_store = tmpfield7
 
 ; Initialize handler's state
 lda #0
 sta death_particles_player_a_counter, x
+
+; Store position to unused space
+lda position_x_param
+sta position_x_store
+lda position_y_param
+sta position_y_store
 
 ; Compute particles orientation
 lda player_a_velocity_h, x
@@ -232,18 +298,19 @@ txa                                                   ;
 asl                                                   ;
 sta particle_blocks+PARTICLE_BLOCK_OFFSET_TILEATTR, y ;
 
-lda #0                           ;
-sta particle_counter             ;
-next_particle:                   ;
-lda particle_counter             ; Loop on each particle position
-cmp #PARTICLE_BLOCK_NB_PARTICLES ;
-beq end                          ;
-inc particle_counter             ;
+lda #<place_one_particle ;
+sta tmpfield1            ;
+lda #>place_one_particle ; Particles position
+sta tmpfield2            ;
+jsr loop_on_particles    ;
 
-iny ;
-iny ; Y points on the current particle
-iny ;
-iny ;
+rts
+
+place_one_particle:
+.(
+particle_counter = tmpfield3
+position_x = position_x_store
+position_y = position_y_store
 
 lda #0                                                ;
 sta particle_blocks+PARTICLE_POSITION_OFFSET_X_LSB, y ; Set position LSBs to zero
@@ -280,19 +347,16 @@ pha                                                   ;
 lda particle_counter                                  ;
 tax                                                   ;
 dex                                                   ;
-lda particle_blocks+PARTICLE_POSITION_OFFSET_X_MSB, y ; Apply particle's offset position
+lda particle_blocks+PARTICLE_POSITION_OFFSET_X_MSB, y ;
 clc                                                   ;
-adc particles_start_position_offset_x, x              ;
+adc particles_start_position_offset_x, x              ; Apply particle's offset position
 sta particle_blocks+PARTICLE_POSITION_OFFSET_X_MSB, y ;
 lda particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, y ;
 clc                                                   ;
 adc particles_start_position_offset_y, x              ;
 sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, y ;
-pla
-tax
-
-jmp next_particle
-end:
+pla                                                   ;
+tax                                                   ;
 
 rts
 
@@ -301,6 +365,7 @@ particles_start_position_offset_x:
 particles_start_position_offset_y:
 .byt $00, $fc, $04, $f8, $08, $fc, $04
 .)
+.)
 
 ; Update death particles of a player
 ;  X - player number
@@ -308,26 +373,30 @@ particle_death_tick:
 .(
 particle_counter = tmpfield1
 
+; Do nothing if deactivated
 lda death_particles_player_a_counter, x
 cmp #12
 beq do_nothing
 
-txa    ;
-clc    ;
-adc #2 ;
-asl    ;
-asl    ;
-asl    ; Y points on the particle box of the player
-asl    ;
-asl    ;
-tay    ;
+; Y points on the particle box of the player
+txa
+clc
+adc #2
+asl
+asl
+asl
+asl
+asl
+tay
 
+; Choose what to do depending on counter
 lda death_particles_player_a_counter, x
 cmp #10
-beq hide_particles
+beq go_hide_particles
 cmp #11
-beq disable_box
+beq go_disable_box
 
+; Update particles tile to animate the explosion
 lsr
 clc
 adc #TILE_EXPLOSION_1
@@ -338,32 +407,15 @@ inc death_particles_player_a_counter, x
 do_nothing:
 rts
 
-hide_particles:
+go_hide_particles:
 .(
-lda #0                           ;
-sta particle_counter             ;
-next_particle:                   ;
-lda particle_counter             ; Loop on each particle position
-cmp #PARTICLE_BLOCK_NB_PARTICLES ;
-beq end                          ;
-inc particle_counter             ;
-
-iny ;
-iny ; Y points on the current particle
-iny ;
-iny ;
-
-lda #$fe                                              ;
-sta particle_blocks+PARTICLE_POSITION_OFFSET_X_MSB, y ; Move the particle out of screen
-sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, y ;
-
-jmp next_particle
+jsr hide_particles
+jmp end
 .)
 
-disable_box:
+go_disable_box:
 .(
-lda #0
-sta particle_blocks+PARTICLE_BLOCK_OFFSET_PARAM, y
+jsr deactivate_particle_block
 jmp end
 .)
 .)

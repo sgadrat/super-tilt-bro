@@ -47,11 +47,6 @@ bne zero_game_state
 ; Reset screen shaking
 sta screen_shake_counter
 
-; TODO need a better place
-lda #12
-sta death_particles_player_a_counter
-sta death_particles_player_b_counter
-
 ; Setup logical game state to the game startup configuration
 lda DIRECTION_LEFT
 sta player_b_direction
@@ -659,8 +654,8 @@ platform_actions_high:
 ;  Overwrites tmpfield1 and tmpfield2
 check_player_position:
 .(
-old_x = tmpfield1
-old_y = tmpfield2
+old_x = tmpfield1 ; Not movable, used by particle_death_start
+old_y = tmpfield2 ; Not movable, used by particle_death_start
 
 ; Check death
 lda player_a_velocity_h, x

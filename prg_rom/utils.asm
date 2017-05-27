@@ -510,6 +510,9 @@ lda #$00
 sta scroll_x
 sta scroll_y
 
+; Reset particle handlers
+jsr particle_handlers_reinit
+
 ; Move all sprites offscreen
 ldx #$00
 clr_sprites:
