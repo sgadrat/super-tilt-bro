@@ -107,6 +107,13 @@ jsr particle_draw
 rts
 no_screen_shake:
 
+lda slow_down_counter
+beq no_slowdown
+jsr slowdown
+lda tmpfield1
+bne end
+no_slowdown:
+
 ; Process AI - this override controller B state
 lda config_ai_enabled
 beq end_ai
@@ -119,6 +126,7 @@ jsr update_players
 ; Update screen
 jsr update_sprites
 
+end:
 rts
 .)
 
@@ -163,6 +171,34 @@ sta scroll_y
 sta scroll_x
 lda #%10010000
 sta ppuctrl_val
+
+end:
+rts
+.)
+
+; Set tmpfield1 to 1 if ne current frame need to be skipped, follow to gameover
+; screen when the counter goes to zero
+slowdown:
+.(
+dec slow_down_counter
+beq next_screen
+lda slow_down_counter
+and #%00000011
+beq keep_frame
+
+lda #1
+sta tmpfield1
+jmp end
+
+keep_frame:
+lda #0
+sta tmpfield1
+jmp end
+
+next_screen:
+lda #GAME_STATE_GAMEOVER
+sta global_game_state
+jsr change_global_game_state
 
 end:
 rts
@@ -712,19 +748,25 @@ sta player_a_num_aerial_jumps, x ;
 sta player_a_hitstun, x ; Reset hitstun counter
 lda #DEFAULT_GRAVITY     ; Reset gravity
 sta player_a_gravity, x  ;
+jsr particle_death_start ; Death particles animation
 dec player_a_stocks, x ; Decrement stocks counter and check for gameover
 bmi gameover           ;
-jsr particle_death_start ; Death particles animation
 jsr start_respawn_player ; Respawn
 jmp end
 
 gameover:
-lda #GAME_STATE_GAMEOVER
-sta global_game_state
-jsr switch_selected_player
-txa
-sta gameover_winner
-jsr change_global_game_state
+lda slow_down_counter      ;
+bne no_set_winner          ;
+jsr switch_selected_player ;
+txa                        ; Set the winner for gameover screen
+sta gameover_winner        ;
+jsr switch_selected_player ;
+no_set_winner:             ;
+lda #0                 ; Do not keep an invalid number of stocks
+sta player_a_stocks, x ;
+jsr start_innexistant_player ; Hide dead player
+lda #SLOWDOWN_TIME    ; Start slow down (restart it if the second player die to
+sta slow_down_counter ; show that heroic death's animation)
 
 end:
 rts

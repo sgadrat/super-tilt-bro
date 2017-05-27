@@ -7,7 +7,7 @@
 player_a_state = $00
 player_b_state = $01
 
-; $02 free
+; $02 - used by gameover_winner
 player_a_hitstun = $03
 player_b_hitstun = $04
 player_a_x = $05
@@ -101,6 +101,8 @@ directional_indicator_player_b_direction_y_low = $7c
 death_particles_player_a_counter = $7d
 death_particles_player_b_counter = $7e
 
+slow_down_counter = $7f
+
 ;
 ; TITLE labels
 ;
@@ -118,7 +120,7 @@ config_music_enabled = $01
 ; GAMEOVER labels
 ;
 
-gameover_winner = $00
+gameover_winner = $02
 gameover_balloon0_x = $50
 gameover_balloon1_x = $51
 gameover_balloon2_x = $52

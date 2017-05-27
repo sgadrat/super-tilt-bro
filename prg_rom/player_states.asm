@@ -1825,3 +1825,39 @@ sta player_a_hitbox_enabled, x
 
 rts
 .)
+
+start_innexistant_player:
+.(
+; Set state
+lda PLAYER_STATE_INNEXISTANT
+sta player_a_state, x
+
+; Set to a fixed place
+lda #0
+sta player_a_x, x
+sta player_a_x_low, x
+sta player_a_y, x
+sta player_a_y_low, x
+sta player_a_velocity_h, x
+sta player_a_velocity_h_low, x
+sta player_a_velocity_v, x
+sta player_a_velocity_v_low, x
+
+; Fallthrough to set the animation
+.)
+set_innexistant_animation:
+.(
+; Set the appropriate animation
+lda #<anim_invisible
+sta tmpfield1
+lda #>anim_invisible
+sta tmpfield2
+jsr set_player_animation
+
+rts
+.)
+
+innexistant_player:
+.(
+rts
+.)
