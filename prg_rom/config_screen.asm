@@ -18,19 +18,6 @@ init_config_screen:
 lda #GAME_STATE_CONFIG
 sta global_game_state
 
-; Reset scrolling
-lda #$00
-sta scroll_x
-sta scroll_y
-
-; Move all sprites offscreen
-ldx #$00
-clr_sprites:
-lda #$FE
-sta oam_mirror, x    ;move all sprites off screen
-inx
-bne clr_sprites
-
 ; Point PPU to Background palette 0 (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
 lda PPUSTATUS
 lda #$3f
