@@ -856,7 +856,7 @@ sta nametable_buffers, x ;
 inx
 cpy player_stocks        ;
 bcs empty_stock          ;
-lda #$dd                 ;
+lda #$cf                 ;
 jmp set_stock_tile       ; Set stock tile depending of the
 empty_stock:             ; stock's availability
 lda #$00                 ;

@@ -91,7 +91,7 @@ sta PPUADDR    ; Load PPUADDR with box position
 lda ppu_addr   ;
 sta PPUADDR    ;
 
-lda #$f4    ; Left border
+lda #$e5    ; Left border
 sta PPUDATA ;
 
 lda #$02                 ;
@@ -101,7 +101,7 @@ sta PPUDATA              ;
 dex                      ;
 bne fill_left_background ;
 
-lda #$f6    ;
+lda #$e7    ;
 sta PPUDATA ; Label/value separator
 lda #$01    ;
 sta PPUDATA ;
@@ -113,7 +113,7 @@ sta PPUDATA               ;
 dex                       ;
 bne fill_right_background ;
 
-lda #$f5    ; Right border
+lda #$e6    ; Right border
 sta PPUDATA ;
 
 lda ppu_addr   ;
