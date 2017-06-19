@@ -344,6 +344,12 @@ ldy #3 ; Set Y to the number of lines to affect
 
 ; Write a nametable buffer for a line of the current frame
 set_line_attributes:
+cpy #1         ;
+bne no_change  ;
+lda tmpfield1  ; Tile's row following a stage block must use palette #3
+ora #%11110000 ;
+sta tmpfield1  ;
+no_change:     ;
 lda #$01
 sta nametable_buffers, x
 inx
