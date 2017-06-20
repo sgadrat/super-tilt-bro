@@ -84,6 +84,39 @@ jsr start_standing_player
 ldx #$01
 jsr start_standing_player
 
+; Construct players palette swap buffers
+ldy #0 ; Y points on players_palettes's next byte
+
+jsr place_player_a_header
+ldx #0
+jsr place_character_palette
+jsr place_player_a_header
+ldx #0
+jsr place_alternate_palette
+
+jsr place_player_b_header
+ldx #1
+jsr place_character_palette
+jsr place_player_b_header
+ldx #1
+jsr place_alternate_palette
+
+; Initialize weapons palettes
+lda #<weapon_palettes
+sta tmpfield2
+lda #>weapon_palettes
+sta tmpfield3
+
+ldx #$15
+lda config_player_a_weapon_palette
+sta tmpfield1
+jsr copy_palette_to_ppu
+
+ldx #$1d
+lda config_player_b_weapon_palette
+sta tmpfield1
+jsr copy_palette_to_ppu
+
 ; Move sprites according to the initial state
 jsr update_sprites
 
@@ -91,6 +124,91 @@ jsr update_sprites
 jsr audio_music_power
 
 rts
+
+place_player_a_header:
+.(
+ldx #0
+copy_one_byte:
+lda header_player_a, x
+sta players_palettes, y
+iny
+inx
+cpx #4
+bne copy_one_byte
+rts
+.)
+
+place_player_b_header:
+.(
+ldx #0
+copy_one_byte:
+lda header_player_b, x
+sta players_palettes, y
+iny
+inx
+cpx #4
+bne copy_one_byte
+rts
+.)
+
+place_character_palette:
+.(
+lda config_player_a_character_palette, x
+asl
+;clc ; useless, asl shall not overflow
+adc config_player_a_character_palette, x
+tax
+lda character_palettes, x
+sta players_palettes, y
+iny
+inx
+lda character_palettes, x
+sta players_palettes, y
+iny
+inx
+lda character_palettes, x
+sta players_palettes, y
+iny
+inx
+
+lda #0
+sta players_palettes, y
+iny
+
+rts
+.)
+
+place_alternate_palette:
+.(
+lda config_player_a_character_palette, x
+asl
+;clc ; useless, asl shall not overflow
+adc config_player_a_character_palette, x
+tax
+lda character_palettes_alternate, x
+sta players_palettes, y
+iny
+inx
+lda character_palettes_alternate, x
+sta players_palettes, y
+iny
+inx
+lda character_palettes_alternate, x
+sta players_palettes, y
+iny
+inx
+
+lda #0
+sta players_palettes, y
+iny
+
+rts
+.)
+
+header_player_a:
+.byt $01, $3f, $11, $03
+header_player_b:
+.byt $01, $3f, $19, $03
 .)
 
 game_tick:
@@ -896,7 +1014,6 @@ blinking:
 .(
 palette_buffer = tmpfield1
 ;                tmpfield2
-palette_buffer_size = tmpfield3
 #define PLAYER_EFFECTS_PALLETTE_SIZE 8
 
 lda #<players_palettes ;
@@ -948,12 +1065,6 @@ pla ; Restore X
 tax ;
 
 rts
-
-players_palettes:
-.byt $01, $3f, $11, $03, $08, $1a, $20, $00 ; player A normal
-.byt $01, $3f, $11, $03, $37, $3a, $20, $00 ; player A hitstun
-.byt $01, $3f, $19, $03, $08, $16, $10, $00 ; player B normal
-.byt $01, $3f, $19, $03, $37, $33, $20, $00 ; player B hitstun
 .)
 .)
 

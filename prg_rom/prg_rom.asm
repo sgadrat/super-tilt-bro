@@ -135,7 +135,12 @@ bne check_stage_selection
 jsr config_screen_tick
 jmp forever
 check_stage_selection:
+cmp #GAME_STATE_STAGE_SELECTION
+bne check_character_selection
 jsr stage_selection_screen_tick
+jmp forever
+check_character_selection:
+jsr character_selection_screen_tick
 jmp forever
 .)
 
@@ -150,6 +155,7 @@ jmp forever
 #include "prg_rom/gameover_screen.asm"
 #include "prg_rom/credits_screen.asm"
 #include "prg_rom/stage_selection_screen.asm"
+#include "prg_rom/character_selection_screen.asm"
 #include "prg_rom/ai.asm"
 #include "prg_rom/particle.asm"
 #include "prg_rom/particle_handlers.asm"

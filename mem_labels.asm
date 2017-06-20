@@ -117,6 +117,13 @@ config_selected_option = $00
 config_music_enabled = $01
 
 ;
+; CHARACTER_SELECTION labels
+;
+
+character_selection_player_a_selected_option = $00
+character_selection_player_b_selected_option = $01
+
+;
 ; GAMEOVER labels
 ;
 
@@ -197,6 +204,10 @@ ppuctrl_val = $e8
 config_initial_stocks = $e9
 config_ai_enabled = $ea
 config_selected_stage = $eb
+config_player_a_character_palette = $ec
+config_player_b_character_palette = $ed
+config_player_a_weapon_palette = $ee
+config_player_b_weapon_palette = $ef
 
 tmpfield1 = $f0
 tmpfield2 = $f1
@@ -222,3 +233,4 @@ particle_block_0 = $0500
 particle_block_1 = $0520
 particle_block_2 = $0540
 particle_block_3 = $0560
+players_palettes = $0580

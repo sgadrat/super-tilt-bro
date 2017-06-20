@@ -29,6 +29,22 @@ lda #>nametable_gameover
 sta tmpfield2
 jsr draw_zipped_nametable
 
+; Initialize sprites palettes regarding configuration
+lda #<character_palettes
+sta tmpfield2
+lda #>character_palettes
+sta tmpfield3
+
+ldx #$11
+lda config_player_a_character_palette
+sta tmpfield1
+jsr copy_palette_to_ppu
+
+ldx #$19
+lda config_player_b_character_palette
+sta tmpfield1
+jsr copy_palette_to_ppu
+
 ; Write winner's name
 lda PPUSTATUS
 lda #$20

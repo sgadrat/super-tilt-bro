@@ -6,8 +6,12 @@ lda #MAX_STOCKS
 sta config_initial_stocks
 lda #$01
 sta config_ai_enabled
+sta config_player_b_character_palette
+sta config_player_b_weapon_palette
 lda #$00
 sta config_selected_stage
+sta config_player_a_character_palette
+sta config_player_a_weapon_palette
 rts
 .)
 
@@ -34,111 +38,12 @@ inx
 cpx #$20
 bne copy_palette
 
-; Clear background
-lda #$00
-sta $40
-sta $41
-lda PPUSTATUS
-lda #$20
-sta PPUADDR
-lda #$00
-sta PPUADDR
-load_background:
-lda #$00
-sta PPUDATA
-inc $40
-bne end_inc_vector
-inc $41
-end_inc_vector:
-lda #$04
-cmp $41
-bne load_background
-lda #$00
-cmp $40
-bne load_background
-
-; Pimp nametable attributes
-lda PPUSTATUS
-lda #$23
-sta PPUADDR
-lda #$cd
-sta PPUADDR
-ldy #NB_OPTIONS
-one_box_attributes:
-lda #%01010000
-sta PPUDATA
-sta PPUDATA
-ldx #6
-lda #%00000000
-attributes_byte:
-sta PPUDATA
-dex
-bne attributes_byte
-dey
-bne one_box_attributes
-
-; Draw configuration boxes
-ppu_addr = tmpfield1
-lda #$c4
-sta ppu_addr
-lda #$20
-sta ppu_addr+1
-
-draw_one_box:
-lda PPUSTATUS  ;
-lda ppu_addr+1 ;
-sta PPUADDR    ; Load PPUADDR with box position
-lda ppu_addr   ;
-sta PPUADDR    ;
-
-lda #$e5    ; Left border
-sta PPUDATA ;
-
-lda #$02                 ;
-ldx #13                  ;
-fill_left_background:    ; Label's background
-sta PPUDATA              ;
-dex                      ;
-bne fill_left_background ;
-
-lda #$e7    ;
-sta PPUDATA ; Label/value separator
-lda #$01    ;
-sta PPUDATA ;
-
-lda #$02                  ;
-ldx #7                    ;
-fill_right_background:    ; Value's background
-sta PPUDATA               ;
-dex                       ;
-bne fill_right_background ;
-
-lda #$e6    ; Right border
-sta PPUDATA ;
-
-lda ppu_addr   ;
-clc            ;
-adc #$80       ;
-sta ppu_addr   ; Position the next box
-lda ppu_addr+1 ;
-adc #$00       ;
-sta ppu_addr+1 ;
-
-lda ppu_addr+1   ;
-cmp #$22         ;
-bne draw_one_box ; Loop
-lda ppu_addr     ;
-cmp #$44         ;
-bne draw_one_box ;
-
-; Write labels
-ldx #0
-labels_loop:
-lda screen_labels, x
-sta nametable_buffers, x
-inx
-cpx #48
-bne labels_loop
+; Copy background from PRG-rom to PPU nametable
+lda #<nametable_config
+sta tmpfield1
+lda #>nametable_config
+sta tmpfield2
+jsr draw_zipped_nametable
 
 ; Place sprites
 ldx #0
@@ -172,17 +77,6 @@ sprites:
 .byt $6f, $3f, $00, $a0
 .byt $6f, $3f, $40, $d0
 .)
-
-screen_labels:
-music_label:
-.byt $01, $20, $c7, $05, $43, $4b, $49, $3f, $39
-stocks_label:
-.byt $01, $21, $47, $06, $49, $4a, $45, $39, $41, $49
-ai_label:
-.byt $01, $21, $c7, $08, $46, $42, $37, $4f, $3b, $48, $02, $16
-start_label:
-.byt $01, $22, $8a, $0c, $46, $48, $3b, $49, $49, $02, $02, $49, $4a, $37, $48, $4a
-.byt $00
 .)
 
 config_screen_tick:
@@ -226,7 +120,7 @@ jmp (tmpfield1)
 ; Go to the next screen
 next_screen:
 .(
-lda #GAME_STATE_STAGE_SELECTION
+lda #GAME_STATE_CHARACTER_SELECTION
 sta global_game_state
 jsr change_global_game_state
 ; jmp end ; not needed, change_global_game_state does not return

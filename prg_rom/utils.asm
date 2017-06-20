@@ -547,7 +547,12 @@ bne check_stage_selection
 jsr init_config_screen
 jmp end_initialization
 check_stage_selection:
+cmp #GAME_STATE_STAGE_SELECTION
+bne check_character_selection
 jsr init_stage_selection_screen
+jmp end_initialization
+check_character_selection:
+jsr init_character_selection_screen
 end_initialization:
 
 ; Enable rendering
@@ -624,4 +629,36 @@ rts
 call_pointed_subroutine:
 .(
 jmp (tmpfield1)
+.)
+
+; Copy a palette from a palettes table to the ppu
+;  register X - PPU address LSB (MSB is fixed to $3f)
+;  tmpfield1 - palette number in the table
+;  tmpfield2, tmpfield3 - table's address
+;
+;  Overwrites registers
+copy_palette_to_ppu:
+.(
+palette_index = tmpfield1
+palette_table = tmpfield2
+
+lda PPUSTATUS
+lda #$3f
+sta PPUADDR
+txa
+sta PPUADDR
+
+lda palette_index
+asl
+;clc ; useless, asl shall not overflow
+adc palette_index
+tay
+ldx #3
+copy_one_color:
+lda (palette_table), y
+sta PPUDATA
+iny
+dex
+bne copy_one_color
+rts
 .)
