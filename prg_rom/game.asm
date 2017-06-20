@@ -213,6 +213,9 @@ header_player_b:
 
 game_tick:
 .(
+; Remove processed nametable buffers
+jsr reset_nt_buffers
+
 ; Shake screen and do nothing until shaking is over
 lda screen_shake_counter
 beq no_screen_shake
@@ -324,9 +327,6 @@ rts
 
 update_players:
 .(
-; Remove processed nametable buffers
-jsr reset_nt_buffers
-
 ; Decrement hitstun counters
 ldx #$00
 hitstun_one_player:
