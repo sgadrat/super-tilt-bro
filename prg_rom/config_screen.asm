@@ -126,6 +126,14 @@ jsr change_global_game_state
 ; jmp end ; not needed, change_global_game_state does not return
 .)
 
+previous_screen:
+.(
+lda #GAME_STATE_TITLE
+sta global_game_state
+jsr change_global_game_state
+; jmp end ; not needed, change_global_game_state does not return
+.)
+
 next_value:
 .(
 lda config_selected_option
@@ -236,7 +244,7 @@ rts
 buttons_numbering:
 .byt CONTROLLER_BTN_RIGHT, CONTROLLER_BTN_LEFT, CONTROLLER_BTN_DOWN, CONTROLLER_BTN_UP, CONTROLLER_BTN_START, CONTROLLER_BTN_B, CONTROLLER_BTN_A
 buttons_actions:
-.word next_value,          previous_value,      next_option,         previous_option,   next_screen,          previous_value,   next_value
+.word next_value,          previous_value,      next_option,         previous_option,   next_screen,          previous_screen,  next_value
 
 next_value_handlers:
 .word music_next_value, stocks_next_value, ai_next_value
