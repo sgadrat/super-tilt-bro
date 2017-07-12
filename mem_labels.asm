@@ -103,6 +103,12 @@ death_particles_player_b_counter = $7e
 
 slow_down_counter = $7f
 
+ai_current_action_lsb = 80
+ai_current_action_msb = 81
+ai_current_action_counter = 82
+ai_current_action_step = 83
+ai_current_action_modifier = 84
+
 ;
 ; TITLE labels
 ;

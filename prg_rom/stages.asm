@@ -75,3 +75,46 @@ copy_data_end:
 
 rts
 .)
+
+; Call a subroutine for each platforms of the current stage
+;  tmpfield1, tmpfield2 - subroutine to call
+;
+; For each call, the platform can be accessed at address
+; "stage_data+STAGE_OFFSET_PLATFORMS, y"
+;
+; Called subroutine can stop the iteration by setting Y to $ff, else
+; it must not modify the Y register.
+;
+; Called subroutine must not modify tmpfield1 nor tmpfield2.
+stage_iterate_platforms:
+.(
+ldy #0
+
+check_current_platform:
+lda stage_data+STAGE_OFFSET_PLATFORMS, y
+beq end
+
+jsr call_pointed_subroutine
+cpy #$ff
+beq end
+
+lda stage_data+STAGE_OFFSET_PLATFORMS, y
+cmp #$01
+beq skip_solid_platform
+
+tya
+clc
+adc #STAGE_SMOOTH_PLATFORM_LENGTH
+tay
+jmp check_current_platform
+
+skip_solid_platform:
+tya
+clc
+adc #STAGE_PLATFORM_LENGTH
+tay
+jmp check_current_platform
+
+end:
+rts
+.)

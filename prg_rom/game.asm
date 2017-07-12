@@ -123,6 +123,9 @@ jsr update_sprites
 ; Change for ingame music
 jsr audio_music_power
 
+; Initialize AI
+jsr ai_init
+
 rts
 
 place_player_a_header:
