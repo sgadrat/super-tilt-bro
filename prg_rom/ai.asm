@@ -1,5 +1,4 @@
 #define AI_ATTACK_HITBOX(left,right,top,bottom) .byt left, right, top, bottom
-
 #define AI_NB_ATTACKS 4
 attacks:
 AI_ATTACK_HITBOX($f0, $fd, $f4, $0c)
@@ -22,6 +21,11 @@ AI_ACTION_STEP(0, 0)
 AI_ACTION_STEP(CONTROLLER_INPUT_JUMP, 9)
 AI_ACTION_END_STEPS
 
+ai_action_jump:
+AI_ACTION_STEP(0, 0)
+AI_ACTION_STEP(CONTROLLER_INPUT_JUMP, 19)
+AI_ACTION_END_STEPS
+
 ai_action_left_tilt:
 AI_ACTION_STEP(CONTROLLER_INPUT_ATTACK_LEFT, 0)
 AI_ACTION_STEP(0, 19)
@@ -40,7 +44,6 @@ AI_ACTION_END_STEPS
 
 ai_action_special_up:
 AI_ACTION_STEP(CONTROLLER_INPUT_SPECIAL_UP, 0)
-AI_ACTION_STEP(0, 11)
 AI_ACTION_END_STEPS
 
 ai_action_special_side:
@@ -186,6 +189,8 @@ best_platform = tmpfield4
 ; Check that the player is offstage - no platform behind him
 lda #1
 sta endangered
+lda #0
+sta best_platform
 
 lda #<platform_handler
 sta platform_handler_lsb
@@ -196,7 +201,7 @@ jsr stage_iterate_platforms
 lda endangered
 beq end
 
-; Set action to side special in platform's direction
+; Set action modifier to the platform's direction
 lda #CONTROLLER_BTN_RIGHT
 sta ai_current_action_modifier
 ldy best_platform
@@ -207,10 +212,81 @@ lda #CONTROLLER_BTN_LEFT
 sta ai_current_action_modifier
 direction_set:
 
+; Set the idle action if
+;  - the player is on hitstun
+;  - or the platform is lower than player
+;  - or the player is not on falling not thrown state
+lda player_b_hitstun
+bne set_idle_action
+
+lda player_b_y
+cmp stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_TOP, y
+bcc set_idle_action
+
+lda player_b_state
+cmp PLAYER_STATE_FALLING
+beq dont_set_idle_action
+cmp PLAYER_STATE_THROWN
+bne set_idle_action
+dont_set_idle_action:
+
+; Air jump if it is possible
+lda player_b_num_aerial_jumps
+cmp #MAX_NUM_AERIAL_JUMPS
+bne set_jump_action
+
+; Special-side if the platform is far away
+lda ai_current_action_modifier
+cmp #CONTROLLER_BTN_RIGHT
+beq load_left_edge
+lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT, y
+jmp edge_loaded
+load_left_edge:
+lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_LEFT, y
+edge_loaded:
+
+sec
+sbc player_b_x
+jsr absolute_a
+cmp #16
+bcs set_special_side_action
+
+; Special-up since no other action was found
+jmp set_special_up_action
+
+; Set an action
+set_idle_action:
+lda #<ai_action_idle
+sta ai_current_action_lsb
+lda #>ai_action_idle
+sta ai_current_action_msb
+jmp begin_action
+
+set_jump_action:
+lda #<ai_action_jump
+sta ai_current_action_lsb
+lda #>ai_action_jump
+sta ai_current_action_msb
+jmp begin_action
+
+set_special_side_action:
 lda #<ai_action_special_side
 sta ai_current_action_lsb
 lda #>ai_action_special_side
 sta ai_current_action_msb
+jmp begin_action
+
+set_special_up_action:
+lda #$00
+sta ai_current_action_modifier
+lda #<ai_action_special_up
+sta ai_current_action_lsb
+lda #>ai_action_special_up
+sta ai_current_action_msb
+;jmp begin_action ; useless, fallthrough
+
+; Reset current action to its begining
+begin_action:
 lda #0
 sta ai_current_action_step
 sta ai_current_action_counter
@@ -232,13 +308,17 @@ bcc end
 
 ; A platform on the left of the player cannot save him
 lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT, y
+clc
+adc #1
 cmp player_b_x
 bcc end
 
 ; A platform on the right of the player cannot save him
-lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_LEFT, y
-cmp player_b_x
-bcs end
+lda player_b_x
+clc
+adc #1
+cmp stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_LEFT, y
+bcc end
 
 ; The current platform can save the player, no need to recover
 lda #0
@@ -263,6 +343,12 @@ sta ai_current_action_modifier
 direction_set:
 
 ; Choose between jumping or not
+lda player_b_state
+cmp PLAYER_STATE_STANDING
+beq jump_if_higher
+cmp PLAYER_STATE_RUNNING
+bne dont_jump
+jump_if_higher:
 lda player_a_y
 cmp player_b_y
 bcs dont_jump
