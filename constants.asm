@@ -36,6 +36,7 @@
 #define SCREENSHAKE_PARRY_INTENSITY 1
 
 #define MAX_STOCKS 4
+#define MAX_AI_LEVEL 3
 
 #define TILENUM_NT_CHAR_0 #$14
 

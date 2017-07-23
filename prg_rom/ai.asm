@@ -55,10 +55,21 @@ ai_action_idle:
 AI_ACTION_STEP(0, 0)
 AI_ACTION_END_STEPS
 
+ai_level_to_delay:
+.byt 30, 10, 1
+
 ai_init:
 .(
+; Reset current action
 lda #AI_STEP_FINAL
 sta ai_current_action_step
+
+; Set delay configuration depending on difficulty level
+ldy config_ai_level
+dey
+lda ai_level_to_delay, y
+sta ai_max_delay
+sta ai_delay
 rts
 .)
 
@@ -165,6 +176,7 @@ lda #0
 sta ai_current_action_modifier
 sta ai_current_action_step
 sta ai_current_action_counter
+jsr delay_action
 jmp end
 
 ; Check the next attack
@@ -290,6 +302,7 @@ begin_action:
 lda #0
 sta ai_current_action_step
 sta ai_current_action_counter
+jsr delay_action
 
 end:
 rts
@@ -376,6 +389,32 @@ lda #0
 sta ai_current_action_step
 sta ai_current_action_counter
 
+rts
+.)
+
+; Replace the selected action by an iddle one if needed because of difficulty level
+delay_action:
+.(
+dec ai_delay
+beq no_delay
+
+; Delay the action by replacing it by an idle action
+lda #<ai_action_idle
+sta ai_current_action_lsb
+lda #>ai_action_idle
+sta ai_current_action_msb
+lda #0
+sta ai_current_action_modifier
+sta ai_current_action_step
+sta ai_current_action_counter
+jmp end
+
+; Let the action execute normally and reset delay counter
+no_delay:
+lda ai_max_delay
+sta ai_delay
+
+end:
 rts
 .)
 

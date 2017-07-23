@@ -239,7 +239,7 @@ bne end
 no_slowdown:
 
 ; Process AI - this override controller B state
-lda config_ai_enabled
+lda config_ai_level
 beq end_ai
 jsr ai_tick
 end_ai:

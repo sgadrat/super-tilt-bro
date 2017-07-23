@@ -5,7 +5,7 @@ default_config:
 lda #MAX_STOCKS
 sta config_initial_stocks
 lda #$01
-sta config_ai_enabled
+sta config_ai_level
 sta config_player_b_character_palette
 sta config_player_b_weapon_palette
 lda #$00
@@ -208,9 +208,12 @@ jmp end
 
 ai_next_value:
 .(
-lda config_ai_enabled
-eor #%00000001
-sta config_ai_enabled
+inc config_ai_level
+lda config_ai_level
+cmp #MAX_AI_LEVEL+1
+bne end
+lda #0
+sta config_ai_level
 jmp end
 .)
 
@@ -223,9 +226,7 @@ jmp music_next_value
 stocks_previous_value:
 .(
 dec config_initial_stocks
-lda config_initial_stocks
-cmp #$ff
-bne end
+bpl end
 lda #MAX_STOCKS
 sta config_initial_stocks
 jmp end
@@ -233,8 +234,11 @@ jmp end
 
 ai_previous_value:
 .(
-jmp ai_next_value
-;jmp end ; Not needed, handled by ai_next_value
+dec config_ai_level
+bpl end
+lda #MAX_AI_LEVEL
+sta config_ai_level
+jmp end
 .)
 
 end:
@@ -447,32 +451,29 @@ jmp end
 
 draw_ai:
 .(
-; Store good buffer's address int tmpfield1
-lda config_ai_enabled
-beq ai_disabled
+; Set Y to the begining of the good buffer from buffer_human
+lda config_ai_level
+asl
+asl
+asl
+adc config_ai_level
+adc config_ai_level
+tay
 
-lda #<buffer_cpu
+; Store "buffer end" Y value in tmpfield1
+tya
+clc
+adc #10
 sta tmpfield1
-lda #>buffer_cpu
-sta tmpfield2
-jmp send_buffer
 
-ai_disabled:
-lda #<buffer_human
-sta tmpfield1
-lda #>buffer_human
-sta tmpfield2
-
-; Copy stored buffer
-send_buffer:
+; Send buffer
 jsr last_nt_buffer
-ldy #0
 loop_value:
-lda (tmpfield1), y
+lda buffer_human, y
 sta nametable_buffers, x
 iny
 inx
-cpy #10
+cpy tmpfield1
 bne loop_value
 
 jmp end
@@ -502,7 +503,11 @@ buffer_five:
 
 buffer_human:
 .byt $01, $21, $d5, $05, $3e, $4b, $43, $37, $44, $00
-buffer_cpu:
-.byt $01, $21, $d5, $05, $39, $46, $4b, $02, $02, $00
+buffer_easy:
+.byt $01, $21, $d5, $05, $3b, $37, $49, $4f, $02, $00
+buffer_fair:
+.byt $01, $21, $d5, $05, $3c, $37, $3f, $48, $02, $00
+buffer_hard:
+.byt $01, $21, $d5, $05, $3e, $37, $48, $3a, $02, $00
 .)
 .)

@@ -108,6 +108,8 @@ ai_current_action_msb = 81
 ai_current_action_counter = 82
 ai_current_action_step = 83
 ai_current_action_modifier = 84
+ai_delay = 85
+ai_max_delay = 86
 
 ;
 ; TITLE labels
@@ -208,7 +210,7 @@ scroll_y = $e7
 ppuctrl_val = $e8
 
 config_initial_stocks = $e9
-config_ai_enabled = $ea
+config_ai_level = $ea
 config_selected_stage = $eb
 config_player_a_character_palette = $ec
 config_player_b_character_palette = $ed
