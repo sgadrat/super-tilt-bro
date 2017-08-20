@@ -174,21 +174,26 @@ gameover_random = $4e
 ; Audio engine labels
 ;
 
-audio_square1_counter = $d0
-audio_square1_note_counter = $d1
-audio_square2_counter = $d2
-audio_square2_note_counter = $d3
-audio_triangle_counter = $d4
-audio_triangle_note_counter = $d5
+audio_square1_sample_counter = $d0  ;
+audio_square2_sample_counter = $d1  ; Counter in the sample - index of a note
+audio_triangle_sample_counter = $d2 ;
 
-audio_channel_mode = $d6
+audio_square1_note_counter = $d3  ;
+audio_square2_note_counter = $d4  ; Counter in the note - time left before next note
+audio_triangle_note_counter = $d5 ;
 
-audio_square1_track = $d7
-audio_square2_track = $d9
-audio_triangle_track = $db
+audio_channel_mode = $d6 ; Square or triangle
+
+audio_square1_track = $d7  ;
+audio_square2_track = $d9  ; Adress of the current track for each channel
+audio_triangle_track = $db ;
 
 audio_duty = $dd
 audio_music_enabled = $de
+
+audio_square1_track_counter = $0600  ;
+audio_square2_track_counter = $0601  ; Counter in the track - index of a sample
+audio_triangle_track_counter = $0602 ;
 
 ;
 ; Global labels
@@ -242,3 +247,4 @@ particle_block_1 = $0520
 particle_block_2 = $0540
 particle_block_3 = $0560
 players_palettes = $0580
+;$06xx may be used by audio engine, see "Audio engine labels"

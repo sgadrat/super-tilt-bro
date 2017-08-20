@@ -46,19 +46,19 @@ end_enabled_check:
 lda #%10000000
 sta audio_duty
 
-lda #<music_main_square1
+lda #<track_main_square1
 sta audio_square1_track
-lda #>music_main_square1
+lda #>track_main_square1
 sta audio_square1_track+1
 
-lda #<music_main_square2
+lda #<track_main_square2
 sta audio_square2_track
-lda #>music_main_square2
+lda #>track_main_square2
 sta audio_square2_track+1
 
-lda #<music_main_triangle
+lda #<track_main_triangle
 sta audio_triangle_track
-lda #>music_main_triangle
+lda #>track_main_triangle
 sta audio_triangle_track+1
 
 jsr audio_reset_music
@@ -81,19 +81,19 @@ end_enabled_check:
 lda #%10000000
 sta audio_duty
 
-lda #<music_main_square1
+lda #<track_main_square1
 sta audio_square1_track
-lda #>music_main_square1
+lda #>track_main_square1
 sta audio_square1_track+1
 
-lda #<music_main_square2
+lda #<track_main_square2
 sta audio_square2_track
-lda #>music_main_square2
+lda #>track_main_square2
 sta audio_square2_track+1
 
-lda #<music_main_triangle
+lda #<track_main_triangle
 sta audio_triangle_track
-lda #>music_main_triangle
+lda #>track_main_triangle
 sta audio_triangle_track+1
 
 jsr audio_reset_music
@@ -116,19 +116,19 @@ end_enabled_check:
 lda #%00000000
 sta audio_duty
 
-lda #<music_gameover_square1
+lda #<track_gameover_square1
 sta audio_square1_track
-lda #>music_gameover_square1
+lda #>track_gameover_square1
 sta audio_square1_track+1
 
-lda #<music_gameover_square2
+lda #<track_gameover_square2
 sta audio_square2_track
-lda #>music_gameover_square2
+lda #>track_gameover_square2
 sta audio_square2_track+1
 
-lda #<music_gameover_triangle
+lda #<track_gameover_triangle
 sta audio_triangle_track
-lda #>music_gameover_triangle
+lda #>track_gameover_triangle
 sta audio_triangle_track+1
 
 jsr audio_reset_music
@@ -141,9 +141,11 @@ audio_reset_music:
 lda #$00
 ldx #0
 reset_counter:
-sta audio_square1_counter, x
+sta audio_square1_track_counter, x
+sta audio_square1_sample_counter, x
+sta audio_square1_note_counter, x
 inx
-cpx #6
+cpx #3
 bne reset_counter
 
 rts
@@ -217,66 +219,119 @@ rts
 
 audio_music_tick:
 .(
-music = tmpfield3
+track = tmpfield1 ; note that it is overriden by square_channel_tick
+sample = tmpfield3
 audio_counter = tmpfield5
 audio_note_counter = tmpfield6
 square_registers = tmpfield7
+next_sample = tmpfield8
 
-lda #AUDIO_CHANNEL_SQUARE
-sta audio_channel_mode
+ldx #0
+jsr channel_tick
 
-lda audio_square1_track
-sta music
-lda audio_square1_track+1
-sta music+1
-lda audio_square1_counter
-sta audio_counter
-lda audio_square1_note_counter
-sta audio_note_counter
-lda #$00
-sta square_registers
-jsr square_channel_tick
-lda audio_counter
-sta audio_square1_counter
-lda audio_note_counter
-sta audio_square1_note_counter
+ldx #1
+jsr channel_tick
 
-lda audio_square2_track
-sta music
-lda audio_square2_track+1
-sta music+1
-lda audio_square2_counter
-sta audio_counter
-lda audio_square2_note_counter
-sta audio_note_counter
-lda #$04
-sta square_registers
-jsr square_channel_tick
-lda audio_counter
-sta audio_square2_counter
-lda audio_note_counter
-sta audio_square2_note_counter
-
-lda #AUDIO_CHANNEL_TRIANGLE
-sta audio_channel_mode
-
-lda audio_triangle_track
-sta music
-lda audio_triangle_track+1
-sta music+1
-lda audio_triangle_counter
-sta audio_counter
-lda audio_triangle_note_counter
-sta audio_note_counter
-lda #$08
-sta square_registers
-jsr square_channel_tick
-lda audio_counter
-sta audio_triangle_counter
-lda audio_note_counter
-sta audio_triangle_note_counter
+ldx #2
+jsr channel_tick
 
 rts
+
+; A tick on any channel
+;  register X - 0 = square1 ; 1 = square2 ; 2 = triangle
+channel_tick:
+.(
+; Set channel mode
+#define AUDIO_TRIANGLE_CHANNEL_NUM 2
+lda #AUDIO_CHANNEL_SQUARE
+cpx #AUDIO_TRIANGLE_CHANNEL_NUM
+bne store_mode
+lda #AUDIO_CHANNEL_TRIANGLE
+store_mode:
+sta audio_channel_mode
+
+; Store track vector to fixed location
+txa
+asl
+tax
+lda audio_square1_track, x
+sta track
+lda audio_square1_track+1, x
+sta track+1
+
+; Store sample vector to a fixed location
+txa
+lsr
+tax
+lda audio_square1_track_counter, x
+asl
+tay
+lda (track), y
+sta sample
+iny
+lda (track), y
+sta sample+1
+
+; Store in-sample counters to a fixed location
+lda audio_square1_sample_counter, x
+sta audio_counter
+lda audio_square1_note_counter, x
+sta audio_note_counter
+
+; Store where to find channel's registers ($4000 + chan_num * 4)
+txa
+asl
+asl
+sta square_registers
+
+; Reset next sample indicator
+lda #0
+sta next_sample
+
+; Do the hard work
+txa
+pha
+jsr square_channel_tick
+pla
+tax
+
+; Store advanced counters to there reserved location
+lda audio_counter
+sta audio_square1_sample_counter, x
+lda audio_note_counter
+sta audio_square1_note_counter, x
+
+; Point to the next sample if requested
+lda next_sample     ; Check that next sample was requested
+beq end_next_sample ;
+
+inc audio_square1_track_counter, x ; Increment sample's counter
+
+txa                                 ;
+asl                                 ;
+tax                                 ;
+                                    ;
+lda audio_square1_track, x          ;
+sta track                           ;
+lda audio_square1_track+1, x        ;
+sta track+1                         ; Get MSB of new sample's adress
+                                    ;
+txa                                 ;
+lsr                                 ;
+tax                                 ;
+                                    ;
+lda audio_square1_track_counter, x  ;
+asl                                 ;
+tay                                 ;
+iny                                 ;
+lda (track), y                      ;
+
+bne end_next_sample                 ;
+sta audio_square1_track_counter, x  ; Loop if sample's MSB is zero
+end_next_sample:                    ;
+
+rts
+.)
 
 square_channel_tick:
 .(
@@ -305,7 +360,7 @@ adc audio_counter
 adc audio_counter
 tay
 
-lda (music), y
+lda (sample), y
 asl
 tax
 lda opcodes, x
@@ -319,6 +374,7 @@ loop:
 lda #$ff
 sta audio_counter
 sta audio_note_counter
+sta next_sample
 jmp next_entry
 .)
 
@@ -326,7 +382,7 @@ silence:
 .(
 jsr mute_current_channel
 iny
-lda (music), y
+lda (sample), y
 sta audio_note_counter
 jmp next_entry
 .)
@@ -351,12 +407,12 @@ iny
 iny
 lda #$02
 jsr point_to_register
-lda (music), y ; TTTTTTTT
+lda (sample), y ; TTTTTTTT
 sta $4000, x   ;
 dey
 lda #$03
 jsr point_to_register
-lda (music), y ; LLLLLTTT
+lda (sample), y ; LLLLLTTT
 sta $4000, x   ;
 jmp save_duration
 
@@ -369,12 +425,12 @@ iny
 iny
 lda #$02
 jsr point_to_register
-lda (music), y ; TTTTTTTT
+lda (sample), y ; TTTTTTTT
 sta $4000, x   ;
 dey
 lda #$03
 jsr point_to_register
-lda (music), y ; LLLLLTTT
+lda (sample), y ; LLLLLTTT
 sta $4000, x   ;
 
 ; Save duration to note counter
