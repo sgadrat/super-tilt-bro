@@ -43,7 +43,7 @@ lda #%00001000 ; ---DNT21
 sta APU_STATUS ;
 end_enabled_check:
 
-lda #%10000000
+lda #%01000000
 sta audio_duty
 
 lda #<track_main_square1
@@ -78,7 +78,7 @@ lda #%00001000 ; ---DNT21
 sta APU_STATUS ;
 end_enabled_check:
 
-lda #%10000000
+lda #%01000000
 sta audio_duty
 
 lda #<track_main_square1
