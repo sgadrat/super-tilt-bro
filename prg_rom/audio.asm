@@ -417,21 +417,15 @@ sta $4000, x   ;
 jmp save_duration
 
 play_triangle:
-lda #$00
-jsr point_to_register
 lda #%10000001 ; CRRRRRRR
-sta $4000, x   ;
+sta $4008      ;
 iny
 iny
-lda #$02
-jsr point_to_register
 lda (sample), y ; TTTTTTTT
-sta $4000, x   ;
+sta $400a       ;
 dey
-lda #$03
-jsr point_to_register
 lda (sample), y ; LLLLLTTT
-sta $4000, x   ;
+sta $400b       ;
 
 ; Save duration to note counter
 save_duration:
