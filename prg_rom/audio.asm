@@ -105,7 +105,7 @@ audio_music_gameover:
 .(
 lda audio_music_enabled
 beq disabled
-lda #%00001111 ; ---DNT21
+lda #%00001011 ; ---DNT21
 sta APU_STATUS ;
 jmp end_enabled_check
 disabled:
@@ -113,7 +113,7 @@ lda #%00001000 ; ---DNT21
 sta APU_STATUS ;
 end_enabled_check:
 
-lda #%00000000
+lda #%01000000
 sta audio_duty
 
 lda #<track_gameover_square1

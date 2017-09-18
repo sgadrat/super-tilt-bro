@@ -185,7 +185,8 @@ credits_begin:
 .asc "sinbad",$0a
 .asc "    by zi ye",$0a
 .asc "perihelium",$0a
-.asc "    by ozzed"
+.asc "i like jump rope",$0a
+.asc "    by ozzed",$0a
 .asc $0a
 .asc "             thanks",$0a
 .asc $0a
