@@ -60,5 +60,6 @@
 
 #define MUSIC_END .byt $00, $00
 
+#include "prg_rom/data/music/theme_menus/theme_menus.asm"
 #include "prg_rom/data/music/theme_main/theme_main.asm"
 #include "prg_rom/data/music/theme_gameover/theme_gameover.asm"

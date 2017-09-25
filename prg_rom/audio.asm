@@ -43,7 +43,7 @@ lda #%00001000 ; ---DNT21
 sta APU_STATUS ;
 end_enabled_check:
 
-lda #%01000000
+lda #%01111100 ; DDLCVVVV
 sta audio_duty
 
 lda #<track_main_square1
@@ -78,22 +78,22 @@ lda #%00001000 ; ---DNT21
 sta APU_STATUS ;
 end_enabled_check:
 
-lda #%01000000
+lda #%00000100 ; DDLCVVVV
 sta audio_duty
 
-lda #<track_main_square1
+lda #<track_menus_square1
 sta audio_square1_track
-lda #>track_main_square1
+lda #>track_menus_square1
 sta audio_square1_track+1
 
-lda #<track_main_square2
+lda #<track_menus_square2
 sta audio_square2_track
-lda #>track_main_square2
+lda #>track_menus_square2
 sta audio_square2_track+1
 
-lda #<track_main_triangle
+lda #<track_menus_triangle
 sta audio_triangle_track
-lda #>track_main_triangle
+lda #>track_menus_triangle
 sta audio_triangle_track+1
 
 jsr audio_reset_music
@@ -113,7 +113,7 @@ lda #%00001000 ; ---DNT21
 sta APU_STATUS ;
 end_enabled_check:
 
-lda #%01000000
+lda #%01111100 ; DDLCVVVV
 sta audio_duty
 
 lda #<track_gameover_square1
@@ -396,9 +396,8 @@ beq play_triangle
 
 lda #$00
 jsr point_to_register
-lda #%00111100 ; DDLCVVVV
-ora audio_duty ;
-sta $4000, x   ;
+lda audio_duty
+sta $4000, x
 lda #$01
 jsr point_to_register
 lda #%01000000 ; EPPPNSSS
@@ -412,8 +411,11 @@ sta $4000, x   ;
 dey
 lda #$03
 jsr point_to_register
-lda (sample), y ; LLLLLTTT
-sta $4000, x   ;
+lda (sample), y ; DDDDDTTT (with D being the note's duration in video frames)
+and #%00000111 ; Replace D by a big L value
+ora #%00001000 ;
+sta $4000, x ; LLLLLTTT
+lda (sample), y ; Reload D, save_duration needs it in register A
 jmp save_duration
 
 play_triangle:

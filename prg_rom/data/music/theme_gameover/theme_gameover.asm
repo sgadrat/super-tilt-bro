@@ -27,5 +27,5 @@ track_gameover_square2:
 MUSIC_END
 
 track_gameover_triangle:
-.word theme_gameover_square2_chorus ; Hack, then engine needs at least a valid sample, even for muted tracks
+.word theme_gameover_square2_chorus ; Hack, the engine needs at least a valid sample, even for muted tracks
 MUSIC_END
