@@ -201,16 +201,22 @@ credits_end:
 
 #echo PRG-ROM total space:
 #print $10000-$8000
+#echo
 #echo PRG-ROM code size:
 #print code_end-$8000
+#echo
 #echo PRG-ROM data size:
 #print data_end-data_begin
 #echo PRG-ROM nametables size:
 #print data_nt_end-data_nt_begin
 #echo PRG-ROM animations size:
 #print data_anim_end-data_anim_begin
+#echo PRG-ROM musics size:
+#print data_music_end-data_music_begin
+#echo
 #echo PRG-ROM credits size:
 #print credits_end-credits_begin
+#echo
 #echo PRG-ROM free space:
 #print $fffa-*
 

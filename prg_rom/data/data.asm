@@ -7,4 +7,6 @@ data_anim_begin:
 #include "prg_rom/data/state_animations/state_animations.asm"
 data_anim_end:
 #include "prg_rom/data/character_colors.asm"
+data_music_begin:
 #include "prg_rom/data/music/music.asm"
+data_music_end:
