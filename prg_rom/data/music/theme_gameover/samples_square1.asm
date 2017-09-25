@@ -116,9 +116,6 @@ AUDIO_SILENCE(QUARTER_NOTE-2)
 TIMED_O2_C(HALF_NOTE-2-2)
 AUDIO_SILENCE(2-2)
 
-#echo square1 chorus (60*3=180):
-#print *-theme_gameover_square1_chorus
-
 SAMPLE_END
 
 
