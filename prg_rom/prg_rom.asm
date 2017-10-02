@@ -55,8 +55,8 @@ rti
 reset:
 
 sei               ; disable IRQs
-cld               ; disable decimal mode
 ldx #$40
+cld               ; disable decimal mode
 stx APU_FRAMECNT  ; disable APU frame IRQ
 ldx #$FF
 txs               ; Set up stack
@@ -191,6 +191,7 @@ credits_begin:
 .asc $0a
 .asc "             thanks",$0a
 .asc $0a
+.asc "antoine gohin",$0a
 .asc "benoit ryder",$0a
 .byt $00
 credits_end:
