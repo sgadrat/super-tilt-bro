@@ -1,54 +1,48 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Intro triangle
+;  silenced, long notes in intro give
+;  a strange feeling at game game start
+;  and a bad transition from menu's music
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 theme_main_triangle_intro:
 ; C3, 80 frames (including final silence)
-TIMED_O3_C(29)
-TIMED_O3_C(29)
-TIMED_O3_C(18)
-AUDIO_SILENCE(0)
+AUDIO_SILENCE(29)
+AUDIO_SILENCE(29)
+AUDIO_SILENCE(19)
 ; F2, 40 frames (including final silence)
-TIMED_O2_F(29)
-TIMED_O2_F(8)
-AUDIO_SILENCE(0)
+AUDIO_SILENCE(29)
+AUDIO_SILENCE(9)
 ; G2, 40 frames (including final silence)
-TIMED_O2_G(29)
-TIMED_O2_G(8)
-AUDIO_SILENCE(0)
+AUDIO_SILENCE(29)
+AUDIO_SILENCE(9)
 
 ; C3, 80 frames (including final silence)
-TIMED_O3_C(29)
-TIMED_O3_C(29)
-TIMED_O3_C(18)
-AUDIO_SILENCE(0)
+AUDIO_SILENCE(29)
+AUDIO_SILENCE(29)
+AUDIO_SILENCE(19)
 ; F2, 40 frames (including final silence)
-TIMED_O2_F(29)
-TIMED_O2_F(8)
-AUDIO_SILENCE(0)
+AUDIO_SILENCE(29)
+AUDIO_SILENCE(9)
 ; G2, 40 frames (including final silence)
-TIMED_O2_G(29)
-TIMED_O2_G(8)
-AUDIO_SILENCE(0)
+AUDIO_SILENCE(29)
+AUDIO_SILENCE(9)
 
 ; C3, 80 frames (including final silence)
-TIMED_O3_C(29)
-TIMED_O3_C(29)
-TIMED_O3_C(18)
-AUDIO_SILENCE(0)
+AUDIO_SILENCE(29)
+AUDIO_SILENCE(29)
+AUDIO_SILENCE(19)
 ; F2, 40 frames (including final silence)
-TIMED_O2_F(29)
-TIMED_O2_F(8)
-AUDIO_SILENCE(0)
+AUDIO_SILENCE(29)
+AUDIO_SILENCE(9)
 ; G2, 40 frames (including final silence)
-TIMED_O2_G(29)
-TIMED_O2_G(8)
-AUDIO_SILENCE(0)
+AUDIO_SILENCE(29)
+AUDIO_SILENCE(9)
 
 ; C3, 80 frames - 1 frame (no final silence)
-TIMED_O3_C(29)
-TIMED_O3_C(29)
-TIMED_O3_C(17)
+AUDIO_SILENCE(29)
+AUDIO_SILENCE(29)
+AUDIO_SILENCE(18)
 
 SAMPLE_END
 
@@ -582,7 +576,5 @@ AUDIO_SILENCE(FULL_NOTE-1)
 AUDIO_SILENCE(HALF_NOTE-1-1)
 
 ; ftm file - $19a5
-
-AUDIO_SILENCE(18) ; Hack, triangle channel shifts out of synchronization without that
 
 SAMPLE_END
