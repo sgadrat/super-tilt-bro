@@ -10,8 +10,13 @@
 #define RAW_VECTOR(x) .byt <x, >x
 stages_init_routine:
 RAW_VECTOR(stage_generic_init) ; Plateau
-RAW_VECTOR(stage_generic_init) ; Pit
+RAW_VECTOR(stage_pit_init) ; Pit
 RAW_VECTOR(stage_generic_init) ; Shelf
+
+stages_tick_routine:
+RAW_VECTOR(dummy_routine) ; Plateau
+RAW_VECTOR(stage_pit_tick) ; Pit
+RAW_VECTOR(dummy_routine) ; Shelf
 
 stages_nametable:
 RAW_VECTOR(nametable) ; Plateau

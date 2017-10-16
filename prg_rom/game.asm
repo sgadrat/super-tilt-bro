@@ -25,6 +25,15 @@ cmp $40
 bne load_background
 .)
 
+; Ensure game state is zero
+ldx #$00
+lda #$00
+zero_game_state:
+sta $00, x
+inx
+cpx #ZERO_PAGE_GLOBAL_FIELDS_BEGIN
+bne zero_game_state
+
 ; Call stage initialization routine
 lda config_selected_stage
 asl
@@ -35,16 +44,8 @@ lda stages_init_routine+1, x
 sta tmpfield2
 jsr call_pointed_subroutine
 
-; Ensure game state is zero
-ldx #$00
-lda #$00
-zero_game_state:
-sta $00, x
-inx
-cpx #ZERO_PAGE_GLOBAL_FIELDS_BEGIN
-bne zero_game_state
-
 ; Reset screen shaking
+lda #0
 sta screen_shake_counter
 
 ; Setup logical game state to the game startup configuration
@@ -231,12 +232,23 @@ jsr particle_draw
 rts
 no_screen_shake:
 
+; Do nothing during a slowdown skipped frame
 lda slow_down_counter
 beq no_slowdown
 jsr slowdown
 lda tmpfield1
 bne end
 no_slowdown:
+
+; Call stage's logic
+lda config_selected_stage
+asl
+tax
+lda stages_tick_routine, x
+sta tmpfield1
+lda stages_tick_routine+1, x
+sta tmpfield2
+jsr call_pointed_subroutine
 
 ; Process AI - this override controller B state
 lda config_ai_level

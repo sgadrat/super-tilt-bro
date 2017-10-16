@@ -104,6 +104,7 @@ rts
 ;  X - player number
 ;
 ; Uses particle box number 0 for player A or 1 for player B
+; Deactivate any particle handler on the same box
 particle_directional_indicator_start:
 .(
 ; Initialize handler state
@@ -117,6 +118,10 @@ lda player_a_velocity_h_low, x
 sta directional_indicator_player_a_direction_x_low, x
 lda player_a_velocity_h, x
 sta directional_indicator_player_a_direction_x_high, x
+
+; Deactivate death particles
+lda #12
+sta death_particles_player_a_counter, x
 
 ; Initialize particles
 txa ;
@@ -245,7 +250,8 @@ rts
 ;  tmpfield1 - player X position before death
 ;  tmpfield2 - player Y position before death
 ;
-; Uses particle box number 2 for player A or 3 for player B
+; Uses particle box number 0 for player A or 1 for player B
+; Deactivate any particle handler on the same box
 particle_death_start:
 .(
 position_x_param = tmpfield1
@@ -259,6 +265,9 @@ position_y_store = tmpfield7
 ; Initialize handler's state
 lda #0
 sta death_particles_player_a_counter, x
+
+; Deactivate directional indicator in the same box
+sta directional_indicator_player_a_counter, x
 
 ; Store position to unused space
 lda position_x_param
@@ -282,7 +291,6 @@ sta orientation_y
 ; Initialize particles
 txa    ;
 clc    ;
-adc #2 ;
 asl    ;
 asl    ;
 asl    ; Y points on the particle box of the player
@@ -381,7 +389,6 @@ beq do_nothing
 ; Y points on the particle box of the player
 txa
 clc
-adc #2
 asl
 asl
 asl

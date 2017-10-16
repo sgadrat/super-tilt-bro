@@ -83,6 +83,14 @@ player_b_stocks = $4c
 player_a_gravity = $4d
 player_b_gravity = $4e
 
+ai_current_action_lsb = $50
+ai_current_action_msb = $51
+ai_current_action_counter = $52
+ai_current_action_step = $53
+ai_current_action_modifier = $54
+ai_delay = $55
+ai_max_delay = $56
+
 screen_shake_counter = $70
 screen_shake_nextval_x = $71
 screen_shake_nextval_y = $72
@@ -103,13 +111,9 @@ death_particles_player_b_counter = $7e
 
 slow_down_counter = $7f
 
-ai_current_action_lsb = 80
-ai_current_action_msb = 81
-ai_current_action_counter = 82
-ai_current_action_step = 83
-ai_current_action_modifier = 84
-ai_delay = 85
-ai_max_delay = 86
+stage_state_begin = $80
+stage_pit_platform1_direction = $80
+stage_pit_platform2_direction = $81
 
 ;
 ; TITLE labels
@@ -244,7 +248,5 @@ stage_data = $0400
 particle_blocks = $0500
 particle_block_0 = $0500
 particle_block_1 = $0520
-particle_block_2 = $0540
-particle_block_3 = $0560
 players_palettes = $0580
 ;$06xx may be used by audio engine, see "Audio engine labels"

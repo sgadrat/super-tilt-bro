@@ -118,3 +118,5 @@ jmp check_current_platform
 end:
 rts
 .)
+
+#include "prg_rom/stages/pit.asm"
