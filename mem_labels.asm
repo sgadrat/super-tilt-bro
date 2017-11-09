@@ -112,8 +112,10 @@ death_particles_player_b_counter = $7e
 slow_down_counter = $7f
 
 stage_state_begin = $80
-stage_pit_platform1_direction = $80
-stage_pit_platform2_direction = $81
+stage_pit_platform1_direction_v = $80
+stage_pit_platform2_direction_v = $81
+stage_pit_platform1_direction_h = $82
+stage_pit_platform2_direction_h = $83
 
 ;
 ; TITLE labels
