@@ -40,7 +40,7 @@ weapon_palettes:
 
 ; Weapon palette name
 weapon_names:
-.byt $02, $38, $37, $3a, $37, $49, $49, $02 ; badass
+.byt $37, $4d, $3b, $49, $45, $43, $3b, $02 ; awesome
 .byt $02, $3d, $45, $42, $3a, $3b, $44, $02 ; golden
 .byt $02, $02, $3f, $39, $3b, $02, $02, $02 ; ice
 .byt $02, $4d, $45, $45, $3a, $3b, $44, $02 ; wooden
