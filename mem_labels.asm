@@ -244,6 +244,8 @@ tmpfield13 = $fc
 tmpfield14 = $fd
 tmpfield15 = $fe
 
+
+;$01xx is for the stack
 oam_mirror = $0200
 nametable_buffers = $0300
 stage_data = $0400
@@ -252,3 +254,5 @@ particle_block_0 = $0500
 particle_block_1 = $0520
 players_palettes = $0580
 ;$06xx may be used by audio engine, see "Audio engine labels"
+virtual_frame_cnt = $0700
+skip_frames_to_50hz = $0701

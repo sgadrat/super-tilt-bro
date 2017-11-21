@@ -84,9 +84,30 @@ sta oam_mirror, x    ;move all sprites off screen
 inx
 bne clrmem
 
-vblankwait2:      ; Second wait for vblank, PPU is ready after this
+; Wait a second vblank
+;  PPU may need 2 frames to warm-up
+;  We use it to count cycles between frames (strong indicator of PAL versus NTSC)
+.(
+ldy #0
+ldx #0
+vblankwait2:
+inx
+beq ok
+iny
+ok:
 bit PPUSTATUS
 bpl vblankwait2
+
+; Y*256+X known values:
+;  15682 - FCEUX on NTSC mode
+;  18253 - FCEUX on PAL mode
+;  61943 - FCEUX on Dendy mode
+cpy #$40
+bcs pal
+lda #1
+sta skip_frames_to_50hz
+pal:
+.)
 
 jsr default_config
 jsr audio_init

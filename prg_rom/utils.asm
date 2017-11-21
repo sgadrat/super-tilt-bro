@@ -36,7 +36,29 @@ bne fetch_one_controller
 rts
 .)
 
+; Wait the next 50Hz frame, returns once NMI is complete
+;  May skip frames to ensure a 50Hz average
 wait_next_frame:
+.(
+jsr wait_next_real_frame
+
+; On 60Hz systems, wait an extra frame every 6 frames to slow down
+lda skip_frames_to_50hz
+beq end
+
+dec virtual_frame_cnt
+bpl end
+lda #5
+sta virtual_frame_cnt
+
+jsr wait_next_real_frame
+
+end:
+rts
+.)
+
+; Wait the next frame, returns once NMI is complete
+wait_next_real_frame:
 .(
 lda #$01
 sta nmi_processing
