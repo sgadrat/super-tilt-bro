@@ -168,7 +168,6 @@ jmp update_animations
 
 next_screen:
 lda #GAME_STATE_TITLE
-sta global_game_state
 jsr change_global_game_state
 
 update_animations:

@@ -513,11 +513,19 @@ dummy_routine:
 rts
 .)
 
-; Effectively set the game state in the value pointed by "global_game_state"
+; Change the game's state
+;  register A - new game state
 ;
 ; WARNING - This routine never returns. It changes the state then restarts the main loop.
 change_global_game_state:
 .(
+; Save previous game state and set the global_game_state variable
+tax
+lda global_game_state
+sta previous_global_game_state
+txa
+sta global_game_state
+
 ; Disable rendering
 lda #$00
 sta PPUCTRL
@@ -531,6 +539,9 @@ jsr reset_nt_buffers
 lda #$00
 sta scroll_x
 sta scroll_y
+
+; Prepare transition between screens
+jsr pre_transition
 
 ; Reset particle handlers
 jsr particle_handlers_reinit
@@ -577,13 +588,8 @@ check_character_selection:
 jsr init_character_selection_screen
 end_initialization:
 
-; Enable rendering
-lda #%10010000  ;
-sta ppuctrl_val ; Reactivate NMI
-sta PPUCTRL     ;
-jsr wait_next_frame ; Avoid re-enabling mid-frame
-lda #%00011110 ; Enable sprites and background rendering
-sta PPUMASK    ;
+; Do transition between screens (and reactivate rendering)
+jsr post_transition
 
 ; Clear stack
 ldx #$ff
@@ -591,6 +597,350 @@ txs
 
 ; Go straight to the main loop
 jmp forever
+
+; Compute the current transition id (previous game state << 4 + new game state)
+get_transition_id:
+.(
+lda previous_global_game_state
+asl
+asl
+asl
+asl
+adc global_game_state
+rts
+.)
+
+; Get the direction of the transition between the previous game state and the new one
+;  Return 0, 1 or 2 in in register A
+;   0 - No transition
+;   1 - Scrolling down
+;   2 - Scrolling up
+;
+; Overwrites register X, tmpfield1
+find_transition_direction:
+.(
+transition_id = tmpfield1
+
+; Compute transition id
+jsr get_transition_id
+sta transition_id
+
+; Find the transition in transition to direction table
+ldx #0
+check_one_transition:
+lda state_transition, x
+cmp transition_id
+beq found_transition
+inx
+cpx #8
+bne check_one_transition
+
+; Not found, return 0
+lda #0
+jmp end
+
+; Found, return value from table
+found_transition:
+lda state_transition_orientation, x
+
+end:
+rts
+
+#define STATE_TRANSITION(previous,new) previous * 16 + new
+state_transition:
+.byt STATE_TRANSITION(GAME_STATE_TITLE, GAME_STATE_CONFIG)
+.byt STATE_TRANSITION(GAME_STATE_CONFIG, GAME_STATE_TITLE)
+.byt STATE_TRANSITION(GAME_STATE_TITLE, GAME_STATE_CREDITS)
+.byt STATE_TRANSITION(GAME_STATE_CREDITS, GAME_STATE_TITLE)
+.byt STATE_TRANSITION(GAME_STATE_CONFIG, GAME_STATE_CHARACTER_SELECTION)
+.byt STATE_TRANSITION(GAME_STATE_CHARACTER_SELECTION, GAME_STATE_CONFIG)
+.byt STATE_TRANSITION(GAME_STATE_CHARACTER_SELECTION, GAME_STATE_STAGE_SELECTION)
+.byt STATE_TRANSITION(GAME_STATE_STAGE_SELECTION, GAME_STATE_CHARACTER_SELECTION)
+state_transition_orientation:
+.byt 1
+.byt 2
+.byt 1
+.byt 2
+.byt 1
+.byt 2
+.byt 1
+.byt 2
+.)
+
+; Called before initialization routine, for transition effects
+;  At this point the rendering is disabled
+pre_transition:
+.(
+; Avoid working if there is no transition
+jsr find_transition_direction
+cmp #0
+beq end
+
+ldy #0
+ldx #0
+
+copy_byte:
+tya
+clc
+adc #$20
+sta PPUADDR
+txa
+sta PPUADDR ; Point on the byte on upper nametable
+
+lda PPUDATA ; Read the byte
+sta tmpfield1
+
+tya
+clc
+adc #$28
+sta PPUADDR
+txa
+sta PPUADDR ; Point on the byte on bottom nametable
+
+lda tmpfield1
+sta PPUDATA ; Copy the byte
+
+inx
+bne end_increment
+iny
+end_increment: ; copute next byte's offset
+
+cpy #$04
+bne copy_byte
+
+end:
+rts
+.)
+
+; Called after initialization routine, for transition effects
+;  At this point the rendering is enabled
+post_transition:
+.(
+screen_sprites_offset_lsb = tmpfield1
+screen_sprites_offset_msb = tmpfield2
+
+; Compute values dependent of the direction
+jsr find_transition_direction
+beq skip_scrolling
+cmp #1
+bne set_up_values
+
+lda #%10010010  ; Reactivate NMI, place scrolling on bottom nametable
+sta ppuctrl_val ;
+lda #240
+sta screen_sprites_offset_lsb
+lda #0
+sta screen_sprites_offset_msb
+lda #$fc
+pha      ; cloud_scroll_lsb
+lda #$ff
+pha      ; cloud_scroll_msb
+lda #10
+pha      ; scroll_step
+lda #0
+pha      ; scroll_begin
+lda #240
+pha      ; scroll_end
+jmp end_set_values
+
+set_up_values:
+lda #%10010000  ; Reactivate NMI, place scrolling on top nametable
+sta ppuctrl_val ;
+lda #$10
+sta screen_sprites_offset_lsb
+lda #$ff
+sta screen_sprites_offset_msb
+lda #$4
+pha      ; cloud_scroll_lsb
+lda #$0
+pha      ; cloud_scroll_msb
+lda #$f6
+pha      ; scroll_step
+lda #240
+pha      ; scroll_begin
+lda #0
+pha      ; scroll_end
+jmp end_set_values
+
+skip_scrolling:
+lda #%10010000  ;
+sta ppuctrl_val ; Reactivate NMI
+sta PPUCTRL     ;
+jsr sleep_frame  ; Avoid re-enabling mid-frame
+lda #%00011110 ; Enable sprites and background rendering
+sta PPUMASK    ;
+jmp end
+
+end_set_values:
+
+; Save sprites y positions as 2 bytes values (to be able to go offscreen)
+ldx #0 ; OAM offset
+ldy #0 ; Sprite index
+save_one_sprite:
+
+lda oam_mirror, x             ;
+clc                           ;
+adc screen_sprites_offset_lsb ;
+sta screen_sprites_y_lsb, y   ; Store sprite's two bytes y position
+lda screen_sprites_offset_msb ;
+adc #0                        ;
+sta screen_sprites_y_msb, y   ;
+
+; Hide sprite
+;  (even cloud sprites, they already blink due to disabling rendering anyway)
+lda #$fe
+sta oam_mirror, x
+
+iny                 ;
+inx                 ;
+inx                 ; Next sprite
+inx                 ;
+inx                 ;
+bne save_one_sprite ;
+
+; Enable rendering
+lda ppuctrl_val
+sta PPUCTRL
+jsr sleep_frame  ; Avoid re-enabling mid-frame
+lda #%00011110 ; Enable sprites and background rendering
+sta PPUMASK    ;
+
+; Scroll to the next screen
+tsx
+lda stack+2, x ; scroll_begin
+
+scroll_frame:
+sta scroll_y
+clc
+tsx
+adc stack+3, x ; scroll_step
+pha
+jsr sleep_frame
+jsr move_sprites
+pla
+tsx
+cmp stack+1, x ; scroll_end
+bne scroll_frame
+
+lda #%10010000
+sta ppuctrl_val
+lda #0
+sta scroll_y
+
+clean:
+pla ; scroll_end
+pla ; scroll_begin
+pla ; scroll_step
+pla ; cloud_scroll_msb
+pla ; cloud_scroll_lsb
+
+end:
+rts
+.)
+
+move_sprites:
+.(
+screen_sprites_end = tmpfield1
+scroll_y_msb = tmpfield2
+
+; Choose if clouds need to be updated
+jsr get_transition_id
+cmp #STATE_TRANSITION(GAME_STATE_TITLE, GAME_STATE_CONFIG)
+beq update_clouds
+cmp #STATE_TRANSITION(GAME_STATE_CONFIG, GAME_STATE_TITLE)
+beq update_clouds
+cmp #STATE_TRANSITION(GAME_STATE_CONFIG, GAME_STATE_CHARACTER_SELECTION)
+beq update_clouds
+cmp #STATE_TRANSITION(GAME_STATE_CHARACTER_SELECTION, GAME_STATE_CONFIG)
+beq update_clouds
+
+; Clouds do not need to be updated
+lda #64                ; All sprites are from the destination screen
+sta screen_sprites_end ;
+
+jmp update_screen_sprites
+
+; Clouds need to be updated
+update_clouds:
+tsx                              ;
+ldy #MENU_COMMON_NB_CLOUDS-1     ;
+vertical_one_cloud:              ;
+lda menu_common_cloud_1_y, y     ;
+clc                              ;
+adc stack + 2 + 1 + 5, x         ; Update clouds Y position
+sta menu_common_cloud_1_y, y     ; based on cloud_scroll_lsb and cloud_scroll_msb from our caller
+lda menu_common_cloud_1_y_msb, y ;
+adc stack + 2 + 1 + 4, x         ;
+sta menu_common_cloud_1_y_msb, y ;
+dey                              ;
+bpl vertical_one_cloud           ;
+
+jsr tick_menu ; Update horizontal clouds position
+jsr menu_position_clouds ; Force refresh of cloud sprites
+
+lda #64 - MENU_COMMON_NB_CLOUDS * MENU_COMMON_NB_SPRITE_PER_CLOUD ; Only sprites before clouds are from destination screen
+sta screen_sprites_end                                            ;
+
+; Move destination screen sprites
+update_screen_sprites:
+
+tsx                      ;
+lda stack + 2 + 1 + 3, x ;
+bpl positive             ;
+lda #0                   ;
+jmp set_scroll_y_msb     ; Compute MSB of a 16-bit "-1 * scroll_y"
+positive:                ;
+lda #$ff                 ;
+set_scroll_y_msb:        ;
+sta scroll_y_msb         ;
+
+ldy #0 ; Current sprite index
+move_one_screen_sprite:
+
+tsx                         ;
+lda stack + 2 + 1 + 3, x    ;
+eor #%11111111              ;
+clc                         ;
+adc #1                      ;
+clc                         ; Scroll 16-bit sprite's position
+adc screen_sprites_y_lsb, y ;
+sta screen_sprites_y_lsb, y ;
+lda screen_sprites_y_msb, y ;
+adc scroll_y_msb            ;
+sta screen_sprites_y_msb, y ;
+
+cmp #0                      ;
+bne hide_sprite             ;
+                            ;
+lda screen_sprites_y_lsb, y ; Compute updated position of the OAM sprite
+jmp update_oam              ;
+                            ;
+hide_sprite:                ;
+lda #$fe                    ;
+
+update_oam:       ;
+pha               ;
+tya               ;
+asl               ; Update OAM sprite
+asl               ;
+tax               ;
+pla               ;
+sta oam_mirror, x ;
+
+iny                        ; Next sprite
+cpy screen_sprites_end     ;
+bne move_one_screen_sprite ;
+
+end:
+rts
+.)
+
+sleep_frame:
+.(
+jsr wait_next_frame
+jsr audio_music_tick
+rts
+.)
 .)
 
 ; Copy a compressed nametable to PPU

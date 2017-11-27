@@ -18,10 +18,6 @@ rts
 init_config_screen:
 .(
 .(
-; Ensure that the global game state is "config" from now on
-lda #GAME_STATE_CONFIG
-sta global_game_state
-
 ; Point PPU to Background palette 0 (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
 lda PPUSTATUS
 lda #$3f
@@ -127,7 +123,6 @@ jmp (tmpfield1)
 next_screen:
 .(
 lda #GAME_STATE_CHARACTER_SELECTION
-sta global_game_state
 jsr change_global_game_state
 ; jmp end ; not needed, change_global_game_state does not return
 .)
@@ -135,7 +130,6 @@ jsr change_global_game_state
 previous_screen:
 .(
 lda #GAME_STATE_TITLE
-sta global_game_state
 jsr change_global_game_state
 ; jmp end ; not needed, change_global_game_state does not return
 .)

@@ -113,15 +113,7 @@ jsr default_config
 jsr audio_init
 
 lda #GAME_STATE_TITLE
-sta global_game_state
 jsr change_global_game_state
-
-; Setup PPU
-lda #%10010000
-sta ppuctrl_val
-sta PPUCTRL
-lda #%00011110
-sta PPUMASK
 
 forever:
 .(

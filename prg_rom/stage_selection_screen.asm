@@ -175,7 +175,6 @@ jsr fade_out
 
 ; Start the game
 lda #GAME_STATE_INGAME
-sta global_game_state
 jsr change_global_game_state
 ; jmp end ; not needed, change_global_game_state does not return
 .)
@@ -185,7 +184,6 @@ previous_screen:
 .(
 ; Return to config screen
 lda #GAME_STATE_CHARACTER_SELECTION
-sta global_game_state
 jsr change_global_game_state
 ; jmp end ; not needed, change_global_game_state does not return
 .)

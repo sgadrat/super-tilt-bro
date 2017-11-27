@@ -333,7 +333,6 @@ jmp end
 
 next_screen:
 lda #GAME_STATE_GAMEOVER
-sta global_game_state
 jsr change_global_game_state
 
 end:

@@ -17,6 +17,10 @@ lda #100
 sta menu_common_cloud_3_x
 lda #188
 sta menu_common_cloud_3_y
+lda #0
+sta menu_common_cloud_1_y_msb
+sta menu_common_cloud_2_y_msb
+sta menu_common_cloud_3_y_msb
 
 ; Fallthrough
 .)
@@ -96,11 +100,18 @@ menu_position_cloud:
 cloud_x = tmpfield3
 cloud_y = tmpfield4
 
-; Saxe cloud's coordinate at a fixed position
+; Save cloud's coordinate at a fixed position
 lda menu_common_cloud_1_x, x
 sta cloud_x
 lda menu_common_cloud_1_y, x
 sta cloud_y
+
+; Hide cloud not on the main screen
+lda menu_common_cloud_1_y_msb, x
+beq do_not_hide
+lda #$fe
+sta cloud_y
+do_not_hide:
 
 ; Compute cloud's first sprite address
 txa ; Save X
@@ -120,8 +131,11 @@ tax ;   = offset of the first byte, starting from first cloud's first byte
 ldy #0
 place_one_sprite:
 lda cloud_y
-clc
-adc sprite_offset_y, y
+cmp #$fe               ;
+beq skip_y_offset      ;
+clc                    ; Do not accidentally unhide hidden clouds
+adc sprite_offset_y, y ;
+skip_y_offset:         ;
 sta oam_mirror + MENU_COMMON_FIRST_CLOUD_SPRITE * MENU_COMMON_OAM_SPRITE_SIZE, x
 inx
 inx

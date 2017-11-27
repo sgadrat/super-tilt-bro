@@ -150,6 +150,12 @@ menu_common_cloud_3_x = $13
 menu_common_cloud_1_y = $14
 menu_common_cloud_2_y = $15
 menu_common_cloud_3_y = $16
+menu_common_cloud_1_y_msb = $17
+menu_common_cloud_2_y_msb = $18
+menu_common_cloud_3_y_msb = $19
+
+screen_sprites_y_lsb = $20 ; $20 to $5f
+screen_sprites_y_msb = $60 ; $60 to $a0
 
 ;
 ; GAMEOVER labels
@@ -259,13 +265,14 @@ tmpfield14 = $fd
 tmpfield15 = $fe
 
 
-;$01xx is for the stack
+stack = $0100
 oam_mirror = $0200
 nametable_buffers = $0300
 stage_data = $0400
 particle_blocks = $0500
 particle_block_0 = $0500
 particle_block_1 = $0520
+previous_global_game_state = $540
 players_palettes = $0580
 ;$06xx may be used by audio engine, see "Audio engine labels"
 virtual_frame_cnt = $0700

@@ -28,11 +28,21 @@ jsr draw_zipped_nametable
 lda #0
 sta title_cheatstate
 
-; Change music for the main theme
-jsr audio_music_weak
+; Choose between soft (keep continuity) or hard (reboot) initialization of music and menu animations
+lda previous_global_game_state
+cmp #GAME_STATE_CONFIG
+beq soft_init
+cmp #GAME_STATE_CREDITS
+beq soft_init
 
-; Initialize common menus effects
-jsr init_menu
+jsr init_menu        ;
+jsr audio_music_weak ; Complete reinitialization
+jmp end_menu_init    ;
+
+soft_init:       ; Soft reinitialization - keep continuity with previous menu
+jsr re_init_menu ;
+
+end_menu_init:
 
 rts
 .)
@@ -61,7 +71,6 @@ jmp end
 
 cheat_succeed:
 lda #GAME_STATE_CREDITS
-sta global_game_state
 jsr change_global_game_state
 
 ; If all buttons of any controller are released on this frame, got to the next screen
@@ -79,7 +88,6 @@ jmp end
 
 next_screen:
 lda #GAME_STATE_CONFIG
-sta global_game_state
 jsr change_global_game_state
 
 end:

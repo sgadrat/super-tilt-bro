@@ -5,10 +5,6 @@
 init_character_selection_screen:
 .(
 .(
-; Ensure that the global game state is "character_selection" from now on
-lda #GAME_STATE_CHARACTER_SELECTION
-sta global_game_state
-
 ; Point PPU to Background palette 0 (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
 lda PPUSTATUS
 lda #$3f
@@ -52,6 +48,20 @@ jsr character_selection_update_screen
 ; Process the batch of nt buffers immediately (while the PPU is disabled)
 jsr process_nt_buffers
 jsr reset_nt_buffers
+
+; Hack, let clouds appear during transition
+;lda PPUSTATUS
+;lda #$3f
+;sta PPUADDR
+;lda #$1d
+;sta PPUADDR
+;lda #$20
+;sta PPUDATA
+;lda #$1c
+;sta PPUDATA
+;lda #$0c
+;sta PPUDATA
+jsr re_init_menu
 
 rts
 
@@ -109,7 +119,6 @@ jmp (tmpfield1)
 next_screen:
 .(
 lda #GAME_STATE_STAGE_SELECTION
-sta global_game_state
 jsr change_global_game_state
 ; jmp end ; not needed, change_global_game_state does not return
 .)
@@ -117,7 +126,6 @@ jsr change_global_game_state
 previous_screen:
 .(
 lda #GAME_STATE_CONFIG
-sta global_game_state
 jsr change_global_game_state
 ; jmp end ; not needed, change_global_game_state does not return
 .)
