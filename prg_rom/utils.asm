@@ -578,11 +578,12 @@ jsr init_character_selection_screen
 end_initialization:
 
 ; Enable rendering
-lda #%10010000
-sta ppuctrl_val
-sta PPUCTRL
-lda #%00011110
-sta PPUMASK
+lda #%10010000  ;
+sta ppuctrl_val ; Reactivate NMI
+sta PPUCTRL     ;
+jsr wait_next_frame ; Avoid re-enabling mid-frame
+lda #%00011110 ; Enable sprites and background rendering
+sta PPUMASK    ;
 
 ; Clear stack
 ldx #$ff
