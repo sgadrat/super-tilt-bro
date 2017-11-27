@@ -360,7 +360,7 @@ rts
 ;   number of tiles - Number of tiles in this buffer
 ;   tiles - One byte per tile, representing the tile number
 ;
-; Overwrites register X
+; Overwrites register X and tmpfield1
 process_nt_buffers:
 .(
 ldx #$00

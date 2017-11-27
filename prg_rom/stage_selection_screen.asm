@@ -171,6 +171,8 @@ lda config_selected_stage
 cmp #3
 bcs end
 
+jsr fade_out
+
 ; Start the game
 lda #GAME_STATE_INGAME
 sta global_game_state
@@ -288,6 +290,71 @@ sta tmpfield1
 jsr stage_selection_screen_modify_selected
 
 jmp end
+.)
+
+; Fade out transition
+;  Progressively mute music and change palettes to background color
+fade_out:
+.(
+; tmpfield1 - used by NMI
+
+ldy #0
+fade_step:
+jsr last_nt_buffer
+
+lda #$01                 ;
+sta nametable_buffers, x ;
+inx                      ;
+lda #$3f                 ;
+sta nametable_buffers, x ;
+inx                      ; Nametable buffer's header
+lda #$00                 ;
+sta nametable_buffers, x ;
+inx                      ;
+lda #32                  ;
+sta nametable_buffers, x ;
+inx                      ;
+
+copy_bg_byte:            ;
+lda palette_steps, y     ;
+sta nametable_buffers, x ;
+inx                      ;
+iny                      ;
+cpy #32                  ;
+beq end_copy             ; Copy step's palette to buffer's body
+cpy #32*2                ;
+beq end_copy             ;
+cpy #32*3                ;
+beq end_copy             ;
+jmp copy_bg_byte         ;
+end_copy:                ;
+
+lda #0                   ; Buffer's footer
+sta nametable_buffers, x ;
+
+ldx #5              ;
+sleep:              ;
+jsr wait_next_frame ; Sleep between steps, do not update music to let it fade aout as well
+dex                 ;
+bne sleep           ;
+
+cpy #32*3
+bne fade_step
+
+rts
+
+palette_steps:
+;.byt $21,$0d,$12,$00, $21,$00,$00,$00, $21,$0d,$28,$00, $21,$0d,$20,$10 ; original values, should exactly match the actual ones
+;.byt $21,$0d,$0d,$21, $21,$08,$19,$21, $21,$00,$00,$00, $21,$00,$00,$00 ;
+
+.byt $21,$01,$11,$01, $21,$01,$01,$01, $21,$01,$21,$01, $21,$01,$21,$11
+.byt $21,$01,$01,$21, $21,$01,$11,$21, $21,$01,$01,$01, $21,$01,$01,$01
+
+.byt $21,$11,$21,$11, $21,$11,$11,$11, $21,$11,$21,$11, $21,$11,$21,$21
+.byt $21,$11,$11,$21, $21,$11,$21,$21, $21,$11,$11,$11, $21,$11,$11,$11
+
+.byt $21,$21,$21,$21, $21,$21,$21,$21, $21,$21,$21,$21, $21,$21,$21,$21
+.byt $21,$21,$21,$21, $21,$21,$21,$21, $21,$21,$21,$21, $21,$21,$21,$21
 .)
 
 buttons_numbering:
