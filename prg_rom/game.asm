@@ -81,9 +81,9 @@ sta player_a_stocks
 sta player_b_stocks
 
 ldx #$00
-jsr start_standing_player
+jsr start_spawn_player
 ldx #$01
-jsr start_standing_player
+jsr start_spawn_player
 
 ; Construct players palette swap buffers
 ldy #0 ; Y points on players_palettes's next byte

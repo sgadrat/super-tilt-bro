@@ -26,3 +26,4 @@
 #include "prg_rom/data/state_animations/sinbad_shielding.asm"
 #include "prg_rom/data/state_animations/sinbad_respawn.asm"
 #include "prg_rom/data/state_animations/invisible.asm"
+#include "prg_rom/data/state_animations/sinbad_spawn.asm"

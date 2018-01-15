@@ -24,6 +24,7 @@ STATE_ROUTINE(spe_down_player)
 STATE_ROUTINE(up_tilt_player)
 STATE_ROUTINE(shielding_player)
 STATE_ROUTINE(innexistant_player)
+STATE_ROUTINE(spawn_player)
 
 sinbad_state_offground_routines:
 STATE_ROUTINE(start_falling_player) ; Standing
@@ -50,6 +51,7 @@ STATE_ROUTINE(dummy_routine) ; Special down
 STATE_ROUTINE(dummy_routine) ; Up tilt
 STATE_ROUTINE(start_helpless_player) ; Shielding
 STATE_ROUTINE(dummy_routine) ; Innexistant
+STATE_ROUTINE(dummy_routine) ; Spawn
 
 sinbad_state_onground_routines:
 STATE_ROUTINE(dummy_routine) ; Standing
@@ -76,6 +78,7 @@ STATE_ROUTINE(dummy_routine) ; Special down
 STATE_ROUTINE(dummy_routine) ; Up tilt
 STATE_ROUTINE(dummy_routine) ; Shielding
 STATE_ROUTINE(dummy_routine) ; Innexistant
+STATE_ROUTINE(dummy_routine) ; Spawn
 
 sinbad_state_input_routines:
 STATE_ROUTINE(standing_player_input) ; Standing
@@ -102,6 +105,7 @@ STATE_ROUTINE(keep_input_dirty) ; Special down
 STATE_ROUTINE(keep_input_dirty) ; Up tilt
 STATE_ROUTINE(shielding_player_input) ; Shielding
 STATE_ROUTINE(dummy_routine) ; Innexistant
+STATE_ROUTINE(keep_input_dirty) ; Spawn
 
 sinbad_state_onhurt_routines:
 STATE_ROUTINE(hurt_player) ; Standing
@@ -128,3 +132,4 @@ STATE_ROUTINE(hurt_player) ; Special down
 STATE_ROUTINE(hurt_player) ; Up tilt
 STATE_ROUTINE(shielding_player_hurt) ; Shielding
 STATE_ROUTINE(dummy_routine) ; Innexistant
+STATE_ROUTINE(dummy_routine) ; Spawn

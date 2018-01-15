@@ -1861,3 +1861,34 @@ innexistant_player:
 .(
 rts
 .)
+
+start_spawn_player:
+.(
+lda PLAYER_STATE_SPAWN
+sta player_a_state, x
+
+; Fallthrough to set the animation
+.)
+set_spawn_animation:
+.(
+; Set the appropriate animation
+lda #<anim_sinbad_spawn
+sta tmpfield1
+lda #>anim_sinbad_spawn
+sta tmpfield2
+jsr set_player_animation
+
+rts
+.)
+
+#define STATE_SINBAD_SPAWN_DURATION #45
+spawn_player:
+.(
+lda player_a_anim_clock, x
+cmp STATE_SINBAD_SPAWN_DURATION
+bne end
+jsr start_standing_player
+
+end:
+rts
+.)
