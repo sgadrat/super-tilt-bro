@@ -1881,7 +1881,7 @@ jsr set_player_animation
 rts
 .)
 
-#define STATE_SINBAD_SPAWN_DURATION #45
+#define STATE_SINBAD_SPAWN_DURATION #50
 spawn_player:
 .(
 lda player_a_anim_clock, x
