@@ -119,7 +119,7 @@
 #define PARTICLE_NB_BLOCKS 2
 #define PARTICLE_FIRST_SPRITE 50
 
-#define SLOWDOWN_TIME 50
+#define SLOWDOWN_TIME 100
 
 #define NOTE_O0_C $7ff
 #define NOTE_O0_Cs $7ff
