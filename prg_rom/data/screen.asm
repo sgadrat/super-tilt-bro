@@ -8,7 +8,7 @@ palette_title:
 ; Background
 .byt $21,$0d,$21,$30, $21,$00,$21,$00, $21,$00,$21,$00, $21,$20,$1c,$0c
 ; Sprites
-.byt $21,$00,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00
+.byt $21,$00,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$20,$1c,$0c
 
 palette_gameover:
 ; Background
@@ -20,19 +20,19 @@ palette_config:
 ; Background
 .byt $21,$0d,$20,$20, $21,$20,$0d,$00, $21,$0d,$28,$28, $21,$0d,$20,$10
 ; Sprites
-.byt $21,$00,$00,$00, $21,$28,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00
+.byt $21,$00,$00,$00, $21,$28,$00,$00, $21,$00,$00,$00, $21,$20,$1c,$0c
 
 palette_stage_selection:
 ; Background
 .byt $21,$0d,$12,$00, $21,$00,$00,$00, $21,$0d,$28,$00, $21,$0d,$20,$10
 ; Sprites
-.byt $21,$0d,$0d,$21, $21,$08,$19,$21, $21,$00,$00,$00, $21,$00,$00,$00
+.byt $21,$0d,$0d,$21, $21,$08,$19,$21, $21,$00,$00,$00, $21,$20,$1c,$0c
 
 palette_character_selection:
 ; Background
 .byt $21,$20,$12,$00, $21,$28,$12,$00, $21,$2a,$1a,$08, $21,$0d,$20,$10
 ; Sprites
-.byt $21,$00,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00
+.byt $21,$00,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$20,$1c,$0c
 
 #define ZIPNT_ZEROS(n) $00, n
 #define ZIPZ $00, $01
@@ -204,18 +204,18 @@ nametablei_stage_shelf_end:
 
 nametable_title:
 .byt ZIPNT_ZEROS(64+10)
-.byt                                                     $51, $52,  $53, ZIPNT_ZEROS(11),                                          $2b, $2c, $2d, $2e
-.byt ZIPNT_ZEROS(4+9)
-.byt                                                $54, $55, $56,  $57, $58, $59, $5a,  $5b, $5c, $5d, $5e,  $5f, $60, $61,ZIPZ,  $2f, $30, $31, $32
-.byt ZIPNT_ZEROS(4+9)
+.byt                                                     $51, $52,  $53
+.byt ZIPNT_ZEROS(19+9)
+.byt                                                $54, $55, $56,  $57, $58, $59, $5a,  $5b, $5c, $5d, $5e,  $5f, $60, $61
+.byt ZIPNT_ZEROS(9+9)
 
 .byt                                                $62, $63, $64,  $65, $66, $67, $68,  $69, $6a, $6b, $6c,  $6d, $6e, $6f
 .byt ZIPNT_ZEROS(9+9)
 .byt                                                $70, $71, $72,  $73, $74, $75, $76,  $77, $78, $79, $7a,  $7b, $7c, $7d
-.byt ZIPNT_ZEROS(9+2)
-.byt           $2b, $2c,  $2d, $2e, ZIPNT_ZEROS(3), $7e, $7f, $80,  $81, $82, $83, $84,  $85, $86, $87, $88,  $89, $8a, $8b
-.byt ZIPNT_ZEROS(9+2)
-.byt           $2f, $30,  $31, $32, $8c, $8d,  $8d, $8e, ZIPNT_ZEROS(6),                 $8f, $90, $91, $92
+.byt ZIPNT_ZEROS(9+9)
+.byt                                                $7e, $7f, $80,  $81, $82, $83, $84,  $85, $86, $87, $88,  $89, $8a, $8b
+.byt ZIPNT_ZEROS(9+6)
+.byt                                $8c, $8d,  $8d, $8e, ZIPNT_ZEROS(6),                 $8f, $90, $91, $92
 .byt ZIPNT_ZEROS(12+6)
 
 .byt                                $93, $94,  $95, $96, $97, $98,  $99, $9a, $9b, $9c,  $9d, $95, $9e, $9f,  $a0, $a1, $a2, $a3,  $a4
@@ -228,27 +228,12 @@ nametable_title:
 .byt ZIPNT_ZEROS(6+12)
 
 .byt                                                                $3c, $45, $48,ZIPNT_ZEROS(2),$44, $3b, $49,
-.byt ZIPNT_ZEROS(12+38)
-.byt                                $2b, $2c,  $2d, $2e
-.byt ZIPNT_ZEROS(22+6)
-.byt                                $2f, $30,  $31, $32
-.byt ZIPNT_ZEROS(22+18)
-
-.byt                                                                                               $2b, $2c,  $2d, $2e
-.byt ZIPNT_ZEROS(10+18)
-.byt                                                                                               $2f, $30,  $31, $32
-.byt ZIPNT_ZEROS(10+26)
-.byt                                                                                                                                         $2b, $2c,  $2d, $2e
-.byt ZIPNT_ZEROS(2+26)
-.byt                                                                                                                                         $2f, $30,  $31, $32
-.byt ZIPNT_ZEROS(2+104)
+.byt ZIPNT_ZEROS(12+160)
+.byt ZIPNT_ZEROS(160+8)
 
 .byt                                           $46, $48, $3b, $49,  $49,ZIPZ, $37, $44,  $4f,ZIPZ, $38, $4b,  $4a, $4a, $45, $44
-.byt ZIPNT_ZEROS(8+68)
-
-.byt                      $2b, $2c, $2d, $2e
-.byt ZIPNT_ZEROS(24+4)
-.byt                      $2f, $30, $31, $32,  ZIPNT_ZEROS(14),                                                         $38, $3b,  $4a, $37,$00,$01, $18
+.byt ZIPNT_ZEROS(8+96+22)
+.byt                                                                                                                    $38, $3b,  $4a, $37,$00,$01, $18
 .byt ZIPNT_ZEROS(4+64+6)
 nametable_title_attributes:
 .byt                                                                   %11110000, ZIPZ

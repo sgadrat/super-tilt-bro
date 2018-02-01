@@ -1,0 +1,150 @@
+init_menu:
+.(
+; Initialize tick counter
+lda #0
+sta menu_common_tick_num
+
+; Initialize clouds positions
+lda #16
+sta menu_common_cloud_1_x
+lda #128
+sta menu_common_cloud_1_y
+lda #180
+sta menu_common_cloud_2_x
+lda #16
+sta menu_common_cloud_2_y
+lda #100
+sta menu_common_cloud_3_x
+lda #188
+sta menu_common_cloud_3_y
+
+; Fallthrough
+.)
+re_init_menu:
+.(
+; Copy initial cloud sprites to oam mirror
+ldx #MENU_COMMON_NB_CLOUDS * MENU_COMMON_NB_SPRITE_PER_CLOUD * MENU_COMMON_OAM_SPRITE_SIZE
+copy_one_byte:
+dex
+lda cloud_sprites, x
+sta oam_mirror + MENU_COMMON_FIRST_CLOUD_SPRITE * MENU_COMMON_OAM_SPRITE_SIZE, x
+cpx #0
+bne copy_one_byte
+
+; Show clouds on screen
+jsr menu_position_clouds
+
+rts
+
+#define CLOUD_SPRITE .byt 0, TILE_CLOUD_1, $23, 0, 0, TILE_CLOUD_2, $23, 0, 0, TILE_CLOUD_3, $23, 0, 0, TILE_CLOUD_4, $23, 0, 0, TILE_CLOUD_5, $23, 0, 0, TILE_CLOUD_6, $23, 0
+cloud_sprites:
+CLOUD_SPRITE
+CLOUD_SPRITE
+CLOUD_SPRITE
+.)
+
+tick_menu:
+.(
+tick_moving_clouds:
+.(
+stop_oam_index = tmpfield1
+
+; Compute where to stop incrementing
+inc menu_common_tick_num ; menu_common_tick_num += 1
+
+lda #%00000001            ;
+bit menu_common_tick_num  ; Skip one out of two frames
+beq end                   ;
+
+lda menu_common_tick_num ;
+lsr                      ; Get a two bits frame counter in A
+and #%00000011           ;
+sta tmpfield1            ;
+
+; Increment clouds X position
+ldx #0
+move_one_cloud:
+cpx tmpfield1
+beq end
+inc menu_common_cloud_1_x, x
+jsr menu_position_cloud
+inx
+jmp move_one_cloud
+
+end:
+; Fallthrough
+.)
+
+rts
+.)
+
+; Position all cloud sprites on screen
+menu_position_clouds:
+.(
+ldx #MENU_COMMON_NB_CLOUDS - 1
+position_one_cloud:
+jsr menu_position_cloud
+dex
+bpl position_one_cloud
+rts
+.)
+
+; Position a cloud's sprites
+;  register X - cloud index
+menu_position_cloud:
+.(
+cloud_x = tmpfield3
+cloud_y = tmpfield4
+
+; Saxe cloud's coordinate at a fixed position
+lda menu_common_cloud_1_x, x
+sta cloud_x
+lda menu_common_cloud_1_y, x
+sta cloud_y
+
+; Compute cloud's first sprite address
+txa ; Save X
+pha ;
+
+sta tmpfield2 ;
+asl           ;
+asl           ; X = X * NB_SPRITE_PER_CLOUD
+adc tmpfield2 ;   = index of the first sprite, starting from first cloud's first sprite
+adc tmpfield2 ;
+
+asl ;
+asl ; X = X * OAM_SPRITE_SIZE
+tax ;   = offset of the first byte, starting from first cloud's first byte
+
+; Place cloud's sprites
+ldy #0
+place_one_sprite:
+lda cloud_y
+clc
+adc sprite_offset_y, y
+sta oam_mirror + MENU_COMMON_FIRST_CLOUD_SPRITE * MENU_COMMON_OAM_SPRITE_SIZE, x
+inx
+inx
+inx
+lda cloud_x
+clc
+adc sprite_offset_x, y
+sta oam_mirror + MENU_COMMON_FIRST_CLOUD_SPRITE * MENU_COMMON_OAM_SPRITE_SIZE, x
+inx
+
+iny
+cpy #MENU_COMMON_NB_SPRITE_PER_CLOUD
+bne place_one_sprite
+
+; Restore X
+pla
+tax
+
+rts
+
+; Offset of sprites relative to cloud's position
+sprite_offset_x:
+.byt 16, 24, 0, 8, 16, 24
+sprite_offset_y:
+.byt 0, 0, 8, 8, 8, 8
+.)

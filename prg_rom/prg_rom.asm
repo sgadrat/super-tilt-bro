@@ -180,6 +180,7 @@ jmp forever
 #include "prg_rom/ai.asm"
 #include "prg_rom/particle.asm"
 #include "prg_rom/particle_handlers.asm"
+#include "prg_rom/menu_common.asm"
 code_end:
 data_begin:
 #include "prg_rom/data/data.asm"

@@ -67,6 +67,9 @@ jsr config_update_screen
 jsr process_nt_buffers
 jsr reset_nt_buffers
 
+; Initialize common menus effects
+jsr re_init_menu
+
 rts
 
 sprites:
@@ -84,6 +87,9 @@ config_screen_tick:
 .(
 ; Clear already written buffers
 jsr reset_nt_buffers
+
+; Play common menus effects
+jsr tick_menu
 
 ; Check if a button is released and trigger correct action
 ldx #0

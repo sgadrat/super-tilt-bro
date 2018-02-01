@@ -138,6 +138,20 @@ character_selection_player_a_selected_option = $00
 character_selection_player_b_selected_option = $01
 
 ;
+; Common menus labels
+;  Common to TITLE, CONFIG, CHARACTER_SELECTION, STAGE_SELECTION and CREDITS
+;
+
+menu_common_tick_num = $10
+
+menu_common_cloud_1_x = $11
+menu_common_cloud_2_x = $12
+menu_common_cloud_3_x = $13
+menu_common_cloud_1_y = $14
+menu_common_cloud_2_y = $15
+menu_common_cloud_3_y = $16
+
+;
 ; GAMEOVER labels
 ;
 

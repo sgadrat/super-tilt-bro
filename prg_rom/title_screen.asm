@@ -31,11 +31,17 @@ sta title_cheatstate
 ; Change music for the main theme
 jsr audio_music_weak
 
+; Initialize common menus effects
+jsr init_menu
+
 rts
 .)
 
 title_screen_tick:
 .(
+; Play common menus effects
+jsr tick_menu
+
 ; Check for cheat code (controller A only)
 ldx title_cheatstate
 lda controller_a_btns
