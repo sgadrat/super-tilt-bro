@@ -526,6 +526,9 @@ sta previous_global_game_state
 txa
 sta global_game_state
 
+; Begin transition between screens
+jsr pre_transition
+
 ; Disable rendering
 lda #$00
 sta PPUCTRL
@@ -539,9 +542,6 @@ jsr reset_nt_buffers
 lda #$00
 sta scroll_x
 sta scroll_y
-
-; Prepare transition between screens
-jsr pre_transition
 
 ; Reset particle handlers
 jsr particle_handlers_reinit
@@ -668,7 +668,6 @@ state_transition_orientation:
 .)
 
 ; Called before initialization routine, for transition effects
-;  At this point the rendering is disabled
 pre_transition:
 .(
 ; Avoid working if there is no transition
@@ -676,48 +675,46 @@ jsr find_transition_direction
 cmp #0
 beq end
 
-ldy #0
-ldx #0
+lda #0
+sta tmpfield3
+sta tmpfield4
+jsr scroll_transition
 
-copy_byte:
-tya
-clc
-adc #$20
-sta PPUADDR
-txa
-sta PPUADDR ; Point on the byte on upper nametable
-
-lda PPUDATA ; Read the byte
-sta tmpfield1
-
-tya
-clc
-adc #$28
-sta PPUADDR
-txa
-sta PPUADDR ; Point on the byte on bottom nametable
-
-lda tmpfield1
-sta PPUDATA ; Copy the byte
-
-inx
-bne end_increment
-iny
-end_increment: ; copute next byte's offset
-
-cpy #$04
-bne copy_byte
+lda #%10010010
+sta ppuctrl_val
+lda #0
+sta scroll_y
 
 end:
 rts
 .)
 
 ; Called after initialization routine, for transition effects
-;  At this point the rendering is enabled
 post_transition:
+.(
+lda #2
+sta tmpfield3
+lda #1
+sta tmpfield4
+jsr scroll_transition
+
+lda #%10010000
+sta ppuctrl_val
+lda #0
+sta scroll_y
+
+rts
+.)
+
+; Transition by scrolling between two screen, keeping menus clouds
+;  tmpfield3 - origin screen 0 for top nametable, 2 for bottom one
+;  tmpfield4 - sprites are from starting or destination screen (0 - starting screen ; 1 - destination screen)
+scroll_transition:
 .(
 screen_sprites_offset_lsb = tmpfield1
 screen_sprites_offset_msb = tmpfield2
+origin_nametable = tmpfield3
+offset_sprites = tmpfield4
 
 ; Compute values dependent of the direction
 jsr find_transition_direction
@@ -725,13 +722,14 @@ beq skip_scrolling
 cmp #1
 bne set_up_values
 
-lda #%10010010  ; Reactivate NMI, place scrolling on bottom nametable
-sta ppuctrl_val ;
+lda origin_nametable ;
+ora #%10010000       ; Reactivate NMI, place scrolling on origin nametable
+sta ppuctrl_val      ;
 lda #240
 sta screen_sprites_offset_lsb
 lda #0
 sta screen_sprites_offset_msb
-lda #$fc
+lda #$fd
 pha      ; cloud_scroll_lsb
 lda #$ff
 pha      ; cloud_scroll_msb
@@ -744,13 +742,15 @@ pha      ; scroll_end
 jmp end_set_values
 
 set_up_values:
-lda #%10010000  ; Reactivate NMI, place scrolling on top nametable
-sta ppuctrl_val ;
+lda origin_nametable ;
+eor #%00000010       ; Reactivate NMI, place scrolling on destination nametable
+ora #%10010000       ;
+sta ppuctrl_val      ;
 lda #$10
 sta screen_sprites_offset_lsb
 lda #$ff
 sta screen_sprites_offset_msb
-lda #$4
+lda #$3
 pha      ; cloud_scroll_lsb
 lda #$0
 pha      ; cloud_scroll_msb
@@ -763,7 +763,7 @@ pha      ; scroll_end
 jmp end_set_values
 
 skip_scrolling:
-lda #%10010000  ;
+lda #%10010010  ;
 sta ppuctrl_val ; Reactivate NMI
 sta PPUCTRL     ;
 jsr sleep_frame  ; Avoid re-enabling mid-frame
@@ -772,6 +772,14 @@ sta PPUMASK    ;
 jmp end
 
 end_set_values:
+
+; Avoid to offset sprites when starting from drawn screen
+lda offset_sprites
+bne do_not_touch_offsets
+lda #0
+sta screen_sprites_offset_lsb
+sta screen_sprites_offset_msb
+do_not_touch_offsets:
 
 ; Save sprites y positions as 2 bytes values (to be able to go offscreen)
 ldx #0 ; OAM offset
@@ -786,10 +794,8 @@ lda screen_sprites_offset_msb ;
 adc #0                        ;
 sta screen_sprites_y_msb, y   ;
 
-; Hide sprite
-;  (even cloud sprites, they already blink due to disabling rendering anyway)
-lda #$fe
-sta oam_mirror, x
+lda #$fe          ; Hide sprite
+sta oam_mirror, x ; (even cloud sprites, they already blink due to disabling rendering anyway)
 
 iny                 ;
 inx                 ;
@@ -801,6 +807,13 @@ bne save_one_sprite ;
 ; Enable rendering
 lda ppuctrl_val
 sta PPUCTRL
+tsx            ;
+lda stack+2, x ; set scrolling to scroll_begin
+cmp #240       ;
+bne set_scroll ;
+lda #239       ;
+set_scroll     ;
+sta scroll_y   ;
 jsr sleep_frame  ; Avoid re-enabling mid-frame
 lda #%00011110 ; Enable sprites and background rendering
 sta PPUMASK    ;
@@ -811,21 +824,26 @@ lda stack+2, x ; scroll_begin
 
 scroll_frame:
 sta scroll_y
+
+cmp #240       ;
+bne no_correct ;
+lda #239       ; Avoid scrolling of 240 which is more "before 0" than "after 239"
+sta scroll_y   ;
+lda #240       ;
+no_correct:    ;
+
 clc
 tsx
 adc stack+3, x ; scroll_step
+
 pha
 jsr sleep_frame
 jsr move_sprites
 pla
+
 tsx
 cmp stack+1, x ; scroll_end
 bne scroll_frame
-
-lda #%10010000
-sta ppuctrl_val
-lda #0
-sta scroll_y
 
 clean:
 pla ; scroll_end
