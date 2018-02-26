@@ -49,20 +49,6 @@ jsr character_selection_update_screen
 jsr process_nt_buffers
 jsr reset_nt_buffers
 
-; Hack, let clouds appear during transition
-;lda PPUSTATUS
-;lda #$3f
-;sta PPUADDR
-;lda #$1d
-;sta PPUADDR
-;lda #$20
-;sta PPUDATA
-;lda #$1c
-;sta PPUDATA
-;lda #$0c
-;sta PPUDATA
-jsr re_init_menu
-
 rts
 
 sprites:
