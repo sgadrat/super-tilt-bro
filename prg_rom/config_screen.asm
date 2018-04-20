@@ -47,7 +47,7 @@ sprite_loop:
 lda sprites, x
 sta oam_mirror, x
 inx
-cpx #24
+cpx #48
 bne sprite_loop
 
 ; Init local options values from global state
@@ -69,12 +69,18 @@ jsr re_init_menu
 rts
 
 sprites:
-.byt $2f, $3f, $00, $a0
-.byt $2f, $3f, $40, $d0
-.byt $4f, $3f, $00, $a0
-.byt $4f, $3f, $40, $d0
-.byt $6f, $3f, $00, $a0
-.byt $6f, $3f, $40, $d0
+.byt $4f, TILE_ICON_MUSIC_1, $00, $50
+.byt $4f, TILE_ICON_MUSIC_2, $00, $58
+.byt $57, TILE_ICON_MUSIC_3, $00, $50
+.byt $57, TILE_ICON_MUSIC_4, $00, $58
+.byt $6f, TILE_ICON_STOCKS_1, $00, $50
+.byt $6f, TILE_ICON_STOCKS_2, $00, $58
+.byt $77, TILE_ICON_STOCKS_3, $00, $50
+.byt $77, TILE_ICON_STOCKS_4, $00, $58
+.byt $8f, TILE_ICON_PLAYER_1, $00, $50
+.byt $8f, TILE_ICON_PLAYER_2, $00, $58
+.byt $97, TILE_ICON_PLAYER_3, $00, $50
+.byt $97, TILE_ICON_PLAYER_4, $00, $58
 .)
 .)
 
@@ -310,12 +316,10 @@ beq enabled
 lda #%00000000
 jmp got_attribute
 enabled:
-lda #%10100000
+lda #%01010000
 got_attribute:
 
 ; Nametable buffer payload
-sta nametable_buffers, x
-inx
 sta nametable_buffers, x
 inx
 sta nametable_buffers, x
@@ -327,51 +331,12 @@ inx
 lda #$00
 sta nametable_buffers, x
 
-;
-; Modify sprites attributes to color arrows of selected attribute
-;
-
-; Set X to point on attribute byte of the first sprite related to this option
-lda option_num
-asl
-asl
-asl
-adc #2
-tax
-
-ldy #0
-
-; Change palette number of option's sprites according to its selected state
-set_option_sprites_attributes:
-lda option_num
-cmp config_selected_option
-beq selected
-
-lda oam_mirror, x
-and #%11111110
-sta oam_mirror, x
-jmp next_sprite
-
-selected:
-lda oam_mirror, x
-ora #%00000001
-sta oam_mirror, x
-
-next_sprite:
-inx
-inx
-inx
-inx
-iny
-cpy #2
-bne set_option_sprites_attributes
-
 rts
 
 options_buffer_headers:
-.byt $01, $23, $c9, $04
-.byt $01, $23, $d1, $04
-.byt $01, $23, $d9, $04
+.byt $01, $23, $d3, $03
+.byt $01, $23, $db, $03
+.byt $01, $23, $e3, $03
 .)
 
 config_draw_value:
@@ -428,12 +393,13 @@ asl
 asl
 adc config_initial_stocks
 adc config_initial_stocks
+adc config_initial_stocks
 tay
 
 ; Store "buffer end" Y value in tmpfield1
 tya
 clc
-adc #10
+adc #11
 sta tmpfield1
 
 ; Send buffer
@@ -458,12 +424,13 @@ asl
 asl
 adc config_ai_level
 adc config_ai_level
+adc config_ai_level
 tay
 
 ; Store "buffer end" Y value in tmpfield1
 tya
 clc
-adc #10
+adc #11
 sta tmpfield1
 
 ; Send buffer
@@ -486,28 +453,28 @@ values_handlers:
 .word draw_music, draw_stocks, draw_ai
 
 buffer_on:
-.byt $01, $20, $d5, $03, $45, $44, $02, $00
+.byt $01, $21, $70, $03, $45, $44, $02, $00
 buffer_off:
-.byt $01, $20, $d5, $03, $45, $3c, $3c, $00
+.byt $01, $21, $70, $03, $45, $3c, $3c, $00
 
 buffer_one:
-.byt $01, $21, $55, $05, $45, $44, $3b, $02, $02, $00
+.byt $01, $21, $ee, $06, $02, $45, $44, $3b, $02, $02, $00
 buffer_two:
-.byt $01, $21, $55, $05, $4a, $4d, $45, $02, $02, $00
+.byt $01, $21, $ee, $06, $02, $4a, $4d, $45, $02, $02, $00
 buffer_three:
-.byt $01, $21, $55, $05, $4a, $3e, $48, $3b, $3b, $00
+.byt $01, $21, $ee, $06, $02, $4a, $3e, $48, $3b, $3b, $00
 buffer_four:
-.byt $01, $21, $55, $05, $3c, $45, $4b, $48, $02, $00
+.byt $01, $21, $ee, $06, $02, $3c, $45, $4b, $48, $02, $00
 buffer_five:
-.byt $01, $21, $55, $05, $3c, $3f, $4c, $3b, $02, $00
+.byt $01, $21, $ee, $06, $02, $3c, $3f, $4c, $3b, $02, $00
 
 buffer_human:
-.byt $01, $21, $d5, $05, $3e, $4b, $43, $37, $44, $00
+.byt $01, $22, $6e, $06, $02, $3e, $4b, $43, $37, $44, $00
 buffer_easy:
-.byt $01, $21, $d5, $05, $3b, $37, $49, $4f, $02, $00
+.byt $01, $22, $6e, $06, $02, $3b, $37, $49, $4f, $02, $00
 buffer_fair:
-.byt $01, $21, $d5, $05, $3c, $37, $3f, $48, $02, $00
+.byt $01, $22, $6e, $06, $02, $3c, $37, $3f, $48, $02, $00
 buffer_hard:
-.byt $01, $21, $d5, $05, $3e, $37, $48, $3a, $02, $00
+.byt $01, $22, $6e, $06, $02, $3e, $37, $48, $3a, $02, $00
 .)
 .)
