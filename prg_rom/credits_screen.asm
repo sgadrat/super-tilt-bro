@@ -83,15 +83,15 @@ sta tmpfield1 ;
 lda #0        ;
 sta tmpfield2 ;
 lda line_num  ;
-sta tmpfield3 ; Point PPUADDR to the line's begining
+sta tmpfield3 ;
 jsr multiply  ;
-clc
-lda #$00
-adc tmpfield4
-sta tmpfield4
-lda #$20
-adc tmpfield5
-sta tmpfield5
+clc           ; Point PPUADDR to the line's begining
+lda #$02      ;
+adc tmpfield4 ; PPUADDR = $2000 + (32 * line num) + 2
+sta tmpfield4 ;           |       |                 `-> Keep 2 spaces at as left margin
+lda #$20      ;           |       `-------------------> Index of the line's leftmost tile in the nametable
+adc tmpfield5 ;           `---------------------------> Nametable's address
+sta tmpfield5 ;
 lda PPUSTATUS ;
 lda tmpfield5 ;
 sta PPUADDR   ;
