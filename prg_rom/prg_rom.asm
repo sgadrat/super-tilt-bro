@@ -189,7 +189,7 @@ credits_begin:
 .asc $0a
 .asc "sylvain gadrat",$0a
 .asc $0a
-.asc "         art sources",$0a
+.asc "         art-sources",$0a
 .asc $0a
 .asc "bomb party",$0a
 .asc "    by matt hackett of",$0a

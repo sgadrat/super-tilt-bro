@@ -110,7 +110,9 @@ beq new_line             ; Considere opcodes
 cmp #$00                 ;  $0a - line break
 beq end_write_credits    ;  $00 - end of data
 cmp #$20                 ;  $20 - space
-beq space                ;
+beq space                ;  $2d - filled space
+cmp #$2d                 ;
+beq filled_space         ;
 
 sec                ;
 sbc #42            ; Generic case
@@ -122,11 +124,19 @@ lda #00            ;
 sta PPUDATA        ; Space character, tile $00
 jmp write_one_char ;
 
+filled_space:
+lda #02            ;
+sta PPUDATA        ; Space filled with text-baground color, tile $02
+jmp write_one_char ;
+
 new_line:
 inc line_num       ; Increment line number and loop
 jmp write_one_line ; to the new line
 
 end_write_credits:
+
+; Initialize common menus effects
+jsr re_init_menu
 
 rts
 .)
@@ -145,6 +155,9 @@ rts
 
 credits_screen_tick:
 .(
+; Play common menus effects
+jsr tick_menu
+
 ; If all buttons of any controller are released on this frame, got to the next screen
 lda controller_a_btns
 bne check_controller_b
