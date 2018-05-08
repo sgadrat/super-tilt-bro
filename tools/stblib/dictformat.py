@@ -50,6 +50,9 @@ def parse_animation_hurtbox(source):
 def parse_animation_sprite(source):
 	return stblib.animations.Sprite(y = source['y'], tile = source['tile'], attr = import_from_dict(source['attr']), x = source['x'], foreground = source['foreground'])
 
+def parse_bg_metatile(source):
+	return stblib.stages.BackgroundMetaTile(x = source['x'], y = source['y'], tile_name = source['tile'])
+
 def parse_nametable(source):
 	return stblib.nametables.Nametable(name = source['name'], tilemap = source['tilemap'], attributes = source['attributes'])
 
@@ -79,10 +82,15 @@ def parse_stage(source):
 	for source_platform in source['platforms']:
 		platforms.append(import_from_dict(source_platform))
 
+	metatiles = []
+	for source_metatile in source['metatiles']:
+		metatiles.append(import_from_dict(source_metatile))
+
 	return stblib.stages.Stage(
 		name = source['name'], description = source['description'],
 		player_a_position = tuple(source['player_a_position']),
 		player_b_position = tuple(source['player_b_position']),
 		respawn_position = tuple(source['respawn_position']),
-		platforms = platforms
+		platforms = platforms,
+		bg_metatiles = metatiles
 	)

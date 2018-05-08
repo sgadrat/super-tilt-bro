@@ -51,6 +51,10 @@ class Nametable:
 					line.append([0]*4)
 				self.attributes.append(line)
 
+	def set_tile(self, x, y, tile, attribute):
+		self.tilemap[y][x] = tile
+		self.set_attribute_for_tile(x, y, attribute)
+
 	def set_attribute_for_tile(self, x, y, attribute):
 		x = x // 2
 		y = y // 2
