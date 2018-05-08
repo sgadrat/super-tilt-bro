@@ -6,24 +6,29 @@
 #include "prg_rom/data/stages/pit.asm"
 #include "prg_rom/data/stages/plateau.asm"
 #include "prg_rom/data/stages/shelf.asm"
+#include "prg_rom/data/stages/gem.asm"
 
 #define RAW_VECTOR(x) .byt <x, >x
 stages_init_routine:
 RAW_VECTOR(stage_generic_init) ; Plateau
 RAW_VECTOR(stage_pit_init) ; Pit
 RAW_VECTOR(stage_generic_init) ; Shelf
+RAW_VECTOR(stage_gem_init) ; Gem
 
 stages_tick_routine:
 RAW_VECTOR(dummy_routine) ; Plateau
 RAW_VECTOR(stage_pit_tick) ; Pit
 RAW_VECTOR(dummy_routine) ; Shelf
+RAW_VECTOR(stage_gem_tick) ; Gem
 
 stages_nametable:
 RAW_VECTOR(nametable) ; Plateau
 RAW_VECTOR(nametable_stage_pit) ; Pit
 RAW_VECTOR(nametable_stage_shelf) ; Shelf
+RAW_VECTOR(nametable_stage_gem) ; Gem
 
 stages_data:
 RAW_VECTOR(stage_plateau_data) ; Plateau
 RAW_VECTOR(stage_pit_data) ; Pit
 RAW_VECTOR(stage_shelf_data) ; Shelf
+RAW_VECTOR(stage_gem_data) ; Gem

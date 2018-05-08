@@ -120,3 +120,4 @@ rts
 .)
 
 #include "prg_rom/stages/pit.asm"
+#include "prg_rom/stages/gem.asm"

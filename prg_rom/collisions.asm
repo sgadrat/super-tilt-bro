@@ -239,9 +239,10 @@ rts
 ;  tmpfield5 - Rectangle 2 left
 ;  tmpfield6 - Rectangle 2 right
 ;  tmpfield7 - Rectangle 2 top
-;  tmpfield8 - Rectangle 2 botto
+;  tmpfield8 - Rectangle 2 bottom
 ;
 ; tmpfield9 is set to #$00 if rectangles overlap, or to #$01 otherwise
+; register A is set to the same value as tempfield9
 boxes_overlap:
 .(
 rect1_left = tmpfield1

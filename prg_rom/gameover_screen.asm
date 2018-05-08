@@ -1,8 +1,4 @@
 #define OAM_BALLOONS 4*32
-#define TILE_BALLOON $4a
-#define TILE_BALLOON_TAIL $4b
-#define TILE_BALLOON_INFLATED $4c
-#define TILE_BALLOON_POPPED $4d
 
 init_gameover_screen:
 .(

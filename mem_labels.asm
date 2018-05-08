@@ -111,11 +111,30 @@ death_particles_player_b_counter = $7e
 
 slow_down_counter = $7f
 
+;
+; Stage specific labels
+;
+
 stage_state_begin = $80
+
 stage_pit_platform1_direction_v = $80
 stage_pit_platform2_direction_v = $81
 stage_pit_platform1_direction_h = $82
 stage_pit_platform2_direction_h = $83
+
+stage_gem_gem_position_x_low = $80
+stage_gem_gem_position_x_high = $81
+stage_gem_gem_position_y_low = $82
+stage_gem_gem_position_y_high = $83
+stage_gem_gem_velocity_h_low = $84
+stage_gem_gem_velocity_h_high = $85
+stage_gem_gem_velocity_v_low = $86
+stage_gem_gem_velocity_v_high = $87
+stage_gem_gem_cooldown_low = $88
+stage_gem_gem_cooldown_high = $89
+stage_gem_gem_state = $8a ; one of STAGE_GEM_GEM_STATE_*
+stage_gem_buffed_player = $8b
+stage_gem_last_opponent_state = $8c
 
 ;
 ; TITLE labels

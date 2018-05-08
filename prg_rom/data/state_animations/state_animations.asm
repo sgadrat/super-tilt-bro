@@ -1,5 +1,3 @@
-#include "prg_rom/data/state_animations/state_animations_macros.asm"
-
 #include "prg_rom/data/state_animations/sinbad_idle.asm"
 #include "prg_rom/data/state_animations/sinbad_run.asm"
 #include "prg_rom/data/state_animations/sinbad_jab.asm"

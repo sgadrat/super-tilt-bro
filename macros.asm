@@ -1,3 +1,7 @@
+;
+; Animations
+;
+
 #define ANIM_FRAME_BEGIN(duration) .byt duration
 #define ANIM_FRAME_END .byt $00
 
