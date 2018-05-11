@@ -207,6 +207,7 @@ credits_begin:
 .asc $0a
 .asc "antoine gohin",$0a
 .asc "benoit ryder",$0a
+.asc "margarita gadrat",$0a
 .byt $00
 credits_end:
 
