@@ -283,7 +283,7 @@ nametable_title:
 
 .byt                                           $46, $48, $3b, $49,  $49,ZIPZ, $37, $44,  $4f,ZIPZ, $38, $4b,  $4a, $4a, $45, $44
 .byt ZIPNT_ZEROS(8+96+22)
-.byt                                                                                                                    $38, $3b,  $4a, $37,$00,$01, $19
+.byt                                                                                                                    $38, $3b,  $4a, $37,$00,$01, $1a
 .byt ZIPNT_ZEROS(4+64+6)
 nametable_title_attributes:
 .byt                                                                   %11110000, ZIPZ
