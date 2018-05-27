@@ -137,6 +137,20 @@ stage_gem_buffed_player = $8b
 stage_gem_last_opponent_state = $8c
 
 ;
+; Network engine labels
+;
+
+network_current_frame_byte0 = $90
+network_current_frame_byte1 = $91
+network_current_frame_byte2 = $92
+network_current_frame_byte3 = $93
+
+network_client_id_byte0 = $94
+network_client_id_byte1 = $95
+network_client_id_byte2 = $96
+network_client_id_byte3 = $97
+
+;
 ; TITLE labels
 ;
 

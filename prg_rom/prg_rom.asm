@@ -158,6 +158,7 @@ jmp forever
 .)
 
 #include "prg_rom/utils.asm"
+#include "prg_rom/network.asm"
 #include "prg_rom/game.asm"
 #include "prg_rom/player_states.asm"
 #include "prg_rom/stages/stages.asm"

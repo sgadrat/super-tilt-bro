@@ -105,6 +105,9 @@ jsr audio_music_power
 ; Initialize AI
 jsr ai_init
 
+; Initialize network
+jsr network_init_stage
+
 rts
 
 place_player_a_header:
@@ -233,6 +236,9 @@ lda config_ai_level
 beq end_ai
 jsr ai_tick
 end_ai:
+
+; Process network messages
+jsr network_tick_ingame
 
 ; Update game state
 jsr update_players
