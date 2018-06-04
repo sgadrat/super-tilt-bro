@@ -25,3 +25,5 @@ ANIM_SPRITE($08, TILE_LANDING_SINBAD_1_BOT, $00, $00)
 ANIM_FRAME_END
 ; End of animation
 ANIM_ANIMATION_END
+
+#print anim_sinbad_landing

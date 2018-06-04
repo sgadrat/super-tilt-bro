@@ -66,3 +66,5 @@ ANIM_SPRITE($06, TILE_SCIMITAR_BLADE, $c1, $0c)
 ANIM_FRAME_END
 ; End of animation
 ANIM_ANIMATION_END
+
+#print anim_sinbad_aerial_down

@@ -9,3 +9,5 @@ ANIM_SPRITE($08, TILE_JUMPING_SINBAD_3_BODY, $00, $00)
 ANIM_FRAME_END
 ; End of animation
 ANIM_ANIMATION_END
+
+#print anim_sinbad_falling

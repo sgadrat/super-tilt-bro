@@ -1,3 +1,5 @@
+#echo Animation addresses:
+
 #include "prg_rom/data/state_animations/sinbad_idle.asm"
 #include "prg_rom/data/state_animations/sinbad_run.asm"
 #include "prg_rom/data/state_animations/sinbad_jab.asm"
@@ -25,3 +27,5 @@
 #include "prg_rom/data/state_animations/sinbad_respawn.asm"
 #include "prg_rom/data/state_animations/invisible.asm"
 #include "prg_rom/data/state_animations/sinbad_spawn.asm"
+
+#echo

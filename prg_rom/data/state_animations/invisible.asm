@@ -5,3 +5,5 @@ ANIM_HURTBOX($00, $01, $00, $01)
 ANIM_FRAME_END
 ; End of animation
 ANIM_ANIMATION_END
+
+#print anim_invisible

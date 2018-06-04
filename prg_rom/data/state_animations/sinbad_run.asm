@@ -31,3 +31,5 @@ ANIM_SPRITE($08, TILE_RUNNING_SINBAD_3_2, $00, $08)
 ANIM_FRAME_END
 ; End of animation
 ANIM_ANIMATION_END
+
+#print anim_sinbad_run

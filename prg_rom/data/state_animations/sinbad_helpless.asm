@@ -7,3 +7,5 @@ ANIM_SPRITE($08, TILE_IDLE_SINBAD_HEAD, $80, $00) ; Y, tile, attr, X
 ANIM_FRAME_END
 ; End of animation
 ANIM_ANIMATION_END
+
+#print anim_sinbad_helpless

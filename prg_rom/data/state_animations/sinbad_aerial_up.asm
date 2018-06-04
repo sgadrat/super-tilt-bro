@@ -53,3 +53,5 @@ ANIM_SPRITE($05, TILE_AERIAL_UP_SINBAD_SE, $00, $05)
 ANIM_FRAME_END
 ; End of animation
 ANIM_ANIMATION_END
+
+#print anim_sinbad_aerial_up

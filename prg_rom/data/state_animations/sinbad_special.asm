@@ -89,3 +89,5 @@ ANIM_SPRITE($fd, TILE_ANGLED_SCIMITAR_HANDLE, $01, $f0)
 ANIM_FRAME_END
 ; End of animation
 ANIM_ANIMATION_END
+
+#print anim_sinbad_special

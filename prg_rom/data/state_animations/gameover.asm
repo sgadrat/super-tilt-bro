@@ -27,3 +27,6 @@ ANIM_SPRITE($08, TILE_JOINED_HANDS_SINBAD_BODY, $40, $00)
 ANIM_FRAME_END
 ; End of animation
 ANIM_ANIMATION_END
+
+#print anim_sinbad_victory
+#print anim_sinbad_defeat

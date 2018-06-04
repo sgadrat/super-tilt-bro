@@ -54,3 +54,4 @@ ANIM_FRAME_END
 ; End of animation
 ANIM_ANIMATION_END
 
+#print anim_sinbad_spawn

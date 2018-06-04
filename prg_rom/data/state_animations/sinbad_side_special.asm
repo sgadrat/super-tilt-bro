@@ -178,3 +178,6 @@ ANIM_SPRITE($08, TILE_RUNNING_SINBAD_1_4, $00, $08)
 ANIM_FRAME_END
 ; End of animation
 ANIM_ANIMATION_END
+
+#print anim_sinbad_side_special_charge
+#print anim_sinbad_side_special_jump

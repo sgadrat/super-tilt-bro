@@ -21,3 +21,5 @@ ANIM_SPRITE($0e, TILE_REVIVAL_PLATFORM_2, $40, $04)
 ANIM_FRAME_END
 ; End of animation
 ANIM_ANIMATION_END
+
+#print anim_sinbad_respawn
