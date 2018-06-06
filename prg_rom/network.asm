@@ -8,10 +8,12 @@ network_init_stage:
 	sta network_current_frame_byte3
 
 	; Set client id
+	lda audio_music_enabled ; Hack to easilly configure the player number - activate music on player A's system
+	eor #%00000001
 	sta network_client_id_byte0
+	lda #0
 	sta network_client_id_byte1
 	sta network_client_id_byte2
-	lda audio_music_enabled ; Hack to easilly configure the player number - activate music on player A's system
 	sta network_client_id_byte3
 
 	rts
