@@ -1,29 +1,7 @@
 init_game_state:
 .(
 ; Clear background of nametable 2
-.(
-lda #$00
-sta $40
-sta $41
-lda PPUSTATUS
-lda #$28
-sta PPUADDR
-lda #$00
-sta PPUADDR
-load_background:
-lda #$00
-sta PPUDATA
-inc $40
-bne end_inc_vector
-inc $41
-end_inc_vector:
-lda #$04
-cmp $41
-bne load_background
-lda #$00
-cmp $40
-bne load_background
-.)
+jsr clear_bg_bot_left
 
 ; Ensure game state is zero
 ldx #$00

@@ -1,5 +1,7 @@
 init_title_screen:
 .(
+; Clear background of nametable 2
+jsr clear_bg_bot_left
 
 ; Point PPU to Background palette 0 (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
 lda PPUSTATUS

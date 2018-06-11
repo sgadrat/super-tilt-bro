@@ -1057,3 +1057,36 @@ dex
 bne copy_one_color
 rts
 .)
+
+; Clear background of bottom left nametable
+;  Expect the PPU rendering to be disabled
+;  Overwrites tmpfield1 and tmpfiled2
+clear_bg_bot_left:
+.(
+cnt_lsb = tmpfield1
+cnt_msb = tmpfield2
+
+lda #$00
+sta cnt_lsb
+sta cnt_msb
+lda PPUSTATUS
+lda #$28
+sta PPUADDR
+lda #$00
+sta PPUADDR
+load_background:
+lda #$00
+sta PPUDATA
+inc cnt_lsb
+bne end_inc_vector
+inc cnt_msb
+end_inc_vector:
+lda #$04
+cmp cnt_msb
+bne load_background
+lda #$00
+cmp cnt_lsb
+bne load_background
+
+rts
+.)
