@@ -16,6 +16,10 @@ network_init_stage:
 	sta network_client_id_byte2
 	sta network_client_id_byte3
 
+	; Clear rolling mode
+	lda #0
+	sta network_rollback_mode
+
 	rts
 .)
 
@@ -23,6 +27,10 @@ network_tick_ingame:
 .(
 	.(
 		network_opponent_number = audio_music_enabled ; Hack to easilly configure the player number - activate music on player A's system
+
+		; Do nothing in rollback mode, it would be recursive
+		lda network_rollback_mode
+		bne end
 
 		; Force opponent's buttons to not change
 		ldx network_opponent_number
@@ -83,11 +91,17 @@ network_tick_ingame:
 		inc network_current_frame_byte3
 		inc_ok:
 
+		end:
 		rts
 	.)
 
 	update_state:
 	.(
+		server_current_frame_byte0 = tmpfield1
+		server_current_frame_byte1 = tmpfield2
+		server_current_frame_byte2 = tmpfield3
+		server_current_frame_byte3 = tmpfield4
+
 		; Copy gamestate
 		ldx #0
 		copy_one_byte:
@@ -111,15 +125,67 @@ network_tick_ingame:
 		sta controller_b_btns
 		sta controller_b_last_frame_btns
 
-		; Reset frame counter
-		;  TODO if in the past, reroll game updates
+		; Extract frame counter
 		lda $5002
-		sta network_current_frame_byte0
+		sta server_current_frame_byte0
 		lda $5003
-		sta network_current_frame_byte1
+		sta server_current_frame_byte1
 		lda $5004
-		sta network_current_frame_byte2
+		sta server_current_frame_byte2
 		lda $5005
+		sta server_current_frame_byte3
+
+		; Update game state until the current frame is at least equal to the one we where before reading the message
+		;  TODO have past inputs stored (network_input_history) and replay it while rolling
+		lda #1
+		sta network_rollback_mode
+		roll_forward_one_step:
+		.(
+			; If sever's frame is inferior to local frame
+			lda server_current_frame_byte3
+			cmp network_current_frame_byte3
+			bcc do_it
+			lda server_current_frame_byte2
+			cmp network_current_frame_byte2
+			bcc do_it
+			lda server_current_frame_byte1
+			cmp network_current_frame_byte1
+			bcc do_it
+			lda server_current_frame_byte0
+			cmp network_current_frame_byte0
+			bcc do_it
+			jmp end_loop
+			do_it:
+
+				; Update game state
+				jsr game_tick
+
+				; Inc server_current_frame_byte
+				inc server_current_frame_byte0
+				bne end_inc
+				inc server_current_frame_byte1
+				bne end_inc
+				inc server_current_frame_byte2
+				bne end_inc
+				inc server_current_frame_byte3
+				end_inc:
+
+				; Loop
+				jmp roll_forward_one_step
+
+			end_loop:
+		.)
+		lda #0
+		sta network_rollback_mode
+
+		// Copy (updated) server frame number to the local one
+		lda server_current_frame_byte0
+		sta network_current_frame_byte0
+		lda server_current_frame_byte1
+		sta network_current_frame_byte1
+		lda server_current_frame_byte2
+		sta network_current_frame_byte2
+		lda server_current_frame_byte3
 		sta network_current_frame_byte3
 
 		rts

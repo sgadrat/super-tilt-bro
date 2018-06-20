@@ -150,6 +150,10 @@ network_client_id_byte1 = $95
 network_client_id_byte2 = $96
 network_client_id_byte3 = $97
 
+network_rollback_mode = $98 ; 0 - normal, 1 - rolling
+
+network_input_history = $99 ; TODO one byte per frame, circular buffer
+
 ;
 ; TITLE labels
 ;
