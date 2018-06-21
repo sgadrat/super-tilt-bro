@@ -152,8 +152,6 @@ network_client_id_byte3 = $97
 
 network_rollback_mode = $98 ; 0 - normal, 1 - rolling
 
-network_input_history = $99 ; TODO one byte per frame, circular buffer
-
 ;
 ; TITLE labels
 ;
@@ -314,3 +312,4 @@ players_palettes = $0580
 ;$06xx may be used by audio engine, see "Audio engine labels"
 virtual_frame_cnt = $0700
 skip_frames_to_50hz = $0701
+network_btns_history = $07e0 ; one byte per frame, circular buffer, 32 entries

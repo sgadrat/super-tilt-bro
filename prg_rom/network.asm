@@ -20,14 +20,24 @@ network_init_stage:
 	lda #0
 	sta network_rollback_mode
 
+	; Clear input history
+	; lda #0 ; ensured by above code
+	ldx #0
+	clear_one_input:
+		sta network_btns_history
+
+		inx
+		cpx #32
+		bne clear_one_input
+
 	rts
 .)
 
 network_tick_ingame:
 .(
-	.(
-		network_opponent_number = audio_music_enabled ; Hack to easilly configure the player number - activate music on player A's system
+	network_opponent_number = audio_music_enabled ; Hack to easilly configure the player number - activate music on player A's system
 
+	.(
 		; Do nothing in rollback mode, it would be recursive
 		lda network_rollback_mode
 		bne end
@@ -37,8 +47,15 @@ network_tick_ingame:
 		lda controller_a_last_frame_btns, x
 		sta controller_a_btns, x
 
-		; Send controller's state
+		; Save local controller's history
 		jsr switch_selected_player
+		lda network_current_frame_byte0
+		and #%00011111
+		tay
+		lda controller_a_btns, x
+		sta network_btns_history, y
+
+		; Send controller's state
 		lda controller_a_btns, x
 		cmp controller_a_last_frame_btns, x
 		beq controller_sent
@@ -97,10 +114,11 @@ network_tick_ingame:
 
 	update_state:
 	.(
-		server_current_frame_byte0 = tmpfield1
-		server_current_frame_byte1 = tmpfield2
-		server_current_frame_byte2 = tmpfield3
-		server_current_frame_byte3 = tmpfield4
+		//TODO reserve a place for it in mem_labels
+		server_current_frame_byte0 = $07d0
+		server_current_frame_byte1 = $07d1
+		server_current_frame_byte2 = $07d2
+		server_current_frame_byte3 = $07d3
 
 		; Copy gamestate
 		ldx #0
@@ -136,7 +154,6 @@ network_tick_ingame:
 		sta server_current_frame_byte3
 
 		; Update game state until the current frame is at least equal to the one we where before reading the message
-		;  TODO have past inputs stored (network_input_history) and replay it while rolling
 		lda #1
 		sta network_rollback_mode
 		roll_forward_one_step:
@@ -156,6 +173,20 @@ network_tick_ingame:
 			bcc do_it
 			jmp end_loop
 			do_it:
+
+				; Set local player input according to history
+				ldx network_opponent_number ; X = local player number
+				jsr switch_selected_player
+
+				lda server_current_frame_byte0 ; Y = input offset in history
+				and #%00011111
+				tay
+
+				lda network_btns_history, y ; write current input
+				sta controller_a_btns, x
+				dey
+				lda network_btns_history, y
+				sta controller_a_last_frame_btns, x
 
 				; Update game state
 				jsr game_tick
