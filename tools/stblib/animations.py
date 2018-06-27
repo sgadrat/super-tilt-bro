@@ -74,9 +74,12 @@ class Frame:
 		self.sprites.reverse()
 
 class Animation:
-	def __init__(self, name='', frames=[]):
+	def __init__(self, name='', frames=None):
 		self.name = name
-		self.frames = frames
+		if frames is not None:
+			self.frames = frames
+		else:
+			self.frames = []
 
 	def serialize(self):
 		serialized = 'anim_{}:\n'.format(self.name)
