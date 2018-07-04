@@ -201,6 +201,9 @@ game_tick:
 ; Remove processed nametable buffers
 jsr reset_nt_buffers
 
+; Process network messages
+jsr network_tick_ingame
+
 ; Shake screen and do nothing until shaking is over
 lda screen_shake_counter
 beq no_screen_shake
@@ -232,13 +235,11 @@ sta tmpfield2
 jsr call_pointed_subroutine
 
 ; Process AI - this override controller B state
-lda config_ai_level
-beq end_ai
-jsr ai_tick
-end_ai:
-
-; Process network messages
-jsr network_tick_ingame
+; TODO enable ai if network is disabled
+;lda config_ai_level
+;beq end_ai
+;jsr ai_tick
+;end_ai:
 
 ; Update game state
 jsr update_players
