@@ -1806,6 +1806,7 @@ rts
 
 shielding_player:
 .(
+;TODO this is dead code, it would be a bug if not dead
 ; After move's time is out, go to standing state
 lda player_a_anim_clock, x
 cmp STATE_SINBAD_UPTILT_DURATION
