@@ -769,6 +769,25 @@ end:
 rts
 .)
 
+#define STATE_SINBAD_JAB_CUTABLE_PART #8
+jabbing_player_input:
+.(
+; If before the cutable part, just keep input dirty
+lda player_a_anim_clock, x
+cmp STATE_SINBAD_JAB_CUTABLE_PART
+bcc end
+
+; Allow to cut the animation for another jab
+lda controller_a_btns, x
+cmp #CONTROLLER_INPUT_JAB
+bne end
+
+jsr start_jabbing_player
+
+end:
+rts
+.)
+
 start_thrown_player:
 .(
 ; Set player's state
