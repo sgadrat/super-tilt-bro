@@ -760,6 +760,17 @@ rts
 #define STATE_SINBAD_JAB_DURATION #14
 jabbing_player:
 .(
+; Do not move, velocity tends toward vector (0,0)
+lda #$00
+sta tmpfield4
+sta tmpfield3
+sta tmpfield2
+sta tmpfield1
+lda #$ff
+sta tmpfield5
+jsr merge_to_player_velocity
+
+; At the end of the move, return to standing state
 lda player_a_anim_clock, x
 cmp STATE_SINBAD_JAB_DURATION
 bne end
@@ -769,14 +780,8 @@ end:
 rts
 .)
 
-#define STATE_SINBAD_JAB_CUTABLE_PART #8
 jabbing_player_input:
 .(
-; If before the cutable part, just keep input dirty
-lda player_a_anim_clock, x
-cmp STATE_SINBAD_JAB_CUTABLE_PART
-bcc end
-
 ; Allow to cut the animation for another jab
 lda controller_a_btns, x
 cmp #CONTROLLER_INPUT_JAB
