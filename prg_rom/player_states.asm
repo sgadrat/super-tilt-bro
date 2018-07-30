@@ -757,7 +757,7 @@ jsr set_player_animation
 rts
 .)
 
-#define STATE_SINBAD_JAB_DURATION #8
+#define STATE_SINBAD_JAB_DURATION #14
 jabbing_player:
 .(
 lda player_a_anim_clock, x
