@@ -227,8 +227,17 @@ jsr merge_to_player_velocity
 rts
 .)
 
+#define AIR_FRICTION_STRENGTH 7
 aerial_directional_influence:
 .(
+; merge_to_player_velocity parameter names
+merged_v_low = tmpfield1
+merged_v_high = tmpfield3
+merged_h_low = tmpfield2
+merged_h_high = tmpfield4
+merge_step = tmpfield5
+
+; Choose what to do depending on controller state
 lda controller_a_btns, x
 and #CONTROLLER_INPUT_LEFT
 bne go_left
@@ -237,8 +246,9 @@ lda controller_a_btns, x
 and #CONTROLLER_INPUT_RIGHT
 bne go_right
 
-jmp end
+jmp air_friction
 
+; Go to the left
 go_left:
 lda #$00
 sta tmpfield6
@@ -252,18 +262,19 @@ jsr signed_cmp
 bpl end
 
 lda player_a_velocity_v_low, x
-sta tmpfield1
+sta merged_v_low
 lda player_a_velocity_v, x
-sta tmpfield3
+sta merged_v_high
 lda #$00
-sta tmpfield2
+sta merged_h_low
 lda #$ff
-sta tmpfield4
+sta merged_h_high
 lda #$80
-sta tmpfield5
+sta merge_step
 jsr merge_to_player_velocity
 jmp end
 
+; Go to the right
 go_right:
 lda player_a_velocity_h_low, x
 sta tmpfield6
@@ -277,15 +288,29 @@ jsr signed_cmp
 bpl end
 
 lda player_a_velocity_v_low, x
-sta tmpfield1
+sta merged_v_low
 lda player_a_velocity_v, x
-sta tmpfield3
+sta merged_v_high
 lda #$00
-sta tmpfield2
+sta merged_h_low
 lda #$01
-sta tmpfield4
+sta merged_h_high
 lda #$80
-sta tmpfield5
+sta merge_step
+jsr merge_to_player_velocity
+jmp end
+
+; Apply air friction
+air_friction:
+lda player_a_velocity_v_low, x
+sta merged_v_low
+lda player_a_velocity_v, x
+sta merged_v_high
+lda #$00
+sta merged_h_low
+sta merged_h_high
+lda #AIR_FRICTION_STRENGTH
+sta merge_step
 jsr merge_to_player_velocity
 
 end:
