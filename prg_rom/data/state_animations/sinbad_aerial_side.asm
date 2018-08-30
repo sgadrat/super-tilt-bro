@@ -20,7 +20,7 @@ ANIM_FRAME_END
 ; Frame 3
 ANIM_FRAME_BEGIN(16)
 ANIM_HURTBOX($f6, $05, $04, $0d) ; left, right, top, bottom
-ANIM_HITBOX($01, $04, $fd00, $ff80, $fff8, $fffe, $e9, $f5, $07, $0c) ; enabled, damages, base_h, base_v, force_h, force_v, left, right, top, bottom
+ANIM_HITBOX($01, $04, $fd00, $ff80, $fff0, $fffc, $e9, $f5, $07, $0c) ; enabled, damages, base_h, base_v, force_h, force_v, left, right, top, bottom
 ANIM_SPRITE($07, TILE_SCIMITAR_BLADE, $01, $e9) ; Y, tile, attr, X
 ANIM_SPRITE($07, TILE_SCIMITAR_HANDLE, $01, $f1)
 ANIM_SPRITE($fe, TILE_DIVING_SINBAD_NW, $00, $f6)

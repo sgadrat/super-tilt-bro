@@ -2,7 +2,7 @@ anim_sinbad_special:
 ; Frame 1
 ANIM_FRAME_BEGIN(3)
 ANIM_HURTBOX($f8, $08, $02, $0d) ; left, right, top, bottom
-ANIM_HITBOX($01, $0a, $fd00, $fd00, $fffb, $fffe, $e9, $f6, $05, $0b) ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
+ANIM_HITBOX($01, $0a, $fd00, $fd00, $ffeb, $fff8, $e9, $f6, $05, $0b) ; enabled, damages, base_h (2 Bytes), base_v (2 Bytes), force_h (2 Bytes), force_v (2 Bytes), left, right, top, bottom
 ANIM_SPRITE($00, TILE_ROLLED_SINBAD_1, $00, $f8) ; Y, tile, attr, X
 ANIM_SPRITE($00, TILE_ROLLED_SINBAD_2, $00, $00)
 ANIM_SPRITE($08, TILE_ROLLED_SINBAD_3, $00, $f8)
@@ -13,7 +13,7 @@ ANIM_FRAME_END
 ; Frame 2
 ANIM_FRAME_BEGIN(3)
 ANIM_HURTBOX($f8, $08, $02, $0d)
-ANIM_HITBOX($01, $0a, $fd00, $fd00, $fffb, $fffe, $ee, $f9, $10, $18)
+ANIM_HITBOX($01, $0a, $fd00, $fd00, $ffeb, $fff8, $ee, $f9, $10, $18)
 ANIM_SPRITE($00, TILE_ROLLED_SINBAD_1, $00, $f8)
 ANIM_SPRITE($00, TILE_ROLLED_SINBAD_2, $00, $00)
 ANIM_SPRITE($08, TILE_ROLLED_SINBAD_3, $00, $f8)
@@ -24,7 +24,7 @@ ANIM_FRAME_END
 ; Frame 3
 ANIM_FRAME_BEGIN(3)
 ANIM_HURTBOX($fa, $05, $00, $10)
-ANIM_HITBOX($01, $0a, $fd00, $fd00, $fffb, $fffe, $fd, $03, $13, $1f)
+ANIM_HITBOX($01, $0a, $fd00, $fd00, $ffeb, $fff8, $fd, $03, $13, $1f)
 ANIM_SPRITE($00, TILE_ROLLED_SINBAD_HEAD_DOWN_2, $00, $f8)
 ANIM_SPRITE($00, TILE_ROLLED_SINBAD_HEAD_DOWN_4, $00, $00)
 ANIM_SPRITE($08, TILE_ROLLED_SINBAD_HEAD_DOWN_1, $00, $f8)
@@ -35,7 +35,7 @@ ANIM_FRAME_END
 ; Frame 4
 ANIM_FRAME_BEGIN(3)
 ANIM_HURTBOX($fa, $05, $00, $10)
-ANIM_HITBOX($01, $0a, $fd00, $fd00, $fffb, $fffe, $08, $10, $0f, $1b)
+ANIM_HITBOX($01, $0a, $fd00, $fd00, $ffeb, $fff8, $08, $10, $0f, $1b)
 ANIM_SPRITE($00, TILE_ROLLED_SINBAD_HEAD_DOWN_2, $00, $f8)
 ANIM_SPRITE($00, TILE_ROLLED_SINBAD_HEAD_DOWN_4, $00, $00)
 ANIM_SPRITE($08, TILE_ROLLED_SINBAD_HEAD_DOWN_1, $00, $f8)
@@ -46,7 +46,7 @@ ANIM_FRAME_END
 ; Frame 5
 ANIM_FRAME_BEGIN(3)
 ANIM_HURTBOX($f8, $08, $03, $0e)
-ANIM_HITBOX($01, $0a, $fd00, $fd00, $fffb, $fffe, $0b, $17, $05, $0b)
+ANIM_HITBOX($01, $0a, $fd00, $fd00, $ffeb, $fff8, $0b, $17, $05, $0b)
 ANIM_SPRITE($00, TILE_ROLLED_SINBAD_4, $c0, $f8)
 ANIM_SPRITE($00, TILE_ROLLED_SINBAD_3, $c0, $00)
 ANIM_SPRITE($08, TILE_ROLLED_SINBAD_2, $c0, $f8)
@@ -57,7 +57,7 @@ ANIM_FRAME_END
 ; Frame 6
 ANIM_FRAME_BEGIN(3)
 ANIM_HURTBOX($f8, $08, $03, $0e)
-ANIM_HITBOX($01, $0a, $fd00, $fd00, $fffb, $fffe, $07, $13, $f8, $00)
+ANIM_HITBOX($01, $0a, $fd00, $fd00, $ffeb, $fff8, $07, $13, $f8, $00)
 ANIM_SPRITE($00, TILE_ROLLED_SINBAD_4, $c0, $f8)
 ANIM_SPRITE($00, TILE_ROLLED_SINBAD_3, $c0, $00)
 ANIM_SPRITE($08, TILE_ROLLED_SINBAD_2, $c0, $f8)
@@ -68,7 +68,7 @@ ANIM_FRAME_END
 ; Frame 7
 ANIM_FRAME_BEGIN(3)
 ANIM_HURTBOX($fb, $06, $00, $10)
-ANIM_HITBOX($01, $0a, $fd00, $fd00, $fffb, $fffe, $fd, $02, $f1, $fd)
+ANIM_HITBOX($01, $0a, $fd00, $fd00, $ffeb, $fff8, $fd, $02, $f1, $fd)
 ANIM_SPRITE($00, TILE_ROLLED_SINBAD_HEAD_DOWN_3, $c0, $f8)
 ANIM_SPRITE($00, TILE_ROLLED_SINBAD_HEAD_DOWN_1, $c0, $00)
 ANIM_SPRITE($08, TILE_ROLLED_SINBAD_HEAD_DOWN_4, $c0, $f8)
@@ -79,7 +79,7 @@ ANIM_FRAME_END
 ; Frame 8
 ANIM_FRAME_BEGIN(3)
 ANIM_HURTBOX($fb, $06, $00, $10)
-ANIM_HITBOX($01, $0a, $fd00, $fd00, $fffb, $fffe, $f0, $f8, $f5, $01)
+ANIM_HITBOX($01, $0a, $fd00, $fd00, $ffeb, $fff8, $f0, $f8, $f5, $01)
 ANIM_SPRITE($00, TILE_ROLLED_SINBAD_HEAD_DOWN_3, $c0, $f8)
 ANIM_SPRITE($00, TILE_ROLLED_SINBAD_HEAD_DOWN_1, $c0, $00)
 ANIM_SPRITE($08, TILE_ROLLED_SINBAD_HEAD_DOWN_4, $c0, $f8)

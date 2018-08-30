@@ -16,7 +16,7 @@ anim_sinbad_spe_up_jump:
 ; Frame 1
 ANIM_FRAME_BEGIN(200)
 ANIM_HURTBOX($00, $07, $00, $0f)
-ANIM_HITBOX($01, $0a, $fd00, $fd00, $fffb, $fffe, $f4, $ff, $02, $07)
+ANIM_HITBOX($01, $0a, $fd00, $fd00, $fff8, $fffc, $f4, $ff, $02, $07)
 ANIM_SPRITE($00, TILE_SCIMITAR_BLADE, $81, $f4)  ; Y, tile, attr, X
 ANIM_SPRITE($00, TILE_SCIMITAR_HANDLE, $81, $fc)
 ANIM_SPRITE($00, TILE_SIDE_TILT_SINBAD_2_1, $00, $00)

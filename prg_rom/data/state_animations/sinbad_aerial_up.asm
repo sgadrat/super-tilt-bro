@@ -28,7 +28,7 @@ ANIM_FRAME_END
 ; Frame 3
 ANIM_FRAME_BEGIN(4)
 ANIM_HURTBOX($fd, $0b, $fd, $0a) ; left, right, top, bottom
-ANIM_HITBOX($01, $02, $fe00, $fc00, $fffb, $fff8, $00, $05, $f4, $ff) ; enabled, damages, base_h, base_v, force_h, force_v, left, right, top, bottom
+ANIM_HITBOX($01, $02, $ff00, $fc00, $fffb, $ffe0, $00, $05, $f4, $ff) ; enabled, damages, base_h, base_v, force_h, force_v, left, right, top, bottom
 ANIM_SPRITE_FOREGROUND($f7, TILE_LIGHT_STAR_BRANCH, $01, $f6)
 ANIM_SPRITE_FOREGROUND($f7, TILE_LIGHT_STAR_BRANCH, $41, $06)
 ANIM_SPRITE_FOREGROUND($07, TILE_LIGHT_STAR_BRANCH, $81, $f6)
@@ -43,7 +43,7 @@ ANIM_FRAME_END
 ; Frame 4
 ANIM_FRAME_BEGIN(20)
 ANIM_HURTBOX($fd, $0b, $fd, $0a) ; left, right, top, bottom
-ANIM_HITBOX($01, $02, $fe00, $fc00, $fffb, $fff8, $00, $05, $f4, $ff) ; enabled, damages, base_h, base_v, force_h, force_v, left, right, top, bottom
+ANIM_HITBOX($01, $02, $ff00, $fc00, $fffb, $ffe0, $00, $05, $f4, $ff) ; enabled, damages, base_h, base_v, force_h, force_v, left, right, top, bottom
 ANIM_SPRITE($f4, TILE_VERTICAL_SCIMITAR_BLADE, $01, $fe)
 ANIM_SPRITE($fc, TILE_VERTICAL_SCIMITAR_HANDLE, $01, $fe)
 ANIM_SPRITE($fd, TILE_AERIAL_UP_SINBAD_NW, $00, $fd)
