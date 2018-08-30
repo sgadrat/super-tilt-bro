@@ -853,7 +853,7 @@ rts
 
 ; To tech successfully the tech must be input at maximum TECH_MAX_FRAMES_BEFORE_COLLISION frames before hitting the ground.
 ; After expiration of a tech input, it is not possible to input another tech for TECH_NB_FORBIDDEN_FRAMES frames.
-#define TECH_MAX_FRAMES_BEFORE_COLLISION 5
+#define TECH_MAX_FRAMES_BEFORE_COLLISION 10
 #define TECH_NB_FORBIDDEN_FRAMES 60
 thrown_player:
 .(
