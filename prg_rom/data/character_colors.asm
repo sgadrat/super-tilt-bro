@@ -20,12 +20,12 @@ character_palettes_alternate:
 
 ; Character palette name
 character_names:
-.byt $4a, $3e, $3b, $02, $4a, $48, $4b, $3b ; the true
-.byt $3e, $3b, $42, $42, $38, $45, $48, $44 ; hellborn
-.byt $02, $3c, $48, $45, $50, $3b, $44, $02 ; frozen
-.byt $02, $3b, $42, $4c, $3b, $44, $02, $02 ; elven
-.byt $02, $02, $3a, $37, $48, $41, $02, $02 ; dark
-.byt $02, $3d, $45, $42, $3a, $3b, $44, $02 ; golden
+.byt $42, $3b, $02, $4c, $48, $37, $3f, $02 ; le vrai
+.byt $02, $3a, $3b, $43, $45, $44, $02, $02 ; demon
+.byt $02, $02, $4f, $3b, $4a, $3f, $02, $02 ; yeti
+.byt $02, $02, $3b, $42, $3c, $3b, $02, $02 ; elfe
+.byt $02, $4c, $3f, $42, $37, $3f, $44, $02 ; vilain
+.byt $02, $49, $4b, $46, $3b, $48, $02, $02 ; super
 .byt $02, $49, $37, $41, $4b, $48, $37, $02 ; sakura
 
 ; Main palettes for weapon
@@ -40,10 +40,10 @@ weapon_palettes:
 
 ; Weapon palette name
 weapon_names:
-.byt $37, $4d, $3b, $49, $45, $43, $3b, $02 ; awesome
-.byt $02, $3d, $45, $42, $3a, $3b, $44, $02 ; golden
-.byt $02, $02, $3f, $39, $3b, $02, $02, $02 ; ice
-.byt $02, $4d, $45, $45, $3a, $3b, $44, $02 ; wooden
-.byt $02, $4b, $44, $3e, $45, $42, $4f, $02 ; unholy
-.byt $02, $49, $4d, $3b, $3b, $4a, $02, $02 ; sweet
-.byt $02, $38, $42, $45, $45, $3a, $4f, $02 ; bloody
+.byt $02, $02, $3d, $48, $45, $49, $02, $02 ; gros
+.byt $02, $02, $38, $3b, $37, $4b, $02, $02 ; beau
+.byt $3d, $42, $37, $39, $3f, $37, $42, $02 ; glacial
+.byt $02, $02, $3b, $39, $45, $02, $02, $02 ; eco
+.byt $02, $43, $37, $4b, $3a, $3f, $4a, $02 ; maudit
+.byt $02, $43, $3f, $3d, $44, $45, $44, $02 ; mignon
+.byt $43, $3b, $39, $3e, $37, $44, $4a, $02 ; mechant
