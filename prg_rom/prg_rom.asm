@@ -185,25 +185,25 @@ data_end:
 credits_begin:
 .asc "           credits",$0a
 .asc $0a
-.asc "           authors",$0a
+.asc "           auteur",$0a
 .asc $0a
 .asc "sylvain gadrat",$0a
 .asc $0a
-.asc "         art-sources",$0a
+.asc "     sources-artistiques",$0a
 .asc $0a
 .asc "bomb party",$0a
-.asc "    by matt hackett of",$0a
+.asc "    par matt hackett de",$0a
 .asc "    lost decade games",$0a
 .asc "twin dragons",$0a
-.asc "    by surt",$0a
+.asc "    par surt",$0a
 .asc "sinbad",$0a
-.asc "    by zi ye",$0a
+.asc "    par zi ye",$0a
 .asc "i like jump rope",$0a
 .asc "perihelium",$0a
 .asc "termosdynamik",$0a
-.asc "    by ozzed",$0a
+.asc "    par ozzed",$0a
 .asc $0a
-.asc "           thanks",$0a
+.asc "           merci",$0a
 .asc $0a
 .asc "antoine gohin",$0a
 .asc "benoit ryder",$0a
