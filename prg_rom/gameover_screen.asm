@@ -135,9 +135,9 @@ jsr audio_music_gameover
 rts
 
 player_names:
-.byt $45, $4a
-.byt $44, $4d
-.byt $3b, $45
+.byt $02, $02
+.byt $3f, $3f
+.byt $02, $3f
 .)
 
 gameover_screen_tick:
