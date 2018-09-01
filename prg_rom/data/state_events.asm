@@ -25,6 +25,7 @@ STATE_ROUTINE(up_tilt_player)
 STATE_ROUTINE(shielding_player)
 STATE_ROUTINE(innexistant_player)
 STATE_ROUTINE(spawn_player)
+STATE_ROUTINE(shieldlag_player)
 
 sinbad_state_offground_routines:
 STATE_ROUTINE(start_falling_player) ; Standing
@@ -52,6 +53,7 @@ STATE_ROUTINE(dummy_routine) ; Up tilt
 STATE_ROUTINE(start_helpless_player) ; Shielding
 STATE_ROUTINE(dummy_routine) ; Innexistant
 STATE_ROUTINE(dummy_routine) ; Spawn
+STATE_ROUTINE(start_helpless_player) ; Shield lag
 
 sinbad_state_onground_routines:
 STATE_ROUTINE(dummy_routine) ; Standing
@@ -79,6 +81,7 @@ STATE_ROUTINE(dummy_routine) ; Up tilt
 STATE_ROUTINE(dummy_routine) ; Shielding
 STATE_ROUTINE(dummy_routine) ; Innexistant
 STATE_ROUTINE(dummy_routine) ; Spawn
+STATE_ROUTINE(dummy_routine) ; Shield lag
 
 sinbad_state_input_routines:
 STATE_ROUTINE(standing_player_input) ; Standing
@@ -106,6 +109,7 @@ STATE_ROUTINE(keep_input_dirty) ; Up tilt
 STATE_ROUTINE(shielding_player_input) ; Shielding
 STATE_ROUTINE(dummy_routine) ; Innexistant
 STATE_ROUTINE(keep_input_dirty) ; Spawn
+STATE_ROUTINE(keep_input_dirty) ; Shield lag
 
 sinbad_state_onhurt_routines:
 STATE_ROUTINE(hurt_player) ; Standing
@@ -133,3 +137,4 @@ STATE_ROUTINE(hurt_player) ; Up tilt
 STATE_ROUTINE(shielding_player_hurt) ; Shielding
 STATE_ROUTINE(dummy_routine) ; Innexistant
 STATE_ROUTINE(dummy_routine) ; Spawn
+STATE_ROUTINE(hurt_player) ; Shield lag

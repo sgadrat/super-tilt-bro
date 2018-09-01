@@ -1812,7 +1812,7 @@ jsr standing_player_input
 jmp end
 
 end_shield:
-jsr start_standing_player
+jsr start_shieldlag_player
 
 end:
 rts
@@ -1872,6 +1872,49 @@ jsr switch_selected_player
 lda HITBOX_DISABLED
 sta player_a_hitbox_enabled, x
 
+rts
+.)
+
+start_shieldlag_player:
+.(
+; Set state
+lda PLAYER_STATE_SHIELDLAG
+sta player_a_state, x
+
+; Fallthrough to set the animation
+.)
+set_shieldlag_animation:
+.(
+; Set the appropriate animation
+lda #<anim_sinbad_shielding_remove
+sta tmpfield1
+lda #>anim_sinbad_shielding_remove
+sta tmpfield2
+jsr set_player_animation
+
+rts
+.)
+
+#define STATE_SINBAD_SHIELDLAG_DURATION #8
+shieldlag_player:
+.(
+; Do not move, velocity tends toward vector (0,0)
+lda #$00
+sta tmpfield4
+sta tmpfield3
+sta tmpfield2
+sta tmpfield1
+lda #$80
+sta tmpfield5
+jsr merge_to_player_velocity
+
+; After move's time is out, go to standing state
+lda player_a_anim_clock, x
+cmp STATE_SINBAD_SHIELDLAG_DURATION
+bne end
+jsr start_standing_player
+
+end:
 rts
 .)
 
