@@ -330,11 +330,12 @@ end_copy:                ;
 lda #0                   ; Buffer's footer
 sta nametable_buffers, x ;
 
-ldx #5              ;
-sleep:              ;
-jsr wait_next_frame ; Sleep between steps, do not update music to let it fade aout as well
-dex                 ;
-bne sleep           ;
+ldx #5               ;
+sleep:               ;
+jsr wait_next_frame  ; Sleep between steps, do not update music to let it fade out as well
+jsr reset_nt_buffers ;
+dex                  ;
+bne sleep            ;
 
 cpy #32*3
 bne fade_step
