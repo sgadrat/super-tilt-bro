@@ -378,3 +378,4 @@
 #define TILE_ICON_PLAYER_2 $97
 #define TILE_ICON_PLAYER_3 $98
 #define TILE_ICON_PLAYER_4 $99
+#define TILE_TEXT_DOT $9a
