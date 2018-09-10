@@ -1818,9 +1818,13 @@ rts
 
 shielding_player_input:
 .(
-; Do the same as standing player, except all buttons are released (start standing in this case)
+; Do the same as standing player except when
+;  all buttons are released - start standing
+;  down is pressed - avoid to reset the shield state (and hit counter)
 lda controller_a_btns, x
 beq end_shield
+cmp #CONTROLLER_INPUT_TECH
+beq end
 
 jsr standing_player_input
 jmp end
