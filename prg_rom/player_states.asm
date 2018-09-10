@@ -1446,6 +1446,20 @@ start_aerial_down_player:
 lda PLAYER_STATE_AERIAL_DOWN
 sta player_a_state, x
 
+; Cancel fastfall
+lda #DEFAULT_GRAVITY     ; Do nothing if not in fast fall
+cmp player_a_gravity, x  ;
+beq end_cancel_fast_fall ;
+
+sta player_a_gravity, x ; Reset gravity
+
+lda #DEFAULT_GRAVITY           ;
+sta player_a_velocity_v, x     ; Reset fall speed
+lda #0                         ;
+sta player_a_velocity_v_low, x ;
+
+end_cancel_fast_fall:
+
 ; Fallthrough to set the animation
 .)
 set_aerial_down_animation:
@@ -1460,7 +1474,7 @@ jsr set_player_animation
 rts
 .)
 
-#define STATE_SINBAD_AERIAL_DOWN_DURATION #21
+#define STATE_SINBAD_AERIAL_DOWN_DURATION #14
 aerial_down_player:
 .(
 jsr apply_gravity
