@@ -26,6 +26,16 @@ lda #>nametable_title
 sta tmpfield2
 jsr draw_zipped_nametable
 
+; Place version number's dot
+lda #221           ; Y
+sta oam_mirror
+lda #TILE_TEXT_DOT ; Tile
+sta oam_mirror+1
+lda #$00           ; Attributes
+sta oam_mirror+2
+lda #215           ; X
+sta oam_mirror+3
+
 ; Reinit cheat code state
 lda #0
 sta title_cheatstate
