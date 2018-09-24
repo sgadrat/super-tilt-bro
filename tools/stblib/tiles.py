@@ -24,6 +24,19 @@ class Tile:
 	def __ne__(self, other):
 		return not self.__eq__(other)
 
+	def flip_h(self):
+		for line in self._representation:
+			for to_swap in [(0,7), (1,6), (2,5), (3,4)]:
+				saved = line[to_swap[0]]
+				line[to_swap[0]] = line[to_swap[1]]
+				line[to_swap[1]] = saved
+
+	def flip_v(self):
+		for to_swap in [(0,7), (1,6), (2,5), (3,4)]:
+			saved = self._representation[to_swap[0]]
+			self._representation[to_swap[0]] = self._representation[to_swap[1]]
+			self._representation[to_swap[1]] = saved
+
 	def add_asm_line(self, line):
 		m = re_tileline.match(line)
 		if m is not None:
