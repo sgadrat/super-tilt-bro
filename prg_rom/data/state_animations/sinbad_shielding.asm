@@ -117,3 +117,4 @@ ANIM_ANIMATION_END
 #print anim_sinbad_shielding_full
 #print anim_sinbad_shielding_partial
 #print anim_sinbad_shielding_limit
+#print anim_sinbad_shielding_remove
