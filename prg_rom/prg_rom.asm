@@ -206,6 +206,7 @@ credits_begin:
 .asc "           thanks",$0a
 .asc $0a
 .asc "antoine gohin",$0a
+.asc "bacteriamage",$0a
 .asc "benoit ryder",$0a
 .asc "bjorn nah",$0a
 .asc "margarita gadrat",$0a
