@@ -210,6 +210,7 @@ credits_begin:
 .asc "benoit ryder",$0a
 .asc "bjorn nah",$0a
 .asc "margarita gadrat",$0a
+.asc "supergameland",$0a
 .byt $00
 credits_end:
 
