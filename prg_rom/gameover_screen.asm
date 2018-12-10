@@ -45,7 +45,7 @@ jsr copy_palette_to_ppu
 lda PPUSTATUS
 lda #$20
 sta PPUADDR
-lda #$9a
+lda #$ba
 sta PPUADDR
 ldx gameover_winner
 ldy #0
