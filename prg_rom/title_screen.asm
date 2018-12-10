@@ -27,7 +27,7 @@ sta tmpfield2
 jsr draw_zipped_nametable
 
 ; Place version number's dot
-lda #221           ; Y
+lda #213           ; Y
 sta oam_mirror
 lda #TILE_TEXT_DOT ; Tile
 sta oam_mirror+1

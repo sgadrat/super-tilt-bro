@@ -205,10 +205,8 @@ credits_begin:
 .asc $0a
 .asc "           merci",$0a
 .asc $0a
-.asc "antoine gohin",$0a
-.asc "bacteriamage",$0a
-.asc "benoit ryder",$0a
-.asc "bjorn nah",$0a
+.asc "antoine gohin   bacteriamage",$0a
+.asc "benoit ryder    bjorn nah",$0a
 .asc "margarita gadrat",$0a
 .asc "supergameland",$0a
 .byt $00
