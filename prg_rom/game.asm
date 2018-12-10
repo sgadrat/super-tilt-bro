@@ -897,15 +897,15 @@ pha
 ; Set on-screen text position depending on the player
 cpx #$00
 beq prepare_player_a
-lda #$94
-sta damages_ppu_position
 lda #$54
+sta damages_ppu_position
+lda #$14
 sta stocks_ppu_position
 jmp end_player_variables
 prepare_player_a:
-lda #$88
-sta damages_ppu_position
 lda #$48
+sta damages_ppu_position
+lda #$08
 sta stocks_ppu_position
 end_player_variables:
 
