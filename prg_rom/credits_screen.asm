@@ -5,21 +5,12 @@ line_num = $0005
 char_cursor_low = $0006
 char_cursor_high = $0007
 
-; Point PPU to Background palette 0 (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
-lda PPUSTATUS
-lda #$3f
-sta PPUADDR
-lda #$00
-sta PPUADDR
-
-; Write palette_data in actual ppu palettes (reuse title screen palette)
-ldx #$00
-copy_palette:
-lda palette_title, x
-sta PPUDATA
-inx
-cpx #$20
-bne copy_palette
+; Construct nt buffers for palettes (to avoid changing it mid-frame)
+lda #<palette_title
+sta tmpfield1
+lda #>palette_title
+sta tmpfield2
+jsr construct_palettes_nt_buffer
 
 ; Clear background
 lda #$00

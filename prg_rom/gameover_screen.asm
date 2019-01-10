@@ -2,28 +2,34 @@
 
 init_gameover_screen:
 .(
-; Point PPU to Background palette 0 (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
-lda PPUSTATUS
-lda #$3f
-sta PPUADDR
-lda #$00
-sta PPUADDR
-
-; Write palette_data in actual ppu palettes
-ldx #$00
-copy_palette:
-lda palette_gameover, x
-sta PPUDATA
-inx
-cpx #$20
-bne copy_palette
-
 ; Copy background from PRG-rom to PPU nametable
 lda #<nametable_gameover
 sta tmpfield1
 lda #>nametable_gameover
 sta tmpfield2
 jsr draw_zipped_nametable
+
+; Wait the begining of a VBI before writing data to PPU's palettes
+bit PPUSTATUS
+lda #$80
+wait_vbi:
+	bit PPUSTATUS
+	beq wait_vbi
+
+; Write screen's palettes in PPU
+lda PPUSTATUS ;
+lda #$3f      ; Point PPU to Background palette 0
+sta PPUADDR   ; (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
+lda #$00      ;
+sta PPUADDR   ;
+
+ldx #$00                ;
+copy_palette:           ;
+lda palette_gameover, x ;
+sta PPUDATA             ; Write palette_data in actual ppu palettes
+inx                     ;
+cpx #$20                ;
+bne copy_palette        ;
 
 ; Initialize sprites palettes regarding configuration
 lda #<character_palettes

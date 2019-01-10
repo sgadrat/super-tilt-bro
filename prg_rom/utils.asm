@@ -1019,6 +1019,43 @@ rts
 .)
 .)
 
+; Construct a nametable buffer to replace palettes
+;  tmpfield1,tmpfield2 - new palette data adress (points to 32 bytes to be copied in PPU palettes)
+;
+;  Overwrites register X, register Y and register A
+construct_palettes_nt_buffer:
+.(
+palettes_data = tmpfield1
+
+jsr last_nt_buffer
+
+lda #1                   ; Continuation byte
+sta nametable_buffers, x ;
+
+lda #$3f                   ;
+sta nametable_buffers+1, x ; PPU address
+lda #$00                   ;
+sta nametable_buffers+2, x ;
+
+lda #32                    ; Tiles count
+sta nametable_buffers+3, x ;
+
+ldy #0                         ;
+copy_one_byte:                 ;
+    lda (palettes_data), y     ;
+    sta nametable_buffers+4, x ;
+                               ; Palettes data
+    inx                        ;
+    iny                        ;
+    cpy #32                    ;
+    bne copy_one_byte          ;
+
+lda #0                     ; Next continuation byte
+sta nametable_buffers+4, x ;
+
+rts
+.)
+
 ; Allows to inderectly call a pointed subroutine normally with jsr
 ;  tmpfield1,tmpfield2 - subroutine to call
 call_pointed_subroutine:
