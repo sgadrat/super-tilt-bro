@@ -81,6 +81,12 @@ ldx #1
 jsr place_alternate_palette
 
 ; Initialize weapons palettes
+bit PPUSTATUS     ;
+lda #$80          ; Wait the begining of a VBI before
+wait_vbi:         ; writing data to PPU's palettes
+    bit PPUSTATUS ;
+    beq wait_vbi  ;
+
 lda #<weapon_palettes
 sta tmpfield2
 lda #>weapon_palettes

@@ -5,21 +5,12 @@
 init_character_selection_screen:
 .(
 .(
-; Point PPU to Background palette 0 (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
-lda PPUSTATUS
-lda #$3f
-sta PPUADDR
-lda #$00
-sta PPUADDR
-
-; Write palette_data in actual ppu palettes
-ldx #$00
-copy_palette:
-lda palette_character_selection, x
-sta PPUDATA
-inx
-cpx #$20
-bne copy_palette
+; Construct nt buffers for palettes (to avoid changing it mid-frame)
+lda #<palette_character_selection
+sta tmpfield1
+lda #>palette_character_selection
+sta tmpfield2
+jsr construct_palettes_nt_buffer
 
 ; Copy background from PRG-rom to PPU nametable
 lda #<nametable_character_selection
@@ -44,6 +35,14 @@ sta character_selection_player_b_selected_option
 
 ; Adapt to configuration's state
 jsr character_selection_update_screen
+
+; Wait VBI to process nt buffers
+bit PPUSTATUS ; Clear PPUSTATUS bit 7 to avoid starting at the middle of the current VBI
+
+lda #$80          ;
+wait_vbi:         ; Wait for PPUSTATUS bit 7 to be set
+	bit PPUSTATUS ; indicating the begining of a VBI
+	beq wait_vbi  ;
 
 ; Process the batch of nt buffers immediately (while the PPU is disabled)
 jsr process_nt_buffers
