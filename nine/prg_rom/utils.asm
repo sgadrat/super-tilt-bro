@@ -348,68 +348,148 @@ dummy_routine:
 rts
 .)
 
+; Compute the current transition id (previous game state << 4 + new game state)
+;
+; Output - register A is set to the result
+; Overwrites register A
+get_transition_id:
+.(
+	lda previous_global_game_state
+	asl
+	asl
+	asl
+	asl
+	adc global_game_state
+	rts
+.)
+
 ; Change the game's state
 ;  register A - new game state
 ;
 ; WARNING - This routine never returns. It changes the state then restarts the main loop.
 change_global_game_state:
 .(
-; Save previous game state and set the global_game_state variable
-tax
-lda global_game_state
-sta previous_global_game_state
-txa
-sta global_game_state
+	.(
+		; Save previous game state and set the global_game_state variable
+		tax
+		lda global_game_state
+		sta previous_global_game_state
+		txa
+		sta global_game_state
 
-; Disable rendering
-lda #$00
-sta PPUCTRL
-sta PPUMASK
-sta ppuctrl_val
+		; Begin transition between screens
+		jsr pre_transition
 
-; Clear not processed drawings
-jsr reset_nt_buffers
+		; Disable rendering
+		lda #$00
+		sta PPUCTRL
+		sta PPUMASK
+		sta ppuctrl_val
 
-; Reset scrolling
-lda #$00
-sta scroll_x
-sta scroll_y
+		; Clear not processed drawings
+		jsr reset_nt_buffers
 
-; Reset particle handlers
-jsr particle_handlers_reinit
+		; Reset scrolling
+		lda #$00
+		sta scroll_x
+		sta scroll_y
 
-; Move all sprites offscreen
-ldx #$00
-clr_sprites:
-lda #$FE
-sta oam_mirror, x    ;move all sprites off screen
-inx
-bne clr_sprites
+		; Reset particle handlers
+		jsr particle_handlers_reinit
 
-; Call the appropriate initialization routine
-lda global_game_state
-asl
-tax
-lda game_states_init, x
-sta tmpfield1
-lda game_states_init+1, x
-sta tmpfield2
-jsr call_pointed_subroutine
+		; Move all sprites offscreen
+		ldx #$00
+		clr_sprites:
+		lda #$FE
+		sta oam_mirror, x    ;move all sprites off screen
+		inx
+		bne clr_sprites
 
-; Enable rendering
-lda #%10010000  ;
-sta ppuctrl_val ; Reactivate NMI
-sta PPUCTRL     ;
-jsr wait_next_frame ; Avoid re-enabling mid-frame
-lda #%00011110 ; Enable sprites and background rendering
-sta PPUMASK    ;
+		; Call the appropriate initialization routine
+		lda global_game_state
+		asl
+		tax
+		lda game_states_init, x
+		sta tmpfield1
+		lda game_states_init+1, x
+		sta tmpfield2
+		jsr call_pointed_subroutine
 
-; Clear stack
-ldx #$ff
-txs
+		; Do transition between screens (and reactivate rendering)
+		jsr post_transition
 
-; Go straight to the main loop
-jmp forever
+		; Clear stack
+		ldx #$ff
+		txs
+
+		; Go straight to the main loop
+		jmp forever
+	.)
+
+	; Set register X value to the offset of the appropriate transition in the transition table
+	find_transition_index:
+	.(
+		transition_id = tmpfield1
+
+		jsr get_transition_id
+		sta transition_id
+		ldx #0
+		check_one_entry:
+			lda state_transition_id, x
+			beq not_found
+			cmp tmpfield1
+			beq found
+
+			inx
+			jmp check_one_entry
+
+		not_found:
+			ldx #$ff
+		found:
+		rts
+	.)
+
+	pre_transition:
+	.(
+		jsr find_transition_index
+		cpx #$ff
+		beq end
+
+			lda state_transition_pretransition_lsb, x
+			sta tmpfield1
+			lda state_transition_pretransition_msb, x
+			sta tmpfield2
+			jsr call_pointed_subroutine
+
+		end:
+		rts
+	.)
+
+	post_transition:
+	.(
+		jsr find_transition_index
+		cpx #$ff
+		beq no_transition
+
+			lda state_transition_posttransition_lsb, x
+			sta tmpfield1
+			lda state_transition_posttransition_msb, x
+			sta tmpfield2
+			jsr call_pointed_subroutine
+
+			jmp end
+
+		no_transition:
+			lda #%10010000  ;
+			sta ppuctrl_val ; Reactivate NMI
+			sta PPUCTRL     ;
+			jsr wait_next_frame ; Avoid re-enabling mid-frame
+			lda #%00011110 ; Enable sprites and background rendering
+			sta PPUMASK    ;
+
+		end:
+		rts
+	.)
 .)
 
 ; Copy a compressed nametable to PPU

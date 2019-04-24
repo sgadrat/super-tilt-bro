@@ -132,3 +132,38 @@
 
 #define ANIM_SPRITE(y,tile,attr,x) .byt $01, y, tile, attr, x
 #define ANIM_SPRITE_FOREGROUND(y,tile,attr,x) .byt $11, y, tile, attr, x
+
+;
+; Transition between gamestates
+;  STATE_TRANSITION(previous,new) - ID of the transition from state "previous" and state "new"
+;
+; Context
+;  change_global_gamestate refers to the state transition table to know if a
+;  special routine should be called before running the new state. Such a routine
+;  can create a visual effect to smooth the transition.
+;
+;  Each transition has an ID, constructed from both IDs of the previous and the
+;  new state. The state transition table associate transition IDs to routines.
+;
+; Example
+;  state_transition_id:
+;  .byt STATE_TRANSITION(GAME_STATE_TITLE, GAME_STATE_INGAME)
+;  .byt STATE_TRANSITION(GAME_STATE_INGAME, GAME_STATE_TITLE)
+;  .byt 0
+
+;  state_transition_pretransition_lsb:
+;  .byt <pre_transition_title_to_game
+;  .byt <pre_transition_game_to_title
+;  state_transition_pretransition_msb:
+;  .byt >pre_transition_title_to_game
+;  .byt >pre_transition_game_to_title
+
+;  state_transition_posttransition_lsb:
+;  .byt <post_transition_title_to_game
+;  .byt <post_transition_game_to_title
+;  state_transition_posttransition_msb:
+;  .byt >post_transition_title_to_game
+;  .byt >post_transition_game_to_title
+;
+
+#define STATE_TRANSITION(previous,new) previous * 16 + new

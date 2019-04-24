@@ -33,3 +33,4 @@ VECTOR(character_selection_screen_tick)
 #include "game/logic/game_states/gameover_screen.asm"
 #include "game/logic/game_states/stage_selection_screen.asm"
 #include "game/logic/game_states/title_screen.asm"
+#include "game/logic/game_states/transitions/transitions.asm"
