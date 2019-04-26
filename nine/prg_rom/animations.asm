@@ -201,21 +201,14 @@ animation_tick:
 			; Search the next frame
 			lda #$01                ; Skip frame duration byte
 			jsr add_to_frame_vector ;
-			skip_sprite:
-				lda (frame_vector), y ; Check current sprite continuation byte
+			skip_entry:
+				lda (frame_vector), y ; Check continuation byte
 				beq end_skip_frame    ;
-				sta tmpfield8  ;
-				lda #$05       ;
-				sta tmpfield9  ; Set data length in tmpfield9
-				lda #%00001000 ; hitbox data is 15 bytes long
-				bit tmpfield8  ; other data are 5 bytes long
-				beq inc_cursor ; (counting the continuation byte)
-				lda #15        ; (note - hitboxes are not yet implemented, this code should be adapted when it is done, for now simply keep super tilt bro's code)
-				sta tmpfield9  ;
-				inc_cursor:
-					lda tmpfield9           ; Add data length to the animation vector, to point
-					jsr add_to_frame_vector ; on the next continuation byte
-					jmp skip_sprite
+
+				and #%00001111          ; Add entry length (least significant bits of the opcode) to the
+				jsr add_to_frame_vector ; animation vector, to point on the next continuation byte
+
+				jmp skip_entry
 			end_skip_frame:
 				lda #$01                ; Skip the last continuation byte
 				jsr add_to_frame_vector ;
@@ -292,6 +285,7 @@ draw_anim_frame:
 			; Check continuation byte - zero value means end of data
 			lda (frame_vector), y
 			beq clear_unused_sprites
+			sta continuation_byte
 			iny
 
 			; Move one sprite
@@ -322,6 +316,14 @@ draw_anim_frame:
 			rts
 	.)
 
+	; TODO conditional definition, to be rewritiable by the game
+	animation_frame_entry_handlers_lsb:
+	.byt <anim_frame_move_sprite, <anim_frame_move_sprite
+	.byt <dummy_routine, <dummy_routine ; TODO hack to skip unknown stb entries
+	animation_frame_entry_handlers_msb:
+	.byt >anim_frame_move_sprite, >anim_frame_move_sprite
+	.byt >dummy_routine, >dummy_routine ; TODO hack
+
 	anim_frame_move_sprite:
 	.(
 		; Copy sprite data
@@ -336,24 +338,24 @@ draw_anim_frame:
 		lda animation_direction
 		beq default_direction
 
-		lda #$40                ; Flip horizontally attributes
-		sta attributes_modifier ;
+			lda #$40                ; Flip horizontally attributes
+			sta attributes_modifier ;
 
-		lda #%00010000              ;
-		bit continuation_byte       ;
-		beq use_last_sprite         ;
-		lda #0                      ;
-		jmp set_sprite_used         ; Use the last sprite unless explicitely foreground
-		use_last_sprite:            ;
-		lda #1                      ;
-		set_sprite_used:            ;
-		sta sprite_used             ;
-		jmp end_init_direction_data ;
+			lda continuation_byte        ;
+			cmp #ANIM_OPCODE_SPRITE      ;
+			beq use_last_sprite          ;
+				lda #0                   ;
+				jmp set_sprite_used      ; Use the last sprite unless explicitely foreground
+			use_last_sprite:             ;
+				lda #1                   ;
+			set_sprite_used:             ;
+			sta sprite_used              ;
+			jmp end_init_direction_data  ;
 
 		default_direction:
-		lda #$00                ;
-		sta attributes_modifier ; Do not flip attributes
-		sta sprite_used         ; Always use the first sprite
+			lda #$00                ;
+			sta attributes_modifier ; Do not flip attributes
+			sta sprite_used         ; Always use the first sprite
 
 		end_init_direction_data:
 

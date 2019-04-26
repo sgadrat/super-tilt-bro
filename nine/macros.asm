@@ -130,8 +130,11 @@
 
 #define ANIM_ANIMATION_END .byt $00
 
-#define ANIM_SPRITE(y,tile,attr,x) .byt $01, y, tile, attr, x
-#define ANIM_SPRITE_FOREGROUND(y,tile,attr,x) .byt $11, y, tile, attr, x
+#define ANIM_OPCODE_SPRITE $50
+#define ANIM_OPCODE_SPRITE_FOREGROUND $51
+
+#define ANIM_SPRITE(y,tile,attr,x) .byt ANIM_OPCODE_SPRITE, y, tile, attr, x
+#define ANIM_SPRITE_FOREGROUND(y,tile,attr,x) .byt ANIM_OPCODE_SPRITE_FOREGROUND, y, tile, attr, x
 
 ;
 ; Transition between gamestates
