@@ -1,36 +1,51 @@
 ; Start a new animation for the player
 ;  X - Player number
-;  tmpfield1 - Animation's vector (low byte)
-;  tmpfield2 - Animation's vector (high byte)
+;  tmpfield1 - Animation's data vector (low byte)
+;  tmpfield2 - Animation's data vector (high byte)
+; Overwrites register A, register Y, tmpfield11, tmpfield12, tmpfield13, tmpfield14 and tmpfield16
+; Outputs - tmpfield11+tmpfield12 is a vector to the player's animation state
 set_player_animation:
 .(
-new_animation = tmpfield1
+	new_animation = tmpfield1
+	animation_state_vector = tmpfield11 ; Not movable - parameter of animation_state_change_animation routine
+	animation_state_data = tmpfield13 ; Not movable - parameter of animation_state_change_animation routine ; TODO take it directly as parameter
 
-; X = X * 2 (we use it to reference a 2 bytes field)
-txa
-asl
-tax
+	; Chose animation state
+	txa
 
-; Set the player's animation
-lda new_animation
-sta player_a_animation, x
-lda new_animation+1
-sta player_a_animation+1, x
+#if ANIMATION_STATE_LENGTH <> 12
+#error code expects an animation state's length of 12 bytes
+#endif
+	asl            ;
+	asl            ;
+	sta tmpfield16 ;
+	asl            ; A = X * ANIMATION_STATE_LENGTH (== offset of the player's animation state)
+	clc            ;
+	adc tmpfield16 ;
 
-; Reset x to it's original value
-txa
-lsr
-tax
+	clc
+	adc #<player_a_animation
+	sta animation_state_vector
+	lda #0
+	adc #>player_a_animation
+	sta animation_state_vector+1
 
-; Reset animation's clock
-lda #$00
-sta player_a_anim_clock, x
+	; Copy animation address
+	;TODO take it directly as parameter
+	lda new_animation
+	sta animation_state_data
+	lda new_animation+1
+	sta animation_state_data+1
 
-; Set animation's direction
-lda player_a_direction, x
-sta player_a_animation_direction, x
+	; Reset animation
+	jsr animation_state_change_animation
 
-rts
+	; Set animation's direction
+	lda player_a_direction, x
+	ldy #ANIMATION_STATE_OFFSET_DIRECTION
+	sta (animation_state_vector), y
+
+	rts
 .)
 
 ; Jump to a callback according to player's controller state
@@ -623,6 +638,7 @@ sta player_a_state, x
 
 lda #0
 sta player_a_state_field1, x
+sta player_a_state_clock, x
 
 ; Fallthrough to set the animation
 .)
@@ -641,8 +657,11 @@ rts
 #define STATE_SINBAD_JUMP_PREPARATION_END #4
 jumping_player:
 .(
+; Tick clock
+inc player_a_state_clock, x
+
 ; Wait for the preparation to end to begin to jump
-lda player_a_anim_clock, x
+lda player_a_state_clock, x
 cmp STATE_SINBAD_JUMP_PREPARATION_END
 bcc end
 beq begin_to_jump
@@ -699,7 +718,7 @@ jumping_player_input:
 ; and by aerial movements after that
 lda player_a_num_aerial_jumps, x ; performing aerial jump, not
 bne not_grounded                 ; grounded
-lda player_a_anim_clock, x            ;
+lda player_a_state_clock, x           ;
 cmp STATE_SINBAD_JUMP_PREPARATION_END ; Still preparing the jump
 bcc grounded                          ;
 
@@ -748,6 +767,10 @@ inc player_a_num_aerial_jumps, x
 lda PLAYER_STATE_JUMPING
 sta player_a_state, x
 
+; Reset clock
+lda #0
+sta player_a_state_clock, x
+
 lda #$00
 sta player_a_velocity_v, x
 lda #$00
@@ -770,6 +793,8 @@ rts
 start_jabbing_player:
 lda PLAYER_STATE_JABBING
 sta player_a_state, x
+lda #0
+sta player_a_state_clock, x
 set_jabbing_animation:
 .(
 ; Set the appropriate animation
@@ -785,6 +810,9 @@ rts
 #define STATE_SINBAD_JAB_DURATION #14
 jabbing_player:
 .(
+; Tick clock
+inc player_a_state_clock, x
+
 ; Do not move, velocity tends toward vector (0,0)
 lda #$00
 sta tmpfield4
@@ -796,7 +824,7 @@ sta tmpfield5
 jsr merge_to_player_velocity
 
 ; At the end of the move, return to standing state
-lda player_a_anim_clock, x
+lda player_a_state_clock, x
 cmp STATE_SINBAD_JAB_DURATION
 bne end
 jsr start_standing_player
@@ -846,7 +874,8 @@ jmp set_anim_dir
 set_anim_left:
 lda DIRECTION_LEFT
 set_anim_dir:
-sta player_a_animation_direction, x
+ldy #ANIMATION_STATE_OFFSET_DIRECTION
+sta (tmpfield11), y
 
 rts
 .)
@@ -1039,6 +1068,10 @@ jsr set_player_animation
 lda PLAYER_STATE_SIDE_TILT
 sta player_a_state, x
 
+; Initialize the clock
+lda #0
+sta player_a_state_clock,x
+
 ; Set initial velocity
 lda #$fd
 sta player_a_velocity_v, x
@@ -1064,7 +1097,9 @@ rts
 #define STATE_SINBAD_SIDE_TILT_DURATION #21
 side_tilt_player:
 .(
-lda player_a_anim_clock, x
+inc player_a_state_clock, x
+
+lda player_a_state_clock, x
 cmp STATE_SINBAD_SIDE_TILT_DURATION
 bne update_velocity
 jsr start_standing_player
@@ -1138,6 +1173,9 @@ sta player_a_velocity_h, x
 sta player_a_velocity_v_low, x
 sta player_a_velocity_v, x
 
+; Reset clock
+sta player_a_state_clock, x
+
 ; Set substate to "charging"
 sta player_a_state_field1, x
 
@@ -1158,12 +1196,15 @@ rts
 #define STATE_SINBAD_SIDE_SPECIAL_PREPARATION_DURATION #120
 side_special_player:
 .(
+; Tick clock
+inc player_a_state_clock, x
+
 ; Move if the substate is set to moving
 lda player_a_state_field1, x
 bne moving
 
 ; Check if there is reason to begin to move
-lda player_a_anim_clock, x
+lda player_a_state_clock, x
 cmp STATE_SINBAD_SIDE_SPECIAL_PREPARATION_DURATION
 bcs start_moving
 lda controller_a_btns, x
@@ -1181,7 +1222,7 @@ lda #$01
 sta player_a_state_field1, x
 
 ; Store fly duration (fly_duration = 5 + charge_duration / 8)
-lda player_a_anim_clock, x
+lda player_a_state_clock, x
 lsr
 lsr
 lsr
@@ -1217,7 +1258,7 @@ lda #$00
 sta player_a_velocity_h_low, x
 
 ; After move's time is out, go to helpless state
-lda player_a_anim_clock, x
+lda player_a_state_clock, x
 cmp player_a_state_field2, x
 bne end
 jsr start_helpless_player
@@ -1259,6 +1300,10 @@ start_landing_player:
 lda PLAYER_STATE_LANDING
 sta player_a_state, x
 
+; Reset clock
+lda #0
+sta player_a_state_clock, x
+
 ; Cap initial velocity
 lda player_a_velocity_h, x
 jsr absolute_a
@@ -1296,6 +1341,9 @@ rts
 #define STATE_SINBAD_LANDING_DURATION #6
 landing_player:
 .(
+; Tick clock
+inc player_a_state_clock, x
+
 ; Do not move, velocity tends toward vector (0,0)
 lda #$00
 sta tmpfield4
@@ -1307,7 +1355,7 @@ sta tmpfield5
 jsr merge_to_player_velocity
 
 ; After move's time is out, go to standing state
-lda player_a_anim_clock, x
+lda player_a_state_clock, x
 cmp STATE_SINBAD_LANDING_DURATION
 bne end
 jsr start_standing_player
@@ -1321,6 +1369,10 @@ start_crashing_player:
 ; Set state
 lda PLAYER_STATE_CRASHING
 sta player_a_state, x
+
+; Reset clock
+lda #0
+sta player_a_state_clock, x
 
 ; Fallthrough to set the animation
 .)
@@ -1342,6 +1394,9 @@ rts
 #define STATE_SINBAD_CRASHING_DURATION #30
 crashing_player:
 .(
+; Tick clock
+inc player_a_state_clock, x
+
 ; Do not move, velocity tends toward vector (0,0)
 lda #$00
 sta tmpfield4
@@ -1353,7 +1408,7 @@ sta tmpfield5
 jsr merge_to_player_velocity
 
 ; After move's time is out, go to standing state
-lda player_a_anim_clock, x
+lda player_a_state_clock, x
 cmp STATE_SINBAD_CRASHING_DURATION
 bne end
 jsr start_standing_player
@@ -1367,6 +1422,10 @@ start_down_tilt_player:
 ; Set state
 lda PLAYER_STATE_DOWN_TILT
 sta player_a_state, x
+
+; Reset clock
+lda #0
+sta player_a_state_clock, x
 
 ; Fallthrough to set the animation
 .)
@@ -1385,6 +1444,9 @@ rts
 #define STATE_SINBAD_DOWNTILT_DURATION #21
 down_tilt_player:
 .(
+; Tick clock
+inc player_a_state_clock, x
+
 ; Do not move, velocity tends toward vector (0,0)
 lda #$00
 sta tmpfield4
@@ -1396,7 +1458,7 @@ sta tmpfield5
 jsr merge_to_player_velocity
 
 ; After move's time is out, go to standing state
-lda player_a_anim_clock, x
+lda player_a_state_clock, x
 cmp STATE_SINBAD_DOWNTILT_DURATION
 bne end
 jsr start_standing_player
@@ -1410,6 +1472,10 @@ start_aerial_side_player:
 ; Set state
 lda PLAYER_STATE_AERIAL_SIDE
 sta player_a_state, x
+
+; Reset clock
+lda #0
+sta player_a_state_clock, x
 
 ; Fallthrough to set the animation
 .)
@@ -1431,7 +1497,8 @@ aerial_side_player:
 jsr apply_gravity
 
 ; Wait for move's timeout
-lda player_a_anim_clock, x
+inc player_a_state_clock, x
+lda player_a_state_clock, x
 cmp STATE_SINBAD_AERIAL_SIDE_DURATION
 bne end
 jsr start_falling_player
@@ -1445,6 +1512,10 @@ start_aerial_down_player:
 ; Set state
 lda PLAYER_STATE_AERIAL_DOWN
 sta player_a_state, x
+
+; Reset clock
+lda #0
+sta player_a_state_clock, x
 
 ; Cancel fastfall
 lda #DEFAULT_GRAVITY     ; Do nothing if not in fast fall
@@ -1480,7 +1551,8 @@ aerial_down_player:
 jsr apply_gravity
 
 ; Wait for move's timeout
-lda player_a_anim_clock, x
+inc player_a_state_clock, x
+lda player_a_state_clock, x
 cmp STATE_SINBAD_AERIAL_DOWN_DURATION
 bne end
 jsr start_falling_player
@@ -1494,6 +1566,10 @@ start_aerial_up_player:
 ; Set state
 lda PLAYER_STATE_AERIAL_UP
 sta player_a_state, x
+
+; Reset clock
+lda #0
+sta player_a_state_clock, x
 
 ; Fallthrough to set the animation
 .)
@@ -1515,7 +1591,8 @@ aerial_up_player:
 jsr apply_gravity
 
 ; Wait for move's timeout
-lda player_a_anim_clock, x
+inc player_a_state_clock, x
+lda player_a_state_clock, x
 cmp STATE_SINBAD_AERIAL_UP_DURATION
 bne end
 jsr start_falling_player
@@ -1529,6 +1606,10 @@ start_aerial_neutral_player:
 ; Set state
 lda PLAYER_STATE_AERIAL_NEUTRAL
 sta player_a_state, x
+
+; Reset clock
+lda #0
+sta player_a_state_clock, x
 
 ; Fallthrough to set the animation
 .)
@@ -1550,7 +1631,8 @@ aerial_neutral_player:
 jsr apply_gravity
 
 ; Wait for move's timeout
-lda player_a_anim_clock, x
+inc player_a_state_clock, x
+lda player_a_state_clock, x
 cmp STATE_SINBAD_AERIAL_NEUTRAL_DURATION
 bne end
 jsr start_falling_player
@@ -1620,6 +1702,9 @@ sta player_a_velocity_h, x
 sta player_a_velocity_v_low, x
 sta player_a_velocity_v, x
 
+; Reset clock
+sta player_a_state_clock, x
+
 ; Set substate to "charging"
 sta player_a_state_field1, x
 
@@ -1640,12 +1725,15 @@ rts
 #define STATE_SINBAD_SPE_UP_PREPARATION_DURATION #3
 spe_up_player:
 .(
+; Tick clock
+inc player_a_state_clock, x
+
 ; Move if the substate is set to moving
 lda player_a_state_field1, x
 bne moving
 
 ; Check if there is reason to begin to move
-lda player_a_anim_clock, x
+lda player_a_state_clock, x
 cmp STATE_SINBAD_SPE_UP_PREPARATION_DURATION
 bcs start_moving
 
@@ -1696,6 +1784,10 @@ start_spe_down_player:
 lda PLAYER_STATE_SPE_DOWN
 sta player_a_state, x
 
+; Reset clock
+lda #0
+sta player_a_state_clock, x
+
 ; Fallthrough to set the animation
 .)
 set_spe_down_animation:
@@ -1716,7 +1808,8 @@ spe_down_player:
 jsr apply_gravity
 
 ; Wait for move's timeout
-lda player_a_anim_clock, x
+inc player_a_state_clock, x
+lda player_a_state_clock, x
 cmp STATE_SINBAD_SPE_DOWN_DURATION
 bne end
 
@@ -1737,6 +1830,10 @@ start_up_tilt_player:
 ; Set state
 lda PLAYER_STATE_UP_TILT
 sta player_a_state, x
+
+; Reset clock
+lda #0
+sta player_a_state_clock, x
 
 ; Fallthrough to set the animation
 .)
@@ -1766,7 +1863,8 @@ sta tmpfield5
 jsr merge_to_player_velocity
 
 ; After move's time is out, go to standing state
-lda player_a_anim_clock, x
+inc player_a_state_clock, x
+lda player_a_state_clock, x
 cmp STATE_SINBAD_UPTILT_DURATION
 bne end
 jsr start_standing_player
@@ -1806,13 +1904,6 @@ rts
 
 shielding_player:
 .(
-; After move's time is out, go to standing state
-lda player_a_anim_clock, x
-cmp STATE_SINBAD_UPTILT_DURATION
-bne end
-jsr start_standing_player
-
-end:
 rts
 .)
 
@@ -1899,6 +1990,10 @@ start_shieldlag_player:
 lda PLAYER_STATE_SHIELDLAG
 sta player_a_state, x
 
+; Reset clock
+lda #0
+sta player_a_state_clock, x
+
 ; Fallthrough to set the animation
 .)
 set_shieldlag_animation:
@@ -1927,7 +2022,8 @@ sta tmpfield5
 jsr merge_to_player_velocity
 
 ; After move's time is out, go to standing state
-lda player_a_anim_clock, x
+inc player_a_state_clock, x
+lda player_a_state_clock, x
 cmp STATE_SINBAD_SHIELDLAG_DURATION
 bne end
 jsr start_standing_player
@@ -1977,6 +2073,10 @@ start_spawn_player:
 lda PLAYER_STATE_SPAWN
 sta player_a_state, x
 
+; Reset clock
+lda #0
+sta player_a_state_clock, x
+
 ; Fallthrough to set the animation
 .)
 set_spawn_animation:
@@ -1994,7 +2094,8 @@ rts
 #define STATE_SINBAD_SPAWN_DURATION #50
 spawn_player:
 .(
-lda player_a_anim_clock, x
+inc player_a_state_clock, x
+lda player_a_state_clock, x
 cmp STATE_SINBAD_SPAWN_DURATION
 bne end
 jsr start_standing_player

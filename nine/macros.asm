@@ -130,8 +130,8 @@
 
 #define ANIM_ANIMATION_END .byt $00
 
-#define ANIM_OPCODE_SPRITE $50
-#define ANIM_OPCODE_SPRITE_FOREGROUND $51
+#define ANIM_OPCODE_SPRITE $05
+#define ANIM_OPCODE_SPRITE_FOREGROUND $15
 
 #define ANIM_SPRITE(y,tile,attr,x) .byt ANIM_OPCODE_SPRITE, y, tile, attr, x
 #define ANIM_SPRITE_FOREGROUND(y,tile,attr,x) .byt ANIM_OPCODE_SPRITE_FOREGROUND, y, tile, attr, x

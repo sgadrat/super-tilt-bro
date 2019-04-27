@@ -1,202 +1,223 @@
 init_game_state:
 .(
-; Clear background of nametable 2
-jsr clear_bg_bot_left
+	.(
+		; Clear background of nametable 2
+		jsr clear_bg_bot_left
 
-; Ensure game state is zero
-ldx #$00
-lda #$00
-zero_game_state:
-sta $00, x
-inx
-cpx #ZERO_PAGE_GLOBAL_FIELDS_BEGIN
-bne zero_game_state
+		; Ensure game state is zero
+		ldx #$00
+		lda #$00
+		zero_game_state:
+		sta $00, x
+		inx
+		cpx #ZERO_PAGE_GLOBAL_FIELDS_BEGIN
+		bne zero_game_state
 
-; Call stage initialization routine
-lda config_selected_stage
-asl
-tax
-lda stages_init_routine, x
-sta tmpfield1
-lda stages_init_routine+1, x
-sta tmpfield2
-jsr call_pointed_subroutine
+		; Call stage initialization routine
+		lda config_selected_stage
+		asl
+		tax
+		lda stages_init_routine, x
+		sta tmpfield1
+		lda stages_init_routine+1, x
+		sta tmpfield2
+		jsr call_pointed_subroutine
 
-; Reset screen shaking
-lda #0
-sta screen_shake_counter
+		; Reset screen shaking
+		lda #0
+		sta screen_shake_counter
 
-; Setup logical game state to the game startup configuration
-lda DIRECTION_LEFT
-sta player_b_direction
+		; Setup logical game state to the game startup configuration
+		lda DIRECTION_LEFT
+		sta player_b_direction
 
-lda DIRECTION_RIGHT
-sta player_a_direction
+		lda DIRECTION_RIGHT
+		sta player_a_direction
 
-lda HITBOX_DISABLED
-sta player_a_hitbox_enabled
-sta player_b_hitbox_enabled
+		lda HITBOX_DISABLED
+		sta player_a_hitbox_enabled
+		sta player_b_hitbox_enabled
 
-ldx #0
-position_player_loop:
-lda stage_data+STAGE_HEADER_OFFSET_PAY_HIGH, x
-sta player_a_y, x
-lda stage_data+STAGE_HEADER_OFFSET_PAY_LOW, x
-sta player_a_y_low, x
-lda stage_data+STAGE_HEADER_OFFSET_PAX_HIGH, x
-sta player_a_x, x
-lda stage_data+STAGE_HEADER_OFFSET_PAX_LOW, x
-sta player_a_x_low, x
-inx
-cpx #2
-bne position_player_loop
+		ldx #0
+		position_player_loop:
+		lda stage_data+STAGE_HEADER_OFFSET_PAY_HIGH, x
+		sta player_a_y, x
+		lda stage_data+STAGE_HEADER_OFFSET_PAY_LOW, x
+		sta player_a_y_low, x
+		lda stage_data+STAGE_HEADER_OFFSET_PAX_HIGH, x
+		sta player_a_x, x
+		lda stage_data+STAGE_HEADER_OFFSET_PAX_LOW, x
+		sta player_a_x_low, x
+		inx
+		cpx #2
+		bne position_player_loop
 
-lda #DEFAULT_GRAVITY
-sta player_a_gravity
-sta player_b_gravity
-lda config_initial_stocks
-sta player_a_stocks
-sta player_b_stocks
+		lda #DEFAULT_GRAVITY
+		sta player_a_gravity
+		sta player_b_gravity
+		lda config_initial_stocks
+		sta player_a_stocks
+		sta player_b_stocks
 
-ldx #$00
-jsr start_spawn_player
-ldx #$01
-jsr start_spawn_player
+		lda #<player_a_animation                                       ;
+		sta tmpfield11                                                 ;
+		lda #>player_a_animation                                       ;
+		sta tmpfield12                                                 ;
+		jsr animation_init_state                                       ;
+		lda #$00                                                       ;
+		sta player_a_animation+ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM ;
+		lda #$0f                                                       ;
+		sta player_a_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM  ; Initialize players animation state
+		lda #<player_b_animation                                       ; (voluntarily let garbage in data vector, it will be overriden by initializing player's state)
+		sta tmpfield11                                                 ;
+		lda #>player_b_animation                                       ;
+		sta tmpfield12                                                 ;
+		jsr animation_init_state                                       ;
+		lda #$10                                                       ;
+		sta player_b_animation+ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM ;
+		lda #$1f                                                       ;
+		sta player_b_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM  ;
 
-; Construct players palette swap buffers
-ldy #0 ; Y points on players_palettes's next byte
+		ldx #$00
+		jsr start_spawn_player
+		ldx #$01
+		jsr start_spawn_player
 
-jsr place_player_a_header
-ldx #0
-jsr place_character_palette
-jsr place_player_a_header
-ldx #0
-jsr place_alternate_palette
+		; Construct players palette swap buffers
+		ldy #0 ; Y points on players_palettes's next byte
 
-jsr place_player_b_header
-ldx #1
-jsr place_character_palette
-jsr place_player_b_header
-ldx #1
-jsr place_alternate_palette
+		jsr place_player_a_header
+		ldx #0
+		jsr place_character_palette
+		jsr place_player_a_header
+		ldx #0
+		jsr place_alternate_palette
 
-; Initialize weapons palettes
-bit PPUSTATUS     ;
-lda #$80          ; Wait the begining of a VBI before
-wait_vbi:         ; writing data to PPU's palettes
-    bit PPUSTATUS ;
-    beq wait_vbi  ;
+		jsr place_player_b_header
+		ldx #1
+		jsr place_character_palette
+		jsr place_player_b_header
+		ldx #1
+		jsr place_alternate_palette
 
-lda #<weapon_palettes
-sta tmpfield2
-lda #>weapon_palettes
-sta tmpfield3
+		; Initialize weapons palettes
+		bit PPUSTATUS     ;
+		lda #$80          ; Wait the begining of a VBI before
+		wait_vbi:         ; writing data to PPU's palettes
+			bit PPUSTATUS ;
+			beq wait_vbi  ;
 
-ldx #$15
-lda config_player_a_weapon_palette
-sta tmpfield1
-jsr copy_palette_to_ppu
+		lda #<weapon_palettes
+		sta tmpfield2
+		lda #>weapon_palettes
+		sta tmpfield3
 
-ldx #$1d
-lda config_player_b_weapon_palette
-sta tmpfield1
-jsr copy_palette_to_ppu
+		ldx #$15
+		lda config_player_a_weapon_palette
+		sta tmpfield1
+		jsr copy_palette_to_ppu
 
-; Move sprites according to the initial state
-jsr update_sprites
+		ldx #$1d
+		lda config_player_b_weapon_palette
+		sta tmpfield1
+		jsr copy_palette_to_ppu
 
-; Change for ingame music
-jsr audio_music_power
+		; Move sprites according to the initial state
+		jsr update_sprites
 
-; Initialize AI
-jsr ai_init
+		; Change for ingame music
+		jsr audio_music_power
 
-rts
+		; Initialize AI
+		jsr ai_init
 
-place_player_a_header:
-.(
-ldx #0
-copy_one_byte:
-lda header_player_a, x
-sta players_palettes, y
-iny
-inx
-cpx #4
-bne copy_one_byte
-rts
-.)
+		rts
+	.)
 
-place_player_b_header:
-.(
-ldx #0
-copy_one_byte:
-lda header_player_b, x
-sta players_palettes, y
-iny
-inx
-cpx #4
-bne copy_one_byte
-rts
-.)
+	place_player_a_header:
+	.(
+		ldx #0
+		copy_one_byte:
+		lda header_player_a, x
+		sta players_palettes, y
+		iny
+		inx
+		cpx #4
+		bne copy_one_byte
+		rts
+	.)
 
-place_character_palette:
-.(
-lda config_player_a_character_palette, x
-asl
-;clc ; useless, asl shall not overflow
-adc config_player_a_character_palette, x
-tax
-lda character_palettes, x
-sta players_palettes, y
-iny
-inx
-lda character_palettes, x
-sta players_palettes, y
-iny
-inx
-lda character_palettes, x
-sta players_palettes, y
-iny
-inx
+	place_player_b_header:
+	.(
+		ldx #0
+		copy_one_byte:
+		lda header_player_b, x
+		sta players_palettes, y
+		iny
+		inx
+		cpx #4
+		bne copy_one_byte
+		rts
+	.)
 
-lda #0
-sta players_palettes, y
-iny
+	place_character_palette:
+	.(
+		lda config_player_a_character_palette, x
+		asl
+		;clc ; useless, asl shall not overflow
+		adc config_player_a_character_palette, x
+		tax
+		lda character_palettes, x
+		sta players_palettes, y
+		iny
+		inx
+		lda character_palettes, x
+		sta players_palettes, y
+		iny
+		inx
+		lda character_palettes, x
+		sta players_palettes, y
+		iny
+		inx
 
-rts
-.)
+		lda #0
+		sta players_palettes, y
+		iny
 
-place_alternate_palette:
-.(
-lda config_player_a_character_palette, x
-asl
-;clc ; useless, asl shall not overflow
-adc config_player_a_character_palette, x
-tax
-lda character_palettes_alternate, x
-sta players_palettes, y
-iny
-inx
-lda character_palettes_alternate, x
-sta players_palettes, y
-iny
-inx
-lda character_palettes_alternate, x
-sta players_palettes, y
-iny
-inx
+		rts
+	.)
 
-lda #0
-sta players_palettes, y
-iny
+	place_alternate_palette:
+	.(
+		lda config_player_a_character_palette, x
+		asl
+		;clc ; useless, asl shall not overflow
+		adc config_player_a_character_palette, x
+		tax
+		lda character_palettes_alternate, x
+		sta players_palettes, y
+		iny
+		inx
+		lda character_palettes_alternate, x
+		sta players_palettes, y
+		iny
+		inx
+		lda character_palettes_alternate, x
+		sta players_palettes, y
+		iny
+		inx
 
-rts
-.)
+		lda #0
+		sta players_palettes, y
+		iny
 
-header_player_a:
-.byt $01, $3f, $11, $03
-header_player_b:
-.byt $01, $3f, $19, $03
+		rts
+	.)
+
+	header_player_a:
+	.byt $01, $3f, $11, $03
+	header_player_b:
+	.byt $01, $3f, $19, $03
 .)
 
 game_tick:
@@ -1020,148 +1041,67 @@ rts
 .)
 .)
 
-;TODO new API
 update_sprites:
 .(
-; Pretty names
-animation_vector = tmpfield3   ; Not movable - Used as parameter for draw_anim_frame subroutine
-first_sprite_index = tmpfield5 ; Not movable - Used as parameter for draw_anim_frame subroutine
-last_sprite_index = tmpfield6  ; Not movable - Used as parameter for draw_anim_frame subroutine
-frame_first_tick = tmpfield7  ; Not movable - Used as parameter for draw_anim_frame subroutine
-animation_direction = tmpfield8 ; Not movable - Used as parameter for draw_anim_frame subroutine
+	; Pretty names
+	animation_vector = tmpfield11 ; Not movable - Used as parameter for animation_draw subroutine
+	camera_x = tmpfield13         ; Not movable - Used as parameter for animation_draw subroutine
+	camera_y = tmpfield15         ; Not movable - Used as parameter for animation_draw subroutine
 
-.(
-;
-; Players animation
-;
+	; Player A
+	lda player_a_x
+	sta player_a_animation+ANIMATION_STATE_OFFSET_X_LSB
+	lda player_a_y
+	sta player_a_animation+ANIMATION_STATE_OFFSET_Y_LSB
+	lda #0
+	sta player_a_animation+ANIMATION_STATE_OFFSET_X_MSB
+	sta player_a_animation+ANIMATION_STATE_OFFSET_Y_MSB
+	;TODO check if true - it is actually handled by player state's routine
+	; and check why we have player_a_direction and player_a_animation_direction - idea certainly because of thrown mode animation direction does not depend on player's direction
+	;lda player_a_direction
+	;sta player_a_animation+ANIMATION_STATE_OFFSET_DIRECTION
 
-ldx #$00
+	lda #<player_a_animation
+	sta animation_vector
+	lda #>player_a_animation
+	sta animation_vector+1
+	lda #0
+	sta camera_x
+	sta camera_x+1
+	sta camera_y
+	sta camera_y+1
+	jsr animation_draw
+	jsr animation_tick
 
-player_animation:
-ldy #$00
-lda #$00
-sta frame_first_tick
+	; Player B
+	lda player_b_x
+	sta player_b_animation+ANIMATION_STATE_OFFSET_X_LSB
+	lda player_b_y
+	sta player_b_animation+ANIMATION_STATE_OFFSET_Y_LSB
+	lda #0
+	sta player_b_animation+ANIMATION_STATE_OFFSET_X_MSB
+	sta player_b_animation+ANIMATION_STATE_OFFSET_Y_MSB
+	;TODO check if true - it is actually handled by player state's routine
+	;lda player_b_direction
+	;sta player_b_animation+ANIMATION_STATE_OFFSET_DIRECTION
 
-; Store current player's animation information to a player independent location
-jsr store_player_anim_parameters
+	lda #<player_b_animation
+	sta animation_vector
+	lda #>player_b_animation
+	sta animation_vector+1
+	lda #0
+	sta camera_x
+	sta camera_x+1
+	sta camera_y
+	sta camera_y+1
+	jsr animation_draw
+	jsr animation_tick
 
-; New frame (search for the frame on time with clock)
-new_frame:
-lda (animation_vector), y ; Load frame duration
-beq loop_animation ; Frame of duration 0 means end of animation
-clc                        ; Compute current frame's clock end
-adc frame_first_tick       ;
-cmp player_a_anim_clock, x  ;
-beq search_next_frame       ; If the current frame ends after the clock time, draw it
-bcs draw_current_frame      ;
-search_next_frame:
-sta frame_first_tick ; Store next frame's clock begin (= current frame's clock end)
-
-; Search the next frame
-lda #$01
-jsr add_to_anim_vector
-skip_sprite:
-lda (animation_vector), y ; Check current sprite continuation byte
-beq end_skip_frame        ;
-sta tmpfield8  ;
-lda #$05       ;
-sta tmpfield9  ; Set data length in tmpfield9
-lda #%00001000 ; hitbox data is 15 bytes long
-bit tmpfield8  ; other data are 5 bytes long
-beq inc_cursor ; (counting the continuation byte)
-lda #15        ;
-sta tmpfield9  ;
-inc_cursor:
-lda tmpfield9          ; Add data length to the animation vector, to point
-jsr add_to_anim_vector ; on the next continuation byte
-jmp skip_sprite
-end_skip_frame:
-lda #$01               ; Skip the last continuation byte
-jsr add_to_anim_vector ;
-jmp new_frame
-
-draw_current_frame:
-; Animation location is player's location
-lda player_a_x, x
-sta tmpfield1
-lda player_a_y, x
-sta tmpfield2
-
-; Increment animation_vector to skip the frame duration field
-lda #$01
-jsr add_to_anim_vector
-
-; Set animation's direction
-lda player_a_animation_direction, x
-sta animation_direction
-
-txa
-pha
-jsr draw_anim_frame_orig ;TODO new API
-pla
-tax
-
-tick_clock:
-inc player_a_anim_clock, x
-jmp next_player
-
-loop_animation:
-lda #$00
-sta player_a_anim_clock, x
-
-next_player:
-inx
-cpx #$02
-bne player_animation
-
-;
-; Enhancement sprites
-;
-
-jsr particle_draw
-;jsr show_hitboxes
-
-rts
+	rts
 .)
 
-store_player_anim_parameters:
-.(
-cpx #$00
-bne select_anim_player_b
-lda player_a_animation
-sta animation_vector
-lda player_a_animation+1
-sta animation_vector+1
-lda #$00
-sta first_sprite_index
-lda #$0f
-sta last_sprite_index
-jmp end
-select_anim_player_b:
-lda player_b_animation
-sta animation_vector
-lda player_b_animation+1
-sta animation_vector+1
-lda #$10
-sta first_sprite_index
-lda #$1f
-sta last_sprite_index
-end:
-rts
-.)
-
-add_to_anim_vector:
-.(
-clc
-adc animation_vector
-sta animation_vector
-lda #$00
-adc animation_vector+1
-sta animation_vector+1
-rts
-.)
-
-.)
+#if 0
+;TODO extract hitbox routines, remove anything else
 
 ; Draw an animation frame on screen
 ;  tmpfield1 - Position X
@@ -1594,6 +1534,7 @@ rts
 .)
 
 .)
+#endif
 
 ; Debug subroutine to show hitboxes and hurtboxes
 ;show_hitboxes:

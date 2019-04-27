@@ -98,6 +98,36 @@ animation_init_state:
 	rts
 .)
 
+; Modify the animation playing in an animation state
+;  tmpfield11, tmpfield12 - vector to the animation state
+;  tmpfield13, tmpfield14 - vector to the animation data
+; Overwrites registers A and Y
+animation_state_change_animation:
+.(
+	anim_state = tmpfield11
+	anim_data = tmpfield13
+
+	; Reset clock
+	lda #0
+	ldy #ANIMATION_STATE_OFFSET_CLOCK
+	sta (anim_state), y
+
+	; Set frame vector and data vector to new animation's first frame
+	lda anim_data
+	ldy #ANIMATION_STATE_OFFSET_DATA_VECTOR_LSB
+	sta (anim_state), y
+	ldy #ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB
+	sta (anim_state), y
+
+	lda anim_data+1
+	ldy #ANIMATION_STATE_OFFSET_DATA_VECTOR_MSB
+	sta (anim_state), y
+	ldy #ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB
+	sta (anim_state), y
+
+	rts
+.)
+
 ; Draw the current frame of an animation
 ;  tmpfield11, tmpfield12 - vector to the animation_state
 ;  tmpfield13, tmpfield14 - camera position X (signed 16 bits)
@@ -265,6 +295,7 @@ animation_tick:
 ; Overwrites tmpfield5, tmpfield10, tmpfield13, tmpfield14, tmpfield15 and all registers
 draw_anim_frame:
 .(
+	;TODO change wording, "sprite" is used while now we do not know what is in entries, often simply replace it by "entry"
 	; Pretty names
 	anim_pos_x = tmpfield1
 	anim_pos_y = tmpfield2
@@ -288,8 +319,18 @@ draw_anim_frame:
 			sta continuation_byte
 			iny
 
-			; Move one sprite
-			jsr anim_frame_move_sprite
+			; Handle one entry
+			lsr
+			lsr
+			lsr
+			lsr
+			tax
+			lda animation_frame_entry_handlers_lsb, x
+			sta tmpfield13
+			lda animation_frame_entry_handlers_msb, x
+			sta tmpfield14
+			jsr call_pointed_subroutine13
+
 			jmp draw_one_sprite
 
 		; Place unused sprites off screen
@@ -316,13 +357,36 @@ draw_anim_frame:
 			rts
 	.)
 
+	call_pointed_subroutine13:
+	.(
+		jmp (tmpfield13)
+	.)
+
 	; TODO conditional definition, to be rewritiable by the game
 	animation_frame_entry_handlers_lsb:
 	.byt <anim_frame_move_sprite, <anim_frame_move_sprite
-	.byt <dummy_routine, <dummy_routine ; TODO hack to skip unknown stb entries
+	.byt <remove_me1, <remove_me2 ; TODO hack to skip unknown stb entries
 	animation_frame_entry_handlers_msb:
 	.byt >anim_frame_move_sprite, >anim_frame_move_sprite
-	.byt >dummy_routine, >dummy_routine ; TODO hack
+	.byt >remove_me1, >remove_me2 ; TODO hack
+
+	remove_me1:
+	.(
+		tya
+		clc
+		adc #$0f-1
+		tay
+		rts
+	.)
+
+	remove_me2:
+	.(
+		tya
+		clc
+		adc #$05-1
+		tay
+		rts
+	.)
 
 	anim_frame_move_sprite:
 	.(

@@ -14,8 +14,8 @@ player_a_x = $05
 player_b_x = $06
 player_a_y = $07
 player_b_y = $08
-player_a_direction = $0009 ; 0 - watching left
-player_b_direction = $000a ; 1 - watching right
+player_a_direction = $09 ; 0 - watching left
+player_b_direction = $0a ; 1 - watching right
 player_a_velocity_v = $0b
 player_b_velocity_v = $0c
 player_a_velocity_h = $0d
@@ -24,10 +24,10 @@ player_a_state_field1 = $0f
 player_b_state_field1 = $10
 player_a_state_field2 = $11
 player_b_state_field2 = $12
-player_a_animation = $13
-player_b_animation = $15
-player_a_anim_clock = $17
-player_b_anim_clock = $18
+; unused $13
+; unused $15
+player_a_state_clock = $17
+player_b_state_clock = $18
 player_a_hurtbox_left = $19
 player_b_hurtbox_left = $1a
 player_a_hurtbox_right = $1b
@@ -74,8 +74,8 @@ player_a_hitbox_base_knock_up_v_low = $43
 player_b_hitbox_base_knock_up_v_low = $44
 player_a_hitbox_base_knock_up_h_low = $45
 player_b_hitbox_base_knock_up_h_low = $46
-player_a_animation_direction = $47
-player_b_animation_direction = $48
+player_a_animation_direction = $47 ; TODO remove all usages
+player_b_animation_direction = $48 ; TODO remove all usages
 player_a_num_aerial_jumps = $49
 player_b_num_aerial_jumps = $4a
 player_a_stocks = $4b
@@ -110,6 +110,9 @@ death_particles_player_a_counter = $7d
 death_particles_player_b_counter = $7e
 
 slow_down_counter = $7f
+
+player_a_animation = $05a0 ; $05a0 to $05ab - player a's animation state
+player_b_animation = $05ac ; $05ac to $05b7 - player b's animation state
 
 ;
 ; Stage specific labels
@@ -279,6 +282,7 @@ tmpfield12 = $fb
 tmpfield13 = $fc
 tmpfield14 = $fd
 tmpfield15 = $fe
+tmpfield16 = $fe
 
 
 stack = $0100
@@ -289,7 +293,8 @@ particle_blocks = $0500
 particle_block_0 = $0500
 particle_block_1 = $0520
 previous_global_game_state = $540
-players_palettes = $0580
+players_palettes = $0580 ; $0580 to $059f - 4 nametable buffers (8 bytes each) containing avatars palettes in normal and alternate mode
+;$05a0 to $05b7 used by in-game state
 ;$06xx may be used by audio engine, see "Audio engine labels"
 virtual_frame_cnt = $0700
 skip_frames_to_50hz = $0701
