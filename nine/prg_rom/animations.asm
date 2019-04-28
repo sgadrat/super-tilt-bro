@@ -295,7 +295,6 @@ animation_tick:
 ; Overwrites tmpfield5, tmpfield10, tmpfield13, tmpfield14, tmpfield15 and all registers
 draw_anim_frame:
 .(
-	;TODO change wording, "sprite" is used while now we do not know what is in entries, often simply replace it by "entry"
 	; Pretty names
 	anim_pos_x = tmpfield1
 	anim_pos_y = tmpfield2
@@ -311,8 +310,8 @@ draw_anim_frame:
 		; Initialization
 		ldy #$00
 
-		; Draw animation's sprites
-		draw_one_sprite:
+		; Handle animation's entries
+		handle_one_entry:
 			; Check continuation byte - zero value means end of data
 			lda (frame_vector), y
 			beq clear_unused_sprites
@@ -331,7 +330,7 @@ draw_anim_frame:
 			sta tmpfield14
 			jsr call_pointed_subroutine13
 
-			jmp draw_one_sprite
+			jmp handle_one_entry
 
 		; Place unused sprites off screen
 		clear_unused_sprites:
