@@ -45,6 +45,17 @@ animation_frame_entry_handlers_msb:
 	end_sign_extend:\
 .)
 
+; Hook called when the sprite handler want's to load attributes from its entry
+;  Here we add "2 * player_num" to fetched attributes, so
+;  player A uses palettes 0 and 1
+;  player B uses palettes 2 and 3
+#define ANIM_HOOK_SPRITE_ATTRIBUTES .(:\
+	lda player_number:\
+	asl:\
+	clc:\
+	adc (frame_vector), y:\
+.)
+
 anim_frame_move_hurtbox:
 .(
 	; Pretty names

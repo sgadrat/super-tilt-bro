@@ -468,7 +468,11 @@ anim_frame_move_sprite:
 
 	; Attributes
 	;  Flip horizontally (eor $40) if oriented to the right
+#ifdef ANIM_HOOK_SPRITE_ATTRIBUTES
+	ANIM_HOOK_SPRITE_ATTRIBUTES
+#else
 	lda (frame_vector), y
+#endif
 	eor attributes_modifier
 	sta oam_mirror+2, x
 	iny
