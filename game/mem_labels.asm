@@ -83,6 +83,8 @@ player_b_stocks = $4c
 player_a_gravity = $4d
 player_b_gravity = $4e
 
+player_number = $4f ; Extra register to hold a player number, used when register X is inconvenient
+
 ai_current_action_lsb = $50
 ai_current_action_msb = $51
 ai_current_action_counter = $52
@@ -90,6 +92,23 @@ ai_current_action_step = $53
 ai_current_action_modifier = $54
 ai_delay = $55
 ai_max_delay = $56
+
+player_a_hurtbox_left_msb = $57
+player_b_hurtbox_left_msb = $58
+player_a_hurtbox_right_msb = $59
+player_b_hurtbox_right_msb = $5a
+player_a_hurtbox_top_msb = $5b
+player_b_hurtbox_top_msb = $5c
+player_a_hurtbox_bottom_msb = $5d
+player_b_hurtbox_bottom_msb = $5e
+player_a_hitbox_left_msb = $5f
+player_b_hitbox_left_msb = $60
+player_a_hitbox_right_msb = $61
+player_b_hitbox_right_msb = $62
+player_a_hitbox_top_msb = $63
+player_b_hitbox_top_msb = $64
+player_a_hitbox_bottom_msb = $65
+player_b_hitbox_bottom_msb = $66
 
 screen_shake_counter = $70
 screen_shake_nextval_x = $71

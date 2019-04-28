@@ -15,6 +15,7 @@
 ;   tmpfield8 - Position X MSB
 ;   tmpfield9 - Position Y MSB
 ;   tmpfield10 - Opcode of the entry
+;   tmpfield11, tmpfield12 - vector to the animation_state
 ;   register Y - Index of the etnry's first byte in the frame vector (payload byte, not opcode)
 ;
 ;  Handlers outputs
@@ -23,31 +24,311 @@
 ;   registerY is advanced to the first byte after the entry
 ;
 ;  Handlers may freely modify
-;   tmpfield11 to tmpfield16
+;   tmpfield13 to tmpfield16
 ;   registers A and X
 ;
 
 animation_frame_entry_handlers_lsb:
 .byt <anim_frame_move_sprite, <anim_frame_move_sprite
-.byt <remove_me1, <remove_me2 ; TODO hack need to be replaced by actual code
+.byt <anim_frame_move_hitbox, <anim_frame_move_hurtbox
 animation_frame_entry_handlers_msb:
 .byt >anim_frame_move_sprite, >anim_frame_move_sprite
-.byt >remove_me1, >remove_me2 ; TODO hack
+.byt >anim_frame_move_hitbox, >anim_frame_move_hurtbox
 
-remove_me1:
+; Set register A to the sign extension of recently loaded value
+#define SIGN_EXTEND() .(:\
+	bmi set_relative_msb_neg:\
+		lda #0:\
+		jmp end_sign_extend:\
+	set_relative_msb_neg:\
+		lda #$ff:\
+	end_sign_extend:\
+.)
+
+anim_frame_move_hurtbox:
 .(
-	tya
+	; Pretty names
+	anim_pos_x = tmpfield1
+    anim_pos_y = tmpfield2
+    frame_vector = tmpfield3
+    sprite_index = tmpfield5
+    last_sprite_index = tmpfield6
+    animation_direction = tmpfield7
+    anim_pos_x_msb = tmpfield8
+    anim_pos_y_msb = tmpfield9
+    continuation_byte = tmpfield10
+
+	sign_extension_byte = tmpfield13
+	width = tmpfield14
+
+	; Extract relative position
+	ldx player_number
+	; Left
+	lda (frame_vector), y
+	sta player_a_hurtbox_left, x
+	iny
+	; Right
+	lda (frame_vector), y
+	sta player_a_hurtbox_right, x
+	iny
+	; Top
+	lda (frame_vector), y
+	sta player_a_hurtbox_top, x
+	iny
+	; Bottom
+	lda (frame_vector), y
+	sta player_a_hurtbox_bottom, x
+	iny
+
+	; If the animation is flipped, flip the box
+	lda animation_direction ; Nothing to do for non-flipped animation
+	beq apply_offset        ;
+	lda player_a_hurtbox_right, x ;
+	sec                           ; Compute box width
+	sbc player_a_hurtbox_left, x  ;
+	sta width                     ;
+
+	lda player_a_hurtbox_left, x  ;
+	eor #%11111111                ;
+	clc                           ; right = -left + 7
+	adc #8                        ;
+	sta player_a_hurtbox_right, x ;
+
+	sec                          ;
+	sbc width                    ; left = right - width
+	sta player_a_hurtbox_left, x ;
+
+	; Apply offset to the box
+	apply_offset:
+	; Left
+	lda player_a_hurtbox_left, x
+	pha
+	SIGN_EXTEND()
+	sta sign_extension_byte
+	pla
 	clc
-	adc #$0f-1
-	tay
+	adc anim_pos_x
+	sta player_a_hurtbox_left, x
+	lda sign_extension_byte
+	adc anim_pos_x_msb, x
+	sta player_a_hurtbox_left_msb, x
+	; Right
+	lda player_a_hurtbox_right, x
+	pha
+	SIGN_EXTEND()
+	sta sign_extension_byte
+	pla
+	clc
+	adc anim_pos_x
+	sta player_a_hurtbox_right, x
+	lda sign_extension_byte
+	adc anim_pos_x_msb
+	sta player_a_hurtbox_right_msb, x
+	; Top
+	lda player_a_hurtbox_top, x
+	pha
+	SIGN_EXTEND()
+	sta sign_extension_byte
+	pla
+	clc
+	adc anim_pos_y
+	sta player_a_hurtbox_top, x
+	lda sign_extension_byte
+	adc anim_pos_y_msb
+	sta player_a_hurtbox_top_msb, x
+	; Bottom
+	lda player_a_hurtbox_bottom, x
+	pha
+	SIGN_EXTEND()
+	sta sign_extension_byte
+	pla
+	clc
+	adc anim_pos_y
+	sta player_a_hurtbox_bottom, x
+	lda sign_extension_byte
+	adc anim_pos_y_msb
+	sta player_a_hurtbox_bottom_msb, x
+
+	end:
 	rts
 .)
 
-remove_me2:
+anim_frame_move_hitbox:
 .(
+	; Pretty names
+	anim_pos_x = tmpfield1
+    anim_pos_y = tmpfield2
+    frame_vector = tmpfield3
+    sprite_index = tmpfield5
+    last_sprite_index = tmpfield6
+    animation_direction = tmpfield7
+    anim_pos_x_msb = tmpfield8
+    anim_pos_y_msb = tmpfield9
+    continuation_byte = tmpfield10
+	anim_state = tmpfield11
+	;tmpfield12 is anim_state msb
+
+	sign_extension_byte = tmpfield13
+	width = tmpfield14
+
+	ldx player_number
+	; Enabled
 	tya
+	pha
+	ldy #ANIMATION_STATE_OFFSET_CLOCK
+	lda (anim_state), y
+	bne ignore_enabled
+		pla
+		tay
+		lda (frame_vector), y
+		ora player_a_hitbox_enabled, x
+		sta player_a_hitbox_enabled, x
+		jmp end_enabled
+	ignore_enabled:
+		pla
+		tay
+	end_enabled:
+	iny
+	; Damages
+	lda (frame_vector), y
+	sta player_a_hitbox_damages, x
+	iny
+	; Base_h
+	lda (frame_vector), y
+	sta player_a_hitbox_base_knock_up_h_high, x
+	iny
+	lda (frame_vector), y
+	sta player_a_hitbox_base_knock_up_h_low, x
+	iny
+	; Base_v
+	lda (frame_vector), y
+	sta player_a_hitbox_base_knock_up_v_high, x
+	iny
+	lda (frame_vector), y
+	sta player_a_hitbox_base_knock_up_v_low, x
+	iny
+	; Force_h
+	lda (frame_vector), y
+	sta player_a_hitbox_force_h, x
+	iny
+	lda (frame_vector), y
+	sta player_a_hitbox_force_h_low, x
+	iny
+	; Force_v
+	lda (frame_vector), y
+	sta player_a_hitbox_force_v, x
+	iny
+	lda (frame_vector), y
+	sta player_a_hitbox_force_v_low, x
+	iny
+	; Left
+	lda (frame_vector), y
+	sta player_a_hitbox_left, x
+	iny
+	; Right
+	lda (frame_vector), y
+	sta player_a_hitbox_right, x
+	iny
+	; Top
+	lda (frame_vector), y
+	sta player_a_hitbox_top, x
+	iny
+	; Top
+	lda (frame_vector), y
+	sta player_a_hitbox_bottom, x
+	iny
+
+	; If the player is right facing, flip the box
+	lda animation_direction ; Nothing to do for left facing players
+	beq apply_offset        ;
+
+	; Flip box position
+	lda player_a_hitbox_right, x ;
+	sec                          ; Compute box width
+	sbc player_a_hitbox_left, x  ;
+	sta width                    ;
+
+	lda player_a_hitbox_left, x  ;
+	eor #%11111111               ;
+	clc                          ; right = -left + 7
+	adc #8                       ;
+	sta player_a_hitbox_right, x ;
+
+	sec                         ;
+	sbc width                   ; left = right - width
+	sta player_a_hitbox_left, x ;
+
+	; Flip box knockback
+	lda player_a_hitbox_base_knock_up_h_low, x  ;
+	eor #%11111111                              ;
+	clc                                         ;
+	adc #1                                      ;
+	sta player_a_hitbox_base_knock_up_h_low, x  ; base_h = -base_h
+	lda player_a_hitbox_base_knock_up_h_high, x ;
+	eor #%11111111                              ;
+	adc #0                                      ;
+	sta player_a_hitbox_base_knock_up_h_high, x ;
+
+	lda player_a_hitbox_force_h_low, x ;
+	eor #%11111111                     ;
+	clc                                ;
+	adc #1                             ;
+	sta player_a_hitbox_force_h_low, x ; force_h = -force_h
+	lda player_a_hitbox_force_h, x     ;
+	eor #%11111111                     ;
+	adc #0                             ;
+	sta player_a_hitbox_force_h, x     ;
+
+	; Apply offset to the box
+	apply_offset:
+	; Left
+	lda player_a_hitbox_left, x
+	pha
+	SIGN_EXTEND()
+	sta sign_extension_byte
+	pla
 	clc
-	adc #$05-1
-	tay
+	adc anim_pos_x
+	sta player_a_hitbox_left, x
+	lda sign_extension_byte
+	adc anim_pos_x_msb, x
+	sta player_a_hitbox_left_msb, x
+	; Right
+	lda player_a_hitbox_right, x
+	pha
+	SIGN_EXTEND()
+	sta sign_extension_byte
+	pla
+	clc
+	adc anim_pos_x
+	sta player_a_hitbox_right, x
+	lda sign_extension_byte
+	adc anim_pos_x_msb
+	sta player_a_hitbox_right_msb, x
+	; Top
+	lda player_a_hitbox_top, x
+	pha
+	SIGN_EXTEND()
+	sta sign_extension_byte
+	pla
+	clc
+	adc anim_pos_y
+	sta player_a_hitbox_top, x
+	lda sign_extension_byte
+	adc anim_pos_y_msb
+	sta player_a_hitbox_top_msb, x
+	; Bottom
+	lda player_a_hitbox_bottom, x
+	pha
+	SIGN_EXTEND()
+	sta sign_extension_byte
+	pla
+	clc
+	adc anim_pos_y
+	sta player_a_hitbox_bottom, x
+	lda sign_extension_byte
+	adc anim_pos_y_msb
+	sta player_a_hitbox_bottom_msb, x
+
 	rts
 .)

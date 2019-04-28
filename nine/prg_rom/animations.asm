@@ -39,21 +39,6 @@
 ;     jsr animation_tick
 ;
 
-#define ANIMATION_STATE_OFFSET_X_LSB 0
-#define ANIMATION_STATE_OFFSET_X_MSB 1
-#define ANIMATION_STATE_OFFSET_Y_LSB 2
-#define ANIMATION_STATE_OFFSET_Y_MSB 3
-#define ANIMATION_STATE_OFFSET_DATA_VECTOR_LSB 4
-#define ANIMATION_STATE_OFFSET_DATA_VECTOR_MSB 5
-#define ANIMATION_STATE_OFFSET_DIRECTION 6
-#define ANIMATION_STATE_OFFSET_CLOCK 7
-#define ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM 8
-#define ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM 9
-#define ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB 10
-#define ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB 11
-
-#define ANIMATION_STATE_LENGTH 12
-
 ; Initialize a memory location to be a valid animation state
 ;  tmpfield11, tmpfield12 - vector to the animation state
 ;  tmpfield13, tmpfield14 - vector to the animation data
@@ -291,8 +276,12 @@ animation_tick:
 ;  tmpfield7 - Animation's direction (0 normal, 1 flipped)
 ;  tmpfield8 - Position X MSB
 ;  tmpfield9 - Position Y MSB
+;  tmpfield11, tmpfield12 - vector to the animation_state
 ;
-; Overwrites all registers, tmpfield5, tmpfield6, and tmpfield10 to tmpfield16
+; Overwrites all registers, tmpfield5, tmpfield6, tmpfield10 and tmpfield13 to tmpfield16
+;
+; Note - tmpfield11 and tmpfield12 are unused by nine-gine, but are guaranteed
+;        to be passed to custom entry handlers
 draw_anim_frame:
 .(
 	; Pretty names
@@ -384,6 +373,7 @@ animation_frame_entry_handlers_msb:
 ;  tmpfield8 - Position X MSB
 ;  tmpfield9 - Position Y MSB
 ;  tmpfield10 - Opcode of the entry
+;  tmpfield11, tmpfield12 - vector to the animation_state
 ;  register Y - Index of the etnry's first byte in the frame vector (payload byte, not opcode)
 ;
 ; Overwrites tmpfield5, tmpfield6, tmpfield13, tmpfield14, tmpfield15 and all registers

@@ -1070,6 +1070,7 @@ update_sprites:
 	sta camera_x+1
 	sta camera_y
 	sta camera_y+1
+	sta player_number
 	jsr animation_draw
 	jsr animation_tick
 
@@ -1094,6 +1095,8 @@ update_sprites:
 	sta camera_x+1
 	sta camera_y
 	sta camera_y+1
+	lda #1
+	sta player_number
 	jsr animation_draw
 	jsr animation_tick
 
