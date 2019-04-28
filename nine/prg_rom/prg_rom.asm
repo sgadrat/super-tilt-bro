@@ -1,5 +1,3 @@
-* = $8000 ; $8000 is where the PRG rom is mapped in CPU space, so code position is relative to it
-
 cursed:
 rti
 

@@ -292,7 +292,7 @@ animation_tick:
 ;  tmpfield8 - Position X MSB
 ;  tmpfield9 - Position Y MSB
 ;
-; Overwrites tmpfield5, tmpfield10, tmpfield13, tmpfield14, tmpfield15 and all registers
+; Overwrites all registers, tmpfield5, tmpfield6, and tmpfield10 to tmpfield16
 draw_anim_frame:
 .(
 	; Pretty names
@@ -360,176 +360,188 @@ draw_anim_frame:
 	.(
 		jmp (tmpfield13)
 	.)
+.)
 
-	; TODO conditional definition, to be rewritiable by the game
-	animation_frame_entry_handlers_lsb:
-	.byt <anim_frame_move_sprite, <anim_frame_move_sprite
-	.byt <remove_me1, <remove_me2 ; TODO hack to skip unknown stb entries
-	animation_frame_entry_handlers_msb:
-	.byt >anim_frame_move_sprite, >anim_frame_move_sprite
-	.byt >remove_me1, >remove_me2 ; TODO hack
+; Default animation entry opcode table
+;  may be overriden by defining it before including this file
+#ifldef animation_frame_entry_handlers_lsb
+#echo specialized table
+#else
+#echo default table
+animation_frame_entry_handlers_lsb:
+.byt <anim_frame_move_sprite, <anim_frame_move_sprite
+animation_frame_entry_handlers_msb:
+.byt >anim_frame_move_sprite, >anim_frame_move_sprite
+#endif
 
-	remove_me1:
+; Handler for ANIM_SPRITE and ANIM_SPRITE_FOREGROUND animations entries
+;  tmpfield1 - Position X LSB
+;  tmpfield2 - Position Y LSB
+;  tmpfield3, tmpfield4 - Vector pointing to the frame to draw
+;  tmpfield5 - First sprite index to use
+;  tmpfield6 - Last sprite index to use
+;  tmpfield7 - Animation's direction (0 normal, 1 flipped)
+;  tmpfield8 - Position X MSB
+;  tmpfield9 - Position Y MSB
+;  tmpfield10 - Opcode of the entry
+;  register Y - Index of the etnry's first byte in the frame vector (payload byte, not opcode)
+;
+; Overwrites tmpfield5, tmpfield6, tmpfield13, tmpfield14, tmpfield15 and all registers
+;
+; Output - tmpfield5 is updated to stay on the next free sprite
+;          tmpfield6 is updated to stay on the last free sprite
+;          registerY is advanced to the first byte after the entry
+anim_frame_move_sprite:
+.(
+	; Pretty names (matching draw_anim_frame)
+	anim_pos_x = tmpfield1
+	anim_pos_y = tmpfield2
+	frame_vector = tmpfield3
+	sprite_index = tmpfield5
+	last_sprite_index = tmpfield6
+	animation_direction = tmpfield7
+	anim_pos_x_msb = tmpfield8
+	anim_pos_y_msb = tmpfield9
+	continuation_byte = tmpfield10
+
+	; Pretty names (local variables)
+	sign_extension_byte = tmpfield13
+	attributes_modifier = tmpfield14
+	sprite_used = tmpfield15 ; 0 - first sprite, 1 - last sprite
+
+	; Compute direction dependent information
+	;  attributes modifier - to flip the animation if needed
+	;  A - sprite index to use
+	lda animation_direction
+	beq default_direction
+
+		lda #$40                ; Flip horizontally attributes
+		sta attributes_modifier ;
+
+		lda continuation_byte        ;
+		cmp #ANIM_OPCODE_SPRITE      ;
+		beq use_last_sprite          ;
+			lda #0                   ;
+			jmp set_sprite_used      ; Use the last sprite unless explicitely foreground
+		use_last_sprite:             ;
+			lda #1                   ;
+		set_sprite_used:             ;
+		sta sprite_used              ;
+		jmp end_init_direction_data  ;
+
+	default_direction:
+		lda #$00                ;
+		sta attributes_modifier ; Do not flip attributes
+		sta sprite_used         ; Always use the first sprite
+
+	end_init_direction_data:
+
+	; X points on sprite data to modify
+	lda sprite_used
+	beq use_first_sprite
+	lda last_sprite_index
+	jmp sprite_index_set
+	use_first_sprite:
+	lda sprite_index
+	sprite_index_set:
+	asl
+	asl
+	tax
+
+	; Y value, must be relative to animation Y position (avoid to place this sprite if offscreen)
+	lda (frame_vector), y
+
 	.(
-		tya
-		clc
-		adc #$0f-1
-		tay
-		rts
+	pha
+	bmi set_relative_msb_neg
+		lda #0
+		jmp set_relative_msb
+	set_relative_msb_neg:
+		lda #$ff
+	set_relative_msb:
+		sta sign_extension_byte
+	pla
 	.)
 
-	remove_me2:
-	.(
-		tya
+	clc
+	adc anim_pos_y
+	sta oam_mirror, x
+	lda sign_extension_byte
+	adc anim_pos_y_msb
+	bne skip
+	iny
+
+	; Tile number
+	lda (frame_vector), y
+	sta oam_mirror+1, x
+	iny
+
+	; Attributes
+	;  Flip horizontally (eor $40) if oriented to the right
+	lda (frame_vector), y
+	eor attributes_modifier
+	sta oam_mirror+2, x
+	iny
+
+	; X value, must be relative to animation X position
+	;  Flip symetrically to the vertical axe if needed
+	lda animation_direction
+	bne flip_x
+		lda (frame_vector), y
+		jmp got_relative_pos
+	flip_x:
+		lda (frame_vector), y
+		eor #%11111111
 		clc
-		adc #$05-1
-		tay
-		rts
+		adc #1
+	got_relative_pos:
+
+	.(
+	pha
+	bmi set_relative_msb_neg
+		lda #0
+		jmp set_relative_msb
+	set_relative_msb_neg:
+		lda #$ff
+	set_relative_msb:
+		sta sign_extension_byte
+	pla
 	.)
 
-	anim_frame_move_sprite:
-	.(
-		; Copy sprite data
+	clc
+	adc anim_pos_x
+	sta oam_mirror+3, x
 
-		sign_extension_byte = tmpfield13
-		attributes_modifier = tmpfield14
-		sprite_used = tmpfield15 ; 0 - first sprite, 1 - last sprite
+	lda sign_extension_byte
+	adc anim_pos_x_msb
+	beq continue
+		; Sprite is offscreen, erase it
+		dey
+		dey
+		dey
+		jmp skip
+	continue:
+	iny
 
-		; Compute direction dependent information
-		;  attributes modifier - to flip the animation if needed
-		;  A - sprite index to use
-		lda animation_direction
-		beq default_direction
+	; Next sprite
+	lda sprite_used
+	beq inc_sprite_index
+	dec last_sprite_index
+	jmp end_next_sprite
+	inc_sprite_index:
+	inc sprite_index
+	end_next_sprite:
+	jmp end
 
-			lda #$40                ; Flip horizontally attributes
-			sta attributes_modifier ;
+	; Skip sprite
+	skip:
+	lda #$fe          ; Reset OAM sprite's Y position
+	sta oam_mirror, x ;
+	iny ;
+	iny ; Advance to the next frame's sprite
+	iny ;
+	iny ;
 
-			lda continuation_byte        ;
-			cmp #ANIM_OPCODE_SPRITE      ;
-			beq use_last_sprite          ;
-				lda #0                   ;
-				jmp set_sprite_used      ; Use the last sprite unless explicitely foreground
-			use_last_sprite:             ;
-				lda #1                   ;
-			set_sprite_used:             ;
-			sta sprite_used              ;
-			jmp end_init_direction_data  ;
-
-		default_direction:
-			lda #$00                ;
-			sta attributes_modifier ; Do not flip attributes
-			sta sprite_used         ; Always use the first sprite
-
-		end_init_direction_data:
-
-		; X points on sprite data to modify
-		lda sprite_used
-		beq use_first_sprite
-		lda last_sprite_index
-		jmp sprite_index_set
-		use_first_sprite:
-		lda sprite_index
-		sprite_index_set:
-		asl
-		asl
-		tax
-
-		; Y value, must be relative to animation Y position (avoid to place this sprite if offscreen)
-		lda (frame_vector), y
-
-		.(
-		pha
-		bmi set_relative_msb_neg
-			lda #0
-			jmp set_relative_msb
-		set_relative_msb_neg:
-			lda #$ff
-		set_relative_msb:
-			sta sign_extension_byte
-		pla
-		.)
-
-		clc
-		adc anim_pos_y
-		sta oam_mirror, x
-		lda sign_extension_byte
-		adc anim_pos_y_msb
-		bne skip
-		iny
-
-		; Tile number
-		lda (frame_vector), y
-		sta oam_mirror+1, x
-		iny
-
-		; Attributes
-		;  Flip horizontally (eor $40) if oriented to the right
-		lda (frame_vector), y
-		eor attributes_modifier
-		sta oam_mirror+2, x
-		iny
-
-		; X value, must be relative to animation X position
-		;  Flip symetrically to the vertical axe if needed
-		lda animation_direction
-		bne flip_x
-			lda (frame_vector), y
-			jmp got_relative_pos
-		flip_x:
-			lda (frame_vector), y
-			eor #%11111111
-			clc
-			adc #1
-		got_relative_pos:
-
-		.(
-		pha
-		bmi set_relative_msb_neg
-			lda #0
-			jmp set_relative_msb
-		set_relative_msb_neg:
-			lda #$ff
-		set_relative_msb:
-			sta sign_extension_byte
-		pla
-		.)
-
-		clc
-		adc anim_pos_x
-		sta oam_mirror+3, x
-
-		lda sign_extension_byte
-		adc anim_pos_x_msb
-		beq continue
-			; Sprite is offscreen, erase it
-			dey
-			dey
-			dey
-			jmp skip
-		continue:
-		iny
-
-		; Next sprite
-		lda sprite_used
-		beq inc_sprite_index
-		dec last_sprite_index
-		jmp end_next_sprite
-		inc_sprite_index:
-		inc sprite_index
-		end_next_sprite:
-		jmp end
-
-		; Skip sprite
-		skip:
-		lda #$fe          ; Reset OAM sprite's Y position
-		sta oam_mirror, x ;
-		iny ;
-		iny ; Advance to the next frame's sprite
-		iny ;
-		iny ;
-
-		end:
-		rts
-	.)
-
+	end:
+	rts
 .)

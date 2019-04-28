@@ -22,7 +22,9 @@
 ; PRG-ROM
 
 #ifndef NO_PRG_ROM
+* = $8000 ; $8000 is where the PRG rom is mapped in CPU space, so code position is relative to it
 code_begin:
+#include "game/logic/animation_opcodes.asm"
 #include "nine/prg_rom/prg_rom.asm"
 #include "game/logic/logic.asm"
 code_end:
