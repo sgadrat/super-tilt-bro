@@ -74,8 +74,8 @@ player_a_hitbox_base_knock_up_v_low = $43
 player_b_hitbox_base_knock_up_v_low = $44
 player_a_hitbox_base_knock_up_h_low = $45
 player_b_hitbox_base_knock_up_h_low = $46
-player_a_animation_direction = $47 ; TODO remove all usages
-player_b_animation_direction = $48 ; TODO remove all usages
+; unused $47
+; unused $48
 player_a_num_aerial_jumps = $49
 player_b_num_aerial_jumps = $4a
 player_a_stocks = $4b

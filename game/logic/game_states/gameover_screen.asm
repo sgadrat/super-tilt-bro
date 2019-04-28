@@ -64,41 +64,45 @@ iny
 cpy #3
 bne winner_name_writing
 
-; Players state using "ingame" state variable to show winning animation
-ldx gameover_winner        ;
-jsr switch_selected_player ; Set winner player num in X
-txa                        ; and looser player num in Y
-tay                        ;
-ldx gameover_winner        ;
+; Set winner's animation
+lda #<player_a_animation
+sta tmpfield11
+lda #>player_a_animation
+sta tmpfield12
+lda #<anim_sinbad_victory
+sta tmpfield13
+lda #>anim_sinbad_victory
+sta tmpfield14
+jsr animation_init_state
 
-lda #$71          ;
-sta player_a_y, x ;
-lda #$76          ;
-sta player_a_y, y ; Place characters
-lda #$64          ;
-sta player_a_x, x ;
-lda #$3c          ;
-sta player_a_x, y ;
+lda #$71
+sta player_a_animation+ANIMATION_STATE_OFFSET_Y_LSB
+lda #$64
+sta player_a_animation+ANIMATION_STATE_OFFSET_X_LSB
+lda #$00
+sta player_a_animation+ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM
+lda #$0f
+sta player_a_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
 
-lda #<anim_sinbad_victory           ;
-sta tmpfield1                       ;
-lda #>anim_sinbad_victory           ; Set winner's animation
-sta tmpfield2                       ;
-jsr set_player_animation            ;
-lda #0                              ;
-sta player_a_animation_direction, x ;
+; Set looser's animation
+lda #<player_b_animation
+sta tmpfield11
+lda #>player_b_animation
+sta tmpfield12
+lda #<anim_sinbad_defeat
+sta tmpfield13
+lda #>anim_sinbad_defeat
+sta tmpfield14
+jsr animation_init_state
 
-tya                                 ;
-tax                                 ;
-lda #<anim_sinbad_defeat            ;
-sta tmpfield1                       ; Set looser's animation
-lda #>anim_sinbad_defeat            ;
-sta tmpfield2                       ;
-jsr set_player_animation            ;
-lda #0                              ;
-sta player_a_animation_direction, x ;
-
-jsr update_sprites ; First animation frame
+lda #$76
+sta player_b_animation+ANIMATION_STATE_OFFSET_Y_LSB
+lda #$3c
+sta player_b_animation+ANIMATION_STATE_OFFSET_X_LSB
+lda #$10
+sta player_b_animation+ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM
+lda #$1f
+sta player_b_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
 
 ; Initialize balloon sprites
 ldx #0
@@ -173,8 +177,44 @@ lda #GAME_STATE_TITLE
 jsr change_global_game_state
 
 update_animations:
-jsr update_sprites
+jsr gamover_update_players
 jsr update_balloons
+rts
+.)
+
+gamover_update_players:
+.(
+; Update winner's animation
+lda #<player_a_animation
+sta tmpfield11
+lda #>player_a_animation
+sta tmpfield12
+lda #0
+sta tmpfield13
+sta tmpfield14
+sta tmpfield15
+sta tmpfield16
+lda gameover_winner
+sta player_number
+jsr animation_draw
+jsr animation_tick
+
+; Update winner's animation
+lda #<player_b_animation
+sta tmpfield11
+lda #>player_b_animation
+sta tmpfield12
+lda #0
+sta tmpfield13
+sta tmpfield14
+sta tmpfield15
+sta tmpfield16
+ldx gameover_winner
+jsr switch_selected_player
+stx player_number
+jsr animation_draw
+jsr animation_tick
+
 rts
 .)
 
