@@ -9,6 +9,7 @@ set_player_animation:
 	new_animation = tmpfield1
 	animation_state_vector = tmpfield11 ; Not movable - parameter of animation_state_change_animation routine
 	animation_state_data = tmpfield13 ; Not movable - parameter of animation_state_change_animation routine ; TODO take it directly as parameter
+	;tmpfield15 shall not be modified, it is used by check_aerials_input which tends to start states which tend to set animations. May be a good idea to write a safer version of check_aerials_input
 
 	; Chose animation state
 	txa
@@ -1236,6 +1237,10 @@ sta tmpfield1
 lda #>anim_sinbad_side_special_jump
 sta tmpfield2
 jsr set_player_animation
+
+; Reset clock
+lda #0
+sta player_a_state_clock, x
 
 moving:
 ; Set vertical velocity (fixed)

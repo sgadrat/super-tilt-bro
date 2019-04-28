@@ -301,7 +301,7 @@ tmpfield12 = $fb
 tmpfield13 = $fc
 tmpfield14 = $fd
 tmpfield15 = $fe
-tmpfield16 = $fe
+tmpfield16 = $ff
 
 
 stack = $0100
