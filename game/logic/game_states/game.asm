@@ -1093,6 +1093,10 @@ update_sprites:
 	jsr animation_draw
 	jsr animation_tick
 
+	; Enhancement sprites
+	jsr particle_draw
+	;jsr show_hitboxes
+
 	rts
 .)
 
