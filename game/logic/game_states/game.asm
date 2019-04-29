@@ -1044,9 +1044,9 @@ rts
 update_sprites:
 .(
 	; Pretty names
-	animation_vector = tmpfield11 ; Not movable - Used as parameter for animation_draw subroutine
-	camera_x = tmpfield13         ; Not movable - Used as parameter for animation_draw subroutine
-	camera_y = tmpfield15         ; Not movable - Used as parameter for animation_draw subroutine
+	animation_vector = tmpfield11 ; Not movable - Used as parameter for stb_animation_draw subroutine
+	camera_x = tmpfield13         ; Not movable - Used as parameter for stb_animation_draw subroutine
+	camera_y = tmpfield15         ; Not movable - Used as parameter for stb_animation_draw subroutine
 
 	; Player A
 	lda player_a_x
@@ -1067,7 +1067,7 @@ update_sprites:
 	sta camera_y
 	sta camera_y+1
 	sta player_number
-	jsr animation_draw
+	jsr stb_animation_draw
 	jsr animation_tick
 
 	; Player B
@@ -1090,7 +1090,7 @@ update_sprites:
 	sta camera_y+1
 	lda #1
 	sta player_number
-	jsr animation_draw
+	jsr stb_animation_draw
 	jsr animation_tick
 
 	; Enhancement sprites

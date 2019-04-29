@@ -181,6 +181,11 @@ anim_frame_move_hitbox:
 
 	sign_extension_byte = tmpfield13
 	width = tmpfield14
+	hitbox_flag = tmpfield16 ; Not movable - must be the same as in stb_animation_draw
+
+	; Anotate that we encountered an hitbox
+	lda #1
+	sta hitbox_flag
 
 	ldx player_number
 	; Enabled
@@ -340,6 +345,27 @@ anim_frame_move_hitbox:
 	lda sign_extension_byte
 	adc anim_pos_y_msb
 	sta player_a_hitbox_bottom_msb, x
+
+	rts
+.)
+
+; Wrapper around animation_draw to handle the absence of hitbox
+stb_animation_draw:
+.(
+	hitbox_flag = tmpfield16 ; Not movable - must be the same as in anim_frame_move_hitbox
+
+	; Reset the flag
+	;  after the call to animation_draw, the flag is set if we encountered an hitbox entry
+	lda #0
+	sta hitbox_flag
+
+	; Call animation_draw and disable hitbox if there is no htibox in the frame
+	jsr animation_draw
+	lda hitbox_flag
+	bne ok
+		ldx player_number
+		sta player_a_hitbox_enabled, x
+	ok:
 
 	rts
 .)
