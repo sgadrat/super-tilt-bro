@@ -1,14 +1,13 @@
 ; Start a new animation for the player
 ;  X - Player number
-;  tmpfield1 - Animation's data vector (low byte)
-;  tmpfield2 - Animation's data vector (high byte)
+;  tmpfield13 - Animation's data vector (low byte)
+;  tmpfield14 - Animation's data vector (high byte)
 ; Overwrites register A, register Y, tmpfield11, tmpfield12, tmpfield13, tmpfield14 and tmpfield16
 ; Outputs - tmpfield11+tmpfield12 is a vector to the player's animation state
 set_player_animation:
 .(
-	new_animation = tmpfield1
 	animation_state_vector = tmpfield11 ; Not movable - parameter of animation_state_change_animation routine
-	animation_state_data = tmpfield13 ; Not movable - parameter of animation_state_change_animation routine ; TODO take it directly as parameter
+	animation_state_data = tmpfield13 ; Not movable - parameter of animation_state_change_animation routine
 	;tmpfield15 shall not be modified, it is used by check_aerials_input which tends to start states which tend to set animations. May be a good idea to write a safer version of check_aerials_input
 
 	; Chose animation state
@@ -30,13 +29,6 @@ set_player_animation:
 	lda #0
 	adc #>player_a_animation
 	sta animation_state_vector+1
-
-	; Copy animation address
-	;TODO take it directly as parameter
-	lda new_animation
-	sta animation_state_data
-	lda new_animation+1
-	sta animation_state_data+1
 
 	; Reset animation
 	jsr animation_state_change_animation
@@ -337,9 +329,9 @@ start_standing_player:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_idle
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_idle
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 ; Set the player's state
@@ -478,9 +470,9 @@ set_running_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_run
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_run
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 ; Set initial velocity
@@ -615,9 +607,9 @@ set_falling_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_falling
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_falling
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -647,9 +639,9 @@ set_jumping_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_jumping
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_jumping
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -783,9 +775,9 @@ set_aerial_jumping_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_aerial_jumping
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_aerial_jumping
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -800,9 +792,9 @@ set_jabbing_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_jab
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_jab
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -862,9 +854,9 @@ sta player_a_state_field1, x
 set_thrown_animation:
 .(
 lda #<anim_sinbad_thrown
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_thrown
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 ; Set the appropriate animation direction (depending on player's velocity)
@@ -1015,9 +1007,9 @@ sta player_a_state_field1, x
 
 ; Set the appropriate animation
 lda #<anim_sinbad_respawn
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_respawn
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -1060,9 +1052,9 @@ start_side_tilt_player:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_side_tilt
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_side_tilt
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 ; Set the player's state
@@ -1125,9 +1117,9 @@ start_special_player:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_special
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_special
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 ; Set the player's state
@@ -1186,9 +1178,9 @@ set_side_special_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_side_special_charge
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_side_special_charge
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -1233,9 +1225,9 @@ sta player_a_state_field2, x
 
 ; Set the movement animation
 lda #<anim_sinbad_side_special_jump
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_side_special_jump
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 ; Reset clock
@@ -1284,9 +1276,9 @@ set_helpless_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_helpless
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_helpless
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -1335,9 +1327,9 @@ set_landing_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_landing
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_landing
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -1385,9 +1377,9 @@ set_crashing_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_crashing
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_crashing
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 ; Play crash sound
@@ -1438,9 +1430,9 @@ set_down_tilt_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_down_tilt
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_down_tilt
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -1488,9 +1480,9 @@ set_aerial_side_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_aerial_side
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_aerial_side
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -1542,9 +1534,9 @@ set_aerial_down_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_aerial_down
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_aerial_down
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -1582,9 +1574,9 @@ set_aerial_up_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_aerial_up
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_aerial_up
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -1622,9 +1614,9 @@ set_aerial_neutral_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_aerial_neutral
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_aerial_neutral
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -1658,9 +1650,9 @@ set_aerial_spe_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_aerial_spe
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_aerial_spe
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -1719,9 +1711,9 @@ set_spe_up_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_spe_up_prepare
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_spe_up_prepare
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -1758,9 +1750,9 @@ sta player_a_velocity_v_low, x
 
 ; Set the movement animation
 lda #<anim_sinbad_spe_up_jump
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_spe_up_jump
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 moving:
@@ -1799,9 +1791,9 @@ set_spe_down_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_spe_down
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_spe_down
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -1846,9 +1838,9 @@ set_up_tilt_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_up_tilt
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_up_tilt
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -1890,9 +1882,9 @@ set_shielding_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_shielding_full
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_shielding_full
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 ; Cancel momentum
@@ -1964,17 +1956,17 @@ jmp end
 ; Get the animation corresponding to the shield's life
 partial_shield:
 lda #<anim_sinbad_shielding_partial
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_shielding_partial
 jmp still_shield
 limit_shield:
 lda #<anim_sinbad_shielding_limit
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_shielding_limit
 
 still_shield:
 ; Set the new shield animation
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 ; Play sound
@@ -2005,9 +1997,9 @@ set_shieldlag_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_shielding_remove
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_shielding_remove
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -2060,9 +2052,9 @@ set_innexistant_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_invisible
-sta tmpfield1
+sta tmpfield13
 lda #>anim_invisible
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
@@ -2088,9 +2080,9 @@ set_spawn_animation:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_spawn
-sta tmpfield1
+sta tmpfield13
 lda #>anim_sinbad_spawn
-sta tmpfield2
+sta tmpfield14
 jsr set_player_animation
 
 rts
