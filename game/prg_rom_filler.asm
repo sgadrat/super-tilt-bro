@@ -33,9 +33,29 @@ credits_begin:
 credits_end:
 
 ;
+; Print some interesting addresses for debug
+;
+
+#echo wait_frame_loop:
+#print wait_next_real_frame+4
+#echo nmi_begin:
+#print nmi
+#echo vblank_end:
+#print reset-11
+#echo game_tick:
+#print game_tick
+#echo update_players:
+#print update_players
+#echo update_sprites
+#print update_sprites
+#echo game_tick_end:
+#print slowdown-1
+
+;
 ; Print some PRG-ROM space usage information
 ;
 
+#echo
 #echo PRG-ROM total space:
 #print $10000-$8000
 #echo
