@@ -361,7 +361,7 @@ animation_frame_entry_handlers_msb:
 .byt >anim_frame_move_sprite, >anim_frame_move_sprite
 #endif
 
-; Handler for ANIM_SPRITE and ANIM_SPRITE_FOREGROUND animations entries
+; Handler for anim_sprite and anim_sprite_foreground animations entries
 ;  tmpfield1 - Position X LSB
 ;  tmpfield2 - Position Y LSB
 ;  tmpfield3, tmpfield4 - Vector pointing to the frame to draw
