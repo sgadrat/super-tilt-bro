@@ -354,9 +354,7 @@ draw_anim_frame:
 ; Default animation entry opcode table
 ;  may be overriden by defining it before including this file
 #ifldef animation_frame_entry_handlers_lsb
-#echo specialized table
 #else
-#echo default table
 animation_frame_entry_handlers_lsb:
 .byt <anim_frame_move_sprite, <anim_frame_move_sprite
 animation_frame_entry_handlers_msb:
