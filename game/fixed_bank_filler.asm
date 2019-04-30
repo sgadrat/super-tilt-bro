@@ -36,6 +36,7 @@ credits_end:
 ; Print some interesting addresses for debug
 ;
 
+#echo
 #echo wait_frame_loop:
 #print wait_next_real_frame+4
 #echo nmi_begin:
@@ -56,25 +57,16 @@ credits_end:
 ;
 
 #echo
-#echo PRG-ROM total space:
-#print $10000-$8000
+#echo FIXED-bank total space:
+#print $10000-$c000
 #echo
-#echo PRG-ROM code size:
-#print code_end-$8000
+#echo FIXED-bank code size:
+#print code_end-$c000
 #echo
-#echo PRG-ROM data size:
-#print data_end-data_begin
-#echo PRG-ROM nametables size:
-#print data_nt_end-data_nt_begin
-#echo PRG-ROM animations size:
-#print data_anim_end-data_anim_begin
-#echo PRG-ROM musics size:
-#print data_music_end-data_music_begin
-#echo
-#echo PRG-ROM credits size:
+#echo FIXED-bank credits size:
 #print credits_end-credits_begin
 #echo
-#echo PRG-ROM free space:
+#echo FIXED-bank free space:
 #print $fffa-*
 
 ;

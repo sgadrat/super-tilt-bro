@@ -72,6 +72,16 @@ bne load_background
 rts
 .)
 
+; Change active PRG-BANK
+;  register A - number of the PRG-BANK to activate
+; TODO - handle CHR-BANK switching
+; TODO - handle bus conflict (which can be turned of at compile time to avoid to store the big table)
+switch_bank:
+.(
+	sta $c000
+	rts
+.)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Super Tilt Bro. specific
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

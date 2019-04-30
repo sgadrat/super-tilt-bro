@@ -2,8 +2,7 @@
 ;  xa tilt.asm -C -o tilt\(E\).nes
 ;
 ; Building raw ROMs
-;  xa tilt.asm -DNO_INES_HEADER -DNO_CHR_ROM -C -o tilt_prg.bin
-;  xa tilt.asm -DNO_INES_HEADER -DNO_PRG_ROM -C -o tilt_chr.bin
+;  xa tilt.asm -DNO_INES_HEADER -C -o tilt_prg.bin
 
 ; iNES header
 
@@ -22,17 +21,14 @@
 ; PRG-ROM
 
 #ifndef NO_PRG_ROM
-* = $8000 ; $8000 is where the PRG rom is mapped in CPU space, so code position is relative to it
+
+#include "game/extra_banks.asm"
+
+* = $c000 ; $c000 is where the PRG fixed bank rom is mapped in CPU space, so code position is relative to it
 code_begin:
 #include "game/logic/animation_opcodes.asm"
 #include "nine/prg_rom/prg_rom.asm"
 #include "game/logic/logic.asm"
 code_end:
-#include "game/data/data.asm"
-#include "game/prg_rom_filler.asm"
-#endif
-
-; CHR-ROM
-#ifndef NO_CHR_ROM
-#include "game/chr_rom.asm"
+#include "game/fixed_bank_filler.asm"
 #endif
