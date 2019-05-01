@@ -51,6 +51,11 @@ init_game_state:
 			inx
 			cpx #2
 			bne position_player_loop
+		;lda #0             ;
+		;sta player_a_x_msb ;
+		;sta player_a_y_msb ; Position MSBs are not entrelaced, set it out of the loop
+		;sta player_b_x_msb ; (commented out, it is set to zero by animation_init_state)
+		;sta player_b_y_msb ;
 
 		lda #DEFAULT_GRAVITY
 		sta player_a_gravity
@@ -298,6 +303,13 @@ slowdown:
 
 update_players:
 .(
+	;TODO out of screen
+	;      - hitboxes colision use msb
+	;      - player states actions may need to be updated (especially the code based on check_on_ground)
+	;      - move_player
+	;      - check_player_position
+	;      - maybe player_effects
+
 	; Decrement hitstun counters
 	ldx #$00
 	hitstun_one_player:
@@ -649,6 +661,7 @@ apply_force_vector:
 ;  and tmpfield2 contains it's old Y
 move_player:
 .(
+	;TODO harmonize component names "subpixel", "pixel" and "screen"
 	old_x = tmpfield1 ; Not movable, return value and parameter of check_collision
 	old_y = tmpfield2 ; Not movable, return value and parameter of check_collision
 	final_x_low = tmpfield9 ; Not movable, parameter of check_collision
@@ -659,13 +672,52 @@ move_player:
 	obstacle_top = tmpfield6 ; Not movable, parameter of check_collision
 	obstacle_right = tmpfield7 ; Not movable, parameter of check_collision
 	obstacle_bottom = tmpfield8 ; Not movable, parameter of check_collision
-	action_vector = tmpfield14
+	final_x_screen = tmpfield11 ; Not movable, parameter of check_collision
+	final_y_screen = tmpfield12 ; Not movable, parameter of check_collision
+	old_x_screen = tmpfield13 ; Not movable, parameter of check_collision
+	old_y_screen = tmpfield14 ; Not movable, parameter of check_collision
+	action_vector = tmpfield15
+
+	;TODO
+	; This function compute movment+velocity, then calls check_collision on each platform to avoid the result being after an obstacle
+	;
+	; Problem - check_collision use one byte unsigned positions, making it hard to work with two bytes signed positions
+	;
+	; Solutions
+	;  1. Patch check_collision to accept two bytes signed positions
+	;       + Stupid logic solution to this exact problem
+	;       - Super intensive use of tmpfields (actually more than 16, which is a problem)
+	;       ? May be compressed by taking (left, width, top, height) coordinates instead of (left, right, top, bot) - width and eight my be one unsigned byte
+	;  2. Use positions relative to the original position
+	;       + Allows to cool, we can detect platforms too far away before calling check_collision on it
+	;       - Does not works, we end up with platforms values being signed (and 8 byte signed is insuficient)
+	;  3. Re-code check_collision inside this function (with two bytes signed positions)
+	;       + Allows to avoid data copy to tmpfields
+	;       - Not backportable to nine-gine
+
+	; Save X to ensure it is not modified by this routine
+	txa
+	pha
 
 	; Save old position
 	lda player_a_x, x
 	sta old_x
 	lda player_a_y, x
 	sta old_y
+	.(
+		cpx #0
+		bne player_b
+			lda player_a_x_msb
+			sta old_x_screen
+			lda player_a_y_msb
+			jmp end_save_old_pos
+		player_b:
+			lda player_b_x_msb
+			sta old_x_screen
+			lda player_b_y_msb
+		end_save_old_pos:
+			sta old_y_screen
+	.)
 
 	; Apply velocity to position
 	lda player_a_velocity_h_low, x
@@ -673,33 +725,68 @@ move_player:
 	adc player_a_x_low, x
 	sta final_x_low
 	lda player_a_velocity_h, x
-	adc player_a_x, x
+	adc old_x
 	sta final_x_high
+	lda player_a_velocity_h, x
+	SIGN_EXTEND()
+	adc #0
+	sta final_x_screen
 
 	lda player_a_velocity_v_low, x
 	clc
 	adc player_a_y_low, x
 	sta final_y_low
 	lda player_a_velocity_v, x
-	adc player_a_y, x
+	adc old_y
 	sta final_y_high
+	lda player_a_velocity_v, x
+	SIGN_EXTEND()
+	adc #0
+	sta final_y_screen
 
 	; Check collisions with stage plaforms
 	ldy #0
 
 	check_platform_colision:
-	txa
-	pha
-	ldx stage_data+STAGE_OFFSET_PLATFORMS, y
-	lda platform_actions_low, x
-	sta action_vector
-	lda platform_actions_high, x
-	sta action_vector+1
-	pla
-	tax
-	jmp (action_vector)
+		;txa
+		;pha
+		ldx stage_data+STAGE_OFFSET_PLATFORMS, y
+		lda platform_actions_low, x
+		sta action_vector
+		lda platform_actions_high, x
+		sta action_vector+1
+		;pla
+		;tax
+		jmp (action_vector)
 
 	end:
+		; Restore X
+		pla
+		tax
+
+		; Store final velocity in player's position
+		lda final_x_high
+		sta player_a_x, x
+		lda final_y_high
+		sta player_a_y, x
+		lda final_x_low
+		sta player_a_x_low, x
+		lda final_y_low
+		sta player_a_y_low, x
+		.(
+			lda final_x_screen
+			cpx #0
+			bne player_b
+				sta player_a_x_msb
+				lda final_y_screen
+				sta player_a_y_msb
+				jmp end_update_pos
+			player_b:
+				sta player_b_x_msb
+				lda final_y_screen
+				sta player_b_y_msb
+			end_update_pos:
+		.)
 	rts
 
 	end_platforms:
@@ -717,16 +804,17 @@ move_player:
 		sta obstacle_right
 		lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_BOTTOM, y
 		sta obstacle_bottom
+		lda #0
+		pha
+		pha
+		pha
+		pha
 
 		jsr check_collision
-		lda final_x_high
-		sta player_a_x, x
-		lda final_y_high
-		sta player_a_y, x
-		lda final_x_low
-		sta player_a_x_low, x
-		lda final_y_low
-		sta player_a_y_low, x
+		pla
+		pla
+		pla
+		pla
 
 		tya
 		clc
@@ -743,16 +831,15 @@ move_player:
 		sta obstacle_top
 		lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT, y
 		sta obstacle_right
+		lda #0
+		pha
+		pha
+		pha
 
 		jsr check_top_collision
-		lda final_x_high
-		sta player_a_x, x
-		lda final_y_high
-		sta player_a_y, x
-		lda final_x_low
-		sta player_a_x_low, x
-		lda final_y_low
-		sta player_a_y_low, x
+		pla
+		pla
+		pla
 
 		tya
 		clc

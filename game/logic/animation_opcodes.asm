@@ -35,16 +35,6 @@ animation_frame_entry_handlers_msb:
 .byt >anim_frame_move_sprite, >anim_frame_move_sprite
 .byt >anim_frame_move_hitbox, >anim_frame_move_hurtbox
 
-; Set register A to the sign extension of recently loaded value
-#define SIGN_EXTEND() .(:\
-	bmi set_relative_msb_neg:\
-		lda #0:\
-		jmp end_sign_extend:\
-	set_relative_msb_neg:\
-		lda #$ff:\
-	end_sign_extend:\
-.)
-
 ; Hook called when the sprite handler want's to load attributes from its entry
 ;  Here we add "2 * player_num" to fetched attributes, so
 ;  player A uses palettes 0 and 1

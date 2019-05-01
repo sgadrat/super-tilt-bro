@@ -9,8 +9,17 @@
 ;  tmpfield8 - Obstacle bottom-right Y
 ;  tmpfield9 - Final position X (low byte)
 ;  tmpfield10 - Final position Y (low byte)
+;  tmpfiedl11 - Final position X (screen byte)
+;  tmpfield12 - Final position Y (screen byte)
+;  tmpfield13 - Original position X (screen byte)
+;  tmpfield14 - Original position y (screen byte)
+;  stack+6 - Obstacle top-left X (screen byte)
+;  stack+5 - Obstacle top-left Y (screen byte)
+;  stack+4 - Obstacle bottom-right X (screen byte)
+;  stack+3 - Obstacle bottom-right Y (screen byte)
 ;
-; tmpfield3, tmpfield4, tmpfield9 and tmpfield10 are rewritten with a final position that do not pass through obstacle.
+; Overwrites register X and tmpfield15
+;  tmpfield3, tmpfield4, tmpfield9, tmpfield10, tmpfield11 and tmpfield12 are rewritten with a final position that do not pass through obstacle.
 check_collision:
 .(
 	; Better names for labels
@@ -24,73 +33,116 @@ check_collision:
 	obstacle_bottom = tmpfield8
 	final_x_low = tmpfield9
 	final_y_low = tmpfield10
+	final_x_screen = tmpfield11
+	final_y_screen = tmpfield12
+	orig_x_screen = tmpfield13
+	orig_y_screen = tmpfield14
+#define LDA_OBSTACLE_LEFT_SCREEN() tsx:lda stack+6, x
+#define LDA_OBSTACLE_TOP_SCREEN() tsx:lda stack+5, x
+#define LDA_OBSTACLE_RIGHT_SCREEN() tsx:lda stack+4, x
+#define LDA_OBSTACLE_BOTTOM_SCREEN() tsx:lda stack+3, x
+;TODO we do not use x, so call tsx just once at the begining
+	obstacle_top_screen = tmpfield15
+	obstacle_bottom_screen = tmpfield15
+	obstacle_left_screen = tmpfield15
+	obstacle_right_screen = tmpfield15
+
+	; Skip vertical edges collision checks if the player is over or under the obstacle
+	LDA_OBSTACLE_TOP_SCREEN()
+	sta obstacle_top_screen
+	SIGNED_CMP(final_y, final_y_screen, obstacle_top, obstacle_top_screen)
+	bmi horizontal_edges
+	LDA_OBSTACLE_BOTTOM_SCREEN()
+	sta obstacle_bottom_screen
+	SIGNED_CMP(obstacle_bottom, obstacle_bottom_screen, final_y, final_y_screen)
+	bmi horizontal_edges
 
 	; Check collision with left edge
-	lda final_y         ;
-	cmp obstacle_top    ;
-	bcc top_edge        ; Skip lateral edges collision checks if
-	lda obstacle_bottom ; the player is over or under the obstacle
-	cmp final_y         ;
-	bcc top_edge        ;
+	left_edge:
+		LDA_OBSTACLE_LEFT_SCREEN()                                                   ;
+		sta obstacle_left_screen                                                     ;
+		SIGNED_CMP(obstacle_left, obstacle_left_screen, orig_x, orig_x_screen)       ; Do not collide if original position is on the right of the edge
+		bmi right_edge                                                               ; nor if final position is on the left of the edge
+			SIGNED_CMP(final_x, final_x_screen, obstacle_left, obstacle_left_screen) ;
+			bmi right_edge                                                           ;
 
-		lda orig_x              ; Set final_x to obstacle_left if original position
-		cmp obstacle_left       ; is on the left of the edge and final position on
-		bcs right_edge          ; the right of the edge.
-			lda final_x         ;
-			cmp obstacle_left   ; When high bytes are equal to obstacle_left ensure low byte
-			bcc right_edge      ; is 0, this is a limitation if origx_x_low differs from 0
-			lda obstacle_left   ; since the point is already inside the obstacle. Should
-			sta final_x         ; work as long as points never fo in obstacles. Else inside
-			dec final_x         ; obstacle for less than one pixel is considered outside.
-			lda #$ff            ;
-			sta final_x_low     ;
+				lda #$ff                 ;
+				sta final_x_low          ;
+				lda obstacle_left        ;
+				sec                      ; Collide against the left edge
+				sbc #1                   ;  Sets final position to edge position minus one sub-pixel
+				sta final_x              ;
+				lda obstacle_left_screen ;
+				sbc #0                   ;
+				sta final_x_screen       ;
 
 	; Check collision with right edge
 	right_edge:
-		lda obstacle_right
-		cmp orig_x
-		bcs top_edge
-			lda obstacle_right
-			cmp final_x
-			bcc top_edge
-			sta final_x
-			inc final_x
-			lda #$00
-			sta final_x_low
+		LDA_OBSTACLE_RIGHT_SCREEN()                                                    ;
+		sta obstacle_right_screen                                                      ;
+		SIGNED_CMP(orig_x, orig_x_screen, obstacle_right, obstacle_right_screen)       ; Do not collide if original position is on the left of the edge
+		bmi horizontal_edges                                                           ; nor if final position is on the right of the edge
+			SIGNED_CMP(obstacle_right, obstacle_right_screen, final_x, final_x_screen) ;
+			bmi horizontal_edges                                                       ;
+
+				lda #$00                  ;
+				sta final_x_low           ;
+				lda obstacle_right        ;
+				clc                       ; Collide against the right edge
+				adc #1                    ;  Sets final position to edge position plus one pixel (consider the obstacle filling its last pixel)
+				sta final_x               ;
+				lda obstacle_right_screen ;
+				adc #0                    ;
+				sta final_x_screen        ;
+
+	horizontal_edges:
+	; Skip horizontal edges collision checks if the player is aside of the obstacle
+	LDA_OBSTACLE_LEFT_SCREEN()
+	sta obstacle_left_screen
+	SIGNED_CMP(final_x, final_x_screen, obstacle_left, obstacle_left_screen)
+	bmi end
+	LDA_OBSTACLE_RIGHT_SCREEN()
+	sta obstacle_right_screen
+	SIGNED_CMP(obstacle_right, obstacle_right_screen, final_x, final_x_screen)
+	bmi end
 
 	; Check collision with top edge
 	top_edge:
-		lda final_x        ;
-		cmp obstacle_left  ;
-		bcc end            ; Skip horizontal edges collision checks if
-		lda obstacle_right ; the player is aside of the obstacle
-		cmp final_x        ;
-		bcc end            ;
+		LDA_OBSTACLE_TOP_SCREEN()                                                  ;
+		sta obstacle_top_screen                                                    ;
+		SIGNED_CMP(obstacle_top, obstacle_top_screen, orig_y, orig_y_screen)       ; Do not collide if original position is on the under of edge
+		bmi bot_edge                                                               ; nor if final position is on above the edge
+			SIGNED_CMP(final_y, final_y_screen, obstacle_top, obstacle_top_screen) ;
+			bmi bot_edge                                                           ;
 
-		lda orig_y
-		cmp obstacle_top
-		bcs bot_edge
-			lda final_y
-			cmp obstacle_top
-			bcc bot_edge
-			lda obstacle_top
-			sta final_y
-			dec final_y
-			lda #$ff
-			sta final_y_low
+				lda #$ff                ;
+				sta final_y_low         ;
+				lda obstacle_top        ;
+				sec                     ; Collide against the top edge
+				sbc #1                  ;  Sets final position to edge position minus one sub-pixel
+				sta final_y             ;
+				lda obstacle_top_screen ;
+				sbc #0                  ;
+				sta final_y_screen      ;
 
 	; Check collision with bottom edge
 	bot_edge:
-		lda obstacle_bottom
-		cmp orig_y
-		bcs end
-			lda obstacle_bottom
-			cmp final_y
-			bcc end
-			sta final_y
-			inc final_y
-			lda #$00
-			sta final_y_low
+		LDA_OBSTACLE_BOTTOM_SCREEN()                                                     ;
+		sta obstacle_bottom_screen                                                       ;
+		SIGNED_CMP(obstacle_bottom, obstacle_bottom_screen, orig_y, orig_y_screen)       ; Do not collide if original position is on the under of edge
+		bmi end                                                                          ; nor if final position is on above the edge
+			SIGNED_CMP(final_y, final_y_screen, obstacle_bottom, obstacle_bottom_screen) ;
+			bmi end                                                                      ;
+
+				lda #$00                   ;
+				sta final_y_low            ;
+				lda obstacle_bottom        ;
+				clc                        ; Collide against the bottom edge
+				adc #1                     ;  Sets final position to edge position plus one pixel (consider the obstacle filling its last pixel)
+				sta final_y                ;
+				lda obstacle_bottom_screen ;
+				adc #0                     ;
+				sta final_y_screen         ;
 
 	end:
 	rts
@@ -104,8 +156,15 @@ check_collision:
 ;  tmpfield6 - Obstacle top-left Y
 ;  tmpfield7 - Obstacle bottom-right X
 ;  tmpfield10 - Final position Y (low byte)
+;  tmpfiedl11 - Final position X (screen byte)
+;  tmpfield12 - Final position Y (screen byte)
+;  tmpfield14 - Original position y (screen byte)
+;  stack+5 - Obstacle top-left X (screen byte)
+;  stack+4 - Obstacle top-left Y (screen byte)
+;  stack+3 - Obstacle bottom-right X (screen byte)
 ;
-; tmpfield3, tmpfield4, tmpfield9 and tmpfield10 are rewritten with a final position that do not pass through obstacle.
+; Overwrites register X and tmpfield15
+;  tmpfield3, tmpfield4, tmpfield10, tmpfield11 and tmpfield12 are rewritten with a final position that do not pass through obstacle.
 check_top_collision:
 .(
 	; Better names for labels
@@ -116,25 +175,42 @@ check_top_collision:
 	obstacle_top = tmpfield6
 	obstacle_right = tmpfield7
 	final_y_low = tmpfield10
+	final_x_screen = tmpfield11
+	final_y_screen = tmpfield12
+	orig_y_screen = tmpfield14
+#define LDA_OBSTACLE_LEFT_SCREEN() tsx:lda stack+5, x
+#define LDA_OBSTACLE_TOP_SCREEN() tsx:lda stack+4, x
+#define LDA_OBSTACLE_RIGHT_SCREEN() tsx:lda stack+3, x
+	obstacle_top_screen = tmpfield15
+	obstacle_left_screen = tmpfield15
+	obstacle_right_screen = tmpfield15
 
-	lda final_x        ;
-	cmp obstacle_left  ;
-	bcc end            ; Skip horizontal edges collision checks if
-	lda obstacle_right ; the player is aside of the obstacle
-	cmp final_x        ;
-	bcc end            ;
+	; Skip horizontal edges collision checks if the player is aside of the obstacle
+	LDA_OBSTACLE_LEFT_SCREEN()
+	sta obstacle_left_screen
+	SIGNED_CMP(final_x, final_x_screen, obstacle_left, obstacle_left_screen)
+	bmi end
+	LDA_OBSTACLE_RIGHT_SCREEN()
+	sta obstacle_right_screen
+	SIGNED_CMP(obstacle_right, obstacle_right_screen, final_x, final_x_screen)
+	bmi end
 
-		lda orig_y
-		cmp obstacle_top
-		bcs end
-		lda final_y
-		cmp obstacle_top
-		bcc end
-			lda obstacle_top
-			sta final_y
-			dec final_y
-			lda #$ff
-			sta final_y_low
+		LDA_OBSTACLE_TOP_SCREEN()                                                  ;
+		sta obstacle_top_screen                                                    ;
+		SIGNED_CMP(obstacle_top, obstacle_top_screen, orig_y, orig_y_screen)       ; Do not collide if original position is under the edge
+		bmi end                                                                    ; nor if final position is above the edge
+			SIGNED_CMP(final_y, final_y_screen, obstacle_top, obstacle_top_screen) ;
+			bmi end                                                                ;
+
+				lda #$ff                ;
+				sta final_y_low         ;
+				lda obstacle_top        ;
+				sec                     ; Collide against the top edge
+				sbc #1                  ;  Sets final position to edge position minus one sub-pixel
+				sta final_y             ;
+				lda obstacle_top_screen ;
+				sbc #0                  ;
+				sta final_y_screen      ;
 
 	end:
 	rts

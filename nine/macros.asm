@@ -170,3 +170,27 @@
 ;
 
 #define STATE_TRANSITION(previous,new) previous * 16 + new
+
+;
+; Utility macros
+;
+
+#define SIGNED_CMP(a_low,a_high,b_low,b_high) .(:\
+	lda a_low:\
+	cmp b_low:\
+	lda a_high:\
+	sbc b_high:\
+	bvc end_signed_cmp:\
+	eor #%10000000:\
+	end_signed_cmp:\
+.)
+
+; Set register A to the sign extension of recently loaded value (based on N flag)
+#define SIGN_EXTEND() .(:\
+	bmi set_relative_msb_neg:\
+		lda #0:\
+		jmp end_sign_extend:\
+	set_relative_msb_neg:\
+		lda #$ff:\
+	end_sign_extend:\
+.)

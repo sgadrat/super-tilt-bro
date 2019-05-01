@@ -77,6 +77,8 @@ rts
 ; Output - N flag set if "a < b", unset otherwise
 ;          C flag set if "(unsigned)a < (unsigned)b", unset otherwise
 ; Overwrites register A
+;
+; See also the macro with the same name (capitalized)
 signed_cmp:
 .(
 ; Trick from http://www.6502.org/tutorials/compare_beyond.html

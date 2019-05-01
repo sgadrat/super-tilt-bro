@@ -132,6 +132,10 @@ slow_down_counter = $7f
 
 player_a_animation = $05a0 ; $05a0 to $05ab - player a's animation state
 player_b_animation = $05ac ; $05ac to $05b7 - player b's animation state
+player_a_x_msb = player_a_animation+ANIMATION_STATE_OFFSET_X_MSB
+player_b_x_msb = player_b_animation+ANIMATION_STATE_OFFSET_X_MSB
+player_a_y_msb = player_a_animation+ANIMATION_STATE_OFFSET_Y_MSB
+player_b_y_msb = player_b_animation+ANIMATION_STATE_OFFSET_Y_MSB
 
 ;
 ; Stage specific labels
