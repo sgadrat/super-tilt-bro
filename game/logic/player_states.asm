@@ -995,6 +995,17 @@ sta player_a_y, x
 lda stage_data+STAGE_HEADER_OFFSET_RESPAWNY_LOW
 sta player_a_y_low, x
 lda #$00
+.(
+cpx #0
+bne player_b
+sta player_a_x_msb
+sta player_a_y_msb
+jmp end_set_pos_msb
+player_b:
+sta player_b_x_msb
+sta player_b_y_msb
+end_set_pos_msb:
+.)
 sta player_a_velocity_h, x
 sta player_a_velocity_h_low, x
 sta player_a_velocity_v, x
@@ -2041,6 +2052,17 @@ sta player_a_x, x
 sta player_a_x_low, x
 sta player_a_y, x
 sta player_a_y_low, x
+.(
+cpx #0
+bne player_b
+sta player_a_x_msb
+sta player_a_y_msb
+jmp end_set_pos_msb
+player_b:
+sta player_b_x_msb
+sta player_b_y_msb
+end_set_pos_msb:
+.)
 sta player_a_velocity_h, x
 sta player_a_velocity_h_low, x
 sta player_a_velocity_v, x

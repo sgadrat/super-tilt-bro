@@ -678,23 +678,6 @@ move_player:
 	old_y_screen = tmpfield14 ; Not movable, parameter of check_collision
 	action_vector = tmpfield15
 
-	;TODO
-	; This function compute movment+velocity, then calls check_collision on each platform to avoid the result being after an obstacle
-	;
-	; Problem - check_collision use one byte unsigned positions, making it hard to work with two bytes signed positions
-	;
-	; Solutions
-	;  1. Patch check_collision to accept two bytes signed positions
-	;       + Stupid logic solution to this exact problem
-	;       - Super intensive use of tmpfields (actually more than 16, which is a problem)
-	;       ? May be compressed by taking (left, width, top, height) coordinates instead of (left, right, top, bot) - width and eight my be one unsigned byte
-	;  2. Use positions relative to the original position
-	;       + Allows to cool, we can detect platforms too far away before calling check_collision on it
-	;       - Does not works, we end up with platforms values being signed (and 8 byte signed is insuficient)
-	;  3. Re-code check_collision inside this function (with two bytes signed positions)
-	;       + Allows to avoid data copy to tmpfields
-	;       - Not backportable to nine-gine
-
 	; Save X to ensure it is not modified by this routine
 	txa
 	pha
@@ -729,7 +712,7 @@ move_player:
 	sta final_x_high
 	lda player_a_velocity_h, x
 	SIGN_EXTEND()
-	adc #0
+	adc old_x_screen
 	sta final_x_screen
 
 	lda player_a_velocity_v_low, x
@@ -741,7 +724,7 @@ move_player:
 	sta final_y_high
 	lda player_a_velocity_v, x
 	SIGN_EXTEND()
-	adc #0
+	adc old_y_screen
 	sta final_y_screen
 
 	; Check collisions with stage plaforms
@@ -860,38 +843,36 @@ move_player:
 
 ; Check the player's position and modify the current state accordingly
 ;  register X - player number
-;  tmpfield1 - player's old X
-;  tmpfield2 - player's old Y
+;  tmpfield1 - player's old X pixel
+;  tmpfield2 - player's old Y pixel
+;  tmpfield3 - player's current X pixel
+;  tmpfield4 - player's current Y pixel
+;  tmpfield11 - player's current X screen
+;  tmpfield12 - player's current Y screen
+;  tmpfield13 - player's old X screen
+;  tmpfield14 - player's old Y screen
 ;
 ;  Overwrites tmpfield1 and tmpfield2
 check_player_position:
 .(
 	old_x = tmpfield1 ; Not movable, used by particle_death_start
 	old_y = tmpfield2 ; Not movable, used by particle_death_start
+	current_x_pixel = tmpfield3 ; Dispensable, shall be equal to "player_a_x, x"
+	current_y_pixel = tmpfield4 ; Dispensable, shall be equal to "player_a_y, x"
+	current_x_screen = tmpfield11
+	current_y_screen = tmpfield12
+	old_x_screen = tmpfield13 ;TODO use it to place particles correctly
+	old_y_screen = tmpfield14 ;TODO use it to place particles correctly
 
 	; Check death
-	lda player_a_velocity_h, x
-	bpl check_right_blast
-	lda old_x           ; Horizontal velocity is negative
-	cmp player_a_x, x   ; die if "old X < new X"
-	bcc set_death_state ;
-	jmp check_vertical_blasts
-	check_right_blast:
-	lda player_a_x, x   ; Horizontal velocity is positive
-	cmp old_x           ; die if "new X < old X"
-	bcc set_death_state ;
-	check_vertical_blasts:
-	lda player_a_velocity_v, x
-	bpl check_bottom_blast
-	lda old_y           ; Vertical velocity is negative
-	cmp player_a_y, x   ; die if "old Y < new Y"
-	bcc set_death_state ;
-	jmp end_death_checks
-	check_bottom_blast:
-	lda player_a_y, x   ; Vertical velocity is positive
-	cmp old_y           ; die if "new Y < old Y"
-	bcc set_death_state ;
-	end_death_checks:
+	SIGNED_CMP(current_x_pixel, current_x_screen, #<STAGE_BLAST_LEFT, #>STAGE_BLAST_LEFT)
+	bmi set_death_state
+	SIGNED_CMP(#<STAGE_BLAST_RIGHT, #>STAGE_BLAST_RIGHT, current_x_pixel, current_x_screen)
+	bmi set_death_state
+	SIGNED_CMP(current_y_pixel, current_y_screen, #<STAGE_BLAST_TOP, #>STAGE_BLAST_TOP)
+	bmi set_death_state
+	SIGNED_CMP(#<STAGE_BLAST_BOTTOM, #>STAGE_BLAST_BOTTOM, current_y_pixel, current_y_screen)
+	bmi set_death_state
 
 	; Check if on ground
 	jsr check_on_ground
@@ -918,6 +899,9 @@ check_player_position:
 		jmp end
 
 	set_death_state:
+		;TODO particle_death_start still uses 8bit values, we have to cap it
+		;     (if a player dies on the left blast line bellow screen levels, particles shall be on the bottom)
+
 		jsr audio_play_death ; Play death sound
 		lda #$00                         ; Reset aerial jumps counter
 		sta player_a_num_aerial_jumps, x ;
@@ -938,8 +922,10 @@ check_player_position:
 		sta gameover_winner        ;
 		jsr switch_selected_player ;
 		no_set_winner:             ;
+
 		lda #0                 ; Do not keep an invalid number of stocks
 		sta player_a_stocks, x ;
+
 		jsr start_innexistant_player ; Hide dead player
 		lda #SLOWDOWN_TIME    ; Start slow down (restart it if the second player die to
 		sta slow_down_counter ; show that heroic death's animation)
@@ -1138,9 +1124,6 @@ update_sprites:
 	sta player_a_animation+ANIMATION_STATE_OFFSET_X_LSB
 	lda player_a_y
 	sta player_a_animation+ANIMATION_STATE_OFFSET_Y_LSB
-	lda #0
-	sta player_a_animation+ANIMATION_STATE_OFFSET_X_MSB
-	sta player_a_animation+ANIMATION_STATE_OFFSET_Y_MSB
 
 	lda #<player_a_animation
 	sta animation_vector
@@ -1160,9 +1143,6 @@ update_sprites:
 	sta player_b_animation+ANIMATION_STATE_OFFSET_X_LSB
 	lda player_b_y
 	sta player_b_animation+ANIMATION_STATE_OFFSET_Y_LSB
-	lda #0
-	sta player_b_animation+ANIMATION_STATE_OFFSET_X_MSB
-	sta player_b_animation+ANIMATION_STATE_OFFSET_Y_MSB
 
 	lda #<player_b_animation
 	sta animation_vector
