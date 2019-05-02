@@ -899,18 +899,45 @@ check_player_position:
 		jmp end
 
 	set_death_state:
-		;TODO particle_death_start still uses 8bit values, we have to cap it
-		;     (if a player dies on the left blast line bellow screen levels, particles shall be on the bottom)
-
 		jsr audio_play_death ; Play death sound
+
 		lda #$00                         ; Reset aerial jumps counter
 		sta player_a_num_aerial_jumps, x ;
+
 		sta player_a_hitstun, x ; Reset hitstun counter
+
 		lda #DEFAULT_GRAVITY     ; Reset gravity
 		sta player_a_gravity, x  ;
-		jsr particle_death_start ; Death particles animation
+
+		.(                               ;
+			lda old_x_screen             ;
+			bmi left_edge                ;
+			beq end_cap_vertical_blast   ;
+				lda #$ff                 ;
+				jmp cap_vertical_blast   ;
+			left_edge:                   ;
+				lda #$0                  ;
+			cap_vertical_blast:          ;
+				sta old_x                ; Death particles animation
+			end_cap_vertical_blast:      ;  It takes on-screen unsigned coordinates,
+		.)                               ;  so we cap actual coordinates to a minimum
+		.(                               ;  of zero and a maxium of 255
+			lda old_y_screen             ;
+			bmi top_edge                 ;
+			beq end_cap_horizontal_blast ;
+				lda #$ff                 ;
+				jmp cap_horizontal_blast ;
+			top_edge:                    ;
+				lda #$0                  ;
+			cap_horizontal_blast:        ;
+				sta old_y                ;
+			end_cap_horizontal_blast:    ;
+		.)                               ;
+		jsr particle_death_start         ;
+
 		dec player_a_stocks, x ; Decrement stocks counter and check for gameover
 		bmi gameover           ;
+
 		jsr start_respawn_player ; Respawn
 		jmp end
 

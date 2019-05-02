@@ -145,11 +145,13 @@ particle_directional_indicator_tick:
 
 ; Start death particles for a player
 ;  X - player number
-;  tmpfield1 - player X position before death
-;  tmpfield2 - player Y position before death
+;  tmpfield1 - Source X position
+;  tmpfield2 - Source Y position
 ;
 ; Uses particle box number 0 for player A or 1 for player B
 ; Deactivate any particle handler on the same box
+;
+; Overwrites all registers, tmpfield1, tmpfield2, tmpfield3, tmpfield4, tmpfield5 tmpfield6 and tmpfield7
 particle_death_start:
 .(
 	position_x_param = tmpfield1
@@ -214,7 +216,7 @@ particle_death_start:
 
 	place_one_particle:
 	.(
-		particle_counter = tmpfield3
+		particle_counter = tmpfield3 ; Not movable, imposed by loop_on_plarticles
 		position_x = position_x_store
 		position_y = position_y_store
 
