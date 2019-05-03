@@ -215,8 +215,23 @@ check_on_ground:
 	platform_right = tmpfield2 ; Not movable - parameter of check_on_platform
 	platform_top = tmpfield3 ; Not movable - parameter of check_on_platform
 
-	ldy #0
+	; Player cannot be on ground if not in the main screen (platforms use one byte unsigned positions)
+	.(
+		cpx #0
+		bne player_b
+			lda player_a_x_msb
+			bne offground
+			lda player_a_y_msb
+			bne offground
+		player_b:
+			lda player_b_x_msb
+			bne offground
+			lda player_b_y_msb
+			bne offground
+	.)
 
+	; Iterate on platforms until we find on onn which the player is
+	ldy #0
 	check_current_platform:
 		lda stage_data+STAGE_OFFSET_PLATFORMS, y
 		beq offground
@@ -227,7 +242,7 @@ check_on_ground:
 		sta tmpfield2
 		lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_TOP, y
 		sta tmpfield3
-		jsr check_on_platform
+		jsr check_on_platform_screen_unsafe
 		beq end
 
 		lda stage_data+STAGE_OFFSET_PLATFORMS, y
@@ -264,14 +279,45 @@ check_on_ground:
 ;
 ; Ovewrites register A, tmpfield1, tmpfield2 and tmpfield3
 check_on_platform:
+; Player cannot be on ground if not in the main screen (platforms use one byte unsigned positions)
 .(
-	platfrom_left = tmpfield1
+	; Check that player is not out of screen
+	cpx #0
+	bne player_b
+		lda player_a_x_msb
+		bne offscreen
+		lda player_a_y_msb
+		bne offscreen
+	player_b:
+		lda player_b_x_msb
+		bne offscreen
+		lda player_b_y_msb
+		bne offscreen
+	jmp check_on_platform_screen_unsafe ; Fallthrough to the screen-unsafe version of this routine
+
+	offscreen:
+		; Comming here by "bne" ensure that Z flag is not set, simply return
+		rts
+.)
+
+; Check if the player is grounded on a specific platform, but do not check for out-of-screen players
+;  register X - Player number
+;  tmpfield1 - platform left
+;  tmpfield2 - platform right
+;  tmpfield3 - platform top
+;
+; Sets Z flag if on ground, else unset it
+;
+; Ovewrites register A, tmpfield1, tmpfield2 and tmpfield3
+check_on_platform_screen_unsafe:
+.(
+	platform_left = tmpfield1
 	platform_right = tmpfield2
 	platform_top = tmpfield3
 
 	lda player_a_x, x ;
-	dec platfrom_left ; if (X < platform_left - 1) then offground
-	cmp platfrom_left ;
+	dec platform_left ; if (X < platform_left - 1) then offground
+	cmp platform_left ;
 	bcc offground     ;
 	inc platform_right ;
 	lda platform_right ; if (platform_right + 1 < X) then offground
