@@ -126,6 +126,11 @@ directional_indicator_player_a_direction_y_high = $79
 directional_indicator_player_b_direction_y_high = $7a
 directional_indicator_player_a_direction_y_low = $7b
 directional_indicator_player_b_direction_y_low = $7c
+; particles lo position tables
+;  | byte 0 | bytes 1 to 7       | byte 8 | bytes 9 to 15      |
+;  | unused | player A particles | unused | player B particles |
+directional_indicator_player_a_position_x_low = $90 ; $90 to $9f - unused $90 and $98
+directional_indicator_player_a_position_y_low = $a0 ; $a0 to $af - unused $a0 and $a8
 
 death_particles_player_a_counter = $7d
 death_particles_player_b_counter = $7e
@@ -159,6 +164,8 @@ stage_gem_gem_cooldown_high = $89
 stage_gem_gem_state = $8a ; one of STAGE_GEM_GEM_STATE_*
 stage_gem_buffed_player = $8b
 stage_gem_last_opponent_state = $8c
+
+;Note - $90 to $af are used by DI particles
 
 ;
 ; TITLE labels

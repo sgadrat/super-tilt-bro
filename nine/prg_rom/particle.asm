@@ -85,13 +85,22 @@ particle_draw:
 
 			; Draw the current particle
 			lda particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, x
-			sta oam_mirror, y
-			lda tile_index
-			sta oam_mirror+1, y
-			lda tile_attr
-			sta oam_mirror+2, y
+			bne hide_particle
 			lda particle_blocks+PARTICLE_POSITION_OFFSET_X_MSB, x
-			sta oam_mirror+3, y
+			bne hide_particle
+				lda particle_blocks+PARTICLE_POSITION_OFFSET_Y_LSB, x
+				sta oam_mirror, y
+				lda tile_index
+				sta oam_mirror+1, y
+				lda tile_attr
+				sta oam_mirror+2, y
+				lda particle_blocks+PARTICLE_POSITION_OFFSET_X_LSB, x
+				sta oam_mirror+3, y
+				jmp particle_drawn
+			hide_particle:
+				lda #$fe
+				sta oam_mirror, y
+			particle_drawn:
 
 			; Point on the next sprite
 			iny

@@ -50,14 +50,32 @@ particle_directional_indicator_start:
 
 	set_particle_position:
 	.(
-		; Position all particles on the player
-		lda player_a_x_low, x
-		sta particle_blocks+PARTICLE_POSITION_OFFSET_X_LSB, y
+		particle_counter = tmpfield3
+
+		; Initialize particle position's low component (in particle handler state)
+		;  index in the table = player_number * 8 + particle_counter
+		txa
+		pha
+		asl
+		asl
+		asl
+		clc
+		adc particle_counter
+		tax
+		lda #0
+		sta directional_indicator_player_a_position_x_low, x
+		sta directional_indicator_player_a_position_y_low, x
+		pla
+		tax
+
+		; Initialize particle position's high components (in the particle block)
 		lda player_a_x, x
+		sta particle_blocks+PARTICLE_POSITION_OFFSET_X_LSB, y
+		lda player_a_x_screen, x
 		sta particle_blocks+PARTICLE_POSITION_OFFSET_X_MSB, y
-		lda player_a_y_low, x
-		sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_LSB, y
 		lda player_a_y, x
+		sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_LSB, y
+		lda player_a_y_screen, x
 		sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, y
 		rts
 	.)
@@ -89,6 +107,7 @@ particle_directional_indicator_tick:
 	lda directional_indicator_player_a_counter, x
 	beq go_disable_box
 		jsr move_particles
+		jmp end
 	go_disable_box:
 		txa
 		pha
@@ -103,6 +122,8 @@ particle_directional_indicator_tick:
 	.(
 		particle_y_direction_low = tmpfield4
 		particle_y_direction_high = tmpfield5
+		particle_x_position_low = tmpfield6
+		particle_y_position_low = tmpfield7
 
 		lda #<move_one_particle
 		sta tmpfield1
@@ -116,11 +137,30 @@ particle_directional_indicator_tick:
 		.(
 			particle_counter = tmpfield3
 
+			txa                                                  ;
+			pha                                                  ;
+			asl                                                  ;
+			asl                                                  ;
+			asl                                                  ;
+			clc                                                  ;
+			adc particle_counter                                 ; Easy access to subpixel components of particle's position
+			tax
+			lda directional_indicator_player_a_position_x_low, x ;  index in the table = player_number * 8 + particle_counter
+			sta particle_x_position_low                          ;
+			lda directional_indicator_player_a_position_y_low, x ;
+			sta particle_y_position_low                          ;
+			pla                                                  ;
+			tax                                                  ;
+
 			lda directional_indicator_player_a_direction_x_low, x  ;
 			clc                                                    ;
+			adc particle_x_position_low                            ;
+			sta particle_x_position_low                            ;
+			lda directional_indicator_player_a_direction_x_high, x ;
 			adc particle_blocks+PARTICLE_POSITION_OFFSET_X_LSB, y  ;
 			sta particle_blocks+PARTICLE_POSITION_OFFSET_X_LSB, y  ; Apply horizontal velocity
 			lda directional_indicator_player_a_direction_x_high, x ;
+			SIGN_EXTEND()                                          ;
 			adc particle_blocks+PARTICLE_POSITION_OFFSET_X_MSB, y  ;
 			sta particle_blocks+PARTICLE_POSITION_OFFSET_X_MSB, y  ;
 
@@ -140,11 +180,30 @@ particle_directional_indicator_tick:
 
 			lda particle_y_direction_low                           ;
 			clc                                                    ;
+			adc particle_y_position_low                            ;
+			sta particle_y_position_low                            ;
+			lda particle_y_direction_high                          ;
 			adc particle_blocks+PARTICLE_POSITION_OFFSET_Y_LSB, y  ;
 			sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_LSB, y  ; Apply vertical velocity
 			lda particle_y_direction_high                          ;
+			SIGN_EXTEND()                                          ;
 			adc particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, y  ;
 			sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, y  ;
+
+			txa                                                  ;
+			pha                                                  ;
+			asl                                                  ;
+			asl                                                  ;
+			asl                                                  ;
+			clc                                                  ;
+			adc particle_counter                                 ; Store position subpixel components in particle handler state
+			tax                                                  ;
+			lda particle_x_position_low                          ;
+			sta directional_indicator_player_a_position_x_low, x ;
+			lda particle_y_position_low                          ;
+			sta directional_indicator_player_a_position_y_low, x ;
+			pla                                                  ;
+			tax                                                  ;
 			rts
 		.)
 	.)
@@ -228,15 +287,15 @@ particle_death_start:
 		position_y = position_y_store
 
 		lda #0                                                ;
-		sta particle_blocks+PARTICLE_POSITION_OFFSET_X_LSB, y ; Set position LSBs to zero
-		sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_LSB, y ;
+		sta particle_blocks+PARTICLE_POSITION_OFFSET_X_MSB, y ; Set position MSB to main screen
+		sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, y ;
 
 		lda position_x                                        ;
 		cmp #248                                              ;
 		bcc no_reposition_x                                   ; Set particle's horizontal position
 		lda #248                                              ;
 		no_reposition_x:                                      ;
-		sta particle_blocks+PARTICLE_POSITION_OFFSET_X_MSB, y ;
+		sta particle_blocks+PARTICLE_POSITION_OFFSET_X_LSB, y ;
 
 		clc               ;
 		adc orientation_x ;
@@ -249,7 +308,7 @@ particle_death_start:
 		bcc no_reposition_y                                   ; Set particle's vertical position
 		lda #232                                              ;
 		no_reposition_y:                                      ;
-		sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, y ;
+		sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_LSB, y ;
 
 		clc               ;
 		adc orientation_y ;
@@ -262,14 +321,14 @@ particle_death_start:
 		lda particle_counter                                  ;
 		tax                                                   ;
 		dex                                                   ;
-		lda particle_blocks+PARTICLE_POSITION_OFFSET_X_MSB, y ;
+		lda particle_blocks+PARTICLE_POSITION_OFFSET_X_LSB, y ;
 		clc                                                   ;
-		adc particles_start_position_offset_x, x              ; Apply particle's offset position
-		sta particle_blocks+PARTICLE_POSITION_OFFSET_X_MSB, y ;
-		lda particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, y ;
+		adc particles_start_position_offset_x, x               ; Apply particle's offset position
+		sta particle_blocks+PARTICLE_POSITION_OFFSET_X_LSB, y ;
+		lda particle_blocks+PARTICLE_POSITION_OFFSET_Y_LSB, y ;
 		clc                                                   ;
 		adc particles_start_position_offset_y, x              ;
-		sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, y ;
+		sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_LSB, y ;
 		pla                                                   ;
 		tax                                                   ;
 
