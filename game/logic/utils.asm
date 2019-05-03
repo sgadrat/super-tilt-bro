@@ -216,19 +216,10 @@ check_on_ground:
 	platform_top = tmpfield3 ; Not movable - parameter of check_on_platform
 
 	; Player cannot be on ground if not in the main screen (platforms use one byte unsigned positions)
-	.(
-		cpx #0
-		bne player_b
-			lda player_a_x_msb
-			bne offground
-			lda player_a_y_msb
-			bne offground
-		player_b:
-			lda player_b_x_msb
-			bne offground
-			lda player_b_y_msb
-			bne offground
-	.)
+	lda player_a_x_screen, x
+	bne offground
+	lda player_a_y_screen, x
+	bne offground
 
 	; Iterate on platforms until we find on onn which the player is
 	ldy #0
@@ -282,17 +273,10 @@ check_on_platform:
 ; Player cannot be on ground if not in the main screen (platforms use one byte unsigned positions)
 .(
 	; Check that player is not out of screen
-	cpx #0
-	bne player_b
-		lda player_a_x_msb
-		bne offscreen
-		lda player_a_y_msb
-		bne offscreen
-	player_b:
-		lda player_b_x_msb
-		bne offscreen
-		lda player_b_y_msb
-		bne offscreen
+	lda player_a_x_screen, x
+	bne offscreen
+	lda player_a_y_screen, x
+	bne offscreen
 	jmp check_on_platform_screen_unsafe ; Fallthrough to the screen-unsafe version of this routine
 
 	offscreen:

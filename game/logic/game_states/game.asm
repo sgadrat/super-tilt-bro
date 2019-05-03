@@ -40,6 +40,9 @@ init_game_state:
 
 		ldx #0
 		position_player_loop:
+			lda #0
+			sta player_a_x_screen, x
+			sta player_a_y_screen, x
 			lda stage_data+STAGE_HEADER_OFFSET_PAY_HIGH, x
 			sta player_a_y, x
 			lda stage_data+STAGE_HEADER_OFFSET_PAY_LOW, x
@@ -51,11 +54,6 @@ init_game_state:
 			inx
 			cpx #2
 			bne position_player_loop
-		;lda #0             ;
-		;sta player_a_x_msb ;
-		;sta player_a_y_msb ; Position MSBs are not entrelaced, set it out of the loop
-		;sta player_b_x_msb ; (commented out, it is set to zero by animation_init_state)
-		;sta player_b_y_msb ;
 
 		lda #DEFAULT_GRAVITY
 		sta player_a_gravity
@@ -687,20 +685,10 @@ move_player:
 	sta old_x
 	lda player_a_y, x
 	sta old_y
-	.(
-		cpx #0
-		bne player_b
-			lda player_a_x_msb
-			sta old_x_screen
-			lda player_a_y_msb
-			jmp end_save_old_pos
-		player_b:
-			lda player_b_x_msb
-			sta old_x_screen
-			lda player_b_y_msb
-		end_save_old_pos:
-			sta old_y_screen
-	.)
+	lda player_a_x_screen, x
+	sta old_x_screen
+	lda player_a_y_screen, x
+	sta old_y_screen
 
 	; Apply velocity to position
 	lda player_a_velocity_h_low, x
@@ -748,6 +736,10 @@ move_player:
 		tax
 
 		; Store final velocity in player's position
+		lda final_x_screen
+		sta player_a_x_screen, x
+		lda final_y_screen
+		sta player_a_y_screen, x
 		lda final_x_high
 		sta player_a_x, x
 		lda final_y_high
@@ -756,20 +748,6 @@ move_player:
 		sta player_a_x_low, x
 		lda final_y_low
 		sta player_a_y_low, x
-		.(
-			lda final_x_screen
-			cpx #0
-			bne player_b
-				sta player_a_x_msb
-				lda final_y_screen
-				sta player_a_y_msb
-				jmp end_update_pos
-			player_b:
-				sta player_b_x_msb
-				lda final_y_screen
-				sta player_b_y_msb
-			end_update_pos:
-		.)
 	rts
 
 	end_platforms:
@@ -1151,6 +1129,10 @@ update_sprites:
 	sta player_a_animation+ANIMATION_STATE_OFFSET_X_LSB
 	lda player_a_y
 	sta player_a_animation+ANIMATION_STATE_OFFSET_Y_LSB
+	lda player_a_x_screen
+	sta player_a_animation+ANIMATION_STATE_OFFSET_X_MSB
+	lda player_a_y_screen
+	sta player_a_animation+ANIMATION_STATE_OFFSET_Y_MSB
 
 	lda #<player_a_animation
 	sta animation_vector
@@ -1170,6 +1152,10 @@ update_sprites:
 	sta player_b_animation+ANIMATION_STATE_OFFSET_X_LSB
 	lda player_b_y
 	sta player_b_animation+ANIMATION_STATE_OFFSET_Y_LSB
+	lda player_b_x_screen
+	sta player_b_animation+ANIMATION_STATE_OFFSET_X_MSB
+	lda player_b_y_screen
+	sta player_b_animation+ANIMATION_STATE_OFFSET_Y_MSB
 
 	lda #<player_b_animation
 	sta animation_vector
