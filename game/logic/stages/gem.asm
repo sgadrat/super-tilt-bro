@@ -200,6 +200,11 @@ stage_gem_tick:
 		clc
 		adc #STAGE_GEM_GEM_HURTBOX_HEIGHT
 		sta tmpfield4
+		lda #0
+		sta tmpfield9
+		sta tmpfield10
+		sta tmpfield11
+		sta tmpfield12
 
 		; For each player, check if he hits the gem
 		ldx #0
@@ -212,16 +217,26 @@ stage_gem_tick:
 			; box_2 = player's hitbox
 			lda player_a_hitbox_left, x
 			sta tmpfield5
+			lda player_a_hitbox_left_msb, x
+			sta tmpfield13
+
 			lda player_a_hitbox_right, x
 			sta tmpfield6
+			lda player_a_hitbox_right_msb, x
+			sta tmpfield14
+
 			lda player_a_hitbox_top, x
 			sta tmpfield7
+			lda player_a_hitbox_top_msb, x
+			sta tmpfield15
+
 			lda player_a_hitbox_bottom, x
 			sta tmpfield8
+			lda player_a_hitbox_bottom_msb, x
+			sta tmpfield16
 
 			; Check collision
 			jsr boxes_overlap
-			cmp #0
 			beq gem_hit
 
 			next_player:

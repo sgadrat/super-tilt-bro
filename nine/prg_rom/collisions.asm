@@ -217,16 +217,25 @@ check_top_collision:
 .)
 
 ; Check if two rectangles collide
-;  tmpfield1 - Rectangle 1 left
-;  tmpfield2 - Rectangle 1 right
-;  tmpfield3 - Rectangle 1 top
-;  tmpfield4 - Rectangle 1 bottom
-;  tmpfield5 - Rectangle 2 left
-;  tmpfield6 - Rectangle 2 right
-;  tmpfield7 - Rectangle 2 top
-;  tmpfield8 - Rectangle 2 botto
+;  tmpfield1 - Rectangle 1 left (pixel)
+;  tmpfield2 - Rectangle 1 right (pixel)
+;  tmpfield3 - Rectangle 1 top (pixel)
+;  tmpfield4 - Rectangle 1 bottom (pixel)
+;  tmpfield5 - Rectangle 2 left (pixel)
+;  tmpfield6 - Rectangle 2 right (pixel)
+;  tmpfield7 - Rectangle 2 top (pixel)
+;  tmpfield8 - Rectangle 2 bottom (pixel)
+;  tmpfield9 - Rectangle 1 left (screen)
+;  tmpfield10 - Rectangle 1 right (screen)
+;  tmpfield11 - Rectangle 1 top (screen)
+;  tmpfield12 - Rectangle 1 bottom (screen)
+;  tmpfield13 - Rectangle 2 left (screen)
+;  tmpfield14 - Rectangle 2 right (screen)
+;  tmpfield15 - Rectangle 2 top (screen)
+;  tmpfield16 - Rectangle 2 bottom (screen)
 ;
-; tmpfield9 is set to #$00 if rectangles overlap, or to #$01 otherwise
+; register A is set to #$00 if rectangles overlap, or to #$01 otherwise
+; zero flag is set if rectangles overlap, or not set otherwise
 boxes_overlap:
 .(
 	rect1_left = tmpfield1
@@ -237,36 +246,38 @@ boxes_overlap:
 	rect2_right = tmpfield6
 	rect2_top = tmpfield7
 	rect2_bottom = tmpfield8
+	rect1_left_msb = tmpfield9
+	rect1_right_msb = tmpfield10
+	rect1_top_msb = tmpfield11
+	rect1_bottom_msb = tmpfield12
+	rect2_left_msb = tmpfield13
+	rect2_right_msb = tmpfield14
+	rect2_top_msb = tmpfield15
+	rect2_bottom_msb = tmpfield16
 
-	; No overlap possible if left of rect1 is on the right of rect2
-	lda rect1_left
-	cmp rect2_right
-	bcs no_overlap
+	; No overlap possible if right of rect2 is on the left of rect1
+	SIGNED_CMP(rect2_right, rect2_right_msb, rect1_left, rect1_left_msb)
+	bmi no_overlap
 
-	; No overlap possible if left of rect2 is on the right of rect1
-	lda rect2_left
-	cmp rect1_right
-	bcs no_overlap
+	; No overlap possible if right of rect1 is on the left of rect2
+	SIGNED_CMP(rect1_right, rect1_right_msb, rect2_left, rect2_left_msb)
+	bmi no_overlap
 
-	; No overlap possible if top of rect1 is lower than bottom of rect2
-	lda rect1_top
-	cmp rect2_bottom
-	bcs no_overlap
+	; No overlap possible if bottom of rect2 is higher than top of rect1
+	SIGNED_CMP(rect2_bottom, rect2_bottom_msb, rect1_top, rect1_top_msb)
+	bmi no_overlap
 
-	; No overlap possible if top of rect1 is lower than bottom of rect2
-	lda rect2_top
-	cmp rect1_bottom
-	bcs no_overlap
+	; No overlap possible if bottom of rect1 is higher than top of rect2
+	SIGNED_CMP(rect1_bottom, rect1_bottom_msb, rect2_top, rect2_top_msb)
+	bmi no_overlap
 
 	; No impossibility found, rectangles overlap at least partially
 	lda #$00
-	sta tmpfield9
 	jmp end
 
 	; No overlap found
 	no_overlap:
 	lda #$01
-	sta tmpfield9
 
 	end:
 	rts

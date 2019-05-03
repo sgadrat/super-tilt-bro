@@ -161,6 +161,7 @@ lda player_a_hurtbox_bottom
 sta tmpfield8
 
 jsr boxes_overlap
+sta tmpfield9
 pla
 tax
 lda tmpfield9

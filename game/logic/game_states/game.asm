@@ -386,13 +386,37 @@ player_state_action:
 	rts
 .)
 
+; Update a player's state according to hitbox collisions
+;  register X - player number
+;
+; Overwrite all registers and all tmpfielde all registers and all tmpfields
 check_player_hit:
 .(
+	; Parameters of boxes_overlap
+	striking_box_left = tmpfield1
+	striking_box_right = tmpfield2
+	striking_box_top = tmpfield3
+	striking_box_bottom = tmpfield4
+	striking_box_left_msb = tmpfield9
+	striking_box_right_msb = tmpfield10
+	striking_box_top_msb = tmpfield11
+	striking_box_bottom_msb = tmpfield12
+	smashed_box_left = tmpfield5
+	smashed_box_right = tmpfield6
+	smashed_box_top = tmpfield7
+	smashed_box_bottom = tmpfield8
+	smashed_box_left_msb = tmpfield13
+	smashed_box_right_msb = tmpfield14
+	smashed_box_top_msb = tmpfield15
+	smashed_box_bottom_msb = tmpfield16
+
+	; Parameters of onhurt callbacks
 	current_player = tmpfield10
 	opponent_player = tmpfield11
 
-	; Store current player number
-	stx current_player
+	; Store current player number (at stack+1)
+	txa
+	pha
 
 	; Check that player's hitbox is enabled
 	lda player_a_hitbox_enabled, x
@@ -402,19 +426,27 @@ check_player_hit:
 
 		; Store current player's hitbox
 		lda player_a_hitbox_left, x
-		sta tmpfield1
+		sta striking_box_left
+		lda player_a_hitbox_left_msb, x
+		sta striking_box_left_msb
+
 		lda player_a_hitbox_right, x
-		sta tmpfield2
+		sta striking_box_right
+		lda player_a_hitbox_right_msb, x
+		sta striking_box_right_msb
+
 		lda player_a_hitbox_top, x
-		sta tmpfield3
+		sta striking_box_top
+		lda player_a_hitbox_top_msb, x
+		sta striking_box_top_msb
+
 		lda player_a_hitbox_bottom, x
-		sta tmpfield4
+		sta striking_box_bottom
+		lda player_a_hitbox_bottom_msb, x
+		sta striking_box_bottom_msb
 
 		; Switch current player to select the opponent
 		jsr switch_selected_player
-
-		; Store opponent player number
-		stx opponent_player
 
 		; If opponent's hitbox is enabled, check hitbox on hitbox collisions
 		lda player_a_hitbox_enabled, x
@@ -422,17 +454,27 @@ check_player_hit:
 
 			; Store opponent's hitbox
 			lda player_a_hitbox_left, x
-			sta tmpfield5
+			sta smashed_box_left
+			lda player_a_hitbox_left_msb, x
+			sta smashed_box_left_msb
+
 			lda player_a_hitbox_right, x
-			sta tmpfield6
+			sta smashed_box_right
+			lda player_a_hitbox_right_msb, x
+			sta smashed_box_right_msb
+
 			lda player_a_hitbox_top, x
-			sta tmpfield7
+			sta smashed_box_top
+			lda player_a_hitbox_top_msb, x
+			sta smashed_box_top_msb
+
 			lda player_a_hitbox_bottom, x
-			sta tmpfield8
+			sta smashed_box_bottom
+			lda player_a_hitbox_bottom_msb, x
+			sta smashed_box_bottom_msb
 
 			; Check collisions between hitbox and hitbox
 			jsr boxes_overlap
-			lda tmpfield9
 			bne check_hitbox_hurtbox
 
 			; Play parry sound
@@ -458,28 +500,42 @@ check_player_hit:
 
 			; Store opponent's hurtbox
 			lda player_a_hurtbox_left, x
-			sta tmpfield5
+			sta smashed_box_left
+			lda player_a_hurtbox_left_msb, x
+			sta smashed_box_left_msb
+
 			lda player_a_hurtbox_right, x
-			sta tmpfield6
+			sta smashed_box_right
+			lda player_a_hurtbox_right_msb, x
+			sta smashed_box_right_msb
+
 			lda player_a_hurtbox_top, x
-			sta tmpfield7
+			sta smashed_box_top
+			lda player_a_hurtbox_top_msb, x
+			sta smashed_box_top_msb
+
 			lda player_a_hurtbox_bottom, x
-			sta tmpfield8
+			sta smashed_box_bottom
+			lda player_a_hurtbox_bottom_msb, x
+			sta smashed_box_bottom_msb
 
 			; Check collisions between hitbox and hurtbox
 			jsr boxes_overlap
-			lda tmpfield9
 			bne end
 
-			lda #<sinbad_state_onhurt_routines ;
+			stx opponent_player                ;
+			jsr switch_selected_player         ;
+			stx current_player                 ;
+			lda #<sinbad_state_onhurt_routines ; Fire on-hurt event
 			sta tmpfield1                      ;
-			lda #>sinbad_state_onhurt_routines ; Fire on-hurt event
+			lda #>sinbad_state_onhurt_routines ;
 			sta tmpfield2                      ;
 			jsr player_state_action            ;
 
 	end:
 	; Reset register X to the current player
-	ldx current_player
+	pla
+	tax
 	rts
 .)
 
