@@ -1,3 +1,5 @@
+#define PARTICLE_DEATH_COUNTER_END 11
+
 ; Start directional indicator particles for a player
 ;  X - player number
 ;
@@ -6,7 +8,7 @@
 particle_directional_indicator_start:
 .(
 	; Initialize handler state
-	lda #10
+	lda #9
 	sta directional_indicator_player_a_counter, x
 	lda player_a_velocity_v_low, x
 	sta directional_indicator_player_a_direction_y_low, x
@@ -18,7 +20,7 @@ particle_directional_indicator_start:
 	sta directional_indicator_player_a_direction_x_high, x
 
 	; Deactivate death particles
-	lda #12
+	lda #PARTICLE_DEATH_COUNTER_END
 	sta death_particles_player_a_counter, x
 
 	; Initialize particles
@@ -86,11 +88,16 @@ particle_directional_indicator_tick:
 	; Chose what to do depending on the counter
 	lda directional_indicator_player_a_counter, x
 	beq go_disable_box
-	cmp #1
-	bne move_particles
-	jmp hide_particles
+		jsr move_particles
 	go_disable_box:
-	jmp deactivate_particle_block
+		txa
+		pha
+		jsr deactivate_particle_block
+		pla
+		tax
+
+	end:
+		rts
 
 	move_particles:
 	.(
@@ -283,7 +290,7 @@ particle_death_tick:
 
 	; Do nothing if deactivated
 	lda death_particles_player_a_counter, x
-	cmp #12
+	cmp #PARTICLE_DEATH_COUNTER_END
 	beq do_nothing
 
 	; Y points on the particle box of the player
@@ -298,9 +305,7 @@ particle_death_tick:
 
 	; Choose what to do depending on counter
 	lda death_particles_player_a_counter, x
-	cmp #10
-	beq go_hide_particles
-	cmp #11
+	cmp #PARTICLE_DEATH_COUNTER_END-1
 	beq go_disable_box
 
 	; Update particles tile to animate the explosion
@@ -314,15 +319,13 @@ particle_death_tick:
 	do_nothing:
 	rts
 
-	go_hide_particles:
-	.(
-		jsr hide_particles
-		jmp end
-	.)
-
 	go_disable_box:
 	.(
+		txa
+		pha
 		jsr deactivate_particle_block
+		pla
+		tax
 		jmp end
 	.)
 .)

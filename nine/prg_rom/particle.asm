@@ -1,3 +1,17 @@
+;
+; Particle system routines
+;
+;  Particles are organized by blocks of related particles
+;
+;  Particle block layout
+;   | byte 0 | byte 1   | byte 2    | byte 3 | bytes 4-31 (7 * 4 bytes) |
+;   | param  | tile_num | tile_attr | unused | particles_position       |
+;
+;   param - Block header, 1 block is active, 0 block is inactive
+;   tile_num - Index of the sprite used to draw particles
+;   tile_attr - OAM sprite attributes of particles
+;
+
 ; Draw particles according to their state
 particle_draw:
 .(

@@ -21,8 +21,10 @@ loop_on_particle_boxes:
 
 	ldy #0
 	loop:
-	jsr call_pointed_subroutine
 	tya
+	pha
+	jsr call_pointed_subroutine
+	pla
 	clc
 	adc #PARTICLE_BLOCK_SIZE
 	tay
@@ -64,16 +66,35 @@ loop_on_particles:
 .)
 
 ; Deactivate the particle block begining at "particle_blocks, y"
+;  Overwrite all registers, tmpfield1, tmpfield2, tmpfield3 and tmpfield4
 deactivate_particle_block:
 .(
 	lda #0
 	sta particle_blocks+PARTICLE_BLOCK_OFFSET_PARAM, y
+
+	jsr hide_particles
+
 	rts
 .)
 
-; Hide all particles in the block begining at "particle_blocks, y"
+; Hide sprites of all particles in the block begining at "particle_blocks, y"
+;  Overwrite all registers, tmpfield1, tmpfield2, tmpfield3 and tmpfield4
 hide_particles:
 .(
+	sprite_offset = tmpfield4
+
+	; Make sprite_offset point to the sprite before block's first sprite in oam_mirror
+	cpy #0
+	bne second_block
+		lda #(PARTICLE_FIRST_SPRITE-1)*4
+		jmp set_sprite_offset
+	second_block:
+		lda #(PARTICLE_FIRST_SPRITE-1+PARTICLE_BLOCK_NB_PARTICLES)*4
+	set_sprite_offset:
+	sta sprite_offset
+
+	; Move block's particles out of screen
+	;  Note - It could be simplified by iterating directly on OAM sprites instead off calling loop_on_particle
 	lda #<hide_one_particle
 	sta tmpfield1
 	lda #>hide_one_particle
@@ -83,9 +104,14 @@ hide_particles:
 
 	hide_one_particle:
 	.(
-		lda #$fe                                              ;
-		sta particle_blocks+PARTICLE_POSITION_OFFSET_X_MSB, y ; Move the particle out of screen
-		sta particle_blocks+PARTICLE_POSITION_OFFSET_Y_MSB, y ;
+		lda sprite_offset
+		clc
+		adc #4
+		sta sprite_offset
+		tax
+
+		lda #$fe          ; Move the particle out of screen
+		sta oam_mirror, x ;
 		rts
 	.)
 .)
