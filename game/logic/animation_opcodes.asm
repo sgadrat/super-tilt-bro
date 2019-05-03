@@ -111,7 +111,7 @@ anim_frame_move_hurtbox:
 	adc anim_pos_x
 	sta player_a_hurtbox_left, x
 	lda sign_extension_byte
-	adc anim_pos_x_msb, x
+	adc anim_pos_x_msb
 	sta player_a_hurtbox_left_msb, x
 	; Right
 	lda player_a_hurtbox_right, x
@@ -297,7 +297,7 @@ anim_frame_move_hitbox:
 	adc anim_pos_x
 	sta player_a_hitbox_left, x
 	lda sign_extension_byte
-	adc anim_pos_x_msb, x
+	adc anim_pos_x_msb
 	sta player_a_hitbox_left_msb, x
 	; Right
 	lda player_a_hitbox_right, x
