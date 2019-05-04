@@ -3,9 +3,9 @@
 #define SMOOTH_PLATFORM(left,right,top) .byt $02, left, right, top
 #define END_OF_STAGE .byt $00
 
-#define STAGE_BLAST_LEFT $ff80
-#define STAGE_BLAST_RIGHT $0180
-#define STAGE_BLAST_TOP $ff80
+#define STAGE_BLAST_LEFT $ffe0
+#define STAGE_BLAST_RIGHT $0120
+#define STAGE_BLAST_TOP $ffe0
 #define STAGE_BLAST_BOTTOM $00ff
 
 #include "game/data/stages/pit.asm"
