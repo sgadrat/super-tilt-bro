@@ -550,6 +550,7 @@ check_player_hit:
 			stx opponent_player                ;
 			jsr switch_selected_player         ;
 			stx current_player                 ;
+			jsr switch_selected_player         ;
 			lda #<sinbad_state_onhurt_routines ; Fire on-hurt event
 			sta tmpfield1                      ;
 			lda #>sinbad_state_onhurt_routines ;
