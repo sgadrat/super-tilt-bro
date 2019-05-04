@@ -2,13 +2,23 @@
 #define AI_NB_ATTACKS 4
 attacks:
 AI_ATTACK_HITBOX($f0, $fd, $f4, $0c)
-.word ai_action_left_tilt
+.byt <ai_action_left_tilt
 AI_ATTACK_HITBOX($0a, $17, $f4, $0c)
-.word ai_action_right_tilt
+.byt <ai_action_right_tilt
 AI_ATTACK_HITBOX($f1, $17, $08, $0f)
-.word ai_action_down_tilt
+.byt <ai_action_down_tilt
 AI_ATTACK_HITBOX($f1, $17, $d0, $f8)
-.word ai_action_special_up
+.byt <ai_action_special_up
+
+attacks_msb:
+AI_ATTACK_HITBOX($ff, $ff, $ff, $00)
+.byt >ai_action_left_tilt
+AI_ATTACK_HITBOX($00, $00, $ff, $00)
+.byt >ai_action_right_tilt
+AI_ATTACK_HITBOX($ff, $00, $00, $00)
+.byt >ai_action_down_tilt
+AI_ATTACK_HITBOX($ff, $00, $ff, $ff)
+.byt >ai_action_special_up
 
 #define AI_STEP_FINAL $ff
 #define AI_ACTION_STEP(buttons,time) .byt buttons, time
@@ -122,6 +132,23 @@ ai_tick:
 	; Search for an attack that can hit player A
 	attack_selector:
 	.(
+		hitbox_left = tmpfield1
+		hitbox_right = tmpfield2
+		hitbox_top = tmpfield3
+		hitbox_bottom = tmpfield4
+		hitbox_left_msb = tmpfield9
+		hitbox_right_msb = tmpfield10
+		hitbox_top_msb = tmpfield11
+		hitbox_bottom_msb = tmpfield12
+		hurtbox_left = tmpfield5
+		hurtbox_right = tmpfield6
+		hurtbox_top = tmpfield7
+		hurtbox_bottom = tmpfield8
+		hurtbox_left_msb = tmpfield13
+		hurtbox_right_msb = tmpfield14
+		hurtbox_top_msb = tmpfield15
+		hurtbox_bottom_msb = tmpfield16
+
 		ldy #AI_NB_ATTACKS
 		ldx #$00
 
@@ -131,35 +158,58 @@ ai_tick:
 			lda attacks, x
 			clc
 			adc player_b_x
-			sta tmpfield1
+			sta hitbox_left
+			lda attacks_msb, x
+			adc player_b_x_screen
+			sta hitbox_left_msb
 			inx
+
 			lda attacks, x
 			clc
 			adc player_b_x
-			sta tmpfield2
+			sta hitbox_right
+			lda attacks_msb, x
+			adc player_b_x_screen
+			sta hitbox_right_msb
 			inx
+
 			lda attacks, x
 			clc
 			adc player_b_y
-			sta tmpfield3
+			sta hitbox_top
+			lda attacks_msb, x
+			adc player_b_y_screen
+			sta hitbox_top_msb
 			inx
+
 			lda attacks, x
 			clc
 			adc player_b_y
-			sta tmpfield4
+			sta hitbox_bottom
+			lda attacks_msb, x
+			adc player_b_y_screen
+			sta hitbox_bottom_msb
 			inx
-			txa
-			pha
 
 			lda player_a_hurtbox_left
-			sta tmpfield5
+			sta hurtbox_left
+			lda player_a_hurtbox_left_msb
+			sta hurtbox_left_msb
 			lda player_a_hurtbox_right
-			sta tmpfield6
+			sta hurtbox_right
+			lda player_a_hurtbox_right_msb
+			sta hurtbox_right_msb
 			lda player_a_hurtbox_top
-			sta tmpfield7
+			sta hurtbox_top
+			lda player_a_hurtbox_top_msb
+			sta hurtbox_top_msb
 			lda player_a_hurtbox_bottom
-			sta tmpfield8
+			sta hurtbox_bottom
+			lda player_a_hurtbox_bottom_msb
+			sta hurtbox_bottom_msb
 
+			txa
+			pha
 			jsr boxes_overlap
 			sta tmpfield9
 			pla
@@ -170,8 +220,7 @@ ai_tick:
 				; Boxes overlap, trigger this attack
 				lda attacks, x
 				sta ai_current_action_lsb
-				inx
-				lda attacks, x
+				lda attacks_msb, x
 				sta ai_current_action_msb
 				lda #0
 				sta ai_current_action_modifier
@@ -183,9 +232,9 @@ ai_tick:
 			; Check the next attack
 			next_attack:
 			inx
-			inx
 			dey
-			bne check_one_attack
+			beq end
+			jmp check_one_attack
 
 		end:
 		rts
@@ -197,6 +246,7 @@ ai_tick:
 		platform_handler_msb = tmpfield2
 		endangered = tmpfield3
 		best_platform = tmpfield4
+		;tmpfield5 used by platform handler
 
 		.(
 			; Check that the player is offstage - no platform behind him
@@ -212,15 +262,15 @@ ai_tick:
 			jsr stage_iterate_platforms
 
 			lda endangered
-			beq end
-
+			bne try_to_recover
+			jmp end
+			try_to_recover:
 				; Set action modifier to the platform's direction
 				lda #CONTROLLER_BTN_RIGHT
 				sta ai_current_action_modifier
 				ldy best_platform
-				lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT, y
-				cmp player_b_x
-				bcs direction_set
+				SIGNED_CMP(player_b_x, player_b_x_screen, stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT COMMA y, #0)
+				bmi direction_set
 				lda #CONTROLLER_BTN_LEFT
 				sta ai_current_action_modifier
 				direction_set:
@@ -232,9 +282,8 @@ ai_tick:
 				lda player_b_hitstun
 				bne set_idle_action
 
-				lda player_b_y
-				cmp stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_TOP, y
-				bcc set_idle_action
+				SIGNED_CMP(player_b_y, player_b_y_screen, stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0)
+				bmi set_idle_action
 
 				lda player_b_state
 				cmp PLAYER_STATE_FALLING
@@ -249,20 +298,23 @@ ai_tick:
 				bne set_jump_action
 
 				; Special-side if the platform is far away
-				lda ai_current_action_modifier
-				cmp #CONTROLLER_BTN_RIGHT
-				beq load_left_edge
-				lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT, y
-				jmp edge_loaded
-				load_left_edge:
-				lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_LEFT, y
-				edge_loaded:
+				lda player_b_x_screen
+				bne set_special_side_action
 
-				sec
-				sbc player_b_x
-				jsr absolute_a
-				cmp #16
-				bcs set_special_side_action
+					lda ai_current_action_modifier
+					cmp #CONTROLLER_BTN_RIGHT
+					beq load_left_edge
+					lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT, y
+					jmp edge_loaded
+					load_left_edge:
+					lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_LEFT, y
+					edge_loaded:
+
+						sec
+						sbc player_b_x
+						jsr absolute_a
+						cmp #16
+						bcs set_special_side_action
 
 				; Special-up since no other action was found
 				jmp set_special_up_action
@@ -311,28 +363,31 @@ ai_tick:
 
 		platform_handler:
 		.(
+			patched_value = tmpfield5
+
 			; Select any platform as the best
 			tya
 			sta best_platform
 
 			; A platform above the player cannot save him
-			lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_TOP, y
-			cmp player_b_y
-			bcc end
+			SIGNED_CMP(stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0, player_b_y, player_b_y_screen)
+			bmi end
 
 			; A platform on the left of the player cannot save him
 			lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT, y
 			clc
 			adc #1
-			cmp player_b_x
-			bcc end
+			sta patched_value
+			SIGNED_CMP(patched_value, #0, player_b_x, player_b_x_screen)
+			bmi end
 
 			; A platform on the right of the player cannot save him
 			lda player_b_x
 			clc
 			adc #1
-			cmp stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_LEFT, y
-			bcc end
+			sta patched_value
+			SIGNED_CMP(patched_value, player_b_x_screen, stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_LEFT COMMA y, #0)
+			bmi end
 
 			; The current platform can save the player, no need to recover
 			lda #0
@@ -346,6 +401,15 @@ ai_tick:
 
 	chase_selector:
 	.(
+		; Note - chasing do not care about screen, only use 8bit unsigned positions
+		;
+		;  The effect is that, when the player is out of screen, the bot tends to flee him
+		;  since the bot actually sees him on the other side of the screen.
+		;
+		;  Handling two bytes signed position would have the effect of making the bot go
+		;  to the edge of the platform. Problem, the bot is really bad on platforms edges,
+		;  oscilating between chasing and recovering until the indecision kills him.
+
 		; Set the modifier to opponent's direction
 		lda #CONTROLLER_BTN_LEFT
 		sta ai_current_action_modifier

@@ -194,3 +194,6 @@
 		lda #$ff:\
 	end_sign_extend:\
 .)
+
+; Usefull to pass a comma in a macro argument
+#define COMMA ,
