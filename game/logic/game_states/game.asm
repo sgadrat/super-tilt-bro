@@ -67,19 +67,43 @@ init_game_state:
 		lda #>player_a_animation                                       ;
 		sta tmpfield12                                                 ;
 		jsr animation_init_state                                       ;
-		lda #$00                                                       ;
+		lda #INGAME_PLAYER_A_FIRST_SPRITE                              ;
 		sta player_a_animation+ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM ;
-		lda #$0f                                                       ;
+		lda #INGAME_PLAYER_A_LAST_SPRITE                               ;
 		sta player_a_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM  ; Initialize players animation state
 		lda #<player_b_animation                                       ; (voluntarily let garbage in data vector, it will be overriden by initializing player's state)
 		sta tmpfield11                                                 ;
 		lda #>player_b_animation                                       ;
 		sta tmpfield12                                                 ;
 		jsr animation_init_state                                       ;
-		lda #$10                                                       ;
+		lda #INGAME_PLAYER_B_FIRST_SPRITE                              ;
 		sta player_b_animation+ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM ;
-		lda #$1f                                                       ;
+		lda #INGAME_PLAYER_B_LAST_SPRITE                               ;
 		sta player_b_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM  ;
+
+		; Initialize out of screen indicators animation state
+		lda #<player_a_out_of_screen_indicator
+		sta tmpfield11
+		lda #>player_a_out_of_screen_indicator
+		sta tmpfield12
+		lda #<anim_out_of_screen_bubble
+		sta tmpfield13
+		lda #>anim_out_of_screen_bubble
+		sta tmpfield14
+		jsr animation_init_state
+		lda #INGAME_PLAYER_A_FIRST_SPRITE
+		sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM
+		lda #INGAME_PLAYER_A_LAST_SPRITE
+		sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+
+		lda #<player_b_out_of_screen_indicator
+		sta tmpfield11
+		lda #>player_b_out_of_screen_indicator
+		jsr animation_init_state
+		lda #INGAME_PLAYER_B_FIRST_SPRITE
+		sta player_b_out_of_screen_indicator+ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM
+		lda #INGAME_PLAYER_B_LAST_SPRITE
+		sta player_b_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
 
 		ldx #$00
 		jsr start_spawn_player
@@ -1180,52 +1204,131 @@ update_sprites:
 	camera_x = tmpfield13         ; Not movable - Used as parameter for stb_animation_draw subroutine
 	camera_y = tmpfield15         ; Not movable - Used as parameter for stb_animation_draw subroutine
 
-	; Player A
-	lda player_a_x
-	sta player_a_animation+ANIMATION_STATE_OFFSET_X_LSB
-	lda player_a_y
-	sta player_a_animation+ANIMATION_STATE_OFFSET_Y_LSB
-	lda player_a_x_screen
-	sta player_a_animation+ANIMATION_STATE_OFFSET_X_MSB
-	lda player_a_y_screen
-	sta player_a_animation+ANIMATION_STATE_OFFSET_Y_MSB
+	ldx #0 ; X is the player number
+	ldy #0 ; Y is the offset of player's animation state
+	update_one_player_sprites:
+		; Player
+		lda player_a_x, x
+		sta player_a_animation+ANIMATION_STATE_OFFSET_X_LSB, y
+		lda player_a_y, x
+		sta player_a_animation+ANIMATION_STATE_OFFSET_Y_LSB, y
+		lda player_a_x_screen, x
+		sta player_a_animation+ANIMATION_STATE_OFFSET_X_MSB, y
+		lda player_a_y_screen, x
+		sta player_a_animation+ANIMATION_STATE_OFFSET_Y_MSB, y
 
-	lda #<player_a_animation
-	sta animation_vector
-	lda #>player_a_animation
-	sta animation_vector+1
-	lda #0
-	sta camera_x
-	sta camera_x+1
-	sta camera_y
-	sta camera_y+1
-	sta player_number
-	jsr stb_animation_draw
-	jsr animation_tick
+		lda #<player_a_animation
+		sta animation_vector
+		tya
+		clc
+		adc animation_vector
+		sta animation_vector
+		lda #>player_a_animation
+		adc #0
+		sta animation_vector+1
+		lda #0
+		sta camera_x
+		sta camera_x+1
+		sta camera_y
+		sta camera_y+1
+		txa
+		sta player_number
+		pha
+		tya
+		pha
+		jsr stb_animation_draw
+		jsr animation_tick
+		pla
+		tay
+		pla
+		tax
 
-	; Player B
-	lda player_b_x
-	sta player_b_animation+ANIMATION_STATE_OFFSET_X_LSB
-	lda player_b_y
-	sta player_b_animation+ANIMATION_STATE_OFFSET_Y_LSB
-	lda player_b_x_screen
-	sta player_b_animation+ANIMATION_STATE_OFFSET_X_MSB
-	lda player_b_y_screen
-	sta player_b_animation+ANIMATION_STATE_OFFSET_Y_MSB
+		; Player's out of screen indicator
+		.(
+			lda player_a_x_screen, x
+			bmi oos_left
+			bne oos_right
+			lda player_a_y_screen, x
+			bmi oss_top
+			bne oos_bot
+			jmp oos_indicator_drawn
 
-	lda #<player_b_animation
-	sta animation_vector
-	lda #>player_b_animation
-	sta animation_vector+1
-	lda #0
-	sta camera_x
-	sta camera_x+1
-	sta camera_y
-	sta camera_y+1
-	lda #1
-	sta player_number
-	jsr stb_animation_draw
-	jsr animation_tick
+			oos_left:
+				lda player_a_y, x ; TODO cap to min 0 - max 240-8
+				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_Y_LSB, y
+				lda DIRECTION_LEFT
+				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_DIRECTION, y
+				lda #0
+				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_X_LSB, y
+				jmp oos_indicator_placed
+
+			oos_right:
+				lda player_a_y, x ; TODO cap to min 0 - max 240-8
+				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_Y_LSB, y
+				lda DIRECTION_RIGHT
+				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_DIRECTION, y
+				lda #255-8
+				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_X_LSB, y
+				jmp oos_indicator_placed
+
+			oss_top:
+				lda player_a_x, x ; TODO cap to min 0 - max 255-8
+				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_X_LSB, y
+				lda DIRECTION_LEFT
+				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_DIRECTION, y
+				lda #0
+				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_Y_LSB, y
+				jmp oos_indicator_placed
+
+			oos_bot:
+				lda player_a_x, x ; TODO cap to min 0 - max 255-8
+				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_X_LSB, y
+				lda DIRECTION_RIGHT
+				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_DIRECTION, y
+				lda #240-8
+				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_Y_LSB, y
+				;jmp oos_indicator_placed
+
+			oos_indicator_placed:
+				lda #<player_a_out_of_screen_indicator
+				sta animation_vector
+				tya
+				clc
+				adc animation_vector
+				sta animation_vector
+				lda #>player_a_out_of_screen_indicator
+				adc #0
+				sta animation_vector+1
+				lda #0
+				sta camera_x
+				sta camera_x+1
+				sta camera_y
+				sta camera_y+1
+				txa
+				sta player_number
+				pha
+				tya
+				pha
+				jsr stb_animation_draw
+				jsr animation_tick
+				pla
+				tay
+				pla
+				tay
+
+			oos_indicator_drawn:
+		.)
+
+		; Loop for both players
+		inx
+		tya
+		clc
+		adc #ANIMATION_STATE_LENGTH
+		tay
+		cpx #2
+		beq all_player_sprites_updated
+		jmp update_one_player_sprites
+	all_player_sprites_updated:
 
 	; Enhancement sprites
 	jsr particle_draw

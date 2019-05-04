@@ -25,3 +25,4 @@
 #include "game/data/animations/sinbad_respawn.asm"
 #include "game/data/animations/invisible.asm"
 #include "game/data/animations/sinbad_spawn.asm"
+#include "game/data/animations/out_of_screen_bubble.asm"

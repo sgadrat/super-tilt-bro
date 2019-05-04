@@ -139,6 +139,8 @@ slow_down_counter = $7f
 
 player_a_animation = $05a0 ; $05a0 to $05ab - player a's animation state
 player_b_animation = $05ac ; $05ac to $05b7 - player b's animation state
+player_a_out_of_screen_indicator = $05b8 ; $05b8 to $05c3 - player a's out of screen animation state
+player_b_out_of_screen_indicator = $05c4 ; $05c4 to $05cf - player b's out of screen animation state
 
 ;
 ; Stage specific labels
@@ -322,7 +324,7 @@ particle_block_0 = $0500
 particle_block_1 = $0520
 previous_global_game_state = $540
 players_palettes = $0580 ; $0580 to $059f - 4 nametable buffers (8 bytes each) containing avatars palettes in normal and alternate mode
-;$05a0 to $05b7 used by in-game state
+;$05a0 to $05cf used by in-game state
 ;$06xx may be used by audio engine, see "Audio engine labels"
 virtual_frame_cnt = $0700
 skip_frames_to_50hz = $0701
