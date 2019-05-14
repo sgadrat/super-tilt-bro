@@ -1,5 +1,8 @@
 init_stage_selection_screen:
 .(
+	; This state only use the generic data bank
+	SWITCH_BANK(#DATA_BANK_NUMBER)
+
 	; Construct nt buffers for palettes
 	lda #<palette_stage_selection
 	sta tmpfield1

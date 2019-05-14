@@ -9,9 +9,6 @@
 #echo DATA-bank nametables size:
 #print data_nt_end-data_nt_begin
 #echo
-#echo DATA-bank animations size:
-#print data_anim_end-data_anim_begin
-#echo
 #echo DATA-bank musics size:
 #print data_music_end-data_music_begin
 #echo

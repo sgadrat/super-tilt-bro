@@ -5,6 +5,8 @@
 init_character_selection_screen:
 .(
 	.(
+		SWITCH_BANK(#DATA_BANK_NUMBER)
+
 		; Construct nt buffers for palettes (to avoid changing it mid-frame)
 		lda #<palette_character_selection
 		sta tmpfield1
@@ -395,6 +397,8 @@ character_selection_draw_value:
 	header_offset = tmpfield5
 	name_offset = tmpfield6
 	palette_offset = tmpfield7
+
+	SWITCH_BANK(#SINBAD_BANK_NUMBER)
 
 	; Save option number
 	lda option

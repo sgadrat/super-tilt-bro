@@ -5,15 +5,17 @@
 ;
 
 
-#define DATA_BANK_NUMBER $00
-#define CURRENT_BANK_NUMBER DATA_BANK_NUMBER
-#include "game/banks/data_bank.asm"
-#define CHR_BANK_NUMBER $01
+#define CHR_BANK_NUMBER $00
 #define CURRENT_BANK_NUMBER CHR_BANK_NUMBER
 #include "game/banks/chr_data.asm"
 
-#define CURRENT_BANK_NUMBER $02
-#include "game/banks/empty_bank.asm"
+#define CURRENT_BANK_NUMBER $01
+#include "game/banks/data01_bank.asm"
+
+#define DATA_BANK_NUMBER $02
+#define CURRENT_BANK_NUMBER DATA_BANK_NUMBER
+#include "game/banks/data_bank.asm"
+
 #define CURRENT_BANK_NUMBER $03
 #include "game/banks/empty_bank.asm"
 #define CURRENT_BANK_NUMBER $04

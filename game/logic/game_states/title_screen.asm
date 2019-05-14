@@ -1,5 +1,8 @@
 init_title_screen:
 .(
+	; This state only use the generic data bank
+	SWITCH_BANK(#DATA_BANK_NUMBER)
+
 	; Clear background of nametable 2
 	jsr clear_bg_bot_left
 

@@ -2,6 +2,8 @@
 
 init_gameover_screen:
 .(
+	SWITCH_BANK(#DATA_BANK_NUMBER)
+
 	; Copy background from PRG-rom to PPU nametable
 	lda #<nametable_gameover
 	sta tmpfield1
@@ -30,6 +32,8 @@ init_gameover_screen:
 		inx                     ;
 		cpx #$20                ;
 		bne copy_palette        ;
+
+	SWITCH_BANK(#SINBAD_BANK_NUMBER)
 
 	; Initialize sprites palettes regarding configuration
 	lda #<character_palettes
@@ -184,6 +188,8 @@ gameover_screen_tick:
 
 	gamover_update_players:
 	.(
+		SWITCH_BANK(#SINBAD_BANK_NUMBER)
+
 		; Update winner's animation
 		lda #<player_a_animation
 		sta tmpfield11

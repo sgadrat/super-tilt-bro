@@ -197,3 +197,9 @@
 
 ; Usefull to pass a comma in a macro argument
 #define COMMA ,
+
+; Should be equivalent to the switch_bank routine
+#define SWITCH_BANK(n) .(:\
+    lda n:\
+    sta $c000:\
+.)

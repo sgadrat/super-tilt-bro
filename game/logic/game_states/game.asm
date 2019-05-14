@@ -14,6 +14,7 @@ init_game_state:
 		bne zero_game_state
 
 		; Call stage initialization routine
+		SWITCH_BANK(#DATA_BANK_NUMBER)
 		lda config_selected_stage
 		asl
 		tax
@@ -61,6 +62,8 @@ init_game_state:
 		lda config_initial_stocks
 		sta player_a_stocks
 		sta player_b_stocks
+
+		SWITCH_BANK(#SINBAD_BANK_NUMBER)
 
 		lda #<player_a_animation                                       ;
 		sta tmpfield11                                                 ;
@@ -273,6 +276,7 @@ game_tick:
 	no_slowdown:
 
 	; Call stage's logic
+	SWITCH_BANK(#DATA_BANK_NUMBER)
 	lda config_selected_stage
 	asl
 	tax
@@ -325,12 +329,7 @@ slowdown:
 
 update_players:
 .(
-	;TODO out of screen
-	;      - hitboxes colision use msb
-	;      - player states actions may need to be updated (especially the code based on check_on_ground)
-	;      - move_player
-	;      - check_player_position
-	;      - maybe player_effects
+	SWITCH_BANK(#SINBAD_BANK_NUMBER)
 
 	; Decrement hitstun counters
 	ldx #$00
@@ -1204,6 +1203,8 @@ update_sprites:
 	animation_vector = tmpfield11 ; Not movable - Used as parameter for stb_animation_draw subroutine
 	camera_x = tmpfield13         ; Not movable - Used as parameter for stb_animation_draw subroutine
 	camera_y = tmpfield15         ; Not movable - Used as parameter for stb_animation_draw subroutine
+
+	SWITCH_BANK(#SINBAD_BANK_NUMBER)
 
 	ldx #0 ; X is the player number
 	ldy #0 ; Y is the offset of player's animation state
