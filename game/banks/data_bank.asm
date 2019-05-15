@@ -1,3 +1,5 @@
+#echo
+#echo ====== DATA-BANK =====
 * = $8000
 
 #include "game/data/data.asm"
@@ -9,14 +11,11 @@
 #echo DATA-bank nametables size:
 #print data_nt_end-data_nt_begin
 #echo
-#echo DATA-bank musics size:
-#print data_music_end-data_music_begin
-#echo
 #echo DATA-bank free space:
 #print $c000-*
 
 #if $c000-* < 0
 #echo *** Error: Data bank occupies too much space
 #else
-.dsb $c000-*, 0
+.dsb $c000-*, CURRENT_BANK_NUMBER
 #endif

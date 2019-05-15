@@ -1,3 +1,5 @@
+#echo
+#echo ===== DATA01-BANK =====
 * = $8000
 
 bank_data01_begin:

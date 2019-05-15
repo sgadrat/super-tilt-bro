@@ -130,6 +130,8 @@ init_stage_selection_screen:
 
 stage_selection_screen_tick:
 .(
+	SWITCH_BANK(#DATA_BANK_NUMBER)
+
 	; Clear already written buffers
 	jsr reset_nt_buffers
 

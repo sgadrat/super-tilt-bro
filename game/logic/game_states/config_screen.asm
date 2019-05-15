@@ -18,6 +18,8 @@ default_config:
 init_config_screen:
 .(
 	.(
+		SWITCH_BANK(#DATA_BANK_NUMBER)
+
 		; Copy background from PRG-rom to PPU nametable
 		lda #<nametable_config
 		sta tmpfield1
@@ -78,6 +80,8 @@ init_config_screen:
 config_screen_tick:
 .(
 	.(
+		SWITCH_BANK(#DATA_BANK_NUMBER)
+
 		; Clear already written buffers
 		jsr reset_nt_buffers
 

@@ -5,6 +5,8 @@ init_credits_screen:
 		char_cursor_low = $0006
 		char_cursor_high = $0007
 
+		SWITCH_BANK(#DATA_BANK_NUMBER)
+
 		; Construct nt buffers for palettes (to avoid changing it mid-frame)
 		lda #<palette_title
 		sta tmpfield1
@@ -146,6 +148,8 @@ init_credits_screen:
 
 credits_screen_tick:
 .(
+	SWITCH_BANK(#DATA_BANK_NUMBER)
+
 	; Play common menus effects
 	jsr tick_menu
 

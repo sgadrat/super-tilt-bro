@@ -55,6 +55,8 @@ init_title_screen:
 
 title_screen_tick:
 .(
+	SWITCH_BANK(#DATA_BANK_NUMBER)
+
 	; Play common menus effects
 	jsr tick_menu
 

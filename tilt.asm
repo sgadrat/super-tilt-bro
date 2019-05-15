@@ -24,6 +24,8 @@
 
 #include "game/extra_banks.asm"
 
+#echo
+#echo ===== FIXED-BANK =====
 * = $c000 ; $c000 is where the PRG fixed bank rom is mapped in CPU space, so code position is relative to it
 code_begin:
 #include "game/logic/animation_opcodes.asm"

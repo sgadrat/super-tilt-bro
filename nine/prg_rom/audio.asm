@@ -50,7 +50,7 @@ audio_music_tick:
 	next_sample = tmpfield8
 
 	.(
-		SWITCH_BANK(#DATA_BANK_NUMBER)
+		SWITCH_BANK(#MUSIC_BANK_NUMBER)
 
 		lda audio_music_enabled
 		beq end

@@ -67,6 +67,8 @@ init_character_selection_screen:
 character_selection_screen_tick:
 .(
 	.(
+		SWITCH_BANK(#DATA_BANK_NUMBER)
+
 		; Clear already written buffers
 		jsr reset_nt_buffers
 
