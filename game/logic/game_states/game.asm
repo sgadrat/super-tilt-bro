@@ -14,8 +14,9 @@ init_game_state:
 		bne zero_game_state
 
 		; Call stage initialization routine
-		SWITCH_BANK(#DATA_BANK_NUMBER)
-		lda config_selected_stage
+		ldx config_selected_stage
+		SWITCH_BANK(stages_bank COMMA x)
+		txa
 		asl
 		tax
 		lda stages_init_routine, x
@@ -276,8 +277,9 @@ game_tick:
 	no_slowdown:
 
 	; Call stage's logic
-	SWITCH_BANK(#DATA_BANK_NUMBER)
-	lda config_selected_stage
+	ldx config_selected_stage
+	SWITCH_BANK(stages_bank COMMA x)
+	txa
 	asl
 	tax
 	lda stages_tick_routine, x

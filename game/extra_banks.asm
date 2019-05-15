@@ -16,11 +16,13 @@
 #define CURRENT_BANK_NUMBER DATA_BANK_NUMBER
 #include "game/banks/data_bank.asm"
 
-#define CURRENT_BANK_NUMBER $03
+#define MUSIC_BANK_NUMBER $03
+#define CURRENT_BANK_NUMBER MUSIC_BANK_NUMBER
 #include "game/banks/music_bank.asm"
 
 #define CURRENT_BANK_NUMBER $04
-#include "game/banks/empty_bank.asm"
+#include "game/banks/data02_bank.asm"
+
 #define CURRENT_BANK_NUMBER $05
 #include "game/banks/empty_bank.asm"
 #define CURRENT_BANK_NUMBER $06

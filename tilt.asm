@@ -32,5 +32,6 @@ code_begin:
 #include "nine/prg_rom/prg_rom.asm"
 #include "game/logic/logic.asm"
 code_end:
+#include "game/data/fixed-bank-data.asm"
 #include "game/fixed_bank_filler.asm"
 #endif

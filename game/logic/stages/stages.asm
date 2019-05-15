@@ -1,3 +1,6 @@
+; Code common to most stage initialization
+;
+; Overwrites all registers, tmpfield1, tmpfield2 and tmpfield15
 stage_generic_init:
 .(
 	stage_table_index = tmpfield15
@@ -20,13 +23,18 @@ stage_generic_init:
 	lda #$00      ;
 	sta PPUADDR   ;
 
-	ldx #$00            ;
-	copy_palette:       ;
-	lda palette_data, x ;
-	sta PPUDATA         ; Write palette_data in actual ppu palettes
-	inx                 ;
-	cpx #$20            ;
-	bne copy_palette    ;
+	ldx stage_table_index   ;
+	lda stage_palettes, x   ;
+	sta tmpfield1           ;
+	lda stage_palettes+1, x ;
+	sta tmpfield2           ;
+	ldy #0                  ; Write palette_data in actual ppu palettes
+	copy_palette:           ;
+		lda (tmpfield1), y  ;
+		sta PPUDATA         ;
+		iny                 ;
+		cpy #$20            ;
+		bne copy_palette    ;
 
 	; Copy background from PRG-rom to PPU nametable
 	ldx stage_table_index
@@ -123,6 +131,3 @@ stage_iterate_platforms:
 	end:
 	rts
 .)
-
-#include "game/logic/stages/pit.asm"
-#include "game/logic/stages/gem.asm"

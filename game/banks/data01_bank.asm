@@ -6,6 +6,9 @@ bank_data01_begin:
 bank_data01_sinbad_begin:
 #include "game/data/characters/sinbad/sinbad.asm"
 bank_data01_sinbad_end:
+bank_data01_stage_plateau_begin:
+#include "game/data/stages/plateau/plateau.asm"
+bank_data01_stage_plateau_end:
 bank_data01_end:
 
 #echo
@@ -14,6 +17,9 @@ bank_data01_end:
 #echo
 #echo DATA01-bank Sinbad size:
 #print bank_data01_sinbad_end-bank_data01_sinbad_begin
+#echo
+#echo DATA01-bank Plateau size:
+#print bank_data01_stage_plateau_end-bank_data01_stage_plateau_begin
 #echo
 #echo DATA01-bank free space:
 #print $c000-*
