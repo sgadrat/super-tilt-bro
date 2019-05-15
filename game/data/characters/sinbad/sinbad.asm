@@ -3,3 +3,4 @@
 #include "game/data/characters/sinbad/animations/animations.asm"
 #include "game/data/characters/sinbad/character_colors.asm"
 #include "game/data/characters/sinbad/state_events.asm"
+#include "game/data/characters/sinbad/player_states.asm"

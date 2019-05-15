@@ -4,6 +4,5 @@
 #include "game/logic/init.asm"
 #include "game/logic/game_states/game_states.asm"
 #include "game/logic/menu_common.asm"
-#include "game/logic/player_states.asm"
 #include "game/logic/stages/stages.asm"
 #include "game/logic/ai.asm"
