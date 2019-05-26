@@ -324,3 +324,41 @@ check_on_platform_screen_unsafe:
 	end:
 	rts
 .)
+
+; Copy tiles data from CPU memory to PPU memory
+;  tmpfield1, tmpfield2 - Address of CPU data to be copied
+;  tmpfield3 - number of tiles to copy
+;
+; PPUADDR must be set to the destination address
+; PPUCTRL's I bit should not be set (if set, writes every 32 bytes)
+;
+; Overwrites register A, register Y, tmpfield1, tmpfield2 and tmpfield3
+cpu_to_ppu_copy_tiles:
+.(
+	prg_vector = tmpfield1
+	; prg_vector_msb = tmpfield2
+	tiles_counter = tmpfield3
+
+	copy_one_tile:
+		ldy #0
+		copy_one_byte:
+			lda (prg_vector), y
+			sta PPUDATA
+
+			iny
+			cpy #16
+			bne copy_one_byte
+
+		lda prg_vector
+		clc
+		adc #16
+		sta prg_vector
+		lda prg_vector+1
+		adc #0
+		sta prg_vector+1
+
+		dec tiles_counter
+		bne copy_one_tile
+
+	rts
+.)
