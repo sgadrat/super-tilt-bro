@@ -342,7 +342,7 @@ rts
 
 ; Update a player that is standing on ground
 ;  register X must contain the player number
-standing_player:
+sinbad_tick_standing:
 .(
 ; Do not move, velocity tends toward vector (0,0)
 lda #$00
@@ -493,7 +493,7 @@ rts
 
 ; Update a player that is running
 ;  register X must contain the player number
-running_player:
+sinbad_tick_running:
 .(
 ; Move the player to the direction he is watching
 lda player_a_direction, x
@@ -617,7 +617,7 @@ rts
 
 ; Update a player that is falling
 ;  register X must contain the player number
-falling_player:
+sinbad_tick_falling:
 .(
 jsr aerial_directional_influence
 jsr apply_gravity
@@ -648,7 +648,7 @@ rts
 .)
 
 #define STATE_SINBAD_JUMP_PREPARATION_END #4
-jumping_player:
+sinbad_tick_jumping:
 .(
 ; Tick clock
 inc player_a_state_clock, x
@@ -665,7 +665,7 @@ beq top_reached
 bpl top_reached
 
 ; The top is not reached, stay in jumping state but apply gravity and directional influence
-jsr falling_player ; Hack - We just use falling_player which do exactly what we want
+jsr sinbad_tick_falling ; Hack - We just use sinbad_tick_falling which do exactly what we want
 
 ; Check if it is time to stop a short-hop
 lda player_a_velocity_v, x
@@ -801,7 +801,7 @@ rts
 .)
 
 #define STATE_SINBAD_JAB_DURATION #14
-jabbing_player:
+sinbad_tick_jabbing:
 .(
 ; Tick clock
 inc player_a_state_clock, x
@@ -877,7 +877,7 @@ rts
 ; After expiration of a tech input, it is not possible to input another tech for TECH_NB_FORBIDDEN_FRAMES frames.
 #define TECH_MAX_FRAMES_BEFORE_COLLISION 10
 #define TECH_NB_FORBIDDEN_FRAMES 60
-thrown_player:
+sinbad_tick_thrown:
 .(
 ; Update velocity
 lda player_a_hitstun, x
@@ -1017,7 +1017,7 @@ jsr set_player_animation
 rts
 .)
 
-respawn_player:
+sinbad_tick_respawn:
 .(
 ; Check for timeout
 dec player_a_state_field1, x
@@ -1090,7 +1090,7 @@ rts
 ; Update a player that is performing a side tilt
 ;  register X must contain the player number
 #define STATE_SINBAD_SIDE_TILT_DURATION #21
-side_tilt_player:
+sinbad_tick_side_tilt:
 .(
 inc player_a_state_clock, x
 
@@ -1139,7 +1139,7 @@ rts
 
 ; Update a player that is performing a grounded neutral special move
 ;  register X must contain the player number
-special_player:
+sinbad_tick_special:
 .(
 rts
 .)
@@ -1189,7 +1189,7 @@ rts
 .)
 
 #define STATE_SINBAD_SIDE_SPECIAL_PREPARATION_DURATION #120
-side_special_player:
+sinbad_tick_side_special:
 .(
 ; Tick clock
 inc player_a_state_clock, x
@@ -1287,9 +1287,9 @@ rts
 .)
 
 ; Update a player that is helplessly falling
-helpless_player:
+sinbad_tick_helpless:
 .(
-jsr falling_player
+jsr sinbad_tick_falling
 rts
 .)
 
@@ -1338,7 +1338,7 @@ rts
 .)
 
 #define STATE_SINBAD_LANDING_DURATION #6
-landing_player:
+sinbad_tick_landing:
 .(
 ; Tick clock
 inc player_a_state_clock, x
@@ -1391,7 +1391,7 @@ rts
 .)
 
 #define STATE_SINBAD_CRASHING_DURATION #30
-crashing_player:
+sinbad_tick_crashing:
 .(
 ; Tick clock
 inc player_a_state_clock, x
@@ -1441,7 +1441,7 @@ rts
 .)
 
 #define STATE_SINBAD_DOWNTILT_DURATION #21
-down_tilt_player:
+sinbad_tick_down_tilt:
 .(
 ; Tick clock
 inc player_a_state_clock, x
@@ -1491,7 +1491,7 @@ rts
 .)
 
 #define STATE_SINBAD_AERIAL_SIDE_DURATION #25
-aerial_side_player:
+sinbad_tick_aerial_side:
 .(
 jsr apply_gravity
 
@@ -1545,7 +1545,7 @@ rts
 .)
 
 #define STATE_SINBAD_AERIAL_DOWN_DURATION #14
-aerial_down_player:
+sinbad_tick_aerial_down:
 .(
 jsr apply_gravity
 
@@ -1585,7 +1585,7 @@ rts
 .)
 
 #define STATE_SINBAD_AERIAL_UP_DURATION #32
-aerial_up_player:
+sinbad_tick_aerial_up:
 .(
 jsr apply_gravity
 
@@ -1625,7 +1625,7 @@ rts
 .)
 
 #define STATE_SINBAD_AERIAL_NEUTRAL_DURATION #12
-aerial_neutral_player:
+sinbad_tick_aerial_neutral:
 .(
 jsr apply_gravity
 
@@ -1660,7 +1660,7 @@ jsr set_player_animation
 rts
 .)
 
-aerial_spe_player:
+sinbad_tick_aerial_spe:
 .(
 jsr aerial_directional_influence
 
@@ -1722,7 +1722,7 @@ rts
 .)
 
 #define STATE_SINBAD_SPE_UP_PREPARATION_DURATION #3
-spe_up_player:
+sinbad_tick_spe_up:
 .(
 ; Tick clock
 inc player_a_state_clock, x
@@ -1802,7 +1802,7 @@ rts
 .)
 
 #define STATE_SINBAD_SPE_DOWN_DURATION #21
-spe_down_player:
+sinbad_tick_spe_down:
 .(
 jsr apply_gravity
 
@@ -1849,7 +1849,7 @@ rts
 .)
 
 #define STATE_SINBAD_UPTILT_DURATION #20
-up_tilt_player:
+sinbad_tick_up_tilt:
 .(
 ; Do not move, velocity tends toward vector (0,0)
 lda #$00
@@ -1901,7 +1901,7 @@ sta player_a_state_field1, x
 rts
 .)
 
-shielding_player:
+sinbad_tick_shielding:
 .(
 rts
 .)
@@ -2008,7 +2008,7 @@ rts
 .)
 
 #define STATE_SINBAD_SHIELDLAG_DURATION #8
-shieldlag_player:
+sinbad_tick_shieldlag:
 .(
 ; Do not move, velocity tends toward vector (0,0)
 lda #$00
@@ -2064,7 +2064,7 @@ jsr set_player_animation
 rts
 .)
 
-innexistant_player:
+sinbad_tick_innexistant:
 .(
 rts
 .)
@@ -2093,7 +2093,7 @@ rts
 .)
 
 #define STATE_SINBAD_SPAWN_DURATION #50
-spawn_player:
+sinbad_tick_spawn:
 .(
 inc player_a_state_clock, x
 lda player_a_state_clock, x
