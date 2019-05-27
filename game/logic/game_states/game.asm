@@ -149,9 +149,9 @@ init_game_state:
 		sta player_b_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
 
 		ldx #$00
-		jsr start_spawn_player
+		jsr sinbad_start_spawn
 		ldx #$01
-		jsr start_spawn_player
+		jsr sinbad_start_spawn
 
 		; Construct players palette swap buffers
 		ldy #0 ; Y points on players_palettes's next byte
@@ -552,7 +552,7 @@ check_player_hit:
 			sta player_a_velocity_h_low, x
 			sta player_a_velocity_v, x
 			sta player_a_velocity_v_low, x
-			jsr start_thrown_player
+			jsr sinbad_start_thrown
 			lda #SCREENSHAKE_PARRY_INTENSITY
 			sta screen_shake_nextval_x
 			sta screen_shake_nextval_y
@@ -636,7 +636,7 @@ hurt_player:
 	sta player_a_damages, x ;
 
 	; Set opponent to thrown state
-	jsr start_thrown_player
+	jsr sinbad_start_thrown
 
 	; Disable the hitbox to avoid multi-hits
 	ldx current_player
@@ -1037,7 +1037,7 @@ check_player_position:
 		dec player_a_stocks, x ; Decrement stocks counter and check for gameover
 		bmi gameover           ;
 
-		jsr start_respawn_player ; Respawn
+		jsr sinbad_start_respawn ; Respawn
 		jmp end
 
 	gameover:
@@ -1052,7 +1052,7 @@ check_player_position:
 		lda #0                 ; Do not keep an invalid number of stocks
 		sta player_a_stocks, x ;
 
-		jsr start_innexistant_player ; Hide dead player
+		jsr sinbad_start_innexistant ; Hide dead player
 		lda #SLOWDOWN_TIME    ; Start slow down (restart it if the second player die to
 		sta slow_down_counter ; show that heroic death's animation)
 

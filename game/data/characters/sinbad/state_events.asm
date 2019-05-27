@@ -28,19 +28,19 @@ STATE_ROUTINE(spawn_player)
 STATE_ROUTINE(shieldlag_player)
 
 sinbad_state_offground_routines:
-STATE_ROUTINE(start_falling_player) ; Standing
-STATE_ROUTINE(start_falling_player) ; Running
+STATE_ROUTINE(sinbad_start_falling) ; Standing
+STATE_ROUTINE(sinbad_start_falling) ; Running
 STATE_ROUTINE(dummy_routine) ; Falling
 STATE_ROUTINE(dummy_routine) ; Jumping
-STATE_ROUTINE(start_falling_player) ; Jabbing
+STATE_ROUTINE(sinbad_start_falling) ; Jabbing
 STATE_ROUTINE(dummy_routine) ; Thrown
 STATE_ROUTINE(dummy_routine) ; Respawn
 STATE_ROUTINE(dummy_routine) ; Side tilt
 STATE_ROUTINE(dummy_routine) ; Special
 STATE_ROUTINE(dummy_routine) ; Side special
 STATE_ROUTINE(dummy_routine) ; Helpless
-STATE_ROUTINE(start_helpless_player) ; Landing
-STATE_ROUTINE(start_helpless_player) ; Crashing
+STATE_ROUTINE(sinbad_start_helpless) ; Landing
+STATE_ROUTINE(sinbad_start_helpless) ; Crashing
 STATE_ROUTINE(dummy_routine) ; Down tilt
 STATE_ROUTINE(dummy_routine) ; Aerial side
 STATE_ROUTINE(dummy_routine) ; Aerial down
@@ -50,15 +50,15 @@ STATE_ROUTINE(dummy_routine) ; Aerial special neutral
 STATE_ROUTINE(dummy_routine) ; Special up
 STATE_ROUTINE(dummy_routine) ; Special down
 STATE_ROUTINE(dummy_routine) ; Up tilt
-STATE_ROUTINE(start_helpless_player) ; Shielding
+STATE_ROUTINE(sinbad_start_helpless) ; Shielding
 STATE_ROUTINE(dummy_routine) ; Innexistant
 STATE_ROUTINE(dummy_routine) ; Spawn
-STATE_ROUTINE(start_helpless_player) ; Shield lag
+STATE_ROUTINE(sinbad_start_helpless) ; Shield lag
 
 sinbad_state_onground_routines:
 STATE_ROUTINE(dummy_routine) ; Standing
 STATE_ROUTINE(dummy_routine) ; Running
-STATE_ROUTINE(start_landing_player) ; Falling
+STATE_ROUTINE(sinbad_start_landing) ; Falling
 STATE_ROUTINE(dummy_routine) ; Jumping
 STATE_ROUTINE(dummy_routine) ; Jabbing
 STATE_ROUTINE(thrown_player_on_ground) ; Thrown
@@ -66,15 +66,15 @@ STATE_ROUTINE(dummy_routine) ; Respawn
 STATE_ROUTINE(dummy_routine) ; Side tilt
 STATE_ROUTINE(dummy_routine) ; Special
 STATE_ROUTINE(dummy_routine) ; Side special
-STATE_ROUTINE(start_landing_player) ; Helpless
+STATE_ROUTINE(sinbad_start_landing) ; Helpless
 STATE_ROUTINE(dummy_routine) ; Landing
 STATE_ROUTINE(dummy_routine) ; Crashing
 STATE_ROUTINE(dummy_routine) ; Down tilt
-STATE_ROUTINE(start_landing_player) ; Aerial side
-STATE_ROUTINE(start_landing_player) ; Aerial down
-STATE_ROUTINE(start_landing_player) ; Aerial up
-STATE_ROUTINE(start_landing_player) ; Aerial neutral
-STATE_ROUTINE(start_landing_player) ; Aerial special neutral
+STATE_ROUTINE(sinbad_start_landing) ; Aerial side
+STATE_ROUTINE(sinbad_start_landing) ; Aerial down
+STATE_ROUTINE(sinbad_start_landing) ; Aerial up
+STATE_ROUTINE(sinbad_start_landing) ; Aerial neutral
+STATE_ROUTINE(sinbad_start_landing) ; Aerial special neutral
 STATE_ROUTINE(dummy_routine) ; Special up
 STATE_ROUTINE(dummy_routine) ; Special down
 STATE_ROUTINE(dummy_routine) ; Up tilt

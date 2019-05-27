@@ -204,13 +204,13 @@ controller_inputs:
 .byt CONTROLLER_INPUT_ATTACK_LEFT,   CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_DOWN_TILT,    CONTROLLER_INPUT_ATTACK_UP,   CONTROLLER_INPUT_JAB
 .byt CONTROLLER_INPUT_SPECIAL,       CONTROLLER_INPUT_SPECIAL_UP,   CONTROLLER_INPUT_SPECIAL_DOWN, CONTROLLER_INPUT_TECH
 controller_callbacks_lo:
-.byt <start_side_special_player,     <start_side_special_player,    <start_aerial_jumping_player,  <start_aerial_jumping_player, <start_aerial_jumping_player
-.byt <start_aerial_side_player,      <start_aerial_side_player,     <start_aerial_down_player,     <start_aerial_up_player,      <start_aerial_neutral_player
-.byt <start_aerial_spe_player,       <start_spe_up_player,          <start_spe_down_player,        <fast_fall
+.byt <sinbad_start_side_special,     <sinbad_start_side_special,    <sinbad_start_aerial_jumping,  <sinbad_start_aerial_jumping, <sinbad_start_aerial_jumping
+.byt <sinbad_start_aerial_side,      <sinbad_start_aerial_side,     <sinbad_start_aerial_down,     <sinbad_start_aerial_up,      <sinbad_start_aerial_neutral
+.byt <sinbad_start_aerial_spe,       <sinbad_start_spe_up,          <sinbad_start_spe_down,        <fast_fall
 controller_callbacks_hi:
-.byt >start_side_special_player,     >start_side_special_player,    >start_aerial_jumping_player,  >start_aerial_jumping_player, >start_aerial_jumping_player
-.byt >start_aerial_side_player,      >start_aerial_side_player,     >start_aerial_down_player,     >start_aerial_up_player,      >start_aerial_neutral_player
-.byt >start_aerial_spe_player,       >start_spe_up_player,          >start_spe_down_player,        >fast_fall
+.byt >sinbad_start_side_special,     >sinbad_start_side_special,    >sinbad_start_aerial_jumping,  >sinbad_start_aerial_jumping, >sinbad_start_aerial_jumping
+.byt >sinbad_start_aerial_side,      >sinbad_start_aerial_side,     >sinbad_start_aerial_down,     >sinbad_start_aerial_up,      >sinbad_start_aerial_neutral
+.byt >sinbad_start_aerial_spe,       >sinbad_start_spe_up,          >sinbad_start_spe_down,        >fast_fall
 controller_default_callback:
 .word no_input
 .)
@@ -325,7 +325,7 @@ end:
 rts
 .)
 
-start_standing_player:
+sinbad_start_standing:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_idle
@@ -374,7 +374,7 @@ standing_player_input_left:
 .(
 lda DIRECTION_LEFT
 sta player_a_direction, x
-jsr start_running_player
+jsr sinbad_start_running
 rts
 .)
 
@@ -383,7 +383,7 @@ standing_player_input_right:
 .(
 lda DIRECTION_RIGHT
 sta player_a_direction, x
-jsr start_running_player
+jsr sinbad_start_running
 rts
 .)
 
@@ -411,7 +411,7 @@ jump_input_right:
 lda DIRECTION_RIGHT
 sta player_a_direction, x
 jump_input:
-jsr start_jumping_player
+jsr sinbad_start_jumping
 jmp end
 
 ; Player is now tilting
@@ -423,7 +423,7 @@ tilt_input_right:
 lda DIRECTION_RIGHT
 sta player_a_direction, x
 tilt_input:
-jsr start_side_tilt_player
+jsr sinbad_start_side_tilt
 jmp end
 
 ; Player is now side specialing
@@ -435,7 +435,7 @@ side_special_input_right:
 lda DIRECTION_RIGHT
 sta player_a_direction, x
 side_special_input:
-jsr start_side_special_player
+jsr sinbad_start_side_special
 jmp end
 
 end:
@@ -451,19 +451,19 @@ controller_inputs:
 .byt CONTROLLER_INPUT_TECH
 controller_callbacks_lo:
 .byt <standing_player_input_left,  <standing_player_input_right,  <jump_input,                   <jump_input_right,             <jump_input_left
-.byt <start_jabbing_player,        <tilt_input_left,              <tilt_input_right,             <start_special_player,         <side_special_input_right
-.byt <side_special_input_left,     <start_down_tilt_player,       <start_spe_up_player,          <start_spe_down_player,        <start_up_tilt_player
-.byt <start_shielding_player
+.byt <sinbad_start_jabbing,        <tilt_input_left,              <tilt_input_right,             <sinbad_start_special,         <side_special_input_right
+.byt <side_special_input_left,     <sinbad_start_down_tilt,       <sinbad_start_spe_up,          <sinbad_start_spe_down,        <sinbad_start_up_tilt
+.byt <sinbad_start_shielding
 controller_callbacks_hi:
 .byt >standing_player_input_left,  >standing_player_input_right,  >jump_input,                   >jump_input_right,             >jump_input_left
-.byt >start_jabbing_player,        >tilt_input_left,              >tilt_input_right,             >start_special_player,         >side_special_input_right
-.byt >side_special_input_left,     >start_down_tilt_player,       >start_spe_up_player,          >start_spe_down_player,        >start_up_tilt_player
-.byt >start_shielding_player
+.byt >sinbad_start_jabbing,        >tilt_input_left,              >tilt_input_right,             >sinbad_start_special,         >side_special_input_right
+.byt >side_special_input_left,     >sinbad_start_down_tilt,       >sinbad_start_spe_up,          >sinbad_start_spe_down,        >sinbad_start_up_tilt
+.byt >sinbad_start_shielding
 controller_default_callback:
 .word end
 .)
 
-start_running_player:
+sinbad_start_running:
 lda PLAYER_STATE_RUNNING
 sta player_a_state, x
 set_running_animation:
@@ -532,7 +532,7 @@ running_player_input:
 ; If in hitstun, stop running
 lda player_a_hitstun, x
 beq take_input
-jsr start_standing_player
+jsr sinbad_start_standing
 jmp end
 take_input:
 
@@ -571,7 +571,7 @@ tilt_input_right:
 lda DIRECTION_RIGHT
 sta player_a_direction, x
 tilt_input:
-jsr start_side_tilt_player
+jsr sinbad_start_side_tilt
 jmp end
 
 end:
@@ -585,18 +585,18 @@ controller_inputs:
 .byt CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL, CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT
 .byt CONTROLLER_INPUT_SPECIAL_UP,  CONTROLLER_INPUT_SPECIAL_DOWN
 controller_callbacks_lo:
-.byt <input_left,                  <input_right,                  <start_jumping_player,    <start_jumping_player,          <start_jumping_player
-.byt <tilt_input_left,             <tilt_input_right,             <start_special_player,    <start_side_special_player,     <start_side_special_player
-.byt <start_spe_up_player,         <start_spe_down_player
+.byt <input_left,                  <input_right,                  <sinbad_start_jumping,    <sinbad_start_jumping,          <sinbad_start_jumping
+.byt <tilt_input_left,             <tilt_input_right,             <sinbad_start_special,    <sinbad_start_side_special,     <sinbad_start_side_special
+.byt <sinbad_start_spe_up,         <sinbad_start_spe_down
 controller_callbacks_hi:
-.byt >input_left,                  >input_right,                  >start_jumping_player,    >start_jumping_player,          >start_jumping_player
-.byt >tilt_input_left,             >tilt_input_right,             >start_special_player,    >start_side_special_player,     >start_side_special_player
-.byt >start_spe_up_player,         >start_spe_down_player
+.byt >input_left,                  >input_right,                  >sinbad_start_jumping,    >sinbad_start_jumping,          >sinbad_start_jumping
+.byt >tilt_input_left,             >tilt_input_right,             >sinbad_start_special,    >sinbad_start_side_special,     >sinbad_start_side_special
+.byt >sinbad_start_spe_up,         >sinbad_start_spe_down
 controller_default_callback:
-.word start_standing_player
+.word sinbad_start_standing
 .)
 
-start_falling_player:
+sinbad_start_falling:
 .(
 lda PLAYER_STATE_FALLING
 sta player_a_state, x
@@ -624,7 +624,7 @@ jsr apply_gravity
 rts
 .)
 
-start_jumping_player:
+sinbad_start_jumping:
 .(
 lda PLAYER_STATE_JUMPING
 sta player_a_state, x
@@ -675,7 +675,7 @@ jmp end
 
 ; The top is reached, return to falling
 top_reached:
-jsr start_falling_player
+jsr sinbad_start_falling
 jmp end
 
 ; If the jump button is no more pressed mid jump, convert the jump to a short-hop
@@ -737,15 +737,15 @@ rts
 controller_inputs:
 .byt CONTROLLER_INPUT_ATTACK_UP, CONTROLLER_INPUT_SPECIAL_UP
 controller_callbacks_lo:
-.byt <start_up_tilt_player, <start_spe_up_player
+.byt <sinbad_start_up_tilt, <sinbad_start_spe_up
 controller_callbacks_hi:
-.byt >start_up_tilt_player, >start_spe_up_player
+.byt >sinbad_start_up_tilt, >sinbad_start_spe_up
 controller_default_callback:
 .word end
 .)
 
 #define MAX_NUM_AERIAL_JUMPS 1
-start_aerial_jumping_player:
+sinbad_start_aerial_jumping:
 .(
 ; Deny to start jump state if the player used all it's jumps
 lda #MAX_NUM_AERIAL_JUMPS
@@ -783,7 +783,7 @@ jsr set_player_animation
 rts
 .)
 
-start_jabbing_player:
+sinbad_start_jabbing:
 lda PLAYER_STATE_JABBING
 sta player_a_state, x
 lda #0
@@ -820,7 +820,7 @@ jsr merge_to_player_velocity
 lda player_a_state_clock, x
 cmp STATE_SINBAD_JAB_DURATION
 bne end
-jsr start_standing_player
+jsr sinbad_start_standing
 
 end:
 rts
@@ -833,13 +833,13 @@ lda controller_a_btns, x
 cmp #CONTROLLER_INPUT_JAB
 bne end
 
-jsr start_jabbing_player
+jsr sinbad_start_jabbing
 
 end:
 rts
 .)
 
-start_thrown_player:
+sinbad_start_thrown:
 .(
 ; Set player's state
 lda PLAYER_STATE_THROWN
@@ -949,7 +949,7 @@ cmp player_a_state_field1, x
 bcs crash
 
 ; A valid tech was entered, land with momentum depending on tech's direction
-jsr start_landing_player
+jsr sinbad_start_landing
 lda player_a_state_field2, x
 beq no_momentum
 cmp #$01
@@ -972,14 +972,14 @@ sta player_a_velocity_h_low, x
 jmp end
 
 crash:
-jsr start_crashing_player
+jsr sinbad_start_crashing
 
 end:
 rts
 .)
 
 #define RESPAWN_PLAYER_MAX_DURATION 250
-start_respawn_player:
+sinbad_start_respawn:
 .(
 ; Set the player's state
 lda PLAYER_STATE_RESPAWN
@@ -1022,7 +1022,7 @@ respawn_player:
 ; Check for timeout
 dec player_a_state_field1, x
 bne end
-jsr start_falling_player
+jsr sinbad_start_falling
 
 end:
 rts
@@ -1044,13 +1044,13 @@ lda player_a_state, x
 cmp PLAYER_STATE_RESPAWN
 bne end
 
-jsr start_falling_player
+jsr sinbad_start_falling
 
 end:
 rts
 .)
 
-start_side_tilt_player:
+sinbad_start_side_tilt:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_side_tilt
@@ -1097,7 +1097,7 @@ inc player_a_state_clock, x
 lda player_a_state_clock, x
 cmp STATE_SINBAD_SIDE_TILT_DURATION
 bne update_velocity
-jsr start_standing_player
+jsr sinbad_start_standing
 jmp end
 
 update_velocity:
@@ -1115,7 +1115,7 @@ end:
 rts
 .)
 
-start_special_player:
+sinbad_start_special:
 .(
 ; Set the appropriate animation
 lda #<anim_sinbad_special
@@ -1149,13 +1149,13 @@ special_player_input:
 lda controller_a_btns, x
 cmp #CONTROLLER_INPUT_SPECIAL
 beq end
-jsr start_standing_player
+jsr sinbad_start_standing
 
 end:
 rts
 .)
 
-start_side_special_player:
+sinbad_start_side_special:
 .(
 ; Set state
 lda PLAYER_STATE_SIDE_SPECIAL
@@ -1260,13 +1260,13 @@ sta player_a_velocity_h_low, x
 lda player_a_state_clock, x
 cmp player_a_state_field2, x
 bne end
-jsr start_helpless_player
+jsr sinbad_start_helpless
 
 end:
 rts
 .)
 
-start_helpless_player:
+sinbad_start_helpless:
 .(
 ; Set state
 lda PLAYER_STATE_HELPLESS
@@ -1293,7 +1293,7 @@ jsr falling_player
 rts
 .)
 
-start_landing_player:
+sinbad_start_landing:
 .(
 ; Set state
 lda PLAYER_STATE_LANDING
@@ -1357,13 +1357,13 @@ jsr merge_to_player_velocity
 lda player_a_state_clock, x
 cmp STATE_SINBAD_LANDING_DURATION
 bne end
-jsr start_standing_player
+jsr sinbad_start_standing
 
 end:
 rts
 .)
 
-start_crashing_player:
+sinbad_start_crashing:
 .(
 ; Set state
 lda PLAYER_STATE_CRASHING
@@ -1410,13 +1410,13 @@ jsr merge_to_player_velocity
 lda player_a_state_clock, x
 cmp STATE_SINBAD_CRASHING_DURATION
 bne end
-jsr start_standing_player
+jsr sinbad_start_standing
 
 end:
 rts
 .)
 
-start_down_tilt_player:
+sinbad_start_down_tilt:
 .(
 ; Set state
 lda PLAYER_STATE_DOWN_TILT
@@ -1460,13 +1460,13 @@ jsr merge_to_player_velocity
 lda player_a_state_clock, x
 cmp STATE_SINBAD_DOWNTILT_DURATION
 bne end
-jsr start_standing_player
+jsr sinbad_start_standing
 
 end:
 rts
 .)
 
-start_aerial_side_player:
+sinbad_start_aerial_side:
 .(
 ; Set state
 lda PLAYER_STATE_AERIAL_SIDE
@@ -1500,13 +1500,13 @@ inc player_a_state_clock, x
 lda player_a_state_clock, x
 cmp STATE_SINBAD_AERIAL_SIDE_DURATION
 bne end
-jsr start_falling_player
+jsr sinbad_start_falling
 
 end:
 rts
 .)
 
-start_aerial_down_player:
+sinbad_start_aerial_down:
 .(
 ; Set state
 lda PLAYER_STATE_AERIAL_DOWN
@@ -1554,13 +1554,13 @@ inc player_a_state_clock, x
 lda player_a_state_clock, x
 cmp STATE_SINBAD_AERIAL_DOWN_DURATION
 bne end
-jsr start_falling_player
+jsr sinbad_start_falling
 
 end:
 rts
 .)
 
-start_aerial_up_player:
+sinbad_start_aerial_up:
 .(
 ; Set state
 lda PLAYER_STATE_AERIAL_UP
@@ -1594,13 +1594,13 @@ inc player_a_state_clock, x
 lda player_a_state_clock, x
 cmp STATE_SINBAD_AERIAL_UP_DURATION
 bne end
-jsr start_falling_player
+jsr sinbad_start_falling
 
 end:
 rts
 .)
 
-start_aerial_neutral_player:
+sinbad_start_aerial_neutral:
 .(
 ; Set state
 lda PLAYER_STATE_AERIAL_NEUTRAL
@@ -1634,13 +1634,13 @@ inc player_a_state_clock, x
 lda player_a_state_clock, x
 cmp STATE_SINBAD_AERIAL_NEUTRAL_DURATION
 bne end
-jsr start_falling_player
+jsr sinbad_start_falling
 
 end:
 rts
 .)
 
-start_aerial_spe_player:
+sinbad_start_aerial_spe:
 .(
 ; Set state
 lda PLAYER_STATE_AERIAL_SPE_NEUTRAL
@@ -1688,7 +1688,7 @@ jsr merge_to_player_velocity
 rts
 .)
 
-start_spe_up_player:
+sinbad_start_spe_up:
 .(
 ; Set state
 lda PLAYER_STATE_SPE_UP
@@ -1770,14 +1770,14 @@ jsr apply_gravity
 jmp end
 
 top_reached:
-jsr start_helpless_player
+jsr sinbad_start_helpless
 jmp end
 
 end:
 rts
 .)
 
-start_spe_down_player:
+sinbad_start_spe_down:
 .(
 ; Set state
 lda PLAYER_STATE_SPE_DOWN
@@ -1815,16 +1815,16 @@ bne end
 ; Return to falling or standing
 jsr check_on_ground
 beq on_ground
-jsr start_falling_player
+jsr sinbad_start_falling
 jmp end
 on_ground
-jsr start_standing_player
+jsr sinbad_start_standing
 
 end:
 rts
 .)
 
-start_up_tilt_player:
+sinbad_start_up_tilt:
 .(
 ; Set state
 lda PLAYER_STATE_UP_TILT
@@ -1866,13 +1866,13 @@ inc player_a_state_clock, x
 lda player_a_state_clock, x
 cmp STATE_SINBAD_UPTILT_DURATION
 bne end
-jsr start_standing_player
+jsr sinbad_start_standing
 
 end:
 rts
 .)
 
-start_shielding_player:
+sinbad_start_shielding:
 .(
 ; Set state
 lda PLAYER_STATE_SHIELDING
@@ -1920,7 +1920,7 @@ jsr standing_player_input
 jmp end
 
 end_shield:
-jsr start_shieldlag_player
+jsr sinbad_start_shieldlag
 
 end:
 rts
@@ -1983,7 +1983,7 @@ sta player_a_hitbox_enabled, x
 rts
 .)
 
-start_shieldlag_player:
+sinbad_start_shieldlag:
 .(
 ; Set state
 lda PLAYER_STATE_SHIELDLAG
@@ -2025,13 +2025,13 @@ inc player_a_state_clock, x
 lda player_a_state_clock, x
 cmp STATE_SINBAD_SHIELDLAG_DURATION
 bne end
-jsr start_standing_player
+jsr sinbad_start_standing
 
 end:
 rts
 .)
 
-start_innexistant_player:
+sinbad_start_innexistant:
 .(
 ; Set state
 lda PLAYER_STATE_INNEXISTANT
@@ -2069,7 +2069,7 @@ innexistant_player:
 rts
 .)
 
-start_spawn_player:
+sinbad_start_spawn:
 .(
 lda PLAYER_STATE_SPAWN
 sta player_a_state, x
@@ -2099,7 +2099,7 @@ inc player_a_state_clock, x
 lda player_a_state_clock, x
 cmp STATE_SINBAD_SPAWN_DURATION
 bne end
-jsr start_standing_player
+jsr sinbad_start_standing
 
 end:
 rts
