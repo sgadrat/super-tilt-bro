@@ -5,7 +5,7 @@ init_game_state:
 		jsr clear_bg_bot_left
 
 		; Store character A tiles in CHR
-		ldx #0 ; Hardcoded select character 0
+		ldx config_player_a_character
 
 		lda characters_bank_number, x
 		jsr switch_bank
@@ -24,7 +24,7 @@ init_game_state:
 		jsr cpu_to_ppu_copy_tiles
 
 		; Store character B tiles in CHR
-		ldx #0 ; Hardcoded select character 0
+		ldx config_player_b_character
 
 		lda characters_bank_number, x
 		jsr switch_bank
@@ -103,8 +103,6 @@ init_game_state:
 		sta player_a_stocks
 		sta player_b_stocks
 
-		SWITCH_BANK(#SINBAD_BANK_NUMBER)
-
 		lda #<player_a_animation                                       ;
 		sta tmpfield11                                                 ;
 		lda #>player_a_animation                                       ;
@@ -148,13 +146,32 @@ init_game_state:
 		lda #INGAME_PLAYER_B_LAST_SPRITE
 		sta player_b_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
 
+		; Initialize players' state
 		ldx #$00
-		jsr sinbad_start_spawn
-		ldx #$01
-		jsr sinbad_start_spawn
+		initialize_one_player:
+			; Select character's bank
+			ldy config_player_a_character, x
+			SWITCH_BANK(characters_bank_number COMMA y)
+
+			; Call character's start routine
+			lda PLAYER_STATE_SPAWN
+			sta player_a_state, x
+			lda characters_routines_table_lsb, y
+			sta tmpfield1
+			lda characters_routines_table_msb, y
+			sta tmpfield2
+			jsr player_state_action
+
+			; Next player
+			inx
+			cpx #2
+			bne initialize_one_player
 
 		; Construct players palette swap buffers
 		ldy #0 ; Y points on players_palettes's next byte
+
+		;TODO remove this hack, get palette from character data
+		SWITCH_BANK(SINBAD_BANK_NUMBER)
 
 		jsr place_player_a_header
 		ldx #0
@@ -370,8 +387,6 @@ slowdown:
 
 update_players:
 .(
-	SWITCH_BANK(#SINBAD_BANK_NUMBER)
-
 	; Decrement hitstun counters
 	ldx #$00
 	hitstun_one_player:
@@ -394,11 +409,14 @@ update_players:
 	; Update both players
 	ldx #$00 ; player number
 	update_one_player:
+		; Select character's bank
+		ldy config_player_a_character, x
+		SWITCH_BANK(characters_bank_number COMMA y)
 
 		; Call the state update routine
-		lda #<sinbad_state_update_routines
+		lda characters_update_routines_table_lsb, y
 		sta tmpfield1
-		lda #>sinbad_state_update_routines
+		lda characters_update_routines_table_msb, y
 		sta tmpfield2
 		jsr player_state_action
 
@@ -406,9 +424,10 @@ update_players:
 		lda controller_a_btns, x
 		cmp controller_a_last_frame_btns, x
 		beq end_input_event
-			lda #<sinbad_state_input_routines
+			ldy config_player_a_character, x
+			lda characters_input_routines_table_lsb, y
 			sta tmpfield1
-			lda #>sinbad_state_input_routines
+			lda characters_input_routines_table_msb, y
 			sta tmpfield2
 			jsr player_state_action
 		end_input_event:
@@ -547,17 +566,29 @@ check_player_hit:
 			; Hitboxes collide, set opponent in thrown mode without momentum
 			lda #HITSTUN_PARRY_NB_FRAMES
 			sta player_a_hitstun, x
+
 			lda #$00
 			sta player_a_velocity_h, x
 			sta player_a_velocity_h_low, x
 			sta player_a_velocity_v, x
 			sta player_a_velocity_v_low, x
-			jsr sinbad_start_thrown
+
+			lda PLAYER_STATE_THROWN
+			sta player_a_state, x
+			ldy config_player_a_character, x
+			SWITCH_BANK(characters_bank_number COMMA y)
+			lda characters_routines_table_lsb, y
+			sta tmpfield1
+			lda characters_routines_table_msb, y
+			sta tmpfield2
+			jsr player_state_action
+
 			lda #SCREENSHAKE_PARRY_INTENSITY
 			sta screen_shake_nextval_x
 			sta screen_shake_nextval_y
 			lda #SCREENSHAKE_PARRY_NB_FRAMES
 			sta screen_shake_counter
+
 			jmp end
 
 		check_hitbox_hurtbox:
@@ -587,15 +618,18 @@ check_player_hit:
 			jsr boxes_overlap
 			bne end
 
-			stx opponent_player                ;
-			jsr switch_selected_player         ;
-			stx current_player                 ;
-			jsr switch_selected_player         ;
-			lda #<sinbad_state_onhurt_routines ; Fire on-hurt event
-			sta tmpfield1                      ;
-			lda #>sinbad_state_onhurt_routines ;
-			sta tmpfield2                      ;
-			jsr player_state_action            ;
+				; Fire on-hurt event
+				stx opponent_player
+				jsr switch_selected_player
+				stx current_player
+				jsr switch_selected_player
+				ldy config_player_a_character, x
+				SWITCH_BANK(characters_bank_number COMMA y)
+				lda characters_onhurt_routines_table_lsb, y
+				sta tmpfield1
+				lda characters_onhurt_routines_table_msb, y
+				sta tmpfield2
+				jsr player_state_action
 
 	end:
 	; Reset register X to the current player
@@ -610,6 +644,7 @@ check_player_hit:
 ;  register X - Player number of the stroke (equals to tmpfield11)
 ;
 ;  Can overwrite any register and any tmpfield except tmpfield10 and tmpfield11.
+;  The currently selected bank must be the current character's bank
 hurt_player:
 .(
 	current_player = tmpfield10
@@ -636,7 +671,14 @@ hurt_player:
 	sta player_a_damages, x ;
 
 	; Set opponent to thrown state
-	jsr sinbad_start_thrown
+	lda PLAYER_STATE_THROWN
+	sta player_a_state, x
+	ldy config_player_a_character, x
+	lda characters_routines_table_lsb, y
+	sta tmpfield1
+	lda characters_routines_table_msb, y
+	sta tmpfield2
+	jsr player_state_action
 
 	; Disable the hitbox to avoid multi-hits
 	ldx current_player
@@ -963,6 +1005,11 @@ check_player_position:
 	old_x_screen = tmpfield13 ;TODO use it to place particles correctly
 	old_y_screen = tmpfield14 ;TODO use it to place particles correctly
 
+	; Select character's bank
+	; TODO check if necessary, if not precise that the bank shall be ok in doc
+	ldy config_player_a_character, x
+	SWITCH_BANK(characters_bank_number COMMA y)
+
 	; Check death
 	SIGNED_CMP(current_x_pixel, current_x_screen, #<STAGE_BLAST_LEFT, #>STAGE_BLAST_LEFT)
 	bmi set_death_state
@@ -980,19 +1027,21 @@ check_player_position:
 		; On ground
 		lda #$00                         ; Reset aerial jumps counter
 		sta player_a_num_aerial_jumps, x ;
+
 		lda #DEFAULT_GRAVITY    ; Reset gravity modifications
 		sta player_a_gravity, x ;
-		lda #<sinbad_state_onground_routines ;
-		sta tmpfield1                        ;
-		lda #>sinbad_state_onground_routines ; Fire on-ground event
-		sta tmpfield2                        ;
-		jsr player_state_action              ;
+
+		lda characters_onground_routines_table_lsb, y ;
+		sta tmpfield1                                 ;
+		lda characters_onground_routines_table_msb, y ; Fire on-ground event
+		sta tmpfield2                                 ;
+		jsr player_state_action                       ;
 		jmp end
 
 	offground:
-		lda #<sinbad_state_offground_routines
+		lda characters_offground_routines_table_lsb, y
 		sta tmpfield1
-		lda #>sinbad_state_offground_routines
+		lda characters_offground_routines_table_msb, y
 		sta tmpfield2
 		jsr player_state_action
 		jmp end
@@ -1037,7 +1086,16 @@ check_player_position:
 		dec player_a_stocks, x ; Decrement stocks counter and check for gameover
 		bmi gameover           ;
 
-		jsr sinbad_start_respawn ; Respawn
+		; Set respawn state
+		lda PLAYER_STATE_RESPAWN
+		sta player_a_state, x
+		ldy config_player_a_character, x
+		lda characters_routines_table_lsb, y
+		sta tmpfield1
+		lda characters_routines_table_msb, y
+		sta tmpfield2
+		jsr player_state_action
+
 		jmp end
 
 	gameover:
@@ -1052,7 +1110,16 @@ check_player_position:
 		lda #0                 ; Do not keep an invalid number of stocks
 		sta player_a_stocks, x ;
 
-		jsr sinbad_start_innexistant ; Hide dead player
+		; Hide dead player
+		lda PLAYER_STATE_INNEXISTANT
+		sta player_a_state, x
+		ldy config_player_a_character, x
+		lda characters_routines_table_lsb, y
+		sta tmpfield1
+		lda characters_routines_table_msb, y
+		sta tmpfield2
+		jsr player_state_action
+
 		lda #SLOWDOWN_TIME    ; Start slow down (restart it if the second player die to
 		sta slow_down_counter ; show that heroic death's animation)
 
@@ -1245,11 +1312,17 @@ update_sprites:
 	camera_x = tmpfield13         ; Not movable - Used as parameter for stb_animation_draw subroutine
 	camera_y = tmpfield15         ; Not movable - Used as parameter for stb_animation_draw subroutine
 
-	SWITCH_BANK(#SINBAD_BANK_NUMBER)
-
 	ldx #0 ; X is the player number
 	ldy #0 ; Y is the offset of player's animation state
 	update_one_player_sprites:
+		; Select character's bank
+		tya
+		pha
+		ldy config_player_a_character, x
+		SWITCH_BANK(characters_bank_number COMMA y)
+		pla
+		tay
+
 		; Player
 		lda player_a_x, x
 		sta player_a_animation+ANIMATION_STATE_OFFSET_X_LSB, y

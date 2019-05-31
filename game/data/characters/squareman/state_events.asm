@@ -1,3 +1,5 @@
+SQUAREMAN_NUM_STATES = 4
+
 squareman_state_start_routines:
 STATE_ROUTINE(squareman_start_thrown)
 STATE_ROUTINE(squareman_start_respawn)

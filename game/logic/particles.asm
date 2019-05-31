@@ -217,7 +217,7 @@ particle_directional_indicator_tick:
 ; Uses particle box number 0 for player A or 1 for player B
 ; Deactivate any particle handler on the same box
 ;
-; Overwrites all registers, tmpfield1, tmpfield2, tmpfield3, tmpfield4, tmpfield5 tmpfield6 and tmpfield7
+; Overwrites register A, register Y, tmpfield1, tmpfield2, tmpfield3, tmpfield4, tmpfield5 tmpfield6 and tmpfield7
 particle_death_start:
 .(
 	position_x_param = tmpfield1

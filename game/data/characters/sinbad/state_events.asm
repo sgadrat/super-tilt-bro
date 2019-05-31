@@ -1,4 +1,6 @@
-siband_state_start_routines:
+SIBAD_NUM_STATES = 26
+
+sinbad_state_start_routines:
 STATE_ROUTINE(sinbad_start_thrown)
 STATE_ROUTINE(sinbad_start_respawn)
 STATE_ROUTINE(sinbad_start_innexistant)

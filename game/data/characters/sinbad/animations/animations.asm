@@ -23,6 +23,4 @@
 #include "game/data/characters/sinbad/animations/gameover.asm"
 #include "game/data/characters/sinbad/animations/sinbad_shielding.asm"
 #include "game/data/characters/sinbad/animations/sinbad_respawn.asm"
-#include "game/data/characters/sinbad/animations/invisible.asm"
 #include "game/data/characters/sinbad/animations/sinbad_spawn.asm"
-#include "game/data/characters/sinbad/animations/out_of_screen_bubble.asm"

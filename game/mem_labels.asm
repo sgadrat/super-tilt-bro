@@ -252,22 +252,22 @@ gameover_random = $4e
 ; Audio engine labels
 ;
 
-audio_square1_sample_counter = $d0  ;
-audio_square2_sample_counter = $d1  ; Counter in the sample - index of a note
-audio_triangle_sample_counter = $d2 ;
+audio_square1_sample_counter = $c0  ;
+audio_square2_sample_counter = $c1  ; Counter in the sample - index of a note
+audio_triangle_sample_counter = $c2 ;
 
-audio_square1_note_counter = $d3  ;
-audio_square2_note_counter = $d4  ; Counter in the note - time left before next note
-audio_triangle_note_counter = $d5 ;
+audio_square1_note_counter = $c3  ;
+audio_square2_note_counter = $c4  ; Counter in the note - time left before next note
+audio_triangle_note_counter = $c5 ;
 
-audio_channel_mode = $d6 ; Square or triangle
+audio_channel_mode = $c6 ; Square or triangle
 
-audio_square1_track = $d7  ;
-audio_square2_track = $d9  ; Adress of the current track for each channel
-audio_triangle_track = $db ;
+audio_square1_track = $c7  ;
+audio_square2_track = $c9  ; Adress of the current track for each channel
+audio_triangle_track = $cb ;
 
-audio_duty = $dd
-audio_music_enabled = $de
+audio_duty = $cd
+audio_music_enabled = $ce
 
 audio_square1_track_counter = $0600  ;
 audio_square2_track_counter = $0601  ; Counter in the track - index of a sample
@@ -277,25 +277,27 @@ audio_triangle_track_counter = $0602 ;
 ; Global labels
 ;
 
-controller_a_btns = $e0
-controller_b_btns = $e1
-controller_a_last_frame_btns = $e2
-controller_b_last_frame_btns = $e3
-global_game_state = $e4
+controller_a_btns = $d0
+controller_b_btns = $d1
+controller_a_last_frame_btns = $d2
+controller_b_last_frame_btns = $d3
+global_game_state = $d4
 
-nmi_processing = $e5
+nmi_processing = $d5
 
-scroll_x = $e6
-scroll_y = $e7
-ppuctrl_val = $e8
+scroll_x = $d6
+scroll_y = $d7
+ppuctrl_val = $d8
 
-config_initial_stocks = $e9
-config_ai_level = $ea
-config_selected_stage = $eb
-config_player_a_character_palette = $ec
-config_player_b_character_palette = $ed
-config_player_a_weapon_palette = $ee
-config_player_b_weapon_palette = $ef
+config_initial_stocks = $d9
+config_ai_level = $da
+config_selected_stage = $db
+config_player_a_character_palette = $dc
+config_player_b_character_palette = $dd
+config_player_a_weapon_palette = $de
+config_player_b_weapon_palette = $df
+config_player_a_character = $e0
+config_player_b_character = $e1
 
 tmpfield1 = $f0
 tmpfield2 = $f1
