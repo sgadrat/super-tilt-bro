@@ -84,15 +84,15 @@ STATE_ROUTINE(dummy_routine) ; Spawn
 STATE_ROUTINE(dummy_routine) ; Shield lag
 
 sinbad_state_input_routines:
-STATE_ROUTINE(standing_player_input) ; Standing
-STATE_ROUTINE(running_player_input) ; Running
+STATE_ROUTINE(sinbad_input_standing) ; Standing
+STATE_ROUTINE(sinbad_input_running) ; Running
 STATE_ROUTINE(check_aerial_inputs) ; Falling
-STATE_ROUTINE(jumping_player_input) ; Jumping
-STATE_ROUTINE(jabbing_player_input) ; Jabbing
-STATE_ROUTINE(thrown_player_input) ; Thrown
-STATE_ROUTINE(respawn_player_input) ; Respawn
+STATE_ROUTINE(sinbad_input_jumping) ; Jumping
+STATE_ROUTINE(sinbad_input_jabbing) ; Jabbing
+STATE_ROUTINE(sinbad_input_thrown) ; Thrown
+STATE_ROUTINE(sinbad_input_respawn) ; Respawn
 STATE_ROUTINE(keep_input_dirty) ; Side tilt
-STATE_ROUTINE(special_player_input) ; Special
+STATE_ROUTINE(sinbad_input_special) ; Special
 STATE_ROUTINE(dummy_routine) ; Side special
 STATE_ROUTINE(keep_input_dirty) ; Helpless
 STATE_ROUTINE(keep_input_dirty) ; Landing
@@ -106,7 +106,7 @@ STATE_ROUTINE(dummy_routine) ; Aerial special neutral
 STATE_ROUTINE(dummy_routine) ; Special up
 STATE_ROUTINE(keep_input_dirty) ; Special down
 STATE_ROUTINE(keep_input_dirty) ; Up tilt
-STATE_ROUTINE(shielding_player_input) ; Shielding
+STATE_ROUTINE(sinbad_input_shielding) ; Shielding
 STATE_ROUTINE(dummy_routine) ; Innexistant
 STATE_ROUTINE(keep_input_dirty) ; Spawn
 STATE_ROUTINE(keep_input_dirty) ; Shield lag
@@ -134,7 +134,7 @@ STATE_ROUTINE(hurt_player) ; Aerial special neutral
 STATE_ROUTINE(hurt_player) ; Special up
 STATE_ROUTINE(hurt_player) ; Special down
 STATE_ROUTINE(hurt_player) ; Up tilt
-STATE_ROUTINE(shielding_player_hurt) ; Shielding
+STATE_ROUTINE(sinbad_hurt_shielding) ; Shielding
 STATE_ROUTINE(dummy_routine) ; Innexistant
 STATE_ROUTINE(dummy_routine) ; Spawn
 STATE_ROUTINE(hurt_player) ; Shield lag

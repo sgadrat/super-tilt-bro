@@ -358,19 +358,19 @@ jsr merge_to_player_velocity
 lda controller_a_btns, x
 cmp #CONTROLLER_INPUT_LEFT
 bne no_left
-jsr standing_player_input_left
+jsr sinbad_input_standing_left
 jmp end
 no_left:
 cmp #CONTROLLER_INPUT_RIGHT
 bne end
-jsr standing_player_input_right
+jsr sinbad_input_standing_right
 
 end:
 rts
 .)
 
 ; Player is now running left
-standing_player_input_left:
+sinbad_input_standing_left:
 .(
 lda DIRECTION_LEFT
 sta player_a_direction, x
@@ -379,7 +379,7 @@ rts
 .)
 
 ; Player is now running right
-standing_player_input_right:
+sinbad_input_standing_right:
 .(
 lda DIRECTION_RIGHT
 sta player_a_direction, x
@@ -387,7 +387,7 @@ jsr sinbad_start_running
 rts
 .)
 
-standing_player_input:
+sinbad_input_standing:
 .(
 ; Do not handle any input if under hitstun
 lda player_a_hitstun, x
@@ -450,12 +450,12 @@ controller_inputs:
 .byt CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_DOWN_TILT,    CONTROLLER_INPUT_SPECIAL_UP,   CONTROLLER_INPUT_SPECIAL_DOWN, CONTROLLER_INPUT_ATTACK_UP
 .byt CONTROLLER_INPUT_TECH
 controller_callbacks_lo:
-.byt <standing_player_input_left,  <standing_player_input_right,  <jump_input,                   <jump_input_right,             <jump_input_left
+.byt <sinbad_input_standing_left,  <sinbad_input_standing_right,  <jump_input,                   <jump_input_right,             <jump_input_left
 .byt <sinbad_start_jabbing,        <tilt_input_left,              <tilt_input_right,             <sinbad_start_special,         <side_special_input_right
 .byt <side_special_input_left,     <sinbad_start_down_tilt,       <sinbad_start_spe_up,          <sinbad_start_spe_down,        <sinbad_start_up_tilt
 .byt <sinbad_start_shielding
 controller_callbacks_hi:
-.byt >standing_player_input_left,  >standing_player_input_right,  >jump_input,                   >jump_input_right,             >jump_input_left
+.byt >sinbad_input_standing_left,  >sinbad_input_standing_right,  >jump_input,                   >jump_input_right,             >jump_input_left
 .byt >sinbad_start_jabbing,        >tilt_input_left,              >tilt_input_right,             >sinbad_start_special,         >side_special_input_right
 .byt >side_special_input_left,     >sinbad_start_down_tilt,       >sinbad_start_spe_up,          >sinbad_start_spe_down,        >sinbad_start_up_tilt
 .byt >sinbad_start_shielding
@@ -527,7 +527,7 @@ end:
 rts
 .)
 
-running_player_input:
+sinbad_input_running:
 .(
 ; If in hitstun, stop running
 lda player_a_hitstun, x
@@ -705,7 +705,7 @@ end:
 rts
 .)
 
-jumping_player_input:
+sinbad_input_jumping:
 .(
 ; The jump is cancellable by grounded movements during preparation
 ; and by aerial movements after that
@@ -826,7 +826,7 @@ end:
 rts
 .)
 
-jabbing_player_input:
+sinbad_input_jabbing:
 .(
 ; Allow to cut the animation for another jab
 lda controller_a_btns, x
@@ -895,7 +895,7 @@ end_dec_tech_cnt:
 rts
 .)
 
-thrown_player_input:
+sinbad_input_thrown:
 .(
 ; Handle controller inputs
 lda #<controller_inputs
@@ -1028,7 +1028,7 @@ end:
 rts
 .)
 
-respawn_player_input:
+sinbad_input_respawn:
 .(
 ; Avoid doing anything until controller has returned to neutral since after
 ; death the player can release buttons without expecting to take action
@@ -1144,7 +1144,7 @@ sinbad_tick_special:
 rts
 .)
 
-special_player_input:
+sinbad_input_special:
 .(
 lda controller_a_btns, x
 cmp #CONTROLLER_INPUT_SPECIAL
@@ -1906,7 +1906,7 @@ sinbad_tick_shielding:
 rts
 .)
 
-shielding_player_input:
+sinbad_input_shielding:
 .(
 ; Do the same as standing player except when
 ;  all buttons are released - start standing
@@ -1916,7 +1916,7 @@ beq end_shield
 cmp #CONTROLLER_INPUT_TECH
 beq end
 
-jsr standing_player_input
+jsr sinbad_input_standing
 jmp end
 
 end_shield:
@@ -1926,7 +1926,7 @@ end:
 rts
 .)
 
-shielding_player_hurt:
+sinbad_hurt_shielding:
 .(
 stroke_player = tmpfield11
 
