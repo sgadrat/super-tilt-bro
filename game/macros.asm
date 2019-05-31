@@ -6,6 +6,12 @@
 #define ANIM_HURTBOX(left,right,top,bottom) .byt $35, left, right, top, bottom
 
 ;
+; Character data
+;
+
+#define STATE_ROUTINE(x) .byt >(x-1), <(x-1)
+
+;
 ; Stage specific macros
 ;
 
