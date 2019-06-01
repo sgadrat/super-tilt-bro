@@ -460,7 +460,11 @@ anim_frame_move_sprite:
 	iny
 
 	; Tile number
+#ifdef ANIM_HOOK_TILE_NUMBER
+	ANIM_HOOK_TILE_NUMBER
+#else
 	lda (frame_vector), y
+#endif
 	sta oam_mirror+1, x
 	iny
 

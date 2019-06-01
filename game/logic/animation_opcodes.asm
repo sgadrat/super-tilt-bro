@@ -35,7 +35,7 @@ animation_frame_entry_handlers_msb:
 .byt >anim_frame_move_sprite, >anim_frame_move_sprite
 .byt >anim_frame_move_hitbox, >anim_frame_move_hurtbox
 
-; Hook called when the sprite handler want's to load attributes from its entry
+; Hook called when the sprite handler wants to load attributes from its entry
 ;  Here we add "2 * player_num" to fetched attributes, so
 ;  player A uses palettes 0 and 1
 ;  player B uses palettes 2 and 3
@@ -44,6 +44,28 @@ animation_frame_entry_handlers_msb:
 	asl:\
 	clc:\
 	adc (frame_vector), y:\
+.)
+
+; Hook called when the sprite handler wants to load the tile number from its entry
+;  Here we add "96 * player_num" to fetched tile number, so
+;  player A uses tiles 0 to 95
+;  player B uses tiles 96 to 191
+#define ANIM_HOOK_TILE_NUMBER .(:\
+	lda player_number:\
+	bne player_b:\
+\
+		; player A, just return tile number:\
+		lda (frame_vector), y:\
+		jmp end_anim_hook:\
+\
+	player_b:\
+\
+		; Player B, return tile number + 96:\
+		lda (frame_vector), y:\
+		clc:\
+		adc #96:\
+\
+	end_anim_hook:\
 .)
 
 anim_frame_move_hurtbox:
