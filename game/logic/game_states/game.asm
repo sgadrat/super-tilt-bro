@@ -171,7 +171,7 @@ init_game_state:
 		ldy #0 ; Y points on players_palettes's next byte
 
 		;TODO remove this hack, get palette from character data
-		SWITCH_BANK(SINBAD_BANK_NUMBER)
+		SWITCH_BANK(#SINBAD_BANK_NUMBER)
 
 		jsr place_player_a_header
 		ldx #0
@@ -472,7 +472,7 @@ player_state_action:
 ; Update a player's state according to hitbox collisions
 ;  register X - player number
 ;
-; Overwrite all registers and all tmpfielde all registers and all tmpfields
+; Overwrite all registers and all tmpfields
 check_player_hit:
 .(
 	; Parameters of boxes_overlap
@@ -560,34 +560,34 @@ check_player_hit:
 			jsr boxes_overlap
 			bne check_hitbox_hurtbox
 
-			; Play parry sound
-			jsr audio_play_parry
+				; Play parry sound
+				jsr audio_play_parry
 
-			; Hitboxes collide, set opponent in thrown mode without momentum
-			lda #HITSTUN_PARRY_NB_FRAMES
-			sta player_a_hitstun, x
+				; Hitboxes collide, set opponent in thrown mode without momentum
+				lda #HITSTUN_PARRY_NB_FRAMES
+				sta player_a_hitstun, x
 
-			lda #$00
-			sta player_a_velocity_h, x
-			sta player_a_velocity_h_low, x
-			sta player_a_velocity_v, x
-			sta player_a_velocity_v_low, x
+				lda #$00
+				sta player_a_velocity_h, x
+				sta player_a_velocity_h_low, x
+				sta player_a_velocity_v, x
+				sta player_a_velocity_v_low, x
 
-			lda PLAYER_STATE_THROWN
-			sta player_a_state, x
-			ldy config_player_a_character, x
-			SWITCH_BANK(characters_bank_number COMMA y)
-			lda characters_routines_table_lsb, y
-			sta tmpfield1
-			lda characters_routines_table_msb, y
-			sta tmpfield2
-			jsr player_state_action
+				lda PLAYER_STATE_THROWN
+				sta player_a_state, x
+				ldy config_player_a_character, x
+				SWITCH_BANK(characters_bank_number COMMA y)
+				lda characters_routines_table_lsb, y
+				sta tmpfield1
+				lda characters_routines_table_msb, y
+				sta tmpfield2
+				jsr player_state_action
 
-			lda #SCREENSHAKE_PARRY_INTENSITY
-			sta screen_shake_nextval_x
-			sta screen_shake_nextval_y
-			lda #SCREENSHAKE_PARRY_NB_FRAMES
-			sta screen_shake_counter
+				lda #SCREENSHAKE_PARRY_INTENSITY
+				sta screen_shake_nextval_x
+				sta screen_shake_nextval_y
+				lda #SCREENSHAKE_PARRY_NB_FRAMES
+				sta screen_shake_counter
 
 			jmp end
 
@@ -1006,7 +1006,7 @@ check_player_position:
 	old_y_screen = tmpfield14 ;TODO use it to place particles correctly
 
 	; Select character's bank
-	; TODO check if necessary, if not precise that the bank shall be ok in doc
+	; TODO check if necessary, if not indicate that the bank shall be ok in doc
 	ldy config_player_a_character, x
 	SWITCH_BANK(characters_bank_number COMMA y)
 
@@ -1031,6 +1031,7 @@ check_player_position:
 		lda #DEFAULT_GRAVITY    ; Reset gravity modifications
 		sta player_a_gravity, x ;
 
+		ldy config_player_a_character, x
 		lda characters_onground_routines_table_lsb, y ;
 		sta tmpfield1                                 ;
 		lda characters_onground_routines_table_msb, y ; Fire on-ground event
@@ -1039,6 +1040,7 @@ check_player_position:
 		jmp end
 
 	offground:
+		ldy config_player_a_character, x
 		lda characters_offground_routines_table_lsb, y
 		sta tmpfield1
 		lda characters_offground_routines_table_msb, y
@@ -1262,25 +1264,25 @@ player_effects:
 		lda player_a_hitstun, x
 		and #%00000010
 		beq no_hitstun
-		lda palette_buffer
-		clc
-		adc #PLAYER_EFFECTS_PALLETTE_SIZE
-		sta palette_buffer
-		lda palette_buffer+1
-		adc #0
-		sta palette_buffer+1
+			lda palette_buffer
+			clc
+			adc #PLAYER_EFFECTS_PALLETTE_SIZE
+			sta palette_buffer
+			lda palette_buffer+1
+			adc #0
+			sta palette_buffer+1
 		no_hitstun:
 
 		; Add palette offset related to player number
 		cpx #1
 		bne player_one
-		lda palette_buffer
-		clc
-		adc #PLAYER_EFFECTS_PALLETTE_SIZE*2
-		sta palette_buffer
-		lda palette_buffer+1
-		adc #0
-		sta palette_buffer+1
+			lda palette_buffer
+			clc
+			adc #PLAYER_EFFECTS_PALLETTE_SIZE*2
+			sta palette_buffer
+			lda palette_buffer+1
+			adc #0
+			sta palette_buffer+1
 		player_one:
 
 		; Copy pointed palette to a nametable buffer
@@ -1290,13 +1292,13 @@ player_effects:
 		ldy #0             ; Y = source's offset (from (palette_buffer) origin)
 
 		copy_one_byte:
-		lda (palette_buffer), y  ; Copy a byte
-		sta nametable_buffers, x ;
+			lda (palette_buffer), y  ; Copy a byte
+			sta nametable_buffers, x ;
 
-		inx                               ;
-		iny                               ; Prepare next byte
-		cpy #PLAYER_EFFECTS_PALLETTE_SIZE ;
-		bne copy_one_byte                 ;
+			inx                               ;
+			iny                               ; Prepare next byte
+			cpy #PLAYER_EFFECTS_PALLETTE_SIZE ;
+			bne copy_one_byte                 ;
 
 		pla ; Restore X
 		tax ;
