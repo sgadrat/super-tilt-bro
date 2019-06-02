@@ -61,9 +61,12 @@ animation_frame_entry_handlers_msb:
 	player_b:\
 \
 		; Player B, return tile number + 96:\
+		;  If the original tile number is >= 96, it is not a char specific tile, do not do the addition:\
 		lda (frame_vector), y:\
-		clc:\
-		adc #96:\
+		cmp #CHARACTERS_NUM_TILES_PER_CHAR:\
+		bcs end_anim_hook:\
+			clc:\
+			adc #CHARACTERS_NUM_TILES_PER_CHAR:\
 \
 	end_anim_hook:\
 .)
