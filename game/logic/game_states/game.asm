@@ -156,9 +156,9 @@ init_game_state:
 			; Call character's start routine
 			lda PLAYER_STATE_SPAWN
 			sta player_a_state, x
-			lda characters_routines_table_lsb, y
+			lda characters_start_routines_table_lsb, y
 			sta tmpfield1
-			lda characters_routines_table_msb, y
+			lda characters_start_routines_table_msb, y
 			sta tmpfield2
 			jsr player_state_action
 
@@ -618,9 +618,9 @@ check_player_hit:
 				sta player_a_state, x
 				ldy config_player_a_character, x
 				SWITCH_BANK(characters_bank_number COMMA y)
-				lda characters_routines_table_lsb, y
+				lda characters_start_routines_table_lsb, y
 				sta tmpfield1
-				lda characters_routines_table_msb, y
+				lda characters_start_routines_table_msb, y
 				sta tmpfield2
 				jsr player_state_action
 
@@ -715,9 +715,9 @@ hurt_player:
 	lda PLAYER_STATE_THROWN
 	sta player_a_state, x
 	ldy config_player_a_character, x
-	lda characters_routines_table_lsb, y
+	lda characters_start_routines_table_lsb, y
 	sta tmpfield1
-	lda characters_routines_table_msb, y
+	lda characters_start_routines_table_msb, y
 	sta tmpfield2
 	jsr player_state_action
 
@@ -1034,6 +1034,8 @@ move_player:
 ;  tmpfield13 - player's old X screen
 ;  tmpfield14 - player's old Y screen
 ;
+;  The selected bank must be the correct character's bank.
+;
 ;  Overwrites tmpfield1 and tmpfield2
 check_player_position:
 .(
@@ -1045,11 +1047,6 @@ check_player_position:
 	current_y_screen = tmpfield12
 	old_x_screen = tmpfield13 ;TODO use it to place particles correctly
 	old_y_screen = tmpfield14 ;TODO use it to place particles correctly
-
-	; Select character's bank
-	; TODO check if necessary, if not indicate that the bank shall be ok in doc
-	ldy config_player_a_character, x
-	SWITCH_BANK(characters_bank_number COMMA y)
 
 	; Check death
 	SIGNED_CMP(current_x_pixel, current_x_screen, #<STAGE_BLAST_LEFT, #>STAGE_BLAST_LEFT)
@@ -1133,9 +1130,9 @@ check_player_position:
 		lda PLAYER_STATE_RESPAWN
 		sta player_a_state, x
 		ldy config_player_a_character, x
-		lda characters_routines_table_lsb, y
+		lda characters_start_routines_table_lsb, y
 		sta tmpfield1
-		lda characters_routines_table_msb, y
+		lda characters_start_routines_table_msb, y
 		sta tmpfield2
 		jsr player_state_action
 
@@ -1157,9 +1154,9 @@ check_player_position:
 		lda PLAYER_STATE_INNEXISTANT
 		sta player_a_state, x
 		ldy config_player_a_character, x
-		lda characters_routines_table_lsb, y
+		lda characters_start_routines_table_lsb, y
 		sta tmpfield1
-		lda characters_routines_table_msb, y
+		lda characters_start_routines_table_msb, y
 		sta tmpfield2
 		jsr player_state_action
 

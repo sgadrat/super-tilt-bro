@@ -41,12 +41,11 @@ characters_weapon_palettes_msb:
 .byt >squareman_weapon_palettes ; Squareman
 
 ; Begining of character's jump tables
-;TODO rename to characters_start_routine_table_*sb
-characters_routines_table_lsb:
+characters_start_routines_table_lsb:
 .byt <sinbad_state_start_routines ; Sinbad
 .byt <squareman_state_start_routines ; Squareman
 
-characters_routines_table_msb:
+characters_start_routines_table_msb:
 .byt >sinbad_state_start_routines ; Sinbad
 .byt >squareman_state_start_routines ; Squareman
 
@@ -89,12 +88,6 @@ characters_onhurt_routines_table_lsb:
 characters_onhurt_routines_table_msb:
 .byt >sinbad_state_onhurt_routines ; Sinbad
 .byt >squareman_state_onhurt_routines ; Squareman
-
-; Number of entries in character's jump tables
-;TODO check if better to store just that or a vector per table
-;characters_routines_table_length:
-;.byt SINBAD_NUM_STATES ; Sinbad
-;.byt SQUAREMAN_NUM_STATES ; Squareman
 
 ; Number of CHR tiles per character
 characters_tiles_number:
