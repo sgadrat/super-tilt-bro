@@ -94,16 +94,19 @@ stage_gem_tick:
 		sta tmpfield5
 		lda #STAGE_GEM_STAGE_SPRITES+STAGE_GEM_NB_STAGE_SPRITES-1
 		sta tmpfield6
-		lda #0
-		sta tmpfield7
 
 		ldx stage_gem_buffed_player
+		stx player_number
 		lda player_a_x, x
 		sta tmpfield1
 		lda player_a_y, x
 		sta tmpfield2
-		lda player_a_direction, x
+		lda player_a_x_screen, x
 		sta tmpfield8
+		lda player_a_y_screen, x
+		sta tmpfield9
+		lda player_a_direction, x
+		sta tmpfield7
 
 		lda player_a_hitbox_enabled, x
 		pha
@@ -361,14 +364,11 @@ stage_gem_tick:
 		lda #0
 		sta tmpfield7
 		sta tmpfield8
-		ldx #1
+		sta tmpfield9
+		lda #1
+		stx player_number
 
-		lda player_a_hitbox_enabled, x
-		pha
 		jsr draw_anim_frame
-		pla
-		ldx #1
-		sta player_a_hitbox_enabled, x
 
 		rts
 	.)
