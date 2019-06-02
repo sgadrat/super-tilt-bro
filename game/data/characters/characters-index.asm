@@ -15,6 +15,31 @@ characters_tiles_data_msb:
 .byt >sinbad_chr_tiles ; Sinbad
 .byt >squareman_chr_tiles ; Squareman
 
+; Colorswap information
+characters_palettes_lsb:
+.byt <character_palettes ; Sinbad
+.byt <squareman_palettes ; Squareman
+
+characters_palettes_msb:
+.byt >character_palettes ; Sinbad
+.byt >squareman_palettes ; Squareman
+
+characters_alternate_palettes_lsb:
+.byt <character_palettes_alternate ; Sinbad
+.byt <squareman_palettes_alternate ; Squareman
+
+characters_alternate_palettes_msb:
+.byt >character_palettes_alternate ; Sinbad
+.byt >squareman_palettes_alternate ; Squareman
+
+characters_weapon_palettes_lsb:
+.byt <weapon_palettes ; Sinbad
+.byt <squareman_weapon_palettes ; Squareman
+
+characters_weapon_palettes_msb:
+.byt >weapon_palettes ; Sinbad
+.byt >squareman_weapon_palettes ; Squareman
+
 ; Begining of character's jump tables
 ;TODO rename to characters_start_routine_table_*sb
 characters_routines_table_lsb:

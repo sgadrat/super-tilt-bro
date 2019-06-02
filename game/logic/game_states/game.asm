@@ -168,24 +168,27 @@ init_game_state:
 			bne initialize_one_player
 
 		; Construct players palette swap buffers
-		ldy #0 ; Y points on players_palettes's next byte
+		ldx #0 ; X points on players_palettes's next byte
 
-		;TODO remove this hack, get palette from character data
-		SWITCH_BANK(#SINBAD_BANK_NUMBER)
+		ldy config_player_a_character
+		SWITCH_BANK(characters_bank_number COMMA y)
 
 		jsr place_player_a_header
-		ldx #0
-		jsr place_character_palette
+		ldy #0
+		jsr place_character_normal_palette
 		jsr place_player_a_header
-		ldx #0
-		jsr place_alternate_palette
+		ldy #0
+		jsr place_character_alternate_palette
+
+		ldy config_player_b_character
+		SWITCH_BANK(characters_bank_number COMMA y)
 
 		jsr place_player_b_header
-		ldx #1
-		jsr place_character_palette
+		ldy #1
+		jsr place_character_normal_palette
 		jsr place_player_b_header
-		ldx #1
-		jsr place_alternate_palette
+		ldy #1
+		jsr place_character_alternate_palette
 
 		; Initialize weapons palettes
 		bit PPUSTATUS     ;
@@ -194,15 +197,26 @@ init_game_state:
 			bit PPUSTATUS ;
 			beq wait_vbi  ;
 
-		lda #<weapon_palettes
+		ldx config_player_a_character
+		SWITCH_BANK(characters_bank_number COMMA x)
+
+		lda characters_weapon_palettes_lsb, x
 		sta tmpfield2
-		lda #>weapon_palettes
+		lda characters_weapon_palettes_msb, x
 		sta tmpfield3
 
 		ldx #$15
 		lda config_player_a_weapon_palette
 		sta tmpfield1
 		jsr copy_palette_to_ppu
+
+		ldx config_player_b_character
+		SWITCH_BANK(characters_bank_number COMMA x)
+
+		lda characters_weapon_palettes_lsb, x
+		sta tmpfield2
+		lda characters_weapon_palettes_msb, x
+		sta tmpfield3
 
 		ldx #$1d
 		lda config_player_b_weapon_palette
@@ -223,80 +237,107 @@ init_game_state:
 
 	place_player_a_header:
 	.(
-		ldx #0
+		ldy #0
 		copy_one_byte:
-		lda header_player_a, x
-		sta players_palettes, y
+		lda header_player_a, y
+		sta players_palettes, x
 		iny
 		inx
-		cpx #4
+		cpy #4
 		bne copy_one_byte
 		rts
 	.)
 
 	place_player_b_header:
 	.(
-		ldx #0
+		ldy #0
 		copy_one_byte:
-		lda header_player_b, x
-		sta players_palettes, y
+		lda header_player_b, y
+		sta players_palettes, x
 		iny
 		inx
-		cpx #4
+		cpy #4
 		bne copy_one_byte
 		rts
 	.)
 
-	place_character_palette:
+	; Copy character's normal palette in players_palettes
+	;  X - current offset in players_palettes
+	;  Y - player number
+	;
+	; Output
+	;  X -  Updated offset in players_palettes
+	;
+	; Overwrites all registers, tmpfield1 and tmpfield2
+	place_character_normal_palette:
 	.(
-		lda config_player_a_character_palette, x
-		asl
-		;clc ; useless, asl shall not overflow
-		adc config_player_a_character_palette, x
+		txa
+		pha
+
+		ldx config_player_a_character, y
+		lda characters_palettes_lsb, x
+		sta tmpfield1
+		lda characters_palettes_msb, x
+		sta tmpfield2
+
+		pla
 		tax
-		lda character_palettes, x
-		sta players_palettes, y
-		iny
-		inx
-		lda character_palettes, x
-		sta players_palettes, y
-		iny
-		inx
-		lda character_palettes, x
-		sta players_palettes, y
-		iny
-		inx
 
-		lda #0
-		sta players_palettes, y
-		iny
-
-		rts
+		jmp place_character_palette
+		;rts ; useless, use place_character_palette's rts
 	.)
 
-	place_alternate_palette:
+	place_character_alternate_palette:
 	.(
-		lda config_player_a_character_palette, x
+		txa
+		pha
+
+		ldx config_player_a_character, y
+		lda characters_alternate_palettes_lsb, x
+		sta tmpfield1
+		lda characters_alternate_palettes_msb, x
+		sta tmpfield2
+
+		pla
+		tax
+
+		jmp place_character_palette
+		;rts ; useless, use place_character_palette's rts
+	.)
+
+	; Copy pointed palette in players_palettes
+	;  X - current offset in players_palettes
+	;  Y - player number
+	;  tmpfield1, tmpfield2 - palettes table of player's character
+	;
+	; Output
+	;  X -  Updated offset in players_palettes
+	;
+	; Overwrites all registers, tmpfield1 and tmpfield2
+	place_character_palette:
+	.(
+		lda config_player_a_character_palette, y
 		asl
 		;clc ; useless, asl shall not overflow
-		adc config_player_a_character_palette, x
-		tax
-		lda character_palettes_alternate, x
-		sta players_palettes, y
+		adc config_player_a_character_palette, y
+		tay
+
+		lda (tmpfield1), y
+		sta players_palettes, x
 		iny
 		inx
-		lda character_palettes_alternate, x
-		sta players_palettes, y
+		lda (tmpfield1), y
+		sta players_palettes, x
 		iny
 		inx
-		lda character_palettes_alternate, x
-		sta players_palettes, y
+		lda (tmpfield1), y
+		sta players_palettes, x
 		iny
 		inx
 
 		lda #0
-		sta players_palettes, y
-		iny
+		sta players_palettes, x
+		inx
 
 		rts
 	.)

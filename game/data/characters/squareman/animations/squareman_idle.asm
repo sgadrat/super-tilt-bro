@@ -2,7 +2,7 @@ squareman_anim_idle:
 ; Frame 1
 ANIM_FRAME_BEGIN(60)
 ANIM_HURTBOX($00, $08, $00, $10)
-ANIM_SPRITE($00, TILE_SQUAREMAN_HAT, $00, $00) ; Y, tile, attr, X
+ANIM_SPRITE($00, TILE_SQUAREMAN_HAT, $01, $00) ; Y, tile, attr, X
 ANIM_SPRITE($08, TILE_SQUAREMAN_BODY, $00, $00)
 ANIM_FRAME_END
 ; End of animation
