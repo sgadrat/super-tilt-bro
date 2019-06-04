@@ -36,6 +36,7 @@ init_gameover_screen:
 	SWITCH_BANK(#SINBAD_BANK_NUMBER)
 
 	; Initialize sprites palettes regarding configuration
+	;TODO multi-chars
 	lda #<character_palettes
 	sta tmpfield2
 	lda #>character_palettes
@@ -69,13 +70,23 @@ init_gameover_screen:
 		bne winner_name_writing
 
 	; Set winner's animation
+	ldx gameover_winner
+	SWITCH_BANK(characters_bank_number COMMA x)
+	ldy config_player_a_character, x
+	lda characters_std_animations_lsb, y
+	sta tmpfield1
+	lda characters_std_animations_msb, y
+	sta tmpfield2
+
 	lda #<player_a_animation
 	sta tmpfield11
 	lda #>player_a_animation
 	sta tmpfield12
-	lda #<anim_sinbad_victory
+	ldy #CHARACTERS_STD_ANIM_VICTORY_OFFSET
+	lda (tmpfield1), y
 	sta tmpfield13
-	lda #>anim_sinbad_victory
+	iny
+	lda (tmpfield1), y
 	sta tmpfield14
 	jsr animation_init_state
 
@@ -88,14 +99,25 @@ init_gameover_screen:
 	lda #$0f
 	sta player_a_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
 
-	; Set looser's animation
+	; Set loser's animation
+	ldx gameover_winner
+	jsr switch_selected_player
+	SWITCH_BANK(characters_bank_number COMMA x)
+	ldy config_player_a_character, x
+	lda characters_std_animations_lsb, y
+	sta tmpfield1
+	lda characters_std_animations_msb, y
+	sta tmpfield2
+
 	lda #<player_b_animation
 	sta tmpfield11
 	lda #>player_b_animation
 	sta tmpfield12
-	lda #<anim_sinbad_defeat
+	ldy #CHARACTERS_STD_ANIM_DEFEAT_OFFSET
+	lda (tmpfield1), y
 	sta tmpfield13
-	lda #>anim_sinbad_defeat
+	iny
+	lda (tmpfield1), y
 	sta tmpfield14
 	jsr animation_init_state
 
@@ -188,8 +210,6 @@ gameover_screen_tick:
 
 	gamover_update_players:
 	.(
-		SWITCH_BANK(#SINBAD_BANK_NUMBER)
-
 		; Update winner's animation
 		lda #<player_a_animation
 		sta tmpfield11
@@ -200,12 +220,13 @@ gameover_screen_tick:
 		sta tmpfield14
 		sta tmpfield15
 		sta tmpfield16
-		lda gameover_winner
-		sta player_number
+		ldx gameover_winner
+		stx player_number
+		SWITCH_BANK(characters_bank_number COMMA x)
 		jsr animation_draw
 		jsr animation_tick
 
-		; Update winner's animation
+		; Update loser's animation
 		lda #<player_b_animation
 		sta tmpfield11
 		lda #>player_b_animation
@@ -218,6 +239,7 @@ gameover_screen_tick:
 		ldx gameover_winner
 		jsr switch_selected_player
 		stx player_number
+		SWITCH_BANK(characters_bank_number COMMA x)
 		jsr animation_draw
 		jsr animation_tick
 

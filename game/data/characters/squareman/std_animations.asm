@@ -1,0 +1,3 @@
+squareman_std_anim:
+VECTOR(anim_squareman_victory)
+VECTOR(anim_squareman_defeat)

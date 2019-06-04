@@ -15,6 +15,20 @@ characters_tiles_data_msb:
 .byt >sinbad_chr_tiles ; Sinbad
 .byt >squareman_chr_tiles ; Squareman
 
+; Number of CHR tiles per character
+characters_tiles_number:
+.byt SINBAD_SPRITE_TILES_NUMBER ; Sinbad
+.byt SQUAREMAN_SPRITE_TILES_NUMBER ; Squareman
+
+; Standard animations
+characters_std_animations_lsb:
+.byt <sinbad_std_anim ; Sinbad
+.byt <squareman_std_anim ; Squareman
+
+characters_std_animations_msb:
+.byt >sinbad_std_anim ; Sinbad
+.byt >squareman_std_anim ; Squareman
+
 ; Colorswap information
 characters_palettes_lsb:
 .byt <character_palettes ; Sinbad
@@ -88,8 +102,3 @@ characters_onhurt_routines_table_lsb:
 characters_onhurt_routines_table_msb:
 .byt >sinbad_state_onhurt_routines ; Sinbad
 .byt >squareman_state_onhurt_routines ; Squareman
-
-; Number of CHR tiles per character
-characters_tiles_number:
-.byt SINBAD_SPRITE_TILES_NUMBER ; Sinbad
-.byt SQUAREMAN_SPRITE_TILES_NUMBER ; Squareman
