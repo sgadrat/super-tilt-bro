@@ -36,16 +36,26 @@ init_gameover_screen:
 	SWITCH_BANK(#SINBAD_BANK_NUMBER)
 
 	; Initialize sprites palettes regarding configuration
-	;TODO multi-chars
-	lda #<character_palettes
+	ldy config_player_a_character
+	SWITCH_BANK(characters_bank_number COMMA y)
+
+	lda characters_palettes_lsb, y
 	sta tmpfield2
-	lda #>character_palettes
+	lda characters_palettes_msb, y
 	sta tmpfield3
 
 	ldx #$11
 	lda config_player_a_character_palette
 	sta tmpfield1
 	jsr copy_palette_to_ppu
+
+	ldy config_player_b_character
+	SWITCH_BANK(characters_bank_number COMMA y)
+
+	lda characters_palettes_lsb, y
+	sta tmpfield2
+	lda characters_palettes_msb, y
+	sta tmpfield3
 
 	ldx #$19
 	lda config_player_b_character_palette
