@@ -21,14 +21,78 @@ init_character_selection_screen:
 		sta tmpfield2
 		jsr draw_zipped_nametable
 
-		; Place sprites
+		; Store characters' tiles in CHR
+		; TODO avoid palette change midframe (can wait vblank or create an nt buffers)
 		ldx #0
-		sprite_loop:
-		lda sprites, x
-		sta oam_mirror, x
-		inx
-		cpx #8*4
-		bne sprite_loop
+		jsr place_character_ppu_tiles
+		ldx #1
+		jsr place_character_ppu_tiles
+
+		; Initialize player A's animation state
+		; TODO have a menu-select animation instead of using victory
+		ldx #0
+		ldy config_player_a_character, x
+		SWITCH_BANK(characters_bank_number COMMA y)
+
+		lda #<character_selection_player_a_animation
+		sta tmpfield11
+		lda #>character_selection_player_a_animation
+		sta tmpfield12
+
+		lda characters_std_animations_lsb, y
+		sta tmpfield1
+		lda characters_std_animations_msb, y
+		sta tmpfield2
+		ldy #CHARACTERS_STD_ANIM_VICTORY_OFFSET
+		lda (tmpfield1), y
+		sta tmpfield13
+		iny
+		lda (tmpfield1), y
+		sta tmpfield14
+
+		jsr animation_init_state
+
+		lda #INGAME_PLAYER_A_FIRST_SPRITE
+		sta character_selection_player_a_animation+ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM
+		lda #INGAME_PLAYER_A_LAST_SPRITE
+		sta character_selection_player_a_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+		lda #$44
+		sta character_selection_player_a_animation+ANIMATION_STATE_OFFSET_X_LSB
+		lda #$58
+		sta character_selection_player_a_animation+ANIMATION_STATE_OFFSET_Y_LSB
+
+		; Initialize player B's animation state
+		; TODO have a menu-select animation instead of using victory
+		ldx #1
+		ldy config_player_a_character, x
+		SWITCH_BANK(characters_bank_number COMMA y)
+
+		lda #<character_selection_player_b_animation
+		sta tmpfield11
+		lda #>character_selection_player_b_animation
+		sta tmpfield12
+
+		lda characters_std_animations_lsb, y
+		sta tmpfield1
+		lda characters_std_animations_msb, y
+		sta tmpfield2
+		ldy #CHARACTERS_STD_ANIM_VICTORY_OFFSET
+		lda (tmpfield1), y
+		sta tmpfield13
+		iny
+		lda (tmpfield1), y
+		sta tmpfield14
+
+		jsr animation_init_state
+
+		lda #INGAME_PLAYER_B_FIRST_SPRITE
+		sta character_selection_player_b_animation+ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM
+		lda #INGAME_PLAYER_B_LAST_SPRITE
+		sta character_selection_player_b_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+		lda #$b4
+		sta character_selection_player_b_animation+ANIMATION_STATE_OFFSET_X_LSB
+		lda #$58
+		sta character_selection_player_b_animation+ANIMATION_STATE_OFFSET_Y_LSB
 
 		; Init local options values from global state
 		lda #0
@@ -51,26 +115,50 @@ init_character_selection_screen:
 		jsr reset_nt_buffers
 
 		rts
-
-		sprites:
-		.byt $5f, TILE_SCIMITAR_BLADE, $01, $3e   ;
-		.byt $5f, TILE_SCIMITAR_HANDLE, $01, $46  ; Player A avatar
-		.byt $58, TILE_IDLE_SINBAD_HEAD, $00, $44 ;
-		.byt $60, TILE_IDLE_SINBAD_BODY, $00, $44 ;
-		.byt $5f, TILE_SCIMITAR_BLADE, $03, $ae    ;
-		.byt $5f, TILE_SCIMITAR_HANDLE, $03, $b6   ; Player B avatar
-		.byt $58, TILE_IDLE_SINBAD_HEAD, $02, $b4  ;
-		.byt $60, TILE_IDLE_SINBAD_BODY, $02, $b4  ;
 	.)
 .)
 
 character_selection_screen_tick:
 .(
 	.(
-		SWITCH_BANK(#DATA_BANK_NUMBER)
-
 		; Clear already written buffers
 		jsr reset_nt_buffers
+
+		; Tick character A's animation
+		ldx #0
+		stx player_number
+		ldy config_player_a_character, x
+        SWITCH_BANK(characters_bank_number COMMA y)
+
+		lda #<character_selection_player_a_animation
+		sta tmpfield11
+		lda #>character_selection_player_a_animation
+		sta tmpfield12
+		lda #0
+		sta tmpfield13
+		sta tmpfield14
+		sta tmpfield15
+		sta tmpfield16
+		jsr animation_draw
+		jsr animation_tick
+
+		; Tick character B's animation
+		ldx #1
+		stx player_number
+		ldy config_player_a_character, x
+        SWITCH_BANK(characters_bank_number COMMA y)
+
+		lda #<character_selection_player_b_animation
+		sta tmpfield11
+		lda #>character_selection_player_b_animation
+		sta tmpfield12
+		lda #0
+		sta tmpfield13
+		sta tmpfield14
+		sta tmpfield15
+		sta tmpfield16
+		jsr animation_draw
+		jsr animation_tick
 
 		; Check if a button is released and trigger correct action
 		ldx #0

@@ -188,6 +188,8 @@ config_music_enabled = $01
 
 character_selection_player_a_selected_option = $00
 character_selection_player_b_selected_option = $01
+character_selection_player_a_animation = $05a0 ; $05a0 to $05ab - player a's animation state
+character_selection_player_b_animation = $05ac ; $05ac to $05b7 - player b's animation state
 
 ;
 ; Common menus labels

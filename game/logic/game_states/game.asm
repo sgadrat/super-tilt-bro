@@ -4,44 +4,11 @@ init_game_state:
 		; Clear background of nametable 2
 		jsr clear_bg_bot_left
 
-		; Store character A tiles in CHR
-		ldx config_player_a_character
-
-		lda characters_bank_number, x
-		jsr switch_bank
-
-		lda PPUSTATUS
-		lda #0
-		sta PPUADDR
-		sta PPUADDR
-
-		lda characters_tiles_data_lsb, x
-		sta tmpfield1
-		lda characters_tiles_data_msb, x
-		sta tmpfield2
-		lda characters_tiles_number, x
-		sta tmpfield3
-		jsr cpu_to_ppu_copy_tiles
-
-		; Store character B tiles in CHR
-		ldx config_player_b_character
-
-		lda characters_bank_number, x
-		jsr switch_bank
-
-		lda PPUSTATUS
-		lda #>CHARACTERS_CHARACTER_B_TILES_OFFSET
-		sta PPUADDR
-		lda #<CHARACTERS_CHARACTER_B_TILES_OFFSET
-		sta PPUADDR
-
-		lda characters_tiles_data_lsb, x
-		sta tmpfield1
-		lda characters_tiles_data_msb, x
-		sta tmpfield2
-		lda characters_tiles_number, x
-		sta tmpfield3
-		jsr cpu_to_ppu_copy_tiles
+		; Store characters' tiles in CHR
+		ldx #0
+		jsr place_character_ppu_tiles
+		ldx #1
+		jsr place_character_ppu_tiles
 
 		; Ensure game state is zero
 		ldx #$00

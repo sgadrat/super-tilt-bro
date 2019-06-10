@@ -362,3 +362,40 @@ cpu_to_ppu_copy_tiles:
 
 	rts
 .)
+
+; Place sprite tiles for a character in PPU memory
+;  register X - Player number
+;  config_player_a_character, x - Character number
+;
+; Overwrites register A, register X, register Y, tmpfield1, tmpfield2 and tmpfield3
+; May change active bank
+place_character_ppu_tiles:
+.(
+	ldy config_player_a_character, x
+
+	SWITCH_BANK(characters_bank_number COMMA y)
+
+	lda PPUSTATUS
+	cpx #0
+	bne player_b
+		lda #>CHARACTERS_CHARACTER_A_TILES_OFFSET
+		sta PPUADDR
+		lda #<CHARACTERS_CHARACTER_A_TILES_OFFSET
+		jmp end_set_ppu_addr
+	player_b:
+		lda #>CHARACTERS_CHARACTER_B_TILES_OFFSET
+		sta PPUADDR
+		lda #<CHARACTERS_CHARACTER_B_TILES_OFFSET
+	end_set_ppu_addr:
+	sta PPUADDR
+
+	lda characters_tiles_data_lsb, y
+	sta tmpfield1
+	lda characters_tiles_data_msb, y
+	sta tmpfield2
+	lda characters_tiles_number, y
+	sta tmpfield3
+	jsr cpu_to_ppu_copy_tiles
+
+	rts
+.)
