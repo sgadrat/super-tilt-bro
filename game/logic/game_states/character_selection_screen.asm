@@ -277,27 +277,27 @@ character_selection_screen_tick:
 			jmp end
 		.)
 
-		next_character:
+		next_character_color:
 		.(
 			inc config_player_a_character_palette, x
 			lda config_player_a_character_palette, x
 			cmp #NB_CHARACTER_PALETTES
-			bne refresh_player_character
+			bne refresh_player_character_color
 			lda #0
 			sta config_player_a_character_palette, x
-			jmp refresh_player_character
+			jmp refresh_player_character_color
 		.)
 
-		previous_character:
+		previous_character_color:
 		.(
 			dec config_player_a_character_palette, x
-			bpl refresh_player_character
+			bpl refresh_player_character_color
 			lda #NB_CHARACTER_PALETTES-1
 			sta config_player_a_character_palette, x
-			jmp refresh_player_character
+			jmp refresh_player_character_color
 		.)
 
-		refresh_player_character:
+		refresh_player_character_color:
 		.(
 			lda #CHARACTER_SELECTION_OPTION_CHARACTER
 			sta tmpfield1
@@ -305,7 +305,7 @@ character_selection_screen_tick:
 			jmp end
 		.)
 
-		next_weapon:
+		next_weapon_color:
 		.(
 			inc config_player_a_weapon_palette, x
 			lda config_player_a_weapon_palette, x
@@ -316,7 +316,7 @@ character_selection_screen_tick:
 			jmp refresh_player_weapon
 		.)
 
-		previous_weapon:
+		previous_weapon_color:
 		.(
 			dec config_player_a_weapon_palette, x
 			bpl refresh_player_weapon
@@ -342,10 +342,10 @@ character_selection_screen_tick:
 		.word next_value,          previous_value,      next_option,         previous_option,   next_screen,          previous_screen,  next_value
 
 		next_value_handlers:
-		.word next_character, next_weapon
+		.word next_character_color, next_weapon_color
 
 		previous_value_handlers:
-		.word previous_character, previous_weapon
+		.word previous_character_color, previous_weapon_color
 	.)
 .)
 
@@ -480,15 +480,19 @@ character_selection_highligh_option:
 ;  register X - player's number
 ;  tmpfield1 - Option to change
 ;
-;  Overwrites registers, tmpfield2, tmpfield3, tmpfield4 and tmpfield5
+;  Overwrites registers, tmpfield2, tmpfield3, tmpfield4, tmpfield5, tmpfield6, tmpfield7
 character_selection_draw_value:
 .(
 	option = tmpfield1
+	; tmpfield2 used as temporary register for some computations and for jumping to option specific routine
+	; tmpfield3 used for jumping to option specific routine
+	; tmpfield4 used by option specific routines
 	header_offset = tmpfield5
 	name_offset = tmpfield6
 	palette_offset = tmpfield7
-
-	SWITCH_BANK(#SINBAD_BANK_NUMBER)
+	character_number = tmpfield8
+	table_addr_lsb = tmpfield9
+	table_addr_msb = tmpfield10
 
 	; Save option number
 	lda option
@@ -501,6 +505,11 @@ character_selection_draw_value:
 	;clc ; useless, asl shall not overflow
 	adc header_offset
 	sta header_offset
+
+	; Store character number and switch to character's bank
+	ldy config_player_a_character, x
+	sty character_number
+	SWITCH_BANK(characters_bank_number COMMA y)
 
 	; Compute palette offset
 	lda option    ;
@@ -551,13 +560,14 @@ character_selection_draw_value:
 	adc #0                                         ;
 	sta tmpfield2                                  ;
 
-	lda #<character_palettes ;
-	clc                      ;
-	adc palette_offset       ;
-	sta tmpfield3            ; payload_address = first_palette_address + palette_offset
-	lda #>character_palettes ;
-	adc #0                   ;
-	sta tmpfield4            ;
+	ldy character_number           ;
+	lda characters_palettes_lsb, y ;
+	clc                            ;
+	adc palette_offset             ;
+	sta tmpfield3                  ; payload_address = first_palette_address + palette_offset
+	lda characters_palettes_msb, y ;
+	adc #0                         ;
+	sta tmpfield4                  ;
 
 	jsr construct_nt_buffer
 
@@ -570,13 +580,14 @@ character_selection_draw_value:
 	adc #0                                      ;
 	sta tmpfield2                               ;
 
-	lda #<character_names ;
-	clc                   ;
-	adc name_offset       ;
-	sta tmpfield3         ; payload_address = first_name_address + name_offset
-	lda #>character_names ;
-	adc #0                ;
-	sta tmpfield4         ;
+    ldy character_number                 ;
+	lda characters_palettes_names_lsb, y ;
+	clc                                  ;
+	adc name_offset                      ;
+	sta tmpfield3                        ; payload_address = first_name_address + name_offset
+	lda characters_palettes_names_msb, y ;
+	adc #0                               ;
+	sta tmpfield4                        ;
 
 	jsr construct_nt_buffer
 
@@ -594,13 +605,14 @@ character_selection_draw_value:
 	adc #0                                      ;
 	sta tmpfield2                               ;
 
-	lda #<weapon_palettes ;
-	clc                   ;
-	adc palette_offset    ;
-	sta tmpfield3         ; payload_address = first_palette_address + palette_offset
-	lda #>weapon_palettes ;
-	adc #0                ;
-	sta tmpfield4         ;
+	ldy character_number                  ;
+	lda characters_weapon_palettes_lsb, y ;
+	clc                                   ;
+	adc palette_offset                    ;
+	sta tmpfield3                         ; payload_address = first_palette_address + palette_offset
+	lda characters_weapon_palettes_msb, y ;
+	adc #0                                ;
+	sta tmpfield4                         ;
 
 	jsr construct_nt_buffer
 
@@ -613,13 +625,14 @@ character_selection_draw_value:
 	adc #0                                   ;
 	sta tmpfield2                            ;
 
-	lda #<weapon_names ;
-	clc                ;
-	adc name_offset    ;
-	sta tmpfield3      ; payload_address = first_name_address + name_offset
-	lda #>weapon_names ;
-	adc #0             ;
-	sta tmpfield4      ;
+	ldy character_number
+	lda characters_weapon_names_lsb, y ;
+	clc                                ;
+	adc name_offset                    ;
+	sta tmpfield3                      ; payload_address = first_name_address + name_offset
+	lda characters_weapon_names_msb, y ;
+	adc #0                             ;
+	sta tmpfield4                      ;
 
 	jsr construct_nt_buffer
 	jmp end

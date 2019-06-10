@@ -30,6 +30,14 @@ characters_std_animations_msb:
 .byt >squareman_std_anim ; Squareman
 
 ; Colorswap information
+characters_palettes_names_lsb:
+.byt <character_names ; Sinbad
+.byt <squareman_names ; Squareman
+
+characters_palettes_names_msb:
+.byt >character_names ; Sinbad
+.byt >squareman_names ; Squareman
+
 characters_palettes_lsb:
 .byt <character_palettes ; Sinbad
 .byt <squareman_palettes ; Squareman
@@ -45,6 +53,14 @@ characters_alternate_palettes_lsb:
 characters_alternate_palettes_msb:
 .byt >character_palettes_alternate ; Sinbad
 .byt >squareman_palettes_alternate ; Squareman
+
+characters_weapon_names_lsb:
+.byt <weapon_names ; Sinbad
+.byt <squareman_weapon_names ; Squareman
+
+characters_weapon_names_msb:
+.byt >weapon_names ; Sinbad
+.byt >squareman_weapon_names ; Squareman
 
 characters_weapon_palettes_lsb:
 .byt <weapon_palettes ; Sinbad
