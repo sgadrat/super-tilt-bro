@@ -1,6 +1,7 @@
-#define NB_OPTIONS 2
-#define CHARACTER_SELECTION_OPTION_CHARACTER 0
+#define NB_OPTIONS 3
+#define CHARACTER_SELECTION_OPTION_CHARACTER_PALETTE 0
 #define CHARACTER_SELECTION_OPTION_WEAPON 1
+#define CHARACTER_SELECTION_OPTION_CHARACTER 2
 
 init_character_selection_screen:
 .(
@@ -266,14 +267,22 @@ character_selection_screen_tick:
 		.(
 			txa
 			pha
-			lda #CHARACTER_SELECTION_OPTION_CHARACTER
+			lda #CHARACTER_SELECTION_OPTION_CHARACTER_PALETTE
 			sta tmpfield1
 			jsr character_selection_highligh_option
+
 			pla
 			tax
+			pha
 			lda #CHARACTER_SELECTION_OPTION_WEAPON
 			sta tmpfield1
 			jsr character_selection_highligh_option
+
+			pla
+			tax
+			lda #CHARACTER_SELECTION_OPTION_CHARACTER
+			jsr character_selection_highligh_option
+
 			jmp end
 		.)
 
@@ -299,7 +308,7 @@ character_selection_screen_tick:
 
 		refresh_player_character_color:
 		.(
-			lda #CHARACTER_SELECTION_OPTION_CHARACTER
+			lda #CHARACTER_SELECTION_OPTION_CHARACTER_PALETTE
 			sta tmpfield1
 			jsr character_selection_draw_value
 			jmp end
@@ -442,28 +451,32 @@ character_selection_highligh_option:
 	rts
 
 	options_buffer_length:
-	.byt 14, 14, 14, 14, 7, 7, 7, 7
+	.byt 14, 14, 14, 14, 7, 7, 7, 7, 7, 7, 7, 7
 	options_buffer_lsb:
-	.byt <buffer_player_a_character_inactive, <buffer_player_a_character_active
-	.byt <buffer_player_b_character_inactive, <buffer_player_b_character_active
-	.byt <buffer_player_a_weapon_inactive,    <buffer_player_a_weapon_active
-	.byt <buffer_player_b_weapon_inactive,    <buffer_player_b_weapon_active
+	.byt <buffer_player_a_character_palette_inactive, <buffer_player_a_character_palette_active
+	.byt <buffer_player_b_character_palette_inactive, <buffer_player_b_character_palette_active
+	.byt <buffer_player_a_weapon_inactive,            <buffer_player_a_weapon_active
+	.byt <buffer_player_b_weapon_inactive,            <buffer_player_b_weapon_active
+	.byt <buffer_player_a_character_inactive,         <buffer_player_a_character_active
+	.byt <buffer_player_b_character_inactive,         <buffer_player_b_character_active
 	options_buffer_msb:
-	.byt >buffer_player_a_character_inactive, >buffer_player_a_character_active
-	.byt >buffer_player_b_character_inactive, >buffer_player_b_character_active
-	.byt >buffer_player_a_weapon_inactive,    >buffer_player_a_weapon_active
-	.byt >buffer_player_b_weapon_inactive,    >buffer_player_b_weapon_active
+	.byt >buffer_player_a_character_palette_inactive, >buffer_player_a_character_palette_active
+	.byt >buffer_player_b_character_palette_inactive, >buffer_player_b_character_palette_active
+	.byt >buffer_player_a_weapon_inactive,            >buffer_player_a_weapon_active
+	.byt >buffer_player_b_weapon_inactive,            >buffer_player_b_weapon_active
+	.byt >buffer_player_a_character_inactive,         >buffer_player_a_character_active
+	.byt >buffer_player_b_character_inactive,         >buffer_player_b_character_active
 
-	buffer_player_a_character_active:
+	buffer_player_a_character_palette_active:
 	.byt $01, $23, $d9, $03, %01011000, %01011010, %01010000
 	.byt $01, $23, $e1, $03, %00000101, %00000101, %00000101
-	buffer_player_a_character_inactive:
+	buffer_player_a_character_palette_inactive:
 	.byt $01, $23, $d9, $03, %00001000, %00001010, %00000000
 	.byt $01, $23, $e1, $03, %00000000, %00000000, %00000000
-	buffer_player_b_character_active:
+	buffer_player_b_character_palette_active:
 	.byt $01, $23, $dc, $03, %01010000, %01011010, %01010010
 	.byt $01, $23, $e4, $03, %00000101, %00000101, %00000101
-	buffer_player_b_character_inactive:
+	buffer_player_b_character_palette_inactive:
 	.byt $01, $23, $dc, $03, %00000000, %00001010, %00000010
 	.byt $01, $23, $e4, $03, %00000000, %00000000, %00000000
 	buffer_player_a_weapon_active:
@@ -474,6 +487,14 @@ character_selection_highligh_option:
 	.byt $01, $23, $ec, $03, %00000101, %00000101, %00000101
 	buffer_player_b_weapon_inactive:
 	.byt $01, $23, $ec, $03, %00000000, %00000000, %00000000
+	buffer_player_a_character_inactive:
+	.byt $01, $23, $d1, $03, %10000000, %10100000, %00000000
+	buffer_player_a_character_active:
+	.byt $01, $23, $d1, $03, %10101010, %10101010, %10101010
+	buffer_player_b_character_inactive:
+	.byt $01, $23, $d4, $03, %00000000, %10100000, %00100000
+	buffer_player_b_character_active:
+	.byt $01, $23, $d4, $03, %10101010, %10101010, %10101010
 .)
 
 ; Reflects an option's value on screen
@@ -497,6 +518,11 @@ character_selection_draw_value:
 	; Save option number
 	lda option
 	pha
+
+	; Nothing to do for character option
+	; TODO actually it should write character name and weapon name
+	cmp #CHARACTER_SELECTION_OPTION_CHARACTER
+	beq end
 
 	; Compute buffer header's offset
 	txa
