@@ -281,6 +281,7 @@ character_selection_screen_tick:
 			pla
 			tax
 			lda #CHARACTER_SELECTION_OPTION_CHARACTER
+			sta tmpfield1
 			jsr character_selection_highligh_option
 
 			jmp end
@@ -490,11 +491,11 @@ character_selection_highligh_option:
 	buffer_player_a_character_inactive:
 	.byt $01, $23, $d1, $03, %10000000, %10100000, %00000000
 	buffer_player_a_character_active:
-	.byt $01, $23, $d1, $03, %10101010, %10101010, %10101010
+	.byt $01, $23, $d1, $03, %10010000, %10100000, %00010000
 	buffer_player_b_character_inactive:
 	.byt $01, $23, $d4, $03, %00000000, %10100000, %00100000
 	buffer_player_b_character_active:
-	.byt $01, $23, $d4, $03, %10101010, %10101010, %10101010
+	.byt $01, $23, $d4, $03, %01000000, %10100000, %01100000
 .)
 
 ; Reflects an option's value on screen
