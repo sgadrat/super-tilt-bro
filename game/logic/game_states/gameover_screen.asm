@@ -33,8 +33,6 @@ init_gameover_screen:
 		cpx #$20                ;
 		bne copy_palette        ;
 
-	SWITCH_BANK(#SINBAD_BANK_NUMBER)
-
 	; Initialize sprites palettes regarding configuration
 	ldy config_player_a_character
 	SWITCH_BANK(characters_bank_number COMMA y)
@@ -81,7 +79,8 @@ init_gameover_screen:
 
 	; Set winner's animation
 	ldx gameover_winner
-	SWITCH_BANK(characters_bank_number COMMA x)
+	ldy config_player_a_character, x
+	SWITCH_BANK(characters_bank_number COMMA y)
 	ldy config_player_a_character, x
 	lda characters_std_animations_lsb, y
 	sta tmpfield1
@@ -112,7 +111,8 @@ init_gameover_screen:
 	; Set loser's animation
 	ldx gameover_winner
 	jsr switch_selected_player
-	SWITCH_BANK(characters_bank_number COMMA x)
+	ldy config_player_a_character, x
+	SWITCH_BANK(characters_bank_number COMMA y)
 	ldy config_player_a_character, x
 	lda characters_std_animations_lsb, y
 	sta tmpfield1
@@ -232,7 +232,8 @@ gameover_screen_tick:
 		sta tmpfield16
 		ldx gameover_winner
 		stx player_number
-		SWITCH_BANK(characters_bank_number COMMA x)
+		ldy config_player_a_character, x
+		SWITCH_BANK(characters_bank_number COMMA y)
 		jsr animation_draw
 		jsr animation_tick
 
@@ -249,7 +250,8 @@ gameover_screen_tick:
 		ldx gameover_winner
 		jsr switch_selected_player
 		stx player_number
-		SWITCH_BANK(characters_bank_number COMMA x)
+		ldy config_player_a_character, x
+		SWITCH_BANK(characters_bank_number COMMA y)
 		jsr animation_draw
 		jsr animation_tick
 
