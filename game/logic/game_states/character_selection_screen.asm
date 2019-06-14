@@ -365,6 +365,12 @@ character_selection_screen_tick:
 
 		refresh_player_character:
 		.(
+			prg_tiles = tmpfield2 ; do not use tmpfield1, NMI handle overwrites it
+			prg_tiles_msb = tmpfield3
+			ppu_tiles = tmpfield4
+			ppu_tiles_msb = tmpfield5
+			ppu_write_count = tmpfield6
+
 			; Change current animation to the new character's one
 			lda animation_states_addresses_lsb, x
 			sta tmpfield11
@@ -386,6 +392,98 @@ character_selection_screen_tick:
 			sta tmpfield14
 
 			jsr animation_state_change_animation
+
+			; Write new character's tiles in PPU-RAM
+			.(
+				; Put PRG tiles address in a fixed location
+				ldy config_player_a_character, x
+				lda characters_tiles_data_lsb, y
+				sta prg_tiles
+				lda characters_tiles_data_msb, y
+				sta prg_tiles_msb
+
+				; Set CHR tiles address in a fixed location
+				cpx #0
+				bne player_b
+					lda #<CHARACTERS_CHARACTER_A_TILES_OFFSET
+					sta ppu_tiles
+					lda #>CHARACTERS_CHARACTER_A_TILES_OFFSET
+					jmp end_set_ppu_addr
+				player_b:
+					lda #<CHARACTERS_CHARACTER_B_TILES_OFFSET
+					sta ppu_tiles
+					lda #>CHARACTERS_CHARACTER_B_TILES_OFFSET
+				end_set_ppu_addr:
+				sta ppu_tiles_msb
+
+				; Copy character's tiles to PPU
+				;  create a series a nt buffers to be processed in consecutive NMIs to avoid disabling rendering
+				;  TODO Do it asynchronously to let the other player continue to configure its character during the copy
+				BYTES_PER_ITERATIONS = 48
+				NB_ITERATIONS = 32
+#if NB_ITERATIONS*BYTES_PER_ITERATIONS <> CHARACTERS_NUM_TILES_PER_CHAR*16
+#error "Incorrect number of copied bytes"
+#endif
+				lda #NB_ITERATIONS-1
+				sta ppu_write_count
+				write_ppu:
+					; Clear any potential nt buffer
+					jsr wait_next_frame
+					jsr reset_nt_buffers
+
+					; Copy three tiles (3*16=48 bytes)
+					jsr last_nt_buffer
+					lda #$01
+					sta nametable_buffers, x
+					inx
+					lda ppu_tiles_msb
+					sta nametable_buffers, x
+					inx
+					lda ppu_tiles
+					sta nametable_buffers, x
+					inx
+					lda #BYTES_PER_ITERATIONS
+					sta nametable_buffers, x
+					inx
+
+					ldy #0
+					copy_one_byte:
+						lda (prg_tiles), y
+						sta nametable_buffers, x
+						iny
+						inx
+
+						cpy #BYTES_PER_ITERATIONS
+						bne copy_one_byte
+
+					lda #0
+					sta nametable_buffers, x
+
+					; Update tiles addresses to the next byte to copy
+					lda #BYTES_PER_ITERATIONS
+					clc
+					adc prg_tiles
+					sta prg_tiles
+					lda #0
+					adc prg_tiles_msb
+					sta prg_tiles_msb
+
+					lda #BYTES_PER_ITERATIONS
+					clc
+					adc ppu_tiles
+					sta ppu_tiles
+					lda #0
+					adc ppu_tiles_msb
+					sta ppu_tiles_msb
+
+					; Loop
+#if NB_ITERATIONS >= 128
+#error "This loop code expects that bit 7 of any valid ppu_write_count is not set"
+#endif
+					dec ppu_write_count
+					bpl write_ppu
+			.)
+
 			jmp end
 
 			animation_states_addresses_lsb:
