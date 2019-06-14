@@ -343,6 +343,57 @@ character_selection_screen_tick:
 			jmp end
 		.)
 
+		next_character:
+		.(
+			inc config_player_a_character, x
+			lda config_player_a_character, x
+			cmp #CHARACTERS_NUMBER
+			bne refresh_player_character
+			lda #0
+			sta config_player_a_character, x
+			jmp refresh_player_character
+		.)
+
+		previous_character:
+		.(
+			dec config_player_a_character, x
+			bpl refresh_player_character
+			lda #CHARACTERS_NUMBER-1
+			sta config_player_a_character, x
+			jmp refresh_player_character
+		.)
+
+		refresh_player_character:
+		.(
+			; Change current animation to the new character's one
+			lda animation_states_addresses_lsb, x
+			sta tmpfield11
+			lda animation_states_addresses_msb, x
+			sta tmpfield12
+
+			ldy config_player_a_character, x
+			SWITCH_BANK(characters_bank_number COMMA y)
+
+			lda characters_std_animations_lsb, y
+			sta tmpfield1
+			lda characters_std_animations_msb, y
+			sta tmpfield2
+			ldy #CHARACTERS_STD_ANIM_VICTORY_OFFSET
+			lda (tmpfield1), y
+			sta tmpfield13
+			iny
+			lda (tmpfield1), y
+			sta tmpfield14
+
+			jsr animation_state_change_animation
+			jmp end
+
+			animation_states_addresses_lsb:
+			.byt <character_selection_player_a_animation, <character_selection_player_b_animation
+			animation_states_addresses_msb:
+			.byt >character_selection_player_a_animation, >character_selection_player_b_animation
+		.)
+
 		end:
 		rts
 
@@ -352,10 +403,10 @@ character_selection_screen_tick:
 		.word next_value,          previous_value,      next_option,         previous_option,   next_screen,          previous_screen,  next_value
 
 		next_value_handlers:
-		.word next_character_color, next_weapon_color
+		.word next_character_color, next_weapon_color, next_character
 
 		previous_value_handlers:
-		.word previous_character_color, previous_weapon_color
+		.word previous_character_color, previous_weapon_color, previous_character
 	.)
 .)
 
