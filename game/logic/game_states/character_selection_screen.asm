@@ -820,97 +820,97 @@ character_selection_draw_value:
 
 	draw_character_palette:
 	.(
-	; Compute useful offsets
-	jsr compute_option_indexes
+		; Compute useful offsets
+		jsr compute_option_indexes
 
-	; Contruct palette buffer
-	lda #<buffer_header_player_a_character_palette ;
-	clc                                            ;
-	adc header_offset                              ;
-	sta tmpfield1                                  ; header's address = first_header_address + header_offset
-	lda #>buffer_header_player_a_character_palette ;
-	adc #0                                         ;
-	sta tmpfield2                                  ;
+		; Contruct palette buffer
+		lda #<buffer_header_player_a_character_palette ;
+		clc                                            ;
+		adc header_offset                              ;
+		sta tmpfield1                                  ; header's address = first_header_address + header_offset
+		lda #>buffer_header_player_a_character_palette ;
+		adc #0                                         ;
+		sta tmpfield2                                  ;
 
-	ldy character_number           ;
-	lda characters_palettes_lsb, y ;
-	clc                            ;
-	adc palette_offset             ;
-	sta tmpfield3                  ; payload_address = first_palette_address + palette_offset
-	lda characters_palettes_msb, y ;
-	adc #0                         ;
-	sta tmpfield4                  ;
+		ldy character_number           ;
+		lda characters_palettes_lsb, y ;
+		clc                            ;
+		adc palette_offset             ;
+		sta tmpfield3                  ; payload_address = first_palette_address + palette_offset
+		lda characters_palettes_msb, y ;
+		adc #0                         ;
+		sta tmpfield4                  ;
 
-	jsr construct_nt_buffer
+		jsr construct_nt_buffer
 
-	; Construct name buffer
-	lda #<buffer_header_player_a_character_palette_name ;
-	clc                                         ;
-	adc header_offset                           ;
-	sta tmpfield1                               ; header's offser = first_header_address + header_offset
-	lda #>buffer_header_player_a_character_palette_name ;
-	adc #0                                      ;
-	sta tmpfield2                               ;
+		; Construct name buffer
+		lda #<buffer_header_player_a_character_palette_name ;
+		clc                                                 ;
+		adc header_offset                                   ;
+		sta tmpfield1                                       ; header's offser = first_header_address + header_offset
+		lda #>buffer_header_player_a_character_palette_name ;
+		adc #0                                              ;
+		sta tmpfield2                                       ;
 
-    ldy character_number                 ;
-	lda characters_palettes_names_lsb, y ;
-	clc                                  ;
-	adc name_offset                      ;
-	sta tmpfield3                        ; payload_address = first_name_address + name_offset
-	lda characters_palettes_names_msb, y ;
-	adc #0                               ;
-	sta tmpfield4                        ;
+		ldy character_number                 ;
+		lda characters_palettes_names_lsb, y ;
+		clc                                  ;
+		adc name_offset                      ;
+		sta tmpfield3                        ; payload_address = first_name_address + name_offset
+		lda characters_palettes_names_msb, y ;
+		adc #0                               ;
+		sta tmpfield4                        ;
 
-	jsr construct_nt_buffer
+		jsr construct_nt_buffer
 
-	jmp end
+		jmp end
 	.)
 
 	draw_weapon:
 	.(
-	; Compute useful offsets
-	jsr compute_option_indexes
+		; Compute useful offsets
+		jsr compute_option_indexes
 
-	; Contruct palette buffer
-	lda #<buffer_header_player_a_weapon_palette ;
-	clc                                         ;
-	adc header_offset                           ;
-	sta tmpfield1                               ; header's address = first_header_address + header_offset
-	lda #>buffer_header_player_a_weapon_palette ;
-	adc #0                                      ;
-	sta tmpfield2                               ;
+		; Contruct palette buffer
+		lda #<buffer_header_player_a_weapon_palette ;
+		clc                                         ;
+		adc header_offset                           ;
+		sta tmpfield1                               ; header's address = first_header_address + header_offset
+		lda #>buffer_header_player_a_weapon_palette ;
+		adc #0                                      ;
+		sta tmpfield2                               ;
 
-	ldy character_number                  ;
-	lda characters_weapon_palettes_lsb, y ;
-	clc                                   ;
-	adc palette_offset                    ;
-	sta tmpfield3                         ; payload_address = first_palette_address + palette_offset
-	lda characters_weapon_palettes_msb, y ;
-	adc #0                                ;
-	sta tmpfield4                         ;
+		ldy character_number                  ;
+		lda characters_weapon_palettes_lsb, y ;
+		clc                                   ;
+		adc palette_offset                    ;
+		sta tmpfield3                         ; payload_address = first_palette_address + palette_offset
+		lda characters_weapon_palettes_msb, y ;
+		adc #0                                ;
+		sta tmpfield4                         ;
 
-	jsr construct_nt_buffer
+		jsr construct_nt_buffer
 
-	; Construct name buffer
-	lda #<buffer_header_player_a_weapon_palette_name ;
-	clc                                      ;
-	adc header_offset                        ;
-	sta tmpfield1                            ; header's offser = first_header_address + header_offset
-	lda #>buffer_header_player_a_weapon_palette_name ;
-	adc #0                                   ;
-	sta tmpfield2                            ;
+		; Construct name buffer
+		lda #<buffer_header_player_a_weapon_palette_name ;
+		clc                                              ;
+		adc header_offset                                ;
+		sta tmpfield1                                    ; header's offser = first_header_address + header_offset
+		lda #>buffer_header_player_a_weapon_palette_name ;
+		adc #0                                           ;
+		sta tmpfield2                                    ;
 
-	ldy character_number
-	lda characters_weapon_names_lsb, y ;
-	clc                                ;
-	adc name_offset                    ;
-	sta tmpfield3                      ; payload_address = first_name_address + name_offset
-	lda characters_weapon_names_msb, y ;
-	adc #0                             ;
-	sta tmpfield4                      ;
+		ldy character_number
+		lda characters_weapon_names_lsb, y ;
+		clc                                ;
+		adc name_offset                    ;
+		sta tmpfield3                      ; payload_address = first_name_address + name_offset
+		lda characters_weapon_names_msb, y ;
+		adc #0                             ;
+		sta tmpfield4                      ;
 
-	jsr construct_nt_buffer
-	jmp end
+		jsr construct_nt_buffer
+		jmp end
 	.)
 
 	draw_character:
