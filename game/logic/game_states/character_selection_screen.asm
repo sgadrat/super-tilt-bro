@@ -389,32 +389,8 @@ character_selection_screen_tick:
 				lda #NB_ITERATIONS-1
 				sta ppu_write_count
 				write_ppu:
-					; Clear any potential nt buffer
-					jsr wait_next_frame
-					jsr reset_nt_buffers
-
-					; Tick animations
-					lda prg_tiles
-					pha
-					lda prg_tiles_msb
-					pha
-					lda ppu_tiles
-					pha
-					lda ppu_tiles_msb
-					pha
-					lda ppu_write_count
-					pha
-					jsr character_selection_tick_animations
-					pla
-					sta ppu_write_count
-					pla
-					sta ppu_tiles_msb
-					pla
-					sta ppu_tiles
-					pla
-					sta prg_tiles_msb
-					pla
-					sta prg_tiles
+					; Wait a frame to process previously created nametable buffers
+					jsr transparent_skip_frame
 
 					; Re-select the new character's bank (tick_animations may have changed that)
 					pla
@@ -500,13 +476,7 @@ character_selection_screen_tick:
 			jsr animation_state_change_animation
 
 			; Refresh character palette options (and set it to #0 to avoid any overflow)
-			txa
-			pha
-			jsr wait_next_frame
-			jsr reset_nt_buffers
-			jsr character_selection_tick_animations
-			pla
-			tax
+			jsr transparent_skip_frame
 
 			option = tmpfield1
 			ldy #CHARACTER_SELECTION_OPTION_CHARACTER_PALETTE
@@ -540,6 +510,43 @@ character_selection_screen_tick:
 			.byt <character_selection_player_a_animation, <character_selection_player_b_animation
 			animation_states_addresses_msb:
 			.byt >character_selection_player_a_animation, >character_selection_player_b_animation
+
+			; Wait a frame, tick animation, tick music while preserving values of X and local tmpfields
+			transparent_skip_frame:
+			.(
+				lda prg_tiles
+				pha
+				lda prg_tiles_msb
+				pha
+				lda ppu_tiles
+				pha
+				lda ppu_tiles_msb
+				pha
+				lda ppu_write_count
+				pha
+				txa
+				pha
+
+				jsr wait_next_frame
+				jsr audio_music_tick
+				jsr reset_nt_buffers
+				jsr character_selection_tick_animations
+
+				pla
+				tax
+				pla
+				sta ppu_write_count
+				pla
+				sta ppu_tiles_msb
+				pla
+				sta ppu_tiles
+				pla
+				sta prg_tiles_msb
+				pla
+				sta prg_tiles
+
+				rts
+			.)
 		.)
 
 		end:
