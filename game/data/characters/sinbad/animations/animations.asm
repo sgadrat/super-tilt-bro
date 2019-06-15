@@ -20,7 +20,7 @@
 #include "game/data/characters/sinbad/animations/sinbad_spe_up.asm"
 #include "game/data/characters/sinbad/animations/sinbad_spe_down.asm"
 #include "game/data/characters/sinbad/animations/sinbad_up_tilt.asm"
-#include "game/data/characters/sinbad/animations/gameover.asm"
+#include "game/data/characters/sinbad/animations/std_animations.asm"
 #include "game/data/characters/sinbad/animations/sinbad_shielding.asm"
 #include "game/data/characters/sinbad/animations/sinbad_respawn.asm"
 #include "game/data/characters/sinbad/animations/sinbad_spawn.asm"

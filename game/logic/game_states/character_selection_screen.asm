@@ -30,7 +30,6 @@ init_character_selection_screen:
 		jsr place_character_ppu_tiles
 
 		; Initialize player A's animation state
-		; TODO have a menu-select animation instead of using victory
 		ldx #0
 		ldy config_player_a_character, x
 		SWITCH_BANK(characters_bank_number COMMA y)
@@ -44,7 +43,7 @@ init_character_selection_screen:
 		sta tmpfield1
 		lda characters_properties_msb, y
 		sta tmpfield2
-		ldy #CHARACTERS_PROPERTIES_VICTORY_ANIM_OFFSET
+		ldy #CHARACTERS_PROPERTIES_MENU_SELECT_ANIM_OFFSET
 		lda (tmpfield1), y
 		sta tmpfield13
 		iny
@@ -63,7 +62,6 @@ init_character_selection_screen:
 		sta character_selection_player_a_animation+ANIMATION_STATE_OFFSET_Y_LSB
 
 		; Initialize player B's animation state
-		; TODO have a menu-select animation instead of using victory
 		ldx #1
 		ldy config_player_a_character, x
 		SWITCH_BANK(characters_bank_number COMMA y)
@@ -77,7 +75,7 @@ init_character_selection_screen:
 		sta tmpfield1
 		lda characters_properties_msb, y
 		sta tmpfield2
-		ldy #CHARACTERS_PROPERTIES_VICTORY_ANIM_OFFSET
+		ldy #CHARACTERS_PROPERTIES_MENU_SELECT_ANIM_OFFSET
 		lda (tmpfield1), y
 		sta tmpfield13
 		iny
@@ -466,7 +464,7 @@ character_selection_screen_tick:
 			sta tmpfield1
 			lda characters_properties_msb, y
 			sta tmpfield2
-			ldy #CHARACTERS_PROPERTIES_VICTORY_ANIM_OFFSET
+			ldy #CHARACTERS_PROPERTIES_MENU_SELECT_ANIM_OFFSET
 			lda (tmpfield1), y
 			sta tmpfield13
 			iny
