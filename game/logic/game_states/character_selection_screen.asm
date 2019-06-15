@@ -529,6 +529,11 @@ character_selection_screen_tick:
 			pla
 			tax
 
+			; Refresh character and weapon names
+			lda #CHARACTER_SELECTION_OPTION_CHARACTER
+			sta tmpfield1
+			jsr character_selection_draw_value
+
 			jmp end
 
 			animation_states_addresses_lsb:
@@ -757,49 +762,8 @@ character_selection_draw_value:
 	lda option
 	pha
 
-	; Nothing to do for character option
-	; TODO actually it should write character name and weapon name
-	cmp #CHARACTER_SELECTION_OPTION_CHARACTER
-	beq end
-
-	; Compute buffer header's offset
-	txa
-	sta header_offset
-	asl
-	;clc ; useless, asl shall not overflow
-	adc header_offset
-	sta header_offset
-
-	; Store character number and switch to character's bank
-	ldy config_player_a_character, x
-	sty character_number
-	SWITCH_BANK(characters_bank_number COMMA y)
-
-	; Compute palette offset
-	lda option    ;
-	asl           ;
-	sta tmpfield2 ;
-	txa           ; X = 2*option_num + X
-	clc           ; X now points to weapon or character option
-	adc tmpfield2 ;
-	tax           ;
-
-	lda config_player_a_character_palette, x
-	sta palette_offset
-	asl
-	;clc ; useless, asl shall not overflow
-	adc palette_offset
-	sta palette_offset
-
-	; Compute name offset
-	lda config_player_a_character_palette, x
-	asl
-	asl
-	asl
-	sta name_offset
-
 	; Jump to the good label regarding option
-	lda option
+	;lda option ; useless - A is already set to option
 	asl
 	tay
 	lda values_handlers, y
@@ -813,8 +777,52 @@ character_selection_draw_value:
 	sta option ;
 	rts
 
-	draw_character:
+	compute_option_indexes:
 	.(
+		; Compute buffer header's offset
+		txa
+		sta header_offset
+		asl
+		;clc ; useless, asl shall not overflow
+		adc header_offset
+		sta header_offset
+
+		; Store character number and switch to character's bank
+		ldy config_player_a_character, x
+		sty character_number
+		SWITCH_BANK(characters_bank_number COMMA y)
+
+		; Compute palette offset
+		lda option    ;
+		asl           ;
+		sta tmpfield2 ;
+		txa           ; X = 2*option_num + X
+		clc           ; X now points to weapon or character option
+		adc tmpfield2 ;
+		tax           ;
+
+		lda config_player_a_character_palette, x
+		sta palette_offset
+		asl
+		;clc ; useless, asl shall not overflow
+		adc palette_offset
+		sta palette_offset
+
+		; Compute name offset
+		lda config_player_a_character_palette, x
+		asl
+		asl
+		asl
+		sta name_offset
+
+		rts
+	.)
+
+	draw_character_palette:
+	.(
+	; Compute useful offsets
+	jsr compute_option_indexes
+
 	; Contruct palette buffer
 	lda #<buffer_header_player_a_character_palette ;
 	clc                                            ;
@@ -836,11 +844,11 @@ character_selection_draw_value:
 	jsr construct_nt_buffer
 
 	; Construct name buffer
-	lda #<buffer_header_player_a_character_name ;
+	lda #<buffer_header_player_a_character_palette_name ;
 	clc                                         ;
 	adc header_offset                           ;
 	sta tmpfield1                               ; header's offser = first_header_address + header_offset
-	lda #>buffer_header_player_a_character_name ;
+	lda #>buffer_header_player_a_character_palette_name ;
 	adc #0                                      ;
 	sta tmpfield2                               ;
 
@@ -860,6 +868,9 @@ character_selection_draw_value:
 
 	draw_weapon:
 	.(
+	; Compute useful offsets
+	jsr compute_option_indexes
+
 	; Contruct palette buffer
 	lda #<buffer_header_player_a_weapon_palette ;
 	clc                                         ;
@@ -881,11 +892,11 @@ character_selection_draw_value:
 	jsr construct_nt_buffer
 
 	; Construct name buffer
-	lda #<buffer_header_player_a_weapon_name ;
+	lda #<buffer_header_player_a_weapon_palette_name ;
 	clc                                      ;
 	adc header_offset                        ;
 	sta tmpfield1                            ; header's offser = first_header_address + header_offset
-	lda #>buffer_header_player_a_weapon_name ;
+	lda #>buffer_header_player_a_weapon_palette_name ;
 	adc #0                                   ;
 	sta tmpfield2                            ;
 
@@ -902,25 +913,92 @@ character_selection_draw_value:
 	jmp end
 	.)
 
+	draw_character:
+	.(
+		character_properties_addr = tmpfield11
+		character_properties_addr_msb = tmpfield12
+
+		; Compute useful offsets
+		;  TODO we care only of buffer header's index and bank switching, it could be upgraded in mother routine
+		jsr compute_option_indexes
+
+		; Get address of character propeties table in zero page
+		ldy character_number
+		lda characters_properties_lsb, y
+		sta character_properties_addr
+		lda characters_properties_msb, y
+		sta character_properties_addr_msb
+
+		; Write character name
+		lda #<buffer_header_player_a_character_name
+		clc
+		adc header_offset
+		sta tmpfield1
+		lda #>buffer_header_player_a_character_name
+		adc #0
+		sta tmpfield2
+
+		lda character_properties_addr
+		clc
+		adc #CHARACTERS_PROPERTIES_CHAR_NAME_OFFSET
+		sta tmpfield3
+		lda character_properties_addr_msb
+		adc #0
+		sta tmpfield4
+
+		jsr construct_nt_buffer
+
+		; Write weapon name
+		lda #<buffer_header_player_a_weapon_name
+		clc
+		adc header_offset
+		sta tmpfield1
+		lda #>buffer_header_player_a_weapon_name
+		adc #0
+		sta tmpfield2
+
+		lda character_properties_addr
+		clc
+		adc #CHARACTERS_PROPERTIES_WEAPON_NAME_OFFSET
+		sta tmpfield3
+		lda character_properties_addr_msb
+		adc #0
+		sta tmpfield4
+
+		jsr construct_nt_buffer
+
+		jmp end
+	.)
+
 	values_handlers:
-	.word draw_character, draw_weapon
+	.word draw_character_palette, draw_weapon, draw_character
 
 	buffer_header_player_a_character_palette:
 	.byt $3f, $11, $03
 	buffer_header_player_b_character_palette:
 	.byt $3f, $19, $03
-	buffer_header_player_a_character_name:
+	buffer_header_player_a_character_palette_name:
 	.byt $21, $e5, $08
-	buffer_header_player_b_character_name:
+	buffer_header_player_b_character_palette_name:
 	.byt $21, $f3, $08
+
 	buffer_header_player_a_weapon_palette:
 	.byt $3f, $15, $03
 	buffer_header_player_b_weapon_palette:
 	.byt $3f, $1d, $03
-	buffer_header_player_a_weapon_name:
+	buffer_header_player_a_weapon_palette_name:
 	.byt $22, $85, $08
-	buffer_header_player_b_weapon_name:
+	buffer_header_player_b_weapon_palette_name:
 	.byt $22, $93, $08
+
+	buffer_header_player_a_character_name:
+	.byt $22, $04, $0a
+	buffer_header_player_b_character_name:
+	.byt $22, $12, $0a
+	buffer_header_player_a_weapon_name:
+	.byt $22, $a4, $0a
+	buffer_header_player_b_weapon_name:
+	.byt $22, $b2, $0a
 .)
 
 ;  tmpfield1, tmpfield2 - header address
