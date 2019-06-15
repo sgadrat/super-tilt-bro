@@ -1,7 +1,7 @@
 ; Main palette for character
 squareman_palettes:
-.byt $08, $28, $20 ; border=dark-brown skin=yellow       pants=white
 .byt $04, $24, $38 ; border=dark-pink  skin=pink         pants=light-yellow
+.byt $08, $28, $20 ; border=dark-brown skin=yellow       pants=white
 .byt $08, $1a, $20 ; border=dark-brown skin=green        pants=white
 .byt $08, $16, $10 ; border=dark-brown skin=red          pants=light-grey
 .byt $01, $31, $33 ; border=dark-blue  skin=light-blue   pants=light-purple
@@ -10,8 +10,8 @@ squareman_palettes:
 
 ; Alternate palette to use to reflect special state
 squareman_palettes_alternate:
-.byt $37, $20, $20
 .byt $33, $33, $20
+.byt $37, $20, $20
 .byt $37, $3a, $20
 .byt $37, $33, $20
 .byt $31, $20, $20
@@ -20,8 +20,8 @@ squareman_palettes_alternate:
 
 ; Character palette name
 squareman_names:
-.byt $02, $3d, $45, $42, $3a, $3b, $44, $02 ; golden
 .byt $02, $49, $37, $41, $4b, $48, $37, $02 ; sakura
+.byt $02, $3d, $45, $42, $3a, $3b, $44, $02 ; golden
 .byt $4a, $3e, $3b, $02, $4a, $48, $4b, $3b ; the true
 .byt $3e, $3b, $42, $42, $38, $45, $48, $44 ; hellborn
 .byt $02, $3c, $48, $45, $50, $3b, $44, $02 ; frozen

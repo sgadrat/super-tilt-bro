@@ -96,7 +96,7 @@ init_character_selection_screen:
 		sta character_selection_player_b_animation+ANIMATION_STATE_OFFSET_Y_LSB
 
 		; Init local options values from global state
-		lda #0
+		lda #2
 		sta character_selection_player_a_selected_option
 		sta character_selection_player_b_selected_option
 
