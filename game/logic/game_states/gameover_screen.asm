@@ -82,16 +82,16 @@ init_gameover_screen:
 	ldy config_player_a_character, x
 	SWITCH_BANK(characters_bank_number COMMA y)
 	ldy config_player_a_character, x
-	lda characters_std_animations_lsb, y
+	lda characters_properties_lsb, y
 	sta tmpfield1
-	lda characters_std_animations_msb, y
+	lda characters_properties_msb, y
 	sta tmpfield2
 
 	lda #<player_a_animation
 	sta tmpfield11
 	lda #>player_a_animation
 	sta tmpfield12
-	ldy #CHARACTERS_STD_ANIM_VICTORY_OFFSET
+	ldy #CHARACTERS_PROPERTIES_VICTORY_ANIM_OFFSET
 	lda (tmpfield1), y
 	sta tmpfield13
 	iny
@@ -114,16 +114,16 @@ init_gameover_screen:
 	ldy config_player_a_character, x
 	SWITCH_BANK(characters_bank_number COMMA y)
 	ldy config_player_a_character, x
-	lda characters_std_animations_lsb, y
+	lda characters_properties_lsb, y
 	sta tmpfield1
-	lda characters_std_animations_msb, y
+	lda characters_properties_msb, y
 	sta tmpfield2
 
 	lda #<player_b_animation
 	sta tmpfield11
 	lda #>player_b_animation
 	sta tmpfield12
-	ldy #CHARACTERS_STD_ANIM_DEFEAT_OFFSET
+	ldy #CHARACTERS_PROPERTIES_DEFEAT_ANIM_OFFSET
 	lda (tmpfield1), y
 	sta tmpfield13
 	iny

@@ -20,14 +20,14 @@ characters_tiles_number:
 .byt SINBAD_SPRITE_TILES_NUMBER ; Sinbad
 .byt SQUAREMAN_SPRITE_TILES_NUMBER ; Squareman
 
-; Standard animations
-characters_std_animations_lsb:
-.byt <sinbad_std_anim ; Sinbad
-.byt <squareman_std_anim ; Squareman
+; Chatacter properties
+characters_properties_lsb:
+.byt <sinbad_properties ; Sinbad
+.byt <squareman_properties ; Squareman
 
-characters_std_animations_msb:
-.byt >sinbad_std_anim ; Sinbad
-.byt >squareman_std_anim ; Squareman
+characters_properties_msb:
+.byt >sinbad_properties ; Sinbad
+.byt >squareman_properties ; Squareman
 
 ; Colorswap information
 characters_palettes_names_lsb:

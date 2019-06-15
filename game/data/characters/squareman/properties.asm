@@ -1,3 +1,3 @@
-squareman_std_anim:
+squareman_properties:
 VECTOR(anim_squareman_victory)
 VECTOR(anim_squareman_defeat)

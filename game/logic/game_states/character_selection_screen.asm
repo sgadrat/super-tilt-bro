@@ -40,11 +40,11 @@ init_character_selection_screen:
 		lda #>character_selection_player_a_animation
 		sta tmpfield12
 
-		lda characters_std_animations_lsb, y
+		lda characters_properties_lsb, y
 		sta tmpfield1
-		lda characters_std_animations_msb, y
+		lda characters_properties_msb, y
 		sta tmpfield2
-		ldy #CHARACTERS_STD_ANIM_VICTORY_OFFSET
+		ldy #CHARACTERS_PROPERTIES_VICTORY_ANIM_OFFSET
 		lda (tmpfield1), y
 		sta tmpfield13
 		iny
@@ -73,11 +73,11 @@ init_character_selection_screen:
 		lda #>character_selection_player_b_animation
 		sta tmpfield12
 
-		lda characters_std_animations_lsb, y
+		lda characters_properties_lsb, y
 		sta tmpfield1
-		lda characters_std_animations_msb, y
+		lda characters_properties_msb, y
 		sta tmpfield2
-		ldy #CHARACTERS_STD_ANIM_VICTORY_OFFSET
+		ldy #CHARACTERS_PROPERTIES_VICTORY_ANIM_OFFSET
 		lda (tmpfield1), y
 		sta tmpfield13
 		iny
@@ -486,11 +486,11 @@ character_selection_screen_tick:
 
 			ldy config_player_a_character, x
 
-			lda characters_std_animations_lsb, y
+			lda characters_properties_lsb, y
 			sta tmpfield1
-			lda characters_std_animations_msb, y
+			lda characters_properties_msb, y
 			sta tmpfield2
-			ldy #CHARACTERS_STD_ANIM_VICTORY_OFFSET
+			ldy #CHARACTERS_PROPERTIES_VICTORY_ANIM_OFFSET
 			lda (tmpfield1), y
 			sta tmpfield13
 			iny
