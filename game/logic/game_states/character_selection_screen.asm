@@ -125,41 +125,8 @@ character_selection_screen_tick:
 		; Clear already written buffers
 		jsr reset_nt_buffers
 
-		; Tick character A's animation
-		ldx #0
-		stx player_number
-		ldy config_player_a_character, x
-        SWITCH_BANK(characters_bank_number COMMA y)
-
-		lda #<character_selection_player_a_animation
-		sta tmpfield11
-		lda #>character_selection_player_a_animation
-		sta tmpfield12
-		lda #0
-		sta tmpfield13
-		sta tmpfield14
-		sta tmpfield15
-		sta tmpfield16
-		jsr animation_draw
-		jsr animation_tick
-
-		; Tick character B's animation
-		ldx #1
-		stx player_number
-		ldy config_player_a_character, x
-        SWITCH_BANK(characters_bank_number COMMA y)
-
-		lda #<character_selection_player_b_animation
-		sta tmpfield11
-		lda #>character_selection_player_b_animation
-		sta tmpfield12
-		lda #0
-		sta tmpfield13
-		sta tmpfield14
-		sta tmpfield15
-		sta tmpfield16
-		jsr animation_draw
-		jsr animation_tick
+		; Refresh players animations
+		jsr character_selection_tick_animations
 
 		; Check if a button is released and trigger correct action
 		ldx #0
@@ -371,29 +338,24 @@ character_selection_screen_tick:
 			ppu_tiles_msb = tmpfield5
 			ppu_write_count = tmpfield6
 
+			; Select new character's bank
+			ldy config_player_a_character, x
+			SWITCH_BANK(characters_bank_number COMMA y)
+
 			; Change current animation to the new character's one
 			lda animation_states_addresses_lsb, x
 			sta tmpfield11
 			lda animation_states_addresses_msb, x
 			sta tmpfield12
-
-			ldy config_player_a_character, x
-			SWITCH_BANK(characters_bank_number COMMA y)
-
-			lda characters_std_animations_lsb, y
-			sta tmpfield1
-			lda characters_std_animations_msb, y
-			sta tmpfield2
-			ldy #CHARACTERS_STD_ANIM_VICTORY_OFFSET
-			lda (tmpfield1), y
+			lda #<anim_invisible
 			sta tmpfield13
-			iny
-			lda (tmpfield1), y
+			lda #>anim_invisible
 			sta tmpfield14
-
 			jsr animation_state_change_animation
 
 			; Write new character's tiles in PPU-RAM
+			txa
+			pha
 			.(
 				; Put PRG tiles address in a fixed location
 				ldy config_player_a_character, x
@@ -431,7 +393,37 @@ character_selection_screen_tick:
 					jsr wait_next_frame
 					jsr reset_nt_buffers
 
-					; Copy three tiles (3*16=48 bytes)
+					; Tick animations
+					lda prg_tiles
+					pha
+					lda prg_tiles_msb
+					pha
+					lda ppu_tiles
+					pha
+					lda ppu_tiles_msb
+					pha
+					lda ppu_write_count
+					pha
+					jsr character_selection_tick_animations
+					pla
+					sta ppu_write_count
+					pla
+					sta ppu_tiles_msb
+					pla
+					sta ppu_tiles
+					pla
+					sta prg_tiles_msb
+					pla
+					sta prg_tiles
+
+					; Re-select the new character's bank (tick_animations may have changed that)
+					pla
+					pha
+					tax
+					ldy config_player_a_character, x
+					SWITCH_BANK(characters_bank_number COMMA y)
+
+					; Copy a chunk of bytes
 					jsr last_nt_buffer
 					lda #$01
 					sta nametable_buffers, x
@@ -483,6 +475,29 @@ character_selection_screen_tick:
 					dec ppu_write_count
 					bpl write_ppu
 			.)
+			pla
+			tax
+
+			; Change current animation to the new character's one
+			lda animation_states_addresses_lsb, x
+			sta tmpfield11
+			lda animation_states_addresses_msb, x
+			sta tmpfield12
+
+			ldy config_player_a_character, x
+
+			lda characters_std_animations_lsb, y
+			sta tmpfield1
+			lda characters_std_animations_msb, y
+			sta tmpfield2
+			ldy #CHARACTERS_STD_ANIM_VICTORY_OFFSET
+			lda (tmpfield1), y
+			sta tmpfield13
+			iny
+			lda (tmpfield1), y
+			sta tmpfield14
+
+			jsr animation_state_change_animation
 
 			jmp end
 
@@ -506,6 +521,49 @@ character_selection_screen_tick:
 		previous_value_handlers:
 		.word previous_character_color, previous_weapon_color, previous_character
 	.)
+.)
+
+; Tick animations in characters portraits
+; Overwrites all registers and all tmpfields
+character_selection_tick_animations:
+.(
+		; Tick character A's animation
+		ldx #0
+		stx player_number
+		ldy config_player_a_character, x
+        SWITCH_BANK(characters_bank_number COMMA y)
+
+		lda #<character_selection_player_a_animation
+		sta tmpfield11
+		lda #>character_selection_player_a_animation
+		sta tmpfield12
+		lda #0
+		sta tmpfield13
+		sta tmpfield14
+		sta tmpfield15
+		sta tmpfield16
+		jsr animation_draw
+		jsr animation_tick
+
+		; Tick character B's animation
+		ldx #1
+		stx player_number
+		ldy config_player_a_character, x
+        SWITCH_BANK(characters_bank_number COMMA y)
+
+		lda #<character_selection_player_b_animation
+		sta tmpfield11
+		lda #>character_selection_player_b_animation
+		sta tmpfield12
+		lda #0
+		sta tmpfield13
+		sta tmpfield14
+		sta tmpfield15
+		sta tmpfield16
+		jsr animation_draw
+		jsr animation_tick
+
+		rts
 .)
 
 character_selection_update_screen:
