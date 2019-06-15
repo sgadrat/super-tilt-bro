@@ -499,6 +499,36 @@ character_selection_screen_tick:
 
 			jsr animation_state_change_animation
 
+			; Refresh character palette options (and set it to #0 to avoid any overflow)
+			txa
+			pha
+			jsr wait_next_frame
+			jsr reset_nt_buffers
+			jsr character_selection_tick_animations
+			pla
+			tax
+
+			option = tmpfield1
+			ldy #CHARACTER_SELECTION_OPTION_CHARACTER_PALETTE
+			sty option
+			lda #0
+			sta config_player_a_character_palette, x
+			txa
+			pha
+			jsr character_selection_draw_value
+			pla
+			tax
+
+			ldy #CHARACTER_SELECTION_OPTION_WEAPON
+			sty option
+			lda #0
+			sta config_player_a_weapon_palette, x
+			txa
+			pha
+			jsr character_selection_draw_value
+			pla
+			tax
+
 			jmp end
 
 			animation_states_addresses_lsb:
