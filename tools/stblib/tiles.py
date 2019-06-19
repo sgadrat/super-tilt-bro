@@ -24,6 +24,17 @@ class Tile:
 	def __ne__(self, other):
 		return not self.__eq__(other)
 
+	def check(self):
+		assert isinstance(self._representation, list)
+		assert len(self._representation) == 8
+		for line in self._representation:
+			assert isinstance(line, list)
+			assert len(line) == 8
+			for pixel in line:
+				assert isinstance(pixel, int)
+				assert pixel >= 0
+				assert pixel <= 3
+
 	def flip_h(self):
 		for line in self._representation:
 			for to_swap in [(0,7), (1,6), (2,5), (3,4)]:
