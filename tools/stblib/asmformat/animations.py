@@ -5,7 +5,7 @@ import stblib.animations
 from stblib.utils import asmint, asmsint8, asmsint16
 import sys
 
-RE_ANIM_LABEL = re.compile('(?P<name>anim_[a-z_]+):')
+RE_ANIM_LABEL = re.compile('(?P<name>([a-z]+_)?anim_[a-z_]+):')
 RE_ANIM_FRAME_BEGIN = re.compile('ANIM_FRAME_BEGIN\((?P<duration>[$%0-9a-fA-F]+)\)')
 RE_ANIM_HURTBOX = re.compile('ANIM_HURTBOX\((?P<left>[$%0-9a-fA-F]+),( *)(?P<right>[$%0-9a-fA-F]+),( *)(?P<top>[$%0-9a-fA-F]+),( *)(?P<bottom>[$%0-9a-fA-F]+)\)')
 RE_ANIM_HITBOX = re.compile('ANIM_HITBOX\((?P<enabled>[$%0-9a-fA-F]+),( *)(?P<damages>[$%0-9a-fA-F]+),( *)(?P<base_h>[$%0-9a-fA-F]+),( *)(?P<base_v>[$%0-9a-fA-F]+),( *)(?P<force_h>[$%0-9a-fA-F]+),( *)(?P<force_v>[$%0-9a-fA-F]+),( *)(?P<left>[$%0-9a-fA-F]+),( *)(?P<right>[$%0-9a-fA-F]+),( *)(?P<top>[$%0-9a-fA-F]+),( *)(?P<bottom>[$%0-9a-fA-F]+)\)')
