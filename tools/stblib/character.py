@@ -72,30 +72,12 @@ class Colorswaps:
 		ensure(len(self.alternate_colors) == len(self.primary_colors))
 		ensure(len(self.secondary_names) == len(self.secondary_colors))
 
-class Tileset:
-	def __init__(self, tiles=None, tilenames=None):
-		self.tiles = tiles if tiles is not None else []
-		self.tilenames = tilenames if tilenames is not None else []
-
-	def check(self):
-		ensure(isinstance(self.tiles, list))
-		for tile in self.tiles:
-			ensure(isinstance(tile, stblib.tiles.Tile))
-			tile.check()
-
-		ensure(isinstance(self.tilenames, list))
-		for tilename in self.tilenames:
-			ensure(isinstance(tilename, str))
-			ensure(len(tilename) > 0)
-
-		ensure(len(self.tilenames) == len(self.tiles))
-
 class Character:
 	def __init__(self, name='', weapon_name='', sourcecode='', tileset=None, victory_animation=None, defeat_animation=None, menu_select_animation=None, animations=None, color_swaps=None, states=None):
 		self.name = name
 		self.weapon_name = weapon_name
 		self.sourcecode = sourcecode
-		self.tileset = tileset if tileset is not None else Tileset()
+		self.tileset = tileset if tileset is not None else stblib.tiles.Tileset()
 		self.victory_animation = victory_animation if victory_animation is not None else stblib.animations.Animation()
 		self.defeat_animation = defeat_animation if defeat_animation is not None else stblib.animations.Animation()
 		self.menu_select_animation = menu_select_animation if menu_select_animation is not None else stblib.animations.Animation()

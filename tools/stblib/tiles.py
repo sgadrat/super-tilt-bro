@@ -86,3 +86,21 @@ class Tile:
 
 	def is_complete(self):
 		return self._asm_line_multiplier == 2
+
+class Tileset:
+	def __init__(self, tiles=None, tilenames=None):
+		self.tiles = tiles if tiles is not None else []
+		self.tilenames = tilenames if tilenames is not None else []
+
+	def check(self):
+		ensure(isinstance(self.tiles, list))
+		for tile in self.tiles:
+			ensure(isinstance(tile, stblib.tiles.Tile))
+			tile.check()
+
+		ensure(isinstance(self.tilenames, list))
+		for tilename in self.tilenames:
+			ensure(isinstance(tilename, str))
+			ensure(len(tilename) > 0)
+
+		ensure(len(self.tilenames) == len(self.tiles))

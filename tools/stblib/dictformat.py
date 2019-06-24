@@ -2,6 +2,7 @@ import stblib.animations
 import stblib.character
 import stblib.nametables
 import stblib.stages
+import stblib.tiles
 
 def import_from_dict(source):
 	if source is None:
@@ -141,7 +142,7 @@ def parse_tile(source):
 	)
 
 def parse_tileset(source):
-	return stblib.character.Tileset(
+	return stblib.tiles.Tileset(
 		tiles = _import_list(source['tiles']),
 		tilenames = source['tilenames']
 	)
