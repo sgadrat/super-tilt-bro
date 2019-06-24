@@ -40,11 +40,11 @@ class Sprite:
 		return 'ANIM_SPRITE%s(%s, %s, %s, %s)\n' % ('_FOREGROUND' if self.foreground else '',intasm8(self.y), self.tile, uintasm8(self.attr), intasm8(self.x))
 
 class Frame:
-	def __init__(self, duration=0, hurtbox=None, hitbox=None):
+	def __init__(self, duration=0, hurtbox=None, hitbox=None, sprites=None):
 		self.duration = duration
 		self.hurtbox = hurtbox
 		self.hitbox = hitbox
-		self.sprites = []
+		self.sprites = sprites if sprites is not None else []
 
 	def serialize(self):
 		serialized = 'ANIM_FRAME_BEGIN(%d)\n' % self.duration

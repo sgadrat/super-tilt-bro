@@ -1,21 +1,25 @@
 #!/usr/bin/env python
+from stblib import ensure
 import re
 
 tile_byte = '(%|\$)(([01][01][01][01][01][01][01][01])|([0-9a-f][0-9a-f]))'
 re_tileline = re.compile('\.byt %s, %s, %s, %s, %s, %s, %s, %s' % ((tile_byte,)*8))
 
 class Tile:
-	def __init__(self):
-		self._representation = [
-			[0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0],
-		]
+	def __init__(self, representation = None):
+		if representation is None:
+			self._representation = [
+				[0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0],
+			]
+		else:
+			self._representation = representation
 		self._asm_line_multiplier = 0
 
 	def __eq__(self, other):
@@ -25,15 +29,15 @@ class Tile:
 		return not self.__eq__(other)
 
 	def check(self):
-		assert isinstance(self._representation, list)
-		assert len(self._representation) == 8
+		ensure(isinstance(self._representation, list))
+		ensure(len(self._representation) == 8)
 		for line in self._representation:
-			assert isinstance(line, list)
-			assert len(line) == 8
+			ensure(isinstance(line, list))
+			ensure(len(line) == 8)
 			for pixel in line:
-				assert isinstance(pixel, int)
-				assert pixel >= 0
-				assert pixel <= 3
+				ensure(isinstance(pixel, int))
+				ensure(pixel >= 0)
+				ensure(pixel <= 3)
 
 	def flip_h(self):
 		for line in self._representation:
