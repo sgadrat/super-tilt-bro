@@ -1,5 +1,6 @@
 import stblib.animations
 import stblib.character
+import stblib.gamemod
 import stblib.nametables
 import stblib.stages
 import stblib.tiles
@@ -97,6 +98,11 @@ def parse_character_state(source):
 		onground_routine = source['onground_routine'],
 		input_routine = source['input_routine'],
 		onhurt_routine = source['onhurt_routine']
+	)
+
+def parse_gamemod(source):
+	return stblib.gamemod.GameMod(
+		characters = _import_list(source['characters'])
 	)
 
 def parse_nametable(source):
