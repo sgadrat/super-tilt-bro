@@ -3,7 +3,7 @@ import stblib.animations
 import stblib.tiles
 
 class State:
-	def __init__(self, name='', start_routine='', update_routine='', offground_routine='', onground_routine='', input_routine='', onhurt_routine=''):
+	def __init__(self, name='', start_routine=None, update_routine='', offground_routine='', onground_routine='', input_routine='', onhurt_routine=''):
 		self.name = name
 		self.start_routine = start_routine
 		self.update_routine = update_routine

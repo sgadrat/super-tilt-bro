@@ -1,3 +1,4 @@
+from stblib import ensure
 from stblib.utils import intasm8, intasm16, uintasm8
 
 class Hurtbox:
@@ -9,6 +10,12 @@ class Hurtbox:
 
 	def serialize(self):
 		return 'ANIM_HURTBOX(%s, %s, %s, %s)\n' % (intasm8(self.left), intasm8(self.right), intasm8(self.top), intasm8(self.bottom))
+
+	def check(self):
+		ensure(-128 <= self.left and self.left <= 127)
+		ensure(-128 <= self.right and self.right <= 127)
+		ensure(-128 <= self.top and self.top <= 127)
+		ensure(-128 <= self.bottom and self.bottom <= 127)
 
 class Hitbox:
 	def __init__(self, enabled=False, damages=0, base_h=0, base_v=0, force_h=0, force_v=0, left=0, right=0, top=0, bottom=0):
@@ -81,8 +88,9 @@ class Animation:
 		else:
 			self.frames = []
 
+	#TODO deprecate this function, put it in stblib.asmformat
 	def serialize(self):
-		serialized = 'anim_{}:\n'.format(self.name)
+		serialized = '{}:\n'.format(self.name)
 		frame_num = 1
 		for frame in self.frames:
 			serialized += '; Frame {}\n'.format(frame_num)

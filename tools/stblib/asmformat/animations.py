@@ -36,7 +36,7 @@ def parse_animations(anim_file):
 		m = RE_ANIM_HURTBOX.match(line)
 		if m is not None and current_anim is not None and len(current_anim.frames) > 0:
 			current_anim.frames[-1].hurtbox = stblib.animations.Hurtbox(
-				asmint(m.group('left')), asmint(m.group('right')), asmint(m.group('top')), asmint(m.group('bottom'))
+				asmsint8(m.group('left')), asmsint8(m.group('right')), asmsint8(m.group('top')), asmsint8(m.group('bottom'))
 			)
 
 		m = RE_ANIM_HITBOX.match(line)
@@ -48,10 +48,10 @@ def parse_animations(anim_file):
 				base_v = asmsint16(m.group('base_v')),
 				force_h = asmsint16(m.group('force_h')),
 				force_v = asmsint16(m.group('force_v')),
-				left = asmint(m.group('left')),
-				right = asmint(m.group('right')),
-				top = asmint(m.group('top')),
-				bottom = asmint(m.group('bottom'))
+				left = asmsint8(m.group('left')),
+				right = asmsint8(m.group('right')),
+				top = asmsint8(m.group('top')),
+				bottom = asmsint8(m.group('bottom'))
 			)
 
 		m = RE_ANIM_SPRITE.match(line)
