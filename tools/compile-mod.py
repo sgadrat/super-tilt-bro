@@ -4,6 +4,7 @@ import json
 import os
 import stblib.asmformat.tiles
 import stblib.jsonformat
+import stblib.utils
 import sys
 import textwrap
 
@@ -313,6 +314,102 @@ def generate_characters_index(characters, game_dir):
 		for routine_type in ['start', 'update', 'offground', 'onground', 'input', 'onhurt']:
 			_w_routine_table(routine_type)
 
+def generate_banks(char_to_bank, game_dir):
+	data_banks = []
+
+	# Populate the bank index
+	bank_index_file_path = '{}/game/extra_banks.asm'.format(game_dir)
+	with open(bank_index_file_path, 'w') as bank_index_file:
+		bank_index_file.write(textwrap.dedent("""\
+			;
+			; Contents of the 31 swappable banks
+			;
+			; The fixed bank is handled separately
+			;
+
+
+			#define CHR_BANK_NUMBER $00
+			#define CURRENT_BANK_NUMBER CHR_BANK_NUMBER
+			#include "game/banks/chr_data.asm"
+
+			#define CURRENT_BANK_NUMBER $01
+			#include "game/banks/data01_bank.asm"
+
+			#define DATA_BANK_NUMBER $02
+			#define CURRENT_BANK_NUMBER DATA_BANK_NUMBER
+			#include "game/banks/data_bank.asm"
+
+			#define MUSIC_BANK_NUMBER $03
+			#define CURRENT_BANK_NUMBER MUSIC_BANK_NUMBER
+			#include "game/banks/music_bank.asm"
+
+			#define CURRENT_BANK_NUMBER $04
+			#include "game/banks/data02_bank.asm"
+		"""))
+
+		for bank_number in range(5, 31):
+			bank_index_file.write('\n#define CURRENT_BANK_NUMBER {}\n'.format(stblib.utils.uintasm8(bank_number)))
+			if bank_number in char_to_bank.values():
+				bank_index_file.write('#include "game/banks/data{:02d}_bank.asm"\n'.format(bank_number))
+				if bank_number not in data_banks:
+					data_banks.append(bank_number)
+			else:
+				bank_index_file.write('#include "game/banks/empty_bank.asm"\n')
+
+	# Construct data banks
+	for bank_number in data_banks:
+		bank_file_path = '{}/game/banks/data{:02d}_bank.asm'.format(game_dir, bank_number)
+		with open(bank_file_path, 'w') as bank_file:
+			# Header
+			bank_file.write(textwrap.dedent("""\
+				#echo
+				#echo ===== DATA{bank_number:02d}-BANK =====
+				* = $8000
+
+			""".format_map(locals())))
+
+			# Characters labels
+			bank_file.write('bank_data{bank_number:02d}_begin:\n'.format_map(locals()))
+			for char_name in char_to_bank:
+				if char_to_bank[char_name] == bank_number:
+					bank_file.write(textwrap.dedent("""\
+						bank_data{bank_number:02d}_character_{char_name}_begin:
+						#include "game/data/characters/{char_name}/{char_name}.asm"
+						bank_data{bank_number:02d}_character_{char_name}_end:
+					""".format_map(locals())))
+			bank_file.write('bank_data{bank_number:02d}_end:\n\n'.format_map(locals()))
+
+			# Size statistics
+			bank_file.write(textwrap.dedent("""\
+				#echo
+				#echo DATA{bank_number:02d}-bank data size:
+				#print bank_data{bank_number:02d}_end-bank_data{bank_number:02d}_begin
+			""".format_map(locals())))
+
+			for char_name in char_to_bank:
+				if char_to_bank[char_name] == bank_number:
+					bank_file.write(textwrap.dedent("""\
+						#echo
+						#echo DATA{bank_number:02d}-bank {char_name} size:
+						#print bank_data{bank_number:02d}_character_{char_name}_end-bank_data{bank_number:02d}_character_{char_name}_begin
+					""".format_map(locals())))
+
+			bank_file.write(textwrap.dedent("""\
+				#echo
+				#echo DATA{bank_number:02d}-bank free space:
+				#print $c000-*
+
+			""".format_map(locals())))
+
+			# Filler
+			bank_file.write(textwrap.dedent("""\
+				#if $c000-* < 0
+				#error DATADATA{bank_number:02d} bank occupies too much space
+				#else
+				.dsb $c000-*, CURRENT_BANK_NUMBER
+				#endif
+			""".format_map(locals())))
+
 def main():
 	# Parse command line
 	if len(sys.argv) < 3 or sys.argv[1] == '-h' or sys.argv[1] == '--help':
@@ -340,7 +437,7 @@ def main():
 
 	# Generate characters
 	char_to_bank = {}
-	current_bank = 0
+	current_bank = 5
 	for character in mod.characters:
 		if character.name not in char_to_bank:
 			char_to_bank[character.name] = current_bank
@@ -348,10 +445,11 @@ def main():
 
 		generate_character(character, game_dir)
 
-	# Generate common files
+	# Generate shared character files
 	generate_characters_index(mod.characters, game_dir)
 
-	#TODO Banks master files
+	# Generate bank files
+	generate_banks(char_to_bank, game_dir)
 
 	return 0
 

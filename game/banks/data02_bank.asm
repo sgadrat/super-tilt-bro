@@ -15,10 +15,6 @@ bank_data02_stage_gem_begin:
 #include "game/data/stages/gem/gem.asm"
 bank_data02_stage_gem_end:
 
-bank_data02_char_squareman_begin:
-#include "game/data/characters/squareman/squareman.asm"
-bank_data02_char_squareman_end:
-
 bank_data02_end:
 
 #echo
@@ -33,9 +29,6 @@ bank_data02_end:
 #echo
 #echo DATA02-bank Gem size:
 #print bank_data02_stage_gem_end-bank_data02_stage_gem_begin
-#echo
-#echo DATA02-bank Squareman size:
-#print bank_data02_char_squareman_end-bank_data02_char_squareman_begin
 #echo
 #echo DATA02-bank free space:
 #print $c000-*
