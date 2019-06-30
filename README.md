@@ -8,12 +8,14 @@ Last tagged build is [playable here](https://sgadrat.itch.io/super-tilt-bro).
 
 You will need the XA cross assembler for 6502. It may be found on Archlinux in the package "community/xa", on ubuntu in the package "xa65"  and for others you may find information [here](http://www.floodgap.com/retrotech/xa/).
 
+You will also need python >= 3.2 and the pillow library.
+
 From the source repository run
 ```
-xa tilt.asm -C -o 'Super_Tilt_Bro_(E).nes'
+./build.sh
 ```
 
-tilt.asm uses xa's preprocessor to directly output a valid iNES ROM file. The "-C" option is not mandatory but make xa stop assembling when using opcodes too recent for the NES.
+It will generate the game as `Super_Tilt_Bro_(E).nes`. If any problem occurs you may find clues in the `build.log` file.
 
 ## Playing
 

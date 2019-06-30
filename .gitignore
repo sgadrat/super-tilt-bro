@@ -3,3 +3,7 @@
 *.nes.deb
 *.nl
 *.bin
+build.log
+game/data/characters/characters-index.asm
+game/data/characters/sinbad/
+game/data/characters/squareman/
