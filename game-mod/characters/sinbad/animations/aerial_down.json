@@ -1,0 +1,420 @@
+{
+	"frames": [
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": -4,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -12,
+					"y": 6
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 6
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_1",
+					"type": "animation_sprite",
+					"x": -8,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_2",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_3",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": {
+				"base_h": -768,
+				"base_v": 256,
+				"bottom": 15,
+				"damages": 3,
+				"enabled": true,
+				"force_h": -5,
+				"force_v": 10,
+				"left": -15,
+				"right": -4,
+				"top": 10,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 15,
+				"left": -8,
+				"right": 7,
+				"top": 6,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -15,
+					"y": 10
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 10
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_DIVING_SINBAD_NW",
+					"type": "animation_sprite",
+					"x": -8,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_DIVING_SINBAD_SW",
+					"type": "animation_sprite",
+					"x": -8,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_DIVING_SINBAD_SE",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": {
+				"base_h": -768,
+				"base_v": 256,
+				"bottom": 19,
+				"damages": 3,
+				"enabled": false,
+				"force_h": -5,
+				"force_v": 10,
+				"left": -12,
+				"right": 4,
+				"top": 8,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 13,
+				"left": -3,
+				"right": 4,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_ANGLED_DOWN_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -12,
+					"y": 9
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_ANGLED_DOWN_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 9
+				},
+				{
+					"attr": 128,
+					"foreground": false,
+					"tile": "TILE_ROCKET_SINBAD_BODY",
+					"type": "animation_sprite",
+					"x": -3,
+					"y": -2
+				},
+				{
+					"attr": 128,
+					"foreground": false,
+					"tile": "TILE_ROCKET_SINBAD_HEAD",
+					"type": "animation_sprite",
+					"x": -3,
+					"y": 6
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": {
+				"base_h": -768,
+				"base_v": 256,
+				"bottom": 25,
+				"damages": 3,
+				"enabled": false,
+				"force_h": -5,
+				"force_v": 10,
+				"left": -5,
+				"right": 13,
+				"top": 15,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_VERTICAL_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": 3,
+					"y": 19
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_VERTICAL_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 3,
+					"y": 11
+				},
+				{
+					"attr": 128,
+					"foreground": false,
+					"tile": "TILE_JUMPING_SINBAD_3_BODY",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 128,
+					"foreground": false,
+					"tile": "TILE_JUMPING_SINBAD_3_HEAD",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": {
+				"base_h": -768,
+				"base_v": 256,
+				"bottom": 19,
+				"damages": 3,
+				"enabled": false,
+				"force_h": -5,
+				"force_v": 10,
+				"left": 4,
+				"right": 17,
+				"top": 6,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 13,
+				"left": 3,
+				"right": 10,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 192,
+					"foreground": false,
+					"tile": "TILE_ROCKET_SINBAD_BODY",
+					"type": "animation_sprite",
+					"x": 3,
+					"y": -2
+				},
+				{
+					"attr": 192,
+					"foreground": false,
+					"tile": "TILE_ROCKET_SINBAD_HEAD",
+					"type": "animation_sprite",
+					"x": 3,
+					"y": 6
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_ANGLED_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 10,
+					"y": 2
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_ANGLED_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": 10,
+					"y": 10
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": {
+				"base_h": -768,
+				"base_v": 256,
+				"bottom": 15,
+				"damages": 3,
+				"enabled": false,
+				"force_h": -5,
+				"force_v": 10,
+				"left": 12,
+				"right": 23,
+				"top": 10,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 15,
+				"left": 10,
+				"right": 16,
+				"top": 6,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 64,
+					"foreground": false,
+					"tile": "TILE_DIVING_SINBAD_NW",
+					"type": "animation_sprite",
+					"x": 8,
+					"y": 0
+				},
+				{
+					"attr": 64,
+					"foreground": false,
+					"tile": "TILE_DIVING_SINBAD_SW",
+					"type": "animation_sprite",
+					"x": 8,
+					"y": 8
+				},
+				{
+					"attr": 64,
+					"foreground": false,
+					"tile": "TILE_DIVING_SINBAD_SE",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 8,
+					"y": 8
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": 16,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 11,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 64,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_1",
+					"type": "animation_sprite",
+					"x": 8,
+					"y": 0
+				},
+				{
+					"attr": 64,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_2",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 64,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_3",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 6
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": 12,
+					"y": 6
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "anim_sinbad_aerial_down",
+	"type": "animation"
+}

@@ -1,0 +1,432 @@
+{
+	"frames": [
+		{
+			"duration": 2,
+			"hitbox": {
+				"base_h": -512,
+				"base_v": -512,
+				"bottom": 2,
+				"damages": 1,
+				"enabled": true,
+				"force_h": -4,
+				"force_v": -4,
+				"left": -4,
+				"right": 2,
+				"top": -7,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 15,
+				"left": -3,
+				"right": 7,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_ANGLED_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": -7
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_ANGLED_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 1
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_RUNNING_SINBAD_2_1",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 1
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_RUNNING_SINBAD_1_2",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 1
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_RUNNING_SINBAD_2_2",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 9
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_RUNNING_SINBAD_2_3",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 9
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": {
+				"base_h": -512,
+				"base_v": -512,
+				"bottom": 4,
+				"damages": 1,
+				"enabled": false,
+				"force_h": -4,
+				"force_v": -4,
+				"left": -8,
+				"right": -1,
+				"top": -5,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 15,
+				"left": -3,
+				"right": 7,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_ANGLED_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -8,
+					"y": -5
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_ANGLED_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": -8,
+					"y": 3
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_1",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 1
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_2",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 1
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_3",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 9
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": {
+				"base_h": -512,
+				"base_v": -512,
+				"bottom": 11,
+				"damages": 1,
+				"enabled": false,
+				"force_h": -4,
+				"force_v": -4,
+				"left": -12,
+				"right": 0,
+				"top": 6,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 15,
+				"left": -3,
+				"right": 7,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -12,
+					"y": 6
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 6
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_1",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 1
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_2",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 1
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_3",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 9
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": {
+				"base_h": -512,
+				"base_v": -512,
+				"bottom": 18,
+				"damages": 1,
+				"enabled": false,
+				"force_h": -4,
+				"force_v": -4,
+				"left": -6,
+				"right": 2,
+				"top": 13,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 15,
+				"left": -3,
+				"right": 7,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_ANGLED_DOWN_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 11
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_ANGLED_DOWN_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 11
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_1",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 1
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_2",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 1
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_3",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 9
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": -3,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_VERTICAL_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": 2,
+					"y": 13
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_VERTICAL_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 2,
+					"y": 5
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_1",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_2",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_3",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": -3,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_ANGLED_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": 5,
+					"y": 11
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_ANGLED_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 5,
+					"y": 3
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_1",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_2",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_3_3",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -3,
+					"y": 9
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 5,
+					"y": 9
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_IDLE_SINBAD_HEAD",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_IDLE_SINBAD_BODY",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "anim_sinbad_jab",
+	"type": "animation"
+}

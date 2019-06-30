@@ -199,6 +199,120 @@ def generate_character(char, game_dir):
 		for rel_anim_file_path in rel_animations_path:
 			master_animations_file.write('#include "{}"\n'.format(rel_anim_file_path))
 
+def generate_characters_index(characters, game_dir):
+	characters_index_file_path = '{}/game/data/characters/characters-index.asm'.format(game_dir)
+	with open(characters_index_file_path, 'w') as characters_index_file:
+		def _w(s):
+			characters_index_file.write(s)
+
+		def _w_table(desc, name, value):
+			if desc is not None and len(desc) > 0:
+				_w('; {}\n'.format(desc))
+			_w('{}:\n'.format(name))
+			for char in characters:
+				_w('.byt {} ; {}\n'.format(value(char), char.name.capitalize()))
+			_w('\n')
+
+		def _w_routine_table(routine_type):
+			_w_table(
+				'',
+				'characters_{}_routines_table_lsb'.format(routine_type),
+				lambda c: '<{}_state_{}_routines'.format(c.name, routine_type)
+			)
+			_w_table(
+				'',
+				'characters_{}_routines_table_msb'.format(routine_type),
+				lambda c: '>{}_state_{}_routines'.format(c.name, routine_type)
+			)
+
+		_w('; Number of characters referenced in following tables\n')
+		_w('CHARACTERS_NUMBER = {}\n\n'.format(len(characters)))
+
+		_w_table(
+			'Bank in which each character is stored',
+			'characters_bank_number',
+			lambda c: '{}_BANK_NUMBER'.format(c.name.upper())
+		)
+		_w_table(
+			'Begining of tiles data for each character',
+			'characters_tiles_data_lsb',
+			lambda c: '<{}_chr_tiles'.format(c.name)
+		)
+		_w_table(
+			'',
+			'characters_tiles_data_msb',
+			lambda c: '>{}_chr_tiles'.format(c.name)
+		)
+		_w_table(
+			'Number of CHR tiles per character',
+			'characters_tiles_number',
+			lambda c: '{}_SPRITE_TILES_NUMBER'.format(c.name.upper())
+		)
+		_w_table(
+			'Character properties',
+			'characters_properties_lsb',
+			lambda c: '<{}_properties'.format(c.name)
+		)
+		_w_table(
+			'',
+			'characters_properties_msb',
+			lambda c: '>{}_properties'.format(c.name)
+		)
+		_w_table(
+			'Colorswap information',
+			'characters_palettes_names_lsb',
+			lambda c: '<{}_character_names'.format(c.name)
+		)
+		_w_table(
+			'',
+			'characters_palettes_names_msb',
+			lambda c: '>{}_character_names'.format(c.name)
+		)
+		_w_table(
+			'',
+			'characters_palettes_lsb',
+			lambda c: '<{}_character_palettes'.format(c.name)
+		)
+		_w_table(
+			'',
+			'characters_palettes_msb',
+			lambda c: '>{}_character_palettes'.format(c.name)
+		)
+		_w_table(
+			'',
+			'characters_alternate_palettes_lsb',
+			lambda c: '<{}_character_alternate_palettes'.format(c.name)
+		)
+		_w_table(
+			'',
+			'characters_alternate_palettes_msb',
+			lambda c: '>{}_character_alternate_palettes'.format(c.name)
+		)
+		_w_table(
+			'',
+			'characters_weapon_names_lsb',
+			lambda c: '<{}_weapon_names'.format(c.name)
+		)
+		_w_table(
+			'',
+			'characters_weapon_names_msb',
+			lambda c: '>{}_weapon_names'.format(c.name)
+		)
+		_w_table(
+			'',
+			'characters_weapon_palettes_lsb',
+			lambda c: '<{}_weapon_palettes'.format(c.name)
+		)
+		_w_table(
+			'',
+			'characters_weapon_palettes_msb',
+			lambda c: '>{}_weapon_palettes'.format(c.name)
+		)
+
+		_w('; Begining of character\'s jump tables\n')
+		for routine_type in ['start', 'update', 'offground', 'onground', 'input', 'onhurt']:
+			_w_routine_table(routine_type)
+
 def main():
 	# Parse command line
 	if len(sys.argv) < 3 or sys.argv[1] == '-h' or sys.argv[1] == '--help':
@@ -234,9 +348,10 @@ def main():
 
 		generate_character(character, game_dir)
 
-	#TODO Generate common files
-	# Character index
-	# Banks master files
+	# Generate common files
+	generate_characters_index(mod.characters, game_dir)
+
+	#TODO Banks master files
 
 	return 0
 

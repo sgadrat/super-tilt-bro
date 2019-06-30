@@ -1,0 +1,226 @@
+{
+	"frames": [
+		{
+			"duration": 3,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 11,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_ANGLED_DOWN_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": 11,
+					"y": 0
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_ANGLED_DOWN_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 3,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_1_1",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_1_2",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_1_3",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_1_4",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 3,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_VERTICAL_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -2,
+					"y": -6
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_VERTICAL_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": -2,
+					"y": 2
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_JUMPING_SINBAD_3_HEAD",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_JUMPING_SINBAD_3_BODY",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 16,
+			"hitbox": {
+				"base_h": -768,
+				"base_v": -128,
+				"bottom": 12,
+				"damages": 4,
+				"enabled": true,
+				"force_h": -16,
+				"force_v": -4,
+				"left": -23,
+				"right": -11,
+				"top": 7,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 13,
+				"left": -10,
+				"right": 5,
+				"top": 4,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -23,
+					"y": 7
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": -15,
+					"y": 7
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_DIVING_SINBAD_NW",
+					"type": "animation_sprite",
+					"x": -10,
+					"y": -2
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_DIVING_SINBAD_SW",
+					"type": "animation_sprite",
+					"x": -10,
+					"y": 6
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_DIVING_SINBAD_SE",
+					"type": "animation_sprite",
+					"x": -2,
+					"y": 6
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 3,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_JUMPING_SINBAD_3_HEAD",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_JUMPING_SINBAD_3_BODY",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "anim_sinbad_aerial_side",
+	"type": "animation"
+}

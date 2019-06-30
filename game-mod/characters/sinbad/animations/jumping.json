@@ -1,0 +1,144 @@
+{
+	"frames": [
+		{
+			"duration": 3,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": 0,
+				"right": 8,
+				"top": 2,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -6,
+					"y": 9
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 2,
+					"y": 9
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_2_TOP",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_2_BOT",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": 0,
+				"right": 8,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_ANGLED_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -3,
+					"y": -2
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_ANGLED_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": -3,
+					"y": 6
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_2_1",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_JUMPING_SINBAD_2",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 100,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": 0,
+				"right": 8,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_VERTICAL_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": -6
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_VERTICAL_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 2
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_JUMPING_SINBAD_3_HEAD",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_JUMPING_SINBAD_3_BODY",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "anim_sinbad_jumping",
+	"type": "animation"
+}

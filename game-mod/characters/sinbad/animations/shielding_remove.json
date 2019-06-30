@@ -1,0 +1,254 @@
+{
+	"frames": [
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "TILE_SHIELD_LIMIT_1",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 0
+				},
+				{
+					"attr": 65,
+					"foreground": true,
+					"tile": "TILE_SHIELD_LIMIT_1",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 0
+				},
+				{
+					"attr": 129,
+					"foreground": true,
+					"tile": "TILE_SHIELD_LIMIT_1",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 8
+				},
+				{
+					"attr": 193,
+					"foreground": true,
+					"tile": "TILE_SHIELD_LIMIT_1",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_2_1",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_JOINED_HANDS_SINBAD_BODY",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "TILE_SHIELD_LIMIT_2",
+					"type": "animation_sprite",
+					"x": -6,
+					"y": -2
+				},
+				{
+					"attr": 65,
+					"foreground": true,
+					"tile": "TILE_SHIELD_LIMIT_2",
+					"type": "animation_sprite",
+					"x": 6,
+					"y": -2
+				},
+				{
+					"attr": 129,
+					"foreground": true,
+					"tile": "TILE_SHIELD_LIMIT_2",
+					"type": "animation_sprite",
+					"x": -6,
+					"y": 10
+				},
+				{
+					"attr": 193,
+					"foreground": true,
+					"tile": "TILE_SHIELD_LIMIT_2",
+					"type": "animation_sprite",
+					"x": 6,
+					"y": 10
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_2_1",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_JOINED_HANDS_SINBAD_BODY",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "TILE_SHIELD_LIMIT_1",
+					"type": "animation_sprite",
+					"x": -10,
+					"y": -6
+				},
+				{
+					"attr": 65,
+					"foreground": true,
+					"tile": "TILE_SHIELD_LIMIT_1",
+					"type": "animation_sprite",
+					"x": 10,
+					"y": -6
+				},
+				{
+					"attr": 129,
+					"foreground": true,
+					"tile": "TILE_SHIELD_LIMIT_1",
+					"type": "animation_sprite",
+					"x": -10,
+					"y": 14
+				},
+				{
+					"attr": 193,
+					"foreground": true,
+					"tile": "TILE_SHIELD_LIMIT_1",
+					"type": "animation_sprite",
+					"x": 10,
+					"y": 14
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_2_1",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_JOINED_HANDS_SINBAD_BODY",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "TILE_SHIELD_LIMIT_2",
+					"type": "animation_sprite",
+					"x": -14,
+					"y": -10
+				},
+				{
+					"attr": 65,
+					"foreground": true,
+					"tile": "TILE_SHIELD_LIMIT_2",
+					"type": "animation_sprite",
+					"x": 14,
+					"y": -10
+				},
+				{
+					"attr": 129,
+					"foreground": true,
+					"tile": "TILE_SHIELD_LIMIT_2",
+					"type": "animation_sprite",
+					"x": -14,
+					"y": 18
+				},
+				{
+					"attr": 193,
+					"foreground": true,
+					"tile": "TILE_SHIELD_LIMIT_2",
+					"type": "animation_sprite",
+					"x": 14,
+					"y": 18
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_2_1",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_JOINED_HANDS_SINBAD_BODY",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "anim_sinbad_shielding_remove",
+	"type": "animation"
+}

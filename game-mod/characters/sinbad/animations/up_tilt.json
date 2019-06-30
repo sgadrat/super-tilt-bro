@@ -1,0 +1,110 @@
+{
+	"frames": [
+		{
+			"duration": 16,
+			"hitbox": {
+				"base_h": 0,
+				"base_v": -1536,
+				"bottom": -1,
+				"damages": 6,
+				"enabled": true,
+				"force_h": 0,
+				"force_v": -8,
+				"left": 2,
+				"right": 7,
+				"top": -12,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_VERTICAL_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": -12
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_VERTICAL_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": -4
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_JUMPING_SINBAD_3_HEAD",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_JUMPING_SINBAD_3_BODY",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_VERTICAL_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": -4
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_VERTICAL_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_JUMPING_SINBAD_3_HEAD",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_JUMPING_SINBAD_3_BODY",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "anim_sinbad_up_tilt",
+	"type": "animation"
+}

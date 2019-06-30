@@ -1,0 +1,30 @@
+{
+	"frames": [
+		{
+			"duration": 60,
+			"hitbox": null,
+			"hurtbox": null,
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SQUAREMAN_HAT",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SQUAREMAN_BODY",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "squareman_anim_menu_select",
+	"type": "animation"
+}

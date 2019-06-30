@@ -1,0 +1,64 @@
+{
+	"frames": [
+		{
+			"duration": 200,
+			"hitbox": {
+				"base_h": -768,
+				"base_v": -768,
+				"bottom": 7,
+				"damages": 10,
+				"enabled": true,
+				"force_h": -8,
+				"force_v": -4,
+				"left": -12,
+				"right": -1,
+				"top": 2,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 129,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -12,
+					"y": 0
+				},
+				{
+					"attr": 129,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_SIDE_TILT_SINBAD_2_1",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_JUMPING_SINBAD_2",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "anim_sinbad_spe_up_jump",
+	"type": "animation"
+}

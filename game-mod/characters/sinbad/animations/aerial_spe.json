@@ -1,0 +1,270 @@
+{
+	"frames": [
+		{
+			"duration": 4,
+			"hitbox": {
+				"base_h": -512,
+				"base_v": -512,
+				"bottom": 23,
+				"damages": 8,
+				"enabled": true,
+				"force_h": -5,
+				"force_v": -5,
+				"left": -12,
+				"right": 3,
+				"top": 16,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_ANGLED_DOWN_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -12,
+					"y": 16
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_ANGLED_DOWN_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 16
+				},
+				{
+					"attr": 129,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_LARGE_2",
+					"type": "animation_sprite",
+					"x": -5,
+					"y": 15
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_1_TOP",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_1_BOT",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 3,
+			"hitbox": {
+				"base_h": -512,
+				"base_v": -512,
+				"bottom": 26,
+				"damages": 8,
+				"enabled": false,
+				"force_h": -5,
+				"force_v": -5,
+				"left": -3,
+				"right": 6,
+				"top": 15,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_VERTICAL_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 19
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_VERTICAL_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 11
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_LARGE_2",
+					"type": "animation_sprite",
+					"x": -3,
+					"y": 17
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_1_TOP",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_1_BOT",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": {
+				"base_h": -512,
+				"base_v": -512,
+				"bottom": 23,
+				"damages": 8,
+				"enabled": false,
+				"force_h": -5,
+				"force_v": -5,
+				"left": 5,
+				"right": 19,
+				"top": 16,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "TILE_ANGLED_DOWN_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": 12,
+					"y": 16
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "TILE_ANGLED_DOWN_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 16
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_LARGE_2",
+					"type": "animation_sprite",
+					"x": 5,
+					"y": 17
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_1_TOP",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_1_BOT",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 3,
+			"hitbox": {
+				"base_h": -512,
+				"base_v": -512,
+				"bottom": 23,
+				"damages": 8,
+				"enabled": false,
+				"force_h": -5,
+				"force_v": -5,
+				"left": 1,
+				"right": 10,
+				"top": 15,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 129,
+					"foreground": false,
+					"tile": "TILE_VERTICAL_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 15
+				},
+				{
+					"attr": 129,
+					"foreground": false,
+					"tile": "TILE_VERTICAL_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 7
+				},
+				{
+					"attr": 129,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_LARGE_2",
+					"type": "animation_sprite",
+					"x": 3,
+					"y": 16
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_1_TOP",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_1_BOT",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "anim_sinbad_aerial_spe",
+	"type": "animation"
+}
