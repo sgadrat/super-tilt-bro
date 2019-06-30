@@ -7,3 +7,6 @@ build.log
 game/data/characters/characters-index.asm
 game/data/characters/sinbad/
 game/data/characters/squareman/
+game/extra_banks.asm
+game/banks/data05_bank.asm
+game/banks/data06_bank.asm
