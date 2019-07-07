@@ -30,6 +30,7 @@ Layers in the .ora file must have the following layout:
 "sprite_layer" are 8x8 layers, each of their pixel must be in a color present in "palettes". These layers can be named freely.
 """
 
+import argparse
 import ora
 import os
 import re
@@ -82,7 +83,7 @@ def ora_to_character(image_file, char_name):
 		m = re.match('^anims\.(?P<anim>[a-z0-9_]+)$', animation_stack['name'])
 		ensure(m is not None, 'invalid animation stack name "{}"'.format(animation_stack['name']))
 		anim_name = m.group('anim')
-		animation.name = 'anim_{}_{}'.format(character.name, anim_name)
+		animation.name = '{}_anim_{}'.format(character.name, anim_name)
 
 		for frame_stack in animation_stack['childs']:
 			frame = stblib.animations.Frame()
@@ -189,24 +190,21 @@ def _uniq_transparent(color):
 	else:
 		return color
 
-def usage():
-	print('usage: {} ora-file mod-path character-name [create]'.format(sys.argv[0]))
+# Parse parameters
+parser = argparse.ArgumentParser(description='Update a character with animations present in an Open Raster file.')
+parser.add_argument('ora-file', help='Open Raster file to parse')
+parser.add_argument('mod-path', help='Directory of the mod to update')
+parser.add_argument('char-name', help='Name of the character to update')
+parser.add_argument('--create', action='store_true', default=False, help='Do not attempt to read an existing character, just create it')
+args = parser.parse_args()
 
-# Check parameters
-if len(sys.argv) < 4 or len(sys.argv) > 5 or sys.argv[1] == '-h' or sys.argv[1] == '--help':
-	usage()
-	sys.exit(1)
-if len(sys.argv) >= 5 and sys.argv[4] not in ['create', 'update']:
-	usage()
-	sys.exit(1)
-
-ora_file_path = sys.argv[1]
-base_path = sys.argv[2]
-character_name = sys.argv[3]
-creation_mode = len(sys.argv) >= 5 and sys.argv[4] == 'create'
+ora_file_path = getattr(args, 'ora-file')
+base_path = getattr(args, 'mod-path')
+character_name = getattr(args, 'char-name')
+creation_mode = args.create
 
 # Generate character
-character = ora_to_character(sys.argv[1], character_name)
+character = ora_to_character(ora_file_path, character_name)
 
 # Load exisitng character data
 orig_character = None
