@@ -194,7 +194,13 @@ def _jsonify_character(character, base_path):
 	character['menu_select_animation'] = _externalize_anim(character['menu_select_animation'], animations_path_rel, base_path)
 
 	# Export sourcecode in its own file
-	#TODO
+	source_path_rel = '{}/states.asm'.format(character_path_rel)
+	source_path = '{}/{}'.format(base_path, source_path_rel)
+	with open(source_path, 'w') as source_file:
+		source_file.write(character['sourcecode'])
+
+	del character['sourcecode']
+	character['sourcecode_file'] = source_path_rel
 
 	return character
 

@@ -189,24 +189,34 @@ def _uniq_transparent(color):
 	else:
 		return color
 
+def usage():
+	print('usage: {} ora-file mod-path character-name [create]'.format(sys.argv[0]))
+
 # Check parameters
-if len(sys.argv) != 4 or sys.argv[1] == '-h' or sys.argv[1] == '--help':
-	print('usage: {} ora-file mod-path character-name'.format(sys.argv[0]))
+if len(sys.argv) < 4 or len(sys.argv) > 5 or sys.argv[1] == '-h' or sys.argv[1] == '--help':
+	usage()
+	sys.exit(1)
+if len(sys.argv) >= 5 and sys.argv[4] not in ['create', 'update']:
+	usage()
 	sys.exit(1)
 
 ora_file_path = sys.argv[1]
 base_path = sys.argv[2]
 character_name = sys.argv[3]
+creation_mode = len(sys.argv) >= 5 and sys.argv[4] == 'create'
 
 # Generate character
 character = ora_to_character(sys.argv[1], character_name)
 
 # Load exisitng character data
-character_main_file_path = '{base}/characters/{char}/{char}.json'.format(base = base_path, char = character_name)
 orig_character = None
-if os.path.exists(character_main_file_path):
-	with open(character_main_file_path, 'r') as orig_character_file:
-		orig_character = stblib.jsonformat.import_from_json(orig_character_file, base_path)
+character_main_file_path = '{base}/characters/{char}/{char}.json'.format(base = base_path, char = character_name)
+if creation_mode:
+	orig_character = stblib.character.Character(name = character_name)
+else:
+	if os.path.exists(character_main_file_path):
+		with open(character_main_file_path, 'r') as orig_character_file:
+			orig_character = stblib.jsonformat.import_from_json(orig_character_file, base_path)
 
 # Merge character read from ora into existing character
 orig_character.tileset = character.tileset
