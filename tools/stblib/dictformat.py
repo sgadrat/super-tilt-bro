@@ -12,6 +12,19 @@ def import_from_dict(source):
 		raise Exception('object not explicitely typed: {}'.format(source))
 	return globals()['parse_{}'.format(source['type'])](source)
 
+def export_to_dict(obj):
+	if obj is None or type(obj) in [int, str, float, bool]:
+		return obj
+	return globals()['serialize_{}'.format(_mangle(type(obj)))](obj)
+
+def _mangle(t):
+	name = None
+	if isinstance(t, type):
+		name = '{}.{}'.format(t.__module__, t.__name__)
+	else:
+		name = t
+	return name.lower().replace('.', '_')
+
 def _import_list(source):
 	res = []
 	for item in source:
@@ -152,3 +165,61 @@ def parse_tileset(source):
 		tiles = _import_list(source['tiles']),
 		tilenames = source['tilenames']
 	)
+
+def _serialize_object(obj_type, obj):
+	result = {
+		'type': obj_type,
+	}
+	for att_name in dir(obj):
+		if att_name[0] == '_':
+			continue
+
+		att_value = getattr(obj, att_name)
+
+		if callable(att_value):
+			pass # Certainly a method, possibly a lambda, anyway we do not want to serialize it
+		elif isinstance(att_value, list):
+			serial_list = []
+			for elem in att_value:
+				serial_list.append(export_to_dict(elem))
+			result[att_name] = serial_list
+		else:
+			result[att_name] = export_to_dict(att_value)
+	return result
+
+def serialize_stblib_animations_animation(obj):
+	return _serialize_object('animation', obj)
+
+def serialize_stblib_animations_frame(obj):
+	return _serialize_object('animation_frame', obj)
+
+def serialize_stblib_animations_hitbox(obj):
+	return _serialize_object('animation_hitbox', obj)
+
+def serialize_stblib_animations_hurtbox(obj):
+	return _serialize_object('animation_hurtbox', obj)
+
+def serialize_stblib_animations_sprite(obj):
+	return _serialize_object('animation_sprite', obj)
+
+def serialize_stblib_character_character(obj):
+	return _serialize_object('character', obj)
+
+def serialize_stblib_character_colorswaps(obj):
+	return _serialize_object('character_colors', obj)
+
+def serialize_stblib_character_palette(obj):
+	return _serialize_object('palette', obj)
+
+def serialize_stblib_character_state(obj):
+	return _serialize_object('character_state', obj)
+
+def serialize_stblib_tiles_tileset(obj):
+	return _serialize_object('tileset', obj)
+
+def serialize_stblib_tiles_tile(obj):
+	# Hack: cannot use _serialize_object() because of misnamed _representation attribute
+	return {
+		'type': 'tile',
+		'representation': obj._representation.copy()
+	}
