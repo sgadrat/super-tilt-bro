@@ -118,16 +118,19 @@ def ora_to_character(image_file, char_name):
 
 						# Parse tile
 						tile = stblib.tiles.Tile()
+						palette_num = 0
 						for y in range(8):
 							for x in range(8):
 								# Convert pixel data to palette index
 								try:
-									color_index = palettes.index(_uniq_transparent(sprite_layer['raster'].getpixel((x, y)))) % 4
+									color_index = palettes.index(_uniq_transparent(sprite_layer['raster'].getpixel((x, y))))
 								except ValueError:
 									ensure(False, 'a sprite in {} use a color not found in palettes: sprite "{}", position "{}x{}", color "{}", palettes: {}'.format(frame_child['name'], sprite_layer['name'], x, y, sprite_layer['raster'].getpixel((x, y)), palettes))
 
 								# Store pixel in tile
-								tile._representation[y][x] = color_index
+								tile._representation[y][x] = color_index % 4
+								if color_index != 0:
+									palette_num = int(color_index / 4)
 
 						# Add tile to tileset if needed, get its name and attributes
 						tile_name = None
@@ -153,7 +156,7 @@ def ora_to_character(image_file, char_name):
 							character.tileset.tilenames.append(tile_name)
 
 						# Add sprite to frame
-						numeric_attr = 0
+						numeric_attr = palette_num
 						if flip['v']:
 							numeric_attr += 0x80
 						if flip['h']:
