@@ -2,6 +2,7 @@
 	"type": "gamemod",
 	"characters": [
 		{"type": "import", "src": "characters/sinbad/sinbad.json"},
-		{"type": "import", "src": "characters/squareman/squareman.json"}
+		{"type": "import", "src": "characters/squareman/squareman.json"},
+		{"type": "import", "src": "characters/kiki/kiki.json"}
 	]
 }

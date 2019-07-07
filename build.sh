@@ -33,7 +33,7 @@ rm -f "$log_file"
 # TODO do not hardcode character names here
 say "Clean ..."
 log "========="
-cmd rm -rf "${root_dir}"/game/data/characters/{sinbad,squareman,characters-index.asm}
+cmd rm -rf "${root_dir}"/game/data/characters/{sinbad,squareman,kiki,characters-index.asm}
 
 # Compile game mod
 log

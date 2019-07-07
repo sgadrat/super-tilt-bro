@@ -1,0 +1,290 @@
+{
+	"animations": [
+		{
+			"src": "characters/kiki/animations/kiki_anim_run.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/kiki/animations/kiki_anim_idle.json",
+			"type": "import"
+		}
+	],
+	"color_swaps": {
+		"alternate_colors": [
+			{
+				"colors": [
+					45,
+					50,
+					52
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					55,
+					51,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					49,
+					32,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					55,
+					56,
+					58
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					55,
+					16,
+					54
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					55,
+					32,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					51,
+					51,
+					32
+				],
+				"type": "palette"
+			}
+		],
+		"primary_colors": [
+			{
+				"colors": [
+					13,
+					36,
+					50
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					40,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					26,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					22,
+					16
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					1,
+					49,
+					51
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					24,
+					41
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					13,
+					7
+				],
+				"type": "palette"
+			}
+		],
+		"primary_names": [
+			"original",
+			"golden",
+			"green",
+			"hellborn",
+			"frozen",
+			"elven",
+			"dark"
+		],
+		"secondary_colors": [
+			{
+				"colors": [
+					8,
+					40,
+					55
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					1,
+					49,
+					51
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					24,
+					41
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					13,
+					13,
+					0
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					4,
+					36,
+					55
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					22,
+					55
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					16,
+					55
+				],
+				"type": "palette"
+			}
+		],
+		"secondary_names": [
+			"golden",
+			"ice",
+			"wooden",
+			"unholy",
+			"sweet",
+			"bloody",
+			"awesome"
+		],
+		"type": "character_colors"
+	},
+	"defeat_animation": {
+		"src": "characters/kiki/animations/kiki_anim_defeat.json",
+		"type": "import"
+	},
+	"menu_select_animation": {
+		"src": "characters/kiki/animations/kiki_anim_menu_select.json",
+		"type": "import"
+	},
+	"name": "kiki",
+	"sourcecode_file": "characters/kiki/states.asm",
+	"states": [
+		{
+			"input_routine": "dummy_routine",
+			"name": "PLAYER_STATE_THROWN",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "dummy_routine",
+			"start_routine": "kiki_start_thrown",
+			"type": "character_state",
+			"update_routine": "kiki_tick_thrown"
+		},
+		{
+			"input_routine": "dummy_routine",
+			"name": "PLAYER_STATE_RESPAWN",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "dummy_routine",
+			"start_routine": "kiki_start_respawn",
+			"type": "character_state",
+			"update_routine": "kiki_tick_respawn"
+		},
+		{
+			"input_routine": "dummy_routine",
+			"name": "PLAYER_STATE_INNEXISTANT",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "dummy_routine",
+			"start_routine": "kiki_start_innexistant",
+			"type": "character_state",
+			"update_routine": "kiki_tick_innexistant"
+		},
+		{
+			"input_routine": "dummy_routine",
+			"name": "PLAYER_STATE_SPAWN",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "dummy_routine",
+			"start_routine": "kiki_start_spawn",
+			"type": "character_state",
+			"update_routine": "kiki_tick_spawn"
+		}
+	],
+	"tileset": {
+		"src": "characters/kiki/tileset.gif",
+		"tilenames": [
+			"KIKI_TILE_0",
+			"KIKI_TILE_1",
+			"KIKI_TILE_2",
+			"KIKI_TILE_3",
+			"KIKI_TILE_4",
+			"KIKI_TILE_5",
+			"KIKI_TILE_6",
+			"KIKI_TILE_7",
+			"KIKI_TILE_8",
+			"KIKI_TILE_9",
+			"KIKI_TILE_10",
+			"KIKI_TILE_11",
+			"KIKI_TILE_12",
+			"KIKI_TILE_13",
+			"KIKI_TILE_14",
+			"KIKI_TILE_15",
+			"KIKI_TILE_16",
+			"KIKI_TILE_17",
+			"KIKI_TILE_18"
+		],
+		"type": "tileset"
+	},
+	"type": "character",
+	"victory_animation": {
+		"src": "characters/kiki/animations/kiki_anim_victory.json",
+		"type": "import"
+	},
+	"weapon_name": "brush"
+}
