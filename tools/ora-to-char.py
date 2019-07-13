@@ -40,6 +40,7 @@ import stblib.character
 import stblib.jsonformat
 import stblib.tiles
 import sys
+import urllib.parse
 
 def ora_to_character(image_file, char_name):
 	character = stblib.character.Character(name = char_name)
@@ -88,10 +89,19 @@ def ora_to_character(image_file, char_name):
 		for frame_stack in animation_stack['childs']:
 			frame = stblib.animations.Frame()
 
-			m = re.match('^anims\.(?P<anim>[a-z0-9_]+)\.frame(?P<frame>[0-9]+)$', frame_stack['name'])
+			m = re.match('^anims\.(?P<anim>[a-z0-9_]+)\.frame(?P<frame>[0-9]+)(\?(?P<params>.*))?$', frame_stack['name'])
 			ensure(m is not None, 'invalid frame stack name "{}"'.format(frame_stack['name']))
 			ensure(m.group('anim') == anim_name, 'frame stack "{}" is named after animation "{}" while in animation "{}"'.format(frame_stack['name'], m.group('anim'), anim_name))
+			params = {}
+			if m.group('params') is not None:
+				params = urllib.parse.parse_qs(m.group('params'), strict_parsing = True)
+			for param_name in params.keys():
+				ensure(param_name in ['dur'], 'unknown frame parameter "{}" for frame {}'.format(param_name, frame_stack['name']))
+				ensure(len(params[param_name]) == 1, 'frame parameter "{}" defined multiple times in frame {}'.format(param_name, frame_stack['name']))
+				params[param_name] = params[param_name][0]
+
 			frame_id = m.group('frame')
+			frame.duration = int(params.get('dur', '4'))
 
 			for frame_child in frame_stack['childs']:
 				if frame_child['name'] == 'anims.{}.frame{}.hurtbox'.format(anim_name, frame_id):
