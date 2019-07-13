@@ -217,7 +217,7 @@
 	"states": [
 		{
 			"input_routine": "dummy_routine",
-			"name": "PLAYER_STATE_THROWN",
+			"name": "KIKI_STATE_THROWN",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "dummy_routine",
 			"onhurt_routine": "dummy_routine",
@@ -227,7 +227,7 @@
 		},
 		{
 			"input_routine": "dummy_routine",
-			"name": "PLAYER_STATE_RESPAWN",
+			"name": "KIKI_STATE_RESPAWN",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "dummy_routine",
 			"onhurt_routine": "dummy_routine",
@@ -237,7 +237,7 @@
 		},
 		{
 			"input_routine": "dummy_routine",
-			"name": "PLAYER_STATE_INNEXISTANT",
+			"name": "KIKI_STATE_INNEXISTANT",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "dummy_routine",
 			"onhurt_routine": "dummy_routine",
@@ -247,13 +247,31 @@
 		},
 		{
 			"input_routine": "dummy_routine",
-			"name": "PLAYER_STATE_SPAWN",
+			"name": "KIKI_STATE_SPAWN",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "dummy_routine",
 			"onhurt_routine": "dummy_routine",
 			"start_routine": "kiki_start_spawn",
 			"type": "character_state",
 			"update_routine": "kiki_tick_spawn"
+		},
+		{
+			"input_routine": "kiki_input_idle",
+			"name": "KIKI_STATE_IDLE",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "dummy_routine",
+			"type": "character_state",
+			"update_routine": "kiki_tick_idle"
+		},
+		{
+			"input_routine": "kiki_input_running",
+			"name": "KIKI_STATE_RUNNING",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "dummy_routine",
+			"type": "character_state",
+			"update_routine": "kiki_tick_running"
 		}
 	],
 	"tileset": {

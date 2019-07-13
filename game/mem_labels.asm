@@ -3,7 +3,7 @@
 ;
 
 ; State of the player's character
-;  May take any value from PLAYER_STATE_XXX constants
+;  May take any value from selected character's state machine
 player_a_state = $00
 player_b_state = $01
 

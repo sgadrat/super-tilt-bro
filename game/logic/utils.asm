@@ -399,3 +399,69 @@ place_character_ppu_tiles:
 
 	rts
 .)
+
+; Jump to a callback according to player's controller state
+;  X - Player number
+;  tmpfield1 - Callbacks table (high byte)
+;  tmpfield2 - Callbacks table (low byte)
+;  tmpfield3 - number of states in the callbacks table
+;
+;  Overwrites register Y, tmpfield4, tmpfield5 and tmpfield6
+;
+;  Note - The callback is called with jmp, controller_callbacks never
+;         returns using rts.
+controller_callbacks:
+.(
+	callbacks_table = tmpfield1
+	num_states = tmpfield3
+	callback_addr = tmpfield4
+	matching_index = tmpfield6
+
+	; Initialize loop, Y on first element and A on controller's state
+	ldy #$00
+	lda controller_a_btns, x
+
+	check_controller_state:
+		; Compare controller state to the current table element
+		cmp (callbacks_table), y
+		bne next_controller_state
+
+			; Store the low byte of the callback address
+			tya                ;
+			sta matching_index ; Save Y, it contains the index of the matching entry
+			clc                       ;
+			adc num_states            ;
+			tay                       ; low_byte = callbacks_table[y + num_states]
+			lda (callbacks_table), y  ;
+			sta callback_addr         ;
+
+			; Store the high byte of the callback address
+			tya                       ;
+			clc                       ;
+			adc num_states            ; high_byte = callbacks_table[matching_index + num_states * 2]
+			tay                       ;
+			lda (callbacks_table), y  ;
+			sta callback_addr+1       ;
+
+			; Controller state is current element, jump to the callback
+			jmp (callback_addr)
+
+		next_controller_state:
+			; Check next element on the state table
+			iny
+			cpy num_states
+			bne check_controller_state
+
+	; The state was not listed on the table, call the default callback at table's end
+	tya            ;
+	asl            ;
+	clc            ; Y = num_states * 3
+	adc num_states ;
+	tay            ;
+	lda (callbacks_table), y ;
+	sta callback_addr        ;
+	iny                      ; Store default callback address
+	lda (callbacks_table), y ;
+	sta callback_addr+1      ;
+	jmp (callback_addr) ; Jump to stored address
+.)
