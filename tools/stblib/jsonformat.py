@@ -58,6 +58,7 @@ def dict_to_json(dict_version, json_file, base_path = None):
 
 	# Save json file
 	json.dump(json_version, json_file, indent='\t', sort_keys=True)
+	json_file.write('\n')
 
 def tileset_to_img(tileset):
 	# Normalize to accept a Tileset or a list of tiles as input
