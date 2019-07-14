@@ -119,7 +119,23 @@ def ora_to_character(image_file, char_name):
 				elif frame_child['name'] == 'anims.{}.frame{}.sprites'.format(anim_name, frame_id):
 					# Parse sprites
 					ensure(frame_child['type'] == 'stack', '{} is not a stack'.format(frame_child['name']))
-					for sprite_layer in frame_child['childs']:
+
+					# Collect sprite layers
+					sprite_layers = []
+					for sprites_container_child in frame_child['childs']:
+						if sprites_container_child['type'] == 'layer':
+							sprite_layers.append({'foreground': False, 'layer': sprites_container_child})
+						elif sprites_container_child['type'] == 'stack':
+							ensure(sprites_container_child['name'] == 'anims.{}.frame{}.sprites.foreground'.format(anim_name, frame_id), 'unexpected stack in {}: "{}"'.format(frame_child['name'], sprite_layer['name']))
+							for foreground_sprite_layer in sprites_container_child['childs']:
+								ensure(foreground_sprite_layer['type'] == 'layer', 'unexpected non-layer in {}: "{}"'.format(sprites_container_child['name'], sprite_layer['name']))
+								sprite_layers.append({'foreground': True, 'layer': foreground_sprite_layer})
+						else:
+							ensure(False, 'unexpected non-stack non-layer in {}: "{}"'.format(frame_child['name'], sprites_container_child['name']))
+
+					# Parse sprite layers
+					for sprite_layer_info in sprite_layers:
+						sprite_layer = sprite_layer_info['layer']
 						ensure(sprite_layer['type'] == 'layer', 'unexpected non-layer in {}: "{}"'.format(frame_child['name'], sprite_layer['name']))
 						ensure(sprite_layer['raster'].size == (8, 8), 'unexpected sprite size of {}x{} in {}: "{}"'.format(
 							sprite_layer['raster'].size[0], sprite_layer['raster'].size[1],
@@ -175,7 +191,8 @@ def ora_to_character(image_file, char_name):
 							y = sprite_layer['y'] - origin['y'],
 							tile = tile_name,
 							attr = numeric_attr,
-							x = sprite_layer['x'] - origin['x']
+							x = sprite_layer['x'] - origin['x'],
+							foreground = sprite_layer_info['foreground']
 						)
 						frame.sprites.append(sprite)
 				else:
