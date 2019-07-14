@@ -107,25 +107,6 @@ controller_default_callback:
 .)
 .)
 
-; Simple way to apply the standard gravity effect
-;  register X - player number
-apply_gravity:
-.(
-lda player_a_velocity_h_low, x
-sta tmpfield2
-lda player_a_velocity_h, x
-sta tmpfield4
-lda #$00
-sta tmpfield1
-lda player_a_gravity, x
-sta tmpfield3
-lda #$60
-sta tmpfield5
-jsr merge_to_player_velocity
-
-rts
-.)
-
 #define AIR_FRICTION_STRENGTH 7
 aerial_directional_influence:
 .(
@@ -511,7 +492,7 @@ rts
 sinbad_tick_falling:
 .(
 jsr aerial_directional_influence
-jsr apply_gravity
+jsr apply_player_gravity
 rts
 .)
 
@@ -775,7 +756,7 @@ lda player_a_hitstun, x
 bne gravity
 jsr aerial_directional_influence
 gravity:
-jsr apply_gravity
+jsr apply_player_gravity
 
 ; Decrement tech counter (to zero minimum)
 lda player_a_state_field1, x
@@ -1384,7 +1365,7 @@ rts
 #define STATE_SINBAD_AERIAL_SIDE_DURATION #25
 sinbad_tick_aerial_side:
 .(
-jsr apply_gravity
+jsr apply_player_gravity
 
 ; Wait for move's timeout
 inc player_a_state_clock, x
@@ -1438,7 +1419,7 @@ rts
 #define STATE_SINBAD_AERIAL_DOWN_DURATION #14
 sinbad_tick_aerial_down:
 .(
-jsr apply_gravity
+jsr apply_player_gravity
 
 ; Wait for move's timeout
 inc player_a_state_clock, x
@@ -1478,7 +1459,7 @@ rts
 #define STATE_SINBAD_AERIAL_UP_DURATION #32
 sinbad_tick_aerial_up:
 .(
-jsr apply_gravity
+jsr apply_player_gravity
 
 ; Wait for move's timeout
 inc player_a_state_clock, x
@@ -1518,7 +1499,7 @@ rts
 #define STATE_SINBAD_AERIAL_NEUTRAL_DURATION #12
 sinbad_tick_aerial_neutral:
 .(
-jsr apply_gravity
+jsr apply_player_gravity
 
 ; Wait for move's timeout
 inc player_a_state_clock, x
@@ -1657,7 +1638,7 @@ bpl top_reached
 
 ; The top is not reached, stay in special upward state but apply gravity and directional influence
 jsr aerial_directional_influence
-jsr apply_gravity
+jsr apply_player_gravity
 jmp end
 
 top_reached:
@@ -1695,7 +1676,7 @@ rts
 #define STATE_SINBAD_SPE_DOWN_DURATION #21
 sinbad_tick_spe_down:
 .(
-jsr apply_gravity
+jsr apply_player_gravity
 
 ; Wait for move's timeout
 inc player_a_state_clock, x

@@ -5,24 +5,161 @@ KIKI_STATE_SPAWN = 3
 KIKI_STATE_IDLE = 4
 KIKI_STATE_RUNNING = 5
 
+KIKI_AIR_FRICTION_STRENGTH = 7
+KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
+KIKI_AERIAL_SPEED = $0100
+kiki_aerial_directional_influence:
+.(
+	; merge_to_player_velocity parameter names
+	merged_v_low = tmpfield1
+	merged_v_high = tmpfield3
+	merged_h_low = tmpfield2
+	merged_h_high = tmpfield4
+	merge_step = tmpfield5
+
+	; Choose what to do depending on controller state
+	lda controller_a_btns, x
+	and #CONTROLLER_INPUT_LEFT
+	bne go_left
+
+	lda controller_a_btns, x
+	and #CONTROLLER_INPUT_RIGHT
+	bne go_right
+
+	jmp air_friction
+
+	go_left:
+		; Go to the left
+		lda #<-KIKI_AERIAL_SPEED
+		sta tmpfield6
+		lda #>-KIKI_AERIAL_SPEED
+		sta tmpfield7
+		lda player_a_velocity_h_low, x
+		sta tmpfield8
+		lda player_a_velocity_h, x
+		sta tmpfield9
+		jsr signed_cmp
+		bpl end
+
+		lda player_a_velocity_v_low, x
+		sta merged_v_low
+		lda player_a_velocity_v, x
+		sta merged_v_high
+		lda #<-KIKI_AERIAL_SPEED
+		sta merged_h_low
+		lda #>-KIKI_AERIAL_SPEED
+		sta merged_h_high
+		lda #KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH
+		sta merge_step
+		jsr merge_to_player_velocity
+		jmp end
+
+	go_right:
+		; Go to the right
+		lda player_a_velocity_h_low, x
+		sta tmpfield6
+		lda player_a_velocity_h, x
+		sta tmpfield7
+		lda #<KIKI_AERIAL_SPEED
+		sta tmpfield8
+		lda #>KIKI_AERIAL_SPEED
+		sta tmpfield9
+		jsr signed_cmp
+		bpl end
+
+		lda player_a_velocity_v_low, x
+		sta merged_v_low
+		lda player_a_velocity_v, x
+		sta merged_v_high
+		lda #<KIKI_AERIAL_SPEED
+		sta merged_h_low
+		lda #>KIKI_AERIAL_SPEED
+		sta merged_h_high
+		lda #KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH
+		sta merge_step
+		jsr merge_to_player_velocity
+		jmp end
+
+	air_friction:
+		; Apply air friction
+		lda player_a_velocity_v_low, x
+		sta merged_v_low
+		lda player_a_velocity_v, x
+		sta merged_v_high
+		lda #$00
+		sta merged_h_low
+		sta merged_h_high
+		lda #KIKI_AIR_FRICTION_STRENGTH
+		sta merge_step
+		jsr merge_to_player_velocity
+
+	end:
+	rts
+.)
+
 kiki_start_thrown:
 .(
 	; Set the player's state
 	lda #KIKI_STATE_THROWN
 	sta player_a_state, x
 
+	; Initialize tech counter
+	lda #0
+	sta player_a_state_field1, x
+
 	; Set the appropriate animation
-	lda #<kiki_anim_idle
+	lda #<kiki_anim_thrown
 	sta tmpfield13
-	lda #>kiki_anim_idle
+	lda #>kiki_anim_thrown
 	sta tmpfield14
 	jsr set_player_animation
+
+	; Set the appropriate animation direction (depending on player's velocity)
+	lda player_a_velocity_h, x
+	bmi set_anim_left
+		lda DIRECTION_RIGHT
+		jmp set_anim_dir
+	set_anim_left:
+		lda DIRECTION_LEFT
+	set_anim_dir:
+		ldy #ANIMATION_STATE_OFFSET_DIRECTION
+		sta (tmpfield11), y
 
 	rts
 .)
 
+; To tech successfully the tech must be input at maximum KIKI_TECH_MAX_FRAMES_BEFORE_COLLISION frames before hitting the ground.
+; After expiration of a tech input, it is not possible to input another tech for KIKI_TECH_NB_FORBIDDEN_FRAMES frames.
+KIKI_TECH_MAX_FRAMES_BEFORE_COLLISION = 10
+KIKI_TECH_NB_FORBIDDEN_FRAMES = 60
 kiki_tick_thrown:
 .(
+	; Update velocity
+	lda player_a_hitstun, x
+	bne gravity
+	jsr kiki_aerial_directional_influence
+	gravity:
+	jsr apply_player_gravity
+
+	; Decrement tech counter (to zero minimum)
+	lda player_a_state_field1, x
+	beq end_dec_tech_cnt
+	dec player_a_state_field1, x
+	end_dec_tech_cnt:
+
+	rts
+.)
+
+kiki_input_thrown:
+.(
+	;TODO tech and aerial input handling
+	rts
+.)
+
+kiki_onground_thrown:
+.(
+	;TODO choose between states landing and crashing
+	jsr kiki_start_idle
 	rts
 .)
 

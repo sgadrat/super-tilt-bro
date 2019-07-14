@@ -204,6 +204,25 @@ merge_to_player_velocity:
 	rts
 .)
 
+; Apply the standard gravity effect to a player
+;  register X - player number
+apply_player_gravity:
+.(
+	lda player_a_velocity_h_low, x
+	sta tmpfield2
+	lda player_a_velocity_h, x
+	sta tmpfield4
+	lda #$00
+	sta tmpfield1
+	lda player_a_gravity, x
+	sta tmpfield3
+	lda #$60
+	sta tmpfield5
+	jsr merge_to_player_velocity
+
+	rts
+.)
+
 ; Check if the player is on ground
 ;  register X - Player number
 ;

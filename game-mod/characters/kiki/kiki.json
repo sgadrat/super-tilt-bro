@@ -7,6 +7,10 @@
 		{
 			"src": "characters/kiki/animations/kiki_anim_idle.json",
 			"type": "import"
+		},
+		{
+			"src": "characters/kiki/animations/kiki_anim_thrown.json",
+			"type": "import"
 		}
 	],
 	"color_swaps": {
@@ -216,11 +220,11 @@
 	"sourcecode_file": "characters/kiki/states.asm",
 	"states": [
 		{
-			"input_routine": "dummy_routine",
+			"input_routine": "kiki_input_thrown",
 			"name": "KIKI_STATE_THROWN",
 			"offground_routine": "dummy_routine",
-			"onground_routine": "dummy_routine",
-			"onhurt_routine": "dummy_routine",
+			"onground_routine": "kiki_onground_thrown",
+			"onhurt_routine": "hurt_player",
 			"start_routine": "kiki_start_thrown",
 			"type": "character_state",
 			"update_routine": "kiki_tick_thrown"
@@ -260,7 +264,8 @@
 			"name": "KIKI_STATE_IDLE",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "dummy_routine",
-			"onhurt_routine": "dummy_routine",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
 			"type": "character_state",
 			"update_routine": "kiki_tick_idle"
 		},
@@ -269,7 +274,8 @@
 			"name": "KIKI_STATE_RUNNING",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "dummy_routine",
-			"onhurt_routine": "dummy_routine",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
 			"type": "character_state",
 			"update_routine": "kiki_tick_running"
 		}
@@ -295,7 +301,15 @@
 			"KIKI_TILE_15",
 			"KIKI_TILE_16",
 			"KIKI_TILE_17",
-			"KIKI_TILE_18"
+			"KIKI_TILE_18",
+			"KIKI_TILE_19",
+			"KIKI_TILE_20",
+			"KIKI_TILE_21",
+			"KIKI_TILE_22",
+			"KIKI_TILE_23",
+			"KIKI_TILE_24",
+			"KIKI_TILE_25",
+			"KIKI_TILE_26"
 		],
 		"type": "tileset"
 	},
