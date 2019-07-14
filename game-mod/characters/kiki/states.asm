@@ -232,9 +232,9 @@ kiki_start_spawn:
 	sta player_a_state_clock, x
 
 	; Set the appropriate animation
-	lda #<kiki_anim_idle
+	lda #<kiki_anim_spawn
 	sta tmpfield13
-	lda #>kiki_anim_idle
+	lda #>kiki_anim_spawn
 	sta tmpfield14
 	jsr set_player_animation
 
@@ -247,7 +247,7 @@ kiki_tick_spawn:
 
 	inc player_a_state_clock, x
 	lda player_a_state_clock, x
-	cmp KIKI_STATE_SPAWN_DURATION
+	cmp #KIKI_STATE_SPAWN_DURATION
 	bne end
 		jsr kiki_start_idle
 

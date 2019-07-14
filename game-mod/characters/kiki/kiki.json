@@ -11,6 +11,10 @@
 		{
 			"src": "characters/kiki/animations/kiki_anim_thrown.json",
 			"type": "import"
+		},
+		{
+			"src": "characters/kiki/animations/kiki_anim_spawn.json",
+			"type": "import"
 		}
 	],
 	"color_swaps": {
@@ -309,7 +313,8 @@
 			"KIKI_TILE_23",
 			"KIKI_TILE_24",
 			"KIKI_TILE_25",
-			"KIKI_TILE_26"
+			"KIKI_TILE_26",
+			"KIKI_TILE_27"
 		],
 		"type": "tileset"
 	},
