@@ -1,0 +1,130 @@
+{
+	"frames": [
+		{
+			"duration": 4,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 9,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "KIKI_TILE_0",
+					"type": "animation_sprite",
+					"x": 3,
+					"y": -6
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "KIKI_TILE_1",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 2
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_2",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_3",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_4",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_5",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 0
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 9,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "KIKI_TILE_0",
+					"type": "animation_sprite",
+					"x": 2,
+					"y": -6
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "KIKI_TILE_1",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 2
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_2",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_3",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_4",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_5",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 0
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "kiki_anim_falling",
+	"type": "animation"
+}

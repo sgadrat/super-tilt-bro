@@ -19,6 +19,10 @@
 		{
 			"src": "characters/kiki/animations/kiki_anim_respawn.json",
 			"type": "import"
+		},
+		{
+			"src": "characters/kiki/animations/kiki_anim_falling.json",
+			"type": "import"
 		}
 	],
 	"color_swaps": {
@@ -270,7 +274,7 @@
 		{
 			"input_routine": "kiki_input_idle",
 			"name": "KIKI_STATE_IDLE",
-			"offground_routine": "dummy_routine",
+			"offground_routine": "kiki_start_falling",
 			"onground_routine": "dummy_routine",
 			"onhurt_routine": "hurt_player",
 			"start_routine": null,
@@ -280,12 +284,22 @@
 		{
 			"input_routine": "kiki_input_running",
 			"name": "KIKI_STATE_RUNNING",
-			"offground_routine": "dummy_routine",
+			"offground_routine": "kiki_start_falling",
 			"onground_routine": "dummy_routine",
 			"onhurt_routine": "hurt_player",
 			"start_routine": null,
 			"type": "character_state",
 			"update_routine": "kiki_tick_running"
+		},
+		{
+			"input_routine": "kiki_check_aerial_inputs",
+			"name": "KIKI_STATE_FALLING",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "kiki_start_landing",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "kiki_tick_falling"
 		}
 	],
 	"tileset": {

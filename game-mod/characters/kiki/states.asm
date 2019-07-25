@@ -324,7 +324,7 @@ kiki_tick_respawn:
 	; Check for timeout
 	dec player_a_state_field1, x
 	bne end
-	jsr kiki_start_idle ;TODO start falling
+	jsr kiki_start_falling
 
 	end:
 	rts
@@ -346,7 +346,7 @@ kiki_input_respawn:
 		cmp #KIKI_STATE_RESPAWN
 		bne end
 
-			jsr kiki_start_idle ; TODO start falling
+			jsr kiki_start_falling
 
 	end:
 	rts
@@ -630,4 +630,34 @@ kiki_input_running:
 		controller_default_callback:
 		.word kiki_start_idle
 	.)
+.)
+
+
+kiki_start_falling:
+.(
+	lda PLAYER_STATE_FALLING
+	sta player_a_state, x
+
+	; Set the appropriate animation
+	lda #<kiki_anim_falling
+	sta tmpfield13
+	lda #>kiki_anim_falling
+	sta tmpfield14
+	jsr set_player_animation
+
+	rts
+.)
+
+kiki_tick_falling:
+.(
+	jsr kiki_aerial_directional_influence
+	jsr apply_player_gravity
+	rts
+.)
+
+
+kiki_start_landing:
+.(
+	;TODO implement landing state
+	jmp kiki_start_idle
 .)
