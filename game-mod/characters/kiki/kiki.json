@@ -1,7 +1,7 @@
 {
 	"animations": [
 		{
-			"src": "characters/kiki/animations/kiki_anim_run.json",
+			"src": "characters/kiki/animations/kiki_anim_falling.json",
 			"type": "import"
 		},
 		{
@@ -9,7 +9,11 @@
 			"type": "import"
 		},
 		{
-			"src": "characters/kiki/animations/kiki_anim_thrown.json",
+			"src": "characters/kiki/animations/kiki_anim_respawn.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/kiki/animations/kiki_anim_run.json",
 			"type": "import"
 		},
 		{
@@ -17,11 +21,7 @@
 			"type": "import"
 		},
 		{
-			"src": "characters/kiki/animations/kiki_anim_respawn.json",
-			"type": "import"
-		},
-		{
-			"src": "characters/kiki/animations/kiki_anim_falling.json",
+			"src": "characters/kiki/animations/kiki_anim_thrown.json",
 			"type": "import"
 		}
 	],
