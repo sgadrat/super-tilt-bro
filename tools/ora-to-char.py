@@ -211,6 +211,7 @@ def ora_to_character(image_file, char_name):
 		else:
 			character.animations.append(animation)
 
+	character.animations = sorted(character.animations, key = lambda x: x.name)
 	return character
 
 def _uniq_transparent(color):
