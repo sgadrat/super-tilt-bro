@@ -15,6 +15,10 @@
 		{
 			"src": "characters/kiki/animations/kiki_anim_spawn.json",
 			"type": "import"
+		},
+		{
+			"src": "characters/kiki/animations/kiki_anim_respawn.json",
+			"type": "import"
 		}
 	],
 	"color_swaps": {
@@ -234,7 +238,7 @@
 			"update_routine": "kiki_tick_thrown"
 		},
 		{
-			"input_routine": "dummy_routine",
+			"input_routine": "kiki_input_respawn",
 			"name": "KIKI_STATE_RESPAWN",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "dummy_routine",
@@ -314,7 +318,9 @@
 			"KIKI_TILE_24",
 			"KIKI_TILE_25",
 			"KIKI_TILE_26",
-			"KIKI_TILE_27"
+			"KIKI_TILE_27",
+			"KIKI_TILE_28",
+			"KIKI_TILE_29"
 		],
 		"type": "tileset"
 	},

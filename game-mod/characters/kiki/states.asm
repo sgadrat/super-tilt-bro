@@ -97,6 +97,123 @@ kiki_aerial_directional_influence:
 	rts
 .)
 
+; Change the player's state if an aerial move is input on the controller
+;  register X - Player number
+;
+;  Overwrites tmpfield15 and tmpfield2 plus the ones overriten by the state starting subroutine
+kiki_check_aerial_inputs:
+.(
+	input_marker = tmpfield15
+	player_btn = tmpfield2
+
+	.(
+		; Refuse to do anything if under hitstun
+		lda player_a_hitstun, x
+		bne end
+
+		; Assuming we are called from an input event
+		; Do nothing if the only changes concern the left-right buttons
+		lda controller_a_btns, x
+		eor controller_a_last_frame_btns, x
+		and #CONTROLLER_BTN_A | CONTROLLER_BTN_B | CONTROLLER_BTN_UP | CONTROLLER_BTN_DOWN
+		beq end
+
+			; Save current direction
+			lda player_a_direction, x
+			pha
+
+			; Change player's direction according to input direction
+			lda controller_a_btns, x
+			sta player_btn
+			lda #CONTROLLER_BTN_LEFT
+			bit player_btn
+			beq check_direction_right
+				lda DIRECTION_LEFT
+				jmp set_direction
+			check_direction_right:
+				lda #CONTROLLER_BTN_RIGHT
+				bit player_btn
+				beq no_direction
+				lda DIRECTION_RIGHT
+			set_direction:
+				sta player_a_direction, x
+			no_direction:
+
+			; Start the good state according to input
+			jsr take_input
+
+			; Restore player's direction if there was no input, else discard saved direction
+			lda input_marker
+			beq restore_direction
+				pla
+				jmp end
+			restore_direction:
+				pla
+				sta player_a_direction, x
+
+		end:
+		rts
+	.)
+
+	take_input:
+	.(
+		; Mark input
+		lda #01
+		sta input_marker
+
+		; Call aerial subroutines, in case of input it will return with input marked
+		lda #<controller_inputs
+		sta tmpfield1
+		lda #>controller_inputs
+		sta tmpfield2
+		lda #14
+		sta tmpfield3
+		jmp controller_callbacks
+
+		;rts ; useless, controller_callbacks returns to caller
+
+		; Fast fall, gravity * 1.5
+		fast_fall:
+		.(
+			lda #DEFAULT_GRAVITY*2-DEFAULT_GRAVITY/2
+			sta player_a_gravity, x
+			sta player_a_velocity_v, x
+			lda #$00
+			sta player_a_velocity_v_low, x
+			rts
+		.)
+
+		; If no input, unmark the input flag and return
+		no_input:
+		.(
+			lda #$00
+			sta input_marker
+			;rts ; Fallthrough to return
+		.)
+
+		end:
+		rts
+
+		; Impactful controller states and associated callbacks
+		; Note - We have to put subroutines as callbacks since we do not expect a return unless we used the default callback
+		; TODO callbacks set to no_input are to be implemented (except the default callback)
+		controller_inputs:
+		.byt CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_JUMP,         CONTROLLER_INPUT_JUMP_RIGHT,  CONTROLLER_INPUT_JUMP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_LEFT,   CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_DOWN_TILT,    CONTROLLER_INPUT_ATTACK_UP,   CONTROLLER_INPUT_JAB
+		.byt CONTROLLER_INPUT_SPECIAL,       CONTROLLER_INPUT_SPECIAL_UP,   CONTROLLER_INPUT_SPECIAL_DOWN, CONTROLLER_INPUT_TECH
+		controller_callbacks_lo:
+		.byt <no_input,                      <no_input,                     <no_input,                     <no_input,                    <no_input
+		.byt <no_input,                      <no_input,                     <no_input,                     <no_input,                    <no_input
+		.byt <no_input,                      <no_input,                     <no_input,                     <fast_fall
+		controller_callbacks_hi:
+		.byt >no_input,                      >no_input,                     >no_input,                     >no_input,                    >no_input
+		.byt >no_input,                      >no_input,                     >no_input,                     >no_input,                    >no_input
+		.byt >no_input,                      >no_input,                     >no_input,                     >fast_fall
+		controller_default_callback:
+		.word no_input
+	.)
+.)
+
 kiki_start_thrown:
 .(
 	; Set the player's state
@@ -163,25 +280,75 @@ kiki_onground_thrown:
 	rts
 .)
 
-
 kiki_start_respawn:
 .(
 	; Set the player's state
 	lda #KIKI_STATE_RESPAWN
 	sta player_a_state, x
 
+	; Place player to the respawn spot
+	lda stage_data+STAGE_HEADER_OFFSET_RESPAWNX_HIGH
+	sta player_a_x, x
+	lda stage_data+STAGE_HEADER_OFFSET_RESPAWNX_LOW
+	sta player_a_x_low, x
+	lda stage_data+STAGE_HEADER_OFFSET_RESPAWNY_HIGH
+	sta player_a_y, x
+	lda stage_data+STAGE_HEADER_OFFSET_RESPAWNY_LOW
+	sta player_a_y_low, x
+	lda #$00
+	sta player_a_x_screen, x
+	sta player_a_y_screen, x
+	sta player_a_velocity_h, x
+	sta player_a_velocity_h_low, x
+	sta player_a_velocity_v, x
+	sta player_a_velocity_v_low, x
+	sta player_a_damages, x
+
+	; Initialise state's timer
+	lda #PLAYER_RESPAWN_MAX_DURATION
+	sta player_a_state_field1, x
+
 	; Set the appropriate animation
-	lda #<kiki_anim_idle
+	lda #<kiki_anim_respawn
 	sta tmpfield13
-	lda #>kiki_anim_idle
+	lda #>kiki_anim_respawn
 	sta tmpfield14
 	jsr set_player_animation
 
 	rts
 .)
 
+
 kiki_tick_respawn:
 .(
+	; Check for timeout
+	dec player_a_state_field1, x
+	bne end
+	jsr kiki_start_idle ;TODO start falling
+
+	end:
+	rts
+.)
+
+kiki_input_respawn:
+.(
+	; Avoid doing anything until controller has returned to neutral since after
+	; death the player can release buttons without expecting to take action
+	lda controller_a_last_frame_btns, x
+	bne end
+
+		; Call kiki_check_aerial_inputs
+		;  If it does not change the player state, go to falling state
+		;  so that any button press makes the player falls from revival
+		;  platform
+		jsr kiki_check_aerial_inputs
+		lda player_a_state, x
+		cmp #KIKI_STATE_RESPAWN
+		bne end
+
+			jsr kiki_start_idle ; TODO start falling
+
+	end:
 	rts
 .)
 
@@ -424,7 +591,7 @@ kiki_input_running:
 	; If in hitstun, stop running
 	lda player_a_hitstun, x
 	beq take_input
-		jsr sinbad_start_standing
+		jsr kiki_start_idle
 		jmp end
 	take_input:
 

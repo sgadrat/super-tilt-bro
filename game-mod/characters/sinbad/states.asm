@@ -850,7 +850,6 @@ end:
 rts
 .)
 
-#define RESPAWN_PLAYER_MAX_DURATION 250
 sinbad_start_respawn:
 .(
 ; Set the player's state
@@ -876,7 +875,7 @@ sta player_a_velocity_v_low, x
 sta player_a_damages, x
 
 ; Initialise state's timer
-lda #RESPAWN_PLAYER_MAX_DURATION
+lda #PLAYER_RESPAWN_MAX_DURATION
 sta player_a_state_field1, x
 
 ; Set the appropriate animation
