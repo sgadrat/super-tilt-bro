@@ -6,6 +6,7 @@ KIKI_STATE_IDLE = 4
 KIKI_STATE_RUNNING = 5
 KIKI_STATE_FALLING = 6
 KIKI_STATE_LANDING = 7
+KIKI_STATE_CRASHING = 8
 
 KIKI_AIR_FRICTION_STRENGTH = 7
 KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
@@ -281,7 +282,7 @@ kiki_input_thrown:
 kiki_onground_thrown:
 .(
 	;TODO choose between states landing and crashing
-	jsr kiki_start_idle
+	jsr kiki_start_crashing
 	rts
 .)
 
@@ -732,6 +733,57 @@ kiki_tick_landing:
 	; After move's time is out, go to standing state
 	lda player_a_state_clock, x
 	cmp #KIKI_STATE_LANDING_DURATION
+	bne end
+	jsr kiki_start_idle
+
+	end:
+	rts
+.)
+
+
+kiki_start_crashing:
+.(
+	; Set state
+	lda #KIKI_STATE_CRASHING
+	sta player_a_state, x
+
+	; Reset clock
+	lda #0
+	sta player_a_state_clock, x
+
+	; Set the appropriate animation
+	lda #<kiki_anim_crash
+	sta tmpfield13
+	lda #>kiki_anim_crash
+	sta tmpfield14
+	jsr set_player_animation
+
+	; Play crash sound
+	jsr audio_play_crash
+
+	rts
+.)
+
+kiki_tick_crashing:
+.(
+	KIKI_STATE_CRASHING_DURATION = 30
+
+	; Tick clock
+	inc player_a_state_clock, x
+
+	; Do not move, velocity tends toward vector (0,0)
+	lda #$00
+	sta tmpfield4
+	sta tmpfield3
+	sta tmpfield2
+	sta tmpfield1
+	lda #KIKI_GROUND_FRICTION_STRENGTH*2
+	sta tmpfield5
+	jsr merge_to_player_velocity
+
+	; After move's time is out, go to standing state
+	lda player_a_state_clock, x
+	cmp #KIKI_STATE_CRASHING_DURATION
 	bne end
 	jsr kiki_start_idle
 
