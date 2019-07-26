@@ -9,6 +9,10 @@
 			"type": "import"
 		},
 		{
+			"src": "characters/kiki/animations/kiki_anim_landing.json",
+			"type": "import"
+		},
+		{
 			"src": "characters/kiki/animations/kiki_anim_respawn.json",
 			"type": "import"
 		},
@@ -300,6 +304,16 @@
 			"start_routine": null,
 			"type": "character_state",
 			"update_routine": "kiki_tick_falling"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "KIKI_STATE_LANDING",
+			"offground_routine": "kiki_start_helpless",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "kiki_tick_landing"
 		}
 	],
 	"tileset": {
@@ -334,7 +348,8 @@
 			"KIKI_TILE_26",
 			"KIKI_TILE_27",
 			"KIKI_TILE_28",
-			"KIKI_TILE_29"
+			"KIKI_TILE_29",
+			"KIKI_TILE_30"
 		],
 		"type": "tileset"
 	},

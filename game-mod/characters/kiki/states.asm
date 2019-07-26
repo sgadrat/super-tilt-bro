@@ -4,10 +4,15 @@ KIKI_STATE_INNEXISTANT = 2
 KIKI_STATE_SPAWN = 3
 KIKI_STATE_IDLE = 4
 KIKI_STATE_RUNNING = 5
+KIKI_STATE_FALLING = 6
+KIKI_STATE_LANDING = 7
 
 KIKI_AIR_FRICTION_STRENGTH = 7
 KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
 KIKI_AERIAL_SPEED = $0100
+
+KIKI_GROUND_FRICTION_STRENGTH = $40
+
 kiki_aerial_directional_influence:
 .(
 	; merge_to_player_velocity parameter names
@@ -635,7 +640,7 @@ kiki_input_running:
 
 kiki_start_falling:
 .(
-	lda PLAYER_STATE_FALLING
+	lda #KIKI_STATE_FALLING
 	sta player_a_state, x
 
 	; Set the appropriate animation
@@ -658,6 +663,85 @@ kiki_tick_falling:
 
 kiki_start_landing:
 .(
-	;TODO implement landing state
-	jmp kiki_start_idle
+	KIKI_LANDING_SPEED_CAP = $0200
+
+	; Set state
+	lda #KIKI_STATE_LANDING
+	sta player_a_state, x
+
+	; Reset clock
+	lda #0
+	sta player_a_state_clock, x
+
+	; Cap initial velocity
+#if (KIKI_LANDING_SPEED_CAP & $00ff) <> 0
+#error following condition expects round number for kiki landing speed cap
+#endif
+	lda player_a_velocity_h, x
+	jsr absolute_a
+	cmp #>(KIKI_LANDING_SPEED_CAP+$0100)
+	bcs set_cap
+
+		jmp kiki_set_landing_animation
+
+	set_cap:
+		lda player_a_velocity_h, x
+		bmi negative_cap
+			lda #>KIKI_LANDING_SPEED_CAP
+			sta player_a_velocity_h, x
+			lda #<KIKI_LANDING_SPEED_CAP
+			sta player_a_velocity_h_low, x
+			jmp kiki_set_landing_animation
+		negative_cap:
+			lda #>(-KIKI_LANDING_SPEED_CAP)
+			sta player_a_velocity_h, x
+			lda #<(-KIKI_LANDING_SPEED_CAP)
+			sta player_a_velocity_h_low, x
+
+	; Fallthrough to set the animation
+.)
+kiki_set_landing_animation:
+.(
+	; Set the appropriate animation
+	lda #<kiki_anim_landing
+	sta tmpfield13
+	lda #>kiki_anim_landing
+	sta tmpfield14
+	jsr set_player_animation
+
+	rts
+.)
+
+kiki_tick_landing:
+.(
+	KIKI_STATE_LANDING_DURATION = 6
+
+	; Tick clock
+	inc player_a_state_clock, x
+
+	; Do not move, velocity tends toward vector (0,0)
+	lda #$00
+	sta tmpfield4
+	sta tmpfield3
+	sta tmpfield2
+	sta tmpfield1
+	lda #KIKI_GROUND_FRICTION_STRENGTH
+	sta tmpfield5
+	jsr merge_to_player_velocity
+
+	; After move's time is out, go to standing state
+	lda player_a_state_clock, x
+	cmp #KIKI_STATE_LANDING_DURATION
+	bne end
+	jsr kiki_start_idle
+
+	end:
+	rts
+.)
+
+
+kiki_start_helpless:
+.(
+	;TODO implement helpless falling
+	jmp kiki_start_falling
 .)
