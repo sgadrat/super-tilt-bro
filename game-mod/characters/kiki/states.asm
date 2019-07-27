@@ -251,23 +251,19 @@ kiki_start_thrown:
 	rts
 .)
 
-; To tech successfully the tech must be input at maximum KIKI_TECH_MAX_FRAMES_BEFORE_COLLISION frames before hitting the ground.
-; After expiration of a tech input, it is not possible to input another tech for KIKI_TECH_NB_FORBIDDEN_FRAMES frames.
-KIKI_TECH_MAX_FRAMES_BEFORE_COLLISION = 10
-KIKI_TECH_NB_FORBIDDEN_FRAMES = 60
 kiki_tick_thrown:
 .(
 	; Update velocity
 	lda player_a_hitstun, x
 	bne gravity
-	jsr kiki_aerial_directional_influence
+		jsr kiki_aerial_directional_influence
 	gravity:
 	jsr apply_player_gravity
 
 	; Decrement tech counter (to zero minimum)
 	lda player_a_state_field1, x
 	beq end_dec_tech_cnt
-	dec player_a_state_field1, x
+		dec player_a_state_field1, x
 	end_dec_tech_cnt:
 
 	rts
@@ -275,14 +271,90 @@ kiki_tick_thrown:
 
 kiki_input_thrown:
 .(
-	;TODO tech and aerial input handling
+	; Handle controller inputs
+	lda #<(input_table+1)
+	sta tmpfield1
+	lda #>(input_table+1)
+	sta tmpfield2
+	lda input_table
+	sta tmpfield3
+	jmp controller_callbacks
+
+	; If a tech is entered, store it's direction in state_field2
+	; and if the counter is at 0, reset it to it's max value.
+	tech_neutral:
+		lda #$00
+		jmp tech_common
+	tech_right:
+		lda #$01
+		jmp tech_common
+	tech_left:
+		lda #$02
+	tech_common:
+		sta player_a_state_field2, x
+		lda player_a_state_field1, x
+		bne end
+		lda #TECH_MAX_FRAMES_BEFORE_COLLISION+TECH_NB_FORBIDDEN_FRAMES
+		sta player_a_state_field1, x
+
+	no_tech:
+		jsr kiki_check_aerial_inputs
+
+	end:
 	rts
+
+	; Impactful controller states and associated callbacks
+	input_table:
+	.(
+		table_length:
+		.byt 3
+		controller_inputs:
+		.byt CONTROLLER_INPUT_TECH,        CONTROLLER_INPUT_TECH_RIGHT,   CONTROLLER_INPUT_TECH_LEFT
+		controller_callbacks_lo:
+		.byt <tech_neutral,                <tech_right,                   <tech_left
+		controller_callbacks_hi:
+		.byt >tech_neutral,                >tech_right,                   >tech_left
+		controller_default_callback:
+		.word no_tech
+	.)
 .)
 
 kiki_onground_thrown:
 .(
-	;TODO choose between states landing and crashing
+	KIKI_TECH_SPEED = $0400
+
+	; If the tech counter is bellow the threshold, just crash
+	lda #TECH_NB_FORBIDDEN_FRAMES
+	cmp player_a_state_field1, x
+	bcs crash
+
+	; A valid tech was entered, land with momentum depending on tech's direction
+	jsr kiki_start_landing
+	lda player_a_state_field2, x
+	beq no_momentum
+	cmp #$01
+	beq momentum_right
+		lda #>(-KIKI_TECH_SPEED)
+		sta player_a_velocity_h, x
+		lda #>(-KIKI_TECH_SPEED)
+		sta player_a_velocity_h_low, x
+		jmp end
+	no_momentum:
+		lda #$00
+		sta player_a_velocity_h, x
+		sta player_a_velocity_h_low, x
+		jmp end
+	momentum_right:
+		lda #>KIKI_TECH_SPEED
+		sta player_a_velocity_h, x
+		lda #<KIKI_TECH_SPEED
+		sta player_a_velocity_h_low, x
+		jmp end
+
+	crash:
 	jsr kiki_start_crashing
+
+	end:
 	rts
 .)
 
