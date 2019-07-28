@@ -9,6 +9,10 @@
 			"type": "import"
 		},
 		{
+			"src": "characters/kiki/animations/kiki_anim_helpless.json",
+			"type": "import"
+		},
+		{
 			"src": "characters/kiki/animations/kiki_anim_idle.json",
 			"type": "import"
 		},
@@ -328,6 +332,16 @@
 			"start_routine": null,
 			"type": "character_state",
 			"update_routine": "kiki_tick_crashing"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "KIKI_STATE_HELPLESS",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "kiki_start_landing",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "kiki_tick_helpless"
 		}
 	],
 	"tileset": {

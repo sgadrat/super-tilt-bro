@@ -1,0 +1,52 @@
+{
+	"frames": [
+		{
+			"duration": 4,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": 1,
+				"right": 10,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 128,
+					"foreground": false,
+					"tile": "KIKI_TILE_2",
+					"type": "animation_sprite",
+					"x": 8,
+					"y": 0
+				},
+				{
+					"attr": 128,
+					"foreground": false,
+					"tile": "KIKI_TILE_3",
+					"type": "animation_sprite",
+					"x": 8,
+					"y": 8
+				},
+				{
+					"attr": 128,
+					"foreground": false,
+					"tile": "KIKI_TILE_4",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 128,
+					"foreground": false,
+					"tile": "KIKI_TILE_5",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "kiki_anim_helpless",
+	"type": "animation"
+}

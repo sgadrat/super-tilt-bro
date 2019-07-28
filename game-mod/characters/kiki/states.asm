@@ -7,6 +7,7 @@ KIKI_STATE_RUNNING = 5
 KIKI_STATE_FALLING = 6
 KIKI_STATE_LANDING = 7
 KIKI_STATE_CRASHING = 8
+KIKI_STATE_HELPLESS = 9
 
 KIKI_AIR_FRICTION_STRENGTH = 7
 KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
@@ -866,6 +867,21 @@ kiki_tick_crashing:
 
 kiki_start_helpless:
 .(
-	;TODO implement helpless falling
-	jmp kiki_start_falling
+	; Set state
+	lda #KIKI_STATE_HELPLESS
+	sta player_a_state, x
+
+	; Set the appropriate animation
+	lda #<kiki_anim_helpless
+	sta tmpfield13
+	lda #>kiki_anim_helpless
+	sta tmpfield14
+	jsr set_player_animation
+
+	rts
+.)
+
+kiki_tick_helpless:
+.(
+	jmp kiki_tick_falling
 .)
