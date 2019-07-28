@@ -31,6 +31,7 @@ Layers in the .ora file must have the following layout:
 """
 
 import argparse
+import copy
 import ora
 import os
 import re
@@ -162,7 +163,7 @@ def ora_to_character(image_file, char_name):
 						tile_name = None
 						flip = None
 						for try_flip in [{'v': False, 'h': False}, {'v': False, 'h': True}, {'v': True, 'h': False}, {'v': True, 'h': True}]:
-							flipped = stblib.tiles.Tile(representation = tile._representation.copy())
+							flipped = stblib.tiles.Tile(representation = copy.deepcopy(tile._representation))
 							if try_flip['v']:
 								flipped.flip_v()
 							if try_flip['h']:
