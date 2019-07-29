@@ -17,6 +17,10 @@
 			"type": "import"
 		},
 		{
+			"src": "characters/kiki/animations/kiki_anim_jump.json",
+			"type": "import"
+		},
+		{
 			"src": "characters/kiki/animations/kiki_anim_landing.json",
 			"type": "import"
 		},
@@ -342,6 +346,16 @@
 			"start_routine": null,
 			"type": "character_state",
 			"update_routine": "kiki_tick_helpless"
+		},
+		{
+			"input_routine": "kiki_input_jumping",
+			"name": "KIKI_STATE_JUMPING",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "kiki_tick_jumping"
 		}
 	],
 	"tileset": {

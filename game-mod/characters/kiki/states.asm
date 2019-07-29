@@ -8,6 +8,7 @@ KIKI_STATE_FALLING = 6
 KIKI_STATE_LANDING = 7
 KIKI_STATE_CRASHING = 8
 KIKI_STATE_HELPLESS = 9
+KIKI_STATE_JUMPING = 10
 
 KIKI_AIR_FRICTION_STRENGTH = 7
 KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
@@ -567,15 +568,31 @@ kiki_input_idle:
 	input_table:
 	.(
 		table_length:
-		.byt 2
+		.byt 5
 		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT, CONTROLLER_INPUT_RIGHT
+		.byt CONTROLLER_INPUT_LEFT, CONTROLLER_INPUT_RIGHT, CONTROLLER_INPUT_JUMP, CONTROLLER_INPUT_JUMP_RIGHT, CONTROLLER_INPUT_JUMP_LEFT
 		controller_callbacks_lsb:
-		.byt <kiki_input_idle_left, <kiki_input_idle_right
+		.byt <kiki_input_idle_left, <kiki_input_idle_right, <kiki_start_jumping,   <kiki_input_idle_jump_right, <kiki_input_idle_jump_left
 		controller_callbacks_msb:
-		.byt >kiki_input_idle_left, >kiki_input_idle_right
+		.byt >kiki_input_idle_left, >kiki_input_idle_right, >kiki_start_jumping,   >kiki_input_idle_jump_right, >kiki_input_idle_jump_left
 		controller_default_callback:
 		.word end
+	.)
+
+	kiki_input_idle_jump_right:
+	.(
+		lda DIRECTION_RIGHT
+		sta player_a_direction, x
+		jmp kiki_start_jumping
+		;rts ; useless - kiki_start_jumping is a routine
+	.)
+
+	kiki_input_idle_jump_left:
+	.(
+		lda DIRECTION_LEFT
+		sta player_a_direction, x
+		jmp kiki_start_jumping
+		;rts ; useless - kiki_start_jumping is a routine
 	.)
 .)
 
@@ -688,26 +705,160 @@ kiki_input_running:
 
 	kiki_input_running_left:
 	.(
+		;TODO
 		rts
 	.)
 
 	kiki_input_running_right:
 	.(
+		;TODO
 		rts
 	.)
 
+	;TODO input jump
 	input_table:
 	.(
 		table_length:
-		.byt 2
+		.byt 5
 		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,    CONTROLLER_INPUT_RIGHT
+		.byt CONTROLLER_INPUT_LEFT,    CONTROLLER_INPUT_RIGHT,    CONTROLLER_INPUT_JUMP, CONTROLLER_INPUT_JUMP_RIGHT, CONTROLLER_INPUT_JUMP_LEFT
 		controller_callbacks_lsb:
-		.byt <kiki_input_running_left, <kiki_input_running_right
+		.byt <kiki_input_running_left, <kiki_input_running_right, <kiki_start_jumping,   <kiki_start_jumping,         <kiki_start_jumping
 		controller_callbacks_msb:
-		.byt >kiki_input_running_left, >kiki_input_running_right
+		.byt >kiki_input_running_left, >kiki_input_running_right, >kiki_start_jumping,   >kiki_start_jumping,         >kiki_start_jumping
 		controller_default_callback:
 		.word kiki_start_idle
+	.)
+.)
+
+
+kiki_start_jumping:
+.(
+	lda #KIKI_STATE_JUMPING
+	sta player_a_state, x
+
+	lda #0
+	sta player_a_state_field1, x
+	sta player_a_state_clock, x
+
+	; Set the appropriate animation
+	lda #<kiki_anim_jump
+	sta tmpfield13
+	lda #>kiki_anim_jump
+	sta tmpfield14
+	jsr set_player_animation
+
+	rts
+.)
+
+KIKI_STATE_JUMP_PREPARATION_END = 4
+kiki_tick_jumping:
+.(
+	;TODO instead of handling short-hop by watching velocity, handle it at a fixed frame number
+	;     it would allow to put initial speed and short-hop speed in constants with less side effects on each values
+	;     with that done, we could remove hardcoded velocity values
+	;     expected constants -
+	;       KIKI_STATE_JUMP_SHORT_HOP_TIME
+	;       KIKI_STATE_JUMP_INITIAL_VELOCITY
+	;       KIKI_STATE_JUMP_SHORT_HOP_VELOCITY
+
+	; Tick clock
+	inc player_a_state_clock, x
+
+	; Wait for the preparation to end to begin to jump
+	lda player_a_state_clock, x
+	cmp #KIKI_STATE_JUMP_PREPARATION_END
+	bcc end
+	beq begin_to_jump
+
+		; Check if the top of the jump is reached
+		lda player_a_velocity_v, x
+		beq top_reached
+		bpl top_reached
+
+			; The top is not reached, stay in jumping state but apply gravity and directional influence
+			jsr kiki_tick_falling ; Hack - We just use kiki_tick_falling which do exactly what we want
+
+			; Check if it is time to stop a short-hop
+			lda player_a_velocity_v, x
+			cmp #$fd
+			bcs stop_short_hop
+			jmp end
+
+		; The top is reached, return to falling
+		top_reached:
+			jsr kiki_start_falling
+			jmp end
+
+		; If the jump button is no more pressed mid jump, convert the jump to a short-hop
+		stop_short_hop:
+			lda player_a_state_field1, x ;
+			bne end                      ; Check for short hop only once
+			inc player_a_state_field1, x ;
+
+			lda controller_a_btns, x   ;
+			and #CONTROLLER_INPUT_JUMP ; If the jump button is still pressed, this is not a short-hop
+			bne end                    ;
+
+			lda #$fe                       ;
+			sta player_a_velocity_v, x     ;
+			sta player_a_velocity_v_low, x ; Reduce upward momentum to end the jump earlier
+			jmp end                        ;
+
+	; Put initial jumping velocity
+	begin_to_jump:
+		lda #$fa
+		sta player_a_velocity_v, x
+		lda #$c0
+		sta player_a_velocity_v_low, x
+		jmp end
+
+	end:
+	rts
+.)
+
+kiki_input_jumping:
+.(
+	; The jump is cancellable by grounded movements during preparation
+	; and by aerial movements after that
+	lda player_a_num_aerial_jumps, x ; performing aerial jump, not
+	bne not_grounded                 ; grounded
+	lda player_a_state_clock, x          ;
+	cmp #KIKI_STATE_JUMP_PREPARATION_END ; Still preparing the jump
+	bcc grounded                         ;
+
+	not_grounded:
+	jsr kiki_check_aerial_inputs
+	jmp end
+
+	grounded:
+	lda #<(input_table+1)
+	sta tmpfield1
+	lda #>(input_table+1)
+	sta tmpfield2
+	lda input_table
+	sta tmpfield3
+	jmp controller_callbacks
+
+	end:
+	rts
+
+	input_table:
+	.(
+		; Impactful controller states and associated callbacks (when still grounded)
+		; Note - We can put subroutines as callbacks because we have nothing to do after calling it
+		;        (sourboutines return to our caller since "called" with jmp)
+		; TODO callbacks set to "end" are to be implemented (except the default callback)
+		table_length:
+		.byt 2
+		controller_inputs:
+		.byt CONTROLLER_INPUT_ATTACK_UP, CONTROLLER_INPUT_SPECIAL_UP
+		controller_callbacks_lo:
+		.byt <end, <end
+		controller_callbacks_hi:
+		.byt >end, >end
+		controller_default_callback:
+		.word end
 	.)
 .)
 
