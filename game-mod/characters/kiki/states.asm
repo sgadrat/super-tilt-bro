@@ -715,7 +715,6 @@ kiki_input_running:
 		rts
 	.)
 
-	;TODO input jump
 	input_table:
 	.(
 		table_length:
@@ -754,13 +753,9 @@ kiki_start_jumping:
 KIKI_STATE_JUMP_PREPARATION_END = 4
 kiki_tick_jumping:
 .(
-	;TODO instead of handling short-hop by watching velocity, handle it at a fixed frame number
-	;     it would allow to put initial speed and short-hop speed in constants with less side effects on each values
-	;     with that done, we could remove hardcoded velocity values
-	;     expected constants -
-	;       KIKI_STATE_JUMP_SHORT_HOP_TIME
-	;       KIKI_STATE_JUMP_INITIAL_VELOCITY
-	;       KIKI_STATE_JUMP_SHORT_HOP_VELOCITY
+	KIKI_STATE_JUMP_SHORT_HOP_TIME = 9
+	KIKI_STATE_JUMP_INITIAL_VELOCITY = $fac0
+	KIKI_STATE_JUMP_SHORT_HOP_VELOCITY = $fefe
 
 	; Tick clock
 	inc player_a_state_clock, x
@@ -780,9 +775,10 @@ kiki_tick_jumping:
 			jsr kiki_tick_falling ; Hack - We just use kiki_tick_falling which do exactly what we want
 
 			; Check if it is time to stop a short-hop
-			lda player_a_velocity_v, x
-			cmp #$fd
-			bcs stop_short_hop
+			;TODO see if we can put this check in the initial condition
+			lda player_a_state_clock, x
+			cmp #KIKI_STATE_JUMP_SHORT_HOP_TIME
+			beq stop_short_hop
 			jmp end
 
 		; The top is reached, return to falling
@@ -792,24 +788,23 @@ kiki_tick_jumping:
 
 		; If the jump button is no more pressed mid jump, convert the jump to a short-hop
 		stop_short_hop:
-			lda player_a_state_field1, x ;
-			bne end                      ; Check for short hop only once
-			inc player_a_state_field1, x ;
+			; If the jump button is still pressed, this is not a short-hop
+			lda controller_a_btns, x
+			and #CONTROLLER_INPUT_JUMP
+			bne end
 
-			lda controller_a_btns, x   ;
-			and #CONTROLLER_INPUT_JUMP ; If the jump button is still pressed, this is not a short-hop
-			bne end                    ;
-
-			lda #$fe                       ;
-			sta player_a_velocity_v, x     ;
-			sta player_a_velocity_v_low, x ; Reduce upward momentum to end the jump earlier
-			jmp end                        ;
+			; Reduce upward momentum to end the jump earlier
+			lda #>KIKI_STATE_JUMP_SHORT_HOP_VELOCITY
+			sta player_a_velocity_v, x
+			lda #<KIKI_STATE_JUMP_SHORT_HOP_VELOCITY
+			sta player_a_velocity_v_low, x
+			jmp end
 
 	; Put initial jumping velocity
 	begin_to_jump:
-		lda #$fa
+		lda #>KIKI_STATE_JUMP_INITIAL_VELOCITY
 		sta player_a_velocity_v, x
-		lda #$c0
+		lda #<KIKI_STATE_JUMP_INITIAL_VELOCITY
 		sta player_a_velocity_v_low, x
 		jmp end
 
