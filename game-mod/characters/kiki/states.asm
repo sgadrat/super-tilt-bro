@@ -210,11 +210,11 @@ kiki_check_aerial_inputs:
 		.byt CONTROLLER_INPUT_ATTACK_LEFT,   CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_DOWN_TILT,    CONTROLLER_INPUT_ATTACK_UP,   CONTROLLER_INPUT_JAB
 		.byt CONTROLLER_INPUT_SPECIAL,       CONTROLLER_INPUT_SPECIAL_UP,   CONTROLLER_INPUT_SPECIAL_DOWN, CONTROLLER_INPUT_TECH
 		controller_callbacks_lo:
-		.byt <no_input,                      <no_input,                     <no_input,                     <no_input,                    <no_input
+		.byt <no_input,                      <no_input,                     <kiki_start_aerial_jumping,    <kiki_start_aerial_jumping,   <kiki_start_aerial_jumping
 		.byt <no_input,                      <no_input,                     <no_input,                     <no_input,                    <no_input
 		.byt <no_input,                      <no_input,                     <no_input,                     <fast_fall
 		controller_callbacks_hi:
-		.byt >no_input,                      >no_input,                     >no_input,                     >no_input,                    >no_input
+		.byt >no_input,                      >no_input,                     >kiki_start_aerial_jumping,    >kiki_start_aerial_jumping,   >kiki_start_aerial_jumping
 		.byt >no_input,                      >no_input,                     >no_input,                     >no_input,                    >no_input
 		.byt >no_input,                      >no_input,                     >no_input,                     >fast_fall
 		controller_default_callback:
@@ -860,6 +860,44 @@ kiki_input_jumping:
 		controller_default_callback:
 		.word end
 	.)
+.)
+
+
+kiki_start_aerial_jumping:
+.(
+	KIKI_MAX_NUM_AERIAL_JUMPS = 1
+
+	; Deny to start jump state if the player used all it's jumps
+	lda #KIKI_MAX_NUM_AERIAL_JUMPS
+	cmp player_a_num_aerial_jumps, x
+	bne jump_ok
+	rts
+	jump_ok:
+	inc player_a_num_aerial_jumps, x
+
+	; Trick - aerial_jumping set the state to jumping. It is the same state with
+	; the starting conditions as the only differences
+	lda #KIKI_STATE_JUMPING
+	sta player_a_state, x
+
+	; Reset clock
+	lda #0
+	sta player_a_state_clock, x
+
+	lda #$00
+	sta player_a_velocity_v, x
+	lda #$00
+	sta player_a_velocity_v_low, x
+
+	; Set the appropriate animation
+	;TODO use aerial_jump animation
+	lda #<kiki_anim_jump
+	sta tmpfield13
+	lda #>kiki_anim_jump
+	sta tmpfield14
+	jsr set_player_animation
+
+	rts
 .)
 
 
