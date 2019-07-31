@@ -766,39 +766,41 @@ kiki_tick_jumping:
 	bcc end
 	beq begin_to_jump
 
-		; Check if the top of the jump is reached
-		lda player_a_velocity_v, x
-		beq top_reached
-		bpl top_reached
+	; Handle short-hop input
+	cmp #KIKI_STATE_JUMP_SHORT_HOP_TIME
+	beq stop_short_hop
 
-			; The top is not reached, stay in jumping state but apply gravity and directional influence
-			jsr kiki_tick_falling ; Hack - We just use kiki_tick_falling which do exactly what we want
+	; Check if the top of the jump is reached
+	lda player_a_velocity_v, x
+	beq top_reached
+	bpl top_reached
 
-			; Check if it is time to stop a short-hop
-			;TODO see if we can put this check in the initial condition
-			lda player_a_state_clock, x
-			cmp #KIKI_STATE_JUMP_SHORT_HOP_TIME
-			beq stop_short_hop
-			jmp end
+	; The top is not reached, stay in jumping state but apply gravity and directional influence
+	moving_upward:
+		jsr kiki_tick_falling ; Hack - We just use kiki_tick_falling which do exactly what we want
+		jmp end
 
-		; The top is reached, return to falling
-		top_reached:
-			jsr kiki_start_falling
-			jmp end
+	; The top is reached, return to falling
+	top_reached:
+		jsr kiki_start_falling
+		jmp end
 
-		; If the jump button is no more pressed mid jump, convert the jump to a short-hop
-		stop_short_hop:
-			; If the jump button is still pressed, this is not a short-hop
-			lda controller_a_btns, x
-			and #CONTROLLER_INPUT_JUMP
-			bne end
+	; If the jump button is no more pressed mid jump, convert the jump to a short-hop
+	stop_short_hop:
+		; Handle this tick as any other
+		jsr kiki_tick_falling
 
-			; Reduce upward momentum to end the jump earlier
-			lda #>KIKI_STATE_JUMP_SHORT_HOP_VELOCITY
-			sta player_a_velocity_v, x
-			lda #<KIKI_STATE_JUMP_SHORT_HOP_VELOCITY
-			sta player_a_velocity_v_low, x
-			jmp end
+		; If the jump button is still pressed, this is not a short-hop
+		lda controller_a_btns, x
+		and #CONTROLLER_INPUT_JUMP
+		bne end
+
+		; Reduce upward momentum to end the jump earlier
+		lda #>KIKI_STATE_JUMP_SHORT_HOP_VELOCITY
+		sta player_a_velocity_v, x
+		lda #<KIKI_STATE_JUMP_SHORT_HOP_VELOCITY
+		sta player_a_velocity_v_low, x
+		jmp end
 
 	; Put initial jumping velocity
 	begin_to_jump:
@@ -806,7 +808,7 @@ kiki_tick_jumping:
 		sta player_a_velocity_v, x
 		lda #<KIKI_STATE_JUMP_INITIAL_VELOCITY
 		sta player_a_velocity_v_low, x
-		jmp end
+		;jmp end ; Useless, fallthrough
 
 	end:
 	rts
