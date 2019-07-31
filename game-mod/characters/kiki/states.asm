@@ -661,7 +661,7 @@ kiki_tick_running:
 		lda #>KIKI_RUNNING_MAX_VELOCITY
 		sta tmpfield4
 		lda #<KIKI_RUNNING_MAX_VELOCITY
-		jmp update_volicty
+		jmp update_velocity
 
 	run_left:
 		; Running left, velocity tends toward vector "-1 * max volcity"
@@ -669,7 +669,7 @@ kiki_tick_running:
 		sta tmpfield4
 		lda #<-KIKI_RUNNING_MAX_VELOCITY
 
-	update_volicty:
+	update_velocity:
 		sta tmpfield2
 		lda #0
 		sta tmpfield3
@@ -705,13 +705,23 @@ kiki_input_running:
 
 	kiki_input_running_left:
 	.(
-		;TODO
+		lda DIRECTION_LEFT
+		cmp player_a_direction, x
+		beq end_changing_direction
+			sta player_a_direction, x
+			jsr kiki_set_running_animation
+		end_changing_direction:
 		rts
 	.)
 
 	kiki_input_running_right:
 	.(
-		;TODO
+		lda DIRECTION_RIGHT
+		cmp player_a_direction, x
+		beq end_changing_direction
+			sta player_a_direction, x
+			jsr kiki_set_running_animation
+		end_changing_direction:
 		rts
 	.)
 
