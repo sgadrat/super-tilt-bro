@@ -134,6 +134,11 @@ init_game_state:
 			cpx #2
 			bne initialize_one_player
 
+		; Clear players' elements
+		lda #STAGE_ELEMENT_END
+		sta player_a_objects
+		sta player_b_objects
+
 		; Construct players palette swap buffers
 		ldx #0 ; X points on players_palettes's next byte
 
