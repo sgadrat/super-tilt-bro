@@ -25,14 +25,14 @@ stage_pit_init:
 	sta stage_pit_platform2_direction_h
 
 	; Place moving platform sprites
-	lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_TOP ;
+	lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_TOP  ;
 	clc
 	adc #15
 	sta oam_mirror+STAGE_PIT_MOVING_PLATFORM_SPRITES*4                                                 ;
 	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+1)*4                                             ; Y positions
 	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+2)*4                                             ;
 	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+3)*4                                             ;
-	lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PIT_MOVING_PLATFORM_2_OFFSET+STAGE_PLATFORM_OFFSET_TOP ;
+	lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_2_OFFSET+STAGE_PLATFORM_OFFSET_TOP  ;
 	clc
 	adc #15
 	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+4)*4                                             ;
@@ -60,7 +60,7 @@ stage_pit_init:
 	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+6)*4+2 ;
 	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+7)*4+2 ;
 
-	lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_LEFT ;
+	lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_LEFT  ;
 	clc
 	adc #7
 	sta oam_mirror+STAGE_PIT_MOVING_PLATFORM_SPRITES*4+3                                                ;
@@ -70,7 +70,7 @@ stage_pit_init:
 	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+2)*4+3                                            ; X positions
 	adc #8
 	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+3)*4+3                                            ;
-	lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PIT_MOVING_PLATFORM_2_OFFSET+STAGE_PLATFORM_OFFSET_LEFT ;
+	lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_2_OFFSET+STAGE_PLATFORM_OFFSET_LEFT  ;
 	adc #7
 	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+4)*4+3                                            ;
 	adc #8
@@ -113,11 +113,11 @@ stage_pit_tick:
 			;         we prefer to move a player that is not really grounded
 			;         than moving the platform through him
 			move_players_on_platform:
-				lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_LEFT, y
+				lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_LEFT, y
 				sta tmpfield1
-				lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_RIGHT, y
+				lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_RIGHT, y
 				sta tmpfield2
-				lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_TOP, y
+				lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_TOP, y
 				sta tmpfield3
 				lda player_a_y_low, x
 				pha
@@ -143,18 +143,18 @@ stage_pit_tick:
 				bne move_players_on_platform
 
 			; Move platform in stage's data
-			lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_TOP, y
+			lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_TOP, y
 			clc
 			adc tmpfield4
-			sta stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_TOP, y
-			lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_LEFT, y
+			sta stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_TOP, y
+			lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_LEFT, y
 			clc
 			adc tmpfield5
-			sta stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_LEFT, y
-			lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_RIGHT, y
+			sta stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_LEFT, y
+			lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_RIGHT, y
 			clc
 			adc tmpfield5
-			sta stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_RIGHT, y
+			sta stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_RIGHT, y
 
 			; Prepare next platform
 			cpy #STAGE_SMOOTH_PLATFORM_LENGTH
@@ -217,10 +217,10 @@ stage_pit_tick:
 		ldy #0 ; Y is the current waypoint index
 		check_one_wp:
 		lda waypoints_v, y
-		cmp stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_TOP, x
+		cmp stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_TOP, x
 		bne next_wp
 		lda waypoints_h, y
-		cmp stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_LEFT, x
+		cmp stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_LEFT, x
 		beq change_direction
 
 		next_wp:

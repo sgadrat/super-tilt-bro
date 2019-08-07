@@ -269,7 +269,7 @@ ai_tick:
 				lda #CONTROLLER_BTN_RIGHT
 				sta ai_current_action_modifier
 				ldy best_platform
-				SIGNED_CMP(player_b_x, player_b_x_screen, stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT COMMA y, #0)
+				SIGNED_CMP(player_b_x, player_b_x_screen, stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_RIGHT COMMA y, #0)
 				bmi direction_set
 				lda #CONTROLLER_BTN_LEFT
 				sta ai_current_action_modifier
@@ -282,7 +282,7 @@ ai_tick:
 				lda player_b_hitstun
 				bne set_idle_action
 
-				SIGNED_CMP(player_b_y, player_b_y_screen, stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0)
+				SIGNED_CMP(player_b_y, player_b_y_screen, stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0)
 				bmi set_idle_action
 
 				lda player_b_state
@@ -304,10 +304,10 @@ ai_tick:
 					lda ai_current_action_modifier
 					cmp #CONTROLLER_BTN_RIGHT
 					beq load_left_edge
-					lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT, y
+					lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_RIGHT, y
 					jmp edge_loaded
 					load_left_edge:
-					lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_LEFT, y
+					lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_LEFT, y
 					edge_loaded:
 
 						sec
@@ -370,11 +370,11 @@ ai_tick:
 			sta best_platform
 
 			; A platform above the player cannot save him
-			SIGNED_CMP(stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0, player_b_y, player_b_y_screen)
+			SIGNED_CMP(stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0, player_b_y, player_b_y_screen)
 			bmi end
 
 			; A platform on the left of the player cannot save him
-			lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT, y
+			lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_RIGHT, y
 			clc
 			adc #1
 			sta patched_value
@@ -386,7 +386,7 @@ ai_tick:
 			clc
 			adc #1
 			sta patched_value
-			SIGNED_CMP(patched_value, player_b_x_screen, stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_LEFT COMMA y, #0)
+			SIGNED_CMP(patched_value, player_b_x_screen, stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_LEFT COMMA y, #0)
 			bmi end
 
 			; The current platform can save the player, no need to recover

@@ -242,21 +242,22 @@ check_on_ground:
 	bne offground
 
 	; Iterate on platforms until we find on onn which the player is
+	;TODO use stage_iterate_platforms routine
 	ldy #0
 	check_current_platform:
-		lda stage_data+STAGE_OFFSET_PLATFORMS, y
+		lda stage_data+STAGE_OFFSET_ELEMENTS, y
 		beq offground
 
-		lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_LEFT, y
+		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_LEFT, y
 		sta tmpfield1
-		lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT, y
+		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_RIGHT, y
 		sta tmpfield2
-		lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_TOP, y
+		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_TOP, y
 		sta tmpfield3
 		jsr check_on_platform_screen_unsafe
 		beq end
 
-		lda stage_data+STAGE_OFFSET_PLATFORMS, y
+		lda stage_data+STAGE_OFFSET_ELEMENTS, y
 		cmp #$01
 		beq skip_solid_platform
 

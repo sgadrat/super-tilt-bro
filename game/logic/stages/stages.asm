@@ -58,10 +58,10 @@ stage_generic_init:
 	sta stage_data, x
 	inx
 	iny
-	cpy #STAGE_OFFSET_PLATFORMS
+	cpy #STAGE_OFFSET_ELEMENTS
 	bne copy_header_loop
 
-	copy_platforms_loop:
+	copy_elements_loop:
 	lda (tmpfield1), y
 	sta stage_data, x
 	beq copy_data_end
@@ -83,7 +83,7 @@ stage_generic_init:
 	sta stage_data, x
 	iny
 	inx
-	jmp copy_platforms_loop
+	jmp copy_elements_loop
 	copy_data_end:
 
 	rts
@@ -93,7 +93,7 @@ stage_generic_init:
 ;  tmpfield1, tmpfield2 - subroutine to call
 ;
 ; For each call, the platform can be accessed at address
-; "stage_data+STAGE_OFFSET_PLATFORMS, y"
+; "stage_data+STAGE_OFFSET_ELEMENTS, y"
 ;
 ; Called subroutine can stop the iteration by setting Y to $ff, else
 ; it must not modify the Y register.
@@ -104,14 +104,14 @@ stage_iterate_platforms:
 	ldy #0
 
 	check_current_platform:
-	lda stage_data+STAGE_OFFSET_PLATFORMS, y
+	lda stage_data+STAGE_OFFSET_ELEMENTS, y
 	beq end
 
 	jsr call_pointed_subroutine
 	cpy #$ff
 	beq end
 
-	lda stage_data+STAGE_OFFSET_PLATFORMS, y
+	lda stage_data+STAGE_OFFSET_ELEMENTS, y
 	cmp #$01
 	beq skip_solid_platform
 

@@ -892,7 +892,7 @@ move_player:
 	check_platform_colision:
 		;txa
 		;pha
-		ldx stage_data+STAGE_OFFSET_PLATFORMS, y
+		ldx stage_data+STAGE_OFFSET_ELEMENTS, y
 		lda platform_actions_low, x
 		sta action_vector
 		lda platform_actions_high, x
@@ -928,13 +928,13 @@ move_player:
 
 	solid_platform_collision:
 	.(
-		lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_LEFT, y
+		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_LEFT, y
 		sta obstacle_left
-		lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_TOP, y
+		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_TOP, y
 		sta obstacle_top
-		lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT, y
+		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_RIGHT, y
 		sta obstacle_right
-		lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_BOTTOM, y
+		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_BOTTOM, y
 		sta obstacle_bottom
 		lda #0
 		pha
@@ -957,11 +957,11 @@ move_player:
 
 	smooth_platform_collision:
 	.(
-		lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_LEFT, y
+		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_LEFT, y
 		sta obstacle_left
-		lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_TOP, y
+		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_TOP, y
 		sta obstacle_top
-		lda stage_data+STAGE_OFFSET_PLATFORMS+STAGE_PLATFORM_OFFSET_RIGHT, y
+		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_RIGHT, y
 		sta obstacle_right
 		lda #0
 		pha
