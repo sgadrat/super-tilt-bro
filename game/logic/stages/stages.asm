@@ -89,29 +89,75 @@ stage_generic_init:
 	rts
 .)
 
-; Call a subroutine for each platforms of the current stage
+; Call a subroutine for each element of the current stage plus player handled elements
 ;  tmpfield1, tmpfield2 - subroutine to call
 ;
-; For each call, the platform can be accessed at address
+;  Overwrites register A and register Y.
+;
+; For each call, the element can be accessed at address
 ; "stage_data+STAGE_OFFSET_ELEMENTS, y"
 ;
 ; Called subroutine can stop the iteration by setting Y to $ff, else
 ; it must not modify the Y register.
 ;
 ; Called subroutine must not modify tmpfield1 nor tmpfield2.
-stage_iterate_platforms:
+stage_iterate_all_elements:
 .(
-	ldy #0
+	ldy #STAGE_OFFSET_ELEMENTS
+	jsr stage_iterate_elements
+	cpy #$ff
+	beq end
 
+#if player_a_objects < stage_data
+#error following code assumes player_a_objects to be after stage data for less than 255 bytes
+#endif
+#if player_a_objects-stage_data > 255
+#error following code assumes player_a_objects to be after stage data for less than 255 bytes
+#endif
+	ldy #player_a_objects-stage_data
+	jsr stage_iterate_elements
+	cpy #$ff
+	beq end
+
+#if player_b_objects < stage_data
+#error following code assumes player_a_objects to be after stage data for less than 255 bytes
+#endif
+#if player_b_objects-stage_data > 255
+#error following code assumes player_a_objects to be after stage data for less than 255 bytes
+#endif
+	ldy #player_b_objects-stage_data
+	jsr stage_iterate_elements
+	cpy #$ff
+	beq end
+
+	end:
+	rts
+.)
+
+; Call a subroutine for each element of the current stage
+;  tmpfield1, tmpfield2 - subroutine to call
+;  register Y - offset of the first element from "stage_data"
+;
+;  Overwrites register A and register Y.
+;
+; For each call, the element can be accessed at address
+; "stage_data, y"
+;
+; Called subroutine can stop the iteration by setting Y to $ff, else
+; it must not modify the Y register.
+;
+; Called subroutine must not modify tmpfield1 nor tmpfield2.
+stage_iterate_elements:
+.(
 	check_current_platform:
-	lda stage_data+STAGE_OFFSET_ELEMENTS, y
+	lda stage_data, y
 	beq end
 
 	jsr call_pointed_subroutine
 	cpy #$ff
 	beq end
 
-	lda stage_data+STAGE_OFFSET_ELEMENTS, y
+	lda stage_data, y
 	cmp #$01
 	beq skip_solid_platform
 

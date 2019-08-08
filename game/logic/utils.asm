@@ -231,54 +231,75 @@ apply_player_gravity:
 ; Overwrites register A, register Y, tmpfield1, tmpfield2 and tmpfield3
 check_on_ground:
 .(
-	platfrom_left = tmpfield1 ; Not movable - parameter of check_on_platform
+	platform_left = tmpfield1 ; Not movable - parameter of check_on_platform
 	platform_right = tmpfield2 ; Not movable - parameter of check_on_platform
 	platform_top = tmpfield3 ; Not movable - parameter of check_on_platform
 
+	platform_handler_lsb = tmpfield1 ; Not movable - parameter of stage_iterate_all_elements
+	platform_handler_msb = tmpfield2 ; Not movable - parameter of stage_iterate_all_elements
+
 	; Player cannot be on ground if not in the main screen (platforms use one byte unsigned positions)
+	;  Note - We can directly jump to "end" as BNE branches if Z flag is unset, which also means offground
 	lda player_a_x_screen, x
-	bne offground
+	bne end
 	lda player_a_y_screen, x
-	bne offground
+	bne end
 
-	; Iterate on platforms until we find on onn which the player is
-	;TODO use stage_iterate_platforms routine
-	ldy #0
-	check_current_platform:
-		lda stage_data+STAGE_OFFSET_ELEMENTS, y
-		beq offground
+		; Iterate on platforms until we find on onn which the player is
+		lda #<check_current_platform
+		sta platform_handler_lsb
+		lda #>check_current_platform
+		sta platform_handler_msb
+		jsr stage_iterate_all_elements
 
-		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_LEFT, y
-		sta tmpfield1
-		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_RIGHT, y
-		sta tmpfield2
-		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_TOP, y
-		sta tmpfield3
-		jsr check_on_platform_screen_unsafe
-		beq end
-
-		lda stage_data+STAGE_OFFSET_ELEMENTS, y
-		cmp #$01
-		beq skip_solid_platform
-
-			tya
-			clc
-			adc #STAGE_SMOOTH_PLATFORM_LENGTH
-			tay
-			jmp check_current_platform
-
-		skip_solid_platform:
-			tya
-			clc
-			adc #STAGE_PLATFORM_LENGTH
-			tay
-			jmp check_current_platform
-
-	offground:
-		lda #1 ; unset Z flag
+		; Set Z flag if a grounded platform was found
+		cpy #$ff
 
 	end:
 		rts
+
+	check_current_platform:
+	.(
+		; Save action vector as it stage_iterate_all_elements forbids to modify it and it collides with check_on_platform_screen_unsafe parameters
+		lda tmpfield1
+		pha
+		lda tmpfield2
+		pha
+
+		; Save Y value as stage_iterate_all_elements forbids to modify it if not to stop iterating
+		tya
+		pha
+
+		; Check if player is is grounded on this platform
+		lda stage_data+STAGE_PLATFORM_OFFSET_LEFT, y
+		sta platform_left
+		lda stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
+		sta platform_right
+		lda stage_data+STAGE_PLATFORM_OFFSET_TOP, y
+		sta platform_top
+		jsr check_on_platform_screen_unsafe
+		bne not_grounded
+
+		grounded:
+			; Stop iterating, we found the platform on which we are grounded
+			pla
+			ldy #$ff
+			jmp end_current_platform
+
+		not_grounded:
+			; Continue iterating, restore original Y value and fallthrough to end_current_platform
+			pla
+			tay
+
+		end_current_platform:
+			; Restore action vector
+			pla
+			sta tmpfield2
+			pla
+			sta tmpfield1
+
+		rts
+	.)
 .)
 
 ; Check if the player is grounded on a specific platform
