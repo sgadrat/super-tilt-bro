@@ -129,9 +129,9 @@ check_collision:
 	bot_edge:
 		LDA_OBSTACLE_BOTTOM_SCREEN()                                                     ;
 		sta obstacle_bottom_screen                                                       ;
-		SIGNED_CMP(obstacle_bottom, obstacle_bottom_screen, orig_y, orig_y_screen)       ; Do not collide if original position is on the under of edge
+		SIGNED_CMP(orig_y, orig_y_screen, obstacle_bottom, obstacle_bottom_screen)       ; Do not collide if original position is on the under of edge
 		bmi end                                                                          ; nor if final position is on above the edge
-			SIGNED_CMP(final_y, final_y_screen, obstacle_bottom, obstacle_bottom_screen) ;
+			SIGNED_CMP(obstacle_bottom, obstacle_bottom_screen, final_y, final_y_screen) ;
 			bmi end                                                                      ;
 
 				lda #$00                   ;
@@ -143,7 +143,6 @@ check_collision:
 				lda obstacle_bottom_screen ;
 				adc #0                     ;
 				sta final_y_screen         ;
-
 	end:
 	rts
 .)
