@@ -169,6 +169,10 @@ stage_gem_last_opponent_state = $8c
 
 ;Note - $90 to $af are used by DI particles
 
+; Extra zero-page registers
+extra_tmpfield1 = $b0
+extra_tmpfield2 = $b1
+
 ;
 ; TITLE labels
 ;

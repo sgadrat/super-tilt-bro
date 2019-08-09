@@ -113,6 +113,11 @@ init_game_state:
 		lda #INGAME_PLAYER_B_LAST_SPRITE
 		sta player_b_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
 
+		; Clear players' elements
+		lda #STAGE_ELEMENT_END
+		sta player_a_objects
+		sta player_b_objects
+
 		; Initialize players' state
 		ldx #$00
 		initialize_one_player:
@@ -133,11 +138,6 @@ init_game_state:
 			inx
 			cpx #2
 			bne initialize_one_player
-
-		; Clear players' elements
-		lda #STAGE_ELEMENT_END
-		sta player_a_objects
-		sta player_b_objects
 
 		; Construct players palette swap buffers
 		ldx #0 ; X points on players_palettes's next byte
@@ -836,8 +836,8 @@ apply_force_vector:
 move_player:
 .(
 	;TODO harmonize component names "subpixel", "pixel" and "screen"
-	old_x = tmpfield1 ; Not movable, return value and parameter of check_collision
-	old_y = tmpfield2 ; Not movable, return value and parameter of check_collision
+	old_x_collision = tmpfield1 ; Not movable, return value and parameter of check_collision
+	old_y_collision = tmpfield2 ; Not movable, return value and parameter of check_collision
 	final_x_low = tmpfield9 ; Not movable, parameter of check_collision
 	final_x_high = tmpfield3 ; Not movable, parameter of check_collision
 	final_y_low = tmpfield10 ; Not movable, parameter of check_collision
@@ -851,6 +851,10 @@ move_player:
 	old_x_screen = tmpfield13 ; Not movable, parameter of check_collision
 	old_y_screen = tmpfield14 ; Not movable, parameter of check_collision
 	action_vector = tmpfield15
+
+	old_x = extra_tmpfield1
+	old_y = extra_tmpfield2
+	elements_action_vector = tmpfield1 ; Not movable, parameter of stage_iterate_all_elements
 
 	; Save X to ensure it is not modified by this routine
 	txa
@@ -895,16 +899,11 @@ move_player:
 	ldy #0
 
 	check_platform_colision:
-		;txa
-		;pha
-		ldx stage_data+STAGE_OFFSET_ELEMENTS, y
-		lda platform_actions_low, x
-		sta action_vector
-		lda platform_actions_high, x
-		sta action_vector+1
-		;pla
-		;tax
-		jmp (action_vector)
+		lda #<handle_one_platform
+		sta elements_action_vector
+		lda #>handle_one_platform
+		sta elements_action_vector+1
+		jsr stage_iterate_all_elements
 
 	end:
 		; Restore X
@@ -926,20 +925,36 @@ move_player:
 		sta player_a_y_low, x
 	rts
 
-	end_platforms:
+	handle_one_platform:
 	.(
-		jmp end
+		; Use element type as jump-table index
+		ldx stage_data, y
+		dex
+
+		; Jump to correct action
+		lda platform_actions_low, x
+		sta action_vector
+		lda platform_actions_high, x
+		sta action_vector+1
+		jmp (action_vector)
+
+		;rts ; useless, we jump to a routine
 	.)
 
 	solid_platform_collision:
 	.(
-		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_LEFT, y
+		; Prepare parameters for check_collision
+		lda old_x
+		sta old_x_collision
+		lda old_y
+		sta old_y_collision
+		lda stage_data+STAGE_PLATFORM_OFFSET_LEFT, y
 		sta obstacle_left
-		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_TOP, y
+		lda stage_data+STAGE_PLATFORM_OFFSET_TOP, y
 		sta obstacle_top
-		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_RIGHT, y
+		lda stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
 		sta obstacle_right
-		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_BOTTOM, y
+		lda stage_data+STAGE_PLATFORM_OFFSET_BOTTOM, y
 		sta obstacle_bottom
 		lda #0
 		pha
@@ -947,50 +962,71 @@ move_player:
 		pha
 		pha
 
+		; Call check collision and clean stack parameters
 		jsr check_collision
 		pla
 		pla
 		pla
 		pla
 
-		tya
-		clc
-		adc #STAGE_PLATFORM_LENGTH
-		tay
-		jmp check_platform_colision
+		; Move computed position to its non-conflicting place
+		lda old_x_collision
+		sta old_x
+		lda old_y_collision
+		sta old_y
+
+		; Restore iteration action vector, erased by "old position" parameter
+		lda #<handle_one_platform
+		sta elements_action_vector
+		lda #>handle_one_platform
+		sta elements_action_vector+1
+
+		rts
 	.)
 
 	smooth_platform_collision:
 	.(
-		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_LEFT, y
+		; Prepare parameters for check_top_collision
+		lda old_x
+		sta old_x_collision
+		lda old_y
+		sta old_y_collision
+		lda stage_data+STAGE_PLATFORM_OFFSET_LEFT, y
 		sta obstacle_left
-		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_TOP, y
+		lda stage_data+STAGE_PLATFORM_OFFSET_TOP, y
 		sta obstacle_top
-		lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PLATFORM_OFFSET_RIGHT, y
+		lda stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
 		sta obstacle_right
 		lda #0
 		pha
 		pha
 		pha
 
+		; Call check collision and clean stack parameters
 		jsr check_top_collision
 		pla
 		pla
 		pla
 
-		tya
-		clc
-		adc #STAGE_SMOOTH_PLATFORM_LENGTH
-		tay
-		jmp check_platform_colision
+		; Move computed position to its non-conflicting place
+		lda old_x_collision
+		sta old_x
+		lda old_y_collision
+		sta old_y
+
+		; Restore iteration action vector, erased by "old position" parameter
+		lda #<handle_one_platform
+		sta elements_action_vector
+		lda #>handle_one_platform
+		sta elements_action_vector+1
+
+		rts
 	.)
 
 	platform_actions_low:
-		.byt <end_platforms
 		.byt <solid_platform_collision
 		.byt <smooth_platform_collision
 	platform_actions_high:
-		.byt >end_platforms
 		.byt >solid_platform_collision
 		.byt >smooth_platform_collision
 .)
