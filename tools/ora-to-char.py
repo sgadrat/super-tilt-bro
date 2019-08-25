@@ -43,6 +43,28 @@ import stblib.tiles
 import sys
 import urllib.parse
 
+def remove_qs(value):
+	"""
+	Remove the querystring from a string (do nothing if there is no querystring)
+	"""
+	return value[:value.find('?')] if '?' in value else value
+
+def extract_params(qs, known_params, object_type, object_name):
+	"""
+	Extract parameters from a query string to a dict while ensuring there is no unknown parameter
+
+	qs: the query string
+	known_params: a list of known parameters, any unknown parameter found will fail an "ensure" check
+	object_type: string containing the type of object to which the parameters relate (for error message purpose)
+	object_name: string containing the name of the object to which the parameters relate (for error message purpose)
+	"""
+	params = urllib.parse.parse_qs(qs, strict_parsing = True)
+	for param_name in params.keys():
+		ensure(param_name in known_params, 'unknown {} parameter "{}" for {} {}'.format(object_type, param_name, object_type, object_name))
+		ensure(len(params[param_name]) == 1, '{} parameter "{}" defined multiple times in {} {}'.format(object_type, param_name, object_type, object_name))
+		params[param_name] = params[param_name][0]
+	return params
+
 def ora_to_character(image_file, char_name):
 	character = stblib.character.Character(name = char_name)
 
@@ -95,11 +117,7 @@ def ora_to_character(image_file, char_name):
 			ensure(m.group('anim') == anim_name, 'frame stack "{}" is named after animation "{}" while in animation "{}"'.format(frame_stack['name'], m.group('anim'), anim_name))
 			params = {}
 			if m.group('params') is not None:
-				params = urllib.parse.parse_qs(m.group('params'), strict_parsing = True)
-			for param_name in params.keys():
-				ensure(param_name in ['dur'], 'unknown frame parameter "{}" for frame {}'.format(param_name, frame_stack['name']))
-				ensure(len(params[param_name]) == 1, 'frame parameter "{}" defined multiple times in frame {}'.format(param_name, frame_stack['name']))
-				params[param_name] = params[param_name][0]
+				params = extract_params(m.group('params'), ['dur'], 'frame', frame_stack['name'])
 
 			frame_id = m.group('frame')
 			frame.duration = int(params.get('dur', '4'))
@@ -116,6 +134,33 @@ def ora_to_character(image_file, char_name):
 					hurtbox.right = hurtbox.left + frame_child['raster'].size[0]
 					hurtbox.bottom = hurtbox.top + frame_child['raster'].size[1]
 					frame.hurtbox = hurtbox
+
+				elif remove_qs(frame_child['name']) == 'anims.{}.frame{}.hitbox'.format(anim_name, frame_id):
+					# Parse hitbox
+					ensure(frame.hitbox is None, 'multiple hitboxes defined for frame anims.{}.frame{}'.format(anim_name, frame_id))
+
+					hitbox_qs = urllib.parse.urlparse(frame_child['name']).query
+					ensure(hitbox_qs != '', 'hitbox {} has no parameters'.format(frame_child['name']))
+					hitbox_params = extract_params(
+						hitbox_qs,
+						['enabled', 'damages', 'base_h', 'force_h', 'base_v', 'force_v'],
+						'hitbox', remove_qs(frame_child['name'])
+					)
+
+					hitbox = stblib.animations.Hitbox(
+						enabled = hitbox_params.get('enabled', 'false') == 'true',
+						damages = int(hitbox_params.get('damages', '0')),
+						base_h = int(hitbox_params.get('base_h', '0')),
+						base_v = int(hitbox_params.get('base_v', '0')),
+						force_h = int(hitbox_params.get('force_h', '0')),
+						force_v = int(hitbox_params.get('force_v', '0')),
+						left = frame_child['x'] - origin['x'],
+						top = frame_child['y'] - origin['y']
+					)
+					hitbox.right = hitbox.left + frame_child['raster'].size[0]
+					hitbox.bottom = hitbox.top + frame_child['raster'].size[1]
+
+					frame.hitbox = hitbox
 
 				elif frame_child['name'] == 'anims.{}.frame{}.sprites'.format(anim_name, frame_id):
 					# Parse sprites
