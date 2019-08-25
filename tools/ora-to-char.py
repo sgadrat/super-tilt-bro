@@ -138,64 +138,74 @@ def ora_to_character(image_file, char_name):
 					for sprite_layer_info in sprite_layers:
 						sprite_layer = sprite_layer_info['layer']
 						ensure(sprite_layer['type'] == 'layer', 'unexpected non-layer in {}: "{}"'.format(frame_child['name'], sprite_layer['name']))
-						ensure(sprite_layer['raster'].size == (8, 8), 'unexpected sprite size of {}x{} in {}: "{}"'.format(
+						ensure(sprite_layer['raster'].size[0] % 8 == 0 and sprite_layer['raster'].size[1] % 8 == 0, 'unexpected sprite size of {}x{} in {}: "{}"'.format(
 							sprite_layer['raster'].size[0], sprite_layer['raster'].size[1],
 							frame_child['name'], sprite_layer['name']
 						))
 
-						# Parse tile
-						tile = stblib.tiles.Tile()
-						palette_num = 0
-						for y in range(8):
-							for x in range(8):
-								# Convert pixel data to palette index
-								try:
-									color_index = palettes.index(_uniq_transparent(sprite_layer['raster'].getpixel((x, y))))
-								except ValueError:
-									ensure(False, 'a sprite in {} use a color not found in palettes: sprite "{}", position "{}x{}", color "{}", palettes: {}'.format(frame_child['name'], sprite_layer['name'], x, y, sprite_layer['raster'].getpixel((x, y)), palettes))
+						raster_horizontal_tiles_count = sprite_layer['raster'].size[0] // 8
+						raster_vertical_tiles_count = sprite_layer['raster'].size[1] // 8
+						for tile_y_num_in_raster in range(raster_vertical_tiles_count):
+							tile_y_pos_in_raster = tile_y_num_in_raster * 8
+							for tile_x_num_in_raster in range(raster_horizontal_tiles_count):
+								tile_x_pos_in_raster = tile_x_num_in_raster * 8
 
-								# Store pixel in tile
-								tile._representation[y][x] = color_index % 4
-								if color_index != 0:
-									palette_num = int(color_index / 4)
+								# Parse tile
+								tile = stblib.tiles.Tile()
+								palette_num = 0
+								for y in range(8):
+									y_in_raster = tile_y_pos_in_raster + y
+									for x in range(8):
+										x_in_raster = tile_x_pos_in_raster + x
 
-						# Add tile to tileset if needed, get its name and attributes
-						tile_name = None
-						flip = None
-						for try_flip in [{'v': False, 'h': False}, {'v': False, 'h': True}, {'v': True, 'h': False}, {'v': True, 'h': True}]:
-							flipped = stblib.tiles.Tile(representation = copy.deepcopy(tile._representation))
-							if try_flip['v']:
-								flipped.flip_v()
-							if try_flip['h']:
-								flipped.flip_h()
-							try:
-								tile_index = character.tileset.tiles.index(flipped)
-								tile_name = character.tileset.tilenames[tile_index]
-								flip = try_flip
-								break
-							except ValueError:
-								pass
+										# Convert pixel data to palette index
+										try:
+											color_index = palettes.index(_uniq_transparent(sprite_layer['raster'].getpixel((x_in_raster, y_in_raster))))
+										except ValueError:
+											ensure(False, 'a sprite in {} use a color not found in palettes: sprite "{}", position "{}x{}", color "{}", palettes: {}'.format(frame_child['name'], sprite_layer['name'], x_in_raster, y_in_raster, sprite_layer['raster'].getpixel((x_in_raster, y_in_raster)), palettes))
 
-						if tile_name is None:
-							tile_name = '{}_TILE_{}'.format(character.name.upper(), len(character.tileset.tiles))
-							flip = {'v': False, 'h': False}
-							character.tileset.tiles.append(tile)
-							character.tileset.tilenames.append(tile_name)
+										# Store pixel in tile
+										tile._representation[y][x] = color_index % 4
+										if color_index != 0:
+											palette_num = int(color_index / 4)
 
-						# Add sprite to frame
-						numeric_attr = palette_num
-						if flip['v']:
-							numeric_attr += 0x80
-						if flip['h']:
-							numeric_attr += 0x40
-						sprite = stblib.animations.Sprite(
-							y = sprite_layer['y'] - origin['y'],
-							tile = tile_name,
-							attr = numeric_attr,
-							x = sprite_layer['x'] - origin['x'],
-							foreground = sprite_layer_info['foreground']
-						)
-						frame.sprites.append(sprite)
+								# Add tile to tileset if needed, get its name and attributes
+								tile_name = None
+								flip = None
+								for try_flip in [{'v': False, 'h': False}, {'v': False, 'h': True}, {'v': True, 'h': False}, {'v': True, 'h': True}]:
+									flipped = stblib.tiles.Tile(representation = copy.deepcopy(tile._representation))
+									if try_flip['v']:
+										flipped.flip_v()
+									if try_flip['h']:
+										flipped.flip_h()
+									try:
+										tile_index = character.tileset.tiles.index(flipped)
+										tile_name = character.tileset.tilenames[tile_index]
+										flip = try_flip
+										break
+									except ValueError:
+										pass
+
+								if tile_name is None:
+									tile_name = '{}_TILE_{}'.format(character.name.upper(), len(character.tileset.tiles))
+									flip = {'v': False, 'h': False}
+									character.tileset.tiles.append(tile)
+									character.tileset.tilenames.append(tile_name)
+
+								# Add sprite to frame
+								numeric_attr = palette_num
+								if flip['v']:
+									numeric_attr += 0x80
+								if flip['h']:
+									numeric_attr += 0x40
+								sprite = stblib.animations.Sprite(
+									y = sprite_layer['y'] + tile_y_pos_in_raster - origin['y'],
+									tile = tile_name,
+									attr = numeric_attr,
+									x = sprite_layer['x'] + tile_x_pos_in_raster - origin['x'],
+									foreground = sprite_layer_info['foreground']
+								)
+								frame.sprites.append(sprite)
 				else:
 					# Refuse unknown children in a frame, it is certainly a naming error or something not yet supported
 					ensure(False, 'unknown frame child in {}: "{}"'.format(frame_stack['name'], frame_child['name']))
