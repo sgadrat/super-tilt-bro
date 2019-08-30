@@ -9,6 +9,7 @@ KIKI_STATE_LANDING = 7
 KIKI_STATE_CRASHING = 8
 KIKI_STATE_HELPLESS = 9
 KIKI_STATE_JUMPING = 10
+KIKI_STATE_SIDE_TILT = 11
 
 KIKI_AIR_FRICTION_STRENGTH = 7
 KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
@@ -568,13 +569,17 @@ kiki_input_idle:
 	input_table:
 	.(
 		table_length:
-		.byt 5
+		.byt 7
 		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT, CONTROLLER_INPUT_RIGHT, CONTROLLER_INPUT_JUMP, CONTROLLER_INPUT_JUMP_RIGHT, CONTROLLER_INPUT_JUMP_LEFT
+		.byt CONTROLLER_INPUT_LEFT,         CONTROLLER_INPUT_RIGHT,       CONTROLLER_INPUT_JUMP, CONTROLLER_INPUT_JUMP_RIGHT, CONTROLLER_INPUT_JUMP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_ATTACK_LEFT
 		controller_callbacks_lsb:
-		.byt <kiki_input_idle_left, <kiki_input_idle_right, <kiki_start_jumping,   <kiki_input_idle_jump_right, <kiki_input_idle_jump_left
+		.byt <kiki_input_idle_left,         <kiki_input_idle_right,       <kiki_start_jumping,   <kiki_input_idle_jump_right, <kiki_input_idle_jump_left
+		.byt <kiki_start_side_tilt_right,   <kiki_start_side_tilt_left
 		controller_callbacks_msb:
-		.byt >kiki_input_idle_left, >kiki_input_idle_right, >kiki_start_jumping,   >kiki_input_idle_jump_right, >kiki_input_idle_jump_left
+		.byt >kiki_input_idle_left,         >kiki_input_idle_right,       >kiki_start_jumping,   >kiki_input_idle_jump_right, >kiki_input_idle_jump_left
+		.byt >kiki_start_side_tilt_right,   >kiki_start_side_tilt_left
+
 		controller_default_callback:
 		.word end
 	.)
@@ -728,13 +733,16 @@ kiki_input_running:
 	input_table:
 	.(
 		table_length:
-		.byt 5
+		.byt 7
 		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,    CONTROLLER_INPUT_RIGHT,    CONTROLLER_INPUT_JUMP, CONTROLLER_INPUT_JUMP_RIGHT, CONTROLLER_INPUT_JUMP_LEFT
+		.byt CONTROLLER_INPUT_LEFT,        CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP, CONTROLLER_INPUT_JUMP_RIGHT, CONTROLLER_INPUT_JUMP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_ATTACK_RIGHT
 		controller_callbacks_lsb:
-		.byt <kiki_input_running_left, <kiki_input_running_right, <kiki_start_jumping,   <kiki_start_jumping,         <kiki_start_jumping
+		.byt <kiki_input_running_left,     <kiki_input_running_right,     <kiki_start_jumping,   <kiki_start_jumping,         <kiki_start_jumping
+		.byt <kiki_start_side_tilt_left,   <kiki_start_side_tilt_right
 		controller_callbacks_msb:
-		.byt >kiki_input_running_left, >kiki_input_running_right, >kiki_start_jumping,   >kiki_start_jumping,         >kiki_start_jumping
+		.byt >kiki_input_running_left,     >kiki_input_running_right,     >kiki_start_jumping,   >kiki_start_jumping,         >kiki_start_jumping
+		.byt >kiki_start_side_tilt_left,   >kiki_start_side_tilt_right
 		controller_default_callback:
 		.word kiki_start_idle
 	.)
@@ -1080,4 +1088,70 @@ kiki_start_helpless:
 kiki_tick_helpless:
 .(
 	jmp kiki_tick_falling
+.)
+
+
+kiki_start_side_tilt_right:
+.(
+	lda DIRECTION_RIGHT
+	sta player_a_direction, x
+	jmp kiki_start_side_tilt
+	; rts ; useless - kiki_start_side_tilt is a routine
+.)
+
+kiki_start_side_tilt_left:
+.(
+	lda DIRECTION_LEFT
+	sta player_a_direction, x
+	; jmp kiki_start_side_tilt ; useless - fallthrough
+	; rts ; useless - kiki_start_side_tilt is a routine
+.)
+
+kiki_start_side_tilt:
+.(
+	; Set the appropriate animation
+	lda #<kiki_anim_strike
+	sta tmpfield13
+	lda #>kiki_anim_strike
+	sta tmpfield14
+	jsr set_player_animation
+
+	; Set the player's state
+	lda #KIKI_STATE_SIDE_TILT
+	sta player_a_state, x
+
+	; Initialize the clock
+	lda #0
+	sta player_a_state_clock,x
+
+	rts
+.)
+
+kiki_tick_side_tilt:
+.(
+	KIKI_STATE_SIDE_TILT_DURATION = 16
+	KIKI_STATE_SIDE_TILT_FRICTION = $20
+
+	inc player_a_state_clock, x
+
+	lda player_a_state_clock, x
+	cmp #KIKI_STATE_SIDE_TILT_DURATION
+	bne update_velocity
+
+		jsr kiki_start_idle
+		jmp end
+
+	update_velocity:
+		; Do not move, velocity tends toward vector (0,0)
+		lda #$00
+		sta tmpfield4
+		sta tmpfield3
+		sta tmpfield2
+		sta tmpfield1
+		lda #KIKI_STATE_SIDE_TILT_FRICTION
+		sta tmpfield5
+		jsr merge_to_player_velocity
+
+	end:
+	rts
 .)

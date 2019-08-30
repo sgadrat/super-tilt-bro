@@ -37,6 +37,10 @@
 			"type": "import"
 		},
 		{
+			"src": "characters/kiki/animations/kiki_anim_strike.json",
+			"type": "import"
+		},
+		{
 			"src": "characters/kiki/animations/kiki_anim_thrown.json",
 			"type": "import"
 		}
@@ -356,6 +360,16 @@
 			"start_routine": null,
 			"type": "character_state",
 			"update_routine": "kiki_tick_jumping"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "KIKI_STATE_SIDE_TILT",
+			"offground_routine": "kiki_start_falling",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "kiki_tick_side_tilt"
 		}
 	],
 	"tileset": {
@@ -398,7 +412,18 @@
 			"KIKI_TILE_34",
 			"KIKI_TILE_35",
 			"KIKI_TILE_36",
-			"KIKI_TILE_37"
+			"KIKI_TILE_37",
+			"KIKI_TILE_38",
+			"KIKI_TILE_39",
+			"KIKI_TILE_40",
+			"KIKI_TILE_41",
+			"KIKI_TILE_42",
+			"KIKI_TILE_43",
+			"KIKI_TILE_44",
+			"KIKI_TILE_45",
+			"KIKI_TILE_46",
+			"KIKI_TILE_47",
+			"KIKI_TILE_48"
 		],
 		"type": "tileset"
 	},
