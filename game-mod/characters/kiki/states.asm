@@ -10,12 +10,55 @@ KIKI_STATE_CRASHING = 8
 KIKI_STATE_HELPLESS = 9
 KIKI_STATE_JUMPING = 10
 KIKI_STATE_SIDE_TILT = 11
+KIKI_STATE_SIDE_SPE = 12
 
 KIKI_AIR_FRICTION_STRENGTH = 7
 KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
 KIKI_AERIAL_SPEED = $0100
 
 KIKI_GROUND_FRICTION_STRENGTH = $40
+
+kiki_first_wall_sprite_per_player:
+.byt INGAME_PLAYER_A_LAST_SPRITE-1, INGAME_PLAYER_B_LAST_SPRITE-1
+
+kiki_last_anim_sprite_per_player:
+.byt INGAME_PLAYER_A_LAST_SPRITE-2, INGAME_PLAYER_B_LAST_SPRITE-2
+
+kiki_init:
+.(
+	; Reserve two sprites for walls
+	.(
+		animation_state_vector = tmpfield2
+
+		; A = X * ANIMATION_STATE_LENGTH (== offset of the player's animation state)
+#if ANIMATION_STATE_LENGTH <> 12
+#error code expects an animation state's length of 12 bytes
+#endif
+		txa
+		asl
+		asl
+		sta tmpfield1
+		asl
+		clc
+		adc tmpfield1
+
+		; animation_state_vector = player_a_animation + A
+		clc
+		adc #<player_a_animation
+		sta animation_state_vector
+		lda #0
+		adc #>player_a_animation
+		sta animation_state_vector+1
+
+		; animation's last sprite num = animation's last sprite num - 2
+		; TODO the same for out of screen indicator (or change oos indicator to use less sprites)
+		ldy #ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+		lda kiki_last_anim_sprite_per_player, x
+		sta (animation_state_vector), y
+	.)
+
+	rts
+.)
 
 kiki_aerial_directional_influence:
 .(
@@ -471,6 +514,10 @@ kiki_tick_innexistant:
 
 kiki_start_spawn:
 .(
+	; Hack - there is no ensured call to a character init function
+	;        expect start_spawn to be called once at the begining of a game
+	jsr kiki_init
+
 	; Set the player's state
 	lda #KIKI_STATE_SPAWN
 	sta player_a_state, x
@@ -569,16 +616,16 @@ kiki_input_idle:
 	input_table:
 	.(
 		table_length:
-		.byt 7
+		.byt 9
 		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,         CONTROLLER_INPUT_RIGHT,       CONTROLLER_INPUT_JUMP, CONTROLLER_INPUT_JUMP_RIGHT, CONTROLLER_INPUT_JUMP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_ATTACK_LEFT
+		.byt CONTROLLER_INPUT_LEFT,         CONTROLLER_INPUT_RIGHT,       CONTROLLER_INPUT_JUMP,          CONTROLLER_INPUT_JUMP_RIGHT,   CONTROLLER_INPUT_JUMP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT
 		controller_callbacks_lsb:
-		.byt <kiki_input_idle_left,         <kiki_input_idle_right,       <kiki_start_jumping,   <kiki_input_idle_jump_right, <kiki_input_idle_jump_left
-		.byt <kiki_start_side_tilt_right,   <kiki_start_side_tilt_left
+		.byt <kiki_input_idle_left,         <kiki_input_idle_right,       <kiki_start_jumping,            <kiki_input_idle_jump_right,   <kiki_input_idle_jump_left
+		.byt <kiki_start_side_tilt_right,   <kiki_start_side_tilt_left,   <kiki_start_side_spe_right,     <kiki_start_side_spe_left
 		controller_callbacks_msb:
-		.byt >kiki_input_idle_left,         >kiki_input_idle_right,       >kiki_start_jumping,   >kiki_input_idle_jump_right, >kiki_input_idle_jump_left
-		.byt >kiki_start_side_tilt_right,   >kiki_start_side_tilt_left
+		.byt >kiki_input_idle_left,         >kiki_input_idle_right,       >kiki_start_jumping,            >kiki_input_idle_jump_right,   >kiki_input_idle_jump_left
+		.byt >kiki_start_side_tilt_right,   >kiki_start_side_tilt_left,   >kiki_start_side_spe_right,     >kiki_start_side_spe_left
 
 		controller_default_callback:
 		.word end
@@ -733,16 +780,16 @@ kiki_input_running:
 	input_table:
 	.(
 		table_length:
-		.byt 7
+		.byt 9
 		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,        CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP, CONTROLLER_INPUT_JUMP_RIGHT, CONTROLLER_INPUT_JUMP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_ATTACK_RIGHT
+		.byt CONTROLLER_INPUT_LEFT,        CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP,         CONTROLLER_INPUT_JUMP_RIGHT,    CONTROLLER_INPUT_JUMP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_SPECIAL_RIGHT
 		controller_callbacks_lsb:
-		.byt <kiki_input_running_left,     <kiki_input_running_right,     <kiki_start_jumping,   <kiki_start_jumping,         <kiki_start_jumping
-		.byt <kiki_start_side_tilt_left,   <kiki_start_side_tilt_right
+		.byt <kiki_input_running_left,     <kiki_input_running_right,     <kiki_start_jumping,           <kiki_start_jumping,            <kiki_start_jumping
+		.byt <kiki_start_side_tilt_left,   <kiki_start_side_tilt_right,   <kiki_start_side_spe_left,     <kiki_start_side_spe_right
 		controller_callbacks_msb:
-		.byt >kiki_input_running_left,     >kiki_input_running_right,     >kiki_start_jumping,   >kiki_start_jumping,         >kiki_start_jumping
-		.byt >kiki_start_side_tilt_left,   >kiki_start_side_tilt_right
+		.byt >kiki_input_running_left,     >kiki_input_running_right,     >kiki_start_jumping,           >kiki_start_jumping,            >kiki_start_jumping
+		.byt >kiki_start_side_tilt_left,   >kiki_start_side_tilt_right,   >kiki_start_side_spe_left,     >kiki_start_side_spe_right
 		controller_default_callback:
 		.word kiki_start_idle
 	.)
@@ -1149,6 +1196,125 @@ kiki_tick_side_tilt:
 		sta tmpfield2
 		sta tmpfield1
 		lda #KIKI_STATE_SIDE_TILT_FRICTION
+		sta tmpfield5
+		jsr merge_to_player_velocity
+
+	end:
+	rts
+.)
+
+
+kiki_start_side_spe_right:
+.(
+	lda DIRECTION_RIGHT
+	sta player_a_direction, x
+	jmp kiki_start_side_spe
+	; rts ; useless - kiki_start_side_spe is a routine
+.)
+
+kiki_start_side_spe_left:
+.(
+	lda DIRECTION_LEFT
+	sta player_a_direction, x
+	; jmp kiki_start_side_spe ; useless - fallthrough
+	; rts ; useless - kiki_start_side_spe is a routine
+.)
+
+kiki_start_side_spe:
+.(
+	; Set the appropriate animation
+	lda #<kiki_anim_paint_side
+	sta tmpfield13
+	lda #>kiki_anim_paint_side
+	sta tmpfield14
+	jsr set_player_animation
+
+	; Set the player's state
+	lda #KIKI_STATE_SIDE_SPE
+	sta player_a_state, x
+
+	; Initialize the clock
+	lda #0
+	sta player_a_state_clock,x
+
+	; TODO stop any velocity
+
+	; Place wall
+	ldy #0
+	cpx #0
+	beq place_wall
+		ldy #player_b_objects-player_a_objects
+	place_wall:
+
+	lda #STAGE_ELEMENT_PLATFORM
+    sta player_a_objects, y ; type
+
+    lda player_a_x, x
+	sec
+	sbc #17
+    sta player_a_objects+1, y ; left
+
+    clc
+	adc #16
+    sta player_a_objects+2, y ; right
+
+    lda player_a_y, x
+	clc
+	adc #16
+    sta player_a_objects+4, y ; bot
+
+	sec
+	sbc #32
+    sta player_a_objects+3, y ; top
+
+    lda #STAGE_ELEMENT_END
+    sta player_a_objects+5, y ; next's type
+
+	; Place wall's sprites
+	lda kiki_first_wall_sprite_per_player, x
+	asl
+	asl
+	tay
+
+	lda player_a_y, x
+	sta oam_mirror, y ; First sprite Y
+	lda #1
+	sta oam_mirror+1, y ; First sprite tile
+	lda #0
+	sta oam_mirror+2, y ; First sprite attributes
+	lda player_a_x, x
+	sec
+	sbc #9
+	sta oam_mirror+3, y ; First sprite X
+
+	;TODO second sprite
+
+	rts
+.)
+
+kiki_tick_side_spe:
+.(
+	; TODO remove velocity stuff
+	KIKI_STATE_SIDE_SPE_DURATION = 16
+	KIKI_STATE_SIDE_SPE_FRICTION = $ff
+
+	inc player_a_state_clock, x
+
+	lda player_a_state_clock, x
+	cmp #KIKI_STATE_SIDE_SPE_DURATION
+	bne update_velocity
+
+		jsr kiki_start_idle
+		jmp end
+
+	update_velocity:
+		; Do not move, velocity tends toward vector (0,0)
+		lda #$00
+		sta tmpfield4
+		sta tmpfield3
+		sta tmpfield2
+		sta tmpfield1
+		lda #KIKI_STATE_SIDE_SPE_FRICTION
 		sta tmpfield5
 		jsr merge_to_player_velocity
 
