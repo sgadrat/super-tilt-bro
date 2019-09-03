@@ -30,34 +30,45 @@ kiki_init:
 	.(
 		animation_state_vector = tmpfield2
 
-		; A = X * ANIMATION_STATE_LENGTH (== offset of the player's animation state)
-#if ANIMATION_STATE_LENGTH <> 12
-#error code expects an animation state's length of 12 bytes
-#endif
-		txa
-		asl
-		asl
-		sta tmpfield1
-		asl
-		clc
-		adc tmpfield1
-
-		; animation_state_vector = player_a_animation + A
-		clc
-		adc #<player_a_animation
+		; Animation's last sprite num = animation's last sprite num - 2
+		lda anim_last_sprite_num_per_player_lsb, x
 		sta animation_state_vector
-		lda #0
-		adc #>player_a_animation
+		lda anim_last_sprite_num_per_player_msb, x
 		sta animation_state_vector+1
 
-		; animation's last sprite num = animation's last sprite num - 2
-		; TODO the same for out of screen indicator (or change oos indicator to use less sprites)
-		ldy #ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+		ldy #0
+		lda kiki_last_anim_sprite_per_player, x
+		sta (animation_state_vector), y
+
+		; Same for out of screen indicator
+		lda oos_last_sprite_num_per_player_lsb, x
+		sta animation_state_vector
+		lda oos_last_sprite_num_per_player_msb, x
+		sta animation_state_vector+1
+
+		;ldy #0 ; useless, already set above
 		lda kiki_last_anim_sprite_per_player, x
 		sta (animation_state_vector), y
 	.)
 
 	rts
+
+	;TODO may be optmizable
+	;     storing the index of the byte from player_a_animation, means one byte per player
+	;     and only have to load it in y and access the byte in "absolute,Y" instead of "(indirect),Y"
+	anim_last_sprite_num_per_player_msb:
+		.byt >player_a_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+		.byt >player_b_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+	anim_last_sprite_num_per_player_lsb:
+		.byt <player_a_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+		.byt <player_b_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+
+	oos_last_sprite_num_per_player_msb:
+		.byt >player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+		.byt >player_b_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+	oos_last_sprite_num_per_player_lsb:
+		.byt <player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+		.byt <player_b_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
 .)
 
 kiki_aerial_directional_influence:
@@ -1278,18 +1289,28 @@ kiki_start_side_spe:
 
 	lda player_a_y, x
 	sta oam_mirror, y ; First sprite Y
+	clc
+	adc #8
+	sta oam_mirror+4, y ; Second sprite Y
+
 	lda #1
 	sta oam_mirror+1, y ; First sprite tile
-	lda #0
+	sta oam_mirror+5, y ; Second sprite tile
+
+	lda wall_attributes_per_player, x
 	sta oam_mirror+2, y ; First sprite attributes
+	sta oam_mirror+6, y ; Second sprite attributes
+
 	lda player_a_x, x
 	sec
 	sbc #9
 	sta oam_mirror+3, y ; First sprite X
-
-	;TODO second sprite
+	sta oam_mirror+7, y ; Second sprite X
 
 	rts
+
+	wall_attributes_per_player:
+	.byt 1, 3
 .)
 
 kiki_tick_side_spe:
