@@ -24,6 +24,9 @@ kiki_first_wall_sprite_per_player:
 kiki_last_anim_sprite_per_player:
 .byt INGAME_PLAYER_A_LAST_SPRITE-2, INGAME_PLAYER_B_LAST_SPRITE-2
 
+kiki_first_tile_index_per_player:
+.byt CHARACTERS_CHARACTER_A_FIRST_TILE, CHARACTERS_CHARACTER_B_FIRST_TILE
+
 kiki_init:
 .(
 	; Reserve two sprites for walls
@@ -1288,12 +1291,16 @@ kiki_start_side_spe:
 	tay
 
 	lda player_a_y, x
+	sec
+	sbc #1
 	sta oam_mirror, y ; First sprite Y
 	clc
 	adc #8
 	sta oam_mirror+4, y ; Second sprite Y
 
-	lda #1
+	lda #KIKI_TILE_WALL_BLOCK
+	clc
+	adc kiki_first_tile_index_per_player, x
 	sta oam_mirror+1, y ; First sprite tile
 	sta oam_mirror+5, y ; Second sprite tile
 

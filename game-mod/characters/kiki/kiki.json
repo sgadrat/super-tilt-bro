@@ -389,7 +389,7 @@
 	"tileset": {
 		"src": "characters/kiki/tileset.gif",
 		"tilenames": [
-			"KIKI_TILE_0",
+			"KIKI_TILE_WALL_BLOCK",
 			"KIKI_TILE_1",
 			"KIKI_TILE_2",
 			"KIKI_TILE_3",
@@ -441,7 +441,8 @@
 			"KIKI_TILE_49",
 			"KIKI_TILE_50",
 			"KIKI_TILE_51",
-			"KIKI_TILE_52"
+			"KIKI_TILE_52",
+			"KIKI_TILE_53"
 		],
 		"type": "tileset"
 	},
