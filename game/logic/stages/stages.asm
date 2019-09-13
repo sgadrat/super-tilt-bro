@@ -157,6 +157,7 @@ stage_iterate_elements:
 	cpy #$ff
 	beq end
 
+	;TODO use a reference table and add possibility to skip oos (smooth) platforms
 	lda stage_data, y
 	cmp #$01
 	beq skip_solid_platform

@@ -1023,12 +1023,28 @@ move_player:
 		rts
 	.)
 
+	oos_solid_platform_collision:
+	.(
+		;TODO
+		rts
+	.)
+
+	oos_smooth_platform_collision:
+	.(
+		;TODO
+		rts
+	.)
+
 	platform_actions_low:
 		.byt <solid_platform_collision
 		.byt <smooth_platform_collision
+		.byt <oos_solid_platform_collision
+		.byt <oos_smooth_platform_collision
 	platform_actions_high:
 		.byt >solid_platform_collision
 		.byt >smooth_platform_collision
+		.byt >oos_solid_platform_collision
+		.byt >oos_smooth_platform_collision
 .)
 
 ; Check the player's position and modify the current state accordingly

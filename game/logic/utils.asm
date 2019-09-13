@@ -238,6 +238,7 @@ check_on_ground:
 	platform_handler_lsb = tmpfield1 ; Not movable - parameter of stage_iterate_all_elements
 	platform_handler_msb = tmpfield2 ; Not movable - parameter of stage_iterate_all_elements
 
+	;TODO remove this check
 	; Player cannot be on ground if not in the main screen (platforms use one byte unsigned positions)
 	;  Note - We can directly jump to "end" as BNE branches if Z flag is unset, which also means offground
 	lda player_a_x_screen, x
@@ -258,6 +259,7 @@ check_on_ground:
 	end:
 		rts
 
+	;TODO replace this routine by one that choose between current inplementation for onscreen platforms or a new one for multiscreen platforms
 	check_current_platform:
 	.(
 		; Save action vector as it stage_iterate_all_elements forbids to modify it and it collides with check_on_platform_screen_unsafe parameters
@@ -363,6 +365,13 @@ check_on_platform_screen_unsafe:
 	offground:
 
 	end:
+	rts
+.)
+
+;TODO document
+check_on_platform_multi_screen:
+.(
+	;TODO implement
 	rts
 .)
 

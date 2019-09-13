@@ -365,6 +365,8 @@ ai_tick:
 		.(
 			patched_value = tmpfield5
 
+			;TODO ignore oos platforms
+
 			; Select any platform as the best
 			tya
 			sta best_platform
