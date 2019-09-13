@@ -378,7 +378,7 @@
 		{
 			"input_routine": "keep_input_dirty",
 			"name": "KIKI_STATE_SIDE_SPE",
-			"offground_routine": "kiki_start_falling",
+			"offground_routine": "dummy_routine",
 			"onground_routine": "dummy_routine",
 			"onhurt_routine": "hurt_player",
 			"start_routine": null,

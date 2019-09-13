@@ -268,11 +268,11 @@ kiki_check_aerial_inputs:
 		.byt CONTROLLER_INPUT_ATTACK_LEFT,   CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_DOWN_TILT,    CONTROLLER_INPUT_ATTACK_UP,   CONTROLLER_INPUT_JAB
 		.byt CONTROLLER_INPUT_SPECIAL,       CONTROLLER_INPUT_SPECIAL_UP,   CONTROLLER_INPUT_SPECIAL_DOWN, CONTROLLER_INPUT_TECH
 		controller_callbacks_lo:
-		.byt <no_input,                      <no_input,                     <kiki_start_aerial_jumping,    <kiki_start_aerial_jumping,   <kiki_start_aerial_jumping
+		.byt <kiki_start_side_spe_right,     <kiki_start_side_spe_left,     <kiki_start_aerial_jumping,    <kiki_start_aerial_jumping,   <kiki_start_aerial_jumping
 		.byt <no_input,                      <no_input,                     <no_input,                     <no_input,                    <no_input
 		.byt <no_input,                      <no_input,                     <no_input,                     <fast_fall
 		controller_callbacks_hi:
-		.byt >no_input,                      >no_input,                     >kiki_start_aerial_jumping,    >kiki_start_aerial_jumping,   >kiki_start_aerial_jumping
+		.byt >kiki_start_side_spe_right,     >kiki_start_side_tilt_left,    >kiki_start_aerial_jumping,    >kiki_start_aerial_jumping,   >kiki_start_aerial_jumping
 		.byt >no_input,                      >no_input,                     >no_input,                     >no_input,                    >no_input
 		.byt >no_input,                      >no_input,                     >no_input,                     >fast_fall
 		controller_default_callback:
@@ -1251,7 +1251,10 @@ kiki_start_side_spe:
 	lda #0
 	sta player_a_state_clock,x
 
-	; TODO stop any velocity
+	; TODO study intersting velocity setups
+	;  Current - rapidly slow down to (0, 0) (was done to copy-paste code from side tilt)
+	;  Idea 1 - directly stop any velocity (should feel like now, without computations per tick)
+	;  Idea 2 - stop horizontal velocity, keep vertical velocity, apply gravity on tick (should help to side spe as part of aerial gameplay)
 
 	; Place wall
 	ldy #0
@@ -1322,7 +1325,7 @@ kiki_start_side_spe:
 
 kiki_tick_side_spe:
 .(
-	; TODO remove velocity stuff
+	; TODO study velocity stuff
 	KIKI_STATE_SIDE_SPE_DURATION = 16
 	KIKI_STATE_SIDE_SPE_FRICTION = $ff
 
