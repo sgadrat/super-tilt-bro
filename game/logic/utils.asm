@@ -228,41 +228,38 @@ apply_player_gravity:
 ;
 ; Sets Z flag if on ground, else unset it
 ;
-; Overwrites register A, register Y, tmpfield1, tmpfield2 and tmpfield3
+; Overwrites register A, register Y and tmpfields 1 to 6
 check_on_ground:
 .(
 	platform_left = tmpfield1 ; Not movable - parameter of check_on_platform
 	platform_right = tmpfield2 ; Not movable - parameter of check_on_platform
 	platform_top = tmpfield3 ; Not movable - parameter of check_on_platform
 
+	platform_left_lsb = tmpfield1 ; Not movable - parameter of check_on_platform_multi_screen
+	platform_right_lsb = tmpfield2 ; Not movable - parameter of check_on_platform_multi_screen
+	platform_top_lsb = tmpfield3 ; Not movable - parameter of check_on_platform_multi_screen
+	platform_left_msb = tmpfield4 ; Not movable - parameter of check_on_platform_multi_screen
+	platform_right_msb = tmpfield5 ; Not movable - parameter of check_on_platform_multi_screen
+	platform_top_msb = tmpfield6 ; Not movable - parameter of check_on_platform_multi_screen
+
 	platform_handler_lsb = tmpfield1 ; Not movable - parameter of stage_iterate_all_elements
 	platform_handler_msb = tmpfield2 ; Not movable - parameter of stage_iterate_all_elements
 
-	;TODO remove this check
-	; Player cannot be on ground if not in the main screen (platforms use one byte unsigned positions)
-	;  Note - We can directly jump to "end" as BNE branches if Z flag is unset, which also means offground
-	lda player_a_x_screen, x
-	bne end
-	lda player_a_y_screen, x
-	bne end
+	; Iterate on platforms until we find on onn which the player is
+	lda #<check_current_platform
+	sta platform_handler_lsb
+	lda #>check_current_platform
+	sta platform_handler_msb
+	jsr stage_iterate_all_elements
 
-		; Iterate on platforms until we find on onn which the player is
-		lda #<check_current_platform
-		sta platform_handler_lsb
-		lda #>check_current_platform
-		sta platform_handler_msb
-		jsr stage_iterate_all_elements
+	; Set Z flag if a grounded platform was found
+	cpy #$ff
 
-		; Set Z flag if a grounded platform was found
-		cpy #$ff
+	rts
 
-	end:
-		rts
-
-	;TODO replace this routine by one that choose between current inplementation for onscreen platforms or a new one for multiscreen platforms
 	check_current_platform:
 	.(
-		; Save action vector as it stage_iterate_all_elements forbids to modify it and it collides with check_on_platform_screen_unsafe parameters
+		; Save action vector as it stage_iterate_all_elements forbids to modify it and it collides with check_on_platform parameters
 		lda tmpfield1
 		pha
 		lda tmpfield2
@@ -272,14 +269,17 @@ check_on_ground:
 		tya
 		pha
 
-		; Check if player is is grounded on this platform
-		lda stage_data+STAGE_PLATFORM_OFFSET_LEFT, y
-		sta platform_left
-		lda stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
-		sta platform_right
-		lda stage_data+STAGE_PLATFORM_OFFSET_TOP, y
-		sta platform_top
-		jsr check_on_platform_screen_unsafe
+		; Call appropriate platform handler
+		lda stage_data, y
+		cmp #STAGE_ELEMENT_OOS_PLATFORM
+		bcs oos_platform
+			jsr check_simple_platform
+			jmp end_platform_handler
+		oos_platform:
+			jsr check_oos_platform
+		end_platform_handler:
+
+		; Act according to handler's result
 		bne not_grounded
 
 		grounded:
@@ -301,6 +301,38 @@ check_on_ground:
 			sta tmpfield1
 
 		rts
+	.)
+
+	check_simple_platform:
+	.(
+		; Check if player is is grounded on this platform
+		lda stage_data+STAGE_PLATFORM_OFFSET_LEFT, y
+		sta platform_left
+		lda stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
+		sta platform_right
+		lda stage_data+STAGE_PLATFORM_OFFSET_TOP, y
+		sta platform_top
+		jmp check_on_platform
+		;rts ; useless, check_on_platform is a routine
+	.)
+
+	check_oos_platform:
+	.(
+		; Check if player is is grounded on this platform
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+		sta platform_left_lsb
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
+		sta platform_right_lsb
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+		sta platform_top_lsb
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+		sta platform_left_msb
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
+		sta platform_right_msb
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+		sta platform_top_msb
+		jmp check_on_platform_multi_screen
+		;rts ; useless, check_on_platform is a routine
 	.)
 .)
 
@@ -368,11 +400,70 @@ check_on_platform_screen_unsafe:
 	rts
 .)
 
-;TODO document
+; Check if the player is grounded on a specific multi-screen platform
+;  register X - Player number
+;  tmpfield1 - platform left lsb
+;  tmpfield2 - platform right lsb
+;  tmpfield3 - platform top lsb
+;  tmpfield4 - platform left msb
+;  tmpfield5 - platform right msb
+;  tmpfield6 - platform top msb
+;
+; Sets Z flag if on ground, else unset it
+;
+; Ovewrites register A, tmpfield1, tmpfield2 and tmpfield3
 check_on_platform_multi_screen:
 .(
-	;TODO implement
-	rts
+	platform_left_lsb = tmpfield1
+	platform_right_lsb = tmpfield2
+	platform_top_lsb = tmpfield3
+	platform_left_msb = tmpfield4
+	platform_right_msb = tmpfield5
+	platform_top_msb = tmpfield6
+
+#define DEC_16(lsb,msb) .(:\
+	dec lsb:\
+	bne dec_16_ok:\
+	dec msb:\
+	dec_16_ok:\
+.)
+
+#define INC_16(lsb,msb) .(:\
+	inc lsb:\
+	bne inc_16_ok:\
+	inc msb:\
+	inc_16_ok:\
+.)
+
+	; if (X < platform_left - 1) then offground
+	DEC_16(platform_left_lsb, platform_left_msb)
+	SIGNED_CMP(player_a_x COMMA x, player_a_x_screen COMMA x, platform_left_lsb, platform_left_msb)
+	bmi offground
+
+	; if (platform_right + 1 < X) then offground
+	INC_16(platform_right_lsb, platform_right_msb)
+	SIGNED_CMP(platform_right_lsb, platform_right_msb, player_a_x COMMA x, player_a_x_screen COMMA x)
+	bmi offground
+
+	; if (Y != platform_top - 1) then offground
+	DEC_16(platform_top_lsb, platform_top_msb)
+	SIGNED_CMP(player_a_y COMMA x, player_a_y_screen COMMA x, platform_top_lsb, platform_top_msb)
+	bmi offground
+
+	; To be onground, the character has to be on the bottom subpixel of the (Y ground pixel - 1)
+	lda player_a_y_low, x
+	cmp #$ff
+	bne offground
+
+		; On ground, unset Z flag
+		lda #1
+		rts
+
+	offground:
+
+		; Offground, set Z flag
+		lda #0
+		rts
 .)
 
 ; Copy tiles data from CPU memory to PPU memory
