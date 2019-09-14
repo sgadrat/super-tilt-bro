@@ -365,36 +365,43 @@ ai_tick:
 		.(
 			patched_value = tmpfield5
 
-			;TODO ignore oos platforms
+			; Ignore unknown platforms
+			lda stage_data, y
+			cmp #STAGE_ELEMENT_PLATFORM
+			beq process
+			cmp #STAGE_ELEMENT_SMOOTH_PLATFORM
+			beq process
+			jmp end
+			process:
 
-			; Select any platform as the best
-			tya
-			sta best_platform
+				; Select any platform as the best
+				tya
+				sta best_platform
 
-			; A platform above the player cannot save him
-			SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0, player_b_y, player_b_y_screen)
-			bmi end
+				; A platform above the player cannot save him
+				SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0, player_b_y, player_b_y_screen)
+				bmi end
 
-			; A platform on the left of the player cannot save him
-			lda stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
-			clc
-			adc #1
-			sta patched_value
-			SIGNED_CMP(patched_value, #0, player_b_x, player_b_x_screen)
-			bmi end
+				; A platform on the left of the player cannot save him
+				lda stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
+				clc
+				adc #1
+				sta patched_value
+				SIGNED_CMP(patched_value, #0, player_b_x, player_b_x_screen)
+				bmi end
 
-			; A platform on the right of the player cannot save him
-			lda player_b_x
-			clc
-			adc #1
-			sta patched_value
-			SIGNED_CMP(patched_value, player_b_x_screen, stage_data+STAGE_PLATFORM_OFFSET_LEFT COMMA y, #0)
-			bmi end
+				; A platform on the right of the player cannot save him
+				lda player_b_x
+				clc
+				adc #1
+				sta patched_value
+				SIGNED_CMP(patched_value, player_b_x_screen, stage_data+STAGE_PLATFORM_OFFSET_LEFT COMMA y, #0)
+				bmi end
 
-			; The current platform can save the player, no need to recover
-			lda #0
-			sta endangered
-			ldy #$ff
+				; The current platform can save the player, no need to recover
+				lda #0
+				sta endangered
+				ldy #$ff
 
 			end:
 			rts

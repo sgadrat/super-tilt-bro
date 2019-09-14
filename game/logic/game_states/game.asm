@@ -1025,13 +1025,88 @@ move_player:
 
 	oos_solid_platform_collision:
 	.(
-		;TODO
+		; Prepare parameters for check_collision
+		lda old_x
+		sta old_x_collision
+		lda old_y
+		sta old_y_collision
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+		sta obstacle_left
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+		sta obstacle_top
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
+		sta obstacle_right
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
+		sta obstacle_bottom
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+		pha
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+		pha
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
+		pha
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
+		pha
+
+		; Call check collision and clean stack parameters
+		jsr check_collision
+		pla
+		pla
+		pla
+		pla
+
+		; Move computed position to its non-conflicting place
+		lda old_x_collision
+		sta old_x
+		lda old_y_collision
+		sta old_y
+
+		; Restore iteration action vector, erased by "old position" parameter
+		lda #<handle_one_platform
+		sta elements_action_vector
+		lda #>handle_one_platform
+		sta elements_action_vector+1
+
 		rts
 	.)
 
 	oos_smooth_platform_collision:
 	.(
-		;TODO
+		; Prepare parameters for check_top_collision
+		lda old_x
+		sta old_x_collision
+		lda old_y
+		sta old_y_collision
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+		sta obstacle_left
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+		sta obstacle_top
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
+		sta obstacle_right
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+		pha
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+		pha
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
+		pha
+
+		; Call check collision and clean stack parameters
+		jsr check_top_collision
+		pla
+		pla
+		pla
+
+		; Move computed position to its non-conflicting place
+		lda old_x_collision
+		sta old_x
+		lda old_y_collision
+		sta old_y
+
+		; Restore iteration action vector, erased by "old position" parameter
+		lda #<handle_one_platform
+		sta elements_action_vector
+		lda #>handle_one_platform
+		sta elements_action_vector+1
+
 		rts
 	.)
 
