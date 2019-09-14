@@ -149,32 +149,40 @@ stage_iterate_all_elements:
 ; Called subroutine must not modify tmpfield1 nor tmpfield2.
 stage_iterate_elements:
 .(
-	check_current_platform:
+	check_current_element:
 	lda stage_data, y
 	beq end
 
-	jsr call_pointed_subroutine
-	cpy #$ff
-	beq end
+		; Call element handler
+		jsr call_pointed_subroutine
+		cpy #$ff
+		beq end
 
-	;TODO use a reference table and add possibility to skip oos (smooth) platforms
-	lda stage_data, y
-	cmp #$01
-	beq skip_solid_platform
+		; Save X (stage_iterate_elements is not allowed to modify it)
+		txa
+		pha
 
-	tya
-	clc
-	adc #STAGE_SMOOTH_PLATFORM_LENGTH
-	tay
-	jmp check_current_platform
+		; Find element's size index
+		lda stage_data, y
+		tax
+		dex
 
-	skip_solid_platform:
-	tya
-	clc
-	adc #STAGE_PLATFORM_LENGTH
-	tay
-	jmp check_current_platform
+		; Add element's size to Y
+		tya
+		clc
+		adc elements_size, x
+		tay
+
+		; Restore X
+		pla
+		tax
+
+		; Handle next element
+		jmp check_current_element
 
 	end:
 	rts
+
+	elements_size:
+	.byt STAGE_PLATFORM_LENGTH, STAGE_SMOOTH_PLATFORM_LENGTH, STAGE_OOS_PLATFORM_LENGTH, STAGE_OOS_SMOOTH_PLATFORM_LENGTH
 .)
