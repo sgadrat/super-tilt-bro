@@ -1263,29 +1263,44 @@ kiki_start_side_spe:
 		ldy #player_b_objects-player_a_objects
 	place_wall:
 
-	lda #STAGE_ELEMENT_PLATFORM
-    sta player_a_objects, y ; type
+	lda #STAGE_ELEMENT_OOS_PLATFORM
+	sta player_a_objects, y ; type
 
-    lda player_a_x, x
+	lda player_a_x, x
 	sec
 	sbc #17
-    sta player_a_objects+1, y ; left
+	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+	lda player_a_x_screen, x
+	sbc #0
+	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
 
-    clc
-	adc #16
-    sta player_a_objects+2, y ; right
+	; TODO add 16 (= platform's width) to platform's left, so that this section does not depend on player's direction)
+	lda player_a_x, x
+	sec
+	sbc #1
+	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
+	lda player_a_x_screen, x
+	sbc #0
+	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
 
-    lda player_a_y, x
+	lda player_a_y, x
 	clc
 	adc #16
-    sta player_a_objects+4, y ; bot
+	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
+	lda player_a_y_screen, x
+	adc #0
+	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
 
+	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
 	sec
 	sbc #32
-    sta player_a_objects+3, y ; top
+	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
+	sbc #0
+	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
 
-    lda #STAGE_ELEMENT_END
-    sta player_a_objects+5, y ; next's type
+	lda #STAGE_ELEMENT_END
+	sta player_a_objects+STAGE_OOS_PLATFORM_LENGTH, y ; next's type
 
 	; Place wall's sprites
 	lda kiki_first_wall_sprite_per_player, x
