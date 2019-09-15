@@ -447,22 +447,26 @@ check_on_platform_multi_screen:
 
 	; if (Y != platform_top - 1) then offground
 	DEC_16(platform_top_lsb, platform_top_msb)
-	SIGNED_CMP(player_a_y COMMA x, player_a_y_screen COMMA x, platform_top_lsb, platform_top_msb)
-	bmi offground
+	lda player_a_y, x
+	cmp platform_top_lsb
+	bne offground
+	lda player_a_y_screen, x
+	cmp platform_top_msb
+	bne offground
 
 	; To be onground, the character has to be on the bottom subpixel of the (Y ground pixel - 1)
 	lda player_a_y_low, x
 	cmp #$ff
 	bne offground
 
-		; On ground, unset Z flag
-		lda #1
+		; On ground, set Z flag
+		lda #0
 		rts
 
 	offground:
 
-		; Offground, set Z flag
-		lda #0
+		; Offground, unset Z flag
+		lda #1
 		rts
 .)
 
