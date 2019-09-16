@@ -1236,6 +1236,11 @@ kiki_start_side_spe_left:
 
 kiki_start_side_spe:
 .(
+	sprite_x_lsb = tmpfield1
+	sprite_x_msb = tmpfield2
+	sprite_y_lsb = tmpfield3
+	sprite_y_msb = tmpfield4
+
 	; Set the appropriate animation
 	lda #<kiki_anim_paint_side
 	sta tmpfield13
@@ -1302,19 +1307,28 @@ kiki_start_side_spe:
 	lda #STAGE_ELEMENT_END
 	sta player_a_objects+STAGE_OOS_PLATFORM_LENGTH, y ; next's type
 
-	; Place wall's sprites
+	; Compute wall's sprites position
+	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+	clc
+	adc #15
+	sta sprite_y_lsb
+	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+	adc #0
+	sta sprite_y_msb
+
+	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+	clc
+	adc #8
+	sta sprite_x_lsb
+	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+	adc #0
+	sta sprite_x_msb
+
+	; Set sprites properties
 	lda kiki_first_wall_sprite_per_player, x
 	asl
 	asl
 	tay
-
-	lda player_a_y, x
-	sec
-	sbc #1
-	sta oam_mirror, y ; First sprite Y
-	clc
-	adc #8
-	sta oam_mirror+4, y ; Second sprite Y
 
 	lda #KIKI_TILE_WALL_BLOCK
 	clc
@@ -1326,11 +1340,49 @@ kiki_start_side_spe:
 	sta oam_mirror+2, y ; First sprite attributes
 	sta oam_mirror+6, y ; Second sprite attributes
 
-	lda player_a_x, x
-	sec
-	sbc #9
-	sta oam_mirror+3, y ; First sprite X
-	sta oam_mirror+7, y ; Second sprite X
+	; Place upper sprite
+	lda sprite_x_msb
+	cmp #0
+	bne hide_upper_sprite
+	lda sprite_y_msb
+	bne hide_upper_sprite
+
+		lda sprite_y_lsb
+		sta oam_mirror, y ; First sprite Y
+		lda sprite_x_lsb
+		sta oam_mirror+3, y ; First sprite X
+		jmp end_upper_sprite
+
+	hide_upper_sprite:
+		lda #$fe
+		sta oam_mirror, y ; First sprite Y
+
+	end_upper_sprite:
+
+	; Place lower sprite
+	lda sprite_x_msb
+	cmp #0
+	bne hide_lower_sprite
+
+	lda sprite_y_lsb
+	clc
+	adc #8
+	sta sprite_y_lsb
+	lda sprite_y_msb
+	adc #0
+	bne hide_lower_sprite
+
+		lda sprite_y_lsb
+		sta oam_mirror+4, y ; Second sprite Y
+		lda sprite_x_lsb
+		sta oam_mirror+7, y ; Second sprite X
+		jmp end_lower_sprite
+
+	hide_lower_sprite:
+		lda #$fe
+		sta oam_mirror+4, y ; Second sprite Y
+
+	end_lower_sprite:
 
 	rts
 
