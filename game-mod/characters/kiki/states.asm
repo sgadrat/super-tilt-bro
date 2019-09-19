@@ -1271,21 +1271,29 @@ kiki_start_side_spe:
 	lda #STAGE_ELEMENT_OOS_PLATFORM
 	sta player_a_objects, y ; type
 
-	lda player_a_x, x
-	sec
-	sbc #17
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-	lda player_a_x_screen, x
-	sbc #0
+	lda player_a_direction, x
+	cmp DIRECTION_LEFT
+	bne platform_on_right
+		lda player_a_x, x
+		clc
+		adc #$ef
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+		lda player_a_x_screen, x
+		adc #$ff
+		jmp end_platform_left_positioning
+	platform_on_right:
+		lda player_a_x, x
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+		lda player_a_x_screen, x
+	end_platform_left_positioning:
 	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
 
-	; TODO add 16 (= platform's width) to platform's left, so that this section does not depend on player's direction)
-	lda player_a_x, x
-	sec
-	sbc #1
+	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+	clc
+	adc #16
 	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
-	lda player_a_x_screen, x
-	sbc #0
+	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+	adc #0
 	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
 
 	lda player_a_y, x
