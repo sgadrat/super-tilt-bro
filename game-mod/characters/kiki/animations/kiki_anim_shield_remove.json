@@ -1,7 +1,7 @@
 {
 	"frames": [
 		{
-			"duration": 4,
+			"duration": 2,
 			"hitbox": null,
 			"hurtbox": {
 				"bottom": 15,
@@ -13,27 +13,43 @@
 			"sprites": [
 				{
 					"attr": 1,
-					"foreground": false,
-					"tile": "KIKI_TILE_45",
+					"foreground": true,
+					"tile": "KIKI_TILE_43",
 					"type": "animation_sprite",
-					"x": -13,
-					"y": 5
+					"x": -4,
+					"y": 0
 				},
 				{
-					"attr": 1,
-					"foreground": false,
-					"tile": "KIKI_TILE_46",
+					"attr": 65,
+					"foreground": true,
+					"tile": "KIKI_TILE_43",
 					"type": "animation_sprite",
-					"x": -5,
-					"y": 5
+					"x": 4,
+					"y": 0
+				},
+				{
+					"attr": 129,
+					"foreground": true,
+					"tile": "KIKI_TILE_43",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 8
+				},
+				{
+					"attr": 193,
+					"foreground": true,
+					"tile": "KIKI_TILE_43",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 8
 				},
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_3",
+					"tile": "KIKI_TILE_6",
 					"type": "animation_sprite",
-					"x": 7,
-					"y": 8
+					"x": -1,
+					"y": 0
 				},
 				{
 					"attr": 0,
@@ -54,16 +70,16 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_6",
+					"tile": "KIKI_TILE_3",
 					"type": "animation_sprite",
-					"x": -1,
-					"y": 0
+					"x": 7,
+					"y": 8
 				}
 			],
 			"type": "animation_frame"
 		},
 		{
-			"duration": 4,
+			"duration": 2,
 			"hitbox": null,
 			"hurtbox": {
 				"bottom": 15,
@@ -75,43 +91,35 @@
 			"sprites": [
 				{
 					"attr": 1,
-					"foreground": false,
-					"tile": "KIKI_TILE_45",
+					"foreground": true,
+					"tile": "KIKI_TILE_43",
 					"type": "animation_sprite",
-					"x": -16,
-					"y": 5
+					"x": -6,
+					"y": -2
 				},
 				{
-					"attr": 1,
-					"foreground": false,
-					"tile": "KIKI_TILE_46",
+					"attr": 65,
+					"foreground": true,
+					"tile": "KIKI_TILE_43",
 					"type": "animation_sprite",
-					"x": -8,
-					"y": 5
+					"x": 6,
+					"y": -2
 				},
 				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "KIKI_TILE_47",
+					"attr": 193,
+					"foreground": true,
+					"tile": "KIKI_TILE_43",
 					"type": "animation_sprite",
-					"x": 7,
-					"y": 8
+					"x": 6,
+					"y": 10
 				},
 				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "KIKI_TILE_48",
+					"attr": 129,
+					"foreground": true,
+					"tile": "KIKI_TILE_43",
 					"type": "animation_sprite",
-					"x": -1,
-					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "KIKI_TILE_49",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 0
+					"x": -6,
+					"y": 10
 				},
 				{
 					"attr": 0,
@@ -120,94 +128,36 @@
 					"type": "animation_sprite",
 					"x": -1,
 					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_4",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_5",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_3",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
 				}
 			],
 			"type": "animation_frame"
 		},
 		{
-			"duration": 4,
-			"hitbox": {
-				"base_h": -768,
-				"base_v": -768,
-				"bottom": 11,
-				"damages": 14,
-				"enabled": true,
-				"force_h": -20,
-				"force_v": -20,
-				"left": -27,
-				"right": -3,
-				"top": 8,
-				"type": "animation_hitbox"
-			},
-			"hurtbox": {
-				"bottom": 15,
-				"left": 0,
-				"right": 9,
-				"top": 0,
-				"type": "animation_hurtbox"
-			},
-			"sprites": [
-				{
-					"attr": 1,
-					"foreground": false,
-					"tile": "KIKI_TILE_50",
-					"type": "animation_sprite",
-					"x": -27,
-					"y": 5
-				},
-				{
-					"attr": 1,
-					"foreground": false,
-					"tile": "KIKI_TILE_51",
-					"type": "animation_sprite",
-					"x": -19,
-					"y": 5
-				},
-				{
-					"attr": 1,
-					"foreground": false,
-					"tile": "KIKI_TILE_52",
-					"type": "animation_sprite",
-					"x": -11,
-					"y": 5
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "KIKI_TILE_6",
-					"type": "animation_sprite",
-					"x": -1,
-					"y": 1
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "KIKI_TILE_53",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 1
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "KIKI_TILE_54",
-					"type": "animation_sprite",
-					"x": -1,
-					"y": 9
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "KIKI_TILE_55",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 9
-				}
-			],
-			"type": "animation_frame"
-		},
-		{
-			"duration": 4,
+			"duration": 2,
 			"hitbox": null,
 			"hurtbox": {
 				"bottom": 15,
@@ -219,43 +169,35 @@
 			"sprites": [
 				{
 					"attr": 1,
-					"foreground": false,
-					"tile": "KIKI_TILE_45",
+					"foreground": true,
+					"tile": "KIKI_TILE_43",
 					"type": "animation_sprite",
-					"x": -15,
-					"y": 5
+					"x": -10,
+					"y": -6
 				},
 				{
-					"attr": 1,
-					"foreground": false,
-					"tile": "KIKI_TILE_46",
+					"attr": 65,
+					"foreground": true,
+					"tile": "KIKI_TILE_43",
 					"type": "animation_sprite",
-					"x": -7,
-					"y": 5
+					"x": 10,
+					"y": -6
 				},
 				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "KIKI_TILE_47",
+					"attr": 193,
+					"foreground": true,
+					"tile": "KIKI_TILE_43",
 					"type": "animation_sprite",
-					"x": 7,
-					"y": 8
+					"x": 10,
+					"y": 14
 				},
 				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "KIKI_TILE_48",
+					"attr": 129,
+					"foreground": true,
+					"tile": "KIKI_TILE_43",
 					"type": "animation_sprite",
-					"x": -1,
-					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "KIKI_TILE_49",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 0
+					"x": -10,
+					"y": 14
 				},
 				{
 					"attr": 0,
@@ -264,11 +206,113 @@
 					"type": "animation_sprite",
 					"x": -1,
 					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_4",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_5",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_3",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 9,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "KIKI_TILE_43",
+					"type": "animation_sprite",
+					"x": -14,
+					"y": -10
+				},
+				{
+					"attr": 65,
+					"foreground": true,
+					"tile": "KIKI_TILE_43",
+					"type": "animation_sprite",
+					"x": 14,
+					"y": -10
+				},
+				{
+					"attr": 193,
+					"foreground": true,
+					"tile": "KIKI_TILE_43",
+					"type": "animation_sprite",
+					"x": 14,
+					"y": 18
+				},
+				{
+					"attr": 129,
+					"foreground": true,
+					"tile": "KIKI_TILE_43",
+					"type": "animation_sprite",
+					"x": -14,
+					"y": 18
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_6",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_4",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_5",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "KIKI_TILE_3",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
 				}
 			],
 			"type": "animation_frame"
 		}
 	],
-	"name": "kiki_anim_strike",
+	"name": "kiki_anim_shield_remove",
 	"type": "animation"
 }

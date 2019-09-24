@@ -9,8 +9,10 @@ KIKI_STATE_LANDING = 7
 KIKI_STATE_CRASHING = 8
 KIKI_STATE_HELPLESS = 9
 KIKI_STATE_JUMPING = 10
-KIKI_STATE_SIDE_TILT = 11
-KIKI_STATE_SIDE_SPE = 12
+KIKI_STATE_SHIELDING = 11
+KIKI_STATE_SHIELDLAG = 12
+KIKI_STATE_SIDE_TILT = 13
+KIKI_STATE_SIDE_SPE = 14
 
 KIKI_AIR_FRICTION_STRENGTH = 7
 KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
@@ -630,16 +632,16 @@ kiki_input_idle:
 	input_table:
 	.(
 		table_length:
-		.byt 9
+		.byt 10
 		controller_inputs:
 		.byt CONTROLLER_INPUT_LEFT,         CONTROLLER_INPUT_RIGHT,       CONTROLLER_INPUT_JUMP,          CONTROLLER_INPUT_JUMP_RIGHT,   CONTROLLER_INPUT_JUMP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_TECH
 		controller_callbacks_lsb:
 		.byt <kiki_input_idle_left,         <kiki_input_idle_right,       <kiki_start_jumping,            <kiki_input_idle_jump_right,   <kiki_input_idle_jump_left
-		.byt <kiki_start_side_tilt_right,   <kiki_start_side_tilt_left,   <kiki_start_side_spe_right,     <kiki_start_side_spe_left
+		.byt <kiki_start_side_tilt_right,   <kiki_start_side_tilt_left,   <kiki_start_side_spe_right,     <kiki_start_side_spe_left,     <kiki_start_shielding
 		controller_callbacks_msb:
 		.byt >kiki_input_idle_left,         >kiki_input_idle_right,       >kiki_start_jumping,            >kiki_input_idle_jump_right,   >kiki_input_idle_jump_left
-		.byt >kiki_start_side_tilt_right,   >kiki_start_side_tilt_left,   >kiki_start_side_spe_right,     >kiki_start_side_spe_left
+		.byt >kiki_start_side_tilt_right,   >kiki_start_side_tilt_left,   >kiki_start_side_spe_right,     >kiki_start_side_spe_left,     >kiki_start_shielding
 
 		controller_default_callback:
 		.word end
@@ -794,16 +796,16 @@ kiki_input_running:
 	input_table:
 	.(
 		table_length:
-		.byt 9
+		.byt 10
 		controller_inputs:
 		.byt CONTROLLER_INPUT_LEFT,        CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP,         CONTROLLER_INPUT_JUMP_RIGHT,    CONTROLLER_INPUT_JUMP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_SPECIAL_RIGHT
+		.byt CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_TECH
 		controller_callbacks_lsb:
 		.byt <kiki_input_running_left,     <kiki_input_running_right,     <kiki_start_jumping,           <kiki_start_jumping,            <kiki_start_jumping
-		.byt <kiki_start_side_tilt_left,   <kiki_start_side_tilt_right,   <kiki_start_side_spe_left,     <kiki_start_side_spe_right
+		.byt <kiki_start_side_tilt_left,   <kiki_start_side_tilt_right,   <kiki_start_side_spe_left,     <kiki_start_side_spe_right,     <kiki_start_shielding
 		controller_callbacks_msb:
 		.byt >kiki_input_running_left,     >kiki_input_running_right,     >kiki_start_jumping,           >kiki_start_jumping,            >kiki_start_jumping
-		.byt >kiki_start_side_tilt_left,   >kiki_start_side_tilt_right,   >kiki_start_side_spe_left,     >kiki_start_side_spe_right
+		.byt >kiki_start_side_tilt_left,   >kiki_start_side_tilt_right,   >kiki_start_side_spe_left,     >kiki_start_side_spe_right,     >kiki_start_shielding
 		controller_default_callback:
 		.word kiki_start_idle
 	.)
@@ -1149,6 +1151,161 @@ kiki_start_helpless:
 kiki_tick_helpless:
 .(
 	jmp kiki_tick_falling
+.)
+
+
+kiki_start_shielding:
+.(
+	; Set state
+	lda #KIKI_STATE_SHIELDING
+	sta player_a_state, x
+
+	; Set the appropriate animation
+	lda #<kiki_anim_shield_full
+	sta tmpfield13
+	lda #>kiki_anim_shield_full
+	sta tmpfield14
+	jsr set_player_animation
+
+	; Cancel momentum
+	lda #$00
+	sta player_a_velocity_h_low
+	sta player_a_velocity_h
+
+	; Set shield as full life
+	lda #2
+	sta player_a_state_field1, x
+
+	rts
+.)
+
+kiki_tick_shielding:
+.(
+	rts
+.)
+
+kiki_input_shielding:
+.(
+	; Do the same as standing player except when
+	;  all buttons are released - start standing
+	;  down is pressed - avoid to reset the shield state (and hit counter)
+	lda controller_a_btns, x
+	beq end_shield
+	cmp #CONTROLLER_INPUT_TECH
+	beq end
+
+		jsr kiki_input_idle
+		jmp end
+
+	end_shield:
+		jsr kiki_start_shieldlag
+
+	end:
+	rts
+.)
+
+kiki_hurt_shielding:
+.(
+	stroke_player = tmpfield11
+
+	; Reduce shield's life
+	dec player_a_state_field1, x
+
+	; Select what to do according to shield's life
+	lda player_a_state_field1, x
+	beq limit_shield
+	cmp #1
+	beq partial_shield
+
+		; Break the shield, derived from normal hurt with:
+		;  Knockback * 2
+		;  Screen shaking * 4
+		;  Special sound
+		jsr hurt_player
+		ldx stroke_player
+		asl player_a_velocity_h_low, x
+		rol player_a_velocity_h, x
+		asl player_a_velocity_v_low, x
+		rol player_a_velocity_v, x
+		asl player_a_hitstun, x
+		asl screen_shake_counter
+		asl screen_shake_counter
+		jsr audio_play_shield_break
+		jmp end
+
+	partial_shield:
+		; Get the animation corresponding to the shield's life
+		lda #<kiki_anim_shield_partial
+		sta tmpfield13
+		lda #>kiki_anim_shield_partial
+		jmp still_shield
+
+	limit_shield:
+		; Get the animation corresponding to the shield's life
+		lda #<kiki_anim_shield_limit
+		sta tmpfield13
+		lda #>kiki_anim_shield_limit
+
+	still_shield:
+		; Set the new shield animation
+		sta tmpfield14
+		jsr set_player_animation
+
+		; Play sound
+		jsr audio_play_shield_hit
+
+	end:
+	; Disable the hitbox to avoid multi-hits
+	jsr switch_selected_player
+	lda HITBOX_DISABLED
+	sta player_a_hitbox_enabled, x
+
+	rts
+.)
+
+kiki_start_shieldlag:
+.(
+	; Set state
+	lda #KIKI_STATE_SHIELDLAG
+	sta player_a_state, x
+
+	; Reset clock
+	lda #0
+	sta player_a_state_clock, x
+
+	; Set the appropriate animation
+	lda #<kiki_anim_shield_remove
+	sta tmpfield13
+	lda #>kiki_anim_shield_remove
+	sta tmpfield14
+	jsr set_player_animation
+
+	rts
+.)
+
+kiki_tick_shieldlag:
+.(
+	KIKI_STATE_SHIELDLAG_DURATION = 8
+
+	; Do not move, velocity tends toward vector (0,0)
+	lda #$00
+	sta tmpfield4
+	sta tmpfield3
+	sta tmpfield2
+	sta tmpfield1
+	lda #$80
+	sta tmpfield5
+	jsr merge_to_player_velocity
+
+	; After move's time is out, go to standing state
+	inc player_a_state_clock, x
+	lda player_a_state_clock, x
+	cmp #KIKI_STATE_SHIELDLAG_DURATION
+	bne end
+		jsr kiki_start_idle
+
+	end:
+	rts
 .)
 
 

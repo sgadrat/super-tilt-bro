@@ -224,8 +224,8 @@ def ora_to_character(image_file, char_name):
 						left = frame_child['x'] - origin['x'],
 						top = frame_child['y'] - origin['y']
 					)
-					hurtbox.right = hurtbox.left + frame_child['raster'].size[0]
-					hurtbox.bottom = hurtbox.top + frame_child['raster'].size[1]
+					hurtbox.right = hurtbox.left + frame_child['raster'].size[0] #TODO check if we should substract 1 (so that a 16 pixels wide box at 0 ends on pixel 15)
+					hurtbox.bottom = hurtbox.top + frame_child['raster'].size[1] #TODO check if we should substract 1
 					frame.hurtbox = hurtbox
 
 				elif remove_qs(frame_child['name']) == 'anims.{}.frame{}.hitbox'.format(anim_name, frame_id):
@@ -250,8 +250,8 @@ def ora_to_character(image_file, char_name):
 						left = frame_child['x'] - origin['x'],
 						top = frame_child['y'] - origin['y']
 					)
-					hitbox.right = hitbox.left + frame_child['raster'].size[0]
-					hitbox.bottom = hitbox.top + frame_child['raster'].size[1]
+					hitbox.right = hitbox.left + frame_child['raster'].size[0] #TODO check if we should substract 1
+					hitbox.bottom = hitbox.top + frame_child['raster'].size[1] #TODO check if we should substract 1
 
 					frame.hitbox = hitbox
 
