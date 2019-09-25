@@ -691,7 +691,16 @@ hurt_player:
 	sta tmpfield1
 	lda characters_start_routines_table_msb, y
 	sta tmpfield2
+
+	lda current_player
+	pha
+	lda opponent_player
+	pha
 	jsr player_state_action
+	pla
+	sta opponent_player
+	pla
+	sta current_player
 
 	; Disable the hitbox to avoid multi-hits
 	ldx current_player
