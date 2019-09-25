@@ -265,7 +265,7 @@ def ora_to_character(image_file, char_name):
 						if sprites_container_child['type'] == 'layer':
 							sprite_layers.append({'foreground': False, 'layer': sprites_container_child})
 						elif sprites_container_child['type'] == 'stack':
-							ensure(sprites_container_child['name'] == 'anims.{}.frame{}.sprites.foreground'.format(anim_name, frame_id), 'unexpected stack in {}: "{}"'.format(frame_child['name'], sprite_layer['name']))
+							ensure(sprites_container_child['name'] == 'anims.{}.frame{}.sprites.foreground'.format(anim_name, frame_id), 'unexpected stack in {}: "{}"'.format(frame_child['name'], sprites_container_child['name']))
 							for foreground_sprite_layer in sprites_container_child['childs']:
 								ensure(foreground_sprite_layer['type'] == 'layer', 'unexpected non-layer in {}: "{}"'.format(sprites_container_child['name'], sprite_layer['name']))
 								sprite_layers.append({'foreground': True, 'layer': foreground_sprite_layer})
