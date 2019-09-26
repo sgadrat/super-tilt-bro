@@ -13,6 +13,7 @@ KIKI_STATE_SHIELDING = 11
 KIKI_STATE_SHIELDLAG = 12
 KIKI_STATE_SIDE_TILT = 13
 KIKI_STATE_SIDE_SPE = 14
+KIKI_STATE_DOWN_SPE = 15
 
 KIKI_AIR_FRICTION_STRENGTH = 7
 KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
@@ -272,11 +273,11 @@ kiki_check_aerial_inputs:
 		controller_callbacks_lo:
 		.byt <kiki_start_side_spe_right,     <kiki_start_side_spe_left,     <kiki_start_aerial_jumping,    <kiki_start_aerial_jumping,   <kiki_start_aerial_jumping
 		.byt <no_input,                      <no_input,                     <no_input,                     <no_input,                    <no_input
-		.byt <no_input,                      <no_input,                     <no_input,                     <fast_fall
+		.byt <no_input,                      <no_input,                     <kiki_start_down_spe,          <fast_fall
 		controller_callbacks_hi:
 		.byt >kiki_start_side_spe_right,     >kiki_start_side_tilt_left,    >kiki_start_aerial_jumping,    >kiki_start_aerial_jumping,   >kiki_start_aerial_jumping
 		.byt >no_input,                      >no_input,                     >no_input,                     >no_input,                    >no_input
-		.byt >no_input,                      >no_input,                     >no_input,                     >fast_fall
+		.byt >no_input,                      >no_input,                     >kiki_start_down_spe,          >fast_fall
 		controller_default_callback:
 		.word no_input
 	.)
@@ -632,16 +633,19 @@ kiki_input_idle:
 	input_table:
 	.(
 		table_length:
-		.byt 10
+		.byt 11
 		controller_inputs:
 		.byt CONTROLLER_INPUT_LEFT,         CONTROLLER_INPUT_RIGHT,       CONTROLLER_INPUT_JUMP,          CONTROLLER_INPUT_JUMP_RIGHT,   CONTROLLER_INPUT_JUMP_LEFT
 		.byt CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_TECH
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN
 		controller_callbacks_lsb:
 		.byt <kiki_input_idle_left,         <kiki_input_idle_right,       <kiki_start_jumping,            <kiki_input_idle_jump_right,   <kiki_input_idle_jump_left
 		.byt <kiki_start_side_tilt_right,   <kiki_start_side_tilt_left,   <kiki_start_side_spe_right,     <kiki_start_side_spe_left,     <kiki_start_shielding
+		.byt <kiki_start_down_spe
 		controller_callbacks_msb:
 		.byt >kiki_input_idle_left,         >kiki_input_idle_right,       >kiki_start_jumping,            >kiki_input_idle_jump_right,   >kiki_input_idle_jump_left
 		.byt >kiki_start_side_tilt_right,   >kiki_start_side_tilt_left,   >kiki_start_side_spe_right,     >kiki_start_side_spe_left,     >kiki_start_shielding
+		.byt >kiki_start_down_spe
 
 		controller_default_callback:
 		.word end
@@ -796,16 +800,19 @@ kiki_input_running:
 	input_table:
 	.(
 		table_length:
-		.byt 10
+		.byt 11
 		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,        CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP,         CONTROLLER_INPUT_JUMP_RIGHT,    CONTROLLER_INPUT_JUMP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_TECH
+		.byt CONTROLLER_INPUT_LEFT,         CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP,         CONTROLLER_INPUT_JUMP_RIGHT,    CONTROLLER_INPUT_JUMP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_LEFT,  CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_TECH
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN
 		controller_callbacks_lsb:
-		.byt <kiki_input_running_left,     <kiki_input_running_right,     <kiki_start_jumping,           <kiki_start_jumping,            <kiki_start_jumping
-		.byt <kiki_start_side_tilt_left,   <kiki_start_side_tilt_right,   <kiki_start_side_spe_left,     <kiki_start_side_spe_right,     <kiki_start_shielding
+		.byt <kiki_input_running_left,      <kiki_input_running_right,     <kiki_start_jumping,           <kiki_start_jumping,            <kiki_start_jumping
+		.byt <kiki_start_side_tilt_left,    <kiki_start_side_tilt_right,   <kiki_start_side_spe_left,     <kiki_start_side_spe_right,     <kiki_start_shielding
+		.byt <kiki_start_down_spe
 		controller_callbacks_msb:
-		.byt >kiki_input_running_left,     >kiki_input_running_right,     >kiki_start_jumping,           >kiki_start_jumping,            >kiki_start_jumping
-		.byt >kiki_start_side_tilt_left,   >kiki_start_side_tilt_right,   >kiki_start_side_spe_left,     >kiki_start_side_spe_right,     >kiki_start_shielding
+		.byt >kiki_input_running_left,      >kiki_input_running_right,     >kiki_start_jumping,           >kiki_start_jumping,            >kiki_start_jumping
+		.byt >kiki_start_side_tilt_left,    >kiki_start_side_tilt_right,   >kiki_start_side_spe_left,     >kiki_start_side_spe_right,     >kiki_start_shielding
+		.byt >kiki_start_down_spe
 		controller_default_callback:
 		.word kiki_start_idle
 	.)
@@ -1580,6 +1587,191 @@ kiki_tick_side_spe:
 		lda #KIKI_STATE_SIDE_SPE_FRICTION
 		sta tmpfield5
 		jsr merge_to_player_velocity
+
+	end:
+	rts
+.)
+
+
+kiki_start_down_spe:
+.(
+	sprite_x_lsb = tmpfield1
+	sprite_x_msb = tmpfield2
+	sprite_y_lsb = tmpfield3
+	sprite_y_msb = tmpfield4
+
+	; Set the appropriate animation
+	; TODO draw a specific animation
+	lda #<kiki_anim_paint_side
+	sta tmpfield13
+	lda #>kiki_anim_paint_side
+	sta tmpfield14
+	jsr set_player_animation
+
+	; Set the player's state
+	lda #KIKI_STATE_DOWN_SPE
+	sta player_a_state, x
+
+	; Initialize the clock
+	lda #0
+	sta player_a_state_clock,x
+
+	; Reset velocity
+	;lda #0 ; useless, already set to zero
+	sta player_a_velocity_h_low, x
+	sta player_a_velocity_h, x
+	sta player_a_velocity_v_low, x
+	sta player_a_velocity_v, x
+
+	; Move player upward (to create wall on ground)
+	lda player_a_y, x
+	sec
+	sbc #8
+	sta player_a_y, x
+	lda player_a_y_screen, x
+	sbc #0
+	sta player_a_y_screen, x
+	lda #$ff
+	sta player_a_y_low, x
+
+	; Place wall
+	;TODO factorize code with other specials
+	ldy #0
+	cpx #0
+	beq place_wall
+		ldy #player_b_objects-player_a_objects
+	place_wall:
+
+	lda #STAGE_ELEMENT_OOS_PLATFORM
+	sta player_a_objects, y ; type
+
+	lda player_a_x, x
+	clc
+	adc #$ef
+	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+	lda player_a_x_screen, x
+	adc #$ff
+	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+
+	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+	clc
+	adc #24
+	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
+	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+	adc #0
+	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
+
+	lda player_a_y, x
+	clc
+	adc #24
+	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
+	lda player_a_y_screen, x
+	adc #0
+	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
+
+	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
+	sec
+	sbc #24
+	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
+	sbc #0
+	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+
+	lda #STAGE_ELEMENT_END
+	sta player_a_objects+STAGE_OOS_PLATFORM_LENGTH, y ; next's type
+
+	; Compute wall's sprites position
+	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+	clc
+	adc #15
+	sta sprite_y_lsb
+	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+	adc #0
+	sta sprite_y_msb
+
+	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+	clc
+	adc #8
+	sta sprite_x_lsb
+	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+	adc #0
+	sta sprite_x_msb
+
+	; Set sprites properties
+	lda kiki_first_wall_sprite_per_player, x
+	asl
+	asl
+	tay
+
+	lda #KIKI_TILE_WALL_BLOCK
+	clc
+	adc kiki_first_tile_index_per_player, x
+	sta oam_mirror+1, y ; First sprite tile
+	sta oam_mirror+5, y ; Second sprite tile
+
+	lda wall_attributes_per_player, x
+	sta oam_mirror+2, y ; First sprite attributes
+	sta oam_mirror+6, y ; Second sprite attributes
+
+	; Place left sprite
+	lda sprite_x_msb
+	cmp #0
+	bne hide_left_sprite
+	lda sprite_y_msb
+	bne hide_left_sprite
+
+		lda sprite_y_lsb
+		sta oam_mirror, y ; First sprite Y
+		lda sprite_x_lsb
+		sta oam_mirror+3, y ; First sprite X
+		jmp end_left_sprite
+
+	hide_left_sprite:
+		lda #$fe
+		sta oam_mirror, y ; First sprite Y
+
+	end_left_sprite:
+
+	; Place right sprite
+	lda sprite_x_lsb
+	clc
+	adc #8
+	sta sprite_x_lsb
+	lda sprite_x_msb
+	adc #0
+	bne hide_right_sprite
+
+	lda sprite_y_msb
+	bne hide_right_sprite
+
+		lda sprite_y_lsb
+		sta oam_mirror+4, y ; Second sprite Y
+		lda sprite_x_lsb
+		sta oam_mirror+7, y ; Second sprite X
+		jmp end_right_sprite
+
+	hide_right_sprite:
+		lda #$fe
+		sta oam_mirror+4, y ; Second sprite Y
+
+	end_right_sprite:
+
+	rts
+
+	wall_attributes_per_player:
+	.byt 1, 3
+.)
+
+kiki_tick_down_spe:
+.(
+	KIKI_STATE_DOWN_SPE_DURATION = 16
+
+	inc player_a_state_clock, x
+
+	lda player_a_state_clock, x
+	cmp #KIKI_STATE_DOWN_SPE_DURATION
+	bne end
+		jsr kiki_start_idle
 
 	end:
 	rts

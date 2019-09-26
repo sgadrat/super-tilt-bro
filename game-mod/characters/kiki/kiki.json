@@ -420,6 +420,16 @@
 			"start_routine": null,
 			"type": "character_state",
 			"update_routine": "kiki_tick_side_spe"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "KIKI_STATE_DOWN_SPE",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "kiki_tick_down_spe"
 		}
 	],
 	"tileset": {
