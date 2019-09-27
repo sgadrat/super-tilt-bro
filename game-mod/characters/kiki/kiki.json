@@ -430,13 +430,23 @@
 			"start_routine": null,
 			"type": "character_state",
 			"update_routine": "kiki_tick_down_spe"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "KIKI_STATE_UP_SPE",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "kiki_tick_up_spe"
 		}
 	],
 	"tileset": {
 		"src": "characters/kiki/tileset.gif",
 		"tilenames": [
+			"KIKI_TILE_SMOOTH_WALL_BLOCK",
 			"KIKI_TILE_WALL_BLOCK",
-			"KIKI_TILE_1",
 			"KIKI_TILE_2",
 			"KIKI_TILE_3",
 			"KIKI_TILE_4",
@@ -494,7 +504,8 @@
 			"KIKI_TILE_56",
 			"KIKI_TILE_57",
 			"KIKI_TILE_58",
-			"KIKI_TILE_59"
+			"KIKI_TILE_59",
+			"KIKI_TILE_60"
 		],
 		"type": "tileset"
 	},
