@@ -61,6 +61,10 @@
 			"type": "import"
 		},
 		{
+			"src": "characters/kiki/animations/kiki_anim_strike_down.json",
+			"type": "import"
+		},
+		{
 			"src": "characters/kiki/animations/kiki_anim_strike_up.json",
 			"type": "import"
 		},
@@ -464,6 +468,26 @@
 			"start_routine": null,
 			"type": "character_state",
 			"update_routine": "kiki_tick_up_aerial"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "KIKI_STATE_DOWN_TILT",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "kiki_tick_down_tilt"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "KIKI_STATE_DOWN_AERIAL",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "kiki_tick_down_aerial"
 		}
 	],
 	"tileset": {
