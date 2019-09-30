@@ -20,6 +20,7 @@ KIKI_STATE_UP_AERIAL = 18
 KIKI_STATE_DOWN_TILT = 19
 KIKI_STATE_DOWN_AERIAL = 20
 KIKI_STATE_SIDE_AERIAL = 21
+KIKI_STATE_JABBING = 22
 
 KIKI_AIR_FRICTION_STRENGTH = 7
 KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
@@ -639,19 +640,19 @@ kiki_input_idle:
 	input_table:
 	.(
 		table_length:
-		.byt 14
+		.byt 15
 		controller_inputs:
 		.byt CONTROLLER_INPUT_LEFT,         CONTROLLER_INPUT_RIGHT,       CONTROLLER_INPUT_JUMP,          CONTROLLER_INPUT_JUMP_RIGHT,   CONTROLLER_INPUT_JUMP_LEFT
 		.byt CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_TECH
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN, CONTROLLER_INPUT_SPECIAL_UP,  CONTROLLER_INPUT_ATTACK_UP,     CONTROLLER_INPUT_DOWN_TILT
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN, CONTROLLER_INPUT_SPECIAL_UP,  CONTROLLER_INPUT_ATTACK_UP,     CONTROLLER_INPUT_DOWN_TILT,    CONTROLLER_INPUT_JAB
 		controller_callbacks_lsb:
 		.byt <kiki_input_idle_left,         <kiki_input_idle_right,       <kiki_start_jumping,            <kiki_input_idle_jump_right,   <kiki_input_idle_jump_left
 		.byt <kiki_start_side_tilt_right,   <kiki_start_side_tilt_left,   <kiki_start_side_spe_right,     <kiki_start_side_spe_left,     <kiki_start_shielding
-		.byt <kiki_start_down_spe,          <kiki_start_up_spe,           <kiki_start_up_tilt,            <kiki_start_down_tilt
+		.byt <kiki_start_down_spe,          <kiki_start_up_spe,           <kiki_start_up_tilt,            <kiki_start_down_tilt,         <kiki_start_jabbing
 		controller_callbacks_msb:
 		.byt >kiki_input_idle_left,         >kiki_input_idle_right,       >kiki_start_jumping,            >kiki_input_idle_jump_right,   >kiki_input_idle_jump_left
 		.byt >kiki_start_side_tilt_right,   >kiki_start_side_tilt_left,   >kiki_start_side_spe_right,     >kiki_start_side_spe_left,     >kiki_start_shielding
-		.byt >kiki_start_down_spe,          >kiki_start_up_spe,           >kiki_start_up_tilt,            >kiki_start_down_tilt
+		.byt >kiki_start_down_spe,          >kiki_start_up_spe,           >kiki_start_up_tilt,            >kiki_start_down_tilt,         >kiki_start_jabbing
 
 		controller_default_callback:
 		.word end
@@ -806,19 +807,19 @@ kiki_input_running:
 	input_table:
 	.(
 		table_length:
-		.byt 14
+		.byt 15
 		controller_inputs:
 		.byt CONTROLLER_INPUT_LEFT,         CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP,         CONTROLLER_INPUT_JUMP_RIGHT,    CONTROLLER_INPUT_JUMP_LEFT
 		.byt CONTROLLER_INPUT_ATTACK_LEFT,  CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_TECH
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN, CONTROLLER_INPUT_SPECIAL_UP,   CONTROLLER_INPUT_ATTACK_UP,    CONTROLLER_INPUT_DOWN_TILT
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN, CONTROLLER_INPUT_SPECIAL_UP,   CONTROLLER_INPUT_ATTACK_UP,    CONTROLLER_INPUT_DOWN_TILT,     CONTROLLER_INPUT_JAB
 		controller_callbacks_lsb:
 		.byt <kiki_input_running_left,      <kiki_input_running_right,     <kiki_start_jumping,           <kiki_start_jumping,            <kiki_start_jumping
 		.byt <kiki_start_side_tilt_left,    <kiki_start_side_tilt_right,   <kiki_start_side_spe_left,     <kiki_start_side_spe_right,     <kiki_start_shielding
-		.byt <kiki_start_down_spe,          <kiki_start_up_spe,            <kiki_start_up_tilt,           <kiki_start_down_tilt
+		.byt <kiki_start_down_spe,          <kiki_start_up_spe,            <kiki_start_up_tilt,           <kiki_start_down_tilt,          <kiki_start_jabbing
 		controller_callbacks_msb:
 		.byt >kiki_input_running_left,      >kiki_input_running_right,     >kiki_start_jumping,           >kiki_start_jumping,            >kiki_start_jumping
 		.byt >kiki_start_side_tilt_left,    >kiki_start_side_tilt_right,   >kiki_start_side_spe_left,     >kiki_start_side_spe_right,     >kiki_start_shielding
-		.byt >kiki_start_down_spe,          >kiki_start_up_spe,            >kiki_start_up_tilt,           >kiki_start_down_tilt
+		.byt >kiki_start_down_spe,          >kiki_start_up_spe,            >kiki_start_up_tilt,           >kiki_start_down_tilt,          >kiki_start_jabbing
 		controller_default_callback:
 		.word kiki_start_idle
 	.)
@@ -2192,6 +2193,68 @@ kiki_tick_side_aerial:
 	cmp #KIKI_STATE_SIDE_AERIAL_DURATION
 	bne end
 		jsr kiki_start_falling
+
+	end:
+	rts
+.)
+
+
+kiki_start_jabbing:
+.(
+	; Set the appropriate animation
+	lda #<kiki_anim_jab
+	sta tmpfield13
+	lda #>kiki_anim_jab
+	sta tmpfield14
+	jsr set_player_animation
+
+	; Set the player's state
+	lda #KIKI_STATE_JABBING
+	sta player_a_state, x
+
+	; Initialize the clock
+	lda #0
+	sta player_a_state_clock,x
+
+	rts
+.)
+
+kiki_tick_jabbing:
+.(
+	KIKI_STATE_JAB_DURATION = 12
+	KIKI_STATE_JAB_FRICTION = $20
+
+	inc player_a_state_clock, x
+
+	lda player_a_state_clock, x
+	cmp #KIKI_STATE_JAB_DURATION
+	bne update_velocity
+
+		jsr kiki_start_idle
+		jmp end
+
+	update_velocity:
+		; Do not move, velocity tends toward vector (0,0)
+		lda #$00
+		sta tmpfield4
+		sta tmpfield3
+		sta tmpfield2
+		sta tmpfield1
+		lda #KIKI_STATE_JAB_FRICTION
+		sta tmpfield5
+		jsr merge_to_player_velocity
+
+	end:
+	rts
+.)
+
+kiki_input_jabbing:
+.(
+	; Allow to cut the animation for another jab
+	lda controller_a_btns, x
+	cmp #CONTROLLER_INPUT_JAB
+	bne end
+		jsr kiki_start_jabbing
 
 	end:
 	rts
