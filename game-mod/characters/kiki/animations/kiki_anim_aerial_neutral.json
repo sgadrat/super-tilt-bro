@@ -5,13 +5,13 @@
 			"hitbox": {
 				"base_h": -768,
 				"base_v": -768,
-				"bottom": 14,
+				"bottom": 15,
 				"damages": 2,
 				"enabled": true,
 				"force_h": -10,
 				"force_v": -10,
 				"left": 0,
-				"right": 14,
+				"right": 13,
 				"top": 1,
 				"type": "animation_hitbox"
 			},
@@ -137,13 +137,13 @@
 			"hitbox": {
 				"base_h": -768,
 				"base_v": -768,
-				"bottom": 14,
+				"bottom": 15,
 				"damages": 2,
 				"enabled": false,
 				"force_h": -10,
 				"force_v": -10,
 				"left": 0,
-				"right": 14,
+				"right": 13,
 				"top": 1,
 				"type": "animation_hitbox"
 			},
