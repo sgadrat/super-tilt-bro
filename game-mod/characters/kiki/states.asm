@@ -21,6 +21,7 @@ KIKI_STATE_DOWN_TILT = 19
 KIKI_STATE_DOWN_AERIAL = 20
 KIKI_STATE_SIDE_AERIAL = 21
 KIKI_STATE_JABBING = 22
+KIKI_STATE_NEUTRAL_AERIAL = 23
 
 KIKI_AIR_FRICTION_STRENGTH = 7
 KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
@@ -279,11 +280,11 @@ kiki_check_aerial_inputs:
 		.byt CONTROLLER_INPUT_SPECIAL,       CONTROLLER_INPUT_SPECIAL_UP,   CONTROLLER_INPUT_SPECIAL_DOWN, CONTROLLER_INPUT_TECH
 		controller_callbacks_lo:
 		.byt <kiki_start_side_spe_right,     <kiki_start_side_spe_left,     <kiki_start_aerial_jumping,    <kiki_start_aerial_jumping,   <kiki_start_aerial_jumping
-		.byt <kiki_start_side_aerial_left,   <kiki_start_side_aerial_right, <kiki_start_down_aerial,       <kiki_start_up_aerial,        <no_input
+		.byt <kiki_start_side_aerial_left,   <kiki_start_side_aerial_right, <kiki_start_down_aerial,       <kiki_start_up_aerial,        <kiki_start_neutral_aerial
 		.byt <no_input,                      <kiki_start_up_spe,            <kiki_start_down_spe,          <fast_fall
 		controller_callbacks_hi:
 		.byt >kiki_start_side_spe_right,     >kiki_start_side_tilt_left,    >kiki_start_aerial_jumping,    >kiki_start_aerial_jumping,   >kiki_start_aerial_jumping
-		.byt >kiki_start_side_aerial_left,   >kiki_start_side_aerial_right, >kiki_start_down_aerial,       >kiki_start_up_aerial,        >no_input
+		.byt >kiki_start_side_aerial_left,   >kiki_start_side_aerial_right, >kiki_start_down_aerial,       >kiki_start_up_aerial,        >kiki_start_neutral_aerial
 		.byt >no_input,                      >kiki_start_up_spe,            >kiki_start_down_spe,          >fast_fall
 		controller_default_callback:
 		.word no_input
@@ -2255,6 +2256,43 @@ kiki_input_jabbing:
 	cmp #CONTROLLER_INPUT_JAB
 	bne end
 		jsr kiki_start_jabbing
+
+	end:
+	rts
+.)
+
+
+kiki_start_neutral_aerial:
+.(
+	; Set the appropriate animation
+	lda #<kiki_anim_aerial_neutral
+	sta tmpfield13
+	lda #>kiki_anim_aerial_neutral
+	sta tmpfield14
+	jsr set_player_animation
+
+	; Set the player's state
+	lda #KIKI_STATE_NEUTRAL_AERIAL
+	sta player_a_state, x
+
+	; Initialize the clock
+	lda #0
+	sta player_a_state_clock,x
+
+	rts
+.)
+
+kiki_tick_neutral_aerial:
+.(
+	KIKI_STATE_NEUTRAL_AERIAL_DURATION = 12
+
+	jsr apply_player_gravity
+
+	inc player_a_state_clock, x
+	lda player_a_state_clock, x
+	cmp #KIKI_STATE_NEUTRAL_AERIAL_DURATION
+	bne end
+		jsr kiki_start_falling
 
 	end:
 	rts
