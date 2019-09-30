@@ -26,8 +26,8 @@ credits_begin:
 .asc "           thanks",$0a
 .asc $0a
 .asc "antoine gohin   bacteriamage",$0a
-.asc "benoit ryder    bjorn nah",$0a
-.asc "margarita gadrat",$0a
+.asc "benoit ryder       bjorn nah",$0a
+.asc "fei         margarita gadrat",$0a
 .asc "supergameland",$0a
 .byt $00
 credits_end:
