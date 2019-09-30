@@ -22,6 +22,8 @@ KIKI_STATE_DOWN_AERIAL = 20
 KIKI_STATE_SIDE_AERIAL = 21
 KIKI_STATE_JABBING = 22
 KIKI_STATE_NEUTRAL_AERIAL = 23
+KIKI_STATE_COUNTER_GUARD = 24
+KIKI_STATE_COUNTER_STRIKE = 25
 
 KIKI_AIR_FRICTION_STRENGTH = 7
 KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
@@ -273,7 +275,6 @@ kiki_check_aerial_inputs:
 
 		; Impactful controller states and associated callbacks
 		; Note - We have to put subroutines as callbacks since we do not expect a return unless we used the default callback
-		; TODO callbacks set to no_input are to be implemented (except the default callback)
 		controller_inputs:
 		.byt CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_JUMP,         CONTROLLER_INPUT_JUMP_RIGHT,  CONTROLLER_INPUT_JUMP_LEFT
 		.byt CONTROLLER_INPUT_ATTACK_LEFT,   CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_DOWN_TILT,    CONTROLLER_INPUT_ATTACK_UP,   CONTROLLER_INPUT_JAB
@@ -281,11 +282,11 @@ kiki_check_aerial_inputs:
 		controller_callbacks_lo:
 		.byt <kiki_start_side_spe_right,     <kiki_start_side_spe_left,     <kiki_start_aerial_jumping,    <kiki_start_aerial_jumping,   <kiki_start_aerial_jumping
 		.byt <kiki_start_side_aerial_left,   <kiki_start_side_aerial_right, <kiki_start_down_aerial,       <kiki_start_up_aerial,        <kiki_start_neutral_aerial
-		.byt <no_input,                      <kiki_start_up_spe,            <kiki_start_down_spe,          <fast_fall
+		.byt <kiki_start_counter_guard,      <kiki_start_up_spe,            <kiki_start_down_spe,          <fast_fall
 		controller_callbacks_hi:
 		.byt >kiki_start_side_spe_right,     >kiki_start_side_tilt_left,    >kiki_start_aerial_jumping,    >kiki_start_aerial_jumping,   >kiki_start_aerial_jumping
 		.byt >kiki_start_side_aerial_left,   >kiki_start_side_aerial_right, >kiki_start_down_aerial,       >kiki_start_up_aerial,        >kiki_start_neutral_aerial
-		.byt >no_input,                      >kiki_start_up_spe,            >kiki_start_down_spe,          >fast_fall
+		.byt >kiki_start_counter_guard,      >kiki_start_up_spe,            >kiki_start_down_spe,          >fast_fall
 		controller_default_callback:
 		.word no_input
 	.)
@@ -641,19 +642,22 @@ kiki_input_idle:
 	input_table:
 	.(
 		table_length:
-		.byt 15
+		.byt 16
 		controller_inputs:
 		.byt CONTROLLER_INPUT_LEFT,         CONTROLLER_INPUT_RIGHT,       CONTROLLER_INPUT_JUMP,          CONTROLLER_INPUT_JUMP_RIGHT,   CONTROLLER_INPUT_JUMP_LEFT
 		.byt CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_TECH
 		.byt CONTROLLER_INPUT_SPECIAL_DOWN, CONTROLLER_INPUT_SPECIAL_UP,  CONTROLLER_INPUT_ATTACK_UP,     CONTROLLER_INPUT_DOWN_TILT,    CONTROLLER_INPUT_JAB
+		.byt CONTROLLER_INPUT_SPECIAL
 		controller_callbacks_lsb:
 		.byt <kiki_input_idle_left,         <kiki_input_idle_right,       <kiki_start_jumping,            <kiki_input_idle_jump_right,   <kiki_input_idle_jump_left
 		.byt <kiki_start_side_tilt_right,   <kiki_start_side_tilt_left,   <kiki_start_side_spe_right,     <kiki_start_side_spe_left,     <kiki_start_shielding
 		.byt <kiki_start_down_spe,          <kiki_start_up_spe,           <kiki_start_up_tilt,            <kiki_start_down_tilt,         <kiki_start_jabbing
+		.byt <kiki_start_counter_guard
 		controller_callbacks_msb:
 		.byt >kiki_input_idle_left,         >kiki_input_idle_right,       >kiki_start_jumping,            >kiki_input_idle_jump_right,   >kiki_input_idle_jump_left
 		.byt >kiki_start_side_tilt_right,   >kiki_start_side_tilt_left,   >kiki_start_side_spe_right,     >kiki_start_side_spe_left,     >kiki_start_shielding
 		.byt >kiki_start_down_spe,          >kiki_start_up_spe,           >kiki_start_up_tilt,            >kiki_start_down_tilt,         >kiki_start_jabbing
+		.byt >kiki_start_counter_guard
 
 		controller_default_callback:
 		.word end
@@ -808,19 +812,22 @@ kiki_input_running:
 	input_table:
 	.(
 		table_length:
-		.byt 15
+		.byt 16
 		controller_inputs:
 		.byt CONTROLLER_INPUT_LEFT,         CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP,         CONTROLLER_INPUT_JUMP_RIGHT,    CONTROLLER_INPUT_JUMP_LEFT
 		.byt CONTROLLER_INPUT_ATTACK_LEFT,  CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_TECH
 		.byt CONTROLLER_INPUT_SPECIAL_DOWN, CONTROLLER_INPUT_SPECIAL_UP,   CONTROLLER_INPUT_ATTACK_UP,    CONTROLLER_INPUT_DOWN_TILT,     CONTROLLER_INPUT_JAB
+		.byt CONTROLLER_INPUT_SPECIAL
 		controller_callbacks_lsb:
 		.byt <kiki_input_running_left,      <kiki_input_running_right,     <kiki_start_jumping,           <kiki_start_jumping,            <kiki_start_jumping
 		.byt <kiki_start_side_tilt_left,    <kiki_start_side_tilt_right,   <kiki_start_side_spe_left,     <kiki_start_side_spe_right,     <kiki_start_shielding
 		.byt <kiki_start_down_spe,          <kiki_start_up_spe,            <kiki_start_up_tilt,           <kiki_start_down_tilt,          <kiki_start_jabbing
+		.byt <kiki_start_counter_guard
 		controller_callbacks_msb:
 		.byt >kiki_input_running_left,      >kiki_input_running_right,     >kiki_start_jumping,           >kiki_start_jumping,            >kiki_start_jumping
 		.byt >kiki_start_side_tilt_left,    >kiki_start_side_tilt_right,   >kiki_start_side_spe_left,     >kiki_start_side_spe_right,     >kiki_start_shielding
 		.byt >kiki_start_down_spe,          >kiki_start_up_spe,            >kiki_start_up_tilt,           >kiki_start_down_tilt,          >kiki_start_jabbing
+		.byt >kiki_start_counter_guard
 		controller_default_callback:
 		.word kiki_start_idle
 	.)
@@ -2291,6 +2298,127 @@ kiki_tick_neutral_aerial:
 	inc player_a_state_clock, x
 	lda player_a_state_clock, x
 	cmp #KIKI_STATE_NEUTRAL_AERIAL_DURATION
+	bne end
+		jsr kiki_start_falling
+
+	end:
+	rts
+.)
+
+
+kiki_start_counter_guard:
+.(
+	; Set the appropriate animation
+	lda #<kiki_anim_counter_guard
+	sta tmpfield13
+	lda #>kiki_anim_counter_guard
+	sta tmpfield14
+	jsr set_player_animation
+
+	; Set the player's state
+	lda #KIKI_STATE_COUNTER_GUARD
+	sta player_a_state, x
+
+	; Initialize the clock
+	lda #0
+	sta player_a_state_clock,x
+
+	rts
+.)
+
+KIKI_STATE_COUNTER_GUARD_ACTIVE_DURATION = 12
+kiki_tick_counter_guard:
+.(
+	KIKI_STATE_COUNTER_GUARD_TOTAL_DURATION = 24
+
+	jsr apply_player_gravity
+
+	inc player_a_state_clock, x
+
+	lda player_a_state_clock, x
+	cmp #KIKI_STATE_COUNTER_GUARD_ACTIVE_DURATION
+	bne check_total_duration
+
+		; Active duration is over, display it by switching to weak animation
+		lda #<kiki_anim_counter_weak
+		sta tmpfield13
+		lda #>kiki_anim_counter_weak
+		sta tmpfield14
+		jsr set_player_animation
+
+	check_total_duration:
+	cmp #KIKI_STATE_COUNTER_GUARD_TOTAL_DURATION
+	bne end
+
+		; Total duration is over, return to a neutral state
+		jsr kiki_start_falling
+
+	end:
+	rts
+.)
+
+kiki_hurt_counter_guard:
+.(
+	striker_player = tmpfield10
+	stroke_player = tmpfield11
+
+	lda stroke_player
+	pha
+	lda striker_player
+	pha
+
+	; Strike if still active, else get hurt
+	lda player_a_state_clock, x
+	cmp #KIKI_STATE_COUNTER_GUARD_ACTIVE_DURATION+1
+	bcs hurt
+
+		ldy striker_player
+		lda HITBOX_DISABLED
+		sta player_a_hitbox_enabled, y
+
+		jsr kiki_start_counter_strike
+		jmp end
+	hurt:
+		jsr hurt_player
+
+	end:
+	pla
+	sta striker_player
+	pla
+	sta stroke_player
+	rts
+.)
+
+
+kiki_start_counter_strike:
+.(
+	; Set the appropriate animation
+	lda #<kiki_anim_counter_strike
+	sta tmpfield13
+	lda #>kiki_anim_counter_strike
+	sta tmpfield14
+	jsr set_player_animation
+
+	; Set the player's state
+	lda #KIKI_STATE_COUNTER_STRIKE
+	sta player_a_state, x
+
+	; Initialize the clock
+	lda #0
+	sta player_a_state_clock,x
+
+	rts
+.)
+
+kiki_tick_counter_strike:
+.(
+	KIKI_STATE_COUNTER_STRIKE_DURATION = 12
+
+	jsr apply_player_gravity
+
+	inc player_a_state_clock, x
+	lda player_a_state_clock, x
+	cmp #KIKI_STATE_COUNTER_STRIKE_DURATION
 	bne end
 		jsr kiki_start_falling
 

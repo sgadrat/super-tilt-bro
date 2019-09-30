@@ -5,6 +5,18 @@
 			"type": "import"
 		},
 		{
+			"src": "characters/kiki/animations/kiki_anim_counter_guard.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/kiki/animations/kiki_anim_counter_strike.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/kiki/animations/kiki_anim_counter_weak.json",
+			"type": "import"
+		},
+		{
 			"src": "characters/kiki/animations/kiki_anim_crash.json",
 			"type": "import"
 		},
@@ -526,6 +538,26 @@
 			"start_routine": null,
 			"type": "character_state",
 			"update_routine": "kiki_tick_neutral_aerial"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "KIKI_STATE_COUNTER_GUARD",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "kiki_hurt_counter_guard",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "kiki_tick_counter_guard"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "KIKI_STATE_COUNTER_STRIKE",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "kiki_tick_counter_strike"
 		}
 	],
 	"tileset": {
@@ -598,7 +630,9 @@
 			"KIKI_TILE_64",
 			"KIKI_TILE_65",
 			"KIKI_TILE_66",
-			"KIKI_TILE_67"
+			"KIKI_TILE_67",
+			"KIKI_TILE_68",
+			"KIKI_TILE_69"
 		],
 		"type": "tileset"
 	},
