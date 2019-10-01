@@ -41,12 +41,16 @@ init_title_screen:
 	cmp #GAME_STATE_CREDITS
 	beq soft_init
 
-	jsr init_menu        ;
-	jsr audio_music_weak ; Complete reinitialization
-	jmp end_menu_init    ;
+		; Complete reinitialization
+		jsr set_menu_chr
+		SWITCH_BANK(#DATA_BANK_NUMBER)
+		jsr init_menu
+		jsr audio_music_weak
+		jmp end_menu_init
 
-	soft_init:       ; Soft reinitialization - keep continuity with previous menu
-	jsr re_init_menu ;
+	soft_init:
+		; Soft reinitialization - keep continuity with previous menu
+		jsr re_init_menu
 
 	end_menu_init:
 

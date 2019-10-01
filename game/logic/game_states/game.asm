@@ -21,9 +21,9 @@ init_game_state:
 
 		; Copy stage's tileset
 		.(
-			tileset_addr = tmpfield1
-			;tileset_addr_msb = tmpfield2
-			tiles_count = tmpfield3
+			tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tiles
+			;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tiles
+			tiles_count = tmpfield3 ; Not movable, used by cpu_to_ppu_copy_tiles
 
 			; Save tileset's vector
 			ldx config_selected_stage

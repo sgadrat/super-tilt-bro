@@ -2,7 +2,7 @@ TILESET_GREEN_GRASS_BANK_NUMBER = CURRENT_BANK_NUMBER
 
 tileset_green_grass:
 
-; Tileset's size in tiles (zero means 255)
+; Tileset's size in tiles (zero means 256)
 .byt $e9
 
 ; TILE $00 - Full backdrop color
