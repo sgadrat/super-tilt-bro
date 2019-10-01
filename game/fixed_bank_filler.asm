@@ -14,6 +14,8 @@ credits_begin:
 .asc "bomb party",$0a
 .asc "    by matt hackett of",$0a
 .asc "    lost decade games",$0a
+.asc "kiki",$0a
+.asc "    by tyson tan",$0a
 .asc "twin dragons",$0a
 .asc "    by surt",$0a
 .asc "sinbad",$0a
@@ -24,7 +26,6 @@ credits_begin:
 .asc "    by ozzed",$0a
 .asc $0a
 .asc "           thanks",$0a
-.asc $0a
 .asc "antoine gohin   bacteriamage",$0a
 .asc "benoit ryder       bjorn nah",$0a
 .asc "fei         margarita gadrat",$0a
