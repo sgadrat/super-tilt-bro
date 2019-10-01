@@ -840,8 +840,17 @@ apply_force_vector:
 ; Move the player according to it's velocity and collisions with obstacles
 ;  register X - player number
 ;
-;  When returning player's position is updated, tmpfield1 contains it's old X
-;  and tmpfield2 contains it's old Y
+;  When returning
+;   - player's position is updated
+;   - tmpfield1 contains its old X ;TODO check, seems bugged
+;   - tmpfield2 contains its old Y ;TODO check, seems bugged
+;   - tmpfield13 contains its old screen_x
+;   - tmpfield14 contains its old screen_y
+;
+;  Note - As a side effect, new position is stored in some tmpfields
+;         some code may use it as an easy optimization (to fetch it
+;         from zero page instead of "zero-page, x").
+;         If this behaviour is changed, take care of dependent code.
 move_player:
 .(
 	;TODO harmonize component names "subpixel", "pixel" and "screen"
@@ -1133,28 +1142,22 @@ move_player:
 
 ; Check the player's position and modify the current state accordingly
 ;  register X - player number
-;  tmpfield1 - player's old X pixel
-;  tmpfield2 - player's old Y pixel
 ;  tmpfield3 - player's current X pixel
 ;  tmpfield4 - player's current Y pixel
 ;  tmpfield11 - player's current X screen
 ;  tmpfield12 - player's current Y screen
-;  tmpfield13 - player's old X screen
-;  tmpfield14 - player's old Y screen
 ;
 ;  The selected bank must be the correct character's bank.
 ;
 ;  Overwrites tmpfield1 and tmpfield2
 check_player_position:
 .(
-	old_x = tmpfield1 ; Not movable, used by particle_death_start
-	old_y = tmpfield2 ; Not movable, used by particle_death_start
+	capped_x = tmpfield1 ; Not movable, used by particle_death_start
+	capped_y = tmpfield2 ; Not movable, used by particle_death_start
 	current_x_pixel = tmpfield3 ; Dispensable, shall be equal to "player_a_x, x"
 	current_y_pixel = tmpfield4 ; Dispensable, shall be equal to "player_a_y, x"
 	current_x_screen = tmpfield11
 	current_y_screen = tmpfield12
-	old_x_screen = tmpfield13 ;TODO use it to place particles correctly
-	old_y_screen = tmpfield14 ;TODO use it to place particles correctly
 
 	; Check death
 	SIGNED_CMP(current_x_pixel, current_x_screen, #<STAGE_BLAST_LEFT, #>STAGE_BLAST_LEFT)
@@ -1171,21 +1174,26 @@ check_player_position:
 	bne offground
 
 		; On ground
-		lda #$00                         ; Reset aerial jumps counter
-		sta player_a_num_aerial_jumps, x ;
 
-		lda #DEFAULT_GRAVITY    ; Reset gravity modifications
-		sta player_a_gravity, x ;
+		; Reset aerial jumps counter
+		lda #$00
+		sta player_a_num_aerial_jumps, x
 
+		; Reset gravity modifications
+		lda #DEFAULT_GRAVITY
+		sta player_a_gravity, x
+
+		; Fire on-ground event
 		ldy config_player_a_character, x
-		lda characters_onground_routines_table_lsb, y ;
-		sta tmpfield1                                 ;
-		lda characters_onground_routines_table_msb, y ; Fire on-ground event
-		sta tmpfield2                                 ;
-		jsr player_state_action                       ;
+		lda characters_onground_routines_table_lsb, y
+		sta tmpfield1
+		lda characters_onground_routines_table_msb, y
+		sta tmpfield2
+		jsr player_state_action
 		jmp end
 
 	offground:
+		; Fire off-ground event
 		ldy config_player_a_character, x
 		lda characters_offground_routines_table_lsb, y
 		sta tmpfield1
@@ -1195,44 +1203,59 @@ check_player_position:
 		jmp end
 
 	set_death_state:
-		jsr audio_play_death ; Play death sound
+		; Play death sound
+		jsr audio_play_death
 
-		lda #$00                         ; Reset aerial jumps counter
-		sta player_a_num_aerial_jumps, x ;
+		; Reset aerial jumps counter
+		lda #$00
+		sta player_a_num_aerial_jumps, x
 
-		sta player_a_hitstun, x ; Reset hitstun counter
+		; Reset hitstun counter
+		sta player_a_hitstun, x
 
-		lda #DEFAULT_GRAVITY     ; Reset gravity
-		sta player_a_gravity, x  ;
+		; Reset gravity
+		lda #DEFAULT_GRAVITY
+		sta player_a_gravity, x
 
-		.(                               ;
-			lda old_x_screen             ;
-			bmi left_edge                ;
-			beq end_cap_vertical_blast   ;
-				lda #$ff                 ;
-				jmp cap_vertical_blast   ;
-			left_edge:                   ;
-				lda #$0                  ;
-			cap_vertical_blast:          ;
-				sta old_x                ; Death particles animation
-			end_cap_vertical_blast:      ;  It takes on-screen unsigned coordinates,
-		.)                               ;  so we cap actual coordinates to a minimum
-		.(                               ;  of zero and a maxium of 255
-			lda old_y_screen             ;
-			bmi top_edge                 ;
-			beq end_cap_horizontal_blast ;
-				lda #$ff                 ;
-				jmp cap_horizontal_blast ;
-			top_edge:                    ;
-				lda #$0                  ;
-			cap_horizontal_blast:        ;
-				sta old_y                ;
-			end_cap_horizontal_blast:    ;
-		.)                               ;
-		jsr particle_death_start         ;
+		; Death particles animation
+		;  It takes on-screen unsigned coordinates,
+		;  so we cap actual coordinates to a minimum
+		;  of zero and a maxium of 255
+		.(
+			lda current_x_screen
+			bmi left_edge
+			beq pass_cap_vertical_blast
+				lda #$ff
+				jmp cap_vertical_blast
+			pass_cap_vertical_blast:
+				lda current_x_pixel
+				jmp cap_vertical_blast
+			left_edge:
+				lda #$0
+			cap_vertical_blast:
+				sta capped_x
+			end_cap_vertical_blast:
+		.)
+		.(
+			lda current_y_screen
+			bmi top_edge
+			beq pass_cap_horizontal_blast
+				lda #$ff
+				jmp cap_horizontal_blast
+			pass_cap_horizontal_blast:
+				lda current_y_pixel
+				jmp cap_horizontal_blast
+			top_edge:
+				lda #$0
+			cap_horizontal_blast:
+				sta capped_y
+			end_cap_horizontal_blast:
+		.)
+		jsr particle_death_start
 
-		dec player_a_stocks, x ; Decrement stocks counter and check for gameover
-		bmi gameover           ;
+		; Decrement stocks counter and check for gameover
+		dec player_a_stocks, x
+		bmi gameover
 
 		; Set respawn state
 		lda PLAYER_STATE_RESPAWN
@@ -1247,16 +1270,18 @@ check_player_position:
 		jmp end
 
 	gameover:
-		lda slow_down_counter      ;
-		bne no_set_winner          ;
-		jsr switch_selected_player ;
-		txa                        ; Set the winner for gameover screen
-		sta gameover_winner        ;
-		jsr switch_selected_player ;
-		no_set_winner:             ;
+		; Set the winner for gameover screen
+		lda slow_down_counter
+		bne no_set_winner
+		jsr switch_selected_player
+		txa
+		sta gameover_winner
+		jsr switch_selected_player
+		no_set_winner:
 
-		lda #0                 ; Do not keep an invalid number of stocks
-		sta player_a_stocks, x ;
+		; Do not keep an invalid number of stocks
+		lda #0
+		sta player_a_stocks, x
 
 		; Hide dead player
 		lda PLAYER_STATE_INNEXISTANT
@@ -1268,8 +1293,10 @@ check_player_position:
 		sta tmpfield2
 		jsr player_state_action
 
-		lda #SLOWDOWN_TIME    ; Start slow down (restart it if the second player die to
-		sta slow_down_counter ; show that heroic death's animation)
+		; Start slow down (restart it if the second player die to
+		; show that heroic death's animation)
+		lda #SLOWDOWN_TIME
+		sta slow_down_counter
 
 	end:
 	rts
