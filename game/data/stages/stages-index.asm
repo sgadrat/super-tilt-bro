@@ -33,3 +33,21 @@ stages_bank:
 .byt STAGE_PIT_BANK_NUMBER ; Pit
 .byt STAGE_SHELF_BANK_NUMBER ; Shelf
 .byt STAGE_GEM_BANK_NUMBER ; Gem
+
+stages_tileset_lsb:
+.byt <tileset_green_grass ; Plateau
+.byt <tileset_green_grass ; Pit
+.byt <tileset_green_grass ; Shelf
+.byt <tileset_green_grass ; Gem
+
+stages_tileset_msb:
+.byt >tileset_green_grass ; Plateau
+.byt >tileset_green_grass ; Pit
+.byt >tileset_green_grass ; Shelf
+.byt >tileset_green_grass ; Gem
+
+stages_tileset_bank:
+.byt TILESET_GREEN_GRASS_BANK_NUMBER ; Plateau
+.byt TILESET_GREEN_GRASS_BANK_NUMBER ; Pit
+.byt TILESET_GREEN_GRASS_BANK_NUMBER ; Shelf
+.byt TILESET_GREEN_GRASS_BANK_NUMBER ; Gem

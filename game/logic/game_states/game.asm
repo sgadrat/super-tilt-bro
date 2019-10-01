@@ -19,6 +19,41 @@ init_game_state:
 		cpx #ZERO_PAGE_GLOBAL_FIELDS_BEGIN
 		bne zero_game_state
 
+		; Copy stage's tileset
+		.(
+			tileset_addr = tmpfield1
+			;tileset_addr_msb = tmpfield2
+			tiles_count = tmpfield3
+
+			; Save tileset's vector
+			ldx config_selected_stage
+			lda stages_tileset_lsb, x
+			sta tileset_addr
+			lda stages_tileset_msb, x
+			sta tileset_addr+1
+
+			; Switch to tileset's bank
+			SWITCH_BANK(stages_tileset_bank COMMA x)
+
+			; Copy tileset
+			ldy #0
+			lda (tileset_addr), y
+			sta tiles_count
+
+			inc tileset_addr
+			bne update_addr_end
+				inc tileset_addr+1
+			update_addr_end:
+
+			lda PPUSTATUS
+			lda #$10
+			sta PPUADDR
+			lda #$00
+			sta PPUADDR
+
+			jsr cpu_to_ppu_copy_tiles
+		.)
+
 		; Call stage initialization routine
 		ldx config_selected_stage
 		SWITCH_BANK(stages_bank COMMA x)
