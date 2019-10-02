@@ -11,7 +11,7 @@ RAW_VECTOR(dummy_routine) ; Shelf
 RAW_VECTOR(stage_gem_tick) ; Gem
 
 stages_nametable:
-RAW_VECTOR(nametable) ; Plateau
+RAW_VECTOR(nametable_flatland) ; Plateau
 RAW_VECTOR(nametable_stage_pit) ; Pit
 RAW_VECTOR(nametable_stage_shelf) ; Shelf
 RAW_VECTOR(nametable_stage_gem) ; Gem
@@ -35,19 +35,19 @@ stages_bank:
 .byt STAGE_GEM_BANK_NUMBER ; Gem
 
 stages_tileset_lsb:
-.byt <tileset_green_grass ; Plateau
+.byt <tileset_ruins ; Plateau
 .byt <tileset_green_grass ; Pit
 .byt <tileset_green_grass ; Shelf
 .byt <tileset_green_grass ; Gem
 
 stages_tileset_msb:
-.byt >tileset_green_grass ; Plateau
+.byt >tileset_ruins ; Plateau
 .byt >tileset_green_grass ; Pit
 .byt >tileset_green_grass ; Shelf
 .byt >tileset_green_grass ; Gem
 
 stages_tileset_bank:
-.byt TILESET_GREEN_GRASS_BANK_NUMBER ; Plateau
+.byt TILESET_RUINS_BANK_NUMBER ; Plateau
 .byt TILESET_GREEN_GRASS_BANK_NUMBER ; Pit
 .byt TILESET_GREEN_GRASS_BANK_NUMBER ; Shelf
 .byt TILESET_GREEN_GRASS_BANK_NUMBER ; Gem
