@@ -350,7 +350,7 @@ def generate_tileset(tileset, game_dir):
 			# Tile data
 			_w('{}\n\n'.format(stblib.asmformat.tiles.tile_to_asm(tile)))
 
-def generate_banks(char_to_bank, game_dir):
+def generate_banks(char_to_bank, tileset_to_bank, game_dir):
 	data_banks = []
 
 	# Populate the bank index
@@ -385,7 +385,7 @@ def generate_banks(char_to_bank, game_dir):
 
 		for bank_number in range(5, 31):
 			bank_index_file.write('\n#define CURRENT_BANK_NUMBER {}\n'.format(stblib.utils.uintasm8(bank_number)))
-			if bank_number in char_to_bank.values():
+			if bank_number in char_to_bank.values() or bank_number in tileset_to_bank.values():
 				bank_index_file.write('#include "game/banks/data{:02d}_bank.asm"\n'.format(bank_number))
 				if bank_number not in data_banks:
 					data_banks.append(bank_number)
@@ -404,8 +404,10 @@ def generate_banks(char_to_bank, game_dir):
 
 			""".format_map(locals())))
 
-			# Characters labels
+			# Data begining label
 			bank_file.write('bank_data{bank_number:02d}_begin:\n'.format_map(locals()))
+
+			# Characters includes
 			for char_name in char_to_bank:
 				if char_to_bank[char_name] == bank_number:
 					bank_file.write(textwrap.dedent("""\
@@ -413,6 +415,16 @@ def generate_banks(char_to_bank, game_dir):
 						#include "game/data/characters/{char_name}/{char_name}.asm"
 						bank_data{bank_number:02d}_character_{char_name}_end:
 					""".format_map(locals())))
+
+			for tileset_name in tileset_to_bank:
+				if tileset_to_bank[tileset_name] == bank_number:
+					bank_file.write(textwrap.dedent("""\
+						bank_data{bank_number:02d}_tileset_{tileset_name}_begin:
+						#include "game/data/tilesets/{tileset_name}.asm"
+						bank_data{bank_number:02d}_tileset_{tileset_name}_end:
+					""".format_map(locals())))
+
+			# Data end label
 			bank_file.write('bank_data{bank_number:02d}_end:\n\n'.format_map(locals()))
 
 			# Size statistics
@@ -428,6 +440,14 @@ def generate_banks(char_to_bank, game_dir):
 						#echo
 						#echo DATA{bank_number:02d}-bank {char_name} size:
 						#print bank_data{bank_number:02d}_character_{char_name}_end-bank_data{bank_number:02d}_character_{char_name}_begin
+					""".format_map(locals())))
+
+			for tileset_name in tileset_to_bank:
+				if tileset_to_bank[tileset_name] == bank_number:
+					bank_file.write(textwrap.dedent("""\
+						#echo
+						#echo DATA{bank_number:02d}-bank {tileset_name} tileset size:
+						#print bank_data{bank_number:02d}_tileset_{tileset_name}_end-bank_data{bank_number:02d}_tileset_{tileset_name}_begin
 					""".format_map(locals())))
 
 			bank_file.write(textwrap.dedent("""\
@@ -496,8 +516,7 @@ def main():
 		generate_tileset(tileset, game_dir)
 
 	# Generate bank files
-	#TODO update to place tilesets in banks
-	generate_banks(char_to_bank, game_dir)
+	generate_banks(char_to_bank, tileset_to_bank, game_dir)
 
 	return 0
 
