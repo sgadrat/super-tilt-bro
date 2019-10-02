@@ -320,7 +320,7 @@ def generate_tileset(tileset, game_dir):
 	# Compute some useful values
 	rel_tileset_dir = 'game/data/tilesets'
 	tileset_dir = '{}/{}'.format(game_dir, rel_tileset_dir)
-	tileset_filename = '{}/{}.asm'.format()
+	tileset_filename = '{}/{}.asm'.format(tileset_dir, tileset.name)
 	tileset_label_name = 'tileset_{}'.format(tileset.name)
 
 	# Generate tileset file
@@ -336,13 +336,13 @@ def generate_tileset(tileset, game_dir):
 
 		# Tileset size
 		_w('; Tileset\'s size in tiles (zero means 256)\n')
-		_w('.byt {}\n\n'.format(stblib.utils.uintasm8(len(tileset.tiles)))
+		_w('.byt {}\n\n'.format(stblib.utils.uintasm8(len(tileset.tiles))))
 
 		# Tiles in binary form, each with a label containing its index
 		index_expression = '(*-({}+1))/16'.format(tileset_label_name)
-		for tile_index in range(len(char.tileset.tilenames)):
-			tile = char.tileset.tiles[tile_index]
-			tile_name = char.tileset.tilenames[tile_index]
+		for tile_index in range(len(tileset.tilenames)):
+			tile = tileset.tiles[tile_index]
+			tile_name = tileset.tilenames[tile_index]
 
 			# Label containing tile's index
 			_w('{} = {}\n'.format(tile_name, index_expression))

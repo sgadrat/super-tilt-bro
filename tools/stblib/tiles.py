@@ -96,7 +96,7 @@ class Tileset:
 	def check(self):
 		ensure(isinstance(self.tiles, list))
 		for tile in self.tiles:
-			ensure(isinstance(tile, stblib.tiles.Tile))
+			ensure(isinstance(tile, Tile))
 			tile.check()
 
 		ensure(isinstance(self.tilenames, list))
