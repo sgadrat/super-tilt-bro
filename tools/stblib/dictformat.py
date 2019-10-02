@@ -115,7 +115,8 @@ def parse_character_state(source):
 
 def parse_gamemod(source):
 	return stblib.gamemod.GameMod(
-		characters = _import_list(source['characters'])
+		characters = _import_list(source['characters']),
+		tilesets = _import_list(source['tilesets'])
 	)
 
 def parse_nametable(source):
@@ -163,7 +164,8 @@ def parse_tile(source):
 def parse_tileset(source):
 	return stblib.tiles.Tileset(
 		tiles = _import_list(source['tiles']),
-		tilenames = source['tilenames']
+		tilenames = source['tilenames'],
+		name = source.get('name')
 	)
 
 def _serialize_object(obj_type, obj):

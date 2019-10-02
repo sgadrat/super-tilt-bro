@@ -88,7 +88,8 @@ class Tile:
 		return self._asm_line_multiplier == 2
 
 class Tileset:
-	def __init__(self, tiles=None, tilenames=None):
+	def __init__(self, tiles=None, tilenames=None, name=None):
+		self.name = name
 		self.tiles = tiles if tiles is not None else []
 		self.tilenames = tilenames if tilenames is not None else []
 

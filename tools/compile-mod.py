@@ -314,6 +314,42 @@ def generate_characters_index(characters, game_dir):
 		for routine_type in ['start', 'update', 'offground', 'onground', 'input', 'onhurt']:
 			_w_routine_table(routine_type)
 
+def generate_tileset(tileset, game_dir):
+	name_upper = tileset.name.upper()
+
+	# Compute some useful values
+	rel_tileset_dir = 'game/data/tilesets'
+	tileset_dir = '{}/{}'.format(game_dir, rel_tileset_dir)
+	tileset_filename = '{}/{}.asm'.format()
+	tileset_label_name = 'tileset_{}'.format(tileset.name)
+
+	# Generate tileset file
+	with open(tileset_filename, 'w') as tileset_file:
+		def _w(s):
+			tileset_file.write(s)
+
+		# Bank number
+		_w('TILESET_{}_BANK_NUMBER = CURRENT_BANK_NUMBER\n\n'.format(name_upper))
+
+		# Tileset label
+		_w('{}:\n\n'.format(tileset_label_name))
+
+		# Tileset size
+		_w('; Tileset\'s size in tiles (zero means 256)\n')
+		_w('.byt {}\n\n'.format(stblib.utils.uintasm8(len(tileset.tiles)))
+
+		# Tiles in binary form, each with a label containing its index
+		index_expression = '(*-({}+1))/16'.format(tileset_label_name)
+		for tile_index in range(len(char.tileset.tilenames)):
+			tile = char.tileset.tiles[tile_index]
+			tile_name = char.tileset.tilenames[tile_index]
+
+			# Label containing tile's index
+			_w('{} = {}\n'.format(tile_name, index_expression))
+
+			# Tile data
+			_w('{}\n\n'.format(stblib.asmformat.tiles.tile_to_asm(tile)))
+
 def generate_banks(char_to_bank, game_dir):
 	data_banks = []
 
@@ -411,6 +447,8 @@ def generate_banks(char_to_bank, game_dir):
 			""".format_map(locals())))
 
 def main():
+	FIRST_AVAILABLE_BANK = 5
+
 	# Parse command line
 	if len(sys.argv) < 3 or sys.argv[1] == '-h' or sys.argv[1] == '--help':
 		print('Compile a game mod stored in JSON format to Super Tilt Bro. source files')
@@ -437,7 +475,7 @@ def main():
 
 	# Generate characters
 	char_to_bank = {}
-	current_bank = 5
+	current_bank = FIRST_AVAILABLE_BANK
 	for character in mod.characters:
 		if character.name not in char_to_bank:
 			char_to_bank[character.name] = current_bank
@@ -447,8 +485,18 @@ def main():
 
 	# Generate shared character files
 	generate_characters_index(mod.characters, game_dir)
+	
+	# Generate tilesets
+	tileset_to_bank = {}
+	current_bank = FIRST_AVAILABLE_BANK
+	for tileset in mod.tilesets:
+		tileset_to_bank[tileset.name] = current_bank
+		current_bank += 1
+
+		generate_tileset(tileset, game_dir)
 
 	# Generate bank files
+	#TODO update to place tilesets in banks
 	generate_banks(char_to_bank, game_dir)
 
 	return 0
