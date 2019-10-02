@@ -827,15 +827,3 @@ tileset_menus:
 ; 22222222
 .byt %11111111, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
 .byt %11111111, %11111111, %11111111, %11111111, %11111111, %11111111, %11111111, %11111111
-
-#if $a000-* < 0
-#echo *** Error: VRAM pattern2 data occupies too much space
-#else
-.dsb $a000-*, 0
-#endif
-
-#if $c000-* < 0
-#echo *** Error: VRAM pattern2 data occupies too much space
-#else
-.dsb $c000-*, 0
-#endif

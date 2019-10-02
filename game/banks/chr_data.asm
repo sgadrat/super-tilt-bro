@@ -368,7 +368,7 @@ TILE_POWER_FLAMES_LARGE_2 = (*-$8000)/16
 #echo CHR-DATA number of free sprites
 #print 256-(*-$8000)/16
 #if $9000-* < 0
-#echo *** Error: VRAM pattern1 data occupies too much space
+#error VRAM pattern1 data occupies too much space
 #else
 .dsb $9000-*, 0
 #endif
@@ -376,13 +376,13 @@ TILE_POWER_FLAMES_LARGE_2 = (*-$8000)/16
 ; No CHR-TILES in this brank (should always be handled by gamestates logic)
 
 #if $a000-* < 0
-#echo *** Error: VRAM pattern2 data occupies too much space
+#error VRAM pattern2 data occupies too much space
 #else
 .dsb $a000-*, 0
 #endif
 
 #if $c000-* < 0
-#echo *** Error: CHR-BANK occupies too much space
+#error CHR-BANK occupies too much space
 #else
 .dsb $c000-*, 0
 #endif
