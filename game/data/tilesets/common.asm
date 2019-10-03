@@ -3,7 +3,7 @@ TILESET_COMMON_BANK_NUMBER = CURRENT_BANK_NUMBER
 tileset_common:
 
 ; Tileset's size in tiles (zero means 256)
-.byt (tileset_common_end-*)/16
+.byt (tileset_common_end-tileset_common_tiles)/16
 
 tileset_common_tiles:
 

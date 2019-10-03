@@ -3,7 +3,9 @@ TILESET_MENUS_BANK_NUMBER = CURRENT_BANK_NUMBER
 tileset_menus:
 
 ; Tileset's size in tiles (zero means 256)
-.byt (tileset_menus_end-tileset_menus)/16
+.byt (tileset_menus_end-tileset_menus_tiles)/16
+
+tileset_menus_tiles:
 
 ; TILE $00 - Full backdrop color
 ;
