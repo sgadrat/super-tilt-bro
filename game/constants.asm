@@ -65,7 +65,7 @@ TECH_NB_FORBIDDEN_FRAMES = 60 ; After expiration of a tech input, it is not poss
 #define MAX_STOCKS 4
 #define MAX_AI_LEVEL 3
 
-#define TILENUM_NT_CHAR_0 #$14
+#define TILENUM_NT_CHAR_0 #TILE_CHAR_0
 
 #define CONTROLLER_BTN_A      %10000000
 #define CONTROLLER_BTN_B      %01000000

@@ -1421,10 +1421,10 @@ write_player_damages:
 	inx
 	cpy player_stocks        ;
 	bcs empty_stock          ;
-	lda #$cf                 ;
+	lda #TILE_PLAYER_A_ICON  ;
 	jmp set_stock_tile       ; Set stock tile depending of the
 	empty_stock:             ; stock's availability
-	lda #$00                 ;
+	lda #TILE_SOLID_0        ;
 	set_stock_tile:          ;
 	sta nametable_buffers, x ;
 	inx
