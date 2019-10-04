@@ -34,7 +34,7 @@ def asmsint16(s):
 		i = -(0x10000 - i)
 	return i
 
-def str_to_tile_index(s, index_of_a = 0x37, index_of_zero = 0x14, special_cases = None):
+def str_to_tile_index(s, index_of_a = 0xe6, index_of_zero = 0xdb, special_cases = None):
 	"""
 	Convert a string to a series of tile indexes.
 
