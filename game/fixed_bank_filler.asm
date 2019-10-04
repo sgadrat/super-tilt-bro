@@ -11,6 +11,8 @@ credits_begin:
 .asc $0a
 .asc "         art-sources",$0a
 .asc $0a
+.asc "backgrounds",$0a
+.asc "    by martin le borgne",$0a
 .asc "bomb party",$0a
 .asc "    by matt hackett of",$0a
 .asc "    lost decade games",$0a
