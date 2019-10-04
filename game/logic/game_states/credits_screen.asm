@@ -107,9 +107,9 @@ init_credits_screen:
 		cmp #$2d                 ;
 		beq filled_space         ;
 
-		sec                ;
-		sbc #42            ; Generic case
-		sta PPUDATA        ; tile_id = char_value - 42
+		clc                ;
+		adc #133           ; Generic case
+		sta PPUDATA        ; tile_id = char_value + 133
 		jmp write_one_char ;
 
 		space:
