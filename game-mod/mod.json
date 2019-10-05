@@ -5,6 +5,7 @@
 		{"type": "import", "src": "characters/kiki/kiki.json"}
 	],
 	"tilesets": [
-		{"type": "import", "src": "tilesets/ruins.json"}
+		{"type": "import", "src": "tilesets/ruins.json"},
+		{"type": "import", "src": "tilesets/jungle.json"}
 	]
 }
