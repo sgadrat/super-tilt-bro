@@ -20,7 +20,7 @@ class Nametable:
 				serialized = ''
 				rest = self.size
 				while rest > 255:
-					serialized += '$00,{} '.format(uintasm8(255))
+					serialized += '$00,{}, '.format(uintasm8(255))
 					rest -= 255
 				if rest == 1:
 					serialized += 'ZIPZ,'
