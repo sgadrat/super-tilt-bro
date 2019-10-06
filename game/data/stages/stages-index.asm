@@ -38,16 +38,16 @@ stages_tileset_lsb:
 .byt <tileset_ruins ; Plateau
 .byt <tileset_jungle ; Pit
 .byt <tileset_ruins ; Shelf
-.byt <tileset_green_grass ; Gem
+.byt <tileset_magma ; Gem
 
 stages_tileset_msb:
 .byt >tileset_ruins ; Plateau
 .byt >tileset_jungle ; Pit
 .byt >tileset_ruins ; Shelf
-.byt >tileset_green_grass ; Gem
+.byt >tileset_magma ; Gem
 
 stages_tileset_bank:
 .byt TILESET_RUINS_BANK_NUMBER ; Plateau
 .byt TILESET_JUNGLE_BANK_NUMBER ; Pit
 .byt TILESET_RUINS_BANK_NUMBER ; Shelf
-.byt TILESET_GREEN_GRASS_BANK_NUMBER ; Gem
+.byt TILESET_MAGMA_BANK_NUMBER ; Gem

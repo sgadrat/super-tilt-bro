@@ -6,6 +6,7 @@
 	],
 	"tilesets": [
 		{"type": "import", "src": "tilesets/ruins.json"},
-		{"type": "import", "src": "tilesets/jungle.json"}
+		{"type": "import", "src": "tilesets/jungle.json"},
+		{"type": "import", "src": "tilesets/magma.json"}
 	]
 }
