@@ -8,6 +8,11 @@ init_character_selection_screen:
 	.(
 		SWITCH_BANK(#DATA_BANK_NUMBER)
 
+		; Disable asynchronous jobs
+		lda #0
+		sta character_selection_player_a_async_job_active
+		sta character_selection_player_b_async_job_active
+
 		; Construct nt buffers for palettes (to avoid changing it mid-frame)
 		lda #<palette_character_selection
 		sta tmpfield1
@@ -122,6 +127,9 @@ character_selection_screen_tick:
 	.(
 		; Clear already written buffers
 		jsr reset_nt_buffers
+
+		; Tick asynchronous jobs
+		jsr async_jobs
 
 		; Refresh players animations
 		jsr character_selection_tick_animations
@@ -340,7 +348,7 @@ character_selection_screen_tick:
 			ldy config_player_a_character, x
 			SWITCH_BANK(characters_bank_number COMMA y)
 
-			; Change current animation to the new character's one
+			; Change current animation to "invisible"
 			lda animation_states_addresses_lsb, x
 			sta tmpfield11
 			lda animation_states_addresses_msb, x
@@ -560,6 +568,34 @@ character_selection_screen_tick:
 
 		previous_value_handlers:
 		.word previous_character_color, previous_weapon_color, previous_character
+	.)
+
+	async_jobs:
+	.(
+		lda character_selection_player_a_async_job_active
+		bne do_player_a_job
+		lda character_selection_player_b_async_job_active
+		bne do_player_b_job
+		jmp end
+
+		do_player_a_job:
+			ldx #0
+			jmp tick_async_job
+			; Note - jump to routine, no return
+
+		do_player_b_job:
+			ldx #1
+			jmp tick_async_job
+			; Note - jump to routine, no return
+
+		end:
+		rts
+
+		tick_async_job:
+		.(
+			;TODO most code of refresh_player_character goes here in a tick-by-tick form
+			rts
+		.)
 	.)
 .)
 

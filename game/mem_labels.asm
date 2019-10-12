@@ -192,6 +192,18 @@ config_music_enabled = $01
 
 character_selection_player_a_selected_option = $00
 character_selection_player_b_selected_option = $01
+character_selection_player_a_async_job_prg_tiles = $02
+character_selection_player_b_async_job_prg_tiles = $03
+character_selection_player_a_async_job_prg_tiles_msb = $04
+character_selection_player_b_async_job_prg_tiles_msb = $05
+character_selection_player_a_async_job_ppu_tiles = $06
+character_selection_player_b_async_job_ppu_tiles = $07
+character_selection_player_a_async_job_ppu_tiles_msb = $08
+character_selection_player_b_async_job_ppu_tiles_msb = $09
+character_selection_player_a_async_job_ppu_write_count = $0a
+character_selection_player_b_async_job_ppu_write_count = $0b
+character_selection_player_a_async_job_active = $0c
+character_selection_player_b_async_job_active = $0d
 character_selection_player_a_animation = $05a0 ; $05a0 to $05ab - player a's animation state
 character_selection_player_b_animation = $05ac ; $05ac to $05b7 - player b's animation state
 
