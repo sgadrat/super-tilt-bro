@@ -949,9 +949,25 @@ move_player:
 	sta final_y_screen
 
 	; Check collisions with stage plaforms
-	ldy #0
+	ldy #0 ; TODO seems useless, not used bu stage_iterate_all_elements
 
-	check_platform_colision:
+	check_platform_collision:
+		lda #<handle_one_platform
+		sta elements_action_vector
+		lda #>handle_one_platform
+		sta elements_action_vector+1
+		jsr stage_iterate_all_elements
+
+		; HACK perform the check twice to mitigate the following issue
+		;  With two pateforms (A and B), if the final position is outside A
+		;  and inside B. A does not impacts movement, but collision with B
+		;  may replace the player inside A.
+		;
+		;  To mitigate it more elegantly we may
+		;   - recheck only platforms before the last colliding platform (and do it until no platform collide)
+		;   - use a better formula for collision detection that does not let player cut the corners
+		;
+		; TODO implement a cleaner solution
 		lda #<handle_one_platform
 		sta elements_action_vector
 		lda #>handle_one_platform
