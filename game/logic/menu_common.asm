@@ -29,18 +29,18 @@ re_init_menu:
 	; Copy initial cloud sprites to oam mirror
 	ldx #MENU_COMMON_NB_CLOUDS * MENU_COMMON_NB_SPRITE_PER_CLOUD * MENU_COMMON_OAM_SPRITE_SIZE
 	copy_one_byte:
-	dex
-	lda cloud_sprites, x
-	sta oam_mirror + MENU_COMMON_FIRST_CLOUD_SPRITE * MENU_COMMON_OAM_SPRITE_SIZE, x
-	cpx #0
-	bne copy_one_byte
+		dex
+		lda cloud_sprites, x
+		sta oam_mirror + MENU_COMMON_FIRST_CLOUD_SPRITE * MENU_COMMON_OAM_SPRITE_SIZE, x
+		cpx #0
+		bne copy_one_byte
 
 	; Show clouds on screen
 	jsr menu_position_clouds
 
 	rts
 
-#define CLOUD_SPRITE .byt 0, TILE_CLOUD_1, $23, 0, 0, TILE_CLOUD_2, $23, 0, 0, TILE_CLOUD_3, $23, 0, 0, TILE_CLOUD_4, $23, 0, 0, TILE_CLOUD_5, $23, 0, 0, TILE_CLOUD_6, $23, 0
+#define CLOUD_SPRITE .byt 0, TILE_CLOUD_1, $63, 0, 0, TILE_CLOUD_2, $63, 0, 0, TILE_CLOUD_3, $63, 0, 0, TILE_CLOUD_4, $63, 0, 0, TILE_CLOUD_5, $63, 0
 	cloud_sprites:
 	CLOUD_SPRITE
 	CLOUD_SPRITE
@@ -141,18 +141,20 @@ menu_position_cloud:
 	; Hide cloud not on the main screen
 	lda menu_common_cloud_1_y_msb, x
 	beq do_not_hide
-	lda #$fe
-	sta cloud_y
+		lda #$fe
+		sta cloud_y
 	do_not_hide:
 
 	; Compute cloud's first sprite address
 	txa ; Save X
 	pha ;
 
+#if MENU_COMMON_NB_SPRITE_PER_CLOUD <> 5
+#error Following code expects 5 sprites per cloud
+#endif
 	sta tmpfield2 ;
-	asl           ;
 	asl           ; X = X * NB_SPRITE_PER_CLOUD
-	adc tmpfield2 ;   = index of the first sprite, starting from first cloud's first sprite
+	asl           ;   = index of the first sprite, starting from first cloud's first sprite
 	adc tmpfield2 ;
 
 	asl ;
@@ -190,7 +192,7 @@ menu_position_cloud:
 
 	; Offset of sprites relative to cloud's position
 	sprite_offset_x:
-	.byt 16, 24, 0, 8, 16, 24
+	.byt 16, 8, 16, 8, 0
 	sprite_offset_y:
-	.byt 0, 0, 8, 8, 8, 8
+	.byt  0, 0,  8, 8, 8
 .)

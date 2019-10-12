@@ -2,7 +2,7 @@ palette_title:
 ; Background
 .byt $21,$0d,$21,$30, $21,$0d,$20,$00, $21,$20,$0d,$00, $21,$0d,$21,$21, ; 0 - logo, 1 - credits title, 2 - credits section, 3 - text and number with same colors
 ; Sprites
-.byt $21,$0d,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$20,$1c,$0c ; 0 - text, 1,2 - unused, 3 - cloud
+.byt $21,$0d,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$0d,$00,$31 ; 0 - text, 1,2 - unused, 3 - cloud
 
 palette_gameover:
 ; Background
@@ -14,19 +14,19 @@ palette_config:
 ; Background
 .byt $21,$20,$12,$0d, $21,$28,$12,$0d, $21,$00,$00,$00, $21,$0d,$20,$10
 ; Sprites
-.byt $21,$0d,$20,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$20,$1c,$0c
+.byt $21,$0d,$20,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$0d,$00,$31
 
 palette_stage_selection:
 ; Background
 .byt $21,$0d,$12,$0d, $21,$00,$00,$00, $21,$20,$28,$20, $21,$0d,$20,$10
 ; Sprites
-.byt $21,$0d,$0d,$21, $21,$08,$19,$21, $21,$00,$00,$00, $21,$20,$1c,$0c
+.byt $21,$0d,$0d,$21, $21,$08,$19,$21, $21,$00,$00,$00, $21,$0d,$00,$31
 
 palette_character_selection:
 ; Background
 .byt $21,$20,$12,$0d, $21,$28,$12,$0d, $21,$2a,$1a,$08, $21,$0d,$20,$10
 ; Sprites
-.byt $21,$00,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$20,$1c,$0c
+.byt $21,$00,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$0d,$00,$31
 
 #define T TILESET_MENUS_TITLE_0
 #define U TILESET_MENUS_TITLE_0+100
