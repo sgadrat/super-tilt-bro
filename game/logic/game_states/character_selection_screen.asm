@@ -3,12 +3,23 @@
 #define CHARACTER_SELECTION_OPTION_WEAPON 1
 #define CHARACTER_SELECTION_OPTION_CHARACTER 2
 
+CHARACTER_SELECTION_ASYNC_COPY_BYTES_PER_ITERATIONS = 48
+CHARACTER_SELECTION_ASYNC_COPY_NB_ITERATIONS = 32
+#if CHARACTER_SELECTION_ASYNC_COPY_NB_ITERATIONS*CHARACTER_SELECTION_ASYNC_COPY_BYTES_PER_ITERATIONS <> CHARACTERS_NUM_TILES_PER_CHAR*16
+#error "Incorrect number of copied bytes"
+#endif
+
+character_selection_animation_states_addresses_lsb:
+.byt <character_selection_player_a_animation, <character_selection_player_b_animation
+character_selection_animation_states_addresses_msb:
+.byt >character_selection_player_a_animation, >character_selection_player_b_animation
+
 init_character_selection_screen:
 .(
 	.(
 		SWITCH_BANK(#DATA_BANK_NUMBER)
 
-		; Disable asynchronous jobs
+		; Deactivate asynchronous jobs
 		lda #0
 		sta character_selection_player_a_async_job_active
 		sta character_selection_player_b_async_job_active
@@ -338,20 +349,14 @@ character_selection_screen_tick:
 
 		refresh_player_character:
 		.(
-			prg_tiles = tmpfield2 ; do not use tmpfield1, NMI handle overwrites it
-			prg_tiles_msb = tmpfield3
-			ppu_tiles = tmpfield4
-			ppu_tiles_msb = tmpfield5
-			ppu_write_count = tmpfield6
-
 			; Select new character's bank
 			ldy config_player_a_character, x
 			SWITCH_BANK(characters_bank_number COMMA y)
 
 			; Change current animation to "invisible"
-			lda animation_states_addresses_lsb, x
+			lda character_selection_animation_states_addresses_lsb, x
 			sta tmpfield11
-			lda animation_states_addresses_msb, x
+			lda character_selection_animation_states_addresses_msb, x
 			sta tmpfield12
 			lda #<anim_invisible
 			sta tmpfield13
@@ -359,200 +364,39 @@ character_selection_screen_tick:
 			sta tmpfield14
 			jsr animation_state_change_animation
 
-			; Write new character's tiles in PPU-RAM
-			txa
-			pha
+			; Start animation change async job (which will copy tiles in CHR-RAM before changing animation)
 			.(
-				; Put PRG tiles address in a fixed location
+				; Put PRG tiles address in job's state
 				ldy config_player_a_character, x
 				lda characters_tiles_data_lsb, y
-				sta prg_tiles
+				sta character_selection_player_a_async_job_prg_tiles, x
 				lda characters_tiles_data_msb, y
-				sta prg_tiles_msb
+				sta character_selection_player_a_async_job_prg_tiles_msb, x
 
-				; Set CHR tiles address in a fixed location
+				; Set CHR tiles address in job's state
 				cpx #0
 				bne player_b
 					lda #<CHARACTERS_CHARACTER_A_TILES_OFFSET
-					sta ppu_tiles
+					sta character_selection_player_a_async_job_ppu_tiles, x
 					lda #>CHARACTERS_CHARACTER_A_TILES_OFFSET
 					jmp end_set_ppu_addr
 				player_b:
 					lda #<CHARACTERS_CHARACTER_B_TILES_OFFSET
-					sta ppu_tiles
+					sta character_selection_player_a_async_job_ppu_tiles, x
 					lda #>CHARACTERS_CHARACTER_B_TILES_OFFSET
 				end_set_ppu_addr:
-				sta ppu_tiles_msb
+				sta character_selection_player_a_async_job_ppu_tiles_msb, x
 
-				; Copy character's tiles to PPU
-				;  create a series a nt buffers to be processed in consecutive NMIs to avoid disabling rendering
-				;  TODO Do it asynchronously to let the other player continue to configure its character during the copy
-				BYTES_PER_ITERATIONS = 48
-				NB_ITERATIONS = 32
-#if NB_ITERATIONS*BYTES_PER_ITERATIONS <> CHARACTERS_NUM_TILES_PER_CHAR*16
-#error "Incorrect number of copied bytes"
-#endif
-				lda #NB_ITERATIONS-1
-				sta ppu_write_count
-				write_ppu:
-					; Wait a frame to process previously created nametable buffers
-					jsr transparent_skip_frame
+				; Set number of tiles to copy
+				lda #CHARACTER_SELECTION_ASYNC_COPY_NB_ITERATIONS-1
+				sta character_selection_player_a_async_job_ppu_write_count, x
 
-					; Re-select the new character's bank (tick_animations may have changed that)
-					pla
-					pha
-					tax
-					ldy config_player_a_character, x
-					SWITCH_BANK(characters_bank_number COMMA y)
-
-					; Copy a chunk of bytes
-					jsr last_nt_buffer
-					lda #$01
-					sta nametable_buffers, x
-					inx
-					lda ppu_tiles_msb
-					sta nametable_buffers, x
-					inx
-					lda ppu_tiles
-					sta nametable_buffers, x
-					inx
-					lda #BYTES_PER_ITERATIONS
-					sta nametable_buffers, x
-					inx
-
-					ldy #0
-					copy_one_byte:
-						lda (prg_tiles), y
-						sta nametable_buffers, x
-						iny
-						inx
-
-						cpy #BYTES_PER_ITERATIONS
-						bne copy_one_byte
-
-					lda #0
-					sta nametable_buffers, x
-
-					; Update tiles addresses to the next byte to copy
-					lda #BYTES_PER_ITERATIONS
-					clc
-					adc prg_tiles
-					sta prg_tiles
-					lda #0
-					adc prg_tiles_msb
-					sta prg_tiles_msb
-
-					lda #BYTES_PER_ITERATIONS
-					clc
-					adc ppu_tiles
-					sta ppu_tiles
-					lda #0
-					adc ppu_tiles_msb
-					sta ppu_tiles_msb
-
-					; Loop
-#if NB_ITERATIONS >= 128
-#error "This loop code expects that bit 7 of any valid ppu_write_count is not set"
-#endif
-					dec ppu_write_count
-					bpl write_ppu
+				; Activate job
+				lda #1
+				sta character_selection_player_a_async_job_active, x
 			.)
-			pla
-			tax
-
-			; Change current animation to the new character's one
-			lda animation_states_addresses_lsb, x
-			sta tmpfield11
-			lda animation_states_addresses_msb, x
-			sta tmpfield12
-
-			ldy config_player_a_character, x
-
-			lda characters_properties_lsb, y
-			sta tmpfield1
-			lda characters_properties_msb, y
-			sta tmpfield2
-			ldy #CHARACTERS_PROPERTIES_MENU_SELECT_ANIM_OFFSET
-			lda (tmpfield1), y
-			sta tmpfield13
-			iny
-			lda (tmpfield1), y
-			sta tmpfield14
-
-			jsr animation_state_change_animation
-
-			; Refresh character palette options (and set it to #0 to avoid any overflow)
-			jsr transparent_skip_frame
-
-			option = tmpfield1
-			ldy #CHARACTER_SELECTION_OPTION_CHARACTER_PALETTE
-			sty option
-			lda #0
-			sta config_player_a_character_palette, x
-			txa
-			pha
-			jsr character_selection_draw_value
-			pla
-			tax
-
-			ldy #CHARACTER_SELECTION_OPTION_WEAPON
-			sty option
-			lda #0
-			sta config_player_a_weapon_palette, x
-			txa
-			pha
-			jsr character_selection_draw_value
-			pla
-			tax
-
-			; Refresh character and weapon names
-			lda #CHARACTER_SELECTION_OPTION_CHARACTER
-			sta tmpfield1
-			jsr character_selection_draw_value
 
 			jmp end
-
-			animation_states_addresses_lsb:
-			.byt <character_selection_player_a_animation, <character_selection_player_b_animation
-			animation_states_addresses_msb:
-			.byt >character_selection_player_a_animation, >character_selection_player_b_animation
-
-			; Wait a frame, tick animation, tick music while preserving values of X and local tmpfields
-			transparent_skip_frame:
-			.(
-				lda prg_tiles
-				pha
-				lda prg_tiles_msb
-				pha
-				lda ppu_tiles
-				pha
-				lda ppu_tiles_msb
-				pha
-				lda ppu_write_count
-				pha
-				txa
-				pha
-
-				jsr wait_next_frame
-				jsr audio_music_tick
-				jsr reset_nt_buffers
-				jsr character_selection_tick_animations
-
-				pla
-				tax
-				pla
-				sta ppu_write_count
-				pla
-				sta ppu_tiles_msb
-				pla
-				sta ppu_tiles
-				pla
-				sta prg_tiles_msb
-				pla
-				sta prg_tiles
-
-				rts
-			.)
 		.)
 
 		end:
@@ -572,29 +416,207 @@ character_selection_screen_tick:
 
 	async_jobs:
 	.(
-		lda character_selection_player_a_async_job_active
-		bne do_player_a_job
-		lda character_selection_player_b_async_job_active
-		bne do_player_b_job
-		jmp end
+		.(
+			lda character_selection_player_a_async_job_active
+			bne do_player_a_job
+			lda character_selection_player_b_async_job_active
+			bne do_player_b_job
+			jmp end
 
-		do_player_a_job:
-			ldx #0
-			jmp tick_async_job
-			; Note - jump to routine, no return
+			do_player_a_job:
+				ldx #0
+				jmp tick_async_job
+				; Note - jump to routine, no return
 
-		do_player_b_job:
-			ldx #1
-			jmp tick_async_job
-			; Note - jump to routine, no return
+			do_player_b_job:
+				ldx #1
+				jmp tick_async_job
+				; Note - jump to routine, no return
 
-		end:
-		rts
+			end:
+			rts
+		.)
 
 		tick_async_job:
 		.(
-			;TODO most code of refresh_player_character goes here in a tick-by-tick form
+			prg_tiles = tmpfield2
+			prg_tiles_msb = tmpfield3
+			ppu_tiles = tmpfield4
+			ppu_tiles_msb = tmpfield5
+			ppu_write_count = tmpfield6
+
+			; Store job's state at fixed location
+			lda character_selection_player_a_async_job_prg_tiles, x
+			sta prg_tiles
+			lda character_selection_player_a_async_job_prg_tiles_msb, x
+			sta prg_tiles_msb
+			lda character_selection_player_a_async_job_ppu_tiles, x
+			sta ppu_tiles
+			lda character_selection_player_a_async_job_ppu_tiles_msb, x
+			sta ppu_tiles_msb
+			lda character_selection_player_a_async_job_ppu_write_count, x
+			sta ppu_write_count
+
+			; Switch to character bank
+			ldy config_player_a_character, x
+			SWITCH_BANK(characters_bank_number COMMA y)
+
+			; Save character number
+			stx player_number
+
+			; Copy a chunk of bytes
+			jsr last_nt_buffer
+			lda #$01
+			sta nametable_buffers, x
+			inx
+			lda ppu_tiles_msb
+			sta nametable_buffers, x
+			inx
+			lda ppu_tiles
+			sta nametable_buffers, x
+			inx
+			lda #CHARACTER_SELECTION_ASYNC_COPY_BYTES_PER_ITERATIONS
+			sta nametable_buffers, x
+			inx
+
+			ldy #0
+			copy_one_byte:
+				lda (prg_tiles), y
+				sta nametable_buffers, x
+				iny
+				inx
+
+				cpy #CHARACTER_SELECTION_ASYNC_COPY_BYTES_PER_ITERATIONS
+				bne copy_one_byte
+
+			lda #0
+			sta nametable_buffers, x
+
+			; Restore player number
+			ldx player_number
+
+			; Update tiles addresses to the next byte to copy
+			lda #CHARACTER_SELECTION_ASYNC_COPY_BYTES_PER_ITERATIONS
+			clc
+			adc prg_tiles
+			sta character_selection_player_a_async_job_prg_tiles, x
+			lda #0
+			adc prg_tiles_msb
+			sta character_selection_player_a_async_job_prg_tiles_msb, x
+
+			lda #CHARACTER_SELECTION_ASYNC_COPY_BYTES_PER_ITERATIONS
+			clc
+			adc ppu_tiles
+			sta character_selection_player_a_async_job_ppu_tiles, x
+			lda #0
+			adc ppu_tiles_msb
+			sta character_selection_player_a_async_job_ppu_tiles_msb, x
+
+			; Loop
+#if CHARACTER_SELECTION_ASYNC_COPY_NB_ITERATIONS >= 128
+#error "This loop code expects that bit 7 of any valid ppu_write_count is not set"
+#endif
+			dec character_selection_player_a_async_job_ppu_write_count, x
+			bmi finalize_switch
+				jmp end
+
+			finalize_switch:
+				; Deactivate job
+				lda #0
+				sta character_selection_player_a_async_job_active, x
+
+				; Change current animation to the new character's one
+				lda character_selection_animation_states_addresses_lsb, x
+				sta tmpfield11
+				lda character_selection_animation_states_addresses_msb, x
+				sta tmpfield12
+
+				ldy config_player_a_character, x
+
+				lda characters_properties_lsb, y
+				sta tmpfield1
+				lda characters_properties_msb, y
+				sta tmpfield2
+				ldy #CHARACTERS_PROPERTIES_MENU_SELECT_ANIM_OFFSET
+				lda (tmpfield1), y
+				sta tmpfield13
+				iny
+				lda (tmpfield1), y
+				sta tmpfield14
+
+				jsr animation_state_change_animation
+
+				; Refresh character palette options (and set it to #0 to avoid any overflow)
+				jsr transparent_skip_frame
+
+				;TODO from here, should be in synchronous routine (note, the skip_frame may just be unnecessary if we copy by smaller increments)
+
+				option = tmpfield1
+				ldy #CHARACTER_SELECTION_OPTION_CHARACTER_PALETTE
+				sty option
+				lda #0
+				sta config_player_a_character_palette, x
+				txa
+				pha
+				jsr character_selection_draw_value
+				pla
+				tax
+
+				ldy #CHARACTER_SELECTION_OPTION_WEAPON
+				sty option
+				lda #0
+				sta config_player_a_weapon_palette, x
+				txa
+				pha
+				jsr character_selection_draw_value
+				pla
+				tax
+
+				; Refresh character and weapon names
+				lda #CHARACTER_SELECTION_OPTION_CHARACTER
+				sta tmpfield1
+				jsr character_selection_draw_value
+
+			end:
 			rts
+
+			; Wait a frame, tick animation, tick music while preserving values of X and local tmpfields
+			;TODO remove this routine if it become unused
+			transparent_skip_frame:
+			.(
+				;lda prg_tiles
+				;pha
+				;lda prg_tiles_msb
+				;pha
+				;lda ppu_tiles
+				;pha
+				;lda ppu_tiles_msb
+				;pha
+				;lda ppu_write_count
+				;pha
+				txa
+				pha
+
+				jsr wait_next_frame
+				jsr audio_music_tick
+				jsr reset_nt_buffers
+				jsr character_selection_tick_animations
+
+				pla
+				tax
+				;pla
+				;sta ppu_write_count
+				;pla
+				;sta ppu_tiles_msb
+				;pla
+				;sta ppu_tiles
+				;pla
+				;sta prg_tiles_msb
+				;pla
+				;sta prg_tiles
+
+				rts
+			.)
 		.)
 	.)
 .)
