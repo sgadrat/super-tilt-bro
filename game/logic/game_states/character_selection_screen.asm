@@ -445,6 +445,60 @@ character_selection_screen_tick:
 			ppu_tiles_msb = tmpfield5
 			ppu_write_count = tmpfield6
 
+			; Save character number
+			stx player_number
+
+			; Use actual value in "job_active" to choose between three steps
+			;  1 - Update character palette option
+			;  2 - Update weapon paelette option and character name displayed
+			;  3 - Copy tiles to VRAM and change character animation (this one takes multiple frames to complete)
+			lda character_selection_player_a_async_job_active, x
+			cmp #1
+			beq update_char_palette
+			cmp #2
+			beq update_weapon_palette
+			jmp copy_tiles
+
+			update_char_palette:
+				option = tmpfield1
+
+				; Set character palette option value to zero (sure to never overflow the available palettes)
+				lda #0
+				sta config_player_a_character_palette, x
+
+				; Refresh new character palette name on screen
+				lda #CHARACTER_SELECTION_OPTION_CHARACTER_PALETTE
+				sta option
+				jsr character_selection_draw_value
+
+				; Set job to next step
+				ldx player_number
+				inc character_selection_player_a_async_job_active, x
+				jmp end
+
+			update_weapon_palette:
+				; Set weapon palette option value to zero (sure to never overflow the available palettes)
+				lda #0
+				sta config_player_a_weapon_palette, x
+
+				; Refresh new weapon palette name on screen
+				lda #CHARACTER_SELECTION_OPTION_WEAPON
+				sta option
+				jsr character_selection_draw_value
+
+				; Refresh character and weapon names
+				ldx player_number
+				lda #CHARACTER_SELECTION_OPTION_CHARACTER
+				sta tmpfield1
+				jsr character_selection_draw_value
+
+				; Set job to next step
+				ldx player_number
+				inc character_selection_player_a_async_job_active, x
+				jmp end
+
+			copy_tiles:
+
 			; Store job's state at fixed location
 			lda character_selection_player_a_async_job_prg_tiles, x
 			sta prg_tiles
@@ -460,9 +514,6 @@ character_selection_screen_tick:
 			; Switch to character bank
 			ldy config_player_a_character, x
 			SWITCH_BANK(characters_bank_number COMMA y)
-
-			; Save character number
-			stx player_number
 
 			; Copy a chunk of bytes
 			jsr last_nt_buffer
@@ -546,77 +597,8 @@ character_selection_screen_tick:
 
 				jsr animation_state_change_animation
 
-				; Refresh character palette options (and set it to #0 to avoid any overflow)
-				jsr transparent_skip_frame
-
-				;TODO from here, should be in synchronous routine (note, the skip_frame may just be unnecessary if we copy by smaller increments)
-
-				option = tmpfield1
-				ldy #CHARACTER_SELECTION_OPTION_CHARACTER_PALETTE
-				sty option
-				lda #0
-				sta config_player_a_character_palette, x
-				txa
-				pha
-				jsr character_selection_draw_value
-				pla
-				tax
-
-				ldy #CHARACTER_SELECTION_OPTION_WEAPON
-				sty option
-				lda #0
-				sta config_player_a_weapon_palette, x
-				txa
-				pha
-				jsr character_selection_draw_value
-				pla
-				tax
-
-				; Refresh character and weapon names
-				lda #CHARACTER_SELECTION_OPTION_CHARACTER
-				sta tmpfield1
-				jsr character_selection_draw_value
-
 			end:
 			rts
-
-			; Wait a frame, tick animation, tick music while preserving values of X and local tmpfields
-			;TODO remove this routine if it become unused
-			transparent_skip_frame:
-			.(
-				;lda prg_tiles
-				;pha
-				;lda prg_tiles_msb
-				;pha
-				;lda ppu_tiles
-				;pha
-				;lda ppu_tiles_msb
-				;pha
-				;lda ppu_write_count
-				;pha
-				txa
-				pha
-
-				jsr wait_next_frame
-				jsr audio_music_tick
-				jsr reset_nt_buffers
-				jsr character_selection_tick_animations
-
-				pla
-				tax
-				;pla
-				;sta ppu_write_count
-				;pla
-				;sta ppu_tiles_msb
-				;pla
-				;sta ppu_tiles
-				;pla
-				;sta prg_tiles_msb
-				;pla
-				;sta prg_tiles
-
-				rts
-			.)
 		.)
 	.)
 .)
