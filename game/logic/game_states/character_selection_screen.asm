@@ -392,7 +392,7 @@ character_selection_screen_tick:
 				sta character_selection_player_a_async_job_ppu_write_count, x
 
 				; Activate job
-				lda #1
+				lda #3
 				sta character_selection_player_a_async_job_active, x
 			.)
 
@@ -417,18 +417,28 @@ character_selection_screen_tick:
 	async_jobs:
 	.(
 		.(
+			; Do job with the highest value in "job_active" (acting as a priority)
 			lda character_selection_player_a_async_job_active
-			bne do_player_a_job
-			lda character_selection_player_b_async_job_active
-			bne do_player_b_job
-			jmp end
+			cmp character_selection_player_b_async_job_active
+			bcs do_player_a_job
+			jmp do_player_b_job
 
 			do_player_a_job:
+				; Do nothing if job is inactive
+				lda character_selection_player_a_async_job_active
+				beq end
+
+				; Do the job
 				ldx #0
 				jmp tick_async_job
 				; Note - jump to routine, no return
 
 			do_player_b_job:
+				; Do nothing if job is inactive
+				lda character_selection_player_b_async_job_active
+				beq end
+
+				; Do the job
 				ldx #1
 				jmp tick_async_job
 				; Note - jump to routine, no return
@@ -449,11 +459,11 @@ character_selection_screen_tick:
 			stx player_number
 
 			; Use actual value in "job_active" to choose between three steps
-			;  1 - Update character palette option
+			;  3 - Update character palette option
 			;  2 - Update weapon paelette option and character name displayed
-			;  3 - Copy tiles to VRAM and change character animation (this one takes multiple frames to complete)
+			;  1 - Copy tiles to VRAM and change character animation (this one takes multiple frames to complete)
 			lda character_selection_player_a_async_job_active, x
-			cmp #1
+			cmp #3
 			beq update_char_palette
 			cmp #2
 			beq update_weapon_palette
@@ -473,7 +483,7 @@ character_selection_screen_tick:
 
 				; Set job to next step
 				ldx player_number
-				inc character_selection_player_a_async_job_active, x
+				dec character_selection_player_a_async_job_active, x
 				jmp end
 
 			update_weapon_palette:
@@ -494,7 +504,7 @@ character_selection_screen_tick:
 
 				; Set job to next step
 				ldx player_number
-				inc character_selection_player_a_async_job_active, x
+				dec character_selection_player_a_async_job_active, x
 				jmp end
 
 			copy_tiles:
