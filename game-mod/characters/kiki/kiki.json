@@ -97,9 +97,9 @@
 		"alternate_colors": [
 			{
 				"colors": [
-					45,
+					55,
 					50,
-					52
+					32
 				],
 				"type": "palette"
 			},
@@ -137,17 +137,17 @@
 			},
 			{
 				"colors": [
-					55,
-					32,
-					32
+					0,
+					0,
+					0
 				],
 				"type": "palette"
 			},
 			{
 				"colors": [
-					51,
-					51,
-					32
+					13,
+					36,
+					50
 				],
 				"type": "palette"
 			}
@@ -163,61 +163,61 @@
 			},
 			{
 				"colors": [
-					8,
-					40,
-					32
+					28,
+					25,
+					50
 				],
 				"type": "palette"
 			},
 			{
 				"colors": [
-					8,
-					26,
-					32
+					6,
+					35,
+					55
 				],
 				"type": "palette"
 			},
 			{
 				"colors": [
-					8,
-					22,
-					16
-				],
-				"type": "palette"
-			},
-			{
-				"colors": [
-					1,
-					49,
-					51
-				],
-				"type": "palette"
-			},
-			{
-				"colors": [
-					8,
-					24,
-					41
-				],
-				"type": "palette"
-			},
-			{
-				"colors": [
-					8,
 					13,
-					7
+					13,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					18,
+					22,
+					42
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					32,
+					32,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					32,
+					25,
+					8
 				],
 				"type": "palette"
 			}
 		],
 		"primary_names": [
 			"original",
-			"golden",
-			"green",
-			"hellborn",
-			"frozen",
-			"elven",
-			"dark"
+			"pastel",
+			"pop art",
+			"ink",
+			"primary",
+			"minimal",
+			"negative"
 		],
 		"secondary_colors": [
 			{
