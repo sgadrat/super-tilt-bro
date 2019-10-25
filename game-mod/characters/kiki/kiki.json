@@ -223,68 +223,68 @@
 			{
 				"colors": [
 					8,
-					40,
+					39,
 					55
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					28,
+					58
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					22,
+					38,
+					54
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					9,
+					25,
+					42
 				],
 				"type": "palette"
 			},
 			{
 				"colors": [
 					1,
-					49,
-					51
-				],
-				"type": "palette"
-			},
-			{
-				"colors": [
-					8,
-					24,
-					41
+					17,
+					34
 				],
 				"type": "palette"
 			},
 			{
 				"colors": [
 					13,
-					13,
-					0
+					21,
+					44
 				],
 				"type": "palette"
 			},
 			{
 				"colors": [
-					4,
-					36,
-					55
-				],
-				"type": "palette"
-			},
-			{
-				"colors": [
-					8,
-					22,
-					55
-				],
-				"type": "palette"
-			},
-			{
-				"colors": [
-					8,
-					16,
-					55
+					18,
+					37,
+					42
 				],
 				"type": "palette"
 			}
 		],
 		"secondary_names": [
-			"golden",
-			"ice",
-			"wooden",
-			"unholy",
-			"sweet",
-			"bloody",
-			"awesome"
+			"yellow",
+			"cyan",
+			"red",
+			"green",
+			"blue",
+			"gumball",
+			"colorful"
 		],
 		"type": "character_colors"
 	},
