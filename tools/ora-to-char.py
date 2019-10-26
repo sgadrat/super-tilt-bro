@@ -69,13 +69,14 @@ def extract_params(qs, known_params, object_type, object_name):
 		params[param_name] = params[param_name][0]
 	return params
 
-def parse_tile(sprite_layer, pos_in_raster, palettes):
+def parse_tile(sprite_layer, pos_in_raster, palettes, sprite_container_name):
 	"""
 	Extract an stblib Tile from an ORA layer
 
 	sprite_layer: The layer containing original sprite
 	pos_in_raster: {x,y} pixel position of the sprite in the layer
 	palettes: List of colors parsed from the palettes ORA layer
+	sprite_container_name: Name of the sprite layer's parent (for error message purpose)
 
 	return a tuple (tile, palette_number)
 		tile: The parsed tile
@@ -92,7 +93,7 @@ def parse_tile(sprite_layer, pos_in_raster, palettes):
 			try:
 				color_index = palettes.index(_uniq_transparent(sprite_layer['raster'].getpixel((x_in_raster, y_in_raster))))
 			except ValueError:
-				ensure(False, 'a sprite in {} use a color not found in palettes: sprite "{}", position "{}x{}", color "{}", palettes: {}'.format(frame_child['name'], sprite_layer['name'], x_in_raster, y_in_raster, sprite_layer['raster'].getpixel((x_in_raster, y_in_raster)), palettes))
+				ensure(False, 'a sprite in {} use a color not found in palettes: sprite "{}", position "{}x{}", color "{}", palettes: {}'.format(sprite_container_name, sprite_layer['name'], x_in_raster, y_in_raster, sprite_layer['raster'].getpixel((x_in_raster, y_in_raster)), palettes))
 
 			# Store pixel in tile
 			tile._representation[y][x] = color_index % 4
@@ -189,7 +190,7 @@ def ora_to_character(image_file, char_name):
 				sprite_layer['name']
 			))
 
-			tile, _ = parse_tile(sprite_layer, {'x':0, 'y': 0}, palettes)
+			tile, _ = parse_tile(sprite_layer, {'x':0, 'y': 0}, palettes, extra_sprites_stack['name'])
 			place_in_tileset(tile, character.tileset, '{}_TILE_{}'.format(character.name.upper(), sprite_layer['name']))
 
 	# Construct animations and tileset
@@ -292,7 +293,8 @@ def ora_to_character(image_file, char_name):
 								tile, palette_num = parse_tile(
 									sprite_layer,
 									{'x': tile_x_pos_in_raster, 'y': tile_y_pos_in_raster},
-									palettes
+									palettes,
+									frame_child['name']
 								)
 
 								# Add tile to tileset if needed, get its name and attributes
