@@ -561,12 +561,13 @@
 		}
 	],
 	"tileset": {
+		"name": null,
 		"src": "characters/kiki/tileset.gif",
 		"tilenames": [
+			"KIKI_TILE_WALL_BLOCK_V_UP",
+			"KIKI_TILE_WALL_BLOCK_V_DOWN",
 			"KIKI_TILE_SMOOTH_WALL_BLOCK",
 			"KIKI_TILE_WALL_BLOCK",
-			"KIKI_TILE_2",
-			"KIKI_TILE_3",
 			"KIKI_TILE_4",
 			"KIKI_TILE_5",
 			"KIKI_TILE_6",
@@ -632,7 +633,9 @@
 			"KIKI_TILE_66",
 			"KIKI_TILE_67",
 			"KIKI_TILE_68",
-			"KIKI_TILE_69"
+			"KIKI_TILE_69",
+			"KIKI_TILE_70",
+			"KIKI_TILE_71"
 		],
 		"type": "tileset"
 	},
