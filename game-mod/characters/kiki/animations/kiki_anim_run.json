@@ -146,14 +146,6 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "KIKI_TILE_12",
-					"type": "animation_sprite",
-					"x": 9,
-					"y": 4
-				},
-				{
-					"attr": 1,
-					"foreground": false,
 					"tile": "KIKI_TILE_13",
 					"type": "animation_sprite",
 					"x": 1,
