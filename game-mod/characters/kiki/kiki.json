@@ -45,6 +45,10 @@
 			"type": "import"
 		},
 		{
+			"src": "characters/kiki/animations/kiki_anim_paint_down.json",
+			"type": "import"
+		},
+		{
 			"src": "characters/kiki/animations/kiki_anim_paint_side.json",
 			"type": "import"
 		},

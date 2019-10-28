@@ -1618,10 +1618,9 @@ kiki_start_down_spe:
 	sprite_y_msb = tmpfield4
 
 	; Set the appropriate animation
-	; TODO draw a specific animation
-	lda #<kiki_anim_paint_side
+	lda #<kiki_anim_paint_down
 	sta tmpfield13
-	lda #>kiki_anim_paint_side
+	lda #>kiki_anim_paint_down
 	sta tmpfield14
 	jsr set_player_animation
 
@@ -1664,7 +1663,7 @@ kiki_start_down_spe:
 
 	lda player_a_x, x
 	clc
-	adc #$ef
+	adc #$f3
 	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
 	lda player_a_x_screen, x
 	adc #$ff
