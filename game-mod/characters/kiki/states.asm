@@ -1720,12 +1720,6 @@ kiki_start_down_spe:
 	asl
 	tay
 
-	lda #KIKI_TILE_WALL_BLOCK
-	clc
-	adc kiki_first_tile_index_per_player, x
-	sta oam_mirror+1, y ; First sprite tile
-	sta oam_mirror+5, y ; Second sprite tile
-
 	lda wall_attributes_per_player, x
 	sta oam_mirror+2, y ; First sprite attributes
 	sta oam_mirror+6, y ; Second sprite attributes
@@ -1737,6 +1731,10 @@ kiki_start_down_spe:
 	lda sprite_y_msb
 	bne hide_left_sprite
 
+		lda #KIKI_TILE_WALL_BLOCK_H_LEFT
+		clc
+		adc kiki_first_tile_index_per_player, x
+		sta oam_mirror+1, y ; First sprite tile
 		lda sprite_y_lsb
 		sta oam_mirror, y ; First sprite Y
 		lda sprite_x_lsb
@@ -1761,6 +1759,10 @@ kiki_start_down_spe:
 	lda sprite_y_msb
 	bne hide_right_sprite
 
+		lda #KIKI_TILE_WALL_BLOCK_H_RIGHT
+		clc
+		adc kiki_first_tile_index_per_player, x
+		sta oam_mirror+5, y ; Second sprite tile
 		lda sprite_y_lsb
 		sta oam_mirror+4, y ; Second sprite Y
 		lda sprite_x_lsb
@@ -1887,12 +1889,6 @@ kiki_start_up_spe:
 	asl
 	tay
 
-	lda #KIKI_TILE_SMOOTH_WALL_BLOCK
-	clc
-	adc kiki_first_tile_index_per_player, x
-	sta oam_mirror+1, y ; First sprite tile
-	sta oam_mirror+5, y ; Second sprite tile
-
 	lda wall_attributes_per_player, x
 	sta oam_mirror+2, y ; First sprite attributes
 	sta oam_mirror+6, y ; Second sprite attributes
@@ -1904,6 +1900,10 @@ kiki_start_up_spe:
 	lda sprite_y_msb
 	bne hide_left_sprite
 
+		lda #KIKI_TILE_SMOOTH_WALL_BLOCK_LEFT
+		clc
+		adc kiki_first_tile_index_per_player, x
+		sta oam_mirror+1, y ; First sprite tile
 		lda sprite_y_lsb
 		sta oam_mirror, y ; First sprite Y
 		lda sprite_x_lsb
@@ -1928,6 +1928,10 @@ kiki_start_up_spe:
 	lda sprite_y_msb
 	bne hide_right_sprite
 
+		lda #KIKI_TILE_SMOOTH_WALL_BLOCK_RIGHT
+		clc
+		adc kiki_first_tile_index_per_player, x
+		sta oam_mirror+5, y ; Second sprite tile
 		lda sprite_y_lsb
 		sta oam_mirror+4, y ; Second sprite Y
 		lda sprite_x_lsb

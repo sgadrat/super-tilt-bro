@@ -14,7 +14,7 @@
 				{
 					"attr": 128,
 					"foreground": false,
-					"tile": "KIKI_TILE_6",
+					"tile": "KIKI_TILE_8",
 					"type": "animation_sprite",
 					"x": 8,
 					"y": 0
@@ -22,7 +22,7 @@
 				{
 					"attr": 128,
 					"foreground": false,
-					"tile": "KIKI_TILE_7",
+					"tile": "KIKI_TILE_9",
 					"type": "animation_sprite",
 					"x": 8,
 					"y": 8
@@ -30,7 +30,7 @@
 				{
 					"attr": 128,
 					"foreground": false,
-					"tile": "KIKI_TILE_8",
+					"tile": "KIKI_TILE_10",
 					"type": "animation_sprite",
 					"x": 0,
 					"y": 0
@@ -38,7 +38,7 @@
 				{
 					"attr": 128,
 					"foreground": false,
-					"tile": "KIKI_TILE_9",
+					"tile": "KIKI_TILE_11",
 					"type": "animation_sprite",
 					"x": 0,
 					"y": 8

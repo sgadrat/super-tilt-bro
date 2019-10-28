@@ -564,12 +564,12 @@
 		"name": null,
 		"src": "characters/kiki/tileset.gif",
 		"tilenames": [
+			"KIKI_TILE_WALL_BLOCK_H_LEFT",
+			"KIKI_TILE_WALL_BLOCK_H_RIGHT",
 			"KIKI_TILE_WALL_BLOCK_V_UP",
 			"KIKI_TILE_WALL_BLOCK_V_DOWN",
-			"KIKI_TILE_SMOOTH_WALL_BLOCK",
-			"KIKI_TILE_WALL_BLOCK",
-			"KIKI_TILE_4",
-			"KIKI_TILE_5",
+			"KIKI_TILE_SMOOTH_WALL_BLOCK_RIGHT",
+			"KIKI_TILE_SMOOTH_WALL_BLOCK_LEFT",
 			"KIKI_TILE_6",
 			"KIKI_TILE_7",
 			"KIKI_TILE_8",
@@ -635,7 +635,9 @@
 			"KIKI_TILE_68",
 			"KIKI_TILE_69",
 			"KIKI_TILE_70",
-			"KIKI_TILE_71"
+			"KIKI_TILE_71",
+			"KIKI_TILE_72",
+			"KIKI_TILE_73"
 		],
 		"type": "tileset"
 	},

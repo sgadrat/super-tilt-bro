@@ -14,7 +14,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_4",
+					"tile": "KIKI_TILE_6",
 					"type": "animation_sprite",
 					"x": 0,
 					"y": -2
@@ -22,7 +22,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_5",
+					"tile": "KIKI_TILE_7",
 					"type": "animation_sprite",
 					"x": -4,
 					"y": 6
@@ -30,7 +30,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "KIKI_TILE_9",
+					"tile": "KIKI_TILE_11",
 					"type": "animation_sprite",
 					"x": -1,
 					"y": 0
@@ -38,7 +38,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "KIKI_TILE_7",
+					"tile": "KIKI_TILE_9",
 					"type": "animation_sprite",
 					"x": 7,
 					"y": 0
@@ -46,7 +46,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "KIKI_TILE_8",
+					"tile": "KIKI_TILE_10",
 					"type": "animation_sprite",
 					"x": -1,
 					"y": 8
@@ -54,7 +54,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "KIKI_TILE_6",
+					"tile": "KIKI_TILE_8",
 					"type": "animation_sprite",
 					"x": 7,
 					"y": 8
@@ -76,7 +76,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "KIKI_TILE_4",
+					"tile": "KIKI_TILE_6",
 					"type": "animation_sprite",
 					"x": 0,
 					"y": -2
@@ -84,7 +84,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "KIKI_TILE_5",
+					"tile": "KIKI_TILE_7",
 					"type": "animation_sprite",
 					"x": -4,
 					"y": 6
@@ -92,7 +92,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_9",
+					"tile": "KIKI_TILE_11",
 					"type": "animation_sprite",
 					"x": -1,
 					"y": 0
@@ -100,7 +100,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_7",
+					"tile": "KIKI_TILE_9",
 					"type": "animation_sprite",
 					"x": 7,
 					"y": 0
@@ -108,7 +108,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_8",
+					"tile": "KIKI_TILE_10",
 					"type": "animation_sprite",
 					"x": -1,
 					"y": 8
@@ -116,7 +116,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_6",
+					"tile": "KIKI_TILE_8",
 					"type": "animation_sprite",
 					"x": 7,
 					"y": 8

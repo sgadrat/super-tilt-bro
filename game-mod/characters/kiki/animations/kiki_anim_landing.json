@@ -14,7 +14,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "KIKI_TILE_4",
+					"tile": "KIKI_TILE_6",
 					"type": "animation_sprite",
 					"x": 3,
 					"y": -5
@@ -22,7 +22,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "KIKI_TILE_5",
+					"tile": "KIKI_TILE_7",
 					"type": "animation_sprite",
 					"x": 1,
 					"y": 3
@@ -30,7 +30,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_14",
+					"tile": "KIKI_TILE_16",
 					"type": "animation_sprite",
 					"x": 7,
 					"y": 8
@@ -38,7 +38,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_15",
+					"tile": "KIKI_TILE_17",
 					"type": "animation_sprite",
 					"x": 7,
 					"y": 0
@@ -46,7 +46,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_16",
+					"tile": "KIKI_TILE_18",
 					"type": "animation_sprite",
 					"x": -1,
 					"y": 8
@@ -54,7 +54,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_17",
+					"tile": "KIKI_TILE_19",
 					"type": "animation_sprite",
 					"x": -1,
 					"y": 0
@@ -76,7 +76,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "KIKI_TILE_4",
+					"tile": "KIKI_TILE_6",
 					"type": "animation_sprite",
 					"x": 3,
 					"y": -3
@@ -84,7 +84,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "KIKI_TILE_5",
+					"tile": "KIKI_TILE_7",
 					"type": "animation_sprite",
 					"x": 1,
 					"y": 5
@@ -92,7 +92,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_14",
+					"tile": "KIKI_TILE_16",
 					"type": "animation_sprite",
 					"x": 7,
 					"y": 9
@@ -100,7 +100,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_15",
+					"tile": "KIKI_TILE_17",
 					"type": "animation_sprite",
 					"x": 7,
 					"y": 1
@@ -108,7 +108,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_34",
+					"tile": "KIKI_TILE_36",
 					"type": "animation_sprite",
 					"x": -1,
 					"y": 9
@@ -116,7 +116,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_17",
+					"tile": "KIKI_TILE_19",
 					"type": "animation_sprite",
 					"x": -1,
 					"y": 1
@@ -138,7 +138,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "KIKI_TILE_4",
+					"tile": "KIKI_TILE_6",
 					"type": "animation_sprite",
 					"x": 3,
 					"y": -3
@@ -146,7 +146,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "KIKI_TILE_5",
+					"tile": "KIKI_TILE_7",
 					"type": "animation_sprite",
 					"x": 1,
 					"y": 5
@@ -154,7 +154,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_14",
+					"tile": "KIKI_TILE_16",
 					"type": "animation_sprite",
 					"x": 7,
 					"y": 8
@@ -162,7 +162,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_15",
+					"tile": "KIKI_TILE_17",
 					"type": "animation_sprite",
 					"x": 7,
 					"y": 0
@@ -170,7 +170,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_16",
+					"tile": "KIKI_TILE_18",
 					"type": "animation_sprite",
 					"x": -1,
 					"y": 8
@@ -178,7 +178,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "KIKI_TILE_17",
+					"tile": "KIKI_TILE_19",
 					"type": "animation_sprite",
 					"x": -1,
 					"y": 0
