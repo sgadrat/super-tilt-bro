@@ -69,6 +69,35 @@ def extract_params(qs, known_params, object_type, object_name):
 		params[param_name] = params[param_name][0]
 	return params
 
+def tile_subrasters(layer):
+	"""
+	Return a list of tiles position in a layer
+
+	layer: A layer as parsed from an ORA file.
+
+	Result type:
+		[
+			{'x': int, 'y': int},
+			...
+		]
+
+		Each element in the list is a position, in pixels, from the top-left corner of the layer.
+		Each returned position is the top-left pixel of an 8x8 tile.
+	"""
+	ensure(layer['raster'].size[0] % 8 == 0 and layer['raster'].size[1] == 0, 'partial tiles in raster of size {}x{}'.format(layer['raster'].size[0], layer['raster'].size[1]))
+
+	tile_positions = []
+	raster_horizontal_tiles_count = layer['raster'].size[0] // 8
+	raster_vertical_tiles_count = layer['raster'].size[1] // 8
+	for tile_y_num_in_raster in range(raster_vertical_tiles_count):
+		tile_y_pos_in_raster = tile_y_num_in_raster * 8
+		for tile_x_num_in_raster in range(raster_horizontal_tiles_count):
+			tile_x_pos_in_raster = tile_x_num_in_raster * 8
+
+			tile_positions.append({'x': tile_x_pos_in_raster, 'y': tile_y_pos_in_raster})
+
+	return tile_positions
+
 def parse_tile(sprite_layer, pos_in_raster, palettes, sprite_container_name):
 	"""
 	Extract an stblib Tile from an ORA layer
@@ -151,6 +180,7 @@ def ora_to_character(image_file, char_name):
 	# Find interesting elements
 	animations_stack = None
 	extra_sprites_stack = None
+	illustrations_stack = None
 	origin_layer = None
 	palettes_layer = None
 	for child in image['root']['childs']:
@@ -160,6 +190,9 @@ def ora_to_character(image_file, char_name):
 		elif child.get('name') == 'extra_sprites':
 			extra_sprites_stack = child
 			ensure(extra_sprites_stack['type'] == 'stack', '"extra_sprites" is not a stack')
+		elif child.get('name') == 'illustrations':
+			illustrations_stack = child
+			ensure(illustrations_stack['type'] == 'stack', '"illustrations" is not a stack')
 		elif child.get('name') == 'origin':
 			origin_layer = child
 			ensure(origin_layer['type'] == 'layer', '"origin" is not a layer')
@@ -179,6 +212,22 @@ def ora_to_character(image_file, char_name):
 	palettes = []
 	for color in palettes_layer['raster'].getdata():
 		palettes.append(_uniq_transparent(color))
+
+	# Extract illustrations
+	ensure(illustrations_stack is not None, 'no illustrations stack found')
+	for illustration_layer in illustrations_stack['childs']:
+		ensure(illustration_layer['name'] == 'illustrations.small', 'uknown illustration "{}"'.format(illustration_layer['name']))
+		ensure(illustration_layer['raster'].size[0] = 16 and illustration_layer['raster'].size[1] = 16)
+		tileset = character.illustration_small
+		for subraster in tile_subrasters(illustration_layer['raster']):
+			tile, _ = parse_tile(
+				illustration_layer,
+				subraster,
+				palettes,
+				illustrations_stack['name']
+			)
+			tileset.tiles.append(tile)
+			tileset.names.append('{}_ILLUSTRATION_SMALL_{}'.format(character.name.upper(), len(tileset.tiles)))
 
 	# Place extra sprites in tileset
 	if extra_sprites_stack is not None:
@@ -282,42 +331,36 @@ def ora_to_character(image_file, char_name):
 							frame_child['name'], sprite_layer['name']
 						))
 
-						raster_horizontal_tiles_count = sprite_layer['raster'].size[0] // 8
-						raster_vertical_tiles_count = sprite_layer['raster'].size[1] // 8
-						for tile_y_num_in_raster in range(raster_vertical_tiles_count):
-							tile_y_pos_in_raster = tile_y_num_in_raster * 8
-							for tile_x_num_in_raster in range(raster_horizontal_tiles_count):
-								tile_x_pos_in_raster = tile_x_num_in_raster * 8
+						for tile_pos_in_raster in tile_subrasters(sprite_layer):
+							# Parse tile
+							tile, palette_num = parse_tile(
+								sprite_layer,
+								tile_pos_in_raster,
+								palettes,
+								frame_child['name']
+							)
 
-								# Parse tile
-								tile, palette_num = parse_tile(
-									sprite_layer,
-									{'x': tile_x_pos_in_raster, 'y': tile_y_pos_in_raster},
-									palettes,
-									frame_child['name']
-								)
+							# Add tile to tileset if needed, get its name and attributes
+							tile_name, flip = place_in_tileset(
+								tile,
+								character.tileset,
+								'{}_TILE_{}'.format(character.name.upper(), len(character.tileset.tiles))
+							)
 
-								# Add tile to tileset if needed, get its name and attributes
-								tile_name, flip = place_in_tileset(
-									tile,
-									character.tileset,
-									'{}_TILE_{}'.format(character.name.upper(), len(character.tileset.tiles))
-								)
-
-								# Add sprite to frame
-								numeric_attr = palette_num
-								if flip['v']:
-									numeric_attr += 0x80
-								if flip['h']:
-									numeric_attr += 0x40
-								sprite = stblib.animations.Sprite(
-									y = sprite_layer['y'] + tile_y_pos_in_raster - origin['y'],
-									tile = tile_name,
-									attr = numeric_attr,
-									x = sprite_layer['x'] + tile_x_pos_in_raster - origin['x'],
-									foreground = sprite_layer_info['foreground']
-								)
-								frame.sprites.append(sprite)
+							# Add sprite to frame
+							numeric_attr = palette_num
+							if flip['v']:
+								numeric_attr += 0x80
+							if flip['h']:
+								numeric_attr += 0x40
+							sprite = stblib.animations.Sprite(
+								y = sprite_layer['y'] + tile_pos_in_raster['y'] - origin['y'],
+								tile = tile_name,
+								attr = numeric_attr,
+								x = sprite_layer['x'] + tile_pos_in_raster['x'] - origin['x'],
+								foreground = sprite_layer_info['foreground']
+							)
+							frame.sprites.append(sprite)
 				else:
 					# Refuse unknown children in a frame, it is certainly a naming error or something not yet supported
 					ensure(False, 'unknown frame child in {}: "{}"'.format(frame_stack['name'], frame_child['name']))

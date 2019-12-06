@@ -3,6 +3,16 @@
 	"name": "sinbad",
 	"weapon_name": "scimitar",
 	"sourcecode_file": "characters/sinbad/states.asm",
+	"illustration_small": {
+		"type": "tileset",
+		"src": "characters/sinbad/illustrations/small.gif",
+		"tilenames": [
+			"SINBAD_ILLUSTRATION_SMALL_1",
+			"SINBAD_ILLUSTRATION_SMALL_2",
+			"SINBAD_ILLUSTRATION_SMALL_3",
+			"SINBAD_ILLUSTRATION_SMALL_4"
+		]
+	},
 	"tileset": {
 		"type": "tileset",
 		"src": "characters/sinbad/tileset.gif",

@@ -296,6 +296,16 @@
 		"src": "characters/kiki/animations/kiki_anim_defeat.json",
 		"type": "import"
 	},
+	"illustration_small": {
+		"type": "tileset",
+		"src": "characters/sinbad/illustrations/small.gif",
+		"tilenames": [
+			"KIKI_ILLUSTRATION_SMALL_1",
+			"KIKI_ILLUSTRATION_SMALL_2",
+			"KIKI_ILLUSTRATION_SMALL_3",
+			"KIKI_ILLUSTRATION_SMALL_4"
+		]
+	},
 	"menu_select_animation": {
 		"src": "characters/kiki/animations/kiki_anim_menu_select.json",
 		"type": "import"

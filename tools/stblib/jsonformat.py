@@ -60,14 +60,14 @@ def dict_to_json(dict_version, json_file, base_path = None):
 	json.dump(json_version, json_file, indent='\t', sort_keys=True)
 	json_file.write('\n')
 
-def tileset_to_img(tileset):
+def tileset_to_img(tileset, img_with_in_tiles, img_height_in_tiles):
 	# Normalize to accept a Tileset or a list of tiles as input
 	tiles = None
 	if isinstance(tileset, stblib.tiles.Tileset):
 		tiles = tileset.tiles
 	else:
 		tiles = tileset
-	ensure(len(tiles) <= 96, 'too much tiles in the tileset: {} / 96'.format(len(tiles)))
+	ensure(len(tiles) <= img_with_in_tiles * img_height_in_tiles, 'too much tiles in the tileset: {} / {}'.format(len(tiles), img_with_in_tiles * img_height_in_tiles))
 
 	# Create empty image
 	img_with_in_tiles = 8
@@ -163,18 +163,27 @@ def _apply_json_transform(obj, base_path):
 def _jsonify_character(character, base_path):
 	character_path_rel = 'characters/{}'.format(character['name'])
 	animations_path_rel = '{}/animations'.format(character_path_rel)
+	illustrations_path_rel = '{}/illustrations'.format(character_path_rel)
 	character_path = '{}/{}'.format(base_path, character_path_rel)
 	animations_path = '{}/{}'.format(base_path, animations_path_rel)
+	illustrations_path = '{}/{}'.format(base_path, illustrations_path_rel)
 	os.makedirs(character_path, exist_ok=True)
 	os.makedirs(animations_path, exist_ok=True)
 
-	# Convert tileset to gif based tileset
+	# Convert tilesets to gif based tileset
 	tileset_src = '{}/tileset.gif'.format(character_path)
-	tileset_img = tileset_to_img(character['tileset']['tiles'])
+	tileset_img = tileset_to_img(character['tileset']['tiles'], 8, 12)
 	tileset_img.save(tileset_src)
-
 	del character['tileset']['tiles']
 	character['tileset']['src'] = '{}/tileset.gif'.format(character_path_rel)
+
+	illsutration_small_src = '{}/small.gif'.format(illustrations_path)
+	illustration_small_img = tileset_to_img(character['illustration_small'])
+	illustration_small_img.save(illsutration_small_src)
+	del character['illustration_small']['tiles']
+	character['illustration_small']['src'] = '{}/small.gif'.format(illustrations_path_rel)
+
+	#TODO same for token illustration
 
 	# Export animations in their own file
 	def _externalize_anim(anim, animations_path_rel, base_path):

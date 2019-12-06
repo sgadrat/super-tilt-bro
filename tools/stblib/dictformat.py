@@ -90,7 +90,8 @@ def parse_character(source):
 		menu_select_animation = import_from_dict(source['menu_select_animation']),
 		animations = _import_list(source['animations']),
 		color_swaps = import_from_dict(source['color_swaps']),
-		states = _import_list(source['states'])
+		states = _import_list(source['states']),
+		illustration_small = import_from_dict(source['illustration_small'])
 	)
 
 def parse_character_colors(source):

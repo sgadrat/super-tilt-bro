@@ -40,6 +40,7 @@ def generate_character(char, game_dir):
 
 	# Label names that are used in multiple places
 	tileset_label_name = '{}_chr_tiles'.format(char.name)
+	illustrations_label_name = '{}_chr_illustrations'.format(char.name)
 	primary_palettes_label_name = '{}_character_palettes'.format(char.name)
 	alternate_palettes_label_name = '{}_character_alternate_palettes'.format(char.name)
 	weapon_palettes_label_name = '{}_weapon_palettes'.format(char.name)
@@ -54,6 +55,7 @@ def generate_character(char, game_dir):
 			{name_upper}_BANK_NUMBER = CURRENT_BANK_NUMBER
 
 			#include "{rel_char_dir}/chr_tiles.asm"
+			#include "{rel_char_dir}/chr_illustrations.asm"
 			#include "{rel_char_dir}/animations/animations.asm"
 			#include "{rel_char_dir}/character_colors.asm"
 			#include "{rel_char_dir}/properties.asm"
@@ -85,6 +87,34 @@ def generate_character(char, game_dir):
 			#print {name_upper}_SPRITE_TILES_NUMBER
 			#if {name_upper}_SPRITE_TILES_NUMBER > 96
 			#error too many sprites for character {name_upper}
+			#endif
+		""".format_map(locals())))
+
+	# Illustrations file
+	chr_illustrations_file_path = '{}/chr_illustrations.asm'.format(char_dir)
+	with open(chr_illustrations_file_path, 'w') as chr_illustrations_file:
+		# Illustrations label
+		chr_illustrations_file.write('{}:\n\n'.format(illustrations_label_name))
+		index_expression = '(*-{})/16'.format(illustrations_label_name)
+
+		# Token illustration
+		#TODO
+		chr_illustrations_file.write('.byt %11111111, %11111111, %11111111, %11111111, %11111111, %11111111, %11111111, %11111111\n')
+		chr_illustrations_file.write('.byt %10101010, %01010101, %10101010, %01010101, %10101010, %01010101, %10101010, %01010101\n\n')
+
+		# Small illustration
+		ensure(len(char.illustration_small.tilenames) == 4)
+		ensure(len(char.illustration_small.tiles) == len(char.illustration_small.tilenames))
+		for tile_index in range(len(char.illustration_small.tilenames)):
+			tile = char.illustration_small.tiles[tile_index]
+			chr_illustrations_file.write('{}\n\n'.format(stblib.asmformat.tiles.tile_to_asm(tile)))
+
+		# Illustration footer
+		chr_illustrations_file.write(textwrap.dedent("""\
+			{name_upper}_ILLUSTRATION_TILES_NUMBER = {index_expression}
+			#print {name_upper}_ILLUSTRATION_TILES_NUMBER
+			#if {name_upper}_ILLUSTRATION_TILES_NUMBER <> 5
+			#error bad count of illustration tiles for character {name_upper}
 			#endif
 		""".format_map(locals())))
 
