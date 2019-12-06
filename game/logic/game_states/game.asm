@@ -10,6 +10,11 @@ init_game_state:
 		ldx #1
 		jsr place_character_ppu_tiles
 
+		ldx #0
+		jsr place_character_ppu_illustrations
+		ldx #1
+		jsr place_character_ppu_illustrations
+
 		; Ensure game state is zero
 		ldx #$00
 		lda #$00
@@ -347,6 +352,40 @@ init_game_state:
 		inx
 
 		rts
+	.)
+
+	place_character_ppu_illustrations:
+	.(
+		ldy config_player_a_character, x
+		SWITCH_BANK(characters_bank_number COMMA y)
+
+		lda PPUSTATUS
+		lda illustrations_addr_msb, x
+		sta PPUADDR
+		lda illustrations_addr_lsb, x
+		sta PPUADDR
+
+		lda characters_properties_lsb, y
+		sta tmpfield4
+		lda characters_properties_msb, y
+		sta tmpfield5
+
+		ldy #CHARACTERS_PROPERTIES_ILLUSTRATIONS_ADDR_OFFSET
+		lda (tmpfield4), y
+		sta tmpfield1
+		iny
+		lda (tmpfield4), y
+		sta tmpfield2
+		lda #5
+		sta tmpfield3
+		jsr cpu_to_ppu_copy_tiles
+
+		rts
+
+		illustrations_addr_msb:
+		.byt $1d, $1d
+		illustrations_addr_lsb:
+		.byt $00, $50
 	.)
 
 	header_player_a:

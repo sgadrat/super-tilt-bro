@@ -187,6 +187,9 @@ def generate_character(char, game_dir):
 		properties_file.write('.byt {} ; {}\n'.format(text_asm(char.name, 10, 2), char.name))
 		properties_file.write('.byt {} ; {}\n'.format(text_asm(char.weapon_name, 10, 2), char.weapon_name))
 
+		# Illustrations
+		properties_file.write('VECTOR({}) ; Illustrations begining'.format(illustrations_label_name))
+
 	# State events
 	state_events_file_path = '{}/state_events.asm'.format(char_dir)
 	with open(state_events_file_path, 'w') as state_events_file:
