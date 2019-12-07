@@ -70,8 +70,6 @@ def tileset_to_img(tileset, img_with_in_tiles, img_height_in_tiles):
 	ensure(len(tiles) <= img_with_in_tiles * img_height_in_tiles, 'too much tiles in the tileset: {} / {}'.format(len(tiles), img_with_in_tiles * img_height_in_tiles))
 
 	# Create empty image
-	img_with_in_tiles = 8
-	img_height_in_tiles = 12
 	img_size = (img_with_in_tiles * 8, img_height_in_tiles * 8)
 	img = PIL.Image.new('P', img_size, 0)
 	img.putpalette([
@@ -178,13 +176,13 @@ def _jsonify_character(character, base_path):
 	character['tileset']['src'] = '{}/tileset.gif'.format(character_path_rel)
 
 	illustration_small_src = '{}/small.gif'.format(illustrations_path)
-	illustration_small_img = tileset_to_img(character['illustration_small'], 2, 2)
+	illustration_small_img = tileset_to_img(character['illustration_small']['tiles'], 2, 2)
 	illustration_small_img.save(illustration_small_src)
 	del character['illustration_small']['tiles']
 	character['illustration_small']['src'] = '{}/small.gif'.format(illustrations_path_rel)
 
 	illustration_token_src = '{}/token.gif'.format(illustrations_path)
-	illustration_token_img = tileset_to_img(character['illustration_token'], 1, 1)
+	illustration_token_img = tileset_to_img(character['illustration_token']['tiles'], 1, 1)
 	illustration_token_img.save(illustration_token_src)
 	del character['illustration_token']['tiles']
 	character['illustration_token']['src'] = '{}/token.gif'.format(illustrations_path_rel)

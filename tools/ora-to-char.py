@@ -13,6 +13,10 @@ Layers in the .ora file must have the following layout:
 	|  `- sprite_layer
 	|  `- sprite_layer
 	|  `- ...
+	`- illustrations
+	|  `- illustration_layer
+	|  `- illustration_layer
+	|  `- ...
 	`- anims
 		`- anim.victory
 		|	`- anim.victory.frame1
@@ -84,7 +88,7 @@ def tile_subrasters(layer):
 		Each element in the list is a position, in pixels, from the top-left corner of the layer.
 		Each returned position is the top-left pixel of an 8x8 tile.
 	"""
-	ensure(layer['raster'].size[0] % 8 == 0 and layer['raster'].size[1] == 0, 'partial tiles in raster of size {}x{}'.format(layer['raster'].size[0], layer['raster'].size[1]))
+	ensure(layer['raster'].size[0] % 8 == 0 and layer['raster'].size[1] % 8 == 0, 'partial tiles in raster of size {}x{}'.format(layer['raster'].size[0], layer['raster'].size[1]))
 
 	tile_positions = []
 	raster_horizontal_tiles_count = layer['raster'].size[0] // 8
@@ -216,10 +220,20 @@ def ora_to_character(image_file, char_name):
 	# Extract illustrations
 	ensure(illustrations_stack is not None, 'no illustrations stack found')
 	for illustration_layer in illustrations_stack['childs']:
-		ensure(illustration_layer['name'] == 'illustrations.small', 'uknown illustration "{}"'.format(illustration_layer['name']))
-		ensure(illustration_layer['raster'].size[0] = 16 and illustration_layer['raster'].size[1] = 16)
-		tileset = character.illustration_small
-		for subraster in tile_subrasters(illustration_layer['raster']):
+		if illustration_layer['name'] == 'illustrations.small':
+			ensure(illustration_layer['raster'].size[0] == 16 and illustration_layer['raster'].size[1] == 16, 'unnexpected size of {}x{} for small illustration'.format(illustration_layer['raster'].size[0], illustration_layer['raster'].size[1]))
+			illustration_id = 'SMALL'
+			tileset = character.illustration_small
+		elif illustration_layer['name'] == 'illustrations.token':
+			ensure(illustration_layer['raster'].size[0] == 8 and illustration_layer['raster'].size[1] == 8, 'unnexpected size of {}x{} for small illustration'.format(illustration_layer['raster'].size[0], illustration_layer['raster'].size[1]))
+			illustration_id = 'TOKEN'
+			tileset = character.illustration_token
+		else:
+			ensure(False, 'uknown illustration "{}"'.format(illustration_layer['name']))
+
+		tileset.tiles = []
+		tileset.tilenames = []
+		for subraster in tile_subrasters(illustration_layer):
 			tile, _ = parse_tile(
 				illustration_layer,
 				subraster,
@@ -227,7 +241,7 @@ def ora_to_character(image_file, char_name):
 				illustrations_stack['name']
 			)
 			tileset.tiles.append(tile)
-			tileset.names.append('{}_ILLUSTRATION_SMALL_{}'.format(character.name.upper(), len(tileset.tiles)))
+			tileset.tilenames.append('{}_ILLUSTRATION_{}_{}'.format(character.name.upper(), illustration_id, len(tileset.tiles)))
 
 	# Place extra sprites in tileset
 	if extra_sprites_stack is not None:
@@ -419,6 +433,9 @@ orig_character.animations = character.animations
 orig_character.victory_animation = character.victory_animation
 orig_character.defeat_animation = character.defeat_animation
 orig_character.menu_select_animation = character.menu_select_animation
+orig_character.illustration_small = character.illustration_small
+orig_character.illustration_token = character.illustration_token
+orig_character.check()
 
 # Write character's json
 os.makedirs('{}/characters/{}'.format(base_path, character_name), exist_ok=True)
