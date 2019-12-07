@@ -1399,6 +1399,7 @@ write_player_damages:
 	damages_ppu_position = tmpfield4
 	stocks_ppu_position = tmpfield7
 	player_stocks = tmpfield8
+	character_icon = tmpfield9
 
 	; Save X
 	txa
@@ -1424,6 +1425,10 @@ write_player_damages:
 	sta tmpfield1
 	lda player_a_stocks, x
 	sta player_stocks
+
+	; Get player's character icon while we have player index at hand
+	lda character_icons, x
+	sta character_icon
 
 	; Write the begining of the damage buffer
 	jsr last_nt_buffer
@@ -1476,7 +1481,7 @@ write_player_damages:
 	inx
 	cpy player_stocks        ;
 	bcs empty_stock          ;
-	lda #TILE_PLAYER_A_ICON  ;
+	lda character_icon       ;
 	jmp set_stock_tile       ; Set stock tile depending of the
 	empty_stock:             ; stock's availability
 	lda #TILE_SOLID_0        ;
@@ -1497,6 +1502,9 @@ write_player_damages:
 
 	stocks_positions:
 	.byt 0, 3, 32, 35
+
+	character_icons:
+	.byt $d0, $d5
 .)
 
 ; Update comestic effects on the player

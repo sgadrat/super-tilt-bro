@@ -5,10 +5,6 @@ stage_plateau_palette_data:
 .byt $21,$08,$1a,$20, $21,$08,$10,$37, $21,$08,$16,$10, $21,$08,$28,$37
 
 ; Temporary 3 char alias for tiles
-#define TP1 TILE_PLAYER_A_PORTRAIT_NW
-#define TP2 TILE_PLAYER_A_PORTRAIT_NE
-#define TP3 TILE_PLAYER_A_PORTRAIT_SW
-#define TP4 TILE_PLAYER_A_PORTRAIT_SE
 #define TFP TILE_CHAR_PCT
 
 nametable_flatland:
@@ -50,8 +46,8 @@ nametable_flatland:
 .byt $3f, $40, $41, $42,  $43, $3f, $37, $3a,  $3e, $3a, $3a, $3a,  $3a, $44, $45, $3a,  $3a, $3a, $44, $45,  $3a, $3a, $3a, $3a,  $3a, $3b, $40, $41,  $42, $43, $3f, $40
 .byt $3a, $3a, $3a, $3a,  $3a, $3a, $33, $3d,  $3a, $3a, $44, $45,  $3a, $3a, $3a, $3a,  $3a, $3a, $3a, $3a,  $3a, $3a, $3a, $3a,  $3a, $36, $3a, $3a,  $3a, $3a, $3a, $3a
 ;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
-.byt $3a, $3a, $3a, $3a,  $3a, $3a, $37, $3a,  $3a, TP1, TP2, $39,  $3a, $3a, $3e, $3a,  $3a, $3a, $3a, $3a,  $3a, TP1, TP2, $3a,  $3c, $3b, $3a, $3a,  $3a, $3a, $3a, $3a
-.byt $3a, $3a, $3a, $3a,  $3a, $3a, $33, $3a,  $3a, TP3, TP4, $3d,  $3a, $3a, $3a, $3e,  $3a, $3a, $3a, $3a,  $38, TP3, TP4, $3a,  $3a, $36, $3a, $3a,  $3a, $3a, $3a, $3a
+.byt $3a, $3a, $3a, $3a,  $3a, $3a, $37, $3a,  $3a, $d1, $d2, $39,  $3a, $3a, $3e, $3a,  $3a, $3a, $3a, $3a,  $3a, $d6, $d7, $3a,  $3c, $3b, $3a, $3a,  $3a, $3a, $3a, $3a
+.byt $3a, $3a, $3a, $3a,  $3a, $3a, $33, $3a,  $3a, $d3, $d4, $3d,  $3a, $3a, $3a, $3e,  $3a, $3a, $3a, $3a,  $38, $d8, $d9, $3a,  $3a, $36, $3a, $3a,  $3a, $3a, $3a, $3a
 .byt $3a, $3a, $3a, $3a,  $3a, $3a, $37, $3a,  $3a, $3a, $3a, TFP,  $45, $3a, $3a, $3a,  $3a, $3a, $3a, $3d,  $3c, $3d, $3a, TFP,  $3a, $3b, $3a, $3a,  $3a, $3a, $3a, $3a
 .byt $3a, $3a, $3a, $3a,  $3a, $3a, $33, $3a,  $3a, $3a, $3a, $3a,  $3a, $3a, $3a, $3a,  $3a, $3a, $3a, $3a,  $44, $45, $3a, $3a,  $38, $36, $3a, $3a,  $3a, $3a, $3a, $3a
 ;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
@@ -71,8 +67,4 @@ nametable_flatland_attributes:
 nametable_flatland_end:
 .byt ZIPNT_END
 
-#undef TP1
-#undef TP2
-#undef TP3
-#undef TP4
 #undef TFP

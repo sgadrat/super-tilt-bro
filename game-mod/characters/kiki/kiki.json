@@ -298,7 +298,7 @@
 	},
 	"illustration_small": {
 		"type": "tileset",
-		"src": "characters/sinbad/illustrations/small.gif",
+		"src": "characters/kiki/illustrations/small.gif",
 		"tilenames": [
 			"KIKI_ILLUSTRATION_SMALL_1",
 			"KIKI_ILLUSTRATION_SMALL_2",
