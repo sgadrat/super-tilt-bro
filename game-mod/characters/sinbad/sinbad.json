@@ -13,6 +13,13 @@
 			"SINBAD_ILLUSTRATION_SMALL_4"
 		]
 	},
+	"illustration_token": {
+		"type": "tileset",
+		"src": "characters/sinbad/illustrations/token.gif",
+		"tilenames": [
+			"SINBAD_ILLUSTRATION_TOKEN_1"
+		]
+	},
 	"tileset": {
 		"type": "tileset",
 		"src": "characters/sinbad/tileset.gif",

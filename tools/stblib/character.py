@@ -73,7 +73,7 @@ class Colorswaps:
 		ensure(len(self.secondary_names) == len(self.secondary_colors))
 
 class Character:
-	def __init__(self, name='', weapon_name='', sourcecode='', tileset=None, victory_animation=None, defeat_animation=None, menu_select_animation=None, animations=None, color_swaps=None, states=None, illustration_small=None):
+	def __init__(self, name='', weapon_name='', sourcecode='', tileset=None, victory_animation=None, defeat_animation=None, menu_select_animation=None, animations=None, color_swaps=None, states=None, illustration_small=None, illustration_token=None):
 		self.name = name
 		self.weapon_name = weapon_name
 		self.sourcecode = sourcecode
@@ -85,6 +85,7 @@ class Character:
 		self.color_swaps = color_swaps if color_swaps is not None else Colorswaps()
 		self.states = states if states is not None else []
 		self.illustration_small = illustration_small if illustration_small is not None else stblib.tiles.Tileset()
+		self.illustration_token = illustration_token if illustration_token is not None else stblib.tiles.Tileset()
 
 	def check(self):
 		ensure(isinstance(self.name, str))
@@ -129,4 +130,8 @@ class Character:
 
 		ensure(isinstance(self.illustration_small, stblib.tiles.Tileset))
 		self.illustration_small.check()
-		ensure(len(self.illustration_small.tiles) == 4) 
+		ensure(len(self.illustration_small.tiles) == 4)
+
+		ensure(isinstance(self.illustration_token, stblib.tiles.Tileset))
+		self.illustration_token.check()
+		ensure(len(self.illustration_token.tiles) == 1)

@@ -306,6 +306,13 @@
 			"KIKI_ILLUSTRATION_SMALL_4"
 		]
 	},
+	"illustration_token": {
+		"type": "tileset",
+		"src": "characters/kiki/illustrations/token.gif",
+		"tilenames": [
+			"KIKI_ILLUSTRATION_TOKEN_1"
+		]
+	},
 	"menu_select_animation": {
 		"src": "characters/kiki/animations/kiki_anim_menu_select.json",
 		"type": "import"

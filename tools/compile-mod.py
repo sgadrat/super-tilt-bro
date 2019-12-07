@@ -98,9 +98,9 @@ def generate_character(char, game_dir):
 		index_expression = '(*-{})/16'.format(illustrations_label_name)
 
 		# Token illustration
-		#TODO
-		chr_illustrations_file.write('.byt %11111111, %11111111, %11111111, %11111111, %11111111, %11111111, %11111111, %11111111\n')
-		chr_illustrations_file.write('.byt %10101010, %01010101, %10101010, %01010101, %10101010, %01010101, %10101010, %01010101\n\n')
+		ensure(len(char.illustration_token.tilenames) == 1)
+		ensure(len(char.illustration_token.tiles) == len(char.illustration_token.tilenames))
+		chr_illustrations_file.write('{}\n\n'.format(stblib.asmformat.tiles.tile_to_asm(char.illustration_token.tiles[0])))
 
 		# Small illustration
 		ensure(len(char.illustration_small.tilenames) == 4)

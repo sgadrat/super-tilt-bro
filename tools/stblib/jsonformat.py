@@ -177,13 +177,17 @@ def _jsonify_character(character, base_path):
 	del character['tileset']['tiles']
 	character['tileset']['src'] = '{}/tileset.gif'.format(character_path_rel)
 
-	illsutration_small_src = '{}/small.gif'.format(illustrations_path)
-	illustration_small_img = tileset_to_img(character['illustration_small'])
-	illustration_small_img.save(illsutration_small_src)
+	illustration_small_src = '{}/small.gif'.format(illustrations_path)
+	illustration_small_img = tileset_to_img(character['illustration_small'], 2, 2)
+	illustration_small_img.save(illustration_small_src)
 	del character['illustration_small']['tiles']
 	character['illustration_small']['src'] = '{}/small.gif'.format(illustrations_path_rel)
 
-	#TODO same for token illustration
+	illustration_token_src = '{}/token.gif'.format(illustrations_path)
+	illustration_token_img = tileset_to_img(character['illustration_token'], 1, 1)
+	illustration_token_img.save(illustration_token_src)
+	del character['illustration_token']['tiles']
+	character['illustration_token']['src'] = '{}/token.gif'.format(illustrations_path_rel)
 
 	# Export animations in their own file
 	def _externalize_anim(anim, animations_path_rel, base_path):
