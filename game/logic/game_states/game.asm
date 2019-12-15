@@ -244,6 +244,9 @@ init_game_state:
 		; Initialize AI
 		jsr ai_init
 
+		; Initialize network
+		jsr network_init_stage
+
 		rts
 	.)
 
@@ -396,6 +399,9 @@ init_game_state:
 
 game_tick:
 .(
+	; Process network messages
+	jsr network_tick_ingame
+
 	; Remove processed nametable buffers
 	jsr reset_nt_buffers
 
@@ -431,11 +437,19 @@ game_tick:
 	sta tmpfield2
 	jsr call_pointed_subroutine
 
+	;TODO clean handling of game mode with
+	; * init routine - called at the end of init_game_state
+	; * pre update hook - called at the very begining of the tick (before screen-shake/slow-down)
+	; * input hook - called here (after scree-shake/slow-down)
+	; That way we can have three game mode - two-players, versus AI, and network
+	; And find a name that is less like "game-mod" which is another concept =)
+#if 0
 	; Process AI - this override controller B state
 	lda config_ai_level
 	beq end_ai
 	jsr ai_tick
 	end_ai:
+#endif
 
 	; Update game state
 	jsr update_players

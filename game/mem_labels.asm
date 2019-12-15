@@ -179,6 +179,20 @@ extra_tmpfield5 = $b4
 extra_tmpfield6 = $b5
 
 ;
+; Network engine labels
+;
+
+network_current_frame_byte0 = $b2
+network_current_frame_byte1 = $b3
+network_current_frame_byte2 = $b4
+network_current_frame_byte3 = $b5
+
+network_client_id_byte0 = $b6
+network_client_id_byte1 = $b7
+network_client_id_byte2 = $b8
+network_client_id_byte3 = $b9
+
+;
 ; TITLE labels
 ;
 
