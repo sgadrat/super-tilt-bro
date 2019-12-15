@@ -5,6 +5,33 @@ import stblib.animations
 from stblib.utils import asmint, asmsint8, asmsint16
 import sys
 
+def animation_to_asm(animation):
+	"""
+	Serialize animation to assembly.
+	"""
+	serialized = '{}:\n'.format(animation.name)
+	frame_num = 1
+	for frame in animation.frames:
+		serialized += '; Frame {}\n'.format(frame_num)
+		serialized += frame.serialize()
+		frame_num += 1
+	serialized += '; End of animation\n'
+	serialized += 'ANIM_ANIMATION_END\n'
+	serialized += '#print {}\n'.format(animation.name)
+	return serialized
+
+def frame_bin_size(frame):
+	"""
+	Return the size of an assembled binary frame.
+	"""
+	return (
+		1 + # ANIM_FRAME_BEGIN(duration)
+		(0 if frame.hurtbox is None else 5) + # ANIM_HURTBOX
+		(0 if frame.hitbox is None else 15) + # ANIM_HITBOX
+		(len(frame.sprites) * 5) + # ANIM_SPRITE
+		1 # ANIM_FRAME_END
+	)
+
 RE_ANIM_LABEL = re.compile('(?P<name>([a-z]+_)?anim_[a-z_]+):')
 RE_ANIM_FRAME_BEGIN = re.compile('ANIM_FRAME_BEGIN\((?P<duration>[$%0-9a-fA-F]+)\)')
 RE_ANIM_HURTBOX = re.compile('ANIM_HURTBOX\((?P<left>[$%0-9a-fA-F]+),( *)(?P<right>[$%0-9a-fA-F]+),( *)(?P<top>[$%0-9a-fA-F]+),( *)(?P<bottom>[$%0-9a-fA-F]+)\)')
