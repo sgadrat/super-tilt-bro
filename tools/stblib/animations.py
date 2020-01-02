@@ -88,7 +88,7 @@ class Animation:
 		else:
 			self.frames = []
 
-	#TODO deprecate this function, put it in stblib.asmformat
+	#TODO deprecated, use stblib.asmformat.animations.animation_to_asm()
 	def serialize(self):
 		serialized = '{}:\n'.format(self.name)
 		frame_num = 1
@@ -98,4 +98,5 @@ class Animation:
 			frame_num += 1
 		serialized += '; End of animation\n'
 		serialized += 'ANIM_ANIMATION_END\n'
+		serialized += '#print {}\n'.format(self.name)
 		return serialized

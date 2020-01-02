@@ -3,6 +3,7 @@ from stblib import ensure
 import json
 import os
 import stblib.asmformat.tiles
+import stblib.asmformat.animations
 import stblib.jsonformat
 import stblib.utils
 import sys
@@ -228,7 +229,7 @@ def generate_character(char, game_dir):
 		anim_file_path = '{}/{}'.format(game_dir, rel_anim_file_path)
 
 		with open(anim_file_path, 'w') as anim_file:
-			anim_file.write(anim.serialize())
+			anim_file.write(stblib.asmformat.animations.animation_to_asm(anim))
 		rel_animations_path.append(rel_anim_file_path)
 
 	write_animation_file(char.victory_animation)
