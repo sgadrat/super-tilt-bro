@@ -197,6 +197,7 @@ network_tick_ingame:
 		;  Unroll - (4+3) * 79 = 7 * 79 = 553
 
 		; Copy controllers state, the game state shall have run one frame, last_frame_btns and btns became equal
+		;FIXME last_frame_btns may not be equal to btns as "keep_input_dirty" could have messed things up
 		lda RAINBOW_DATA
 		sta controller_a_btns
 		sta controller_a_last_frame_btns
