@@ -128,7 +128,7 @@ network_tick_ingame:
 
 			; Check length
 			lda RAINBOW_DATA
-			cmp #88 ; TODO update to reality, here it is 87 bytes for old payload length + 1 for ESP type
+			cmp #112 ; TODO update to reality, here it is 87 bytes for old payload length + 1 for ESP type
 			bne skip_message
 
 				lda RAINBOW_DATA ; Burn ESP message type, length match and there is no reason it is not MESSAGE_FROM_SERVER
@@ -180,15 +180,17 @@ network_tick_ingame:
 		sta network_current_frame_byte3
 
 		; Copy gamestate
-		ldx #0
-		copy_one_byte:
+		.(
+			ldx #0
+			copy_one_byte:
 
-			lda RAINBOW_DATA ; 4 cycles
-			sta $00, x       ; 4 cycles
+				lda RAINBOW_DATA ; 4 cycles
+				sta $00, x       ; 4 cycles
 
-		inx ; 2 cycles
-		cpx #$4f ; 3 cycles
-		bne copy_one_byte ; 3 cycles
+			inx ; 2 cycles
+			cpx #$4f ; 3 cycles
+			bne copy_one_byte ; 3 cycles
+		.)
 
 		; Note
 		;  Total - (4+4+2+3+3) * 79 = 16 * 79 = 1264
@@ -201,6 +203,19 @@ network_tick_ingame:
 		lda RAINBOW_DATA
 		sta controller_b_btns
 		sta controller_b_last_frame_btns
+
+		; Copy animation states
+		.(
+			ldx #0
+			copy_one_byte:
+
+				lda RAINBOW_DATA ; 4 cycles
+				sta player_a_animation, x ; 5 cycles
+
+			inx ; 2 cycles
+			cpx #12*2 ; 3 cycles
+			bne copy_one_byte ; 3 cycles
+		.)
 
 		rts
 	.)
