@@ -128,7 +128,7 @@ network_tick_ingame:
 
 			; Check length
 			lda RAINBOW_DATA
-			cmp #112 ; TODO update to reality, here it is 87 bytes for old payload length + 1 for ESP type
+			cmp #128 ; 127 bytes for payload length + 1 for ESP type
 			bne skip_message
 
 				lda RAINBOW_DATA ; Burn ESP message type, length match and there is no reason it is not MESSAGE_FROM_SERVER
@@ -195,6 +195,23 @@ network_tick_ingame:
 		; Note
 		;  Total - (4+4+2+3+3) * 79 = 16 * 79 = 1264
 		;  Unroll - (4+3) * 79 = 7 * 79 = 553
+
+		; Copy hitboxes MSB
+		.(
+			ldx #0
+			copy_one_byte:
+
+				lda RAINBOW_DATA                 ; 4 cycles
+				sta player_a_hurtbox_left_msb, x ; 4 cycles
+
+			inx ; 2 cycles
+			cpx #$10 ; 3 cycles
+			bne copy_one_byte ; 3 cycles
+		.)
+
+		; Note
+		;  Total - (4+4+2+3+3) * 16 = 16 * 16 = 256
+		;  Unroll - (4+3) * 16 = 7 * 16 = 112
 
 		; Copy controllers state, the game state shall have run one frame, last_frame_btns and btns became equal
 		;FIXME last_frame_btns may not be equal to btns as "keep_input_dirty" could have messed things up
