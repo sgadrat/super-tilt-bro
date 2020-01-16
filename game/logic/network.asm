@@ -133,7 +133,7 @@ network_tick_ingame:
 
 			; Check length
 			lda RAINBOW_DATA
-			cmp #128 ; 127 bytes for payload length + 1 for ESP type
+			cmp #130 ; 129 bytes for payload length + 1 for ESP type
 			bne skip_message
 
 				lda RAINBOW_DATA ; Burn ESP message type, length match and there is no reason it is not MESSAGE_FROM_SERVER
@@ -226,12 +226,13 @@ network_tick_ingame:
 		;  Unroll - (4+3) * 16 = 7 * 16 = 112
 
 		; Copy controllers state, the game state shall have run one frame, last_frame_btns and btns became equal
-		;FIXME last_frame_btns may not be equal to btns as "keep_input_dirty" could have messed things up
 		lda RAINBOW_DATA
 		sta controller_a_btns
-		sta controller_a_last_frame_btns
 		lda RAINBOW_DATA
 		sta controller_b_btns
+		lda RAINBOW_DATA
+		sta controller_a_last_frame_btns
+		lda RAINBOW_DATA
 		sta controller_b_last_frame_btns
 
 		; Copy animation states
