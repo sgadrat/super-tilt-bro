@@ -192,6 +192,9 @@ network_client_id_byte1 = $b7
 network_client_id_byte2 = $b8
 network_client_id_byte3 = $b9
 
+network_last_sent_btns = $ba
+network_last_received_btns = $bb
+
 ;
 ; TITLE labels
 ;

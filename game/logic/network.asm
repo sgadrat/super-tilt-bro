@@ -66,6 +66,10 @@ network_init_stage:
 	jsr switch_selected_player
 	stx network_client_id_byte3
 
+	; Initialize controllers state
+	sta network_last_sent_btns
+	sta network_last_received_btns
+
 	rts
 .)
 
@@ -76,13 +80,13 @@ network_tick_ingame:
 
 		; Force opponent's buttons to not change
 		ldx network_opponent_number
-		lda controller_a_last_frame_btns, x
+		lda network_last_received_btns
 		sta controller_a_btns, x
 
 		; Send controller's state
 		jsr switch_selected_player
-		lda controller_a_btns, x
-		cmp controller_a_last_frame_btns, x
+		lda network_last_sent_btns
+		cmp controller_a_btns, x
 		beq controller_sent
 
 			; ESP header
@@ -116,6 +120,7 @@ network_tick_ingame:
 
 			lda controller_a_btns, x ; controller state
 			sta RAINBOW_DATA
+			sta network_last_sent_btns
 
 		controller_sent:
 
@@ -141,7 +146,14 @@ network_tick_ingame:
 					; TODO use it to avoid useless state reset
 					lda RAINBOW_DATA
 
+					; Override gamestate with the one in message's payload
 					jsr update_state
+
+					; Save received opponent's buttons
+					ldx network_opponent_number
+					lda controller_a_btns, x
+					sta network_last_received_btns
+
 					jmp state_updated
 
 			skip_message:
