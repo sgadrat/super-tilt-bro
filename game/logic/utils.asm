@@ -264,7 +264,8 @@ apply_player_gravity:
 ; Check if the player is on ground
 ;  register X - Player number
 ;
-; Sets Z flag if on ground, else unset it
+; Output - Sets Z flag if on ground, else unset it
+;          tmpfield3 is set to platform's index from stage_data (if grounded)
 ;
 ; Overwrites register A, register Y and tmpfields 1 to 6
 check_on_ground:
@@ -282,6 +283,8 @@ check_on_ground:
 
 	platform_handler_lsb = tmpfield1 ; Not movable - parameter of stage_iterate_all_elements
 	platform_handler_msb = tmpfield2 ; Not movable - parameter of stage_iterate_all_elements
+
+	output_platform_index = tmpfield3
 
 	; Iterate on platforms until we find on onn which the player is
 	lda #<check_current_platform
@@ -323,6 +326,7 @@ check_on_ground:
 		grounded:
 			; Stop iterating, we found the platform on which we are grounded
 			pla
+			sta output_platform_index
 			ldy #$ff
 			jmp end_current_platform
 

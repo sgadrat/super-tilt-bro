@@ -1181,6 +1181,10 @@ kiki_start_shielding:
 	lda #KIKI_STATE_SHIELDING
 	sta player_a_state, x
 
+	; Reset clock
+	lda #0
+	sta player_a_state_clock, x
+
 	; Set the appropriate animation
 	lda #<kiki_anim_shield_full
 	sta tmpfield13
@@ -1202,13 +1206,20 @@ kiki_start_shielding:
 
 kiki_tick_shielding:
 .(
+	; Tick clock
+	lda player_a_state_clock, x
+	cmp #PLAYER_DOWN_TAP_MAX_DURATION
+	bcs end_tick
+		inc player_a_state_clock, x
+	end_tick:
+
 	rts
 .)
 
 kiki_input_shielding:
 .(
 	; Do the same as standing player except when
-	;  all buttons are released - start standing
+	;  all buttons are released - start shieldlag (or falling if on smooth platform and it was a short-tap)
 	;  down is pressed - avoid to reset the shield state (and hit counter)
 	lda controller_a_btns, x
 	beq end_shield
@@ -1219,7 +1230,37 @@ kiki_input_shielding:
 		jmp end
 
 	end_shield:
-		jsr kiki_start_shieldlag
+
+		lda #PLAYER_DOWN_TAP_MAX_DURATION
+		cmp player_a_state_clock, x
+		beq shieldlag
+		bcc shieldlag
+			jsr check_on_ground
+			bne shieldlag
+				ldy tmpfield3
+				lda stage_data, y
+				cmp #STAGE_ELEMENT_PLATFORM
+				beq shieldlag
+				cmp #STAGE_ELEMENT_OOS_PLATFORM
+				beq shieldlag
+
+		fall_from_smooth:
+			; HACK - "position = position + 2" to compensate collision system not handling subpixels and "position + 1" being the collision line
+			;        actually, "position = position + 3" to compensate for moving platforms that move down
+			;        Better solution would be to have an intermediary player state with a specific animation
+			clc
+			lda player_a_y, x
+			adc #3
+			sta player_a_y, x
+			lda player_a_y_screen, x
+			adc #0
+			sta player_a_y_screen, x
+
+			jsr kiki_start_falling
+			jmp end
+
+		shieldlag:
+			jsr kiki_start_shieldlag
 
 	end:
 	rts
