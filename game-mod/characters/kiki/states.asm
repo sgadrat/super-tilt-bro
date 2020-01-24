@@ -284,7 +284,7 @@ kiki_check_aerial_inputs:
 		.byt <kiki_start_side_aerial_left,   <kiki_start_side_aerial_right, <kiki_start_down_aerial,       <kiki_start_up_aerial,        <kiki_start_neutral_aerial
 		.byt <kiki_start_counter_guard,      <kiki_start_up_spe,            <kiki_start_down_spe,          <fast_fall
 		controller_callbacks_hi:
-		.byt >kiki_start_side_spe_right,     >kiki_start_side_tilt_left,    >kiki_start_aerial_jumping,    >kiki_start_aerial_jumping,   >kiki_start_aerial_jumping
+		.byt >kiki_start_side_spe_right,     >kiki_start_side_spe_left,     >kiki_start_aerial_jumping,    >kiki_start_aerial_jumping,   >kiki_start_aerial_jumping
 		.byt >kiki_start_side_aerial_left,   >kiki_start_side_aerial_right, >kiki_start_down_aerial,       >kiki_start_up_aerial,        >kiki_start_neutral_aerial
 		.byt >kiki_start_counter_guard,      >kiki_start_up_spe,            >kiki_start_down_spe,          >fast_fall
 		controller_default_callback:
