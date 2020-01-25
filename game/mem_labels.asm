@@ -166,6 +166,7 @@ stage_gem_gem_cooldown_high = $89
 stage_gem_gem_state = $8a ; one of STAGE_GEM_GEM_STATE_*
 stage_gem_buffed_player = $8b
 stage_gem_last_opponent_state = $8c
+stage_gem_frame_cnt = $8d
 
 ;Note - $90 to $af are used by DI particles
 

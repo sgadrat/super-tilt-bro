@@ -35,12 +35,42 @@ stage_gem_init:
 	; Put the gem in its initial state
 	jsr stage_gem_set_state_cooldown
 
+	; Init background animation
+	lda #0
+	sta stage_gem_frame_cnt
+
 	rts
 .)
 
 stage_gem_tick:
 .(
 	.(
+		; Update lava tiles
+		inc stage_gem_frame_cnt
+		lda #%0010000
+		bit stage_gem_frame_cnt
+		beq even_frame
+			ldx #1
+			jmp x_ok
+		even_frame:
+			ldx #0
+		x_ok:
+
+		lda lava_bg_frames_lsb, x
+		sta tmpfield1
+		lda lava_bg_frames_msb, x
+		sta tmpfield2
+
+		jsr last_nt_buffer
+		ldy #0
+		copy_one_byte:
+			lda (tmpfield1), y
+			sta nametable_buffers, x
+			inx
+			iny
+			cpy #LAVA_TILE_ANIM_BUFF_LEN
+			bne copy_one_byte
+
 		; Call the correct tick routine according to gem's state
 		ldx stage_gem_gem_state
 		lda stage_gem_tick_state_routines_lsb, x

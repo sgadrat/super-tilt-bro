@@ -155,3 +155,17 @@ gem_buff_frame_8:
 	ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_2, $01, $f9) ; Y, tile, attr, X
 	ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_2, $41, $07)
 	ANIM_FRAME_END
+
+lava_bg_frame_0:
+	.byt $01, $3f, $02, $02, $16, $27, $00
+
+lava_bg_frame_1:
+	.byt $01, $3f, $02, $02, $27, $16, $00
+
+lava_bg_frames_lsb:
+	.byt <lava_bg_frame_0, <lava_bg_frame_1
+
+lava_bg_frames_msb:
+	.byt >lava_bg_frame_0, >lava_bg_frame_1
+
+LAVA_TILE_ANIM_BUFF_LEN = lava_bg_frame_1 - lava_bg_frame_0
