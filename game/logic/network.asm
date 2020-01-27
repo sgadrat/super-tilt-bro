@@ -51,6 +51,10 @@ MESSAGE_TYPE_NEWSTATE = 2
 ;     - bring back prediction-rollback
 network_init_stage:
 .(
+	; Enable ESP
+	lda #1
+	sta RAINBOW_FLAGS
+
 	; Reinit frame counter
 	lda #$00
 	sta network_current_frame_byte0
@@ -130,6 +134,7 @@ network_tick_ingame:
 
 			; Burn garbage byte
 			lda RAINBOW_DATA
+			nop
 
 			; Check length
 			lda RAINBOW_DATA
@@ -137,6 +142,7 @@ network_tick_ingame:
 			bne skip_message
 
 				lda RAINBOW_DATA ; Burn ESP message type, length match and there is no reason it is not MESSAGE_FROM_SERVER
+				nop
 
 				lda RAINBOW_DATA ; Message type from payload
 				cmp #MESSAGE_TYPE_NEWSTATE
