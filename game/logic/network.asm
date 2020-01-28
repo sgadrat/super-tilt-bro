@@ -142,6 +142,7 @@ network_tick_ingame:
 			bne skip_message
 
 				lda RAINBOW_DATA ; Burn ESP message type, length match and there is no reason it is not MESSAGE_FROM_SERVER
+				nop
 
 				lda RAINBOW_DATA ; Message type from payload
 				cmp #MESSAGE_TYPE_NEWSTATE
