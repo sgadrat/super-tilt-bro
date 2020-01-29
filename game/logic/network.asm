@@ -42,6 +42,39 @@ ESP_FILE_PATH_USER = 2
 RAINBOW_DATA = $5000
 RAINBOW_FLAGS = $5001
 
+#define ESP_DEBUG_LOG_HEADER(len) .(:\
+	lda #len+2:\
+	sta RAINBOW_DATA:\
+	lda #TOESP_MSG_DEBUG_LOG:\
+	sta RAINBOW_DATA:\
+	lda #len:\
+	sta RAINBOW_DATA:\
+.)
+
+#define ESP_DEBUG_LOG(len) .(:\
+	txa:\
+	pha:\
+	lda #len+2:\
+	sta RAINBOW_DATA:\
+	lda #TOESP_MSG_DEBUG_LOG:\
+	sta RAINBOW_DATA:\
+	lda #len:\
+	sta RAINBOW_DATA:\
+\
+	ldx #0:\
+	send_one_byte:\
+		lda msg_data, x:\
+		sta RAINBOW_DATA:\
+		inx:\
+		cpx #len:\
+		bne send_one_byte:\
+\
+	pla:\
+	tax:\
+	jmp msg_data+len:\
+	msg_data:\
+.)
+
 ; STNP lib
 
 MESSAGE_TYPE_NEWSTATE = 2
@@ -93,6 +126,11 @@ network_tick_ingame:
 		cmp controller_a_btns, x
 		beq controller_sent
 
+#ifdef ESP_DBG
+			; Log that we are about to send controller data
+			ESP_DEBUG_LOG(23):.asc "sending controller data"
+#endif
+
 			; ESP header
 			lda #11          ; Message length (10 bytes of payload + 1 byte for ESP message type)
 			sta RAINBOW_DATA
@@ -130,7 +168,20 @@ network_tick_ingame:
 
 		; Receive new state
 		bit RAINBOW_FLAGS
+#ifdef ESP_DBG
+		; Avoid out of reach branching
+		; only when ESP debug is activated as it is not necessary without these debug message in the midle of the code
+		; and we love to spare some cycle in the nominal case
+		bmi handle_msg
+			jmp state_updated
+		handle_msg:
+#else
 		bpl state_updated
+#endif
+
+#ifdef ESP_DBG
+			ESP_DEBUG_LOG(21):.asc "received msg from esp"
+#endif
 
 			; Burn garbage byte
 			lda RAINBOW_DATA
@@ -139,7 +190,18 @@ network_tick_ingame:
 			; Check length
 			lda RAINBOW_DATA
 			cmp #130 ; 129 bytes for payload length + 1 for ESP type
+#ifdef ESP_DBG
+			; Avoid out of reach branching
+			beq no_skip
+				jmp skip_message
+			no_skip:
+#else
 			bne skip_message
+#endif
+
+#ifdef ESP_DBG
+				ESP_DEBUG_LOG(21):.asc "msg is 130 bytes long"
+#endif
 
 				lda RAINBOW_DATA ; Burn ESP message type, length match and there is no reason it is not MESSAGE_FROM_SERVER
 				nop
@@ -147,6 +209,10 @@ network_tick_ingame:
 				lda RAINBOW_DATA ; Message type from payload
 				cmp #MESSAGE_TYPE_NEWSTATE
 				bne skip_message
+
+#ifdef ESP_DBG
+					ESP_DEBUG_LOG(15):.asc "msg is newstate"
+#endif
 
 					; Burn prediction ID
 					; TODO use it to avoid useless state reset
@@ -186,15 +252,23 @@ network_tick_ingame:
 
 	update_state:
 	.(
+#ifdef ESP_DBG
+					ESP_DEBUG_LOG(37):.asc "received message (minus burnt bytes):"
+					ESP_DEBUG_LOG_HEADER(127)
+#define LOAD_RAINBOW_BYTE lda RAINBOW_DATA:sta RAINBOW_DATA
+#else
+#define LOAD_RAINBOW_BYTE lda RAINBOW_DATA
+#endif
+
 		; Reset frame counter
 		;  TODO if in the past, reroll game updates
-		lda RAINBOW_DATA
+		LOAD_RAINBOW_BYTE
 		sta network_current_frame_byte0
-		lda RAINBOW_DATA
+		LOAD_RAINBOW_BYTE
 		sta network_current_frame_byte1
-		lda RAINBOW_DATA
+		LOAD_RAINBOW_BYTE
 		sta network_current_frame_byte2
-		lda RAINBOW_DATA
+		LOAD_RAINBOW_BYTE
 		sta network_current_frame_byte3
 
 		; Copy gamestate
@@ -202,8 +276,8 @@ network_tick_ingame:
 			ldx #0
 			copy_one_byte:
 
-				lda RAINBOW_DATA ; 4 cycles
-				sta $00, x       ; 4 cycles
+				LOAD_RAINBOW_BYTE ; 4 cycles
+				sta $00, x        ; 4 cycles
 
 			inx ; 2 cycles
 			cpx #$4f ; 3 cycles
@@ -219,7 +293,7 @@ network_tick_ingame:
 			ldx #0
 			copy_one_byte:
 
-				lda RAINBOW_DATA                 ; 4 cycles
+				LOAD_RAINBOW_BYTE                ; 4 cycles
 				sta player_a_hurtbox_left_msb, x ; 4 cycles
 
 			inx ; 2 cycles
@@ -232,13 +306,13 @@ network_tick_ingame:
 		;  Unroll - (4+3) * 16 = 7 * 16 = 112
 
 		; Copy controllers state, the game state shall have run one frame, last_frame_btns and btns became equal
-		lda RAINBOW_DATA
+		LOAD_RAINBOW_BYTE
 		sta controller_a_btns
-		lda RAINBOW_DATA
+		LOAD_RAINBOW_BYTE
 		sta controller_b_btns
-		lda RAINBOW_DATA
+		LOAD_RAINBOW_BYTE
 		sta controller_a_last_frame_btns
-		lda RAINBOW_DATA
+		LOAD_RAINBOW_BYTE
 		sta controller_b_last_frame_btns
 
 		; Copy animation states
@@ -246,7 +320,7 @@ network_tick_ingame:
 			ldx #0
 			copy_one_byte:
 
-				lda RAINBOW_DATA ; 4 cycles
+				LOAD_RAINBOW_BYTE ; 4 cycles
 				sta player_a_animation, x ; 5 cycles
 
 			inx ; 2 cycles
