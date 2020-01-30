@@ -47,6 +47,16 @@ check_collision:
 	obstacle_left_screen = tmpfield15
 	obstacle_right_screen = tmpfield15
 
+	; Skip vertical edges collision checks if horizontal position is not impacted (pixel precision)
+	lda orig_x
+	cmp final_x
+	bne vertical_edges
+	lda orig_x_screen
+	cmp final_x_screen
+	bne vertical_edges
+	jmp horizontal_edges
+
+	vertical_edges:
 	; Skip vertical edges collision checks if the player is over or under the obstacle
 	LDA_OBSTACLE_TOP_SCREEN()
 	sta obstacle_top_screen
@@ -105,6 +115,11 @@ check_collision:
 	sta obstacle_right_screen
 	SIGNED_CMP(obstacle_right, obstacle_right_screen, final_x, final_x_screen)
 	bmi end
+
+	;TODO investigate - is there a need to check if vertical position is moved?
+	;     - Super tilt bro seems to not need it - it is easy to jump on platform edge and have no horizontal velocity
+	;     - Moving a pixel for nothing will not impact further collision tests as it is the last
+	;     - Maybe it can be observed by placing platforms in 1 pixel stairs and moving horizontally on it (to be checked)
 
 	; Check collision with top edge
 	top_edge:

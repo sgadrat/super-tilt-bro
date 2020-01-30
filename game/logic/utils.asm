@@ -418,11 +418,9 @@ check_on_platform_screen_unsafe:
 	platform_top = tmpfield3
 
 	lda player_a_x, x ;
-	dec platform_left ; if (X < platform_left - 1) then offground
-	cmp platform_left ;
+	cmp platform_left ; if (X < platform_left) then offground
 	bcc offground     ;
-	inc platform_right ;
-	lda platform_right ; if (platform_right + 1 < X) then offground
+	lda platform_right ; if (platform_right < X) then offground
 	cmp player_a_x, x  ;
 	bcc offground      ;
 	lda player_a_y, x ;
@@ -477,13 +475,11 @@ check_on_platform_multi_screen:
 	inc_16_ok:\
 .)
 
-	; if (X < platform_left - 1) then offground
-	DEC_16(platform_left_lsb, platform_left_msb)
+	; if (X < platform_left) then offground
 	SIGNED_CMP(player_a_x COMMA x, player_a_x_screen COMMA x, platform_left_lsb, platform_left_msb)
 	bmi offground
 
-	; if (platform_right + 1 < X) then offground
-	INC_16(platform_right_lsb, platform_right_msb)
+	; if (platform_right < X) then offground
 	SIGNED_CMP(platform_right_lsb, platform_right_msb, player_a_x COMMA x, player_a_x_screen COMMA x)
 	bmi offground
 
