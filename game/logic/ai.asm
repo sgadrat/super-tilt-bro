@@ -61,6 +61,11 @@ AI_ACTION_STEP(CONTROLLER_INPUT_SPECIAL, 60)
 AI_ACTION_STEP(0, 9)
 AI_ACTION_END_STEPS
 
+ai_action_tap_down:
+AI_ACTION_STEP(CONTROLLER_INPUT_TECH, 0)
+AI_ACTION_STEP(0, 0)
+AI_ACTION_END_STEPS
+
 ai_action_idle:
 AI_ACTION_STEP(0, 0)
 AI_ACTION_END_STEPS
@@ -419,6 +424,20 @@ ai_tick:
 		;  to the edge of the platform. Problem, the bot is really bad on platforms edges,
 		;  oscilating between chasing and recovering until the indecision kills him.
 
+		; If grounded on smooth platform and opponent bellow, tap down
+		SIGNED_CMP(player_b_y, player_b_y_screen, player_a_y, player_a_y_screen)
+		bpl no_tap_down
+			ldx #1
+			jsr check_on_ground
+			bne no_tap_down
+				ldx tmpfield3
+				lda stage_data, x
+				cmp #STAGE_ELEMENT_SMOOTH_PLATFORM
+				beq tap_down
+				cmp #STAGE_ELEMENT_OOS_SMOOTH_PLATFORM
+				beq tap_down
+		no_tap_down:
+
 		; Set the modifier to opponent's direction
 		lda #CONTROLLER_BTN_LEFT
 		sta ai_current_action_modifier
@@ -444,6 +463,8 @@ ai_tick:
 			cmp #16
 			bcs jump
 
+		;TODO jump if there is a wall in front of the bot (just sensor a hard platform at "bot.x +- 7")
+
 		dont_jump:
 			lda #<ai_action_idle
 			sta ai_current_action_lsb
@@ -456,6 +477,16 @@ ai_tick:
 			sta ai_current_action_lsb
 			lda #>ai_action_double_jump
 			sta ai_current_action_msb
+			jmp action_set
+
+		tap_down:
+			lda #0
+			sta ai_current_action_modifier
+			lda #<ai_action_tap_down
+			sta ai_current_action_lsb
+			lda #>ai_action_tap_down
+			sta ai_current_action_msb
+			;jmp action_set ; useless, fallthrough
 
 		; Begin the selected action
 		action_set:

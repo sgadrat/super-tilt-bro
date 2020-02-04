@@ -175,6 +175,13 @@
 ; Utility macros
 ;
 
+; Perform multibyte signed comparison
+;
+; Output - N flag set if "a < b", unset otherwise
+;          C flag set if "(unsigned)a < (unsigned)b", unset otherwise
+; Overwrites register A
+;
+; See also the routine with the same name (lowercase)
 #define SIGNED_CMP(a_low,a_high,b_low,b_high) .(:\
 	lda a_low:\
 	cmp b_low:\
