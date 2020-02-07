@@ -424,13 +424,22 @@ ai_tick:
 		;  to the edge of the platform. Problem, the bot is really bad on platforms edges,
 		;  oscilating between chasing and recovering until the indecision kills him.
 
+		stage_element_handler_lsb = tmpfield1
+		stage_element_handler_msb = tmpfield2
+		collision_point_x_lsb = tmpfield3
+		collision_point_y_lsb = tmpfield4
+		collision_point_x_msb = tmpfield5
+		collision_point_y_msb = tmpfield6
+
+		grounded_platform = tmpfield3
+
 		; If grounded on smooth platform and opponent bellow, tap down
 		SIGNED_CMP(player_b_y, player_b_y_screen, player_a_y, player_a_y_screen)
 		bpl no_tap_down
 			ldx #1
 			jsr check_on_ground
 			bne no_tap_down
-				ldx tmpfield3
+				ldx grounded_platform
 				lda stage_data, x
 				cmp #STAGE_ELEMENT_SMOOTH_PLATFORM
 				beq tap_down
@@ -454,16 +463,57 @@ ai_tick:
 		beq jump_if_higher
 		cmp PLAYER_STATE_RUNNING
 		bne dont_jump
+
 		jump_if_higher:
 			lda player_a_y
 			cmp player_b_y
-			bcs dont_jump
+			bcs end_jump_if_higher
 			sec
 			sbc player_b_y
 			cmp #16
 			bcs jump
+		end_jump_if_higher:
 
-		;TODO jump if there is a wall in front of the bot (just sensor a hard platform at "bot.x +- 7")
+		; Jump if there is a wall in front of the bot (just sensor a hard platform at "bot.x +- 7")
+		lda #<check_in_platform
+		sta stage_element_handler_lsb
+		lda #>check_in_platform
+		sta stage_element_handler_msb
+
+		lda ai_current_action_modifier
+		cmp #CONTROLLER_BTN_LEFT
+		beq negative_offset
+
+			lda #7
+			sta collision_point_x_lsb
+			lda #0
+			sta collision_point_x_msb
+			jmp end_set_offset
+
+		negative_offset:
+			lda #$f9
+			sta collision_point_x_lsb
+			lda #$ff
+			sta collision_point_x_msb
+
+		end_set_offset:
+
+		lda player_b_x
+		clc
+		adc collision_point_x_lsb
+		sta collision_point_x_lsb
+		lda player_b_x_screen
+		adc collision_point_x_msb
+		sta collision_point_x_msb
+
+		lda player_b_y
+		sta collision_point_y_lsb
+		lda player_b_y_screen
+		sta collision_point_y_msb
+
+		jsr stage_iterate_all_elements
+		cpy #$ff ; technically useless as stage_iterate_all_elements already does it, but it is not ensured in its description
+		beq jump
 
 		dont_jump:
 			lda #<ai_action_idle

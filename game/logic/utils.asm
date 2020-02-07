@@ -75,7 +75,7 @@ clear_bg_bot_left:
 ; Change active PRG-BANK
 ;  register A - number of the PRG-BANK to activate
 ; TODO - handle CHR-BANK switching
-; TODO - handle bus conflict (which can be turned of at compile time to avoid to store the big table)
+; TODO - handle bus conflict (which can be turned off at compile time to avoid to store the big table)
 ; See macro with the same name
 switch_bank:
 .(
@@ -506,6 +506,113 @@ check_on_platform_multi_screen:
 		; Offground, unset Z flag
 		lda #1
 		rts
+.)
+
+; Check if a point is in a specific platform
+;  register Y - platform offset from stage_data
+;  tmpfield3 - point x lsb
+;  tmpfield4 - point y lsb
+;  tmpfield5 - point x msb
+;  tmpfield6 - point y msb
+;
+; Sets Y register to $ff if point is in platform, else keep it unmodified
+;
+; Compatible with stage_iterate_all_elements routine
+;
+; Ovewrites Register A and register Y
+check_in_platform:
+.(
+	;tmpfield1 - reserved, stage_iterate_all_elements forbids to modify it
+	;tmpfield2 - reserved, stage_iterate_all_elements forbids to modify it
+	point_x_lsb = tmpfield3
+	point_y_lsb = tmpfield4
+	point_x_msb = tmpfield5
+	point_y_msb = tmpfield6
+
+	.(
+		lda stage_data, y
+		cmp #STAGE_ELEMENT_PLATFORM
+		beq simple_platform_handler
+		cmp #STAGE_ELEMENT_OOS_PLATFORM
+		beq oos_platform_handler
+		rts
+	.)
+
+	simple_platform_handler:
+	.(
+		; Check that point is not out of screen
+		lda point_x_msb, x
+		bne not_in_platform
+		lda point_y_msb, x
+		bne not_in_platform
+
+			; Not in platform if on the left of left edge
+			lda stage_data+STAGE_PLATFORM_OFFSET_LEFT, y
+			cmp point_x_lsb
+			beq end_left_edge
+			bcs not_in_platform
+			end_left_edge:
+
+			; Not in platform if on the right of right edge
+			lda point_x_lsb
+			cmp stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
+			beq end_right_edge
+			bcs not_in_platform
+			end_right_edge:
+
+			; Not in platform if above top edge
+			lda stage_data+STAGE_PLATFORM_OFFSET_TOP, y
+			cmp point_y_lsb
+			beq end_top_edge
+			bcs not_in_platform
+			end_top_edge:
+
+			; Not in platform if under bottom edge
+			lda point_y_lsb
+			cmp stage_data+STAGE_PLATFORM_OFFSET_BOTTOM, y
+			beq end_bottom_edge
+			bcs not_in_platform
+			end_bottom_edge:
+
+				; All checks failed, the point is in the platform
+				;jmp in_platform ; useless, fallthrough
+
+		in_platform:
+			ldy #$ff
+			;rts ; useless, fallthrough
+
+		not_in_platform:
+			rts
+	.)
+
+	oos_platform_handler:
+	.(
+		; Not in platform if on the left of left edge
+		SIGNED_CMP(point_x_lsb, point_x_msb, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB COMMA y)
+		bmi not_in_platform
+
+		; Not in platform if on the right of right edge
+		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB COMMA y, point_x_lsb, point_x_msb)
+		bmi not_in_platform
+
+		; Not in platform if above top edge
+		SIGNED_CMP(point_y_lsb, point_y_msb, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB COMMA y)
+		bmi not_in_platform
+
+		; Not in platform if under bottom edge
+		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB COMMA y, point_y_lsb, point_y_msb)
+		bmi not_in_platform
+
+			; All checks failed, the point is in the platform
+			;jmp in_platform ; useless, fallthrough
+
+		in_platform:
+			ldy #$ff
+			;rts ; useless, fallthrough
+
+		not_in_platform:
+			rts
+	.)
 .)
 
 ; Place sprite tiles for a character in PPU memory

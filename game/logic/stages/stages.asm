@@ -95,7 +95,7 @@ stage_generic_init:
 ;  Overwrites register A and register Y.
 ;
 ; For each call, the element can be accessed at address
-; "stage_data+STAGE_OFFSET_ELEMENTS, y"
+; "stage_data, y"
 ;
 ; Called subroutine can stop the iteration by setting Y to $ff, else
 ; it must not modify the Y register.
