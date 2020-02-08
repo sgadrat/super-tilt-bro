@@ -1,11 +1,11 @@
 #define AI_ATTACK_HITBOX(left,right,top,bottom) .byt left, right, top, bottom
 #define AI_NB_ATTACKS 4
 attacks:
-AI_ATTACK_HITBOX($f0, $fd, $f4, $0c)
+AI_ATTACK_HITBOX($e0, $f4, $f4, $0c)
 .byt <ai_action_left_tilt
-AI_ATTACK_HITBOX($0a, $17, $f4, $0c)
+AI_ATTACK_HITBOX($13, $27, $f4, $0c)
 .byt <ai_action_right_tilt
-AI_ATTACK_HITBOX($f1, $17, $08, $0f)
+AI_ATTACK_HITBOX($fb, $06, $08, $0f)
 .byt <ai_action_down_tilt
 AI_ATTACK_HITBOX($f1, $17, $d0, $f8)
 .byt <ai_action_special_up
