@@ -4,11 +4,32 @@ AI_ATTACK_CONDITION_DIRECTION_RIGHT = %00000010
 ; Readable shorthand to get the negation of a constant 8bit value
 #define NOT(x) <(-x-1)
 
-; Attacks list macros
 #define AI_ATTACK_HITBOX(cond,left,right,top,bottom) .byt cond,left, right, top, bottom
 #define AI_NB_ATTACKS 5
+attacks:
+AI_ATTACK_HITBOX(0, $e0, $f4, $f4, $0c)
+.byt <ai_action_left_tilt
+AI_ATTACK_HITBOX(0, $13, $27, $f4, $0c)
+.byt <ai_action_right_tilt
+AI_ATTACK_HITBOX(AI_ATTACK_CONDITION_DIRECTION_LEFT, $fb, $ff, $08, $0f)
+.byt <ai_action_down_tilt
+AI_ATTACK_HITBOX(AI_ATTACK_CONDITION_DIRECTION_RIGHT, $03, $0d, $08, $0f)
+.byt <ai_action_down_tilt
+AI_ATTACK_HITBOX(0, $f1, $17, $d0, $f8)
+.byt <ai_action_special_up
 
-; Common actions
+attacks_msb:
+AI_ATTACK_HITBOX(0, $ff, $ff, $ff, $00)
+.byt >ai_action_left_tilt
+AI_ATTACK_HITBOX(0, $00, $00, $ff, $00)
+.byt >ai_action_right_tilt
+AI_ATTACK_HITBOX(0, $ff, $ff, $00, $00)
+.byt >ai_action_down_tilt
+AI_ATTACK_HITBOX(0, $00, $00, $00, $00)
+.byt >ai_action_down_tilt
+AI_ATTACK_HITBOX(0, $ff, $00, $ff, $ff)
+.byt >ai_action_special_up
+
 #define AI_STEP_FINAL $ff
 #define AI_ACTION_STEP(buttons,time) .byt buttons, time
 #define AI_ACTION_END_STEPS .byt AI_STEP_FINAL
@@ -43,6 +64,11 @@ AI_ACTION_END_STEPS
 
 ai_action_special_up:
 AI_ACTION_STEP(CONTROLLER_INPUT_SPECIAL_UP, 0)
+AI_ACTION_END_STEPS
+
+ai_action_special_side:
+AI_ACTION_STEP(CONTROLLER_INPUT_SPECIAL, 60)
+AI_ACTION_STEP(0, 9)
 AI_ACTION_END_STEPS
 
 ai_action_tap_down:
@@ -83,10 +109,6 @@ ai_tick:
 		lda #$00
 		sta controller_b_btns
 
-		; Switch to player B's character bank
-		ldx config_player_b_character
-		SWITCH_BANK(characters_bank_number COMMA x)
-
 		; Continue the current action if there is one
 		lda ai_current_action_step
 		cmp #AI_STEP_FINAL
@@ -96,43 +118,19 @@ ai_tick:
 		;  Note - the last selector must always return an action,
 		;         not finding any action triggers undefined behaviour
 		find_action:
-
-		; Push first selectors table's address (lsb first, msb second)
-		ldx config_player_b_character
-		lda characters_properties_lsb, x
-		sta tmpfield1
-		lda characters_properties_msb, x
-		sta tmpfield2
-		ldy #CHARACTERS_PROPERTIES_AI_ACTION_SELECTORS_OFFSET
-		lda (tmpfield1), y
-		pha
-		iny
-		lda (tmpfield1), y
-		pha
-
+		ldx #0
 		run_current_selector:
-			; Retrieve selector table pointer
-			pla
-			sta tmpfield2
-			pla
+			lda action_selectors_lsb, x
 			sta tmpfield1
-
-			; Push pointer + 1
-			clc
-			adc #2
-			pha
-			lda tmpfield2
-			adc #0
-			pha
-
-			; Call selector
+			lda action_selectors_msb, x
+			sta tmpfield2
 			txa
 			pha
 			jsr call_pointed_subroutine
 			pla
 			tax
 
-			; Loop if selector did not start a new action
+			inx
 			lda ai_current_action_step
 			cmp #AI_STEP_FINAL
 			beq run_current_selector
@@ -145,9 +143,6 @@ ai_tick:
 			beq find_action
 		rts
 	.)
-
-	;TODO make selectors generic (if needed)
-	;TODO place selectors in outer scope
 
 	; Search for an attack that can hit player A
 	attack_selector:

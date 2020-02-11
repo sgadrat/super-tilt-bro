@@ -45,6 +45,7 @@ CHARACTERS_PROPERTIES_MENU_SELECT_ANIM_OFFSET = 4
 CHARACTERS_PROPERTIES_CHAR_NAME_OFFSET = 6
 CHARACTERS_PROPERTIES_WEAPON_NAME_OFFSET = 16
 CHARACTERS_PROPERTIES_ILLUSTRATIONS_ADDR_OFFSET = 26
+CHARACTERS_PROPERTIES_AI_ACTION_SELECTORS_OFFSET = 27 ;TODO serialize it when compiling mod ;TODO format changed, it is now a vector table instead of two half-vector tables
 
 TECH_MAX_FRAMES_BEFORE_COLLISION = 10 ; To tech successfully the tech must be input at maximum TECH_MAX_FRAMES_BEFORE_COLLISION frames before hitting the ground
 TECH_NB_FORBIDDEN_FRAMES = 60 ; After expiration of a tech input, it is not possible to input another tech for TECH_NB_FORBIDDEN_FRAMES frames

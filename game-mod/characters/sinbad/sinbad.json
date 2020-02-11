@@ -3,6 +3,95 @@
 	"name": "sinbad",
 	"weapon_name": "scimitar",
 	"sourcecode_file": "characters/sinbad/states.asm",
+	"ai": {
+		"type": "character_ai",
+		"sourcecode_file": "characters/sinbad/ai.asm",
+		"attacks": [
+			{
+				"type": "character_ai_attack",
+				"action": "ai_action_left_tilt",
+				"constraints": 0,
+				"hitbox": {
+					"type": "character_ai_hitbox",
+					"left": -32,
+					"right": -12,
+					"top": -12,
+					"bottom": 12
+				}
+			},
+			{
+				"type": "character_ai_attack",
+				"action": "ai_action_right_tilt",
+				"constraints": 0,
+				"hitbox": {
+					"type": "character_ai_hitbox",
+					"left": 19,
+					"right": 39,
+					"top": -12,
+					"bottom": 12
+				}
+			},
+			{
+				"type": "character_ai_attack",
+				"action": "ai_action_down_tilt",
+				"constraints": 1,
+				"hitbox": {
+					"type": "character_ai_hitbox",
+					"left": -5,
+					"right": -1,
+					"top": 8,
+					"bottom": 15
+				}
+			},
+			{
+				"type": "character_ai_attack",
+				"action": "ai_action_down_tilt",
+				"constraints": 2,
+				"hitbox": {
+					"type": "character_ai_hitbox",
+					"left": 3,
+					"right": 13,
+					"top": 8,
+					"bottom": 15
+				}
+			},
+			{
+				"type": "character_ai_attack",
+				"action": "ai_action_special_up",
+				"constraints": 0,
+				"hitbox": {
+					"type": "character_ai_hitbox",
+					"left": -15,
+					"right": 23,
+					"top": -48,
+					"bottom": 8
+				}
+			}
+		],
+		"action_selectors": [
+			"attack_selector",
+			"recover_selector",
+			"chase_selector"
+		],
+		"actions": [
+			{
+				"type": "character_ai_action",
+				"name": "special_side",
+				"steps": [
+					{
+						"type": "character_ai_action_step",
+						"input": "CONTROLLER_INPUT_SPECIAL",
+						"duration": 60
+					},
+					{
+						"type": "character_ai_action_step",
+						"input": 0,
+						"duration": 9
+					}
+				]
+			}
+		]
+	},
 	"illustration_small": {
 		"type": "tileset",
 		"src": "characters/sinbad/illustrations/small.gif",
