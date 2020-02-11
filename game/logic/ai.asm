@@ -1,23 +1,33 @@
-#define AI_ATTACK_HITBOX(left,right,top,bottom) .byt left, right, top, bottom
-#define AI_NB_ATTACKS 4
+AI_ATTACK_CONDITION_DIRECTION_LEFT = %00000001
+AI_ATTACK_CONDITION_DIRECTION_RIGHT = %00000010
+
+; Readable shorthand to get the negation of a constant 8bit value
+#define NOT(x) <(-x-1)
+
+#define AI_ATTACK_HITBOX(cond,left,right,top,bottom) .byt cond,left, right, top, bottom
+#define AI_NB_ATTACKS 5
 attacks:
-AI_ATTACK_HITBOX($e0, $f4, $f4, $0c)
+AI_ATTACK_HITBOX(0, $e0, $f4, $f4, $0c)
 .byt <ai_action_left_tilt
-AI_ATTACK_HITBOX($13, $27, $f4, $0c)
+AI_ATTACK_HITBOX(0, $13, $27, $f4, $0c)
 .byt <ai_action_right_tilt
-AI_ATTACK_HITBOX($fb, $06, $08, $0f)
+AI_ATTACK_HITBOX(AI_ATTACK_CONDITION_DIRECTION_LEFT, $fb, $ff, $08, $0f)
 .byt <ai_action_down_tilt
-AI_ATTACK_HITBOX($f1, $17, $d0, $f8)
+AI_ATTACK_HITBOX(AI_ATTACK_CONDITION_DIRECTION_RIGHT, $03, $0d, $08, $0f)
+.byt <ai_action_down_tilt
+AI_ATTACK_HITBOX(0, $f1, $17, $d0, $f8)
 .byt <ai_action_special_up
 
 attacks_msb:
-AI_ATTACK_HITBOX($ff, $ff, $ff, $00)
+AI_ATTACK_HITBOX(0, $ff, $ff, $ff, $00)
 .byt >ai_action_left_tilt
-AI_ATTACK_HITBOX($00, $00, $ff, $00)
+AI_ATTACK_HITBOX(0, $00, $00, $ff, $00)
 .byt >ai_action_right_tilt
-AI_ATTACK_HITBOX($ff, $00, $00, $00)
+AI_ATTACK_HITBOX(0, $ff, $ff, $00, $00)
 .byt >ai_action_down_tilt
-AI_ATTACK_HITBOX($ff, $00, $ff, $ff)
+AI_ATTACK_HITBOX(0, $00, $00, $00, $00)
+.byt >ai_action_down_tilt
+AI_ATTACK_HITBOX(0, $ff, $00, $ff, $ff)
 .byt >ai_action_special_up
 
 #define AI_STEP_FINAL $ff
@@ -154,10 +164,43 @@ ai_tick:
 		hurtbox_top_msb = tmpfield15
 		hurtbox_bottom_msb = tmpfield16
 
+		condition_mask = extra_tmpfield1
+
+		; Compute condition mask
+		;  Each matched condition is set to zero in the mask, non matched condition are set to one
+		;  Each necessary condition in constraints are set to one
+		;  mask & constraints = zero if all necessary conditions are met
+		lda #$ff
+
+		ldx player_b_direction
+		bne right_facing
+			and #NOT(AI_ATTACK_CONDITION_DIRECTION_LEFT)
+			jmp end_direction_flag
+		right_facing:
+			and #NOT(AI_ATTACK_CONDITION_DIRECTION_RIGHT)
+		end_direction_flag:
+
+		sta condition_mask
+
+		; Find an attack to trigger
 		ldy #AI_NB_ATTACKS
 		ldx #$00
 
 		check_one_attack:
+			; Test if attack's condition match condition mask
+			lda attacks, x
+			inx
+			bit condition_mask
+			beq condition_ok
+
+				; Condition failed, skip to next attack
+				inx
+				inx
+				inx
+				inx
+				jmp next_attack
+
+			condition_ok:
 
 			; Test if attack's hitbox overlaps player A's hurtbox
 			lda attacks, x
