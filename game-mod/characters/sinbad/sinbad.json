@@ -70,7 +70,7 @@
 		],
 		"action_selectors": [
 			"ai_attack_selector",
-			"character_sinbad_ai_recover_selector",
+			"sinbad_ai_recover_selector",
 			"ai_chase_selector"
 		],
 		"actions": [
