@@ -173,6 +173,10 @@ stage_gem_frame_cnt = $8d
 ; Extra zero-page registers
 extra_tmpfield1 = $b0
 extra_tmpfield2 = $b1
+extra_tmpfield3 = $b2
+extra_tmpfield4 = $b3
+extra_tmpfield5 = $b4
+extra_tmpfield6 = $b5
 
 ;
 ; TITLE labels
