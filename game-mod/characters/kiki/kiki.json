@@ -1,4 +1,13 @@
 {
+	"ai": {
+		"actions": [],
+		"action_selectors": [
+			"ai_chase_selector"
+		],
+		"attacks": [],
+		"sourcecode_file": null,
+		"type": "character_ai"
+	},
 	"animations": [
 		{
 			"src": "characters/kiki/animations/kiki_anim_aerial_neutral.json",
