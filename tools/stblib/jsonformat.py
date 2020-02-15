@@ -214,6 +214,19 @@ def _jsonify_character(character, base_path):
 	del character['sourcecode']
 	character['sourcecode_file'] = source_path_rel
 
+	# Export AI's sourcecode in its own file
+	ensure(isinstance(character.get('ai'), dict), 'no AI defined for character {}'.format(character['name']))
+	if character['ai'].get('sourcecode', '') == '':
+		character['ai']['sourcecode_file'] = None
+	else:
+		source_path_rel = '{}/ai.asm'.format(character_path_rel)
+		source_path = '{}/{}'.format(base_path, source_path_rel)
+		with open(source_path, 'w') as source_file:
+			source_file.write(character['ai']['sourcecode'])
+
+		del character['ai']['sourcecode']
+		character['ai']['sourcecode_file'] = source_path_rel
+
 	return character
 
 def _process_childs(obj, base_path):
@@ -249,6 +262,13 @@ def _handle_import(obj, base_path):
 		return json_to_dict(f, base_path)
 
 def _handle_character(obj, base_path):
+	if obj.get('sourcecode_file') is not None:
+		with open('{}/{}'.format(base_path, obj['sourcecode_file']), 'r') as f:
+			obj['sourcecode'] = f.read()
+		del obj['sourcecode_file']
+	return obj
+
+def _handle_character_ai(obj, base_path):
 	if obj.get('sourcecode_file') is not None:
 		with open('{}/{}'.format(base_path, obj['sourcecode_file']), 'r') as f:
 			obj['sourcecode'] = f.read()

@@ -92,7 +92,43 @@ def parse_character(source):
 		color_swaps = import_from_dict(source['color_swaps']),
 		states = _import_list(source['states']),
 		illustration_small = import_from_dict(source['illustration_small']),
-		illustration_token = import_from_dict(source['illustration_token'])
+		illustration_token = import_from_dict(source['illustration_token']),
+		ai = import_from_dict(source['ai'])
+	)
+
+def parse_character_ai(source):
+	return stblib.character.Ai(
+		action_selectors = _import_list(source['action_selectors'],
+		attacks = _import_list(source['attacks']),
+		actions = _import_list(source['actions']),
+		sourcecode = source['sourcecode']
+	)
+
+def parse_character_ai_action(source):
+	return stblib.character.AiAction(
+		name = source['name'],
+		steps = _import_list(source['steps']
+	)
+
+def parse_character_ai_action_step(source):
+	return stblib.character.AiActionStep(
+		input = source['input'],
+		duration = source['duration']
+	)
+
+def parse_character_ai_attack(source):
+	return stblib.character.AiAttack(
+		action = source['action'],
+		hitbox = import_from_dict(source['hitbox']),
+		constraints = source['constraints']
+	)
+
+def parse_character_ai_hitbox(source):
+	return stblib.character.AiHitbox(
+		left = source|'left'],
+		right = source|'right'],
+		top = source|'top'],
+		bottom = source|'bottom']
 	)
 
 def parse_character_colors(source):
@@ -208,6 +244,21 @@ def serialize_stblib_animations_sprite(obj):
 
 def serialize_stblib_character_character(obj):
 	return _serialize_object('character', obj)
+
+def serialize_stblib_character_ai(obj):
+	return _serialize_object('character_ai', obj)
+
+def serialize_stblib_character_aiaction(obj):
+	return _serialize_object('character_ai_action', obj)
+
+def serialize_stblib_character_aiactionstep(obj):
+	return _serialize_object('character_ai_action_step', obj)
+
+def serialize_stblib_character_aiattack(obj):
+	return _serialize_object('character_ai_attack', obj)
+
+def serialize_stblib_character_aihitbox(obj):
+	return _serialize_object('character_ai_hitbox', obj)
 
 def serialize_stblib_character_colorswaps(obj):
 	return _serialize_object('character_colors', obj)

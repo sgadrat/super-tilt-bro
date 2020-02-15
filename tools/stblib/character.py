@@ -1,4 +1,4 @@
-from stblib import ensure
+from stblib import ensure, is_valid_label_name
 import stblib.animations
 import stblib.tiles
 
@@ -72,8 +72,100 @@ class Colorswaps:
 		ensure(len(self.alternate_colors) == len(self.primary_colors))
 		ensure(len(self.secondary_names) == len(self.secondary_colors))
 
+class AiHitbox:
+	def __init__(self, left=0, right=0, top=0, bottom=0):
+		self.left = left
+		self.right = right
+		self.top = top
+		self.bottom = bottom
+
+	def check(self):
+		ensure(isinstance(left, int))
+		ensure(isinstance(right, int))
+		ensure(isinstance(top, int))
+		ensure(isinstance(bottom, int))
+
+		ensure(left <= right)
+		ensure(top <= bottom)
+
+class AiAttack:
+	class ConstraintFlag:
+		DIRECTION_LEFT  = 0b00000001
+		DIRECTION_RIGHT = 0b00000010
+
+	def __init(self, action='', hitbox=None, constraints=0):
+		self.action = action
+		self.constraints = constraints
+		self.hitbox = hitbox if hitbox is not None else AiHitbox
+
+	def constraint_set(self, constraint):
+		return self.constraints & constraint != 0
+
+	def check(self):
+		ensure(isinstance(self.action, str))
+
+		ensure(isinstance(self.hitbox, AiHitbox))
+		self.hitbox.check()
+
+		ensure(isinstance(self.constraints, int))
+		ensure(self.constraints <= ConstraintFlag.DIRECTION_LEFT + ConstraintFlag.DIRECTION_RIGHT, "unknown flag set in action's constraints")
+		ensure(not (self.constraint_set(ConstraintFlag.DIRECTION_LEFT) and self.constraint_set(ConstraintFlag.DIRECTION_RIGHT)), "impossible constraints mix: right and left")
+
+class AiActionStep:
+	def __init__(self, input=0, duration=0):
+		self.input = input
+		self.duration = duration
+
+	def check(self):
+		ensure(isinstance(self.input, int) or isinstance(self.input, str))
+		if isinstance(self.input, int):
+			ensure(0 <= self.input and self.input <= 255)
+		if isinstance(self.input, str):
+			ensure(self.input[:17] == 'CONTROLLER_INPUT_')
+
+		ensure(isinstance(self.duration, int))
+		ensure(0 <= self.duration and self.duration <= 255)
+
+class AiAction:
+	def __init(self, name='', steps=None):
+		self.name = name
+		self.steps = steps if steps is not None else []
+
+	def check(self):
+		ensure(is_valid_label_name(self.name))
+
+		ensure(isinstance(self.steps, list))
+		ensure(len(self.steps) > 0, 'empty action')
+		for step in self.steps:
+			ensure(isinstance(step, AiActionStep))
+			step.check()
+
+class Ai:
+	def __init__(self, action_selectors=None, attacks=None, actions=None, sourcecode=''):
+		self.action_selectors = action_selectors if action_selectors is not None else []
+		self.attacks = attacks if attacks is not None else []
+		self.actions = actions if actions is not None else []
+		self.sourcecode = ''
+
+	def check(self):
+		ensure(isinstance(action_selectors, list))
+		for selector in action_selectors:
+			ensure(isinstance(selector, str))
+
+		ensure(isinstance(attacks, list))
+		for attack in attacks:
+			ensure(isinstance(attack, AiAttack))
+			attack.check()
+
+		ensure(isinstance(actions, list))
+		for action in actions:
+			ensure(isinstance(action, AiAction))
+			action.check()
+
+		ensure(isinstance(self.sourcecode, str))
+
 class Character:
-	def __init__(self, name='', weapon_name='', sourcecode='', tileset=None, victory_animation=None, defeat_animation=None, menu_select_animation=None, animations=None, color_swaps=None, states=None, illustration_small=None, illustration_token=None):
+	def __init__(self, name='', weapon_name='', sourcecode='', tileset=None, victory_animation=None, defeat_animation=None, menu_select_animation=None, animations=None, color_swaps=None, states=None, illustration_small=None, illustration_token=None, ai=None):
 		self.name = name
 		self.weapon_name = weapon_name
 		self.sourcecode = sourcecode
@@ -86,6 +178,7 @@ class Character:
 		self.states = states if states is not None else []
 		self.illustration_small = illustration_small if illustration_small is not None else stblib.tiles.Tileset()
 		self.illustration_token = illustration_token if illustration_token is not None else stblib.tiles.Tileset()
+		self.ai = ai if ai is not None else Ai()
 
 	def check(self):
 		ensure(isinstance(self.name, str))
@@ -135,3 +228,6 @@ class Character:
 		ensure(isinstance(self.illustration_token, stblib.tiles.Tileset))
 		self.illustration_token.check()
 		ensure(len(self.illustration_token.tiles) == 1)
+
+		ensure(isinstance(self.ai, Ai))
+		self.ai.check()
