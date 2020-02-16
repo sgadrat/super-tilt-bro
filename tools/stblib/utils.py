@@ -34,6 +34,20 @@ def asmsint16(s):
 		i = -(0x10000 - i)
 	return i
 
+def int16msb(i):
+	s = struct.pack('>h', i)
+	return s[0]
+
+def int16lsb(i):
+	s = struct.pack('>h', i)
+	return s[1]
+
+def uint16msb(i):
+	return (i & 0xff00) >> 8
+
+def uint16lsb(i):
+	return i & 0x00ff
+
 def str_to_tile_index(s, index_of_a = 0xe6, index_of_zero = 0xdb, special_cases = None):
 	"""
 	Convert a string to a series of tile indexes.

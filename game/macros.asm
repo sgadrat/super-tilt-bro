@@ -12,6 +12,16 @@
 #define STATE_ROUTINE(x) .byt >(x-1), <(x-1)
 
 ;
+; Character AI
+;
+
+#define AI_ATTACK_HITBOX(cond,left,right,top,bottom) .byt cond,left, right, top, bottom
+
+#define AI_STEP_FINAL $ff
+#define AI_ACTION_STEP(buttons,time) .byt buttons, time
+#define AI_ACTION_END_STEPS .byt AI_STEP_FINAL
+
+;
 ; Stage specific macros
 ;
 

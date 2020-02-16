@@ -4,15 +4,6 @@ AI_ATTACK_CONDITION_DIRECTION_RIGHT = %00000010
 ; Readable shorthand to get the negation of a constant 8bit value
 #define NOT(x) <(-x-1)
 
-; Attacks list macros
-#define AI_ATTACK_HITBOX(cond,left,right,top,bottom) .byt cond,left, right, top, bottom
-#define AI_NB_ATTACKS 5
-
-; Common actions
-#define AI_STEP_FINAL $ff
-#define AI_ACTION_STEP(buttons,time) .byt buttons, time
-#define AI_ACTION_END_STEPS .byt AI_STEP_FINAL
-
 ai_action_double_jump:
 AI_ACTION_STEP(0, 0)
 AI_ACTION_STEP(CONTROLLER_INPUT_JUMP, 9)
@@ -275,7 +266,7 @@ ai_attack_selector:
 	sta condition_mask
 
 	; Find an attack to trigger
-	ldx #AI_NB_ATTACKS
+	ldx nb_attacks
 	ldy #$00
 
 	check_one_attack:

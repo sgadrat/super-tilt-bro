@@ -47,6 +47,8 @@ def generate_character(char, game_dir):
 	character_names_label_name = '{}_character_names'.format(char.name)
 	weapon_names_label_name = '{}_weapon_names'.format(char.name)
 	properties_table_label_name = '{}_properties'.format(char.name)
+	ai_attacks_table_label_name = '{}_ai_attacks'.format(char.name)
+	ai_selectors_table_label_name = '{}_ai_selectors'.format(char.name)
 
 	# Create character's master file
 	master_file_path = '{}/{}.asm'.format(char_dir, char.name)
@@ -61,6 +63,8 @@ def generate_character(char, game_dir):
 			#include "{rel_char_dir}/properties.asm"
 			#include "{rel_char_dir}/state_events.asm"
 			#include "{rel_char_dir}/player_states.asm"
+			#include "{rel_char_dir}/ai_data.asm"
+			#include "{rel_char_dir}/ai.asm"
 		""".format_map(locals())))
 
 	# Tileset file
@@ -190,6 +194,11 @@ def generate_character(char, game_dir):
 		# Illustrations
 		properties_file.write('VECTOR({}) ; Illustrations begining'.format(illustrations_label_name))
 
+		# AI
+		properties_file.write('VECTOR({}) ; AI selectors'.format(ai_selectors_table_label_name))
+		properties_file.write('.byt {} ; Number of AI attacks'.format(len(char.ai.attacks)))
+		properties_file.write('VECTOR({}) ; AI attacks'.format(ai_attacks_table_label_name))
+
 	# State events
 	state_events_file_path = '{}/state_events.asm'.format(char_dir)
 	with open(state_events_file_path, 'w') as state_events_file:
@@ -232,6 +241,50 @@ def generate_character(char, game_dir):
 	with open(master_animations_file_path, 'w') as master_animations_file:
 		for rel_anim_file_path in rel_animations_path:
 			master_animations_file.write('#include "{}"\n'.format(rel_anim_file_path))
+
+	# AI
+	custom_ai_file_path = '{}/ai.asm'.format(char_dir)
+	with open(custom_ai_file_path, 'w') as custom_ai_file:
+		custom_ai_file.write(char.sourcecode)
+
+	ai_data_file_path = '{}/ai_data.asm'.format(char_dir)
+	with open(ai_data_file_path, 'w') as ai_data_file:
+		# Attacks
+		ai_data_file.write('{}:\n'.format(ai_attacks_table_label_name))
+		ai_data_file.write('; LSBs\n')
+		for attack in char.ai.attacks:
+			ai_data_file.write('AI_ATTACK_HITBOX({}, {}, {}, {})\n'.format(
+				stblib.utils.uint16lsb(attack.constraints),
+				stblib.utils.int16lsb(attack.hitbox.left),
+				stblib.utils.int16lsb(attack.hitbox.right),
+				stblib.utils.int16lsb(attack.hitbox.top),
+				stblib.utils.int16lsb(attack.hitbox.bottom)
+			))
+			ai_data_file.write('.byt <{}\n'.format(attack.action))
+		ai_data_file.write('; MSBs\n')
+		for attack in char.ai.attacks:
+			ai_data_file.write('AI_ATTACK_HITBOX({}, {}, {}, {})\n'.format(
+				stblib.utils.uint16msb(attack.constraints),
+				stblib.utils.int16msb(attack.hitbox.left),
+				stblib.utils.int16msb(attack.hitbox.right),
+				stblib.utils.int16msb(attack.hitbox.top),
+				stblib.utils.int16msb(attack.hitbox.bottom)
+			))
+			ai_data_file.write('.byt >{}\n'.format(attack.action))
+		ai_data_file.write('\n')
+
+		# Selectors
+		ai_data_file.write('{}:\n'.format(ai_selectors_table_label_name))
+		for selector in char.ai.action_selectors:
+			ai_data_file.write('VECTOR({})\n'.format(selector))
+		ai_data_file.write('\n')
+
+		# Actions
+		for action in char.ai.actions:
+			ai_data_file.write('{}_ai_action_{}:\n'.format(char.name, action.name))
+			for step in action.steps:
+				ai_data_file.write('AI_ACTION_STEP({}, {})\n'.format(step.input, step.duration))
+			ai_data_file.write('AI_ACTION_END_STEPS\n')
 
 def generate_characters_index(characters, game_dir):
 	characters_index_file_path = '{}/game/data/characters/characters-index.asm'.format(game_dir)

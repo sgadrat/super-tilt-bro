@@ -93,9 +93,9 @@ sinbad_ai_recover_selector:
 				jmp begin_action
 
 			set_special_side_action:
-				lda #<ai_action_special_side
+				lda #<sinbad_ai_action_special_side
 				sta ai_current_action_lsb
-				lda #>ai_action_special_side
+				lda #>sinbad_ai_action_special_side
 				sta ai_current_action_msb
 				jmp begin_action
 
