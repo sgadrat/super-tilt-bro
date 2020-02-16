@@ -98,7 +98,7 @@ def parse_character(source):
 
 def parse_character_ai(source):
 	return stblib.character.Ai(
-		action_selectors = _import_list(source['action_selectors'],
+		action_selectors = source['action_selectors'],
 		attacks = _import_list(source['attacks']),
 		actions = _import_list(source['actions']),
 		sourcecode = source['sourcecode']
@@ -107,7 +107,7 @@ def parse_character_ai(source):
 def parse_character_ai_action(source):
 	return stblib.character.AiAction(
 		name = source['name'],
-		steps = _import_list(source['steps']
+		steps = _import_list(source['steps'])
 	)
 
 def parse_character_ai_action_step(source):
@@ -125,10 +125,10 @@ def parse_character_ai_attack(source):
 
 def parse_character_ai_hitbox(source):
 	return stblib.character.AiHitbox(
-		left = source|'left'],
-		right = source|'right'],
-		top = source|'top'],
-		bottom = source|'bottom']
+		left = source['left'],
+		right = source['right'],
+		top = source['top'],
+		bottom = source['bottom']
 	)
 
 def parse_character_colors(source):

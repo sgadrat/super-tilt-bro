@@ -192,12 +192,12 @@ def generate_character(char, game_dir):
 		properties_file.write('.byt {} ; {}\n'.format(text_asm(char.weapon_name, 10, 2), char.weapon_name))
 
 		# Illustrations
-		properties_file.write('VECTOR({}) ; Illustrations begining'.format(illustrations_label_name))
+		properties_file.write('VECTOR({}) ; Illustrations begining\n'.format(illustrations_label_name))
 
 		# AI
-		properties_file.write('VECTOR({}) ; AI selectors'.format(ai_selectors_table_label_name))
-		properties_file.write('.byt {} ; Number of AI attacks'.format(len(char.ai.attacks)))
-		properties_file.write('VECTOR({}) ; AI attacks'.format(ai_attacks_table_label_name))
+		properties_file.write('VECTOR({}) ; AI selectors\n'.format(ai_selectors_table_label_name))
+		properties_file.write('.byt {} ; Number of AI attacks\n'.format(len(char.ai.attacks)))
+		properties_file.write('VECTOR({}) ; AI attacks\n'.format(ai_attacks_table_label_name))
 
 	# State events
 	state_events_file_path = '{}/state_events.asm'.format(char_dir)
@@ -210,7 +210,7 @@ def generate_character(char, game_dir):
 			state_events_file.write('{}_state_{}_routines:\n'.format(char.name, routine_type))
 			for state in char.states:
 				routine_name = getattr(state, '{}_routine'.format(routine_type))
-				ensure(routine_name is not None or routine_type is 'start', 'in {}\'s state {}, missing {} routine'.format(char.name, state.name, routine_type))
+				ensure(routine_name is not None or routine_type == 'start', 'in {}\'s state {}, missing {} routine'.format(char.name, state.name, routine_type))
 
 				if routine_name is not None:
 					state_events_file.write('STATE_ROUTINE({}) ; {}\n'.format(routine_name, state.name))
@@ -245,7 +245,7 @@ def generate_character(char, game_dir):
 	# AI
 	custom_ai_file_path = '{}/ai.asm'.format(char_dir)
 	with open(custom_ai_file_path, 'w') as custom_ai_file:
-		custom_ai_file.write(char.sourcecode)
+		custom_ai_file.write(char.ai.sourcecode)
 
 	ai_data_file_path = '{}/ai_data.asm'.format(char_dir)
 	with open(ai_data_file_path, 'w') as ai_data_file:
@@ -253,7 +253,7 @@ def generate_character(char, game_dir):
 		ai_data_file.write('{}:\n'.format(ai_attacks_table_label_name))
 		ai_data_file.write('; LSBs\n')
 		for attack in char.ai.attacks:
-			ai_data_file.write('AI_ATTACK_HITBOX({}, {}, {}, {})\n'.format(
+			ai_data_file.write('AI_ATTACK_HITBOX({}, ${:02x}, ${:02x}, ${:02x}, ${:02x})\n'.format(
 				stblib.utils.uint16lsb(attack.constraints),
 				stblib.utils.int16lsb(attack.hitbox.left),
 				stblib.utils.int16lsb(attack.hitbox.right),
@@ -263,7 +263,7 @@ def generate_character(char, game_dir):
 			ai_data_file.write('.byt <{}\n'.format(attack.action))
 		ai_data_file.write('; MSBs\n')
 		for attack in char.ai.attacks:
-			ai_data_file.write('AI_ATTACK_HITBOX({}, {}, {}, {})\n'.format(
+			ai_data_file.write('AI_ATTACK_HITBOX({}, ${:02x}, ${:02x}, ${:02x}, ${:02x})\n'.format(
 				stblib.utils.uint16msb(attack.constraints),
 				stblib.utils.int16msb(attack.hitbox.left),
 				stblib.utils.int16msb(attack.hitbox.right),

@@ -5,8 +5,9 @@ This format has a lot in common with the dict format, but handles some structure
 
 Notable changes:
 	* The "import" type is specific to JSON format, it inlines another JSON file
-	* The "tileset" type is based on a GIF file instead of specifying each tile in the dicument
+	* The "tileset" type is based on a GIF file instead of specifying each tile in the document
 	* The character's "sourcecode" property is a filename instead of the sourcecode
+	* The character's AI "sourcecode" property is a filename instead of the sourcecode
 """
 
 import json
@@ -269,10 +270,12 @@ def _handle_character(obj, base_path):
 	return obj
 
 def _handle_character_ai(obj, base_path):
-	if obj.get('sourcecode_file') is not None:
+	if obj.get('sourcecode_file') is None:
+		obj['sourcecode'] = ''
+	else:
 		with open('{}/{}'.format(base_path, obj['sourcecode_file']), 'r') as f:
 			obj['sourcecode'] = f.read()
-		del obj['sourcecode_file']
+	del obj['sourcecode_file']
 	return obj
 
 def _handle_tileset(obj, base_path):

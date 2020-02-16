@@ -80,20 +80,20 @@ class AiHitbox:
 		self.bottom = bottom
 
 	def check(self):
-		ensure(isinstance(left, int))
-		ensure(isinstance(right, int))
-		ensure(isinstance(top, int))
-		ensure(isinstance(bottom, int))
+		ensure(isinstance(self.left, int))
+		ensure(isinstance(self.right, int))
+		ensure(isinstance(self.top, int))
+		ensure(isinstance(self.bottom, int))
 
-		ensure(left <= right)
-		ensure(top <= bottom)
+		ensure(self.left <= self.right)
+		ensure(self.top <= self.bottom)
 
 class AiAttack:
 	class ConstraintFlag:
 		DIRECTION_LEFT  = 0b00000001
 		DIRECTION_RIGHT = 0b00000010
 
-	def __init(self, action='', hitbox=None, constraints=0):
+	def __init__(self, action='', hitbox=None, constraints=0):
 		self.action = action
 		self.constraints = constraints
 		self.hitbox = hitbox if hitbox is not None else AiHitbox
@@ -108,8 +108,8 @@ class AiAttack:
 		self.hitbox.check()
 
 		ensure(isinstance(self.constraints, int))
-		ensure(self.constraints <= ConstraintFlag.DIRECTION_LEFT + ConstraintFlag.DIRECTION_RIGHT, "unknown flag set in action's constraints")
-		ensure(not (self.constraint_set(ConstraintFlag.DIRECTION_LEFT) and self.constraint_set(ConstraintFlag.DIRECTION_RIGHT)), "impossible constraints mix: right and left")
+		ensure(self.constraints <= AiAttack.ConstraintFlag.DIRECTION_LEFT + AiAttack.ConstraintFlag.DIRECTION_RIGHT, "unknown flag set in action's constraints")
+		ensure(not (self.constraint_set(AiAttack.ConstraintFlag.DIRECTION_LEFT) and self.constraint_set(AiAttack.ConstraintFlag.DIRECTION_RIGHT)), "impossible constraints mix: right and left")
 
 class AiActionStep:
 	def __init__(self, input=0, duration=0):
@@ -127,7 +127,7 @@ class AiActionStep:
 		ensure(0 <= self.duration and self.duration <= 255)
 
 class AiAction:
-	def __init(self, name='', steps=None):
+	def __init__(self, name='', steps=None):
 		self.name = name
 		self.steps = steps if steps is not None else []
 
@@ -145,20 +145,20 @@ class Ai:
 		self.action_selectors = action_selectors if action_selectors is not None else []
 		self.attacks = attacks if attacks is not None else []
 		self.actions = actions if actions is not None else []
-		self.sourcecode = ''
+		self.sourcecode = sourcecode
 
 	def check(self):
-		ensure(isinstance(action_selectors, list))
-		for selector in action_selectors:
+		ensure(isinstance(self.action_selectors, list))
+		for selector in self.action_selectors:
 			ensure(isinstance(selector, str))
 
-		ensure(isinstance(attacks, list))
-		for attack in attacks:
+		ensure(isinstance(self.attacks, list))
+		for attack in self.attacks:
 			ensure(isinstance(attack, AiAttack))
 			attack.check()
 
-		ensure(isinstance(actions, list))
-		for action in actions:
+		ensure(isinstance(self.actions, list))
+		for action in self.actions:
 			ensure(isinstance(action, AiAction))
 			action.check()
 
