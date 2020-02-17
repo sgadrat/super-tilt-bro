@@ -2,10 +2,11 @@
 	"ai": {
 		"actions": [],
 		"action_selectors": [
+			"kiki_ai_recover_selector",
 			"ai_chase_selector"
 		],
 		"attacks": [],
-		"sourcecode_file": null,
+		"sourcecode_file": "characters/kiki/ai.asm",
 		"type": "character_ai"
 	},
 	"animations": [

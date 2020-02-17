@@ -374,7 +374,7 @@ check_on_ground:
 		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
 		sta platform_top_msb
 		jmp check_on_platform_multi_screen
-		;rts ; useless, check_on_platform is a routine
+		;rts ; useless, check_on_platform_multi_screen is a routine
 	.)
 .)
 
@@ -410,7 +410,7 @@ check_on_platform:
 ;
 ; Sets Z flag if on ground, else unset it
 ;
-; Ovewrites register A, tmpfield1, tmpfield2 and tmpfield3
+; Ovewrites register A
 check_on_platform_screen_unsafe:
 .(
 	platform_left = tmpfield1
@@ -451,7 +451,7 @@ check_on_platform_screen_unsafe:
 ;
 ; Sets Z flag if on ground, else unset it
 ;
-; Ovewrites register A, tmpfield1, tmpfield2 and tmpfield3
+; Ovewrites register A
 check_on_platform_multi_screen:
 .(
 	platform_left_lsb = tmpfield1

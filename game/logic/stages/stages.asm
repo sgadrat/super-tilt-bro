@@ -127,8 +127,8 @@ stage_iterate_all_elements:
 #endif
 	ldy #player_b_objects-stage_data
 	jsr stage_iterate_elements
-	cpy #$ff
-	beq end
+	cpy #$ff ; TODO investigate - if no code checks Z flag after calling this routine, then this instruction is unecessary
+	;beq end ; useless - fallthrough
 
 	end:
 	rts
