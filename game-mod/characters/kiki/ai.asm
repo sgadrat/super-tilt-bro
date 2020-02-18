@@ -97,6 +97,12 @@ kiki_ai_recover_selector:
 
 	platform_handler:
 	.(
+		; Don't mess with handler vector
+		lda platform_handler_lsb
+		pha
+		lda platform_handler_msb
+		pha
+
 		; Ignore unknown platforms
 		lda stage_data, y
 		cmp #STAGE_ELEMENT_PLATFORM
@@ -111,6 +117,7 @@ kiki_ai_recover_selector:
 
 		process_simple_platform:
 			; If grounded on platform, stop iterating
+			ldx #1
 			jsr check_simple_platform
 			bne not_grounded
 				ldy #$ff
@@ -128,11 +135,19 @@ kiki_ai_recover_selector:
 
 		process_oos_platform:
 			; If grounded on platform, stop iterating
+			ldx #1
 			jsr check_oos_platform
 			bne end
 				ldy #$ff
 
 		end:
+
+		; Don't mess with handler vector
+		pla
+		sta platform_handler_msb
+		pla
+		sta platform_handler_lsb
+
 		rts
 	.)
 
@@ -143,12 +158,6 @@ kiki_ai_recover_selector:
 		platform_right = tmpfield2 ; Not movable - parameter of check_on_platform
 		platform_top = tmpfield3 ; Not movable - parameter of check_on_platform
 
-		; Don't mess with handler vector
-		lda platform_handler_lsb
-		pha
-		lda platform_handler_msb
-		pha
-
 		; Check if player is is grounded on this platform
 		lda stage_data+STAGE_PLATFORM_OFFSET_LEFT, y
 		sta platform_left
@@ -157,12 +166,6 @@ kiki_ai_recover_selector:
 		lda stage_data+STAGE_PLATFORM_OFFSET_TOP, y
 		sta platform_top
 		jsr check_on_platform
-
-		; Don't mess with handler vector
-		pla
-		sta platform_handler_msb
-		pla
-		sta platform_handler_lsb
 
 		rts
 	.)
@@ -175,12 +178,6 @@ kiki_ai_recover_selector:
 		platform_left_msb = tmpfield4 ; Not movable - parameter of check_on_platform_multi_screen
 		platform_right_msb = tmpfield5 ; Not movable - parameter of check_on_platform_multi_screen
 		platform_top_msb = tmpfield6 ; Not movable - parameter of check_on_platform_multi_screen
-
-		; Don't mess with handler vector
-		lda platform_handler_lsb
-		pha
-		lda platform_handler_msb
-		pha
 
 		; Check if player is is grounded on this platform
 		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
@@ -196,12 +193,6 @@ kiki_ai_recover_selector:
 		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
 		sta platform_top_msb
 		jsr check_on_platform_multi_screen
-
-		; Don't mess with handler vector
-		pla
-		sta platform_handler_msb
-		pla
-		sta platform_handler_lsb
 
 		rts
 	.)
