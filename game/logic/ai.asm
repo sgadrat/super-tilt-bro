@@ -27,6 +27,7 @@ AI_ACTION_STEP(0, 19)
 AI_ACTION_END_STEPS
 
 ; Can be used for aerial down and down tilt - same duration
+;TODO move it to Sinbad specific actions
 ai_action_down_tilt:
 AI_ACTION_STEP(CONTROLLER_INPUT_DOWN_TILT, 0)
 AI_ACTION_STEP(0, 19)

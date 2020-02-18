@@ -1,11 +1,134 @@
 {
 	"ai": {
-		"actions": [],
+		"actions": [
+			{
+				"name": "jab",
+				"steps": [
+					{
+						"duration": 0,
+						"input": "CONTROLLER_INPUT_JAB",
+						"type": "character_ai_action_step"
+					},
+					{
+						"duration": 16,
+						"input": 0,
+						"type": "character_ai_action_step"
+					}
+				],
+				"type": "character_ai_action"
+			},
+			{
+				"name": "down_tilt",
+				"steps": [
+					{
+						"duration": 0,
+						"input": "CONTROLLER_INPUT_DOWN_TILT",
+						"type": "character_ai_action_step"
+					},
+					{
+						"duration": 12,
+						"input": 0,
+						"type": "character_ai_action_step"
+					}
+				],
+				"type": "character_ai_action"
+			},
+			{
+				"name": "up_tilt",
+				"steps": [
+					{
+						"duration": 0,
+						"input": "CONTROLLER_INPUT_ATTACK_UP",
+						"type": "character_ai_action_step"
+					},
+					{
+						"duration": 16,
+						"input": 0,
+						"type": "character_ai_action_step"
+					}
+				],
+				"type": "character_ai_action"
+			}
+		],
 		"action_selectors": [
+			"ai_attack_selector",
 			"kiki_ai_recover_selector",
 			"ai_chase_selector"
 		],
-		"attacks": [],
+		"attacks": [
+			{
+				"action": "kiki_ai_action_jab",
+				"constraints": 1,
+				"hitbox": {
+					"bottom": 16,
+					"left": -8,
+					"right": 0,
+					"top": 0,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			},
+			{
+				"action": "kiki_ai_action_jab",
+				"constraints": 2,
+				"hitbox": {
+					"bottom": 16,
+					"left": 7,
+					"right": 15,
+					"top": 0,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			},
+			{
+				"action": "ai_action_left_tilt",
+				"constraints": 1,
+				"hitbox": {
+					"bottom": 11,
+					"left": -27,
+					"right": -3,
+					"top": 8,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			},
+			{
+				"action": "ai_action_right_tilt",
+				"constraints": 2,
+				"hitbox": {
+					"bottom": 11,
+					"left": 10,
+					"right": 34,
+					"top": 8,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			},
+			{
+				"action": "kiki_ai_action_up_tilt",
+				"constraints": 0,
+				"hitbox": {
+					"bottom": 5,
+					"left": 3,
+					"right": 4,
+					"top": -19,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			},
+			{
+				"action": "kiki_ai_action_down_tilt",
+				"constraints": 0,
+				"hitbox": {
+					"bottom": 28,
+					"left": -7,
+					"right": 14,
+					"top": 17,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			}
+		],
 		"sourcecode_file": "characters/kiki/ai.asm",
 		"type": "character_ai"
 	},
