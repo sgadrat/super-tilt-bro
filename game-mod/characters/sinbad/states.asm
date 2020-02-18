@@ -67,7 +67,7 @@ lda #<controller_inputs
 sta tmpfield1
 lda #>controller_inputs
 sta tmpfield2
-lda #14
+lda #18
 sta tmpfield3
 jmp controller_callbacks
 
@@ -91,17 +91,20 @@ rts
 ; Impactful controller states and associated callbacks
 ; Note - We have to put subroutines as callbacks since we do not expect a return unless we used the default callback
 controller_inputs:
-.byt CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_JUMP,         CONTROLLER_INPUT_JUMP_RIGHT,  CONTROLLER_INPUT_JUMP_LEFT
-.byt CONTROLLER_INPUT_ATTACK_LEFT,   CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_DOWN_TILT,    CONTROLLER_INPUT_ATTACK_UP,   CONTROLLER_INPUT_JAB
-.byt CONTROLLER_INPUT_SPECIAL,       CONTROLLER_INPUT_SPECIAL_UP,   CONTROLLER_INPUT_SPECIAL_DOWN, CONTROLLER_INPUT_TECH
+.byt CONTROLLER_INPUT_SPECIAL_RIGHT,  CONTROLLER_INPUT_SPECIAL_LEFT,     CONTROLLER_INPUT_JUMP,            CONTROLLER_INPUT_JUMP_RIGHT,  CONTROLLER_INPUT_JUMP_LEFT
+.byt CONTROLLER_INPUT_ATTACK_LEFT,    CONTROLLER_INPUT_ATTACK_RIGHT,     CONTROLLER_INPUT_DOWN_TILT,       CONTROLLER_INPUT_ATTACK_UP,   CONTROLLER_INPUT_JAB
+.byt CONTROLLER_INPUT_SPECIAL,        CONTROLLER_INPUT_SPECIAL_UP,       CONTROLLER_INPUT_SPECIAL_DOWN,    CONTROLLER_INPUT_TECH,        CONTROLLER_INPUT_ATTACK_UP_RIGHT
+.byt CONTROLLER_INPUT_ATTACK_UP_LEFT, CONTROLLER_INPUT_SPECIAL_UP_RIGHT, CONTROLLER_INPUT_SPECIAL_UP_LEFT
 controller_callbacks_lo:
-.byt <sinbad_start_side_special,     <sinbad_start_side_special,    <sinbad_start_aerial_jumping,  <sinbad_start_aerial_jumping, <sinbad_start_aerial_jumping
-.byt <sinbad_start_aerial_side,      <sinbad_start_aerial_side,     <sinbad_start_aerial_down,     <sinbad_start_aerial_up,      <sinbad_start_aerial_neutral
-.byt <sinbad_start_aerial_spe,       <sinbad_start_spe_up,          <sinbad_start_spe_down,        <fast_fall
+.byt <sinbad_start_side_special,      <sinbad_start_side_special,        <sinbad_start_aerial_jumping,     <sinbad_start_aerial_jumping, <sinbad_start_aerial_jumping
+.byt <sinbad_start_aerial_side,       <sinbad_start_aerial_side,         <sinbad_start_aerial_down,        <sinbad_start_aerial_up,      <sinbad_start_aerial_neutral
+.byt <sinbad_start_aerial_spe,        <sinbad_start_spe_up,              <sinbad_start_spe_down,           <fast_fall,                   <sinbad_start_aerial_up
+.byt <sinbad_start_aerial_up,         <sinbad_start_spe_up,              <sinbad_start_spe_up
 controller_callbacks_hi:
-.byt >sinbad_start_side_special,     >sinbad_start_side_special,    >sinbad_start_aerial_jumping,  >sinbad_start_aerial_jumping, >sinbad_start_aerial_jumping
-.byt >sinbad_start_aerial_side,      >sinbad_start_aerial_side,     >sinbad_start_aerial_down,     >sinbad_start_aerial_up,      >sinbad_start_aerial_neutral
-.byt >sinbad_start_aerial_spe,       >sinbad_start_spe_up,          >sinbad_start_spe_down,        >fast_fall
+.byt >sinbad_start_side_special,      >sinbad_start_side_special,        >sinbad_start_aerial_jumping,     >sinbad_start_aerial_jumping, >sinbad_start_aerial_jumping
+.byt >sinbad_start_aerial_side,       >sinbad_start_aerial_side,         >sinbad_start_aerial_down,        >sinbad_start_aerial_up,      >sinbad_start_aerial_neutral
+.byt >sinbad_start_aerial_spe,        >sinbad_start_spe_up,              >sinbad_start_spe_down,           >fast_fall,                   >sinbad_start_aerial_up
+.byt >sinbad_start_aerial_up,         >sinbad_start_spe_up,              >sinbad_start_spe_up
 controller_default_callback:
 .word no_input
 .)
@@ -270,7 +273,7 @@ lda #<controller_inputs
 sta tmpfield1
 lda #>controller_inputs
 sta tmpfield2
-lda #16
+lda #22
 sta tmpfield3
 jmp controller_callbacks
 
@@ -317,20 +320,23 @@ rts
 ; Note - We can put subroutines as callbacks because we have nothing to do after calling it
 ;        (sourboutines return to our caller since "called" with jmp)
 controller_inputs:
-.byt CONTROLLER_INPUT_LEFT,         CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP,         CONTROLLER_INPUT_JUMP_RIGHT,   CONTROLLER_INPUT_JUMP_LEFT
-.byt CONTROLLER_INPUT_JAB,          CONTROLLER_INPUT_ATTACK_LEFT,  CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL,      CONTROLLER_INPUT_SPECIAL_RIGHT
-.byt CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_DOWN_TILT,    CONTROLLER_INPUT_SPECIAL_UP,   CONTROLLER_INPUT_SPECIAL_DOWN, CONTROLLER_INPUT_ATTACK_UP
-.byt CONTROLLER_INPUT_TECH
+.byt CONTROLLER_INPUT_LEFT,           CONTROLLER_INPUT_RIGHT,           CONTROLLER_INPUT_JUMP,         CONTROLLER_INPUT_JUMP_RIGHT,      CONTROLLER_INPUT_JUMP_LEFT
+.byt CONTROLLER_INPUT_JAB,            CONTROLLER_INPUT_ATTACK_LEFT,     CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL,         CONTROLLER_INPUT_SPECIAL_RIGHT
+.byt CONTROLLER_INPUT_SPECIAL_LEFT,   CONTROLLER_INPUT_DOWN_TILT,       CONTROLLER_INPUT_SPECIAL_UP,   CONTROLLER_INPUT_SPECIAL_DOWN,    CONTROLLER_INPUT_ATTACK_UP
+.byt CONTROLLER_INPUT_TECH,           CONTROLLER_INPUT_TECH_LEFT,       CONTROLLER_INPUT_TECH_RIGHT,   CONTROLLER_INPUT_SPECIAL_UP_LEFT, CONTROLLER_INPUT_SPECIAL_UP_RIGHT
+.byt CONTROLLER_INPUT_ATTACK_UP_LEFT, CONTROLLER_INPUT_ATTACK_UP_RIGHT
 controller_callbacks_lo:
-.byt <sinbad_input_standing_left,  <sinbad_input_standing_right,  <jump_input,                   <jump_input_right,             <jump_input_left
-.byt <sinbad_start_jabbing,        <tilt_input_left,              <tilt_input_right,             <sinbad_start_special,         <side_special_input_right
-.byt <side_special_input_left,     <sinbad_start_down_tilt,       <sinbad_start_spe_up,          <sinbad_start_spe_down,        <sinbad_start_up_tilt
-.byt <sinbad_start_shielding
+.byt <sinbad_input_standing_left,     <sinbad_input_standing_right,  <jump_input,                      <jump_input_right,                <jump_input_left
+.byt <sinbad_start_jabbing,           <tilt_input_left,              <tilt_input_right,                <sinbad_start_special,            <side_special_input_right
+.byt <side_special_input_left,        <sinbad_start_down_tilt,       <sinbad_start_spe_up,             <sinbad_start_spe_down,           <sinbad_start_up_tilt
+.byt <sinbad_start_shielding,         <sinbad_start_shielding,       <sinbad_start_shielding,          <sinbad_start_spe_up,             <sinbad_start_spe_up
+.byt <sinbad_start_up_tilt,           <sinbad_start_up_tilt
 controller_callbacks_hi:
-.byt >sinbad_input_standing_left,  >sinbad_input_standing_right,  >jump_input,                   >jump_input_right,             >jump_input_left
-.byt >sinbad_start_jabbing,        >tilt_input_left,              >tilt_input_right,             >sinbad_start_special,         >side_special_input_right
-.byt >side_special_input_left,     >sinbad_start_down_tilt,       >sinbad_start_spe_up,          >sinbad_start_spe_down,        >sinbad_start_up_tilt
-.byt >sinbad_start_shielding
+.byt >sinbad_input_standing_left,     >sinbad_input_standing_right,  >jump_input,                      >jump_input_right,                >jump_input_left
+.byt >sinbad_start_jabbing,           >tilt_input_left,              >tilt_input_right,                >sinbad_start_special,            >side_special_input_right
+.byt >side_special_input_left,        >sinbad_start_down_tilt,       >sinbad_start_spe_up,             >sinbad_start_spe_down,           >sinbad_start_up_tilt
+.byt >sinbad_start_shielding,         >sinbad_start_shielding,       >sinbad_start_shielding,          >sinbad_start_spe_up,             >sinbad_start_spe_up
+.byt >sinbad_start_up_tilt,           >sinbad_start_up_tilt
 controller_default_callback:
 .word end
 .)
@@ -412,7 +418,7 @@ lda #<controller_inputs
 sta tmpfield1
 lda #>controller_inputs
 sta tmpfield2
-lda #12
+lda #18
 sta tmpfield3
 jmp controller_callbacks
 
@@ -453,17 +459,20 @@ rts
 ; Note - We can put subroutines as callbacks because we have nothing to do after calling it
 ;        (sourboutines return to our caller since "called" with jmp)
 controller_inputs:
-.byt CONTROLLER_INPUT_LEFT,        CONTROLLER_INPUT_RIGHT,        CONTROLLER_INPUT_JUMP,    CONTROLLER_INPUT_JUMP_RIGHT,    CONTROLLER_INPUT_JUMP_LEFT
-.byt CONTROLLER_INPUT_ATTACK_LEFT, CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL, CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT
-.byt CONTROLLER_INPUT_SPECIAL_UP,  CONTROLLER_INPUT_SPECIAL_DOWN
+.byt CONTROLLER_INPUT_LEFT,             CONTROLLER_INPUT_RIGHT,          CONTROLLER_INPUT_JUMP,            CONTROLLER_INPUT_JUMP_RIGHT,    CONTROLLER_INPUT_JUMP_LEFT
+.byt CONTROLLER_INPUT_ATTACK_LEFT,      CONTROLLER_INPUT_ATTACK_RIGHT,   CONTROLLER_INPUT_SPECIAL,         CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT
+.byt CONTROLLER_INPUT_SPECIAL_UP,       CONTROLLER_INPUT_SPECIAL_DOWN,   CONTROLLER_INPUT_TECH_LEFT,       CONTROLLER_INPUT_TECH_RIGHT,    CONTROLLER_INPUT_SPECIAL_UP_LEFT,
+.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT, CONTROLLER_INPUT_ATTACK_UP_LEFT, CONTROLLER_INPUT_ATTACK_UP_RIGHT
 controller_callbacks_lo:
-.byt <input_left,                  <input_right,                  <sinbad_start_jumping,    <sinbad_start_jumping,          <sinbad_start_jumping
-.byt <tilt_input_left,             <tilt_input_right,             <sinbad_start_special,    <sinbad_start_side_special,     <sinbad_start_side_special
-.byt <sinbad_start_spe_up,         <sinbad_start_spe_down
+.byt <input_left,                       <input_right,                    <sinbad_start_jumping,            <sinbad_start_jumping,          <sinbad_start_jumping
+.byt <tilt_input_left,                  <tilt_input_right,               <sinbad_start_special,            <sinbad_start_side_special,     <sinbad_start_side_special
+.byt <sinbad_start_spe_up,              <sinbad_start_spe_down,          <sinbad_start_shielding,          <sinbad_start_shielding,        <sinbad_start_spe_up
+.byt <sinbad_start_spe_up,              <sinbad_start_up_tilt,           <sinbad_start_up_tilt
 controller_callbacks_hi:
-.byt >input_left,                  >input_right,                  >sinbad_start_jumping,    >sinbad_start_jumping,          >sinbad_start_jumping
-.byt >tilt_input_left,             >tilt_input_right,             >sinbad_start_special,    >sinbad_start_side_special,     >sinbad_start_side_special
-.byt >sinbad_start_spe_up,         >sinbad_start_spe_down
+.byt >input_left,                       >input_right,                    >sinbad_start_jumping,            >sinbad_start_jumping,          >sinbad_start_jumping
+.byt >tilt_input_left,                  >tilt_input_right,               >sinbad_start_special,            >sinbad_start_side_special,     >sinbad_start_side_special
+.byt >sinbad_start_spe_up,              >sinbad_start_spe_down,          >sinbad_start_shielding,          >sinbad_start_shielding,        >sinbad_start_spe_up
+.byt >sinbad_start_spe_up,              >sinbad_start_up_tilt,           >sinbad_start_up_tilt
 controller_default_callback:
 .word sinbad_start_standing
 .)
