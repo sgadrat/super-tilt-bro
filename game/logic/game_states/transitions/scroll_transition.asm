@@ -4,13 +4,20 @@ state_transition_pre_scroll_down:
 	lda #0
 	sta tmpfield3
 	sta tmpfield4
+	lda #<camera_steps
+	sta extra_tmpfield1
+	lda #>camera_steps
+	sta extra_tmpfield2
 	lda #1
 	jsr scroll_transition
 
-	; No need to force the stop position
+	; No need to adjust the stop position
 	; we expect rendering to be disabled soon after we return
 
 	rts
+
+	camera_steps:
+	.byt 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, $ff
 .)
 
 state_transition_pre_scroll_up:
@@ -19,13 +26,20 @@ state_transition_pre_scroll_up:
 	lda #0
 	sta tmpfield3
 	sta tmpfield4
+	lda #<camera_steps
+	sta extra_tmpfield1
+	lda #>camera_steps
+	sta extra_tmpfield2
 	lda #2
 	jsr scroll_transition
 
-	; No need to force the stop position
+	; No need to adjust the stop position
 	; we expect rendering to be disabled soon after we return
 
 	rts
+
+	camera_steps:
+	.byt 230, 220, 210, 200, 190, 180, 170, 160, 150, 140, 130, 120, 110, 100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 0, $ff
 .)
 
 state_transition_post_scroll_down:
@@ -35,16 +49,25 @@ state_transition_post_scroll_down:
 	sta tmpfield3
 	lda #1
 	sta tmpfield4
+	lda #<camera_steps
+	sta extra_tmpfield1
+	lda #>camera_steps
+	sta extra_tmpfield2
 	lda #1
 	jsr scroll_transition
 
-	; Force stop on scroll_y=0 of top nametable
+	; Adjust stop position to scroll_y=0 of top nametable
+	;   scrolling stops on scroll_y=239 of bottom nametable
+	;   (with sprites being already accurately placed since their transition handle pixel number 240)
 	lda #%10010000 ; NMI enabled, background pattern table at $1000, base nametable is top left
 	sta ppuctrl_val
 	lda #0
 	sta scroll_y
 
 	rts
+
+	camera_steps:
+	.byt 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, $ff
 .)
 
 state_transition_post_scroll_up:
@@ -54,24 +77,35 @@ state_transition_post_scroll_up:
 	sta tmpfield3
 	lda #1
 	sta tmpfield4
+	lda #<camera_steps
+	sta extra_tmpfield1
+	lda #>camera_steps
+	sta extra_tmpfield2
 	lda #2
 	jsr scroll_transition
 
-	; Force stop on scroll_y=0 of top nametable
-	lda #%10010000 ; NMI enabled, background pattern table at $1000, base nametable is top left
-	sta ppuctrl_val
-	lda #0
-	sta scroll_y
+	; No need to adjust stop scroll
+	; transition already stops on scroll_y=0 of top nametable
 
 	rts
+
+	camera_steps:
+	.byt 230, 220, 210, 200, 190, 180, 170, 160, 150, 140, 130, 120, 110, 100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 0, $ff
 .)
 
 ; Transition by scrolling between two screen, keeping menus clouds
 ;  tmpfield3 - origin screen 0 for top nametable, 2 for bottom one
 ;  tmpfield4 - sprites are from starting or destination screen (0 - starting screen ; 1 - destination screen)
-;  register A - transition direction (0 - no transition ; 1 - down ; 2 - up)
+;  register A - transition direction (1 - down ; 2 - up)
 scroll_transition:
 .(
+	STACK_SCROLL_BEGIN_OFFSET = 1
+	STACK_CLOUD_SCROLL_MSB_OFFSET = 2
+	STACK_CLOUD_SCROLL_LSB_OFFSET = 3
+
+	camera_steps_addr = extra_tmpfield1
+	; extra_tmpfield2 reserved for camera_steps_addr MSB
+
 	.(
 		screen_sprites_offset_lsb = tmpfield1
 		screen_sprites_offset_msb = tmpfield2
@@ -79,59 +113,40 @@ scroll_transition:
 		offset_sprites = tmpfield4
 
 		; Compute values dependent of the direction
-		cmp #0
-		beq skip_scrolling
 		cmp #1
 		bne set_up_values
 
-		lda origin_nametable ;
-		ora #%10010000       ; Reactivate NMI, place scrolling on origin nametable
-		sta ppuctrl_val      ;
-		lda #240
-		sta screen_sprites_offset_lsb
-		lda #0
-		sta screen_sprites_offset_msb
-		lda #$fd
-		pha      ; cloud_scroll_lsb
-		lda #$ff
-		pha      ; cloud_scroll_msb
-		lda #10
-		pha      ; scroll_step
-		lda #0
-		pha      ; scroll_begin
-		lda #240
-		pha      ; scroll_end
-		jmp end_set_values
+			lda origin_nametable ;
+			ora #%10010000       ; Reactivate NMI, place scrolling on origin nametable
+			sta ppuctrl_val      ;
+			lda #240
+			sta screen_sprites_offset_lsb
+			lda #0
+			sta screen_sprites_offset_msb
+			lda #$fd
+			pha      ; cloud_scroll_lsb
+			lda #$ff
+			pha      ; cloud_scroll_msb
+			lda #0
+			pha      ; scroll_begin
+			jmp end_set_values
 
 		set_up_values:
-		lda origin_nametable ;
-		eor #%00000010       ; Reactivate NMI, place scrolling on destination nametable
-		ora #%10010000       ;
-		sta ppuctrl_val      ;
-		lda #$10
-		sta screen_sprites_offset_lsb
-		lda #$ff
-		sta screen_sprites_offset_msb
-		lda #$3
-		pha      ; cloud_scroll_lsb
-		lda #$0
-		pha      ; cloud_scroll_msb
-		lda #$f6
-		pha      ; scroll_step
-		lda #240
-		pha      ; scroll_begin
-		lda #0
-		pha      ; scroll_end
-		jmp end_set_values
-
-		skip_scrolling:
-		lda #%10010010  ;
-		sta ppuctrl_val ; Reactivate NMI
-		sta PPUCTRL     ;
-		jsr sleep_frame  ; Avoid re-enabling mid-frame
-		lda #%00011110 ; Enable sprites and background rendering
-		sta PPUMASK    ;
-		jmp end
+			lda origin_nametable ;
+			eor #%00000010       ; Reactivate NMI, place scrolling on destination nametable
+			ora #%10010000       ;
+			sta ppuctrl_val      ;
+			lda #$10
+			sta screen_sprites_offset_lsb
+			lda #$ff
+			sta screen_sprites_offset_msb
+			lda #$3
+			pha      ; cloud_scroll_lsb
+			lda #$0
+			pha      ; cloud_scroll_msb
+			lda #240
+			pha      ; scroll_begin
+			;jmp end_set_values ; useless - fallthrough
 
 		end_set_values:
 
@@ -148,69 +163,74 @@ scroll_transition:
 		ldy #0 ; Sprite index
 		save_one_sprite:
 
-		lda oam_mirror, x             ;
-		clc                           ;
-		adc screen_sprites_offset_lsb ;
-		sta screen_sprites_y_lsb, y   ; Store sprite's two bytes y position
-		lda screen_sprites_offset_msb ;
-		adc #0                        ;
-		sta screen_sprites_y_msb, y   ;
+			lda oam_mirror, x             ;
+			clc                           ;
+			adc screen_sprites_offset_lsb ;
+			sta screen_sprites_y_lsb, y   ; Store sprite's two bytes y position
+			lda screen_sprites_offset_msb ;
+			adc #0                        ;
+			sta screen_sprites_y_msb, y   ;
 
-		lda #$fe          ; Hide sprite
-		sta oam_mirror, x ; (even cloud sprites, they already blink due to disabling rendering anyway)
+			lda #$fe          ; Hide sprite
+			sta oam_mirror, x ; (even cloud sprites, they already blink due to disabling rendering anyway)
 
-		iny                 ;
-		inx                 ;
-		inx                 ; Next sprite
-		inx                 ;
-		inx                 ;
-		bne save_one_sprite ;
+			iny                 ;
+			inx                 ;
+			inx                 ; Next sprite
+			inx                 ;
+			inx                 ;
+			bne save_one_sprite ;
 
-		; Enable rendering
-		lda ppuctrl_val
-		sta PPUCTRL
-		tsx            ;
-		lda stack+2, x ; set scrolling to scroll_begin
-		cmp #240       ;
-		bne set_scroll ;
-		lda #239       ;
-		set_scroll     ;
-		sta scroll_y   ;
-		jsr sleep_frame  ; Avoid re-enabling mid-frame
-		lda #%00011110 ; Enable sprites and background rendering
-		sta PPUMASK    ;
-
-		; Scroll to the next screen
-		tsx
-		lda stack+2, x ; scroll_begin
-
+		ldy #0
 		scroll_frame:
-		sta scroll_y
+			; Scroll camera according to camera_steps table
+			lda (camera_steps_addr), y
+			cmp #$ff
+			beq clean
+			cmp #240
+			bne set_camera_scroll
+				lda #239
+			set_camera_scroll:
+			sta scroll_y
 
-		cmp #240       ;
-		bne no_correct ;
-		lda #239       ; Avoid scrolling of 240 which is more "before 0" than "after 239"
-		sta scroll_y   ;
-		lda #240       ;
-		no_correct:    ;
+			tya
+			pha
 
-		clc
-		tsx
-		adc stack+3, x ; scroll_step
+			; Update sprites position
+			jsr move_sprites
 
-		pha
-		jsr sleep_frame
-		jsr move_sprites
-		pla
 
-		tsx
-		cmp stack+1, x ; scroll_end
-		bne scroll_frame
+			; Sleep, and enable rendering if necessary
+			pla
+			pha
+			bne simple_sleep
+
+				; First frame, re-enable rendering
+				lda ppuctrl_val
+				sta PPUCTRL
+
+				jsr sleep_frame  ; Avoid re-enabling mid-frame
+
+				lda #%00011110 ; Enable sprites and background rendering
+				sta PPUMASK    ;
+
+				jmp end_sleep ; Skip sleeping as we already done it
+
+			simple_sleep:
+
+				; Just sleep, nothing fancy
+				jsr sleep_frame
+
+			end_sleep:
+
+			pla
+			tay
+
+			iny
+			jmp scroll_frame
 
 		clean:
-		pla ; scroll_end
 		pla ; scroll_begin
-		pla ; scroll_step
 		pla ; cloud_scroll_msb
 		pla ; cloud_scroll_lsb
 
@@ -218,10 +238,23 @@ scroll_transition:
 		rts
 	.)
 
+	; Scroll sprites
+	;  stack+3 - frame number
+	;  stack+3+STACK_CLOUD_SCROLL_LSB_OFFSET - clouds scroll step LSB
+	;  stack+3+STACK_CLOUD_SCROLL_MSB_OFFSET - clouds scroll step MSB
+	;  stack+3+STACK_SCROLL_BEGIN_OFFSET - initial position of the screen
+	;  extra_tmpfield1, extra_tmpfield2 - camera_steps table address
+	;
+	; Overwrites all registers, tmpfield1, extra_tmpfield3, extra_tmpfield4 and extra_tmpfield5
 	move_sprites:
 	.(
 		screen_sprites_end = tmpfield1
-		scroll_y_msb = tmpfield2
+		sprites_offset_lsb = extra_tmpfield3
+		sprites_offset_msb = extra_tmpfield4
+		sprite_y_pixel = extra_tmpfield5
+
+		STACK_CALLER = 2 + 1 ; 2 for our address, 1 because our caller pushes frame number
+		STACK_FRAME_CNT_OFFSET = 0
 
 		; Choose if clouds need to be updated
 		jsr get_transition_id
@@ -238,82 +271,79 @@ scroll_transition:
 		cmp #STATE_TRANSITION(GAME_STATE_CHARACTER_SELECTION, GAME_STATE_CONFIG)
 		beq update_clouds
 
-		; Clouds do not need to be updated
-		lda #64                ; All sprites are from the destination screen
-		sta screen_sprites_end ;
+			; Clouds do not need to be updated
+			lda #64                ; All sprites are from the destination screen
+			sta screen_sprites_end ;
 
-		jmp update_screen_sprites
+			jmp update_screen_sprites
 
-		; Clouds need to be updated
 		update_clouds:
-		tsx                              ;
-		ldy #MENU_COMMON_NB_CLOUDS-1     ;
-		vertical_one_cloud:              ;
-		lda menu_common_cloud_1_y, y     ;
-		clc                              ;
-		adc stack + 2 + 1 + 5, x         ; Update clouds Y position
-		sta menu_common_cloud_1_y, y     ; based on cloud_scroll_lsb and cloud_scroll_msb from our caller
-		lda menu_common_cloud_1_y_msb, y ;
-		adc stack + 2 + 1 + 4, x         ;
-		sta menu_common_cloud_1_y_msb, y ;
-		dey                              ;
-		bpl vertical_one_cloud           ;
+			; Clouds need to be updated
+			tsx                                                             ;
+			ldy #MENU_COMMON_NB_CLOUDS-1                                    ;
+			vertical_one_cloud:                                             ;
+				lda menu_common_cloud_1_y, y                                ;
+				clc                                                         ;
+				adc stack + STACK_CALLER + STACK_CLOUD_SCROLL_LSB_OFFSET, x ; Update clouds Y position
+				sta menu_common_cloud_1_y, y                                ; based on cloud_scroll_lsb and cloud_scroll_msb from our caller
+				lda menu_common_cloud_1_y_msb, y                            ;
+				adc stack + STACK_CALLER + STACK_CLOUD_SCROLL_MSB_OFFSET, x ;
+				sta menu_common_cloud_1_y_msb, y                            ;
+				dey                                                         ;
+				bpl vertical_one_cloud                                      ;
 
-		jsr tick_menu ; Update horizontal clouds position
-		jsr menu_position_clouds ; Force refresh of cloud sprites
+			jsr tick_menu ; Update horizontal clouds position
+			jsr menu_position_clouds ; Force refresh of cloud sprites
 
-		lda #64 - MENU_COMMON_NB_CLOUDS * MENU_COMMON_NB_SPRITE_PER_CLOUD ; Only sprites before clouds are from destination screen
-		sta screen_sprites_end                                            ;
+			lda #64 - MENU_COMMON_NB_CLOUDS * MENU_COMMON_NB_SPRITE_PER_CLOUD ; Only sprites before clouds are from destination screen
+			sta screen_sprites_end                                            ;
 
 		; Move destination screen sprites
 		update_screen_sprites:
 
-		tsx                      ;
-		lda stack + 2 + 1 + 3, x ;
-		bpl positive             ;
-		lda #0                   ;
-		jmp set_scroll_y_msb     ; Compute MSB of a 16-bit "-1 * scroll_y"
-		positive:                ;
-		lda #$ff                 ;
-		set_scroll_y_msb:        ;
-		sta scroll_y_msb         ;
+		; Convert camera position to an offset from initial position (signed two bytes)
+		tsx
+		ldy stack + STACK_CALLER + STACK_FRAME_CNT_OFFSET, x
 
+		lda stack + STACK_CALLER + STACK_SCROLL_BEGIN_OFFSET, x
+		sec
+		sbc (camera_steps_addr), y
+		sta sprites_offset_lsb
+		lda #0
+		sbc #0
+		sta sprites_offset_msb
+
+		; Move sprites
 		ldy #0 ; Current sprite index
 		move_one_screen_sprite:
 
-		tsx                         ;
-		lda stack + 2 + 1 + 3, x    ;
-		eor #%11111111              ;
-		clc                         ;
-		adc #1                      ;
-		clc                         ; Scroll 16-bit sprite's position
-		adc screen_sprites_y_lsb, y ;
-		sta screen_sprites_y_lsb, y ;
-		lda screen_sprites_y_msb, y ;
-		adc scroll_y_msb            ;
-		sta screen_sprites_y_msb, y ;
+			; Compute 16 bit sprite position
+			lda screen_sprites_y_lsb, y
+			clc
+			adc sprites_offset_lsb
+			sta sprite_y_pixel
+			lda screen_sprites_y_msb, y
+			adc sprites_offset_msb
 
-		cmp #0                      ;
-		bne hide_sprite             ;
-									;
-		lda screen_sprites_y_lsb, y ; Compute updated position of the OAM sprite
-		jmp update_oam              ;
-									;
-		hide_sprite:                ;
-		lda #$fe                    ;
+			; If msb not 0, hide sprite, else place it to lsb
+			bne hide_sprite
+				lda sprite_y_pixel
+				jmp update_oam
+			hide_sprite:
+				lda #$fe
 
-		update_oam:       ;
-		pha               ;
-		tya               ;
-		asl               ; Update OAM sprite
-		asl               ;
-		tax               ;
-		pla               ;
-		sta oam_mirror, x ;
+			update_oam:       ;
+			pha               ;
+			tya               ;
+			asl               ; Update OAM sprite
+			asl               ;
+			tax               ;
+			pla               ;
+			sta oam_mirror, x ;
 
-		iny                        ; Next sprite
-		cpy screen_sprites_end     ;
-		bne move_one_screen_sprite ;
+			iny                        ; Next sprite
+			cpy screen_sprites_end     ;
+			bne move_one_screen_sprite ;
 
 		end:
 		rts
