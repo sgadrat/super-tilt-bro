@@ -28,42 +28,46 @@ palette_character_selection:
 ; Sprites
 .byt $21,$00,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$0d,$00,$31
 
-#define T TILESET_MENUS_TITLE_0
-#define U TILESET_MENUS_TITLE_0+100
 #define FOR_NES TILE_CHAR_F, TILE_CHAR_O, TILE_CHAR_R, $00, $02, TILE_CHAR_N, TILE_CHAR_E, TILE_CHAR_S
 #define PRESS_ANY_BUTTON  TILE_CHAR_P, TILE_CHAR_R, TILE_CHAR_E, TILE_CHAR_S, TILE_CHAR_S, $00, $01, TILE_CHAR_A, TILE_CHAR_N, TILE_CHAR_Y, $00, $01, TILE_CHAR_B, TILE_CHAR_U, TILE_CHAR_T, TILE_CHAR_T, TILE_CHAR_O, TILE_CHAR_N
 #define TITLE_SCREEN_VERSION TILE_CHAR_V, TILE_CHAR_E, TILE_CHAR_R, TILE_CHAR_S, TILE_CHAR_I, TILE_CHAR_O, TILE_CHAR_N, $00, $01, TILE_CHAR_2, TILE_CHAR_D, TILE_CHAR_E, TILE_CHAR_V
 
 nametable_title:
-.byt ZIPNT_ZEROS(32*3+10)
-.byt                                                     T+0, T+1,  T+2
-.byt ZIPNT_ZEROS(19+9)
+.byt ZIPNT_ZEROS(32*3+6)
+.byt                                $01, $02,  $03, $04, $05
+.byt ZIPNT_ZEROS(21+6)
 ;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
-.byt                                                T+3, T+4, T+5,  T+6, T+7, T+8, T+9,  T+10,T+11,T+12,T+13, T+14,T+15,T+16
-.byt ZIPNT_ZEROS(9+9)
-.byt                                                T+17,T+18,T+19, T+20,T+21,T+22,T+23, T+24,T+25,T+26,T+27, T+28,T+29,T+30
-.byt ZIPNT_ZEROS(9+9)
-.byt                                                T+31,T+32,T+33, T+34,T+35,T+36,T+37, T+38,T+39,T+40,T+41, T+42,T+43,T+44
-.byt ZIPNT_ZEROS(9+9)
-.byt                                                T+45,T+46,T+47, T+48,T+49,T+50,T+51, T+52,T+53,T+54,T+55, T+56,T+57,T+58
-.byt ZIPNT_ZEROS(9+6)
+.byt                                $06, $07,  $08, $09, $0a, $0b,  $0c, $0d, $0e, $0b,  $0f, $10, $11, $12,  $13, $14, $0b, $0f,  $15
+.byt ZIPNT_ZEROS(7+6)
+.byt                                $16, $17,  $18, $19, $1a, $1b,  $19, $1c, $1a, $1b,  $1d, $1e, $1f, $20,  $21, $22, $1b, $1d,  $1e, $23
+.byt ZIPNT_ZEROS(6+6)
+.byt                                $24, $25,  $26, $27, $28, $1b,  $19, $1c, $1a, $29,  $2a, $2b, $1f, $2c,  $2d, $1a, $29, $2a,  $2e, $2f
+.byt ZIPNT_ZEROS(6+6)
+.byt                                $30, $31,  $32, $33, $34, $35,  $19, $1c, $1a, $36,  $37, $19, $1f, $38,  $39, $1a, $36, $3a,  $3b
+.byt ZIPNT_ZEROS(7+6)
 ;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
-.byt                                T+59,T+60, T+60,T+61,
-.byt                                                      ZIPNT_ZEROS(6),
-.byt                                                                                     T+62,T+63,T+64,T+65
-.byt ZIPNT_ZEROS(12+6)
-.byt                                T+66,T+67, T+68,T+69,T+70,T+71, T+72,T+73,T+74,T+75, T+76,T+68,T+77,T+78, T+79,T+80,T+81,T+82, T+83
-.byt ZIPNT_ZEROS(7+7)
-.byt                                     T+84, T+85,T+86,T+87,T+85, T+88,T+39,T+89,T+90, T+84,T+91,T+92,T+93, T+94,T+95,T+96,T+86, T+97
-.byt ZIPNT_ZEROS(7+7)
-.byt                                     T+98, T+85,T+86,T+87,T+85, T+99,U+0 ,U+1 ,ZIPZ, T+98,T+85,U+2 ,U+3 , U+4 ,U+5 ,U+6 ,U+7 , U+8 ,U+9
-.byt ZIPNT_ZEROS(6+7)
+.byt                                $3c, $3d,  $3e, $3f, $40, $41,  $42, $43, $44, $29,  $45, $46, $47, $2c,  $48, $49, $29, $4a,  $4b, $4c
+.byt ZIPNT_ZEROS(6+6)
+.byt                                $4d, $4e,  $4f, $50,ZIPZ, $51,  $4f, $52, $53, $4f,  $54, $55, $4f, $4f,  $4f, $56, $4f, $57,  $4f, $58
+.byt ZIPNT_ZEROS(6+2)
+.byt           $59, $03,  $03, $03, $5a, $5b,            ZIPNT_ZEROS(7),           $5c,  $03, $5d, $5e, $05
+.byt ZIPNT_ZEROS(12+2)
+.byt           $5f, $60,  $61, $62, $63, $64,  $65, $66, $67, $68,  $69, $6a, $6b, $6c,  $61, $6d, $6e, $6f,  $70, $0b, $0f, $15,  $71, $72, $73, $74
+.byt ZIPNT_ZEROS(4+2)
 ;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
-.byt                                     U+10, U+11,U+12,U+13,U+14, U+15,U+16,U+17,ZIPZ, U+10,U+14,U+18,U+19, U+20,U+21,U+22,U+23, U+24,U+25
-.byt ZIPNT_ZEROS(6+12)
+.byt           $75, $76,  $77, $78, $19, $77,  $79, $77, $79, $7a,  $7b, $7c, $7d, $76,  $77, $7e, $7f, $80,  $1a, $1b, $1d, $1e,  $81, $82, $83, $84,  $85
+.byt ZIPNT_ZEROS(3+3)
+.byt                $86,  $77, $78, $19, $77,  $79, $77, $79, $19,  $7b, $87,ZIPZ, $86,  $77, $88, $89, $8a,  $1a, $29, $2a, $2b,  $8b, $20, $19, $8c,  $8d
+.byt ZIPNT_ZEROS(3+3)
+.byt                $86,  $77, $78, $19, $77,  $79, $77, $79, $19,  $7b, $87,ZIPZ, $86,  $77, $78, $8e, $8f,  $1a, $36, $3a, $90,  $91, $92, $93, $94,  $95, $96
+.byt ZIPNT_ZEROS(2+3)
+.byt                $97,  $98, $99, $9a, $98,  $9b, $98, $9c, $9d,  $9e, $9f, $a0, $a1,  $98, $a2, $a3, $a4,  $44, $29, $4a, $a5,  $a6, $a7, $a8, $a9,  $aa, $ab
+.byt ZIPNT_ZEROS(2+3)
+;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
+.byt                $ac,  $4f, $ad, $ae, $4f,  $af, $4f, $4f, $b0,  $b1, $ad, $b2, $ac,  $4f, $4f, $b3, $b4,  $b5, $4f, $b6, $4f,  $b7, $51, $b3, $b8,  $b9, $ba
+.byt ZIPNT_ZEROS(2+12)
 .byt                                                                                 FOR_NES
-.byt ZIPNT_ZEROS(12+32*5)
-.byt ZIPNT_ZEROS(32*4+8)
+.byt ZIPNT_ZEROS(12+32*5+8)
 .byt                                                                             PRESS_ANY_BUTTON
 ;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
 .byt ZIPNT_ZEROS(8+32*2+18)
@@ -76,8 +80,6 @@ nametable_title_attributes:
 nametable_title_end:
 .byt ZIPNT_END
 
-#undef T
-#undef U
 #undef FOR_NES
 #undef PRESS_ANY_BUTTON
 #undef TITLE_SCREEN_VERSION

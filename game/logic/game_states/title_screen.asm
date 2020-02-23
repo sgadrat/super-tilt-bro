@@ -34,6 +34,9 @@ init_title_screen:
 	lda #0
 	sta title_cheatstate
 
+	; Copy title screen's tileset in CHR-RAM
+	jsr set_title_chr
+
 	; Choose between soft (keep continuity) or hard (reboot) initialization of music and menu animations
 	lda previous_global_game_state
 	cmp #GAME_STATE_CONFIG
@@ -42,7 +45,6 @@ init_title_screen:
 	beq soft_init
 
 		; Complete reinitialization
-		jsr set_menu_chr
 		SWITCH_BANK(#DATA_BANK_NUMBER)
 		jsr init_menu
 		jsr audio_music_weak
@@ -55,6 +57,38 @@ init_title_screen:
 	end_menu_init:
 
 	rts
+
+	; Set the CHR-RAM contents as expected by title screen
+	;
+	; Overwrites register A, registerY, tmpfield1, tmpfield2, tmpfield3
+	;
+	; Shall only be called while PPU rendering is turned off
+	set_title_chr:
+	.(
+		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tiles
+		;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tiles
+		tiles_count = tmpfield3 ; Not movable, used by cpu_to_ppu_copy_tiles
+
+		lda #<(tileset_logo+1)
+		sta tileset_addr
+		lda #>(tileset_logo+1)
+		sta tileset_addr+1
+
+		SWITCH_BANK(#TILESET_LOGO_BANK_NUMBER)
+
+		lda tileset_logo
+		sta tiles_count
+
+		lda PPUSTATUS
+		lda #$10
+		sta PPUADDR
+		lda #$00
+		sta PPUADDR
+
+		jsr cpu_to_ppu_copy_tiles
+
+		rts
+	.)
 .)
 
 title_screen_tick:

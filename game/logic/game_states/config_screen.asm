@@ -20,6 +20,9 @@ default_config:
 init_config_screen:
 .(
 	.(
+		; Copy menus tileset in CHR-RAM
+		jsr set_menu_chr
+
 		SWITCH_BANK(#DATA_BANK_NUMBER)
 
 		; Copy background from PRG-rom to PPU nametable

@@ -5,6 +5,9 @@ init_credits_screen:
 		char_cursor_low = $0006
 		char_cursor_high = $0007
 
+		; Copy menus tileset in CHR-RAM
+		jsr set_menu_chr
+
 		SWITCH_BANK(#DATA_BANK_NUMBER)
 
 		; Construct nt buffers for palettes (to avoid changing it mid-frame)

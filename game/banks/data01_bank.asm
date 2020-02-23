@@ -15,6 +15,9 @@ bank_data01_tileset_green_grass_end:
 bank_data01_tileset_menus_begin:
 #include "game/data/tilesets/menus_tileset.asm"
 bank_data01_tileset_menus_end:
+bank_data01_tileset_logo_begin:
+#include "game/data/tilesets/logo.asm"
+bank_data01_tileset_logo_end:
 bank_data01_end:
 
 #echo
@@ -32,6 +35,9 @@ bank_data01_end:
 #echo
 #echo DATA01-bank Common tileset size:
 #print bank_data01_tileset_common_end-bank_data01_tileset_common_begin
+#echo
+#echo DATA01-bank Logo tileset size:
+#print bank_data01_tileset_logo_end-bank_data01_tileset_logo_begin
 #echo
 #echo DATA01-bank free space:
 #print $c000-*

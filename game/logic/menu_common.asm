@@ -7,7 +7,7 @@ init_menu:
 	; Initialize clouds positions
 	lda #16
 	sta menu_common_cloud_1_x
-	lda #128
+	lda #119
 	sta menu_common_cloud_1_y
 	lda #180
 	sta menu_common_cloud_2_x
@@ -15,7 +15,7 @@ init_menu:
 	sta menu_common_cloud_2_y
 	lda #100
 	sta menu_common_cloud_3_x
-	lda #188
+	lda #187
 	sta menu_common_cloud_3_y
 	lda #0
 	sta menu_common_cloud_1_y_msb
