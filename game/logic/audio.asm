@@ -168,3 +168,14 @@ lda #%10110000           ; LLLLL---
 sta APU_NOISE_LENGTH_CNT
 rts
 .)
+
+audio_play_title_screen_text:
+.(
+lda #%00000100         ; --LCVVVV
+sta APU_NOISE_ENVELOPE ;
+lda #%10001000       ; L---PPPP
+sta APU_NOISE_PERIOD ;
+lda #%10110000           ; LLLLL---
+sta APU_NOISE_LENGTH_CNT
+rts
+.)

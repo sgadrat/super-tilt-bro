@@ -183,6 +183,9 @@ extra_tmpfield6 = $b5
 ;
 
 title_cheatstate = $00
+title_animation_frame = $01
+title_animation_state = $02
+title_original_music_state = $03
 
 ;
 ; CONFIG labels

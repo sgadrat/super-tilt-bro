@@ -74,9 +74,11 @@ nametable_title:
 .byt                                                                                               TITLE_SCREEN_VERSION
 .byt ZIPNT_ZEROS(2+32*3)
 nametable_title_attributes:
-.byt ZIPNT_ZEROS(8+8+8+8+8+8+6)
-.byt                                                                   %11000000
-.byt ZIPNT_ZEROS(1+8)
+.byt ZIPNT_ZEROS(8+8+8+8+8+2)
+.byt                       %11110000, %11110000, %11110000, %11110000
+.byt ZIPNT_ZEROS(2+4)
+.byt                                             %11000000, %11110000, %11110000, %00110000
+.byt ZIPNT_ZEROS(8)
 nametable_title_end:
 .byt ZIPNT_END
 
