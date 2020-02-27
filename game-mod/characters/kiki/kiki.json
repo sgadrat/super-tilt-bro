@@ -1,5 +1,10 @@
 {
 	"ai": {
+		"action_selectors": [
+			"ai_attack_selector",
+			"kiki_ai_recover_selector",
+			"ai_chase_selector"
+		],
 		"actions": [
 			{
 				"name": "jab",
@@ -49,11 +54,6 @@
 				],
 				"type": "character_ai_action"
 			}
-		],
-		"action_selectors": [
-			"ai_attack_selector",
-			"kiki_ai_recover_selector",
-			"ai_chase_selector"
 		],
 		"attacks": [
 			{
