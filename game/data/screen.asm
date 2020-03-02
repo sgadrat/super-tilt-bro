@@ -2,7 +2,7 @@ palette_title:
 ; Background
 .byt $21,$0d,$21,$30, $21,$0d,$20,$00, $21,$20,$0d,$00, $21,$0d,$21,$21, ; 0 - logo, 1 - credits title, 2 - credits section, 3 - text and number with same colors
 ; Sprites
-.byt $21,$0d,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$0d,$00,$31 ; 0 - text, 1,2 - unused, 3 - cloud
+.byt $21,$0d,$21,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$0d,$00,$31 ; 0 - text, 1,2 - unused, 3 - cloud
 
 palette_gameover:
 ; Background
@@ -30,7 +30,7 @@ palette_character_selection:
 
 #define FOR_NES TILE_CHAR_F, TILE_CHAR_O, TILE_CHAR_R, $00, $02, TILE_CHAR_N, TILE_CHAR_E, TILE_CHAR_S
 #define PRESS_ANY_BUTTON  TILE_CHAR_P, TILE_CHAR_R, TILE_CHAR_E, TILE_CHAR_S, TILE_CHAR_S, $00, $01, TILE_CHAR_A, TILE_CHAR_N, TILE_CHAR_Y, $00, $01, TILE_CHAR_B, TILE_CHAR_U, TILE_CHAR_T, TILE_CHAR_T, TILE_CHAR_O, TILE_CHAR_N
-#define TITLE_SCREEN_VERSION TILE_CHAR_V, TILE_CHAR_E, TILE_CHAR_R, TILE_CHAR_S, TILE_CHAR_I, TILE_CHAR_O, TILE_CHAR_N, $00, $01, TILE_CHAR_2, TILE_CHAR_D, TILE_CHAR_E, TILE_CHAR_V
+#define TITLE_SCREEN_VERSION TILE_CHAR_V, TILE_CHAR_E, TILE_CHAR_R, TILE_CHAR_S, TILE_CHAR_I, TILE_CHAR_O, TILE_CHAR_N, $00, $01, TILE_CHAR_2, $00, $01, TILE_CHAR_A, TILE_CHAR_L, TILE_CHAR_P, TILE_CHAR_H, TILE_CHAR_A, TILE_CHAR_1
 
 nametable_title:
 .byt ZIPNT_ZEROS(32*3+6)
@@ -70,14 +70,14 @@ nametable_title:
 .byt ZIPNT_ZEROS(12+32*5+8)
 .byt                                                                             PRESS_ANY_BUTTON
 ;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
-.byt ZIPNT_ZEROS(8+32*2+18)
+.byt ZIPNT_ZEROS(8+32*2+14)
 .byt                                                                                               TITLE_SCREEN_VERSION
 .byt ZIPNT_ZEROS(2+32*3)
 nametable_title_attributes:
 .byt ZIPNT_ZEROS(8+8+8+8+8+2)
 .byt                       %11110000, %11110000, %11110000, %11110000
-.byt ZIPNT_ZEROS(2+4)
-.byt                                             %11000000, %11110000, %11110000, %00110000
+.byt ZIPNT_ZEROS(2+3)
+.byt                                  %11000000, %11110000, %11110000, %11110000, %00110000
 .byt ZIPNT_ZEROS(8)
 nametable_title_end:
 .byt ZIPNT_END

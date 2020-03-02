@@ -23,13 +23,13 @@ init_title_screen:
 	jsr draw_zipped_nametable
 
 	; Place version number's dot
-	lda #213           ; Y
+	lda #211           ; Y
 	sta oam_mirror
 	lda #TILE_TEXT_DOT ; Tile
 	sta oam_mirror+1
 	lda #$00           ; Attributes
 	sta oam_mirror+2
-	lda #215           ; X
+	lda #185           ; X
 	sta oam_mirror+3
 
 	; Reinit cheat code state
@@ -122,7 +122,7 @@ init_title_screen:
 		; Background
 		.byt $21,$21,$21,$21, $21,$0d,$20,$00, $21,$20,$0d,$00, $21,$21,$21,$21, ; 0 - logo, 1 - credits title, 2 - credits section, 3 - text and number with same colors
 		; Sprites
-		.byt $21,$21,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$0d,$00,$31 ; 0 - text, 1,2 - unused, 3 - cloud
+		.byt $21,$21,$21,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$0d,$00,$31 ; 0 - text, 1,2 - unused, 3 - cloud
 	.)
 .)
 
