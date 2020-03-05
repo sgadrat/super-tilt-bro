@@ -1,9 +1,13 @@
+stage_elements_size:
+.byt STAGE_PLATFORM_LENGTH, STAGE_SMOOTH_PLATFORM_LENGTH, STAGE_OOS_PLATFORM_LENGTH, STAGE_OOS_SMOOTH_PLATFORM_LENGTH
+
 ; Code common to most stage initialization
 ;
 ; Overwrites all registers, tmpfield1, tmpfield2 and tmpfield15
 stage_generic_init:
 .(
 	stage_table_index = tmpfield15
+	element_length = tmpfield15 ; warning reuse, take care of not mixing usages
 
 	; Point stage_table_index to the byte offset of selected stage entry in vector tables
 	lda config_selected_stage
@@ -62,29 +66,37 @@ stage_generic_init:
 	bne copy_header_loop
 
 	copy_elements_loop:
-	lda (tmpfield1), y
-	sta stage_data, x
-	beq copy_data_end
-	iny
-	inx
-	lda (tmpfield1), y
-	sta stage_data, x
-	iny
-	inx
-	lda (tmpfield1), y
-	sta stage_data, x
-	iny
-	inx
-	lda (tmpfield1), y
-	sta stage_data, x
-	iny
-	inx
-	lda (tmpfield1), y
-	sta stage_data, x
-	iny
-	inx
-	jmp copy_elements_loop
-	copy_data_end:
+		; Copy element header and retrieve element length
+		txa
+		pha
+
+		lda (tmpfield1), y
+		sta stage_data, x
+		beq copy_data_end
+
+		tax
+		dex
+		lda stage_elements_size, x
+		sta element_length
+		dec element_length
+
+		pla
+		tax
+		iny
+		inx
+
+		; Copy element
+		copy_one_element:
+			lda (tmpfield1), y
+			sta stage_data, x
+			iny
+			inx
+			dec element_length
+			bne copy_one_element
+		jmp copy_elements_loop
+
+		copy_data_end:
+		pla
 
 	rts
 .)
@@ -170,7 +182,7 @@ stage_iterate_elements:
 		; Add element's size to Y
 		tya
 		clc
-		adc elements_size, x
+		adc stage_elements_size, x
 		tay
 
 		; Restore X
@@ -182,7 +194,4 @@ stage_iterate_elements:
 
 	end:
 	rts
-
-	elements_size:
-	.byt STAGE_PLATFORM_LENGTH, STAGE_SMOOTH_PLATFORM_LENGTH, STAGE_OOS_PLATFORM_LENGTH, STAGE_OOS_SMOOTH_PLATFORM_LENGTH
 .)
