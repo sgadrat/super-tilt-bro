@@ -6,4 +6,5 @@
 #include "game/logic/menu_common.asm"
 #include "game/logic/stages/stages.asm"
 #include "game/logic/ai.asm"
+#include "game/logic/rainbow_lib.asm"
 #include "game/logic/network.asm"
