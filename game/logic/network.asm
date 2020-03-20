@@ -44,9 +44,9 @@ network_init_stage:
 
 network_tick_ingame:
 .(
-	.(
-		network_opponent_number = audio_music_enabled ; Hack to easilly configure the player number - activate music on player A's system
+	network_opponent_number = audio_music_enabled ; Hack to easilly configure the player number - activate music on player A's system
 
+	.(
 		; Force opponent's buttons to not change
 		ldx network_opponent_number
 		lda network_last_received_btns
@@ -121,7 +121,7 @@ network_tick_ingame:
 
 			; Check length
 			lda RAINBOW_DATA
-			cmp #130 ; 129 bytes for payload length + 1 for ESP type
+			cmp #132 ; 131 bytes for payload length + 1 for ESP type
 #ifdef ESP_DBG
 			; Avoid out of reach branching
 			beq no_skip
@@ -132,7 +132,7 @@ network_tick_ingame:
 #endif
 
 #ifdef ESP_DBG
-				ESP_DEBUG_LOG(21):.asc "msg is 130 bytes long"
+				ESP_DEBUG_LOG(21):.asc "msg is 132 bytes long"
 #endif
 
 				lda RAINBOW_DATA ; Burn ESP message type, length match and there is no reason it is not MESSAGE_FROM_SERVER
@@ -152,11 +152,6 @@ network_tick_ingame:
 
 					; Override gamestate with the one in message's payload
 					jsr update_state
-
-					; Save received opponent's buttons
-					ldx network_opponent_number
-					lda controller_a_btns, x
-					sta network_last_received_btns
 
 					jmp state_updated
 
@@ -237,7 +232,7 @@ network_tick_ingame:
 		;  Total - (4+4+2+3+3) * 16 = 16 * 16 = 256
 		;  Unroll - (4+3) * 16 = 7 * 16 = 112
 
-		; Copy controllers state, the game state shall have run one frame, last_frame_btns and btns became equal
+		; Copy controllers state
 		LOAD_RAINBOW_BYTE
 		sta controller_a_btns
 		LOAD_RAINBOW_BYTE
@@ -246,6 +241,28 @@ network_tick_ingame:
 		sta controller_a_last_frame_btns
 		LOAD_RAINBOW_BYTE
 		sta controller_b_last_frame_btns
+
+		; Copy actually pressed opponent btns (keep_input_dirty may mess with normal values, but not this one)
+		.(
+			lda network_opponent_number
+			beq player_a
+
+				player_b:
+					; Opponent is player B, burn player A's buttons
+					LOAD_RAINBOW_BYTE
+					nop
+					LOAD_RAINBOW_BYTE
+					sta network_last_received_btns
+					jmp ok
+
+				player_a:
+					; Opponent is player A, burn player B's buttons
+					LOAD_RAINBOW_BYTE
+					sta network_last_received_btns
+					LOAD_RAINBOW_BYTE
+			ok:
+		.)
+		; Note - we are zero cycles after a load of rainbow byte, next instruction cannot be another load (add a nop if necessary)
 
 		; Copy animation states
 		.(
