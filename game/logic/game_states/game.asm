@@ -872,31 +872,41 @@ apply_force_vector:
 
 	; Apply hitstun to the opponent
 	; hitstun duration = high byte of 2 * (abs(velotcity_v) + abs(velocity_h))
-	lda player_a_velocity_h, x     ;
-	bpl end_abs_kb_h               ;
-	lda player_a_velocity_h_low, x ;
-	eor #%11111111                 ;
-	clc                            ;
-	adc #$01                       ; knockback_h = abs(velocity_h)
-	sta knockback_h_low            ;
-	lda player_a_velocity_h, x     ;
-	eor #%11111111                 ;
-	adc #$00                       ;
-	end_abs_kb_h:                  ;
-	sta knockback_h_high           ;
+	lda player_a_velocity_h, x         ;
+	bpl passthrough_kb_h               ;
+		lda player_a_velocity_h_low, x ;
+		eor #%11111111                 ;
+		clc                            ;
+		adc #$01                       ;
+		sta knockback_h_low            ;
+		lda player_a_velocity_h, x     ;
+		eor #%11111111                 ; knockback_h = abs(velocity_h)
+		adc #$00                       ;
+		sta knockback_h_high           ;
+		jmp end_abs_kb_h               ;
+	passthrough_kb_h:                  ;
+		sta knockback_h_high           ;
+		lda player_a_velocity_h_low, x ;
+		sta knockback_h_low            ;
+	end_abs_kb_h:                      ;
 
-	lda player_a_velocity_v, x      ;
-	bpl end_abs_kb_v                ;
-	lda player_a_velocity_v_low, x  ;
-	eor #%11111111                  ;
-	clc                             ;
-	adc #$01                        ; knockback_v = abs(velocity_v)
-	sta knockback_v_low             ;
-	lda player_a_velocity_v, x      ;
-	eor #%11111111                  ;
-	adc #$00                        ;
-	end_abs_kb_v:                   ;
-	sta knockback_v_high            ;
+	lda player_a_velocity_v, x         ;
+	bpl passthrough_kb_v               ;
+		lda player_a_velocity_v_low, x ;
+		eor #%11111111                 ;
+		clc                            ;
+		adc #$01                       ;
+		sta knockback_v_low            ;
+		lda player_a_velocity_v, x     ;
+		eor #%11111111                 ; knockback_v = abs(velocity_v)
+		adc #$00                       ;
+		sta knockback_v_high           ;
+		jmp end_abs_kb_v               ;
+	passthrough_kb_v:                  ;
+		sta knockback_v_high           ;
+		lda player_a_velocity_v_low, x ;
+		sta knockback_v_low            ;
+	end_abs_kb_v:                      ;
 
 	lda knockback_h_low  ;
 	clc                  ;
