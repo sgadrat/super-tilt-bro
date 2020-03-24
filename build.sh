@@ -46,6 +46,8 @@ log
 say "Assemble the game ..."
 log "====================="
 cmd xa tilt.asm -C -o 'Super_Tilt_Bro_(E).nes'
+cmd xa -DNETWORK_AI tilt.asm -C -o 'tilt_ai_(E).nes'
+cmd xa -DNO_NETWORK tilt.asm -C -o 'tilt_no_network_(E).nes'
 
 say
 say "======================="
