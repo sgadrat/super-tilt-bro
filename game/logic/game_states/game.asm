@@ -1731,12 +1731,12 @@ update_sprites:
 				pha
 				tya
 				pha
-				jsr stb_animation_draw
+				jsr animation_draw
 				jsr animation_tick
 				pla
 				tay
 				pla
-				tay
+				tax
 
 			oos_indicator_drawn:
 		.)
