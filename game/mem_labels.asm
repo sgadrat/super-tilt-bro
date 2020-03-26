@@ -195,6 +195,12 @@ network_client_id_byte3 = $bd
 network_last_sent_btns = $be
 network_last_received_btns = $bf
 
+network_rollback_mode = $e2 ; 0 - normal, 1 - rolling
+server_current_frame_byte0 = $e3
+server_current_frame_byte1 = $e4
+server_current_frame_byte2 = $e5
+server_current_frame_byte3 = $e6
+
 ;
 ; TITLE labels
 ;
@@ -342,6 +348,8 @@ config_player_b_weapon_palette = $df
 config_player_a_character = $e0
 config_player_b_character = $e1
 
+; Note other $ex may be used by network engine
+
 tmpfield1 = $f0
 tmpfield2 = $f1
 tmpfield3 = $f2
@@ -375,3 +383,4 @@ players_palettes = $0580 ; $0580 to $059f - 4 nametable buffers (8 bytes each) c
 ;$06xx may be used by audio engine, see "Audio engine labels"
 virtual_frame_cnt = $0700
 skip_frames_to_50hz = $0701
+network_btns_history = $07e0 ; one byte per frame, circular buffer, 32 entries
