@@ -11,6 +11,20 @@ network_init_stage:
 	lda #1
 	sta RAINBOW_FLAGS
 
+	; Clear rolling mode
+	lda #0
+	sta network_rollback_mode
+
+	; Clear input history
+	; lda #0 ; ensured by above code
+	ldx #0
+	clear_one_input:
+		sta network_btns_history
+
+		inx
+		cpx #32
+		bne clear_one_input
+
 	; Reinit frame counter
 	lda #$00
 	sta network_current_frame_byte0
@@ -47,13 +61,26 @@ network_tick_ingame:
 	network_opponent_number = audio_music_enabled ; Hack to easilly configure the player number - activate music on player A's system
 
 	.(
+		; Do nothing in rollback mode, it would be recursive
+		lda network_rollback_mode
+		beq do_tick
+		jmp end
+		do_tick:
+
 		; Force opponent's buttons to not change
 		ldx network_opponent_number
 		lda network_last_received_btns
 		sta controller_a_btns, x
 
-		; Send controller's state
+		; Update local controller's history
 		jsr switch_selected_player
+		lda network_current_frame_byte0
+		and #%00011111
+		tay
+		lda controller_a_btns, x
+		sta network_btns_history, y
+
+		; Send controller's state
 		lda network_last_sent_btns
 		cmp controller_a_btns, x
 		beq controller_sent
@@ -174,6 +201,7 @@ network_tick_ingame:
 		inc network_current_frame_byte3
 		inc_ok:
 
+		end:
 		rts
 	.)
 
@@ -187,16 +215,15 @@ network_tick_ingame:
 #define LOAD_RAINBOW_BYTE lda RAINBOW_DATA
 #endif
 
-		; Reset frame counter
-		;  TODO if in the past, reroll game updates
+		; Extract frame counter
 		LOAD_RAINBOW_BYTE
-		sta network_current_frame_byte0
+		sta server_current_frame_byte0
 		LOAD_RAINBOW_BYTE
-		sta network_current_frame_byte1
+		sta server_current_frame_byte1
 		LOAD_RAINBOW_BYTE
-		sta network_current_frame_byte2
+		sta server_current_frame_byte2
 		LOAD_RAINBOW_BYTE
-		sta network_current_frame_byte3
+		sta server_current_frame_byte3
 
 		; Copy gamestate
 		.(
@@ -280,6 +307,72 @@ network_tick_ingame:
 			cpx #12*2 ; 3 cycles
 			bne copy_one_byte ; 3 cycles
 		.)
+
+		; Update game state until the current frame is at least equal to the one we where before reading the message
+		lda #1
+		sta network_rollback_mode
+		roll_forward_one_step:
+		.(
+			; If sever's frame is inferior to local frame
+			lda server_current_frame_byte3
+			cmp network_current_frame_byte3
+			bcc do_it
+			lda server_current_frame_byte2
+			cmp network_current_frame_byte2
+			bcc do_it
+			lda server_current_frame_byte1
+			cmp network_current_frame_byte1
+			bcc do_it
+			lda server_current_frame_byte0
+			cmp network_current_frame_byte0
+			bcc do_it
+			jmp end_loop
+			do_it:
+
+				; Set local player input according to history
+				ldx network_opponent_number ; X = local player number
+				jsr switch_selected_player
+
+				lda server_current_frame_byte0 ; Y = input offset in history
+				and #%00011111
+				tay
+
+				lda network_btns_history, y ; write current input
+				sta controller_a_btns, x
+				dey
+				lda network_btns_history, y
+				sta controller_a_last_frame_btns, x
+
+				; Update game state
+				jsr game_tick
+
+				; Inc server_current_frame_byte
+				inc server_current_frame_byte0
+				bne end_inc
+				inc server_current_frame_byte1
+				bne end_inc
+				inc server_current_frame_byte2
+				bne end_inc
+				inc server_current_frame_byte3
+				end_inc:
+
+				; Loop
+				jmp roll_forward_one_step
+
+			end_loop:
+		.)
+		lda #0
+		sta network_rollback_mode
+
+		; Copy (updated) server frame number to the local one
+		lda server_current_frame_byte0
+		sta network_current_frame_byte0
+		lda server_current_frame_byte1
+		sta network_current_frame_byte1
+		lda server_current_frame_byte2
+		sta network_current_frame_byte2
+		lda server_current_frame_byte3
+		sta network_current_frame_byte3
 
 		rts
 	.)
