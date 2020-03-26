@@ -121,7 +121,7 @@ network_tick_ingame:
 
 			; Check length
 			lda RAINBOW_DATA
-			cmp #132 ; 131 bytes for payload length + 1 for ESP type
+			cmp #133 ; 132 bytes for payload length + 1 for ESP type
 #ifdef ESP_DBG
 			; Avoid out of reach branching
 			beq no_skip
@@ -132,7 +132,7 @@ network_tick_ingame:
 #endif
 
 #ifdef ESP_DBG
-				ESP_DEBUG_LOG(21):.asc "msg is 132 bytes long"
+				ESP_DEBUG_LOG(21):.asc "msg is 133 bytes long"
 #endif
 
 				lda RAINBOW_DATA ; Burn ESP message type, length match and there is no reason it is not MESSAGE_FROM_SERVER
@@ -231,6 +231,10 @@ network_tick_ingame:
 		; Note
 		;  Total - (4+4+2+3+3) * 16 = 16 * 16 = 256
 		;  Unroll - (4+3) * 16 = 7 * 16 = 112
+
+		; Copy special state
+		LOAD_RAINBOW_BYTE
+		sta screen_shake_counter
 
 		; Copy controllers state
 		LOAD_RAINBOW_BYTE
