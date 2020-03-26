@@ -23,6 +23,13 @@ cmd() {
 	$@ >> "$log_file" 2>&1
 }
 
+# Execute a command while logging its output only if it fails
+exe() {
+	echo "+ $@" >> "$log_file.err"
+	$@ >> "$log_file.err" 2>&1
+	rm "$log_file.err"
+}
+
 #TODO check dependencies (python >= 3.2, xa, pillow)
 
 # Clean old build log
@@ -46,9 +53,9 @@ log
 say "Assemble the game ..."
 log "====================="
 cmd xa tilt.asm -C -o 'Super_Tilt_Bro_(E).nes'
-cmd xa -DNETWORK_AI tilt.asm -C -o 'tilt_ai_(E).nes'
-cmd xa -DNO_NETWORK tilt.asm -C -o 'tilt_no_network_(E).nes'
-cmd xa -DNO_NETWORK -DUNROM512 tilt.asm -C -o 'tilt_no_network_unrom512_(E).nes'
+exe xa -DNETWORK_AI tilt.asm -C -o 'tilt_ai_(E).nes'
+exe xa -DNO_NETWORK tilt.asm -C -o 'tilt_no_network_(E).nes'
+exe xa -DNO_NETWORK -DUNROM512 tilt.asm -C -o 'tilt_no_network_unrom512_(E).nes'
 
 say
 say "======================="
