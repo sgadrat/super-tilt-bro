@@ -163,23 +163,41 @@ scroll_transition:
 		ldy #0 ; Sprite index
 		save_one_sprite:
 
-			lda oam_mirror, x             ;
-			clc                           ;
-			adc screen_sprites_offset_lsb ;
-			sta screen_sprites_y_lsb, y   ; Store sprite's two bytes y position
-			lda screen_sprites_offset_msb ;
-			adc #0                        ;
-			sta screen_sprites_y_msb, y   ;
+			; Store sprite's two bytes y position
+			lda oam_mirror, x
+			cmp #240
+			bcs hidden_sprite
 
-			lda #$fe          ; Hide sprite
-			sta oam_mirror, x ; (even cloud sprites, they already blink due to disabling rendering anyway)
+				; Visible sprite, place it at "Y + sprites offset"
+				clc
+				adc screen_sprites_offset_lsb
+				sta screen_sprites_y_lsb, y
+				lda screen_sprites_offset_msb
+				adc #0
+				sta screen_sprites_y_msb, y
+				jmp two_byte_position_stored
 
-			iny                 ;
-			inx                 ;
-			inx                 ; Next sprite
-			inx                 ;
-			inx                 ;
-			bne save_one_sprite ;
+			hidden_sprite:
+
+				; This sprite was not visible, place it far from visible screen
+				lda #$80
+				sta screen_sprites_y_msb, y
+				; Note - we don't care about LSB, we will scroll only one screen while $80xx is 128 screens away
+
+			two_byte_position_stored:
+
+			; Hide sprite
+			; even cloud sprites, they already blink due to disabling rendering anyway)
+			lda #$fe
+			sta oam_mirror, x
+
+			; Next sprite
+			iny
+			inx
+			inx
+			inx
+			inx
+			bne save_one_sprite
 
 		ldy #0
 		scroll_frame:
