@@ -262,6 +262,14 @@ network_tick_ingame:
 		; Copy special state
 		LOAD_RAINBOW_BYTE
 		sta screen_shake_counter
+		bne screen_shake_updated
+			; Received a "no screen shake", ensure that scrolling is reset
+			;lda #$00 ; useless - ensured by bne
+			sta scroll_y
+			sta scroll_x
+			lda #%10010000
+			sta ppuctrl_val
+		screen_shake_updated:
 
 		; Copy controllers state
 		LOAD_RAINBOW_BYTE
