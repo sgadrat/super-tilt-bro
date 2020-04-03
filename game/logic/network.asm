@@ -322,19 +322,26 @@ network_tick_ingame:
 		roll_forward_one_step:
 		.(
 			; If sever's frame is inferior to local frame
+			; TODO optimization - could be implemented like in signed_cmp
+			;      one CMP, followed by SBCs, branching at the end on carry flag
+			;      to be determined, but considering 255 out of 256 times only the LSB is changing, it should be speeder
 			lda server_current_frame_byte3
 			cmp network_current_frame_byte3
 			bcc do_it
+			bne dont_do_it
 			lda server_current_frame_byte2
 			cmp network_current_frame_byte2
 			bcc do_it
+			bne dont_do_it
 			lda server_current_frame_byte1
 			cmp network_current_frame_byte1
 			bcc do_it
+			bne dont_do_it
 			lda server_current_frame_byte0
 			cmp network_current_frame_byte0
 			bcc do_it
-			jmp end_loop
+			jmp dont_do_it
+
 			do_it:
 
 				; Set local player input according to history
@@ -368,6 +375,7 @@ network_tick_ingame:
 				jmp roll_forward_one_step
 
 			end_loop:
+			dont_do_it:
 		.)
 		lda #0
 		sta network_rollback_mode
