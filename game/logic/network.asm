@@ -2,9 +2,6 @@
 
 MESSAGE_TYPE_NEWSTATE = 2
 
-;TODO this is a copy of the first network experiment, adapted to rainbow mapper
-;     - adapt update_state routine to the new game engine
-;     - bring back prediction-rollback
 network_init_stage:
 .(
 	; Enable ESP
@@ -85,11 +82,6 @@ network_tick_ingame:
 		cmp controller_a_btns, x
 		beq controller_sent
 
-#ifdef ESP_DBG
-			; Log that we are about to send controller data
-			ESP_DEBUG_LOG(23):.asc "sending controller data"
-#endif
-
 			; ESP header
 			lda #11          ; Message length (10 bytes of payload + 1 byte for ESP message type)
 			sta RAINBOW_DATA
@@ -127,20 +119,7 @@ network_tick_ingame:
 
 		; Receive new state
 		bit RAINBOW_FLAGS
-#ifdef ESP_DBG
-		; Avoid out of reach branching
-		; only when ESP debug is activated as it is not necessary without these debug message in the midle of the code
-		; and we love to spare some cycle in the nominal case
-		bmi handle_msg
-			jmp state_updated
-		handle_msg:
-#else
 		bpl state_updated
-#endif
-
-#ifdef ESP_DBG
-			ESP_DEBUG_LOG(21):.asc "received msg from esp"
-#endif
 
 			; Burn garbage byte
 			lda RAINBOW_DATA
@@ -149,18 +128,7 @@ network_tick_ingame:
 			; Check length
 			lda RAINBOW_DATA
 			cmp #133 ; 132 bytes for payload length + 1 for ESP type
-#ifdef ESP_DBG
-			; Avoid out of reach branching
-			beq no_skip
-				jmp skip_message
-			no_skip:
-#else
 			bne skip_message
-#endif
-
-#ifdef ESP_DBG
-				ESP_DEBUG_LOG(21):.asc "msg is 133 bytes long"
-#endif
 
 				lda RAINBOW_DATA ; Burn ESP message type, length match and there is no reason it is not MESSAGE_FROM_SERVER
 				nop
@@ -168,10 +136,6 @@ network_tick_ingame:
 				lda RAINBOW_DATA ; Message type from payload
 				cmp #MESSAGE_TYPE_NEWSTATE
 				bne skip_message
-
-#ifdef ESP_DBG
-					ESP_DEBUG_LOG(15):.asc "msg is newstate"
-#endif
 
 					; Burn prediction ID
 					; TODO use it to avoid useless state reset
@@ -207,22 +171,14 @@ network_tick_ingame:
 
 	update_state:
 	.(
-#ifdef ESP_DBG
-					ESP_DEBUG_LOG(37):.asc "received message (minus burnt bytes):"
-					ESP_DEBUG_LOG_HEADER(127)
-#define LOAD_RAINBOW_BYTE lda RAINBOW_DATA:sta RAINBOW_DATA
-#else
-#define LOAD_RAINBOW_BYTE lda RAINBOW_DATA
-#endif
-
 		; Extract frame counter
-		LOAD_RAINBOW_BYTE
+		lda RAINBOW_DATA
 		sta server_current_frame_byte0
-		LOAD_RAINBOW_BYTE
+		lda RAINBOW_DATA
 		sta server_current_frame_byte1
-		LOAD_RAINBOW_BYTE
+		lda RAINBOW_DATA
 		sta server_current_frame_byte2
-		LOAD_RAINBOW_BYTE
+		lda RAINBOW_DATA
 		sta server_current_frame_byte3
 
 		; Copy gamestate
@@ -230,7 +186,7 @@ network_tick_ingame:
 			ldx #0
 			copy_one_byte:
 
-				LOAD_RAINBOW_BYTE ; 4 cycles
+				lda RAINBOW_DATA  ; 4 cycles
 				sta $00, x        ; 4 cycles
 
 			inx ; 2 cycles
@@ -247,7 +203,7 @@ network_tick_ingame:
 			ldx #0
 			copy_one_byte:
 
-				LOAD_RAINBOW_BYTE                ; 4 cycles
+				lda RAINBOW_DATA                 ; 4 cycles
 				sta player_a_hurtbox_left_msb, x ; 4 cycles
 
 			inx ; 2 cycles
@@ -260,7 +216,7 @@ network_tick_ingame:
 		;  Unroll - (4+3) * 16 = 7 * 16 = 112
 
 		; Copy special state
-		LOAD_RAINBOW_BYTE
+		lda RAINBOW_DATA
 		sta screen_shake_counter
 		bne screen_shake_updated
 			; Received a "no screen shake", ensure that scrolling is reset
@@ -272,13 +228,13 @@ network_tick_ingame:
 		screen_shake_updated:
 
 		; Copy controllers state
-		LOAD_RAINBOW_BYTE
+		lda RAINBOW_DATA
 		sta controller_a_btns
-		LOAD_RAINBOW_BYTE
+		lda RAINBOW_DATA
 		sta controller_b_btns
-		LOAD_RAINBOW_BYTE
+		lda RAINBOW_DATA
 		sta controller_a_last_frame_btns
-		LOAD_RAINBOW_BYTE
+		lda RAINBOW_DATA
 		sta controller_b_last_frame_btns
 
 		; Copy actually pressed opponent btns (keep_input_dirty may mess with normal values, but not this one)
@@ -288,17 +244,17 @@ network_tick_ingame:
 
 				player_b:
 					; Opponent is player B, burn player A's buttons
-					LOAD_RAINBOW_BYTE
+					lda RAINBOW_DATA
 					nop
-					LOAD_RAINBOW_BYTE
+					lda RAINBOW_DATA
 					sta network_last_received_btns
 					jmp ok
 
 				player_a:
 					; Opponent is player A, burn player B's buttons
-					LOAD_RAINBOW_BYTE
+					lda RAINBOW_DATA
 					sta network_last_received_btns
-					LOAD_RAINBOW_BYTE
+					lda RAINBOW_DATA
 			ok:
 		.)
 		; Note - we are zero cycles after a load of rainbow byte, next instruction cannot be another load (add a nop if necessary)
@@ -308,7 +264,7 @@ network_tick_ingame:
 			ldx #0
 			copy_one_byte:
 
-				LOAD_RAINBOW_BYTE ; 4 cycles
+				lda RAINBOW_DATA ; 4 cycles
 				sta player_a_animation, x ; 5 cycles
 
 			inx ; 2 cycles
