@@ -418,11 +418,14 @@ game_tick:
 	lda screen_shake_counter
 	beq no_screen_shake
 	jsr shake_screen
-	ldx #0
-	jsr player_effects
-	ldx #1
-	jsr player_effects
-	jsr particle_draw
+	lda network_rollback_mode
+	bne end_effects
+		ldx #0
+		jsr player_effects
+		ldx #1
+		jsr player_effects
+		jsr particle_draw
+	end_effects:
 	rts
 	no_screen_shake:
 
@@ -545,8 +548,11 @@ update_players:
 		; Call generic update routines
 		jsr move_player
 		jsr check_player_position
-		jsr write_player_damages
-		jsr player_effects
+		lda network_rollback_mode
+		bne end_visuals
+			jsr write_player_damages
+			jsr player_effects
+		end_visuals:
 
 	inx
 	cpx #$02
@@ -1618,6 +1624,12 @@ update_sprites:
 	camera_x = tmpfield13         ; Not movable - Used as parameter for stb_animation_draw subroutine
 	camera_y = tmpfield15         ; Not movable - Used as parameter for stb_animation_draw subroutine
 
+	; If the frame will not be show, just tick animations
+	lda network_rollback_mode
+	beq normal_draw
+		jmp dummy_update_sprites
+	normal_draw:
+
 	ldx #0 ; X is the player number
 	ldy #0 ; Y is the offset of player's animation state
 	update_one_player_sprites:
@@ -1757,6 +1769,27 @@ update_sprites:
 	;jsr show_hitboxes
 
 	rts
+
+	dummy_update_sprites:
+	.(
+		; TODO emulate animation_draw only for hitboxes/hurtboxes
+
+		lda #<player_a_animation
+		sta animation_vector
+		lda #>player_a_animation
+		sta animation_vector+1
+		jsr animation_tick
+
+		lda #<player_b_animation
+		sta animation_vector
+		lda #>player_b_animation
+		sta animation_vector+1
+		jsr animation_tick
+
+		; Note - skip ticking oos animations as it need some checks and is not actually animated (nor important for gamestate)
+
+		rts
+	.)
 .)
 
 ; Debug subroutine to show hitboxes and hurtboxes

@@ -195,7 +195,7 @@ network_client_id_byte3 = $bd
 network_last_sent_btns = $be
 network_last_received_btns = $bf
 
-network_rollback_mode = $e2 ; 0 - normal, 1 - rolling
+network_rollback_mode = $e2 ; 0 - normal, 1 - rolling ; Note - also used by game tick to know if a frame will be drawn, may be renamed something more generic like "dummy_frame"
 server_current_frame_byte0 = $e3
 server_current_frame_byte1 = $e4
 server_current_frame_byte2 = $e5
