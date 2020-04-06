@@ -1624,11 +1624,15 @@ update_sprites:
 	camera_x = tmpfield13         ; Not movable - Used as parameter for stb_animation_draw subroutine
 	camera_y = tmpfield15         ; Not movable - Used as parameter for stb_animation_draw subroutine
 
+#if 0
 	; If the frame will not be show, just tick animations
+	; Note - disabled, replaced by hacking animation_draw to avoid handling sprites in rolllback mode
+	;        less optimal, but avoid to duplicate code / introduce bugs.
 	lda network_rollback_mode
 	beq normal_draw
 		jmp dummy_update_sprites
 	normal_draw:
+#endif
 
 	ldx #0 ; X is the player number
 	ldy #0 ; Y is the offset of player's animation state
@@ -1770,6 +1774,7 @@ update_sprites:
 
 	rts
 
+#if 0
 	dummy_update_sprites:
 	.(
 		; TODO emulate animation_draw only for hitboxes/hurtboxes
@@ -1790,6 +1795,7 @@ update_sprites:
 
 		rts
 	.)
+#endif
 .)
 
 ; Debug subroutine to show hitboxes and hurtboxes
