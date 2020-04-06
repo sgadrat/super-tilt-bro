@@ -304,10 +304,20 @@ draw_anim_frame:
 			; Check continuation byte - zero value means end of data
 			lda (frame_vector), y
 			beq clear_unused_sprites
+
+			; In rollback mode, stop at the first sprite (hitboxes should be before sprites)
+			ldx network_rollback_mode
+			beq continue:
+				cmp #ANIM_OPCODE_SPRITE
+				beq end
+				cmp #ANIM_OPCODE_SPRITE_FOREGROUND
+				beq end
+			continue:
+
+			; Handle one entry
 			sta continuation_byte
 			iny
 
-			; Handle one entry
 			lsr
 			lsr
 			lsr
@@ -323,6 +333,9 @@ draw_anim_frame:
 
 		; Place unused sprites off screen
 		clear_unused_sprites:
+			lda network_rollback_mode
+			bne end
+
 			lda last_sprite_index
 			cmp sprite_index
 			bcc end

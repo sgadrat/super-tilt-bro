@@ -418,11 +418,14 @@ game_tick:
 	lda screen_shake_counter
 	beq no_screen_shake
 	jsr shake_screen
-	ldx #0
-	jsr player_effects
-	ldx #1
-	jsr player_effects
-	jsr particle_draw
+	lda network_rollback_mode
+	bne end_effects
+		ldx #0
+		jsr player_effects
+		ldx #1
+		jsr player_effects
+		jsr particle_draw
+	end_effects:
 	rts
 	no_screen_shake:
 
@@ -488,6 +491,8 @@ slowdown:
 		jmp end
 
 	next_screen:
+	lda #0
+	sta network_rollback_mode
 	lda #GAME_STATE_GAMEOVER
 	jsr change_global_game_state
 
@@ -545,8 +550,11 @@ update_players:
 		; Call generic update routines
 		jsr move_player
 		jsr check_player_position
-		jsr write_player_damages
-		jsr player_effects
+		lda network_rollback_mode
+		bne end_visuals
+			jsr write_player_damages
+			jsr player_effects
+		end_visuals:
 
 	inx
 	cpx #$02
