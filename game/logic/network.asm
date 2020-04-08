@@ -16,11 +16,14 @@ network_init_stage:
 	; lda #0 ; ensured by above code
 	ldx #0
 	clear_one_input:
-		sta network_btns_history
+		sta network_player_local_btns_history
+		sta network_player_remote_btns_history
 
 		inx
 		cpx #32
 		bne clear_one_input
+
+	sta network_last_known_remote_input
 
 	; Reinit frame counter
 	lda #$00
@@ -39,7 +42,6 @@ network_init_stage:
 
 	; Initialize controllers state
 	sta network_last_sent_btns
-	sta network_last_received_btns
 
 	; Initialize UDP socket
 	ESP_SEND_CMD(set_udp_cmd)
@@ -64,21 +66,19 @@ network_tick_ingame:
 		jmp end
 		do_tick:
 
-		; Force opponent's buttons to not change
-		ldx network_opponent_number
-		lda network_last_received_btns
-		sta controller_a_btns, x
-
 		; Update local controller's history
+		ldx network_opponent_number
 		jsr switch_selected_player
 		lda network_current_frame_byte0
+		clc
+		adc #NETWORK_INPUT_LAG
 		and #%00011111
 		tay
 		lda controller_a_btns, x
-		sta network_btns_history, y
+		sta network_player_local_btns_history, y
 
 		; Send controller's state
-		lda network_last_sent_btns
+		lda network_last_sent_btns ; NOTE - optimizable as "controller_a_btns, x" is already in register A
 		cmp controller_a_btns, x
 		beq controller_sent
 
@@ -127,7 +127,7 @@ network_tick_ingame:
 
 			; Check length
 			lda RAINBOW_DATA
-			cmp #133 ; 132 bytes for payload length + 1 for ESP type
+			cmp #133+NETWORK_INPUT_LAG ; 1 byte for ESP type + 132 for fixed payload length + delayed inputs
 			bne skip_message
 
 				lda RAINBOW_DATA ; Burn ESP message type, length match and there is no reason it is not MESSAGE_FROM_SERVER
@@ -155,6 +155,20 @@ network_tick_ingame:
 
 		state_updated:
 
+		; Overwrite player's input with delayed input
+		ldx network_opponent_number ; X = local player number
+		jsr switch_selected_player
+
+		lda network_current_frame_byte0 ; Y = input offset in history ;FIXME if just got a message in the futur, it may be in garbage part of the input history (should rewrite next four inputs when receiving a message in the futur)
+		and #%00011111
+		tay
+
+		lda network_player_local_btns_history, y ; write current input
+		sta controller_a_btns, x
+
+		jsr switch_selected_player ;NOTE - optimizable, no need to switch two times
+		jsr set_opponent_buttons_from_history
+
 		; Increment frame counter
 		inc network_current_frame_byte0
 		bne inc_ok
@@ -180,6 +194,53 @@ network_tick_ingame:
 		sta server_current_frame_byte2
 		lda RAINBOW_DATA
 		sta server_current_frame_byte3
+
+		;TODO select action from message type -  ancient, past or futur
+		;NOTE in a first draft the current rollback implementation should handle all cases
+		;     correctly, even if sub-optimal (notably doing unecessary rollbacks for "past"
+		;     messages.
+		;     one advantage of this solution is to resync with server on any occasion
+
+		ancient:
+			jsr rollback_state
+			jmp end
+
+		past:
+			;TODO
+
+		future:
+			;TODO
+
+		end:
+		rts
+	.)
+
+	rollback_state:
+	.(
+		; Copy delayed inputs from message in opponent's intput history
+		.(
+			; Get first delayed input index in history
+			lda server_current_frame_byte0
+			clc
+			adc #1
+			and #%00011111
+			tay
+
+			; Copy delayed inputs
+			ldx #NETWORK_INPUT_LAG
+			copy_one_byte:
+				lda RAINBOW_DATA
+				sta network_player_remote_btns_history, y
+				sty network_last_known_remote_input
+
+				iny
+				tya
+				and #%00011111
+				tay
+
+				dex
+				bne copy_one_byte
+		.)
 
 		; Copy gamestate
 		.(
@@ -247,17 +308,23 @@ network_tick_ingame:
 					lda RAINBOW_DATA
 					nop
 					lda RAINBOW_DATA
-					sta network_last_received_btns
+					pha
 					jmp ok
 
 				player_a:
 					; Opponent is player A, burn player B's buttons
 					lda RAINBOW_DATA
-					sta network_last_received_btns
+					pha
 					lda RAINBOW_DATA
 			ok:
+
+			; Register it in opponent's input history
+			lda server_current_frame_byte0
+			and #%00011111
+			tay
+			pla
+			sta network_player_remote_btns_history, y
 		.)
-		; Note - we are zero cycles after a load of rainbow byte, next instruction cannot be another load (add a nop if necessary)
 
 		; Copy animation states
 		.(
@@ -315,8 +382,12 @@ network_tick_ingame:
 				and #%00011111
 				tay
 
-				lda network_btns_history, y ; write current input
+				lda network_player_local_btns_history, y ; write current input
 				sta controller_a_btns, x
+				jsr switch_selected_player
+				;lda network_player_remote_btns_history, y
+				;sta controller_a_btns, x
+				jsr set_opponent_buttons_from_history
 
 				; Update game state
 				jsr game_tick
@@ -349,6 +420,31 @@ network_tick_ingame:
 		sta network_current_frame_byte2
 		lda server_current_frame_byte3
 		sta network_current_frame_byte3
+
+		rts
+	.)
+
+	; Get opponent'input if known, else predict it
+	set_opponent_buttons_from_history:
+	.(
+		; Determine if we know the next input or have to predict it
+		cpy network_last_known_remote_input
+		beq mark_nexts_unknown
+		lda network_last_known_remote_input
+		cmp #$80
+		bcc known
+
+		unknown:
+			and #%00011111
+			tay
+			jmp known ; not known per see, but we predict it being the same as last known
+		mark_nexts_unknown:
+			lda #$80
+			ora network_last_known_remote_input
+			sta network_last_known_remote_input
+		known:
+			lda network_player_remote_btns_history, y
+			sta controller_a_btns, x
 
 		rts
 	.)
