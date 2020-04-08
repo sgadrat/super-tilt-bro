@@ -300,6 +300,13 @@ network_tick_ingame:
 
 			do_it:
 
+				; Update last_frame_btns
+				;  it is not done by fetch_controller because we don't use the main loop
+				lda controller_a_btns
+				sta controller_a_last_frame_btns
+				lda controller_b_btns
+				sta controller_b_last_frame_btns
+
 				; Set local player input according to history
 				ldx network_opponent_number ; X = local player number
 				jsr switch_selected_player
@@ -310,9 +317,6 @@ network_tick_ingame:
 
 				lda network_btns_history, y ; write current input
 				sta controller_a_btns, x
-				dey
-				lda network_btns_history, y
-				sta controller_a_last_frame_btns, x
 
 				; Update game state
 				jsr game_tick
