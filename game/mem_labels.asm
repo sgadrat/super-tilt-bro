@@ -193,7 +193,6 @@ network_client_id_byte2 = $bc
 network_client_id_byte3 = $bd
 
 network_last_sent_btns = $be
-network_last_received_btns = $bf
 
 network_rollback_mode = $e2 ; 0 - normal, 1 - rolling ; Note - also used by game tick to know if a frame will be drawn, may be renamed something more generic like "dummy_frame"
 server_current_frame_byte0 = $e3
@@ -383,4 +382,6 @@ players_palettes = $0580 ; $0580 to $059f - 4 nametable buffers (8 bytes each) c
 ;$06xx may be used by audio engine, see "Audio engine labels"
 virtual_frame_cnt = $0700
 skip_frames_to_50hz = $0701
-network_btns_history = $07e0 ; one byte per frame, circular buffer, 32 entries
+network_last_known_remote_input = $07bf
+network_player_local_btns_history = $07c0 ; one byte per frame, circular buffers, 32 entries
+network_player_remote_btns_history = $07e0 ;

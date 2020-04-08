@@ -52,6 +52,8 @@ CHARACTERS_PROPERTIES_AI_ATTACKS_OFFSET = 31
 TECH_MAX_FRAMES_BEFORE_COLLISION = 10 ; To tech successfully the tech must be input at maximum TECH_MAX_FRAMES_BEFORE_COLLISION frames before hitting the ground
 TECH_NB_FORBIDDEN_FRAMES = 60 ; After expiration of a tech input, it is not possible to input another tech for TECH_NB_FORBIDDEN_FRAMES frames
 
+NETWORK_INPUT_LAG = 4
+
 #define INGAME_PLAYER_A_FIRST_SPRITE 0
 #define INGAME_PLAYER_A_LAST_SPRITE 15
 #define INGAME_PLAYER_B_FIRST_SPRITE 16
