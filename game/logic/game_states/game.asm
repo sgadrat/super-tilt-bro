@@ -491,6 +491,8 @@ slowdown:
 		jmp end
 
 	next_screen:
+	lda #0
+	sta network_rollback_mode
 	lda #GAME_STATE_GAMEOVER
 	jsr change_global_game_state
 
