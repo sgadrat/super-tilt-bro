@@ -1,6 +1,17 @@
+;
 ; STNP lib
+;
 
-MESSAGE_TYPE_NEWSTATE = 2
+STNP_CLI_MSG_TYPE_CONNECTION = 0
+STNP_CLI_MSG_TYPE_CONTROLLER_STATE = 1
+
+STNP_SRV_MSG_TYPE_CONNECTED = 0
+STNP_SRV_MSG_TYPE_START_GAME = 1
+STNP_SRV_MSG_TYPE_NEWSTATE = 2
+
+;
+; Netcode
+;
 
 network_init_stage:
 .(
@@ -47,6 +58,60 @@ network_init_stage:
 	ESP_SEND_CMD(set_udp_cmd)
 	ESP_SEND_CMD(connect_cmd)
 
+	; TODO The following should ne be done here
+	;   First, real hardware will not support waiting two message consecutively (RAINBOW_FLAGS has some latency)
+	;   Second, a message and some kind of progression should be displayed to the user
+	;   Third, errors and packets re-emission should be handled gracefully
+
+	; Connect to server
+	lda #7                                ; ESP header
+	sta RAINBOW_DATA
+	lda #TOESP_MSG_SEND_MESSAGE_TO_SERVER
+	sta RAINBOW_DATA
+
+	lda #STNP_CLI_MSG_TYPE_CONNECTION ; message_type
+	sta RAINBOW_DATA
+	lda network_client_id_byte0 ; client_id
+	sta RAINBOW_DATA
+	lda network_client_id_byte1
+	sta RAINBOW_DATA
+	lda network_client_id_byte2
+	sta RAINBOW_DATA
+	lda network_client_id_byte3
+	sta RAINBOW_DATA
+	lda #6 ; ping ;TODO get actual ping
+	sta RAINBOW_DATA
+
+	; Wait for Connected message
+	jsr esp_wait_message
+
+	.(
+		; Skip message (hoping it is effectively a Connected message from server)
+		lda RAINBOW_DATA ; garbage byte
+		nop
+		ldx RAINBOW_DATA ; message length
+		nop
+		skip_one_byte:
+			lda RAINBOW_DATA
+			dex
+			bne skip_one_byte
+	.)
+
+	; Wait for a match
+	jsr esp_wait_message
+
+	.(
+		; Skip message (hoping it is effectively a StartGame message from server)
+		lda RAINBOW_DATA ; garbage byte
+		nop
+		ldx RAINBOW_DATA ; message length
+		nop
+		skip_one_byte:
+			lda RAINBOW_DATA
+			dex
+			bne skip_one_byte
+	.)
+
 	rts
 
 	set_udp_cmd:
@@ -90,7 +155,7 @@ network_tick_ingame:
 			sta RAINBOW_DATA
 
 			; Payload
-			lda #$1          ; message_type
+			lda #STNP_CLI_MSG_TYPE_CONTROLLER_STATE ; message_type
 			sta RAINBOW_DATA
 
 			lda network_client_id_byte0 ; client_id
@@ -134,7 +199,7 @@ network_tick_ingame:
 				nop
 
 				lda RAINBOW_DATA ; Message type from payload
-				cmp #MESSAGE_TYPE_NEWSTATE
+				cmp #STNP_SRV_MSG_TYPE_NEWSTATE
 				bne skip_message
 
 					; Burn prediction ID

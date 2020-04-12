@@ -77,3 +77,12 @@ esp_send_cmd:
 
 	rts
 .)
+
+; Wait for a message from the ESP
+esp_wait_message:
+.(
+	wait_esp:
+		bit $5001
+		bpl wait_esp
+	rts
+.)
