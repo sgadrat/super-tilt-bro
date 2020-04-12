@@ -1,6 +1,24 @@
+;
 ; STNP lib
+;
 
-MESSAGE_TYPE_NEWSTATE = 2
+STNP_CLI_MSG_TYPE_CONNECTION = 0
+STNP_CLI_MSG_TYPE_CONTROLLER_STATE = 1
+
+STNP_SRV_MSG_TYPE_CONNECTED = 0
+STNP_SRV_MSG_TYPE_START_GAME = 1
+STNP_SRV_MSG_TYPE_NEWSTATE = 2
+STNP_SRV_MSG_TYPE_GAMEOVER = 3
+STNP_SRV_MSG_TYPE_DISCONNECTED = 4
+
+STNP_START_GAME_FIELD_STAGE = 1
+STNP_START_GAME_FIELD_STOCK = 2
+STNP_START_GAME_FIELD_PLAYER_NUMBER = 3
+STNP_DISCONNECTED_FIELD_REASON = 1
+
+;
+; Netcode
+;
 
 network_init_stage:
 .(
@@ -32,33 +50,14 @@ network_init_stage:
 	sta network_current_frame_byte2
 	sta network_current_frame_byte3
 
-	; Set client id
-	sta network_client_id_byte0
-	sta network_client_id_byte1
-	sta network_client_id_byte2
-	ldx audio_music_enabled ; Hack to easilly configure the player number - activate music on player A's system
-	jsr switch_selected_player
-	stx network_client_id_byte3
-
 	; Initialize controllers state
 	sta network_last_sent_btns
 
-	; Initialize UDP socket
-	ESP_SEND_CMD(set_udp_cmd)
-	ESP_SEND_CMD(connect_cmd)
-
 	rts
-
-	set_udp_cmd:
-		.byt 2, TOESP_MSG_SET_SERVER_PROTOCOL, ESP_PROTOCOL_UDP
-	connect_cmd:
-		.byt 1, TOESP_MSG_CONNECT_TO_SERVER
 .)
 
 network_tick_ingame:
 .(
-	network_opponent_number = audio_music_enabled ; Hack to easilly configure the player number - activate music on player A's system
-
 	.(
 		; Do nothing in rollback mode, it would be recursive
 		lda network_rollback_mode
@@ -67,19 +66,17 @@ network_tick_ingame:
 		do_tick:
 
 		; Update local controller's history
-		ldx network_opponent_number
-		jsr switch_selected_player
 		lda network_current_frame_byte0
 		clc
 		adc #NETWORK_INPUT_LAG
 		and #%00011111
 		tay
-		lda controller_a_btns, x
+		lda controller_a_btns
 		sta network_player_local_btns_history, y
 
 		; Send controller's state
-		lda network_last_sent_btns ; NOTE - optimizable as "controller_a_btns, x" is already in register A
-		cmp controller_a_btns, x
+		lda network_last_sent_btns ; NOTE - optimizable as "controller_a_btns" is already in register A
+		cmp controller_a_btns
 		beq controller_sent
 
 			; ESP header
@@ -90,7 +87,7 @@ network_tick_ingame:
 			sta RAINBOW_DATA
 
 			; Payload
-			lda #$1          ; message_type
+			lda #STNP_CLI_MSG_TYPE_CONTROLLER_STATE ; message_type
 			sta RAINBOW_DATA
 
 			lda network_client_id_byte0 ; client_id
@@ -134,7 +131,7 @@ network_tick_ingame:
 				nop
 
 				lda RAINBOW_DATA ; Message type from payload
-				cmp #MESSAGE_TYPE_NEWSTATE
+				cmp #STNP_SRV_MSG_TYPE_NEWSTATE
 				bne skip_message
 
 					; Burn prediction ID
@@ -155,9 +152,8 @@ network_tick_ingame:
 
 		state_updated:
 
-		; Overwrite player's input with delayed input
-		ldx network_opponent_number ; X = local player number
-		jsr switch_selected_player
+		; Overwrite players input with delayed input
+		ldx network_local_player_number ; X = local player number
 
 		lda network_current_frame_byte0 ; Y = input offset in history ;FIXME if just got a message in the futur, it may be in garbage part of the input history (should rewrite next four inputs when receiving a message in the futur)
 		and #%00011111
@@ -166,7 +162,7 @@ network_tick_ingame:
 		lda network_player_local_btns_history, y ; write current input
 		sta controller_a_btns, x
 
-		jsr switch_selected_player ;NOTE - optimizable, no need to switch two times
+		jsr switch_selected_player
 		jsr set_opponent_buttons_from_history
 
 		; Increment frame counter
@@ -217,7 +213,7 @@ network_tick_ingame:
 
 	rollback_state:
 	.(
-		; Copy delayed inputs from message in opponent's intput history
+		; Copy delayed inputs from message in opponent's input history
 		.(
 			; Get first delayed input index in history
 			lda server_current_frame_byte0
@@ -300,19 +296,24 @@ network_tick_ingame:
 
 		; Copy actually pressed opponent btns (keep_input_dirty may mess with normal values, but not this one)
 		.(
-			lda network_opponent_number
-			beq player_a
+			;TODO Investigate
+			;     We may want to write received buttons in local player history instead of burning it
+			;       That would avoid desynchronizing if a ControllerState packet is lost (= not seen by server)
+			;     Beware of race conditions, if the server receives the ControllerState packet after sending the NewState
+			;       That would cause desychronization (until next NewGameState received), because we updated history with predicted info from server
+			lda network_local_player_number
+			bne player_b
 
-				player_b:
-					; Opponent is player B, burn player A's buttons
+				player_a:
+					; Local player is player A, burn its buttons (already in our history)
 					lda RAINBOW_DATA
 					nop
 					lda RAINBOW_DATA
 					pha
 					jmp ok
 
-				player_a:
-					; Opponent is player A, burn player B's buttons
+				player_b:
+					; Local player is player B, burn its buttons (already in our history)
 					lda RAINBOW_DATA
 					pha
 					lda RAINBOW_DATA
@@ -375,8 +376,7 @@ network_tick_ingame:
 				sta controller_b_last_frame_btns
 
 				; Set local player input according to history
-				ldx network_opponent_number ; X = local player number
-				jsr switch_selected_player
+				ldx network_local_player_number ; X = local player number
 
 				lda server_current_frame_byte0 ; Y = input offset in history
 				and #%00011111
@@ -384,9 +384,9 @@ network_tick_ingame:
 
 				lda network_player_local_btns_history, y ; write current input
 				sta controller_a_btns, x
+
+				; Set remote player input according to history
 				jsr switch_selected_player
-				;lda network_player_remote_btns_history, y
-				;sta controller_a_btns, x
 				jsr set_opponent_buttons_from_history
 
 				; Update game state

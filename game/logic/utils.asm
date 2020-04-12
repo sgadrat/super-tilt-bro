@@ -39,6 +39,52 @@ construct_palettes_nt_buffer:
 	rts
 .)
 
+; Construct a nametable buffer from its header and payload
+;  tmpfield1, tmpfield2 - header address
+;  tmpfield3, tmpfield4 - payload address
+;
+;  Overwrites registers, tmpfield1
+construct_nt_buffer:
+.(
+	header = tmpfield1
+	payload = tmpfield3
+	payload_size = tmpfield1
+
+	jsr last_nt_buffer
+
+	; Continuation byte
+	lda #$01
+	sta nametable_buffers, x
+	inx
+
+	; Header
+	ldy #0
+	copy_header_byte:
+		lda (header), y
+		sta nametable_buffers, x
+		inx
+		iny
+		cpy #3
+		bne copy_header_byte
+	sta payload_size
+
+	; Payload
+	ldy #0
+	copy_payload_byte:
+		lda (payload), y
+		sta nametable_buffers, x
+		inx
+		iny
+		cpy payload_size
+		bne copy_payload_byte
+
+	; Stop Byte
+	lda #$00
+	sta nametable_buffers, x
+
+	rts
+.)
+
 ; Clear background of bottom left nametable
 ;  Expect the PPU rendering to be disabled
 ;  Overwrites tmpfield1 and tmpfiled2

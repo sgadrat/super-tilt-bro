@@ -193,6 +193,7 @@ network_client_id_byte2 = $bc
 network_client_id_byte3 = $bd
 
 network_last_sent_btns = $be
+network_local_player_number = $bf
 
 network_rollback_mode = $e2 ; 0 - normal, 1 - rolling ; Note - also used by game tick to know if a frame will be drawn, may be renamed something more generic like "dummy_frame"
 server_current_frame_byte0 = $e3
@@ -208,6 +209,12 @@ title_cheatstate = $00
 title_animation_frame = $01
 title_animation_state = $02
 title_original_music_state = $03
+
+;
+; MODE_SELECTION labels
+;
+
+mode_selection_current_option = $00
 
 ;
 ; CONFIG labels
@@ -236,6 +243,14 @@ character_selection_player_a_async_job_active = $0c
 character_selection_player_b_async_job_active = $0d
 character_selection_player_a_animation = $05a0 ; $05a0 to $05ab - player a's animation state
 character_selection_player_b_animation = $05ac ; $05ac to $05b7 - player b's animation state
+
+;
+; NETPLAY_LAUNCH labels
+;
+
+netplay_launch_state = $00
+netplay_launch_ping = $01
+netplay_launch_counter = $02
 
 ;
 ; Common menus labels
@@ -385,3 +400,4 @@ skip_frames_to_50hz = $0701
 network_last_known_remote_input = $07bf
 network_player_local_btns_history = $07c0 ; one byte per frame, circular buffers, 32 entries
 network_player_remote_btns_history = $07e0 ;
+netplay_launch_received_msg = $0702

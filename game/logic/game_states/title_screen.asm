@@ -54,7 +54,7 @@ init_title_screen:
 
 	; Choose between soft (keep continuity) or hard (reboot) initialization of music and menu animations
 	lda previous_global_game_state
-	cmp #GAME_STATE_CONFIG
+	cmp #GAME_STATE_MODE_SELECTION
 	beq soft_init
 	cmp #GAME_STATE_CREDITS
 	beq soft_init
@@ -188,7 +188,7 @@ title_screen_tick:
 
 			next_screen:
 				jsr title_screen_restore_music_state
-				lda #GAME_STATE_CONFIG
+				lda #GAME_STATE_MODE_SELECTION
 				jsr change_global_game_state
 
 		end:

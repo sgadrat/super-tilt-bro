@@ -20,9 +20,6 @@ default_config:
 init_config_screen:
 .(
 	.(
-		; Copy menus tileset in CHR-RAM
-		jsr set_menu_chr
-
 		SWITCH_BANK(#DATA_BANK_NUMBER)
 
 		; Copy background from PRG-rom to PPU nametable
@@ -135,7 +132,7 @@ config_screen_tick:
 
 		previous_screen:
 		.(
-			lda #GAME_STATE_TITLE
+			lda #GAME_STATE_MODE_SELECTION
 			jsr change_global_game_state
 			; jmp end ; not needed, change_global_game_state does not return
 		.)
