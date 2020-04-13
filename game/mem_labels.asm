@@ -193,6 +193,7 @@ network_client_id_byte2 = $bc
 network_client_id_byte3 = $bd
 
 network_last_sent_btns = $be
+network_local_player_number = $bf
 
 network_rollback_mode = $e2 ; 0 - normal, 1 - rolling ; Note - also used by game tick to know if a frame will be drawn, may be renamed something more generic like "dummy_frame"
 server_current_frame_byte0 = $e3
@@ -236,6 +237,13 @@ character_selection_player_a_async_job_active = $0c
 character_selection_player_b_async_job_active = $0d
 character_selection_player_a_animation = $05a0 ; $05a0 to $05ab - player a's animation state
 character_selection_player_b_animation = $05ac ; $05ac to $05b7 - player b's animation state
+
+;
+; NETPLAY_LAUNCH labels
+;
+
+netplay_launch_state = $00
+netplay_launch_ping = $01
 
 ;
 ; Common menus labels

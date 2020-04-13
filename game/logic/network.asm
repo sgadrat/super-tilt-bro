@@ -43,87 +43,14 @@ network_init_stage:
 	sta network_current_frame_byte2
 	sta network_current_frame_byte3
 
-	; Set client id
-	sta network_client_id_byte0
-	sta network_client_id_byte1
-	sta network_client_id_byte2
-	ldx audio_music_enabled ; Hack to easilly configure the player number - activate music on player A's system
-	jsr switch_selected_player
-	stx network_client_id_byte3
-
 	; Initialize controllers state
 	sta network_last_sent_btns
 
-	; Initialize UDP socket
-	ESP_SEND_CMD(set_udp_cmd)
-	ESP_SEND_CMD(connect_cmd)
-
-	; TODO The following should ne be done here
-	;   First, real hardware will not support waiting two message consecutively (RAINBOW_FLAGS has some latency)
-	;   Second, a message and some kind of progression should be displayed to the user
-	;   Third, errors and packets re-emission should be handled gracefully
-
-	; Connect to server
-	lda #7                                ; ESP header
-	sta RAINBOW_DATA
-	lda #TOESP_MSG_SEND_MESSAGE_TO_SERVER
-	sta RAINBOW_DATA
-
-	lda #STNP_CLI_MSG_TYPE_CONNECTION ; message_type
-	sta RAINBOW_DATA
-	lda network_client_id_byte0 ; client_id
-	sta RAINBOW_DATA
-	lda network_client_id_byte1
-	sta RAINBOW_DATA
-	lda network_client_id_byte2
-	sta RAINBOW_DATA
-	lda network_client_id_byte3
-	sta RAINBOW_DATA
-	lda #6 ; ping ;TODO get actual ping
-	sta RAINBOW_DATA
-
-	; Wait for Connected message
-	jsr esp_wait_message
-
-	.(
-		; Skip message (hoping it is effectively a Connected message from server)
-		lda RAINBOW_DATA ; garbage byte
-		nop
-		ldx RAINBOW_DATA ; message length
-		nop
-		skip_one_byte:
-			lda RAINBOW_DATA
-			dex
-			bne skip_one_byte
-	.)
-
-	; Wait for a match
-	jsr esp_wait_message
-
-	.(
-		; Skip message (hoping it is effectively a StartGame message from server)
-		lda RAINBOW_DATA ; garbage byte
-		nop
-		ldx RAINBOW_DATA ; message length
-		nop
-		skip_one_byte:
-			lda RAINBOW_DATA
-			dex
-			bne skip_one_byte
-	.)
-
 	rts
-
-	set_udp_cmd:
-		.byt 2, TOESP_MSG_SET_SERVER_PROTOCOL, ESP_PROTOCOL_UDP
-	connect_cmd:
-		.byt 1, TOESP_MSG_CONNECT_TO_SERVER
 .)
 
 network_tick_ingame:
 .(
-	network_opponent_number = audio_music_enabled ; Hack to easilly configure the player number - activate music on player A's system
-
 	.(
 		; Do nothing in rollback mode, it would be recursive
 		lda network_rollback_mode
@@ -132,8 +59,7 @@ network_tick_ingame:
 		do_tick:
 
 		; Update local controller's history
-		ldx network_opponent_number
-		jsr switch_selected_player
+		ldx network_local_player_number
 		lda network_current_frame_byte0
 		clc
 		adc #NETWORK_INPUT_LAG
@@ -221,8 +147,7 @@ network_tick_ingame:
 		state_updated:
 
 		; Overwrite player's input with delayed input
-		ldx network_opponent_number ; X = local player number
-		jsr switch_selected_player
+		ldx network_local_player_number ; X = local player number
 
 		lda network_current_frame_byte0 ; Y = input offset in history ;FIXME if just got a message in the futur, it may be in garbage part of the input history (should rewrite next four inputs when receiving a message in the futur)
 		and #%00011111
@@ -365,8 +290,8 @@ network_tick_ingame:
 
 		; Copy actually pressed opponent btns (keep_input_dirty may mess with normal values, but not this one)
 		.(
-			lda network_opponent_number
-			beq player_a
+			lda network_local_player_number
+			bne player_a
 
 				player_b:
 					; Opponent is player B, burn player A's buttons
@@ -440,8 +365,7 @@ network_tick_ingame:
 				sta controller_b_last_frame_btns
 
 				; Set local player input according to history
-				ldx network_opponent_number ; X = local player number
-				jsr switch_selected_player
+				ldx network_local_player_number ; X = local player number
 
 				lda server_current_frame_byte0 ; Y = input offset in history
 				and #%00011111

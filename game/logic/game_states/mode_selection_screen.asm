@@ -58,7 +58,8 @@ mode_selection_screen_tick:
 			jmp end
 
 		go_online:
-			jmp end ; TODO
+			lda #GAME_STATE_NETPLAY_LAUNCH
+			jsr change_global_game_state
 
 		go_local:
 			lda #GAME_STATE_CONFIG
