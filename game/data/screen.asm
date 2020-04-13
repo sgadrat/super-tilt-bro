@@ -28,6 +28,12 @@ palette_character_selection:
 ; Sprites
 .byt $21,$00,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$0d,$00,$31
 
+palette_mode_selection:
+; Background
+.byt $21,$0d,$21,$21, $21,$28,$12,$0d, $21,$2a,$1a,$08, $21,$0d,$20,$10
+; Sprites
+.byt $21,$00,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$0d,$00,$31
+
 #define FOR_NES TILE_CHAR_F, TILE_CHAR_O, TILE_CHAR_R, $00, $02, TILE_CHAR_N, TILE_CHAR_E, TILE_CHAR_S
 #define PRESS_ANY_BUTTON  TILE_CHAR_P, TILE_CHAR_R, TILE_CHAR_E, TILE_CHAR_S, TILE_CHAR_S, $00, $01, TILE_CHAR_A, TILE_CHAR_N, TILE_CHAR_Y, $00, $01, TILE_CHAR_B, TILE_CHAR_U, TILE_CHAR_T, TILE_CHAR_T, TILE_CHAR_O, TILE_CHAR_N
 #define TITLE_SCREEN_VERSION TILE_CHAR_V, TILE_CHAR_E, TILE_CHAR_R, TILE_CHAR_S, TILE_CHAR_I, TILE_CHAR_O, TILE_CHAR_N, $00, $01, TILE_CHAR_2, $00, $01, TILE_CHAR_A, TILE_CHAR_L, TILE_CHAR_P, TILE_CHAR_H, TILE_CHAR_A, TILE_CHAR_1
@@ -279,4 +285,38 @@ nametable_character_selection_attributes:
 .byt                       %11000000, %11110000, %11110000, %00110000
 .byt ZIPNT_ZEROS(2+8)
 nametable_character_selection_end:
+.byt ZIPNT_END
+
+nametable_mode_selection:
+.byt ZIPNT_ZEROS(98)
+.byt
+.byt
+.byt           $0d, $0e,  $02, $ec, $e6, $f2,  $ea, $02, $f2, $f4,  $e9, $ea, $02, $f8,  $ea, $f1, $ea, $e8,  $f9, $ee, $f4, $f3,  $02, $02, $02, $02,  $02, $02, ZIPNT_ZEROS(4)
+;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
+.byt           $0f, $10,  ZIPNT_ZEROS(98)
+.byt
+.byt                                $ee, $f2,  $e6, $ec, $ee, $f3,  $ea, $02, $e6, $02,  $f8, $fa, $f5, $ea,  $f7, $02, $f2, $ea, $f3, $fa, ZIPNT_ZEROS(12)
+;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
+.byt                                $fc, $ee,  $f9, $ed, $02, $f9,  $f4, $f3, $f8, $02,  $f4, $eb, $02, $ea,  $eb, $eb, $ea, $e8, $f9, $f8, ZIPNT_ZEROS(6)
+.byt ZIPNT_ZEROS(32*3+4)
+;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
+.byt                      $e7, $02, $02, $02,  $02, $02, $02, $02,  $02, $02, $02, $02,  $02, $02, $02, $02,  $02, $02, $e7, $e6,  $e8, $f0, $02, $02, ZIPNT_ZEROS(8)
+.byt                      $f8, $ea, $f1, $ea,  $e8, $f9, $02, $02,  $02, $02, $02, $02,  $02, $02, $02, $02,  $02, $02, $f4, $f3,  $f1, $ee, $f3, $ea, ZIPNT_ZEROS(8)
+.byt                      $e6, $f3, $fe, $02,  $f4, $f9, $ed, $ea,  $f7, $02, $e7, $fa,  $f9, $f9, $f4, $f3,  $02, $02, $f1, $f4,  $e8, $e6, $f1, $02, ZIPNT_ZEROS(4)
+.byt ZIPNT_ZEROS(32)
+;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
+.byt ZIPNT_ZEROS(32*4)
+;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
+.byt ZIPNT_ZEROS(32*4)
+;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
+.byt ZIPNT_ZEROS(32*4)
+;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
+.byt ZIPNT_ZEROS(32*2)
+nametable_mode_selection_attributes:
+.byt %11111111, %11111111, %11111111, %11111111, %11111111, %11111111, %11111111, %11111111
+.byt %00001111, ZIPNT_ZEROS(7)
+.byt ZIPNT_ZEROS(8+1)
+.byt            %11111111, %11111111, %11111111, %11111111, %11111111, %11111111
+.byt ZIPNT_ZEROS(1+8*4)
+nametable_mode_selection_end:
 .byt ZIPNT_END
