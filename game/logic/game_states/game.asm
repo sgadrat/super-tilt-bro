@@ -406,6 +406,8 @@ game_tick:
 		lda config_ai_level
 		beq end_ai
 		jsr ai_tick
+		lda controller_b_btns
+		sta controller_a_btns
 	end_ai:
 #endif
 #ifndef NO_NETWORK

@@ -59,18 +59,17 @@ network_tick_ingame:
 		do_tick:
 
 		; Update local controller's history
-		ldx network_local_player_number
 		lda network_current_frame_byte0
 		clc
 		adc #NETWORK_INPUT_LAG
 		and #%00011111
 		tay
-		lda controller_a_btns, x
+		lda controller_a_btns
 		sta network_player_local_btns_history, y
 
 		; Send controller's state
-		lda network_last_sent_btns ; NOTE - optimizable as "controller_a_btns, x" is already in register A
-		cmp controller_a_btns, x
+		lda network_last_sent_btns ; NOTE - optimizable as "controller_a_btns" is already in register A
+		cmp controller_a_btns
 		beq controller_sent
 
 			; ESP header
@@ -146,7 +145,7 @@ network_tick_ingame:
 
 		state_updated:
 
-		; Overwrite player's input with delayed input
+		; Overwrite players input with delayed input
 		ldx network_local_player_number ; X = local player number
 
 		lda network_current_frame_byte0 ; Y = input offset in history ;FIXME if just got a message in the futur, it may be in garbage part of the input history (should rewrite next four inputs when receiving a message in the futur)
@@ -156,7 +155,7 @@ network_tick_ingame:
 		lda network_player_local_btns_history, y ; write current input
 		sta controller_a_btns, x
 
-		jsr switch_selected_player ;NOTE - optimizable, no need to switch two times
+		jsr switch_selected_player
 		jsr set_opponent_buttons_from_history
 
 		; Increment frame counter
@@ -207,7 +206,7 @@ network_tick_ingame:
 
 	rollback_state:
 	.(
-		; Copy delayed inputs from message in opponent's intput history
+		; Copy delayed inputs from message in opponent's input history
 		.(
 			; Get first delayed input index in history
 			lda server_current_frame_byte0
@@ -290,19 +289,24 @@ network_tick_ingame:
 
 		; Copy actually pressed opponent btns (keep_input_dirty may mess with normal values, but not this one)
 		.(
+			;TODO Investigate
+			;     We may want to write received buttons in local player history instead of burning it
+			;       That would avoid desynchronizing if a ControllerState packet is lost (= not seen by server)
+			;     Beware of race conditions, if the server receives the ControllerState packet after sending the NewState
+			;       That would cause desychronization (until next NewGameState received), because we updated history with predicted info from server
 			lda network_local_player_number
-			bne player_a
+			bne player_b
 
-				player_b:
-					; Opponent is player B, burn player A's buttons
+				player_a:
+					; Local player is player A, burn its buttons (already in our history)
 					lda RAINBOW_DATA
 					nop
 					lda RAINBOW_DATA
 					pha
 					jmp ok
 
-				player_a:
-					; Opponent is player A, burn player B's buttons
+				player_b:
+					; Local player is player B, burn its buttons (already in our history)
 					lda RAINBOW_DATA
 					pha
 					lda RAINBOW_DATA
@@ -373,9 +377,9 @@ network_tick_ingame:
 
 				lda network_player_local_btns_history, y ; write current input
 				sta controller_a_btns, x
+
+				; Set remote player input according to history
 				jsr switch_selected_player
-				;lda network_player_remote_btns_history, y
-				;sta controller_a_btns, x
 				jsr set_opponent_buttons_from_history
 
 				; Update game state
