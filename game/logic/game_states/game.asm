@@ -401,9 +401,11 @@ game_tick:
 .(
 #ifdef NETWORK_AI
 	; Process AI, done before network call to override "physical" gamepad state at the expense of AI trying to play during screenshakes/slowdown
-	lda config_ai_level
-	beq end_ai
-	jsr ai_tick
+	lda network_rollback_mode
+	bne end_ai
+		lda config_ai_level
+		beq end_ai
+		jsr ai_tick
 	end_ai:
 #endif
 #ifndef NO_NETWORK

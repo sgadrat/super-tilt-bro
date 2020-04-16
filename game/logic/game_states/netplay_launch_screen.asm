@@ -313,7 +313,9 @@ netplay_launch_screen_tick:
 
 			; Configure game
 			lda #0
+#ifndef NETWORK_AI
 			sta config_ai_level
+#endif
 			sta config_selected_stage
 			sta config_player_a_character
 			sta config_player_b_character
