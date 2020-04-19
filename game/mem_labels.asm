@@ -211,6 +211,12 @@ title_animation_state = $02
 title_original_music_state = $03
 
 ;
+; MODE_SELECTION labels
+;
+
+mode_selection_current_option = $00
+
+;
 ; CONFIG labels
 ;
 
