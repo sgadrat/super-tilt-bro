@@ -244,6 +244,7 @@ character_selection_player_b_animation = $05ac ; $05ac to $05b7 - player b's ani
 
 netplay_launch_state = $00
 netplay_launch_ping = $01
+netplay_launch_counter = $02
 
 ;
 ; Common menus labels
@@ -393,3 +394,4 @@ skip_frames_to_50hz = $0701
 network_last_known_remote_input = $07bf
 network_player_local_btns_history = $07c0 ; one byte per frame, circular buffers, 32 entries
 network_player_remote_btns_history = $07e0 ;
+netplay_launch_received_msg = $0702

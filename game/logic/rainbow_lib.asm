@@ -60,7 +60,7 @@ RAINBOW_FLAGS = $5001
 ; Command data follows the format
 ;  First byte is the message length (number of bytes following this first byte).
 ;  Second byte is the command opcode.
-;  Any remaining byte are parameters for the command.
+;  Any remaining bytes are parameters for the command.
 ;
 ; Overwrites all registers
 esp_send_cmd:
@@ -78,5 +78,58 @@ esp_send_cmd:
 		dex
 		bne copy_one_byte
 
+	rts
+.)
+
+; Retrieve a message from ESP
+;  tmpfield1,tmpfield2 - address where the message is stored
+;
+; Message data follows the format
+;  First byte is the message length (number of bytes following this first byte).
+;  Second byte is the message type.
+;  Any remaining bytes are payload of the message.
+;
+; Output
+;  - Retrieved message is stored at address pointed by tmpfield1,tmpfield2
+;  - Y number of bytes retrieved (zero if there was no message, message length otherwise)
+;
+; Note
+;  - Y returns the contents of the "message length" field, so it is one less than the bumber
+;    of bytes writen in memory.
+;  - It is indistinguishable if there was a message with a length field of zero or there
+;    was no message.
+;
+; Overwrites all registers
+esp_get_msg:
+.(
+	ldy #0
+
+	bit RAINBOW_FLAGS
+	bmi store_msg
+
+		; No message, set msg_len to zero
+		lda #0
+		sta (tmpfield1), y
+		jmp end
+
+	store_msg:
+		lda RAINBOW_DATA ; Garbage byte
+		nop
+		lda RAINBOW_DATA ; Message length
+		sta (tmpfield1), y
+
+		tax
+		inx
+		copy_one_byte:
+			dex
+			beq end
+
+			iny
+			lda RAINBOW_DATA
+			sta (tmpfield1), y
+
+			jmp copy_one_byte
+
+	end:
 	rts
 .)
