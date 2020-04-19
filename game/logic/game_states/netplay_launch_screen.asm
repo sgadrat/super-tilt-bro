@@ -251,7 +251,7 @@ netplay_launch_screen_tick:
 	connection_send_msg:
 	.(
 		; Send connection message
-		lda #7                                ; ESP header
+		lda #8                                ; ESP header
 		sta RAINBOW_DATA
 		lda #TOESP_MSG_SEND_MESSAGE_TO_SERVER
 		sta RAINBOW_DATA
@@ -267,6 +267,8 @@ netplay_launch_screen_tick:
 		lda network_client_id_byte3
 		sta RAINBOW_DATA
 		lda netplay_launch_ping ; ping
+		sta RAINBOW_DATA
+		lda #0 ; protocol_version
 		sta RAINBOW_DATA
 
 		; Next step - wait for a response
@@ -313,9 +315,6 @@ netplay_launch_screen_tick:
 
 		connected_msg:
 			; Next step
-			lda netplay_launch_received_msg+2+STNP_CONNECTED_FIELD_PLAYER_NUMBER
-			sta network_local_player_number
-
 			inc netplay_launch_state
 			jmp end
 
@@ -356,7 +355,6 @@ netplay_launch_screen_tick:
 #ifndef NETWORK_AI
 		sta config_ai_level
 #endif
-		sta config_selected_stage
 		sta config_player_a_character
 		sta config_player_b_character
 		sta config_player_a_character_palette
@@ -364,8 +362,15 @@ netplay_launch_screen_tick:
 		lda #1
 		sta config_player_b_character_palette
 		sta config_player_b_weapon_palette
-		lda #3
+
+		lda netplay_launch_received_msg+2+STNP_START_GAME_FIELD_STAGE
+		sta config_selected_stage
+
+		lda netplay_launch_received_msg+2+STNP_START_GAME_FIELD_STOCK
 		sta config_initial_stocks
+
+		lda netplay_launch_received_msg+2+STNP_START_GAME_FIELD_PLAYER_NUMBER
+		sta network_local_player_number
 
 		; Start game
 		lda #GAME_STATE_INGAME
