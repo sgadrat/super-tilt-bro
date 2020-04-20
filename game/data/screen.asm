@@ -413,6 +413,8 @@ nametable_netplay_launch_attributes:
 .byt %00001111, ZIPNT_ZEROS(7)
 .byt ZIPNT_ZEROS(8+1)
 .byt            %11111111, %11111111, %11111111, %11111111, %11111111, %11111111
-.byt ZIPNT_ZEROS(1+8*4)
+.byt ZIPNT_ZEROS(1+1)
+.byt            %11111111, %11111111, %11111111, %11111111, %11111111, %11111111
+.byt ZIPNT_ZEROS(8*3)
 nametable_netplay_launch_end:
 .byt ZIPNT_END

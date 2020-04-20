@@ -68,7 +68,7 @@ netplay_launch_screen_tick:
 	.byt <connection_title, <connection_send_msg, <connection_wait_msg
 	.byt <wait_game
 	error_state_routines_lsb:
-	.byt <no_contact, <bad_ping, <crazy_msg
+	.byt <no_contact, <bad_ping, <crazy_msg, <disconnected
 
 	state_routines_msb:
 	.byt >the_purge
@@ -77,12 +77,13 @@ netplay_launch_screen_tick:
 	.byt >connection_title, >connection_send_msg, >connection_wait_msg
 	.byt >wait_game
 	error_state_routines_msb:
-	.byt >no_contact, >bad_ping, >crazy_msg
+	.byt >no_contact, >bad_ping, >crazy_msg, >disconnected
 
 	FIRST_ERROR_STATE = error_state_routines_lsb - state_routines_lsb
 	ERROR_STATE_NO_CONTACT = FIRST_ERROR_STATE
 	ERROR_STATE_BAD_PING = FIRST_ERROR_STATE + 1
 	ERROR_STATE_CRAZY_MESSAGE = FIRST_ERROR_STATE + 2
+	ERROR_STATE_DISCONNECTED = FIRST_ERROR_STATE + 3
 
 	the_purge:
 	.(
@@ -307,7 +308,14 @@ netplay_launch_screen_tick:
 		cmp #STNP_SRV_MSG_TYPE_CONNECTED
 		beq connected_msg
 		cmp #STNP_SRV_MSG_TYPE_START_GAME
+		beq start_game_msg
+		cmp #STNP_SRV_MSG_TYPE_DISCONNECTED
 		bne error_crazy_msg
+
+		disconnected_msg:
+			lda #ERROR_STATE_DISCONNECTED
+			sta netplay_launch_state
+			jmp end
 
 		start_game_msg:
 			jmp got_start_game_msg
@@ -416,6 +424,68 @@ netplay_launch_screen_tick:
 
 		step_title:
 			.byt $ea, $f7, $f7, $f4, $f7, $02, $e8, $f7, $e6, $ff, $fe, $02, $f2, $ea, $f8, $f8, $e6, $ec, $ea, $f8
+	.)
+
+	disconnected:
+	.(
+		; Write text from server (one line per frame)
+		lda #1 ; continuation byte
+		sta nametable_buffers
+
+		inc netplay_launch_counter ; netplay_launch_counter = current line number
+		lda netplay_launch_counter
+		and #%00000111
+		sta netplay_launch_counter
+
+		asl
+		asl
+		asl
+		asl
+		asl
+		clc
+		adc #$85
+		sta nametable_buffers+2 ; address lsb
+		lda #0
+		adc #$21
+		sta nametable_buffers+1 ; address msb
+		lda #24
+		sta nametable_buffers+3 ; tiles count
+
+		lda netplay_launch_counter ; Y = current line * 24
+		asl
+		asl
+		asl
+		sta tmpfield1
+		asl
+		clc
+		adc tmpfield1
+		tay
+
+		ldx #4
+		lda #24
+		sta tmpfield1
+		copy_one_byte:
+			lda netplay_launch_received_msg+2+STNP_DISCONNECTED_FIELD_REASON, y
+			cmp #32 ; ascii space
+			beq space
+				clc
+				adc #133
+				jmp char_ok
+			space:
+				lda #$02
+			char_ok:
+			sta nametable_buffers, x
+
+			inx
+			iny
+			dec tmpfield1
+			bne copy_one_byte
+
+		lda #0
+		sta nametable_buffers, x ; stop byte
+
+		; Common error code
+		jmp error_common
 	.)
 
 	error_common:
