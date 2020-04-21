@@ -110,7 +110,7 @@ mode_selection_screen_tick:
 			rts
 
 		option_to_game_state:
-			.byt GAME_STATE_CONFIG, GAME_STATE_NETPLAY_LAUNCH, GAME_STATE_DONATION
+			.byt GAME_STATE_NO_LOCAL, GAME_STATE_NETPLAY_LAUNCH, GAME_STATE_DONATION
 	.)
 
 	show_selected_option:
