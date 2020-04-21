@@ -10,6 +10,8 @@ VECTOR(init_character_selection_screen)
 VECTOR(init_mode_selection_screen)
 VECTOR(init_netplay_launch_screen)
 VECTOR(init_donation_screen)
+VECTOR(init_donation_btc_screen)
+VECTOR(init_donation_paypal_screen)
 
 ; Subroutine called each frame
 game_states_tick:
@@ -23,6 +25,8 @@ VECTOR(character_selection_screen_tick)
 VECTOR(mode_selection_screen_tick)
 VECTOR(netplay_launch_screen_tick)
 VECTOR(donation_screen_tick)
+VECTOR(donation_qr_screen_tick)
+VECTOR(donation_qr_screen_tick)
 
 #define GAME_STATE_INGAME $00
 #define GAME_STATE_TITLE $01
@@ -34,12 +38,15 @@ VECTOR(donation_screen_tick)
 #define GAME_STATE_MODE_SELECTION $07
 #define GAME_STATE_NETPLAY_LAUNCH $08
 #define GAME_STATE_DONATION $09
+#define GAME_STATE_DONATION_BTC $0a
+#define GAME_STATE_DONATION_PAYPAL $0b
 ;NOTE maximum supported value is $0f, because get_transition_id returns an ID on one byte. To handle more than 16 states, it should be changed.
 
 #include "game/logic/game_states/character_selection_screen.asm"
 #include "game/logic/game_states/config_screen.asm"
 #include "game/logic/game_states/credits_screen.asm"
 #include "game/logic/game_states/donation_screen.asm"
+#include "game/logic/game_states/donation_qr.asm"
 #include "game/logic/game_states/game.asm"
 #include "game/logic/game_states/gameover_screen.asm"
 #include "game/logic/game_states/mode_selection_screen.asm"

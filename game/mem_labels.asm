@@ -253,6 +253,12 @@ netplay_launch_ping = $01
 netplay_launch_counter = $02
 
 ;
+; DONATION labels
+;
+
+donation_method = $00
+
+;
 ; Common menus labels
 ;  Common to TITLE, CONFIG, CHARACTER_SELECTION, STAGE_SELECTION and CREDITS
 ;
