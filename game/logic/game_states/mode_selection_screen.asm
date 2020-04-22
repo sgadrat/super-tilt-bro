@@ -90,10 +90,18 @@ mode_selection_screen_tick:
 
 		go_left:
 			dec mode_selection_current_option
+			bpl end
+				lda #2
+				sta mode_selection_current_option
 			jmp end
 
 		go_right:
 			inc mode_selection_current_option
+			lda mode_selection_current_option
+			cmp #3
+			bne end
+				lda #0
+				sta mode_selection_current_option
 			jmp end
 
 		go_title:
