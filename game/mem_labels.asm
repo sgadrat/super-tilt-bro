@@ -249,8 +249,9 @@ character_selection_player_b_animation = $05ac ; $05ac to $05b7 - player b's ani
 ;
 
 netplay_launch_state = $00
-netplay_launch_ping = $01
-netplay_launch_counter = $02
+netplay_launch_counter = $01
+netplay_launch_ping_min = $02
+netplay_launch_ping_max = $03
 
 ;
 ; DONATION labels
