@@ -196,11 +196,12 @@ netplay_launch_screen_tick:
 
 			lda RAINBOW_DATA ; message type
 			nop
+
 			lda RAINBOW_DATA ; min
-			nop
+			sta netplay_launch_ping_min
 
 			lda RAINBOW_DATA ; max
-			sta netplay_launch_ping
+			sta netplay_launch_ping_max
 			cmp #OUTRAGEOUS_PING/4
 			bcs error_bad_ping
 
@@ -252,7 +253,7 @@ netplay_launch_screen_tick:
 	connection_send_msg:
 	.(
 		; Send connection message
-		lda #8                                ; ESP header
+		lda #9                                ; ESP header
 		sta RAINBOW_DATA
 		lda #TOESP_MSG_SEND_MESSAGE_TO_SERVER
 		sta RAINBOW_DATA
@@ -267,9 +268,11 @@ netplay_launch_screen_tick:
 		sta RAINBOW_DATA
 		lda network_client_id_byte3
 		sta RAINBOW_DATA
-		lda netplay_launch_ping ; ping
+		lda netplay_launch_ping_min ; min ping
 		sta RAINBOW_DATA
-		lda #0 ; protocol_version
+		lda #1 ; protocol_version
+		sta RAINBOW_DATA
+		lda netplay_launch_ping_max ; max ping
 		sta RAINBOW_DATA
 
 		; Next step - wait for a response
