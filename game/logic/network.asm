@@ -108,7 +108,7 @@ network_tick_ingame:
 			lda network_current_frame_byte3
 			sta RAINBOW_DATA
 
-			lda controller_a_btns, x ; controller state
+			lda controller_a_btns ; controller state
 			sta RAINBOW_DATA
 			sta network_last_sent_btns
 

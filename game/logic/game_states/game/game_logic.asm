@@ -241,11 +241,13 @@ init_game_state:
 		; Change for ingame music
 		jsr audio_music_power
 
-		; Initialize AI
-		jsr ai_init
-
-		; Initialize network
-		jsr network_init_stage
+		; Initialize game mode
+		ldx config_game_mode
+		lda game_modes_init_lsb, x
+		sta tmpfield1
+		lda game_modes_init_msb, x
+		sta tmpfield2
+		jsr call_pointed_subroutine
 
 		rts
 	.)
@@ -399,24 +401,17 @@ init_game_state:
 
 game_tick:
 .(
-#ifdef NETWORK_AI
-	; Process AI, done before network call to override "physical" gamepad state at the expense of AI trying to play during screenshakes/slowdown
-	lda network_rollback_mode
-	bne end_ai
-		lda config_ai_level
-		beq end_ai
-		jsr ai_tick
-		lda controller_b_btns
-		sta controller_a_btns
-	end_ai:
-#endif
-#ifndef NO_NETWORK
-	; Process network messages
-	jsr network_tick_ingame
-#endif
-
 	; Remove processed nametable buffers
 	jsr reset_nt_buffers
+
+	; Tick game mode
+	ldx config_game_mode
+	lda game_modes_pre_update_lsb, x
+	sta tmpfield1
+	lda game_modes_pre_update_msb, x
+	sta tmpfield2
+	jsr call_pointed_subroutine
+	;jsr network_tick_ingame
 
 	; Shake screen and do nothing until shaking is over
 	lda screen_shake_counter
@@ -452,20 +447,6 @@ game_tick:
 	lda stages_tick_routine+1, x
 	sta tmpfield2
 	jsr call_pointed_subroutine
-
-	;TODO clean handling of game mode with
-	; * init routine - called at the end of init_game_state
-	; * pre update hook - called at the very begining of the tick (before screen-shake/slow-down)
-	; * input hook - called here (after scree-shake/slow-down)
-	; That way we can have three game mode - two-players, versus AI, and network
-	; And find a name that is less like "game-mod" which is another concept =)
-#if 0
-	; Process AI - this override controller B state
-	lda config_ai_level
-	beq end_ai
-	jsr ai_tick
-	end_ai:
-#endif
 
 	; Update game state
 	jsr update_players

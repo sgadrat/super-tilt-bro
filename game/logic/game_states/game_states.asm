@@ -47,7 +47,7 @@ VECTOR(donation_qr_screen_tick)
 #include "game/logic/game_states/credits_screen.asm"
 #include "game/logic/game_states/donation_screen.asm"
 #include "game/logic/game_states/donation_qr.asm"
-#include "game/logic/game_states/game.asm"
+#include "game/logic/game_states//game/game.asm"
 #include "game/logic/game_states/gameover_screen.asm"
 #include "game/logic/game_states/mode_selection_screen.asm"
 #include "game/logic/game_states/netplay_launch_screen.asm"
