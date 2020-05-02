@@ -195,11 +195,11 @@ network_client_id_byte3 = $bd
 network_last_sent_btns = $be
 network_local_player_number = $bf
 
-network_rollback_mode = $e2 ; 0 - normal, 1 - rolling ; Note - also used by game tick to know if a frame will be drawn, may be renamed something more generic like "dummy_frame"
 server_current_frame_byte0 = $e3
 server_current_frame_byte1 = $e4
 server_current_frame_byte2 = $e5
 server_current_frame_byte3 = $e6
+network_rollback_mode = $e7 ; 0 - normal, 1 - rolling ; Note - also used by game tick to know if a frame will be drawn, may be renamed something more generic like "dummy_frame"
 
 ;
 ; TITLE labels
@@ -368,7 +368,7 @@ config_player_a_weapon_palette = $de
 config_player_b_weapon_palette = $df
 config_player_a_character = $e0
 config_player_b_character = $e1
-
+config_game_mode = $e2
 ; Note other $ex may be used by network engine
 
 tmpfield1 = $f0

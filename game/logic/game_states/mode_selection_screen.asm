@@ -23,7 +23,7 @@ init_mode_selection_screen:
 	jsr re_init_menu
 
 	; Initialize state
-	lda #1
+	lda config_game_mode
 	sta mode_selection_current_option
 
 	rts
@@ -110,6 +110,7 @@ mode_selection_screen_tick:
 
 		go_next_screen:
 			ldx mode_selection_current_option
+			stx config_game_mode
 			lda option_to_game_state, x
 			jsr change_global_game_state
 
