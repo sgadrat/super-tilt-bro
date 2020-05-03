@@ -14,6 +14,7 @@ default_config:
 	sta config_player_a_character
 	sta config_player_b_character_palette
 	sta config_player_b_weapon_palette
+	sta config_game_mode
 	rts
 .)
 
