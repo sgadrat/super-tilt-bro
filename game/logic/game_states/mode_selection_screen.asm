@@ -110,6 +110,10 @@ mode_selection_screen_tick:
 
 		go_next_screen:
 			ldx mode_selection_current_option
+#ifdef NO_NETWORK
+			cpx #1
+			beq end
+#endif
 			stx config_game_mode
 			lda option_to_game_state, x
 			jsr change_global_game_state
@@ -124,33 +128,56 @@ mode_selection_screen_tick:
 
 	show_selected_option:
 	.(
-		lda #<nt_header
+		lda #<nt_highlight_header
 		sta tmpfield1
-		lda #>nt_header
+		lda #>nt_highlight_header
 		sta tmpfield2
 
 		ldx mode_selection_current_option
-		lda nt_payload_addr_lsb, x
+		lda nt_highlight_payload_addr_lsb, x
 		sta tmpfield3
-		lda nt_payload_addr_msb, x
+		lda nt_highlight_payload_addr_msb, x
 		sta tmpfield4
 
 		jsr construct_nt_buffer
 
 		rts
 
-		nt_header:
+#ifndef NO_NETWORK
+		nt_highlight_header:
 			.byt $23, $d1, $15
-		nt_payload_local:
-			.byt %01010101, %01010101, %01010101, 0, 0, 0 ,0, 0, %01010101, %01010101, %01010101, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-		nt_payload_online:
-			.byt 0, 0, 0, %01010101, %01010101, %01010101, %01010101, 0, 0, 0, 0, %01010101, %01010101, %01010101, %01010101, 0, 0, 0, 0, 0, 0
-		nt_payload_donation:
-			.byt 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, %01010101, %01010101, %01010101, %01010101
+		nt_highlight_payload_local:
+			.byt            %01010101, %01010101, %01010101, %00000000, %00000000, %00000000, %00000000,
+			.byt %00000000, %01010101, %01010101, %01010101, %00000000, %00000000, %00000000, %00000000,
+			.byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000,
+		nt_highlight_payload_online:
+			.byt            %00000000, %00000000, %00000000, %01010101, %01010101, %01010101, %01010101,
+			.byt %00000000, %00000000, %00000000, %00000000, %01010101, %01010101, %01010101, %01010101,
+			.byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000,
+		nt_highlight_payload_donation:
+			.byt            %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000,
+			.byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000,
+			.byt %00000000, %00000000, %01010101, %01010101, %01010101, %01010101
+#else
+		nt_highlight_header:
+			.byt $23, $d1, $15
+		nt_highlight_payload_local:
+			.byt            %01010101, %01010101, %01010101, %10101010, %10101010, %10101010, %10101010,
+			.byt %00000000, %01010101, %01010101, %01010101, %10101010, %10101010, %10101010, %10101010,
+			.byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000,
+		nt_highlight_payload_online:
+			.byt            %00000000, %00000000, %00000000, %11111111, %11111111, %11111111, %11111111,
+			.byt %00000000, %00000000, %00000000, %00000000, %11111111, %11111111, %11111111, %11111111,
+			.byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000,
+		nt_highlight_payload_donation:
+			.byt            %00000000, %00000000, %00000000, %10101010, %10101010, %10101010, %10101010,
+			.byt %00000000, %00000000, %00000000, %00000000, %10101010, %10101010, %10101010, %10101010,
+			.byt %00000000, %00000000, %01010101, %01010101, %01010101, %01010101
+#endif
 
-		nt_payload_addr_lsb:
-			.byt <nt_payload_local, <nt_payload_online, <nt_payload_donation
-		nt_payload_addr_msb:
-			.byt >nt_payload_local, >nt_payload_online, >nt_payload_donation
+		nt_highlight_payload_addr_lsb:
+			.byt <nt_highlight_payload_local, <nt_highlight_payload_online, <nt_highlight_payload_donation
+		nt_highlight_payload_addr_msb:
+			.byt >nt_highlight_payload_local, >nt_highlight_payload_online, >nt_highlight_payload_donation
 	.)
 .)
