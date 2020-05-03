@@ -4,6 +4,7 @@
 *.nl
 *.bin
 build.log
+build.log.err
 game/data/characters/characters-index.asm
 game/data/characters/sinbad/
 game/data/characters/kiki/

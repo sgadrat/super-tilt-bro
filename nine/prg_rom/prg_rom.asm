@@ -90,17 +90,17 @@ ldy #0
 ldx #0
 vblankwait2:
 inx
-beq ok ; bug? should be bne. fixing it will impact known values below
+bne ok
 iny
 ok:
 bit PPUSTATUS
 bpl vblankwait2
 
 ; Y*256+X known values:
-;  15682 - FCEUX on NTSC mode
-;  18253 - FCEUX on PAL mode
-;  61943 - FCEUX on Dendy mode
-cpy #$40
+;  $05b1 - FCEUX on NTSC mode
+;  $06d2 - FCEUX on PAL mode
+;  $078b - FCEUX on Dendy mode
+cpy #$06
 bcs pal
 lda #1
 sta skip_frames_to_50hz

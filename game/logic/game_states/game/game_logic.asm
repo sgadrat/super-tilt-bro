@@ -241,8 +241,13 @@ init_game_state:
 		; Change for ingame music
 		jsr audio_music_power
 
-		; Initialize AI
-		jsr ai_init
+		; Initialize game mode
+		ldx config_game_mode
+		lda game_modes_init_lsb, x
+		sta tmpfield1
+		lda game_modes_init_msb, x
+		sta tmpfield2
+		jsr call_pointed_subroutine
 
 		rts
 	.)
@@ -399,15 +404,27 @@ game_tick:
 	; Remove processed nametable buffers
 	jsr reset_nt_buffers
 
+	; Tick game mode
+	ldx config_game_mode
+	lda game_modes_pre_update_lsb, x
+	sta tmpfield1
+	lda game_modes_pre_update_msb, x
+	sta tmpfield2
+	jsr call_pointed_subroutine
+	;jsr network_tick_ingame
+
 	; Shake screen and do nothing until shaking is over
 	lda screen_shake_counter
 	beq no_screen_shake
 	jsr shake_screen
-	ldx #0
-	jsr player_effects
-	ldx #1
-	jsr player_effects
-	jsr particle_draw
+	lda network_rollback_mode
+	bne end_effects
+		ldx #0
+		jsr player_effects
+		ldx #1
+		jsr player_effects
+		jsr particle_draw
+	end_effects:
 	rts
 	no_screen_shake:
 
@@ -430,12 +447,6 @@ game_tick:
 	lda stages_tick_routine+1, x
 	sta tmpfield2
 	jsr call_pointed_subroutine
-
-	; Process AI - this override controller B state
-	lda config_ai_level
-	beq end_ai
-	jsr ai_tick
-	end_ai:
 
 	; Update game state
 	jsr update_players
@@ -465,6 +476,8 @@ slowdown:
 		jmp end
 
 	next_screen:
+	lda #0
+	sta network_rollback_mode
 	lda #GAME_STATE_GAMEOVER
 	jsr change_global_game_state
 
@@ -522,8 +535,11 @@ update_players:
 		; Call generic update routines
 		jsr move_player
 		jsr check_player_position
-		jsr write_player_damages
-		jsr player_effects
+		lda network_rollback_mode
+		bne end_visuals
+			jsr write_player_damages
+			jsr player_effects
+		end_visuals:
 
 	inx
 	cpx #$02
@@ -858,31 +874,41 @@ apply_force_vector:
 
 	; Apply hitstun to the opponent
 	; hitstun duration = high byte of 2 * (abs(velotcity_v) + abs(velocity_h))
-	lda player_a_velocity_h, x     ;
-	bpl end_abs_kb_h               ;
-	lda player_a_velocity_h_low, x ;
-	eor #%11111111                 ;
-	clc                            ;
-	adc #$01                       ; knockback_h = abs(velocity_h)
-	sta knockback_h_low            ;
-	lda player_a_velocity_h, x     ;
-	eor #%11111111                 ;
-	adc #$00                       ;
-	end_abs_kb_h:                  ;
-	sta knockback_h_high           ;
+	lda player_a_velocity_h, x         ;
+	bpl passthrough_kb_h               ;
+		lda player_a_velocity_h_low, x ;
+		eor #%11111111                 ;
+		clc                            ;
+		adc #$01                       ;
+		sta knockback_h_low            ;
+		lda player_a_velocity_h, x     ;
+		eor #%11111111                 ; knockback_h = abs(velocity_h)
+		adc #$00                       ;
+		sta knockback_h_high           ;
+		jmp end_abs_kb_h               ;
+	passthrough_kb_h:                  ;
+		sta knockback_h_high           ;
+		lda player_a_velocity_h_low, x ;
+		sta knockback_h_low            ;
+	end_abs_kb_h:                      ;
 
-	lda player_a_velocity_v, x      ;
-	bpl end_abs_kb_v                ;
-	lda player_a_velocity_v_low, x  ;
-	eor #%11111111                  ;
-	clc                             ;
-	adc #$01                        ; knockback_v = abs(velocity_v)
-	sta knockback_v_low             ;
-	lda player_a_velocity_v, x      ;
-	eor #%11111111                  ;
-	adc #$00                        ;
-	end_abs_kb_v:                   ;
-	sta knockback_v_high            ;
+	lda player_a_velocity_v, x         ;
+	bpl passthrough_kb_v               ;
+		lda player_a_velocity_v_low, x ;
+		eor #%11111111                 ;
+		clc                            ;
+		adc #$01                       ;
+		sta knockback_v_low            ;
+		lda player_a_velocity_v, x     ;
+		eor #%11111111                 ; knockback_v = abs(velocity_v)
+		adc #$00                       ;
+		sta knockback_v_high           ;
+		jmp end_abs_kb_v               ;
+	passthrough_kb_v:                  ;
+		sta knockback_v_high           ;
+		lda player_a_velocity_v_low, x ;
+		sta knockback_v_low            ;
+	end_abs_kb_v:                      ;
 
 	lda knockback_h_low  ;
 	clc                  ;
@@ -1698,12 +1724,12 @@ update_sprites:
 				pha
 				tya
 				pha
-				jsr stb_animation_draw
+				jsr animation_draw
 				jsr animation_tick
 				pla
 				tay
 				pla
-				tay
+				tax
 
 			oos_indicator_drawn:
 		.)

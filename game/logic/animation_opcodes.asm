@@ -264,7 +264,7 @@ anim_frame_move_hitbox:
 	lda (frame_vector), y
 	sta player_a_hitbox_top, x
 	iny
-	; Top
+	; Bottom
 	lda (frame_vector), y
 	sta player_a_hitbox_bottom, x
 	iny

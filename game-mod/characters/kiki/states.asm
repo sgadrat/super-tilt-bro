@@ -1203,8 +1203,8 @@ kiki_start_shielding:
 
 	; Cancel momentum
 	lda #$00
-	sta player_a_velocity_h_low
-	sta player_a_velocity_h
+	sta player_a_velocity_h_low, x
+	sta player_a_velocity_h, x
 
 	; Set shield as full life
 	lda #2

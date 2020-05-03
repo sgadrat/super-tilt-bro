@@ -32,6 +32,19 @@ init_title_screen:
 	lda #185           ; X
 	sta oam_mirror+3
 
+	; Place 50Hz emulation indicator
+	lda skip_frames_to_50hz
+	beq emu_50hz_done
+		lda #208                 ; Y
+		sta oam_mirror+4
+		lda #TILE_NTSC_INDICATOR ; Tile
+		sta oam_mirror+5
+		lda #$00                 ; Attributes
+		sta oam_mirror+6
+		lda #100                 ; X
+		sta oam_mirror+7
+	emu_50hz_done:
+
 	; Reinit cheat code state
 	lda #0
 	sta title_cheatstate
@@ -41,7 +54,7 @@ init_title_screen:
 
 	; Choose between soft (keep continuity) or hard (reboot) initialization of music and menu animations
 	lda previous_global_game_state
-	cmp #GAME_STATE_CONFIG
+	cmp #GAME_STATE_MODE_SELECTION
 	beq soft_init
 	cmp #GAME_STATE_CREDITS
 	beq soft_init
@@ -175,7 +188,7 @@ title_screen_tick:
 
 			next_screen:
 				jsr title_screen_restore_music_state
-				lda #GAME_STATE_CONFIG
+				lda #GAME_STATE_MODE_SELECTION
 				jsr change_global_game_state
 
 		end:

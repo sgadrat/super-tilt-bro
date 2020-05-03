@@ -179,6 +179,29 @@ extra_tmpfield5 = $b4
 extra_tmpfield6 = $b5
 
 ;
+; Network engine labels
+;
+
+network_current_frame_byte0 = $b6
+network_current_frame_byte1 = $b7
+network_current_frame_byte2 = $b8
+network_current_frame_byte3 = $b9
+
+network_client_id_byte0 = $ba
+network_client_id_byte1 = $bb
+network_client_id_byte2 = $bc
+network_client_id_byte3 = $bd
+
+network_last_sent_btns = $be
+network_local_player_number = $bf
+
+server_current_frame_byte0 = $e3
+server_current_frame_byte1 = $e4
+server_current_frame_byte2 = $e5
+server_current_frame_byte3 = $e6
+network_rollback_mode = $e7 ; 0 - normal, 1 - rolling ; Note - also used by game tick to know if a frame will be drawn, may be renamed something more generic like "dummy_frame"
+
+;
 ; TITLE labels
 ;
 
@@ -186,6 +209,12 @@ title_cheatstate = $00
 title_animation_frame = $01
 title_animation_state = $02
 title_original_music_state = $03
+
+;
+; MODE_SELECTION labels
+;
+
+mode_selection_current_option = $00
 
 ;
 ; CONFIG labels
@@ -214,6 +243,21 @@ character_selection_player_a_async_job_active = $0c
 character_selection_player_b_async_job_active = $0d
 character_selection_player_a_animation = $05a0 ; $05a0 to $05ab - player a's animation state
 character_selection_player_b_animation = $05ac ; $05ac to $05b7 - player b's animation state
+
+;
+; NETPLAY_LAUNCH labels
+;
+
+netplay_launch_state = $00
+netplay_launch_counter = $01
+netplay_launch_ping_min = $02
+netplay_launch_ping_max = $03
+
+;
+; DONATION labels
+;
+
+donation_method = $00
 
 ;
 ; Common menus labels
@@ -324,6 +368,8 @@ config_player_a_weapon_palette = $de
 config_player_b_weapon_palette = $df
 config_player_a_character = $e0
 config_player_b_character = $e1
+config_game_mode = $e2
+; Note other $ex may be used by network engine
 
 tmpfield1 = $f0
 tmpfield2 = $f1
@@ -358,3 +404,7 @@ players_palettes = $0580 ; $0580 to $059f - 4 nametable buffers (8 bytes each) c
 ;$06xx may be used by audio engine, see "Audio engine labels"
 virtual_frame_cnt = $0700
 skip_frames_to_50hz = $0701
+network_last_known_remote_input = $07bf
+network_player_local_btns_history = $07c0 ; one byte per frame, circular buffers, 32 entries
+network_player_remote_btns_history = $07e0 ;
+netplay_launch_received_msg = $0702
