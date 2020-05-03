@@ -101,10 +101,10 @@ netplay_launch_screen_tick:
 		; Next step
 		inc netplay_launch_state
 
-		rts
+		jmp back_on_b
 
 		step_title:
-			.byt $ee, $f3, $ee, $f9, $ee, $e6, $f1, $ee, $02, $ee, $f3, $ec, $02, $f8, $f9, $fa, $eb, $eb, $02, $02
+			.byt $ee, $f3, $ee, $f9, $ee, $e6, $f1, $ee, $ff, $ea, $02, $f8, $f9, $fa, $eb, $eb, $02, $02, $02, $02
 	.)
 
 	client_id_request_rnd:
@@ -169,7 +169,7 @@ netplay_launch_screen_tick:
 		; Next step - wait for replies
 		inc netplay_launch_state
 
-		rts
+		jmp back_on_b
 
 		estimate_latency_msg:
 			.byt $ea, $f8, $f9, $ee, $f2, $e6, $f9, $ea, $02, $f1, $e6, $f9, $ea, $f3, $e8, $fe, $02, $02, $02, $02
@@ -231,7 +231,7 @@ netplay_launch_screen_tick:
 			;jmp end
 
 		end:
-		rts
+		jmp back_on_b
 	.)
 
 	connection_title:
@@ -244,7 +244,7 @@ netplay_launch_screen_tick:
 		; Next step
 		inc netplay_launch_state
 
-		rts
+		jmp back_on_b
 
 		step_title:
 			.byt $e8, $f4, $f3, $f3, $ea, $e8, $f9, $ee, $f3, $ec, $02, $f9, $f4, $02, $f8, $ea, $f7, $fb, $ea, $f7
@@ -280,7 +280,7 @@ netplay_launch_screen_tick:
 		sta netplay_launch_counter
 		inc netplay_launch_state
 
-		rts
+		jmp back_on_b
 	.)
 
 	connection_wait_msg:
@@ -335,7 +335,7 @@ netplay_launch_screen_tick:
 			;jmp end
 
 		end:
-		rts
+		jmp back_on_b
 	.)
 
 	wait_game:
@@ -353,7 +353,7 @@ netplay_launch_screen_tick:
 		sta netplay_launch_counter
 		dec netplay_launch_state
 
-		rts
+		jmp back_on_b
 
 		step_title:
 			.byt $fc, $e6, $ee, $f9, $ee, $f3, $ec, $02, $eb, $f4, $f7, $02, $e6, $02, $f7, $ee, $fb, $e6, $f1, $02
@@ -397,7 +397,7 @@ netplay_launch_screen_tick:
 		ldy #>step_title
 		jsr show_step_name
 
-		jmp error_common
+		jmp back_on_b
 
 		step_title:
 			.byt $ea, $f7, $f7, $f4, $f7, $02, $f3, $f4, $02, $e8, $f4, $f3, $f9, $e6, $e8, $f9, $02, $02, $02, $02
@@ -410,7 +410,7 @@ netplay_launch_screen_tick:
 		ldy #>step_title
 		jsr show_step_name
 
-		jmp error_common
+		jmp back_on_b
 
 		step_title:
 			.byt $ea, $f7, $f7, $f4, $f7, $02, $e7, $e6, $e9, $02, $f5, $ee, $f3, $ec, $02, $02, $02, $02, $02, $02
@@ -423,7 +423,7 @@ netplay_launch_screen_tick:
 		ldy #>step_title
 		jsr show_step_name
 
-		jmp error_common
+		jmp back_on_b
 
 		step_title:
 			.byt $ea, $f7, $f7, $f4, $f7, $02, $e8, $f7, $e6, $ff, $fe, $02, $f2, $ea, $f8, $f8, $e6, $ec, $ea, $f8
@@ -488,15 +488,16 @@ netplay_launch_screen_tick:
 		sta nametable_buffers, x ; stop byte
 
 		; Common error code
-		jmp error_common
+		jmp back_on_b
 	.)
 
-	error_common:
+	back_on_b:
 	.(
 		lda controller_a_btns
 		bne end
 		lda controller_a_last_frame_btns
-		beq end
+		cmp #CONTROLLER_BTN_B
+		bne end
 
 			lda #GAME_STATE_TITLE
 			jsr change_global_game_state
