@@ -1,3 +1,5 @@
+SINBAD_FASTFALL_GRAVITY = $05
+
 ; Change the player's state if an aerial move is input on the controller
 ;  register X - Player number
 ;
@@ -73,7 +75,7 @@ jmp controller_callbacks
 
 ; Fast fall, gravity * 1.5
 fast_fall:
-lda #DEFAULT_GRAVITY*2-DEFAULT_GRAVITY/2
+lda #SINBAD_FASTFALL_GRAVITY
 sta player_a_gravity, x
 sta player_a_velocity_v, x
 lda #$00
@@ -576,9 +578,9 @@ jmp end                        ;
 
 ; Put initial jumping velocity
 begin_to_jump:
-lda #$fa
+lda #$fb
 sta player_a_velocity_v, x
-lda #$c0
+lda #$80
 sta player_a_velocity_v_low, x
 jmp end
 
