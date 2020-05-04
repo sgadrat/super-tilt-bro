@@ -6,4 +6,8 @@ ANIM_FRAME_END
 ; End of animation
 ANIM_ANIMATION_END
 
+#if (* - anim_invisible) <> ANIM_INVISIBLE_SIZE
+#error wrong anim_invisible size constant
+#endif
+
 #print anim_invisible

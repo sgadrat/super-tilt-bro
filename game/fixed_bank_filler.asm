@@ -57,6 +57,9 @@ credits_end:
 ; Print some PRG-ROM space usage information
 ;
 
+ANIM_INVISIBLE_SIZE = 8
+ANIM_INVISIBLE_ADDR = $fffa-ANIM_INVISIBLE_SIZE
+
 #echo
 #echo FIXED-bank total space:
 #print $10000-$c000
@@ -68,17 +71,27 @@ credits_end:
 #print credits_end-credits_begin
 #echo
 #echo FIXED-bank free space:
-#print $fffa-*
+#print ANIM_INVISIBLE_ADDR-*
 
 ;
-; Fill code bank and set entry points vectors (also from nesmine)
+; Fill bank's empty space
 ;
 
-#if $fffa-* < 0
-#echo *** Error: Code occupies too much space
-#else
-.dsb $fffa-*, 0     ;aligning
+#if ANIM_INVISIBLE_ADDR-* < 0
+#error Fixed bank overflow
+#endif
+.dsb ANIM_INVISIBLE_ADDR-*, 0
+
+;
+; Place anim invisible (see comment in characters-common-animations.asm)
+;
+
+#include "game/data/characters/characters-common-animations/invisible.asm"
+
+;
+; Set entry points vectors (also from nesmine)
+;
+
 .word nmi           ;entry point for VBlank interrupt  (NMI)
 .word reset         ;entry point for program start     (RESET)
 .word cursed        ;entry point for masking interrupt (IRQ)
-#endif
