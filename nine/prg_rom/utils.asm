@@ -23,7 +23,8 @@ sta controller_a_btns, x
 ldy #$08
 next_btn:
 lda CONTROLLER_A, x
-lsr
+and #%00000011
+cmp #1
 rol controller_a_btns, x
 dey
 bne next_btn
