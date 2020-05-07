@@ -411,7 +411,6 @@ game_tick:
 	lda game_modes_pre_update_msb, x
 	sta tmpfield2
 	jsr call_pointed_subroutine
-	;jsr network_tick_ingame
 
 	; Shake screen and do nothing until shaking is over
 	lda screen_shake_counter
@@ -1472,6 +1471,9 @@ write_player_damages:
 	inx
 
 	; Store the tiles address as destination parameter for number_to_tile_indexes
+#if (nametable_buffers & $ff) <> 0
+#error Code bellow expects nametable_buffer to be page-aligned
+#endif
 	txa
 	sta tmpfield2
 	lda #>nametable_buffers
