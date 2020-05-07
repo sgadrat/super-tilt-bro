@@ -528,7 +528,7 @@
 		{
 			"input_routine": "keep_input_dirty",
 			"name": "KIKI_STATE_LANDING",
-			"offground_routine": "kiki_start_helpless",
+			"offground_routine": "kiki_start_falling",
 			"onground_routine": "dummy_routine",
 			"onhurt_routine": "hurt_player",
 			"start_routine": null,
@@ -538,7 +538,7 @@
 		{
 			"input_routine": "keep_input_dirty",
 			"name": "KIKI_STATE_CRASHING",
-			"offground_routine": "kiki_start_helpless",
+			"offground_routine": "kiki_start_falling",
 			"onground_routine": "dummy_routine",
 			"onhurt_routine": "hurt_player",
 			"start_routine": null,
@@ -568,7 +568,7 @@
 		{
 			"input_routine": "kiki_input_shielding",
 			"name": "KIKI_STATE_SHIELDING",
-			"offground_routine": "kiki_start_helpless",
+			"offground_routine": "kiki_start_falling",
 			"onground_routine": "dummy_routine",
 			"onhurt_routine": "kiki_hurt_shielding",
 			"start_routine": null,
@@ -578,7 +578,7 @@
 		{
 			"input_routine": "keep_input_dirty",
 			"name": "KIKI_STATE_SHIELDLAG",
-			"offground_routine": "kiki_start_helpless",
+			"offground_routine": "kiki_start_falling",
 			"onground_routine": "dummy_routine",
 			"onhurt_routine": "hurt_player",
 			"start_routine": null,

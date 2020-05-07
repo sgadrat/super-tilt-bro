@@ -487,7 +487,7 @@
 			"type": "character_state",
 			"name": "PLAYER_STATE_LANDING",
 			"update_routine": "sinbad_tick_landing",
-			"offground_routine": "sinbad_start_helpless",
+			"offground_routine": "sinbad_start_falling",
 			"onground_routine": "dummy_routine",
 			"input_routine": "keep_input_dirty",
 			"onhurt_routine": "hurt_player"
@@ -496,7 +496,7 @@
 			"type": "character_state",
 			"name": "PLAYER_STATE_CRASHING",
 			"update_routine": "sinbad_tick_crashing",
-			"offground_routine": "sinbad_start_helpless",
+			"offground_routine": "sinbad_start_falling",
 			"onground_routine": "dummy_routine",
 			"input_routine": "keep_input_dirty",
 			"onhurt_routine": "hurt_player"
@@ -586,7 +586,7 @@
 			"type": "character_state",
 			"name": "PLAYER_STATE_SHIELDING",
 			"update_routine": "sinbad_tick_shielding",
-			"offground_routine": "sinbad_start_helpless",
+			"offground_routine": "sinbad_start_falling",
 			"onground_routine": "dummy_routine",
 			"input_routine": "sinbad_input_shielding",
 			"onhurt_routine": "sinbad_hurt_shielding"
@@ -595,7 +595,7 @@
 			"type": "character_state",
 			"name": "PLAYER_STATE_SHIELDLAG",
 			"update_routine": "sinbad_tick_shieldlag",
-			"offground_routine": "sinbad_start_helpless",
+			"offground_routine": "sinbad_start_falling",
 			"onground_routine": "dummy_routine",
 			"input_routine": "keep_input_dirty",
 			"onhurt_routine": "hurt_player"
