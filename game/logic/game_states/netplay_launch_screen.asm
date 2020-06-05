@@ -252,8 +252,10 @@ netplay_launch_screen_tick:
 
 	connection_send_msg:
 	.(
+		flags_byte = tmpfield1
+
 		; Send connection message
-		lda #9                                ; ESP header
+		lda #11                                ; ESP header
 		sta RAINBOW_DATA
 		lda #TOESP_MSG_SEND_MESSAGE_TO_SERVER
 		sta RAINBOW_DATA
@@ -270,9 +272,25 @@ netplay_launch_screen_tick:
 		sta RAINBOW_DATA
 		lda netplay_launch_ping_min ; min ping
 		sta RAINBOW_DATA
-		lda #1 ; protocol_version
+		lda #2 ; protocol_version
 		sta RAINBOW_DATA
 		lda netplay_launch_ping_max ; max ping
+		sta RAINBOW_DATA
+
+		lda skip_frames_to_50hz
+		clc
+		ror
+		ror
+		sta flags_byte ; framerate
+
+		lda RAINBOW_MAPPER_VERSION
+		and #%01100000
+		ora flags_byte ; support
+
+		ora #>GAME_VERSION ; release_type + version_major
+		sta RAINBOW_DATA
+
+		lda #<GAME_VERSION ; version_minor
 		sta RAINBOW_DATA
 
 		; Next step - wait for a response

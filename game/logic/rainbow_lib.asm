@@ -53,6 +53,7 @@ ESP_PROTOCOL_UDP = 1
 
 RAINBOW_DATA = $5000
 RAINBOW_FLAGS = $5001
+RAINBOW_MAPPER_VERSION = $5C03
 
 ; Send a command to the ESP
 ;  tmpfield1,tmpfield2 - address of the command data
