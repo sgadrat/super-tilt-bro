@@ -252,6 +252,8 @@ netplay_launch_state = $00
 netplay_launch_counter = $01
 netplay_launch_ping_min = $02
 netplay_launch_ping_max = $03
+netplay_launch_server = $04
+netplay_launch_nb_servers = $05
 
 ;
 ; DONATION labels
