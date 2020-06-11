@@ -49,9 +49,8 @@ palette_donation:
 #define FOR_NES TILE_CHAR_F, TILE_CHAR_O, TILE_CHAR_R, $00, $02, TILE_CHAR_N, TILE_CHAR_E, TILE_CHAR_S
 #define PRESS_ANY_BUTTON  TILE_CHAR_P, TILE_CHAR_R, TILE_CHAR_E, TILE_CHAR_S, TILE_CHAR_S, $00, $01, TILE_CHAR_A, TILE_CHAR_N, TILE_CHAR_Y, $00, $01, TILE_CHAR_B, TILE_CHAR_U, TILE_CHAR_T, TILE_CHAR_T, TILE_CHAR_O, TILE_CHAR_N
 #define TITLE_SCREEN_VERSION \
-	TILE_CHAR_O, TILE_CHAR_N, TILE_CHAR_L, TILE_CHAR_I, TILE_CHAR_N, TILE_CHAR_E, $00, $01, \
-	TILE_CHAR_P, TILE_CHAR_R, TILE_CHAR_O, TILE_CHAR_T, TILE_CHAR_O, \
-	TILE_CHAR_3
+	TILE_CHAR_V, TILE_CHAR_E, TILE_CHAR_R, TILE_CHAR_S, TILE_CHAR_I, TILE_CHAR_O, TILE_CHAR_N, $00, $01, \
+	TILE_CHAR_2, $00, $01, TILE_CHAR_A, TILE_CHAR_L, TILE_CHAR_P, TILE_CHAR_H, TILE_CHAR_A, TILE_CHAR_2
 
 nametable_title:
 .byt ZIPNT_ZEROS(32*3+6)
@@ -91,7 +90,7 @@ nametable_title:
 .byt ZIPNT_ZEROS(12+32*5+8)
 .byt                                                                             PRESS_ANY_BUTTON
 ;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
-.byt ZIPNT_ZEROS(8+32*2+17)
+.byt ZIPNT_ZEROS(8+32*2+14)
 .byt                                                                                               TITLE_SCREEN_VERSION
 .byt ZIPNT_ZEROS(2+32*3)
 nametable_title_attributes:
