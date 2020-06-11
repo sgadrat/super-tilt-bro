@@ -110,6 +110,46 @@ netplay_launch_screen_tick:
 	.(
 		esp_msg_length = netplay_launch_received_msg
 
+		; Show progress to the user
+		lda #<step_title
+		ldy #>step_title
+		jsr show_step_name
+
+		; Display choices
+		lda #<server1_buffer_header
+		sta tmpfield1
+		lda #>server1_buffer_header
+		sta tmpfield2
+		lda #<server1_name
+		sta tmpfield3
+		lda #>server1_name
+		sta tmpfield4
+		jsr construct_nt_buffer
+
+		lda #<server2_buffer_header
+		sta tmpfield1
+		lda #>server2_buffer_header
+		sta tmpfield2
+		lda #<server2_name
+		sta tmpfield3
+		lda #>server2_name
+		sta tmpfield4
+		jsr construct_nt_buffer
+
+		; Set info about servers list
+		lda #0
+		sta netplay_launch_server
+		lda #NB_KNOWN_SERVERS
+		sta netplay_launch_nb_servers
+
+		; Prepare selection sprite
+		lda #TILE_OUT_OF_SCREEN_BUBBLE
+		sta oam_mirror+1
+		lda #0
+		sta oam_mirror+2
+		lda #55
+		sta oam_mirror+3
+
 		; Wait for server settings
 		lda #<netplay_launch_received_msg
 		sta tmpfield1
@@ -120,50 +160,19 @@ netplay_launch_screen_tick:
 		cpy #0
 		beq end
 
-			; Show progress to the user
-			lda #<step_title
-			ldy #>step_title
-			jsr show_step_name
-
-			; Display choices
-			lda #<server1_buffer_header
-			sta tmpfield1
-			lda #>server1_buffer_header
-			sta tmpfield2
-			lda #<server1_name
-			sta tmpfield3
-			lda #>server1_name
-			sta tmpfield4
-			jsr construct_nt_buffer
-
-			lda #<server2_buffer_header
-			sta tmpfield1
-			lda #>server2_buffer_header
-			sta tmpfield2
-			lda #<server2_name
-			sta tmpfield3
-			lda #>server2_name
-			sta tmpfield4
-			jsr construct_nt_buffer
-
-			; Set info about servers list
-			lda #0
-			sta netplay_launch_server
-			lda #NB_KNOWN_SERVERS
-			sta netplay_launch_nb_servers
-
-			; Prepare selection sprite
-			lda #TILE_OUT_OF_SCREEN_BUBBLE
-			sta oam_mirror+1
-			lda #0
-			sta oam_mirror+2
-			lda #55
-			sta oam_mirror+3
-
 			; Display custom server if configured
+			lda config_has_custom_server
+			beq check_message
+			bmi end_custom_server
+			check_message:
+			lda #$ff
+			sta config_has_custom_server
 			lda esp_msg_length
 			cmp #1
 			beq end_custom_server
+				lda #1
+				sta config_has_custom_server
+
 				lda #<server3_buffer_header
 				sta tmpfield1
 				lda #>server3_buffer_header
