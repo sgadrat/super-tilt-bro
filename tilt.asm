@@ -4,6 +4,23 @@
 ; Building raw ROMs
 ;  xa tilt.asm -DNO_INES_HEADER -C -o tilt_prg.bin
 
+; Constants depending on mapper
+
+#define DEFAULT_MAPPER
+#ifdef MAPPER_UNROM512
+#undef DEFAULT_MAPPER
+	MAPPER_NUMBER=30
+#endif
+#ifdef MAPPER_RAINBOW512
+#undef DEFAULT_MAPPER
+	MAPPER_NUMBER=3870
+#endif
+#ifdef DEFAULT_MAPPER
+#undef DEFAULT_MAPPER
+#define MAPPER_RAINBOW
+	MAPPER_NUMBER=3871
+#endif
+
 ; iNES header
 
 #ifndef NO_INES_HEADER
