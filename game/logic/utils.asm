@@ -125,7 +125,11 @@ clear_bg_bot_left:
 ; See macro with the same name
 switch_bank:
 .(
+#ifdef MAPPER_RAINBOW
+	sta RAINBOW_PRG_BANKING_1
+#else
 	sta $c000
+#endif
 	rts
 .)
 

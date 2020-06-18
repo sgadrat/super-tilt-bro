@@ -93,5 +93,5 @@ ANIM_INVISIBLE_ADDR = $fffa-ANIM_INVISIBLE_SIZE
 ;
 
 .word nmi           ;entry point for VBlank interrupt  (NMI)
-.word reset         ;entry point for program start     (RESET)
+.word mapper_init   ;entry point for program start     (RESET)
 .word cursed        ;entry point for masking interrupt (IRQ)

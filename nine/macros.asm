@@ -206,7 +206,14 @@
 #define COMMA ,
 
 ; Should be equivalent to the switch_bank routine
+#ifdef MAPPER_RAINBOW
+#define SWITCH_BANK(n) .(:\
+    lda n:\
+    sta RAINBOW_PRG_BANKING_1:\
+.)
+#else
 #define SWITCH_BANK(n) .(:\
     lda n:\
     sta $c000:\
 .)
+#endif

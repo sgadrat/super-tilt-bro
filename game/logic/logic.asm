@@ -8,3 +8,4 @@
 #include "game/logic/ai.asm"
 #include "game/logic/rainbow_lib.asm"
 #include "game/logic/network.asm"
+#include "game/logic/mapper_init.asm"
