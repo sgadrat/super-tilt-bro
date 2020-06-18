@@ -128,7 +128,22 @@ switch_bank:
 #ifdef MAPPER_RAINBOW
 	sta RAINBOW_PRG_BANKING_1
 #else
+#ifdef MAPPER_UNROM
+	pha
+	txa
+	pha
+
+	tsx
+	lda stack+2, x
+	tax
+	sta bank_table, x
+
+	pla
+	tax
+	pla
+#else
 	sta $c000
+#endif
 #endif
 	rts
 .)

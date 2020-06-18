@@ -212,8 +212,15 @@
     sta RAINBOW_PRG_BANKING_1:\
 .)
 #else
+#ifdef MAPPER_UNROM
+#define SWITCH_BANK(n) .(:\
+	lda n:\
+	jsr switch_bank:\
+.)
+#else
 #define SWITCH_BANK(n) .(:\
     lda n:\
     sta $c000:\
 .)
+#endif
 #endif
