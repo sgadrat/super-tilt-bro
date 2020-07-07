@@ -101,7 +101,7 @@ netplay_launch_screen_tick:
 		step_title:
 			.byt $e8, $ed, $ea, $e8, $f0, $02, $f3, $ea, $f9, $fc, $f4, $f7, $f0, $02, $e8, $f4, $f3, $eb, $ee, $ec
 		cmd_get_server_settings:
-			.byt 1, TOESP_MSG_GET_SERVER_SETTINGS
+			.byt 1, TOESP_MSG_GET_SERVER_CONFIG_SETTINGS
 	.)
 
 	NB_KNOWN_SERVERS = 2
