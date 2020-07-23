@@ -13,6 +13,7 @@
 ;#define VECTOR(lbl) .byt <lbl, >lbl
 #define VECTOR(lbl) .word lbl
 
+#if 0
 ;
 ; Audio data representation
 ;  TIMED_OX_X(duration) - play the described note for <duration> frames
@@ -98,6 +99,64 @@
 
 #define SAMPLE_END .byt $02, $00, $00
 #define MUSIC_END .byt $00, $00
+
+#else
+
+; New audio engine macros
+;TODO comment it properly
+
+; Music header
+;  Format
+;   2 bytes - vector to 2a06 pulse channel 1's track
+;   0 to 256 bytes - notes table, each entry is a two bytes frequency
+;
+;  WiP
+;   TODO add other channels
+;   TODO remove the table, could be a global table, there is only 96 common notes
+MUSIC_HEADER_PULSE_TRACK_OFFSET = 0
+MUSIC_HEADER_NOTES_TABLE_OFFSET = 2
+
+; Commons
+
+#define MUSIC_END .byt $00, $00
+#define SAMPLE_END .byt $ff
+
+; 2a03 pulse
+
+AUDIO_OP_CHAN_PARAMS = 0
+AUDIO_OP_CHAN_VOLUME_LOW = 1
+AUDIO_OP_CHAN_VOLUME_HIGH = 2
+AUDIO_OP_PLAY_TIMED_FREQ = 3
+AUDIO_OP_PLAY_NOTE = 4
+AUDIO_OP_WAIT = 5
+AUDIO_OP_LONG_WAIT = 6
+AUDIO_OP_HALT = 7
+
+#define CHAN_PARAMS(default_dur,duty,loop,const,volume,sweep_enabled,sweep_period,sweep_negate,sweep_shift) .byt \
+(default_dur << 5) + AUDIO_OP_CHAN_PARAMS, \
+(duty << 6) + (loop << 5) + (const << 4) + volume, \
+(sweep_enabled << 7) + (sweep_period << 4) + (sweep_negate << 3) + sweep_shift
+
+#define CHAN_VOLUME_LOW(volume) .byt (volume << 5) + AUDIO_OP_CHAN_VOLUME_LOW
+
+#define CHAN_VOLUME_HIGH(volume_minus_eight) .byt (volume_minus_eight << 5) + AUDIO_OP_CHAN_VOLUME_HIGH
+
+#define PLAY_TIMED_FREQ(freq,dur_minus_one) .byt \
+((freq >> 3) & %11100000) + AUDIO_OP_PLAY_TIMED_FREQ, \
+<freq, \
+dur_minus_one
+
+#define PLAY_NOTE(dir,shift,note_idx) .byt \
+(dir << 7) + (shift << 5) + AUDIO_OP_PLAY_NOTE, \
+note_idx
+
+#define WAIT(dur_minus_one) .byt (dur_minus_one << 5) + AUDIO_OP_WAIT
+
+#define LONG_WAIT(dur_minus_one) .byt AUDIO_OP_LONG_WAIT, dur_minus_one
+
+#define HALT(dur_minus_one) .byt (dur_minus_one << 5) + AUDIO_OP_HALT
+
+#endif
 
 ;
 ; Animation data representation

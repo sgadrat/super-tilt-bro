@@ -1,5 +1,7 @@
 audio_music_power:
 .(
+#if 0
+;TODO old engine
 lda audio_music_enabled
 beq disabled
 lda #%00001111 ; ---DNT21
@@ -29,12 +31,14 @@ lda #>track_main_triangle
 sta audio_triangle_track+1
 
 jsr audio_reset_music
-
+#endif
 rts
 .)
 
 audio_music_weak:
 .(
+#if 0
+;TODO old engine
 lda audio_music_enabled
 beq disabled
 lda #%00001011 ; ---DNT21
@@ -64,12 +68,14 @@ lda #>track_menus_triangle
 sta audio_triangle_track+1
 
 jsr audio_reset_music
-
+#endif
 rts
 .)
 
 audio_music_gameover:
 .(
+#if 0
+;TODO old engine
 lda audio_music_enabled
 beq disabled
 lda #%00001011 ; ---DNT21
@@ -99,7 +105,7 @@ lda #>track_gameover_triangle
 sta audio_triangle_track+1
 
 jsr audio_reset_music
-
+#endif
 rts
 .)
 

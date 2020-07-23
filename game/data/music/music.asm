@@ -1,3 +1,8 @@
+#if 0
+
+; Old game engine's musics
+;TODO remove/convert them
+
 #define TIMED_O1_A(duration) .byt $00, (duration << 3) + (NOTE_O1_A >> 8), (NOTE_O1_A & $ff)
 #define TIMED_O1_B(duration) .byt $00, (duration << 3) + (NOTE_O1_B >> 8), (NOTE_O1_B & $ff)
 #define TIMED_O1_C(duration) .byt $00, (duration << 3) + (NOTE_O1_C >> 8), (NOTE_O1_C & $ff)
@@ -63,3 +68,9 @@
 #include "game/data/music/theme_menus/theme_menus.asm"
 #include "game/data/music/theme_main/theme_main.asm"
 #include "game/data/music/theme_gameover/theme_gameover.asm"
+
+#else
+
+#include "game/data/music/theme_title/theme_title.asm"
+
+#endif

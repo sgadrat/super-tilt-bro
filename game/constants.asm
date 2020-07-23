@@ -198,6 +198,7 @@ STAGE_ELEMENT_OOS_SMOOTH_PLATFORM = $04
 #define MENU_COMMON_NB_SPRITE_PER_CLOUD 5
 #define MENU_COMMON_FIRST_CLOUD_SPRITE (64 - MENU_COMMON_NB_SPRITE_PER_CLOUD * MENU_COMMON_NB_CLOUDS)
 
+;TODO document if it is PAL or NTSC (it should be PAL, but need to verify, and get the NTSC equiv)
 #define NOTE_O0_C $7ff
 #define NOTE_O0_Cs $7ff
 #define NOTE_O0_D $7ff
