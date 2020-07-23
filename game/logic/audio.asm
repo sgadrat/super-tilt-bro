@@ -1,106 +1,39 @@
 audio_music_power:
 .(
-lda audio_music_enabled
-beq disabled
-lda #%00001111 ; ---DNT21
-sta APU_STATUS ;
-jmp end_enabled_check
-disabled:
-lda #%00001000 ; ---DNT21
-sta APU_STATUS ;
-end_enabled_check:
+	lda #1
+	sta audio_skip_noise
+	lda #%00110000
+	sta APU_NOISE_ENVELOPE
 
-lda #%01111100 ; DDLCVVVV
-sta audio_duty
+	ldy #<music_main_info
+	lda #>music_main_info
+	jmp audio_play_music
 
-lda #<track_main_square1
-sta audio_square1_track
-lda #>track_main_square1
-sta audio_square1_track+1
-
-lda #<track_main_square2
-sta audio_square2_track
-lda #>track_main_square2
-sta audio_square2_track+1
-
-lda #<track_main_triangle
-sta audio_triangle_track
-lda #>track_main_triangle
-sta audio_triangle_track+1
-
-jsr audio_reset_music
-
-rts
+	rts ; useless, jump to a subroutine
 .)
 
 audio_music_weak:
 .(
-lda audio_music_enabled
-beq disabled
-lda #%00001011 ; ---DNT21
-sta APU_STATUS ;
-jmp end_enabled_check
-disabled:
-lda #%00001000 ; ---DNT21
-sta APU_STATUS ;
-end_enabled_check:
+	lda #0
+	sta audio_skip_noise
 
-lda #%00000100 ; DDLCVVVV
-sta audio_duty
+	ldy #<music_title_info
+	lda #>music_title_info
+	jmp audio_play_music
 
-lda #<track_menus_square1
-sta audio_square1_track
-lda #>track_menus_square1
-sta audio_square1_track+1
-
-lda #<track_menus_square2
-sta audio_square2_track
-lda #>track_menus_square2
-sta audio_square2_track+1
-
-lda #<track_menus_triangle
-sta audio_triangle_track
-lda #>track_menus_triangle
-sta audio_triangle_track+1
-
-jsr audio_reset_music
-
-rts
+	;rts ; useless, jump to a subroutine
 .)
 
 audio_music_gameover:
 .(
-lda audio_music_enabled
-beq disabled
-lda #%00001011 ; ---DNT21
-sta APU_STATUS ;
-jmp end_enabled_check
-disabled:
-lda #%00001000 ; ---DNT21
-sta APU_STATUS ;
-end_enabled_check:
+	lda #0
+	sta audio_skip_noise
 
-lda #%01111100 ; DDLCVVVV
-sta audio_duty
+	ldy #<music_jump_rope_info
+	lda #>music_jump_rope_info
+	jmp audio_play_music
 
-lda #<track_gameover_square1
-sta audio_square1_track
-lda #>track_gameover_square1
-sta audio_square1_track+1
-
-lda #<track_gameover_square2
-sta audio_square2_track
-lda #>track_gameover_square2
-sta audio_square2_track+1
-
-lda #<track_gameover_triangle
-sta audio_triangle_track
-lda #>track_gameover_triangle
-sta audio_triangle_track+1
-
-jsr audio_reset_music
-
-rts
+	;rts ; useless, jump to a subroutine
 .)
 
 audio_play_crash:

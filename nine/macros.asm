@@ -14,90 +14,254 @@
 #define VECTOR(lbl) .word lbl
 
 ;
-; Audio data representation
-;  TIMED_OX_X(duration) - play the described note for <duration> frames
-;  AUDIO_SILENCE(duration) - play no note for <duration> frames
-;  SAMPLE_END - end of the sample
-;  MUSIC_END - end of the music
-;
-; Example:
-;  sample1:
-;  TIMED_O2_C(20)
-;  TIMED_O2_D(20)
-;  TIMED_O2_E(20)
-;  TIMED_O2_F(20)
-;  TIMED_O2_G(20)
-;  TIMED_O3_A(20)
-;  TIMED_O3_B(20)
-;  TIMED_O3_C(20)
-;  AUDIO_SILENCE(5)
-;  SAMPLE_END
-;
-;  music_scale_c:
-;  .word sample1
-;  MUSIC_END
+; New audio engine macros
+;TODO comment it properly
 ;
 
-#define TIMED_O1_A(duration) .byt $00, (duration << 3) + (NOTE_O1_A >> 8), (NOTE_O1_A & $ff)
-#define TIMED_O1_B(duration) .byt $00, (duration << 3) + (NOTE_O1_B >> 8), (NOTE_O1_B & $ff)
-#define TIMED_O1_C(duration) .byt $00, (duration << 3) + (NOTE_O1_C >> 8), (NOTE_O1_C & $ff)
-#define TIMED_O1_D(duration) .byt $00, (duration << 3) + (NOTE_O1_D >> 8), (NOTE_O1_D & $ff)
-#define TIMED_O1_E(duration) .byt $00, (duration << 3) + (NOTE_O1_E >> 8), (NOTE_O1_E & $ff)
-#define TIMED_O1_F(duration) .byt $00, (duration << 3) + (NOTE_O1_F >> 8), (NOTE_O1_F & $ff)
-#define TIMED_O1_G(duration) .byt $00, (duration << 3) + (NOTE_O1_G >> 8), (NOTE_O1_G & $ff)
-#define TIMED_O2_A(duration) .byt $00, (duration << 3) + (NOTE_O2_A >> 8), (NOTE_O2_A & $ff)
-#define TIMED_O2_B(duration) .byt $00, (duration << 3) + (NOTE_O2_B >> 8), (NOTE_O2_B & $ff)
-#define TIMED_O2_C(duration) .byt $00, (duration << 3) + (NOTE_O2_C >> 8), (NOTE_O2_C & $ff)
-#define TIMED_O2_D(duration) .byt $00, (duration << 3) + (NOTE_O2_D >> 8), (NOTE_O2_D & $ff)
-#define TIMED_O2_E(duration) .byt $00, (duration << 3) + (NOTE_O2_E >> 8), (NOTE_O2_E & $ff)
-#define TIMED_O2_F(duration) .byt $00, (duration << 3) + (NOTE_O2_F >> 8), (NOTE_O2_F & $ff)
-#define TIMED_O2_G(duration) .byt $00, (duration << 3) + (NOTE_O2_G >> 8), (NOTE_O2_G & $ff)
-#define TIMED_O3_A(duration) .byt $00, (duration << 3) + (NOTE_O3_A >> 8), (NOTE_O3_A & $ff)
-#define TIMED_O3_B(duration) .byt $00, (duration << 3) + (NOTE_O3_B >> 8), (NOTE_O3_B & $ff)
-#define TIMED_O3_C(duration) .byt $00, (duration << 3) + (NOTE_O3_C >> 8), (NOTE_O3_C & $ff)
-#define TIMED_O3_D(duration) .byt $00, (duration << 3) + (NOTE_O3_D >> 8), (NOTE_O3_D & $ff)
-#define TIMED_O3_E(duration) .byt $00, (duration << 3) + (NOTE_O3_E >> 8), (NOTE_O3_E & $ff)
-#define TIMED_O3_F(duration) .byt $00, (duration << 3) + (NOTE_O3_F >> 8), (NOTE_O3_F & $ff)
-#define TIMED_O3_G(duration) .byt $00, (duration << 3) + (NOTE_O3_G >> 8), (NOTE_O3_G & $ff)
-#define TIMED_O4_A(duration) .byt $00, (duration << 3) + (NOTE_O4_A >> 8), (NOTE_O4_A & $ff)
-#define TIMED_O4_B(duration) .byt $00, (duration << 3) + (NOTE_O4_B >> 8), (NOTE_O4_B & $ff)
-#define TIMED_O4_C(duration) .byt $00, (duration << 3) + (NOTE_O4_C >> 8), (NOTE_O4_C & $ff)
-#define TIMED_O4_D(duration) .byt $00, (duration << 3) + (NOTE_O4_D >> 8), (NOTE_O4_D & $ff)
-#define TIMED_O4_E(duration) .byt $00, (duration << 3) + (NOTE_O4_E >> 8), (NOTE_O4_E & $ff)
-#define TIMED_O4_F(duration) .byt $00, (duration << 3) + (NOTE_O4_F >> 8), (NOTE_O4_F & $ff)
-#define TIMED_O4_G(duration) .byt $00, (duration << 3) + (NOTE_O4_G >> 8), (NOTE_O4_G & $ff)
-#define TIMED_O5_A(duration) .byt $00, (duration << 3) + (NOTE_O5_A >> 8), (NOTE_O5_A & $ff)
-#define TIMED_O5_B(duration) .byt $00, (duration << 3) + (NOTE_O5_B >> 8), (NOTE_O5_B & $ff)
-#define TIMED_O5_C(duration) .byt $00, (duration << 3) + (NOTE_O5_C >> 8), (NOTE_O5_C & $ff)
-#define TIMED_O5_D(duration) .byt $00, (duration << 3) + (NOTE_O5_D >> 8), (NOTE_O5_D & $ff)
-#define TIMED_O5_E(duration) .byt $00, (duration << 3) + (NOTE_O5_E >> 8), (NOTE_O5_E & $ff)
-#define TIMED_O5_F(duration) .byt $00, (duration << 3) + (NOTE_O5_F >> 8), (NOTE_O5_F & $ff)
-#define TIMED_O5_G(duration) .byt $00, (duration << 3) + (NOTE_O5_G >> 8), (NOTE_O5_G & $ff)
-#define TIMED_O6_A(duration) .byt $00, (duration << 3) + (NOTE_O6_A >> 8), (NOTE_O6_A & $ff)
-#define TIMED_O6_B(duration) .byt $00, (duration << 3) + (NOTE_O6_B >> 8), (NOTE_O6_B & $ff)
-#define TIMED_O6_C(duration) .byt $00, (duration << 3) + (NOTE_O6_C >> 8), (NOTE_O6_C & $ff)
-#define TIMED_O6_D(duration) .byt $00, (duration << 3) + (NOTE_O6_D >> 8), (NOTE_O6_D & $ff)
-#define TIMED_O6_E(duration) .byt $00, (duration << 3) + (NOTE_O6_E >> 8), (NOTE_O6_E & $ff)
-#define TIMED_O6_F(duration) .byt $00, (duration << 3) + (NOTE_O6_F >> 8), (NOTE_O6_F & $ff)
-#define TIMED_O6_G(duration) .byt $00, (duration << 3) + (NOTE_O6_G >> 8), (NOTE_O6_G & $ff)
-#define TIMED_O7_A(duration) .byt $00, (duration << 3) + (NOTE_O7_A >> 8), (NOTE_O7_A & $ff)
-#define TIMED_O7_B(duration) .byt $00, (duration << 3) + (NOTE_O7_B >> 8), (NOTE_O7_B & $ff)
-#define TIMED_O7_C(duration) .byt $00, (duration << 3) + (NOTE_O7_C >> 8), (NOTE_O7_C & $ff)
-#define TIMED_O7_D(duration) .byt $00, (duration << 3) + (NOTE_O7_D >> 8), (NOTE_O7_D & $ff)
-#define TIMED_O7_E(duration) .byt $00, (duration << 3) + (NOTE_O7_E >> 8), (NOTE_O7_E & $ff)
-#define TIMED_O7_F(duration) .byt $00, (duration << 3) + (NOTE_O7_F >> 8), (NOTE_O7_F & $ff)
-#define TIMED_O7_G(duration) .byt $00, (duration << 3) + (NOTE_O7_G >> 8), (NOTE_O7_G & $ff)
-#define TIMED_O8_A(duration) .byt $00, (duration << 3) + (NOTE_O8_A >> 8), (NOTE_O8_A & $ff)
-#define TIMED_O8_B(duration) .byt $00, (duration << 3) + (NOTE_O8_B >> 8), (NOTE_O8_B & $ff)
-#define TIMED_O8_C(duration) .byt $00, (duration << 3) + (NOTE_O8_C >> 8), (NOTE_O8_C & $ff)
-#define TIMED_O8_D(duration) .byt $00, (duration << 3) + (NOTE_O8_D >> 8), (NOTE_O8_D & $ff)
-#define TIMED_O8_E(duration) .byt $00, (duration << 3) + (NOTE_O8_E >> 8), (NOTE_O8_E & $ff)
-#define TIMED_O8_F(duration) .byt $00, (duration << 3) + (NOTE_O8_F >> 8), (NOTE_O8_F & $ff)
+; Music header
+;  Format
+;   2 bytes - vector to 2a03 pulse channel 1's track
+;   2 bytes - vector to 2a03 pulse channel 1's track
+;   2 bytes - vector to 2a03 triangle channel's track
+;   2 bytes - vector to 2a03 noise channel's track
+MUSIC_HEADER_PULSE1_TRACK_OFFSET = 0
+MUSIC_HEADER_PULSE2_TRACK_OFFSET = 2
+MUSIC_HEADER_TRIANGLE_TRACK_OFFSET = 4
+MUSIC_HEADER_NOISE_TRACK_OFFSET = 6
 
-#define AUDIO_SILENCE(duration) .byt $01, duration, $00
+; Commons
 
-#define SAMPLE_END .byt $02, $00, $00
 #define MUSIC_END .byt $00, $00
+#define SAMPLE_END .byt $00
+
+; 2a03 pulse
+
+AUDIO_OP_CHAN_PARAMS = 1
+AUDIO_OP_CHAN_VOLUME_LOW = 2
+AUDIO_OP_CHAN_VOLUME_HIGH = 3
+AUDIO_OP_PLAY_TIMED_FREQ = 4
+AUDIO_OP_PLAY_NOTE = 5
+AUDIO_OP_WAIT = 6
+AUDIO_OP_LONG_WAIT = 7
+AUDIO_OP_HALT = 8
+AUDIO_OP_PITCH_SLIDE = 9
+AUDIO_OP_CHAN_DUTY = 10
+AUDIO_OP_PLAY_TIMED_NOTE = 11
+AUDIO_OP_META_NOTE_SLIDE_UP = 12
+AUDIO_OP_META_NOTE_SLIDE_DOWN = 13
+AUDIO_OP_META_WAIT_SLIDE_UP = 14
+AUDIO_OP_META_WAIT_SLIDE_DOWN = 15
+
+AUDIO_OP_NOISE_SET_VOLUME = 1
+AUDIO_OP_NOISE_SET_PERIODIC = 2
+AUDIO_OP_NOISE_PLAY_TIMED_FREQ = 3
+AUDIO_OP_NOISE_WAIT = 4
+AUDIO_OP_NOISE_LONG_WAIT = 5
+AUDIO_OP_NOISE_HALT = 6
+AUDIO_OP_NOISE_PITCH_SLIDE_UP = 7
+AUDIO_OP_NOISE_PITCH_SLIDE_DOWN = 8
+
+#define CHAN_PARAMS(default_dur,duty,loop,const,volume,sweep_enabled,sweep_period,sweep_negate,sweep_shift) .byt \
+(AUDIO_OP_CHAN_PARAMS << 3) + default_dur, \
+(duty << 6) + (loop << 5) + (const << 4) + volume, \
+(sweep_enabled << 7) + (sweep_period << 4) + (sweep_negate << 3) + sweep_shift
+
+#define CHAN_VOLUME_LOW(volume) .byt (AUDIO_OP_CHAN_VOLUME_LOW << 3) + volume
+
+#define CHAN_VOLUME_HIGH(volume_minus_eight) .byt (AUDIO_OP_CHAN_VOLUME_HIGH << 3) + volume_minus_eight
+
+#define CHAN_DUTY(duty) .byt (AUDIO_OP_CHAN_DUTY << 3) + (duty << 1)
+
+#define PLAY_TIMED_FREQ(freq,duration) .byt \
+(AUDIO_OP_PLAY_TIMED_FREQ << 3) + (freq >> 8), \
+<freq, \
+duration
+
+#define PLAY_NOTE(dir,shift,note_idx) .byt \
+(AUDIO_OP_PLAY_NOTE << 3) + (dir << 2) + shift, \
+note_idx
+
+#define PLAY_TIMED_NOTE(dur_minus_one,note_idx) .byt \
+(AUDIO_OP_PLAY_TIMED_NOTE << 3) + (dur_minus_one >> 1), \
+((dur_minus_one & %00000001) << 7) + note_idx
+
+#define WAIT(dur_minus_one) .byt (AUDIO_OP_WAIT << 3) + dur_minus_one
+
+#define LONG_WAIT(duration) .byt (AUDIO_OP_LONG_WAIT << 3), duration
+
+#define HALT(dur_minus_one) .byt (AUDIO_OP_HALT << 3) + dur_minus_one
+
+#define PITCH_SLIDE(step) .byt \
+(AUDIO_OP_PITCH_SLIDE << 3) + ((step >> 8) & %00000100), \
+<step
+
+#define AUDIO_PULSE_META_NOTE(note_idx,duration) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000000, \
+note_idx, \
+duration
+
+#define AUDIO_PULSE_META_NOTE_DUT(note_idx,duration,duty) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000001, \
+note_idx, \
+duration, \
+(duty << 6)
+
+#define AUDIO_PULSE_META_NOTE_VOL(note_idx,duration,volume) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000100, \
+note_idx, \
+duration, \
+volume
+
+#define AUDIO_PULSE_META_NOTE_DUT_VOL(note_idx,duration,duty,volume) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000101, \
+note_idx, \
+duration, \
+(duty << 6) + volume
+
+#define AUDIO_PULSE_META_NOTE_USLIDE(note_idx,duration,slide) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_UP << 3) + %00000010, \
+note_idx, \
+duration, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_NOTE_DUT_USLIDE(note_idx,duration,duty,slide) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_UP << 3) + %00000011, \
+note_idx, \
+duration, \
+(duty << 6), \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_NOTE_VOL_USLIDE(note_idx,duration,volume,slide) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_UP << 3) + %00000110, \
+note_idx, \
+duration, \
+volume, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_NOTE_DUT_VOL_USLIDE(note_idx,duration,duty,volume,slide) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_UP << 3) + %00000111, \
+note_idx, \
+duration, \
+(duty << 6) + volume, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_NOTE_DSLIDE(note_idx,duration,slide) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000010, \
+note_idx, \
+duration, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_NOTE_DUT_DSLIDE(note_idx,duration,duty,slide) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000011, \
+note_idx, \
+duration, \
+(duty << 6), \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_NOTE_VOL_DSLIDE(note_idx,duration,volume,slide) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000110, \
+note_idx, \
+duration, \
+volume, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(note_idx,duration,duty,volume,slide) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000111, \
+note_idx, \
+duration, \
+(duty << 6) + volume, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_WAIT(duration) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3) + %00000000, \
+duration
+
+#define AUDIO_PULSE_META_WAIT_DUT(duration,duty) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3) + %00000001, \
+duration, \
+(duty << 6)
+
+#define AUDIO_PULSE_META_WAIT_VOL(duration,volume) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3) + %00000100, \
+duration, \
+volume
+
+#define AUDIO_PULSE_META_WAIT_DUT_VOL(duration,duty,volume) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3) + %00000101, \
+duration, \
+(duty << 6) + volume
+
+#define AUDIO_PULSE_META_WAIT_USLIDE(duration,slide) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_UP << 3) + %00000010, \
+duration, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_WAIT_DUT_USLIDE(duration,duty,slide) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_UP << 3) + %00000011, \
+duration, \
+(duty << 6), \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_WAIT_VOL_USLIDE(duration,volume,slide) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_UP << 3) + %00000110, \
+duration, \
+volume, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_WAIT_DUT_VOL_USLIDE(duration,duty,volume,slide) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_UP << 3) + %00000111, \
+duration, \
+(duty << 6) + volume, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_WAIT_DSLIDE(duration,slide) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3) + %00000010, \
+duration, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_WAIT_DUT_DSLIDE(duration,duty,slide) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3) + %00000011, \
+duration, \
+(duty << 6), \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_WAIT_VOL_DSLIDE(duration,volume,slide) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3) + %00000110, \
+duration, \
+volume, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_WAIT_DUT_VOL_DSLIDE(duration,duty,volume,slide) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3) + %00000111, \
+duration, \
+(duty << 6) + volume, \
+(slide & $ff)
+
+#define AUDIO_NOISE_SET_VOLUME(volume) .byt \
+(AUDIO_OP_NOISE_SET_VOLUME << 4) + volume
+
+#define AUDIO_NOISE_SET_PERIODIC(flag) .byt \
+(AUDIO_OP_NOISE_SET_PERIODIC << 4) + flag
+
+#define AUDIO_NOISE_PLAY_TIMED_FREQ(freq, duration) .byt \
+(AUDIO_OP_NOISE_PLAY_TIMED_FREQ << 4) + freq, \
+duration
+
+#define AUDIO_NOISE_WAIT(dur_minus_one) .byt \
+(AUDIO_OP_NOISE_WAIT << 4) + dur_minus_one
+
+#define AUDIO_NOISE_LONG_WAIT(duration) .byt \
+(AUDIO_OP_NOISE_LONG_WAIT << 4), \
+duration
+
+#define AUDIO_NOISE_HALT(dur_minus_one) .byt \
+(AUDIO_OP_NOISE_HALT << 4) + dur_minus_one
+
+#define AUDIO_NOISE_PITCH_SLIDE_UP(slide) .byt \
+(AUDIO_OP_NOISE_PITCH_SLIDE_UP << 4) + slide
+
+#define AUDIO_NOISE_PITCH_SLIDE_DOWN(slide) .byt \
+(AUDIO_OP_NOISE_PITCH_SLIDE_DOWN << 4) + slide
 
 ;
 ; Animation data representation

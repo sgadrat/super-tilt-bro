@@ -339,6 +339,7 @@ title_screen_tick:
 			finish:
 				; Finish by finally enabling music and going to next state
 				jsr audio_music_weak
+				SWITCH_BANK(#DATA_BANK_NUMBER)
 				jsr title_screen_restore_music_state
 				jsr change_anim_state
 

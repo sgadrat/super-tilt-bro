@@ -99,9 +99,10 @@ state_transition_post_scroll_up:
 ;  register A - transition direction (1 - down ; 2 - up)
 scroll_transition:
 .(
-	STACK_SCROLL_BEGIN_OFFSET = 1
-	STACK_CLOUD_SCROLL_MSB_OFFSET = 2
-	STACK_CLOUD_SCROLL_LSB_OFFSET = 3
+	STACK_FRAME_CNT_OFFSET = 0
+	STACK_SCROLL_BEGIN_OFFSET = 3
+	STACK_CLOUD_SCROLL_MSB_OFFSET = 4
+	STACK_CLOUD_SCROLL_LSB_OFFSET = 5
 
 	camera_steps_addr = extra_tmpfield1
 	; extra_tmpfield2 reserved for camera_steps_addr MSB
@@ -187,7 +188,7 @@ scroll_transition:
 			two_byte_position_stored:
 
 			; Hide sprite
-			; even cloud sprites, they already blink due to disabling rendering anyway)
+			; even cloud sprites, they already blink due to disabling rendering anyway
 			lda #$fe
 			sta oam_mirror, x
 
@@ -211,12 +212,17 @@ scroll_transition:
 			set_camera_scroll:
 			sta scroll_y
 
+			; Save parts of state in registers and tmpfields
+			lda camera_steps_addr
+			pha
+			lda camera_steps_addr+1
+			pha
+
 			tya
 			pha
 
 			; Update sprites position
 			jsr move_sprites
-
 
 			; Sleep, and enable rendering if necessary
 			pla
@@ -241,9 +247,16 @@ scroll_transition:
 
 			end_sleep:
 
+			; Restore saved state
 			pla
 			tay
 
+			pla
+			sta camera_steps_addr+1
+			pla
+			sta camera_steps_addr
+
+			; Loop
 			iny
 			jmp scroll_frame
 
@@ -257,7 +270,7 @@ scroll_transition:
 	.)
 
 	; Scroll sprites
-	;  stack+3 - frame number
+	;  stack+3+STACK_FRAME_CNT_OFFSET - frame number
 	;  stack+3+STACK_CLOUD_SCROLL_LSB_OFFSET - clouds scroll step LSB
 	;  stack+3+STACK_CLOUD_SCROLL_MSB_OFFSET - clouds scroll step MSB
 	;  stack+3+STACK_SCROLL_BEGIN_OFFSET - initial position of the screen
@@ -271,8 +284,7 @@ scroll_transition:
 		sprites_offset_msb = extra_tmpfield4
 		sprite_y_pixel = extra_tmpfield5
 
-		STACK_CALLER = 2 + 1 ; 2 for our address, 1 because our caller pushes frame number
-		STACK_FRAME_CNT_OFFSET = 0
+		STACK_CALLER = 1 + 2 ; 1 to be on the last initialized byte + 2 to skip current routine's address
 
 		; Choose if clouds need to be updated
 		jsr get_transition_id

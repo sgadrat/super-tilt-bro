@@ -116,7 +116,7 @@ jsr change_global_game_state
 forever:
 .(
 ; Call common routines to all states
-jsr wait_next_frame
+jsr wait_next_real_frame ;TODO hack to test audio ngine on NTSC
 jsr audio_music_tick
 jsr fetch_controllers
 
@@ -136,6 +136,8 @@ jmp forever
 #include "nine/prg_rom/utils.asm"
 #include "nine/prg_rom/animations.asm"
 #include "nine/prg_rom/collisions.asm"
+ninegine_audio_engine_begin:
 #include "nine/prg_rom/audio.asm"
+ninegine_audio_engine_end:
 #include "nine/prg_rom/particle.asm"
 #include "nine/prg_rom/particle_handlers.asm"

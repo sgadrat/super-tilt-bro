@@ -284,7 +284,7 @@ stage_gem_tick:
 			stx stage_gem_buffed_player
 
 			; Pause music and all animations but the breaking gem
-			lda #%00001000 ; Pause music, avoid audio_mute_music which changes the configuration
+			lda #%00001000 ; Pause music, avoid audio_mute_music which changes the configuration ;TODO This is hacky as fuck (and may break with new audio engine)
 			sta APU_STATUS
 
 			ldx #0

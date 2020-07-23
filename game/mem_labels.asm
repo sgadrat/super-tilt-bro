@@ -324,26 +324,54 @@ gameover_random = $4e
 ; Audio engine labels
 ;
 
-audio_square1_sample_counter = $c0  ;
-audio_square2_sample_counter = $c1  ; Counter in the sample - index of a note
-audio_triangle_sample_counter = $c2 ;
+audio_music_enabled = $c0
 
-audio_square1_note_counter = $c3  ;
-audio_square2_note_counter = $c4  ; Counter in the note - time left before next note
-audio_triangle_note_counter = $c5 ;
+audio_current_track_lsb = $c1
+audio_current_track_msb = $c2
 
-audio_channel_mode = $c6 ; Square or triangle
+audio_square1_sample_num = $c3
+audio_square2_sample_num = $c4
+audio_triangle_sample_num = $c5
+audio_noise_sample_num = $c6
 
-audio_square1_track = $c7  ;
-audio_square2_track = $c9  ; Adress of the current track for each channel
-audio_triangle_track = $cb ;
+audio_skip_noise = $c7 ;HACK Setting this value makes the audio engine not touch the noise channel, allowing old sfx (based on hacking noise channel) to play
 
-audio_duty = $cd
-audio_music_enabled = $ce
+audio_square1_current_opcode = $0604
+audio_square2_current_opcode = $0605
+audio_triangle_current_opcode = $0606
+audio_noise_current_opcode = $0607
+audio_square1_current_opcode_msb = $0608
+audio_square2_current_opcode_msb = $0609
+audio_triangle_current_opcode_msb = $060a
+audio_noise_current_opcode_msb = $060b
+audio_square1_wait_cnt = $060c
+audio_square2_wait_cnt = $060d
+audio_triangle_wait_cnt = $060e
+audio_noise_wait_cnt = $060f
+audio_square1_default_note_duration = $0610
+audio_square2_default_note_duration = $0611
+audio_triangle_default_note_duration = $0612
+audio_square1_apu_envelope_byte = $0613
+audio_square2_apu_envelope_byte = $0614
+audio_square1_apu_timer_low_byte = $0615
+audio_square2_apu_timer_low_byte = $0616
+audio_triangle_apu_timer_low_byte = $0617
+audio_square1_apu_timer_high_byte = $0618
+audio_square2_apu_timer_high_byte = $0619
+audio_triangle_apu_timer_high_byte = $061a
+audio_square1_apu_timer_high_byte_old = $061b
+audio_square2_apu_timer_high_byte_old = $061c
+audio_triangle_apu_timer_high_byte_old = $061d ; Actually useless for triangle, but allows to easily merge code for pulse/triangle (unused now, triangle timer is handled in a "if triangle" branch) ;TODO remove it once code is stable enough to confidently state that we'll never use it
+audio_square1_pitch_slide_lsb = $061e
+audio_square2_pitch_slide_lsb = $061f
+audio_triangle_pitch_slide_lsb = $0620
+audio_square1_pitch_slide_msb = $0621
+audio_square2_pitch_slide_msb = $0622
+audio_triangle_pitch_slide_msb = $0623
 
-audio_square1_track_counter = $0600  ;
-audio_square2_track_counter = $0601  ; Counter in the track - index of a sample
-audio_triangle_track_counter = $0602 ;
+audio_noise_apu_envelope_byte = $0624
+audio_noise_apu_period_byte = $0625 ; bit 4 used to silence the channel, so it is Ls.. PPPP with s handled by the engine
+audio_noise_pitch_slide = $0626
 
 ;
 ; Global labels
