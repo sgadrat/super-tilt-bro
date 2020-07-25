@@ -136,6 +136,11 @@ jmp forever
 #include "nine/prg_rom/utils.asm"
 #include "nine/prg_rom/animations.asm"
 #include "nine/prg_rom/collisions.asm"
+#if 0
+;TODO remove old audio engine
 #include "nine/prg_rom/audio.asm"
+#else
+#include "nine/prg_rom/audio2.asm"
+#endif
 #include "nine/prg_rom/particle.asm"
 #include "nine/prg_rom/particle_handlers.asm"

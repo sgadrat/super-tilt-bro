@@ -324,6 +324,8 @@ gameover_random = $4e
 ; Audio engine labels
 ;
 
+#if 0
+;TODO remove old engine
 audio_square1_sample_counter = $c0  ;
 audio_square2_sample_counter = $c1  ; Counter in the sample - index of a note
 audio_triangle_sample_counter = $c2 ;
@@ -344,7 +346,16 @@ audio_music_enabled = $ce
 audio_square1_track_counter = $0600  ;
 audio_square2_track_counter = $0601  ; Counter in the track - index of a sample
 audio_triangle_track_counter = $0602 ;
+#else
 
+audio_music_enabled = $c0
+
+audio_current_track_lsb = $c1
+audio_current_track_msb = $c2
+
+audio_square1_sample_num = $c3
+
+#endif
 ;
 ; Global labels
 ;
