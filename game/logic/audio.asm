@@ -68,8 +68,12 @@ lda #>track_menus_triangle
 sta audio_triangle_track+1
 
 jsr audio_reset_music
-#endif
 rts
+#else
+	ldy #<track_title_info
+	lda #>track_title_info
+	jmp audio_play_music
+#endif
 .)
 
 audio_music_gameover:

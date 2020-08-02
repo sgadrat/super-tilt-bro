@@ -354,6 +354,11 @@ audio_current_track_lsb = $c1
 audio_current_track_msb = $c2
 
 audio_square1_sample_num = $c3
+audio_square1_current_opcode = $c4
+audio_square1_current_opcode_msb = $c5
+audio_square1_wait_cnt = $c6
+audio_square1_default_note_duration = $c7
+audio_square1_apu_envelope_byte = $c8
 
 #endif
 ;

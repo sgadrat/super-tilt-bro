@@ -119,42 +119,42 @@ MUSIC_HEADER_NOTES_TABLE_OFFSET = 2
 ; Commons
 
 #define MUSIC_END .byt $00, $00
-#define SAMPLE_END .byt $ff
+#define SAMPLE_END .byt $00
 
 ; 2a03 pulse
 
-AUDIO_OP_CHAN_PARAMS = 0
-AUDIO_OP_CHAN_VOLUME_LOW = 1
-AUDIO_OP_CHAN_VOLUME_HIGH = 2
-AUDIO_OP_PLAY_TIMED_FREQ = 3
-AUDIO_OP_PLAY_NOTE = 4
-AUDIO_OP_WAIT = 5
-AUDIO_OP_LONG_WAIT = 6
-AUDIO_OP_HALT = 7
+AUDIO_OP_CHAN_PARAMS = 1
+AUDIO_OP_CHAN_VOLUME_LOW = 2
+AUDIO_OP_CHAN_VOLUME_HIGH = 3
+AUDIO_OP_PLAY_TIMED_FREQ = 4
+AUDIO_OP_PLAY_NOTE = 5
+AUDIO_OP_WAIT = 6
+AUDIO_OP_LONG_WAIT = 7
+AUDIO_OP_HALT = 8
 
 #define CHAN_PARAMS(default_dur,duty,loop,const,volume,sweep_enabled,sweep_period,sweep_negate,sweep_shift) .byt \
-(default_dur << 5) + AUDIO_OP_CHAN_PARAMS, \
+(AUDIO_OP_CHAN_PARAMS << 3) + default_dur, \
 (duty << 6) + (loop << 5) + (const << 4) + volume, \
 (sweep_enabled << 7) + (sweep_period << 4) + (sweep_negate << 3) + sweep_shift
 
-#define CHAN_VOLUME_LOW(volume) .byt (volume << 5) + AUDIO_OP_CHAN_VOLUME_LOW
+#define CHAN_VOLUME_LOW(volume) .byt (AUDIO_OP_CHAN_VOLUME_LOW << 3) + volume
 
-#define CHAN_VOLUME_HIGH(volume_minus_eight) .byt (volume_minus_eight << 5) + AUDIO_OP_CHAN_VOLUME_HIGH
+#define CHAN_VOLUME_HIGH(volume_minus_eight) .byt (AUDIO_OP_CHAN_VOLUME_HIGH << 3) + volume_minus_eight
 
-#define PLAY_TIMED_FREQ(freq,dur_minus_one) .byt \
-((freq >> 3) & %11100000) + AUDIO_OP_PLAY_TIMED_FREQ, \
+#define PLAY_TIMED_FREQ(freq,duration) .byt \
+(AUDIO_OP_PLAY_TIMED_FREQ << 3) + (freq >> 8), \
 <freq, \
-dur_minus_one
+duration
 
 #define PLAY_NOTE(dir,shift,note_idx) .byt \
-(dir << 7) + (shift << 5) + AUDIO_OP_PLAY_NOTE, \
+(AUDIO_OP_PLAY_NOTE << 3) + (dir << 2) + shift, \
 note_idx
 
-#define WAIT(dur_minus_one) .byt (dur_minus_one << 5) + AUDIO_OP_WAIT
+#define WAIT(dur_minus_one) .byt (AUDIO_OP_WAIT << 3) + dur_minus_one
 
-#define LONG_WAIT(dur_minus_one) .byt AUDIO_OP_LONG_WAIT, dur_minus_one
+#define LONG_WAIT(duration) .byt (AUDIO_OP_LONG_WAIT << 3), duration
 
-#define HALT(dur_minus_one) .byt (dur_minus_one << 5) + AUDIO_OP_HALT
+#define HALT(dur_minus_one) .byt (AUDIO_OP_HALT << 3) + dur_minus_one
 
 #endif
 
