@@ -281,18 +281,18 @@ audio_music_tick:
 			; OOOO OTTT  TTTT TTTT  DDDD DDDD
 
 			; TTT TTTT TTTT - direct write to APU
-			lda (audio_square1_apu_envelope_byte), y
+			lda (audio_square1_current_opcode), y
 			and #%00000111
 			ora #%11111000 ;TODO this actually hardocode a long value for "length counter load", which should be adequat most times. If we want to play with it, mirror the APU register and add opcodes to handle this value
 			sta APU_SQUARE1_LENGTH_CNT
 
 			iny
-			lda (audio_square1_apu_envelope_byte), y
+			lda (audio_square1_current_opcode), y
 			sta APU_SQUARE1_TIMER_LOW
 
 			; DDDD DDDD
 			iny
-			lda (audio_square1_apu_envelope_byte), y
+			lda (audio_square1_current_opcode), y
 			sta audio_square1_wait_cnt
 
 			lda #3
@@ -304,7 +304,7 @@ audio_music_tick:
 			; OOOO ODdd  zNNN NNNN
 
 			; D dd - set wait counter
-			lda (audio_square1_apu_envelope_byte), y
+			lda (audio_square1_current_opcode), y
 			pha
 			and #%00000011
 			tax
@@ -334,7 +334,7 @@ audio_music_tick:
 
 			; NNN NNNN - set note frequency as read in the reference table
 			iny
-			lda (audio_square1_apu_envelope_byte), y
+			lda (audio_square1_current_opcode), y
 			;and #%01111111 ; useless - unused byte is forced to zero by spec
 			tax
 
@@ -353,7 +353,7 @@ audio_music_tick:
 		.(
 			; OOOO Oddd
 
-			lda (audio_square1_apu_envelope_byte), y
+			lda (audio_square1_current_opcode), y
 			and #%00000111
 			sta audio_square1_wait_cnt
 			inc audio_square1_wait_cnt
@@ -367,7 +367,7 @@ audio_music_tick:
 			; OOOO O... DDDD DDDD
 
 			iny
-			lda (audio_square1_apu_envelope_byte), y
+			lda (audio_square1_current_opcode), y
 			sta audio_square1_wait_cnt
 
 			lda #2
@@ -379,7 +379,7 @@ audio_music_tick:
 			; OOOO Oddd
 
 			; ddd - set wait counter
-			lda (audio_square1_apu_envelope_byte), y
+			lda (audio_square1_current_opcode), y
 			and #%00000111
 			sta audio_square1_wait_cnt
 

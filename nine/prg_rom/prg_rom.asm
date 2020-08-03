@@ -116,7 +116,7 @@ jsr change_global_game_state
 forever:
 .(
 ; Call common routines to all states
-jsr wait_next_frame
+jsr wait_next_real_frame
 jsr audio_music_tick
 jsr fetch_controllers
 
