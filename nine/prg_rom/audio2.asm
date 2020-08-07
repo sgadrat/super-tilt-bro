@@ -107,9 +107,11 @@ audio_music_tick:
 			tmp_addr = tmpfield1
 			tmp_addr_msb = tmpfield2
 
+			;TODO Execute effects if not silenced
+
 			; Execute opcodes only if not in wait mode
 			lda audio_square1_wait_cnt
-			bne tick_wait_cnt
+			bne end_opcodes_execution
 
 				; Execute opcodes until one activates wait mode
 				execute_current_opcode:
@@ -141,8 +143,26 @@ audio_music_tick:
 					lda audio_square1_wait_cnt
 					beq execute_current_opcode
 
+			end_opcodes_execution:
+
+			; Tick wait counter
 			tick_wait_cnt:
 			dec audio_square1_wait_cnt
+
+			; Write mirrored APU registers
+			lda audio_square1_apu_envelope_byte
+			sta APU_SQUARE1_ENVELOPE
+			lda audio_square1_apu_timer_low_byte
+			sta APU_SQUARE1_TIMER_LOW
+
+			lda audio_square1_apu_timer_high_byte
+			cmp audio_square1_apu_timer_high_byte_old
+			beq end_write_apu
+				sta APU_SQUARE1_LENGTH_CNT
+				sta audio_square1_apu_timer_high_byte_old
+
+			end_write_apu:
+
 			rts
 		.)
 
@@ -216,10 +236,9 @@ audio_music_tick:
 			sta audio_square1_default_note_duration
 			inc audio_square1_default_note_duration
 
-			; DDLC VVVV - direct write to APU
+			; DDLC VVVV - direct write to APU (mirrored)
 			iny
 			lda (audio_square1_current_opcode), y
-			sta APU_SQUARE1_ENVELOPE
 			sta audio_square1_apu_envelope_byte
 
 			; EPPP NSSS - direct write to APU
@@ -246,8 +265,8 @@ audio_music_tick:
 			ora audio_square1_apu_envelope_byte
 			sta audio_square1_apu_envelope_byte
 
-			; Write to APU
-			sta APU_SQUARE1_ENVELOPE
+			; Write to APU (mirrored)
+			sta audio_square1_apu_envelope_byte
 
 			lda #1
 			rts
@@ -269,8 +288,8 @@ audio_music_tick:
 			ora audio_square1_apu_envelope_byte
 			sta audio_square1_apu_envelope_byte
 
-			; Write to APU
-			sta APU_SQUARE1_ENVELOPE
+			; Write to APU (mirrored)
+			sta audio_square1_apu_envelope_byte
 
 			lda #1
 			rts
@@ -280,15 +299,15 @@ audio_music_tick:
 		.(
 			; OOOO OTTT  TTTT TTTT  DDDD DDDD
 
-			; TTT TTTT TTTT - direct write to APU
+			; TTT TTTT TTTT - direct write to APU (mirrored)
 			lda (audio_square1_current_opcode), y
 			and #%00000111
-			ora #%11111000 ;TODO this actually hardocode a long value for "length counter load", which should be adequat most times. If we want to play with it, mirror the APU register and add opcodes to handle this value
-			sta APU_SQUARE1_LENGTH_CNT
+			ora #%11111000 ;TODO this actually hardocode a long value for "length counter load", which should be adequat most times. If we want to play with it, actually use register mirroring, and add opcodes to handle this value
+			sta audio_square1_apu_timer_high_byte
 
 			iny
 			lda (audio_square1_current_opcode), y
-			sta APU_SQUARE1_TIMER_LOW
+			sta audio_square1_apu_timer_low_byte
 
 			; DDDD DDDD
 			iny
@@ -339,11 +358,11 @@ audio_music_tick:
 			tax
 
 			lda audio_notes_table_high, x
-			ora #%11111000 ; TODO this actually hardocode a long value for "length counter load", which should be adequat most times. If we want to play with it, mirror the APU register and add opcodes to handle this value
-			sta APU_SQUARE1_LENGTH_CNT
+			ora #%11111000 ;TODO this actually hardocode a long value for "length counter load", which should be adequat most times. If we want to play with it, actually use register mirroring, and add opcodes to handle this value
+			sta audio_square1_apu_timer_high_byte
 
 			lda audio_notes_table_low, x
-			sta APU_SQUARE1_TIMER_LOW
+			sta audio_square1_apu_timer_low_byte
 
 			lda #2
 			rts
@@ -385,8 +404,8 @@ audio_music_tick:
 
 			; Silence the channel
 			lda #0
-			sta APU_SQUARE1_TIMER_LOW
-			sta APU_SQUARE1_LENGTH_CNT
+			sta audio_square1_apu_timer_low_byte
+			sta audio_square1_apu_timer_high_byte
 
 			lda #1
 			rts

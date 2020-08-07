@@ -359,6 +359,9 @@ audio_square1_current_opcode_msb = $c5
 audio_square1_wait_cnt = $c6
 audio_square1_default_note_duration = $c7
 audio_square1_apu_envelope_byte = $c8
+audio_square1_apu_timer_low_byte = $c9
+audio_square1_apu_timer_high_byte = $ca
+audio_square1_apu_timer_high_byte_old = $cb
 
 #endif
 ;
