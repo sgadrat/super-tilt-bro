@@ -131,6 +131,7 @@ AUDIO_OP_PLAY_NOTE = 5
 AUDIO_OP_WAIT = 6
 AUDIO_OP_LONG_WAIT = 7
 AUDIO_OP_HALT = 8
+AUDIO_OP_PITCH_SLIDE = 9
 
 #define CHAN_PARAMS(default_dur,duty,loop,const,volume,sweep_enabled,sweep_period,sweep_negate,sweep_shift) .byt \
 (AUDIO_OP_CHAN_PARAMS << 3) + default_dur, \
@@ -155,6 +156,10 @@ note_idx
 #define LONG_WAIT(duration) .byt (AUDIO_OP_LONG_WAIT << 3), duration
 
 #define HALT(dur_minus_one) .byt (AUDIO_OP_HALT << 3) + dur_minus_one
+
+#define PITCH_SLIDE(step) .byt \
+(AUDIO_OP_PITCH_SLIDE << 3) + ((step >> 8) & %00000100), \
+<step
 
 #endif
 

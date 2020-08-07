@@ -107,7 +107,38 @@ audio_music_tick:
 			tmp_addr = tmpfield1
 			tmp_addr_msb = tmpfield2
 
-			;TODO Execute effects if not silenced
+			; Execute effects if not silenced
+			lda audio_square1_apu_timer_low_byte
+			bne do_effects
+			lda audio_square1_apu_timer_high_byte
+			and #%00000111
+			beq end_effects
+			do_effects:
+
+				; Pitch slide (add pitch slide value to frequency)
+				lda audio_square1_apu_timer_low_byte ; Add low bytes (straightforward)
+				clc
+				adc audio_square1_pulse_slide_lsb
+				sta audio_square1_apu_timer_low_byte
+
+				lda audio_square1_apu_timer_high_byte ; Add High bytes (need to byte extend current frequency sign bit)
+				tay
+				and #%00000100
+				bne negative
+					positive:
+						tya
+						and #%00000111
+						jmp end_byte_extend
+					negative:
+						tya
+						ora #%11111000
+				end_byte_extend:
+
+				adc audio_square1_pulse_slide_msb
+				ora #%11111000 ; TODO long value for "length counter load" (see other similar comments)
+				sta audio_square1_apu_timer_high_byte
+
+			end_effects:
 
 			; Execute opcodes only if not in wait mode
 			lda audio_square1_wait_cnt
@@ -146,7 +177,6 @@ audio_music_tick:
 			end_opcodes_execution:
 
 			; Tick wait counter
-			tick_wait_cnt:
 			dec audio_square1_wait_cnt
 
 			; Write mirrored APU registers
@@ -263,9 +293,6 @@ audio_music_tick:
 			lda (audio_square1_current_opcode), y
 			and #%00000111
 			ora audio_square1_apu_envelope_byte
-			sta audio_square1_apu_envelope_byte
-
-			; Write to APU (mirrored)
 			sta audio_square1_apu_envelope_byte
 
 			lda #1
@@ -411,12 +438,33 @@ audio_music_tick:
 			rts
 		.)
 
+		opcode_pitch_slide:
+		.(
+			; OOOO Oszz  TTTT TTTT
+
+			; s - sign, set frequency high to byte extend of it
+			lda (audio_square1_current_opcode), y
+			and #%00000100
+			beq set_value
+				lda #$ff
+			set_value:
+			sta audio_square1_pulse_slide_msb
+
+			; TTTT TTTT
+			iny
+			lda (audio_square1_current_opcode), y
+			sta audio_square1_pulse_slide_lsb
+
+			lda #2
+			rts
+		.)
+
 		pulse1_opcode_routines_lsb:
 		.byt <opcode_sample_end, <opcode_chan_params, <opcode_chan_volume_low, <opcode_chan_volume_high, <opcode_play_timed_freq
-		.byt <opcode_play_note, <opcode_wait, <opcode_long_wait, <opcode_halt
+		.byt <opcode_play_note, <opcode_wait, <opcode_long_wait, <opcode_halt, <opcode_pitch_slide
 
 		pulse1_opcode_routines_msb:
 		.byt >opcode_sample_end, >opcode_chan_params, >opcode_chan_volume_low, >opcode_chan_volume_high, >opcode_play_timed_freq
-		.byt >opcode_play_note, >opcode_wait, >opcode_long_wait, >opcode_halt
+		.byt >opcode_play_note, >opcode_wait, >opcode_long_wait, >opcode_halt, >opcode_pitch_slide
 	.)
 .)
