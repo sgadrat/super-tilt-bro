@@ -26,6 +26,16 @@ audio_play_music:
 
 	SWITCH_BANK(#MUSIC_BANK_NUMBER)
 
+	; Set default square1 parameters
+	lda #5 ; default note duration ;TODO get it from music header
+	sta audio_square1_default_note_duration
+
+	lda #%00111111 ; DDLC VVVV - APU mirror
+	sta audio_square1_apu_envelope_byte
+
+	lda #%00000000 ; EPPP NSSS - direct write to APU
+	sta APU_SQUARE1_PERIOD
+
 	; Get current sample's address
 	ldy #MUSIC_HEADER_PULSE_TRACK_OFFSET ; tmp_addr = channel's samples list address
 	lda (audio_current_track_lsb), y
