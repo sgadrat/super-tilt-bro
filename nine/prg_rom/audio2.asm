@@ -438,6 +438,7 @@ audio_music_tick:
 			lda (audio_square1_current_opcode), y
 			and #%00000111
 			sta audio_square1_wait_cnt
+			inc audio_square1_wait_cnt
 
 			; Silence the channel
 			lda #0
