@@ -96,6 +96,9 @@ audio_reset_music:
 	rts
 .)
 
+; Play one tick of the audio engine
+;
+; Overwrites all registers, and tmpfield1 to tmpfield4
 audio_music_tick:
 .(
 	.(
@@ -113,6 +116,9 @@ audio_music_tick:
 
 	pulse1_tick:
 	.(
+		current_opcode = tmpfield3
+		current_opcode_msb = tmpfield4
+
 		.(
 			tmp_addr = tmpfield1
 			tmp_addr_msb = tmpfield2
@@ -156,9 +162,15 @@ audio_music_tick:
 
 				; Execute opcodes until one activates wait mode
 				execute_current_opcode:
+					; Mirror opcode address in zero-page, to be usable in indirect addressing
+					lda audio_square1_current_opcode
+					sta current_opcode
+					lda audio_square1_current_opcode_msb
+					sta current_opcode_msb
+
 					; Decode opcode
 					ldy #0
-					lda (audio_square1_current_opcode), y
+					lda (current_opcode), y
 					lsr
 					lsr
 					lsr
@@ -271,19 +283,19 @@ audio_music_tick:
 
 			; ddd - default note duration minus one
 			;ldy #0 ; useless, ensured by caller
-			lda (audio_square1_current_opcode), y
+			lda (current_opcode), y
 			and #%00000111
 			sta audio_square1_default_note_duration
 			inc audio_square1_default_note_duration
 
 			; DDLC VVVV - direct write to APU (mirrored)
 			iny
-			lda (audio_square1_current_opcode), y
+			lda (current_opcode), y
 			sta audio_square1_apu_envelope_byte
 
 			; EPPP NSSS - direct write to APU
 			iny
-			lda (audio_square1_current_opcode), y
+			lda (current_opcode), y
 			sta APU_SQUARE1_PERIOD
 
 			lda #3
@@ -300,7 +312,7 @@ audio_music_tick:
 			sta audio_square1_apu_envelope_byte
 
 			; Place new volume bits
-			lda (audio_square1_current_opcode), y
+			lda (current_opcode), y
 			and #%00000111
 			ora audio_square1_apu_envelope_byte
 			sta audio_square1_apu_envelope_byte
@@ -319,7 +331,7 @@ audio_music_tick:
 			sta audio_square1_apu_envelope_byte
 
 			; Place new volume bits
-			lda (audio_square1_current_opcode), y
+			lda (current_opcode), y
 			and #%00000111
 			ora #%00001000
 			ora audio_square1_apu_envelope_byte
@@ -337,18 +349,18 @@ audio_music_tick:
 			; OOOO OTTT  TTTT TTTT  DDDD DDDD
 
 			; TTT TTTT TTTT - direct write to APU (mirrored)
-			lda (audio_square1_current_opcode), y
+			lda (current_opcode), y
 			and #%00000111
 			ora #%11111000 ;TODO this actually hardocode a long value for "length counter load", which should be adequat most times. If we want to play with it, actually use register mirroring, and add opcodes to handle this value
 			sta audio_square1_apu_timer_high_byte
 
 			iny
-			lda (audio_square1_current_opcode), y
+			lda (current_opcode), y
 			sta audio_square1_apu_timer_low_byte
 
 			; DDDD DDDD
 			iny
-			lda (audio_square1_current_opcode), y
+			lda (current_opcode), y
 			sta audio_square1_wait_cnt
 
 			lda #3
@@ -360,7 +372,7 @@ audio_music_tick:
 			; OOOO ODdd  zNNN NNNN
 
 			; D dd - set wait counter
-			lda (audio_square1_current_opcode), y
+			lda (current_opcode), y
 			pha
 			and #%00000011
 			tax
@@ -390,8 +402,8 @@ audio_music_tick:
 
 			; NNN NNNN - set note frequency as read in the reference table
 			iny
-			lda (audio_square1_current_opcode), y
-			;and #%01111111 ; useless - unused byte is forced to zero by spec
+			lda (current_opcode), y
+			;and #%01111111 ; useless - unused bit is forced to zero by spec
 			tax
 
 			lda audio_notes_table_high, x
@@ -409,7 +421,7 @@ audio_music_tick:
 		.(
 			; OOOO Oddd
 
-			lda (audio_square1_current_opcode), y
+			lda (current_opcode), y
 			and #%00000111
 			sta audio_square1_wait_cnt
 			inc audio_square1_wait_cnt
@@ -423,7 +435,7 @@ audio_music_tick:
 			; OOOO O... DDDD DDDD
 
 			iny
-			lda (audio_square1_current_opcode), y
+			lda (current_opcode), y
 			sta audio_square1_wait_cnt
 
 			lda #2
@@ -435,7 +447,7 @@ audio_music_tick:
 			; OOOO Oddd
 
 			; ddd - set wait counter
-			lda (audio_square1_current_opcode), y
+			lda (current_opcode), y
 			and #%00000111
 			sta audio_square1_wait_cnt
 			inc audio_square1_wait_cnt
@@ -454,7 +466,7 @@ audio_music_tick:
 			; OOOO Oszz  TTTT TTTT
 
 			; s - sign, set frequency high to byte extend of it
-			lda (audio_square1_current_opcode), y
+			lda (current_opcode), y
 			and #%00000100
 			beq set_value
 				lda #$ff
@@ -463,7 +475,7 @@ audio_music_tick:
 
 			; TTTT TTTT
 			iny
-			lda (audio_square1_current_opcode), y
+			lda (current_opcode), y
 			sta audio_square1_pulse_slide_lsb
 
 			lda #2
