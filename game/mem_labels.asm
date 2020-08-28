@@ -354,17 +354,27 @@ audio_current_track_lsb = $c1
 audio_current_track_msb = $c2
 
 audio_square1_sample_num = $0600
-audio_square1_wait_cnt = $0601
-audio_square1_default_note_duration = $0602
-audio_square1_apu_envelope_byte = $0603
-audio_square1_apu_timer_low_byte = $0604
-audio_square1_apu_timer_high_byte = $0605
-audio_square1_apu_timer_high_byte_old = $0606
-audio_square1_pulse_slide_lsb = $0607
-audio_square1_pulse_slide_msb = $0608
-
-audio_square1_current_opcode = $0609
-audio_square1_current_opcode_msb = $060a
+audio_square2_sample_num = $0601
+audio_square1_current_opcode = $0602
+audio_square2_current_opcode = $0603
+audio_square1_current_opcode_msb = $0604
+audio_square2_current_opcode_msb = $0605
+audio_square1_wait_cnt = $0606
+audio_square2_wait_cnt = $0607
+audio_square1_default_note_duration = $0608
+audio_square2_default_note_duration = $0609
+audio_square1_apu_envelope_byte = $060a
+audio_square2_apu_envelope_byte = $060b
+audio_square1_apu_timer_low_byte = $060c
+audio_square2_apu_timer_low_byte = $060d
+audio_square1_apu_timer_high_byte = $060e
+audio_square2_apu_timer_high_byte = $060f
+audio_square1_apu_timer_high_byte_old = $0610
+audio_square2_apu_timer_high_byte_old = $0611
+audio_square1_pulse_slide_lsb = $0612
+audio_square2_pulse_slide_lsb = $0613
+audio_square1_pulse_slide_msb = $0614
+audio_square2_pulse_slide_msb = $0615
 
 #endif
 ;

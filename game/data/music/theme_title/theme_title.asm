@@ -1,7 +1,9 @@
 #include "game/data/music/theme_title/samples_square1.asm"
+#include "game/data/music/theme_title/samples_square2.asm"
 
 track_title_info:
 .word track_title_square1
+.word track_title_square2
 
 track_title_square1:
 .word sample_1
@@ -21,4 +23,24 @@ track_title_square1:
 .word sample_15
 .word sample_16
 .word sample_17
+MUSIC_END
+
+track_title_square2:
+.word square2_sample_1
+.word square2_sample_2
+.word square2_sample_3
+.word square2_sample_4
+.word square2_sample_5
+.word square2_sample_6
+.word square2_sample_7
+.word square2_sample_8
+.word square2_sample_9
+.word square2_sample_10
+.word square2_sample_11
+.word square2_sample_12
+.word square2_sample_13
+.word square2_sample_14
+.word square2_sample_15
+.word square2_sample_16
+.word square2_sample_17
 MUSIC_END

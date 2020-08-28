@@ -112,9 +112,8 @@
 ;
 ;  WiP
 ;   TODO add other channels
-;   TODO remove the table, could be a global table, there is only 96 common notes
-MUSIC_HEADER_PULSE_TRACK_OFFSET = 0
-MUSIC_HEADER_NOTES_TABLE_OFFSET = 2
+MUSIC_HEADER_PULSE1_TRACK_OFFSET = 0
+MUSIC_HEADER_PULSE2_TRACK_OFFSET = 2
 
 ; Commons
 
