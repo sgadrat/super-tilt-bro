@@ -271,21 +271,45 @@ audio_music_tick:
 
 		lda channel_number
 		cmp #2 ; triangle
-		beq end_envelope
+		beq triangle
+
+			; Pulse channel
+			;  copy mirrored envelope as is (a zero frequency cleanly mute the channel)
+			;  avoid rewriting timer high bits if not modified (it resets phase, producing an audible "pop")
 			lda audio_square1_apu_envelope_byte, x
 			sta APU_SQUARE1_ENVELOPE, y
-		end_envelope:
 
-		;TODO actually mute triangle if it is halted, unmute if it is not
+			lda audio_square1_apu_timer_low_byte, x
+			sta APU_SQUARE1_TIMER_LOW, y
 
-		lda audio_square1_apu_timer_low_byte, x
-		sta APU_SQUARE1_TIMER_LOW, y
+			lda audio_square1_apu_timer_high_byte, x
+			cmp audio_square1_apu_timer_high_byte_old, x
+			beq end_write_apu
+				sta APU_SQUARE1_LENGTH_CNT, y
+				sta audio_square1_apu_timer_high_byte_old, x
 
-		lda audio_square1_apu_timer_high_byte, x
-		cmp audio_square1_apu_timer_high_byte_old, x
-		beq end_write_apu
-			sta APU_SQUARE1_LENGTH_CNT, y
-			sta audio_square1_apu_timer_high_byte_old, x
+			jmp end_write_apu
+
+		triangle:
+			; Triangle channel
+			;  silence channel on frequency 0 (avoiding a "pop" noise by violent change in frequency)
+			;  simply copy timer, no phase problem when wrriting high bits
+			lda audio_triangle_apu_timer_low_byte
+			bne unmute
+			lda audio_triangle_apu_timer_high_byte
+			bne unmute
+				lda #%10000000
+				jmp write_linear_cnt
+			unmute:
+				lda audio_triangle_apu_timer_low_byte
+				sta APU_TRIANGLE_TIMER_LOW
+				lda audio_triangle_apu_timer_high_byte
+				sta APU_TRIANGLE_LENGTH_CNT
+
+				lda #%11111111
+
+			write_linear_cnt:
+			sta APU_TRIANGLE_LINEAR_CNT
 
 		end_write_apu:
 
