@@ -64,6 +64,9 @@ ANIM_INVISIBLE_ADDR = $fffa-ANIM_INVISIBLE_SIZE
 #echo FIXED-bank total space:
 #print $10000-$c000
 #echo
+#echo FIXED-bank audio engine size:
+#print ninegine_audio_engine_end-ninegine_audio_engine_begin
+#echo
 #echo FIXED-bank code size:
 #print code_end-$c000
 #echo
