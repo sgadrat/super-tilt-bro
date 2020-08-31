@@ -1,3 +1,4 @@
+music_theme_title_begin:
 #include "game/data/music/theme_title/samples_square1.asm"
 #include "game/data/music/theme_title/samples_square2.asm"
 #include "game/data/music/theme_title/samples_triangle.asm"
@@ -66,3 +67,7 @@ track_title_triangle:
 .word triangle_sample_16
 .word triangle_sample_17
 MUSIC_END
+
+#echo
+#echo theme title size:
+#print *-music_theme_title_begin
