@@ -7,6 +7,22 @@ track_title_info:
 .word track_title_square1
 .word track_title_square2
 .word track_title_triangle
+.word track_title_noise
+
+track_title_noise:
+.word noise_sample_1
+.word noise_sample_2
+MUSIC_END
+
+noise_sample_1:
+AUDIO_NOISE_PITCH_SLIDE_UP(1)
+AUDIO_NOISE_PLAY_TIMED_FREQ(15, 15)
+SAMPLE_END
+
+noise_sample_2:
+AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
+AUDIO_NOISE_WAIT(14)
+SAMPLE_END
 
 track_title_square1:
 .word sample_1

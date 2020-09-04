@@ -21,6 +21,7 @@ audio_play_music:
 	jsr init_pulse_channel
 	ldx #2
 	jsr init_pulse_channel
+	;TODO noise channel
 
 	rts
 
@@ -154,6 +155,27 @@ audio_music_tick:
 	current_opcode_msb = tmpfield4
 	channel_number = tmpfield5
 
+	;HACK test things
+	.(
+		lda audio_music_enabled
+		beq end
+
+			lda #%00111111
+			sta APU_NOISE_ENVELOPE
+
+			lda #%10000000
+			sta APU_NOISE_PERIOD
+
+			lda #%00001000
+			sta APU_NOISE_LENGTH_CNT
+
+			lda #1
+			sta audio_music_enabled
+
+		end:
+		rts
+	.)
+
 	.(
 		SWITCH_BANK(#MUSIC_BANK_NUMBER)
 
@@ -166,9 +188,118 @@ audio_music_tick:
 			jsr pulse_tick
 			ldx #2
 			jsr pulse_tick ; Triangle opcodes are compatible with pulse opcodes, just use pulse_tick
-			;TODO other channels
+			jsr noise_tick
 
 		end:
+		rts
+	.)
+
+	noise_tick:
+	.(
+		tmp_addr = tmpfield1
+		tmp_addr_msb = tmpfield2
+
+		; Execute effects if not silenced
+		lda audio_noise_apu_envelope_byte
+		and #%00001111
+		beq end_effects
+
+			; Pitch slide (add pitch slide value to frequency)
+			lda audio_noise_apu_period_byte
+			and #%00001111
+			clc
+			adc audio_noise_pitch_slide
+			cmp #%00010000
+			bcs overflow
+
+				; No overflow, just store result (keeping original periodic flag)
+				.(
+					sta tmpfield1
+					lda audio_noise_apu_envelope_byte
+					bpl store_result
+						and #%10000000
+						;clc ; useless, ensured by bcs above
+						adc tmpfield1
+						sta tmpfield1
+					store_result:
+					lda tmpfield1
+					sta audio_noise_apu_envelope_byte
+				.)
+
+				jmp end_effects
+
+			overflow:
+
+				; Overflow, cap value to zero if slide is negative or $f is slide is positive
+				.(
+					lda audio_noise_pitch_slide
+					bmi negative
+						lda #%00001111
+						ora audio_noise_apu_envelope_byte
+						jmp store_result
+					negative:
+						lda #%10000000
+						and audio_noise_apu_envelope_byte
+					store_result:
+					sta audio_noise_apu_envelope_byte
+				.)
+
+		end_effects:
+
+		; Execute opcodes only if not in wait mode
+		lda audio_noise_wait_cnt
+		bne end_opcodes_execution
+
+			; Execute opcodes until one activates wait mode
+			execute_current_opcode:
+				; Mirror opcode address in zero-page, to be usable in indirect addressing
+				lda audio_noise_current_opcode
+				sta current_opcode
+				lda audio_noise_current_opcode_msb
+				sta current_opcode_msb
+
+				; Decode opcode
+				ldy #0
+				lda (current_opcode), y
+				lsr
+				lsr
+				lsr
+				lsr
+
+				; Call opcode's routine
+				;  Note - subroutines are ensured to be called with Y=0, and A containing the opcode byte
+				tax
+
+				lda noise_opcode_routines_lsb, x
+				sta tmp_addr
+				lda noise_opcode_routines_msb, x
+				sta tmp_addr_msb
+				lda (current_opcode), y
+				jsr call_pointed_subroutine
+
+				; Point to next opcode
+				clc
+				adc audio_noise_current_opcode
+				sta audio_noise_current_opcode
+				lda #0
+				adc audio_noise_current_opcode_msb
+				sta audio_noise_current_opcode_msb
+
+				; Loop until we are in wait mode
+				lda audio_noise_wait_cnt
+				beq execute_current_opcode
+
+		end_opcodes_execution:
+
+		; Tick wait counter
+		dec audio_noise_wait_cnt
+
+		; Write mirrored APU registers
+		lda audio_noise_apu_envelope_byte
+		sta APU_NOISE_ENVELOPE
+		lda audio_noise_apu_period_byte
+		sta APU_NOISE_PERIOD
+
 		rts
 	.)
 
@@ -234,7 +365,7 @@ audio_music_tick:
 				lsr
 
 				; Call opcode's routine
-				;  Note - subroutines are called wit Y=0, and are free to expect it
+				;  Note - subroutines are ensured to be called wit Y=0, A containing the opcode byte, and X=channel_number
 				tax
 
 				lda pulse1_opcode_routines_lsb, x
@@ -242,6 +373,7 @@ audio_music_tick:
 				lda pulse1_opcode_routines_msb, x
 				sta tmp_addr_msb
 				ldx channel_number
+				lda (current_opcode), y
 				jsr call_pointed_subroutine
 
 				ldx channel_number
@@ -316,6 +448,11 @@ audio_music_tick:
 		rts
 	.)
 
+	opcode_noise_sample_end:
+	.(
+		ldx #3
+		; Fallthrough
+	.)
 	opcode_sample_end:
 	.(
 		tmp_addr = tmpfield1
@@ -326,7 +463,8 @@ audio_music_tick:
 		; Get next sample's address
 #if \
 	(MUSIC_HEADER_PULSE2_TRACK_OFFSET <> (MUSIC_HEADER_PULSE1_TRACK_OFFSET + 2)) || \
-	(MUSIC_HEADER_TRIANGLE_TRACK_OFFSET <>  (MUSIC_HEADER_PULSE2_TRACK_OFFSET + 2))
+	(MUSIC_HEADER_TRIANGLE_TRACK_OFFSET <>  (MUSIC_HEADER_PULSE2_TRACK_OFFSET + 2)) || \
+	(MUSIC_HEADER_NOISE_TRACK_OFFSET <>  (MUSIC_HEADER_TRIANGLE_TRACK_OFFSET + 2))
 #error code below expects channels track offset in a specific order
 #endif
 		txa ; Y = pulse1_track_offset + 2 * X = channel's samples list address' offset in music header
@@ -415,18 +553,18 @@ audio_music_tick:
 		rts
 	.)
 
-	opcode_chan_volume_low:
+	; Generic volume setter
+	;  X envelope byte offset
+	;  Y volume to be set
+	set_volume:
 	.(
-		; OOOO Ovvv
-
 		; Reset volume bits in channel's envelope mirror
 		lda audio_square1_apu_envelope_byte, x
 		and #%11110000
 		sta audio_square1_apu_envelope_byte, x
 
 		; Place new volume bits
-		lda (current_opcode), y
-		and #%00000111
+		tya
 		ora audio_square1_apu_envelope_byte, x
 		sta audio_square1_apu_envelope_byte, x
 
@@ -434,27 +572,50 @@ audio_music_tick:
 		rts
 	.)
 
+	opcode_chan_volume_low:
+	.(
+		; OOOO Ovvv
+
+		; Extract volume value
+		lda (current_opcode), y
+		and #%00000111
+		tay
+
+		; Set channel's volume
+		jmp set_volume
+
+		;rts ; useless, jump to a routine
+	.)
+
 	opcode_chan_volume_high:
 	.(
 		; OOOO Ovvv
 
-		; Reset volume bits in channel's envelope mirror
-		lda audio_square1_apu_envelope_byte, x
-		and #%11110000
-		sta audio_square1_apu_envelope_byte, x
-
-		; Place new volume bits
+		; Extract volume value
 		lda (current_opcode), y
 		and #%00000111
 		ora #%00001000
-		ora audio_square1_apu_envelope_byte, x
-		sta audio_square1_apu_envelope_byte, x
+		tay
 
-		; Write to APU (mirrored)
-		sta audio_square1_apu_envelope_byte, x
+		; Set channel's volume
+		jmp set_volume
 
-		lda #1
-		rts
+		;rts ; useless, jump to a routine
+	.)
+
+	opcode_noise_set_volume:
+	.(
+		; OOOO vvvv
+
+		; Extract volume value
+		and #%00001111
+		tay
+
+		; Set channel's volume
+		ldx #audio_noise_apu_envelope_byte-audio_square1_apu_envelope_byte
+		jmp set_volume
+
+		;rts useless, jump to a routine
 	.)
 
 	opcode_play_timed_freq:
@@ -620,8 +781,14 @@ audio_music_tick:
 	pulse1_opcode_routines_lsb:
 	.byt <opcode_sample_end, <opcode_chan_params, <opcode_chan_volume_low, <opcode_chan_volume_high, <opcode_play_timed_freq
 	.byt <opcode_play_note, <opcode_wait, <opcode_long_wait, <opcode_halt, <opcode_pitch_slide
-
 	pulse1_opcode_routines_msb:
 	.byt >opcode_sample_end, >opcode_chan_params, >opcode_chan_volume_low, >opcode_chan_volume_high, >opcode_play_timed_freq
 	.byt >opcode_play_note, >opcode_wait, >opcode_long_wait, >opcode_halt, >opcode_pitch_slide
+
+	noise_opcode_routines_lsb:
+	.byt <opcode_noise_sample_end, <opcode_noise_set_volume, <opcode_noise_set_periodic, <opcode_noise_play_timed_freq, <opcode_noise_wait
+	.byt <opcode_noise_long_wait, <opcode_noise_halt, <opcode_noise_pitch_slide_up, <opcode_noise_pitch_slide_down
+	noise_opcode_routines_msb:
+	.byt >opcode_noise_sample_end, >opcode_noise_set_volume, >opcode_noise_set_periodic, >opcode_noise_play_timed_freq, >opcode_noise_wait
+	.byt >opcode_noise_long_wait, >opcode_noise_halt, >opcode_noise_pitch_slide_up, >opcode_noise_pitch_slide_down
 .)

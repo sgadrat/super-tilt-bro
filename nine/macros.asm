@@ -107,14 +107,14 @@
 
 ; Music header
 ;  Format
-;   2 bytes - vector to 2a06 pulse channel 1's track
-;   0 to 256 bytes - notes table, each entry is a two bytes frequency
-;
-;  WiP
-;   TODO add other channels
+;   2 bytes - vector to 2a03 pulse channel 1's track
+;   2 bytes - vector to 2a03 pulse channel 1's track
+;   2 bytes - vector to 2a03 triangle channel's track
+;   2 bytes - vector to 2a03 noise channel's track
 MUSIC_HEADER_PULSE1_TRACK_OFFSET = 0
 MUSIC_HEADER_PULSE2_TRACK_OFFSET = 2
 MUSIC_HEADER_TRIANGLE_TRACK_OFFSET = 4
+MUSIC_HEADER_NOISE_TRACK_OFFSET = 6
 
 ; Commons
 
@@ -132,6 +132,15 @@ AUDIO_OP_WAIT = 6
 AUDIO_OP_LONG_WAIT = 7
 AUDIO_OP_HALT = 8
 AUDIO_OP_PITCH_SLIDE = 9
+
+AUDIO_OP_NOISE_SET_VOLUME = 1
+AUDIO_OP_NOISE_SET_PERIODIC = 2
+AUDIO_OP_NOISE_PLAY_TIMED_FREQ = 3
+AUDIO_OP_NOISE_WAIT = 4
+AUDIO_OP_NOISE_LONG_WAIT = 5
+AUDIO_OP_NOISE_HALT = 6
+AUDIO_OP_NOISE_PITCH_SLIDE_UP = 7
+AUDIO_OP_NOISE_PITCH_SLIDE_DOWN = 8
 
 #define CHAN_PARAMS(default_dur,duty,loop,const,volume,sweep_enabled,sweep_period,sweep_negate,sweep_shift) .byt \
 (AUDIO_OP_CHAN_PARAMS << 3) + default_dur, \
@@ -160,6 +169,41 @@ note_idx
 #define PITCH_SLIDE(step) .byt \
 (AUDIO_OP_PITCH_SLIDE << 3) + ((step >> 8) & %00000100), \
 <step
+
+#define AUDIO_NOISE_SET_VOLUME(volume) .byt \
+(AUDIO_OP_NOISE_SET_VOLUME << 4) + volume
+
+
+#define AUDIO_NOISE_SET_PERIODIC(flag) .byt \
+(AUDIO_OP_NOISE_SET_PERIODIC << 4) + flag
+
+
+#define AUDIO_NOISE_PLAY_TIMED_FREQ(freq, duration) .byt \
+(AUDIO_OP_NOISE_PLAY_TIMED_FREQ << 4) + freq, \
+duration
+
+
+#define AUDIO_NOISE_WAIT(dur_minus_one) .byt \
+(AUDIO_OP_NOISE_WAIT << 4) + dur_minus_one
+
+
+#define AUDIO_NOISE_LONG_WAIT(duration) .byt \
+(AUDIO_OP_NOISE_LONG_WAIT << 4), \
+duration
+
+
+#define AUDIO_NOISE_HALT(dur_minus_one) .byt \
+(AUDIO_OP_NOISE_HALT << 4) + dur_minus_one
+
+
+#define AUDIO_NOISE_PITCH_SLIDE_UP(slide) .byt \
+(AUDIO_OP_NOISE_PITCH_SLIDE_UP << 4) + slide
+
+
+#define AUDIO_NOISE_PITCH_SLIDE_DOWN(slide) .byt \
+(AUDIO_OP_NOISE_PITCH_SLIDE_DOWN << 4) + slide
+
+
 
 #endif
 
