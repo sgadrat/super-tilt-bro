@@ -24,7 +24,13 @@ AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
 AUDIO_NOISE_WAIT(14)
 SAMPLE_END
 
+halt_sample:
+HALT(7)
+SAMPLE_END
+
 track_title_square1:
+.word halt_sample
+MUSIC_END
 .word sample_1
 .word sample_2
 .word sample_3
@@ -45,6 +51,8 @@ track_title_square1:
 MUSIC_END
 
 track_title_square2:
+.word halt_sample
+MUSIC_END
 .word square2_sample_1
 .word square2_sample_2
 .word square2_sample_3
@@ -65,6 +73,8 @@ track_title_square2:
 MUSIC_END
 
 track_title_triangle:
+.word halt_sample
+MUSIC_END
 .word triangle_sample_1
 .word triangle_sample_2
 .word triangle_sample_3

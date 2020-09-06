@@ -15,17 +15,38 @@ audio_play_music:
 	sta audio_current_track_msb
 	sty audio_current_track_lsb
 
+	; Init pulse channels
 	ldx #0
-	jsr init_pulse_channel
+	jsr init_channel
+
 	ldx #1
-	jsr init_pulse_channel
+	jsr init_channel
+
+	; Init triangle channle
+	lda #5 ; default note duration ;TODO get it from music header
+	sta audio_triangle_default_note_duration
+
+	lda #%11111111 ; CRRR RRRR
+	sta APU_TRIANGLE_LINEAR_CNT
+
 	ldx #2
-	jsr init_pulse_channel
-	;TODO noise channel
+	jsr init_channel
+
+	; Init noise channel
+	lda #%01000000
+	sta audio_noise_apu_period_byte
+	lda #%00111111
+	sta audio_noise_apu_envelope_byte
+
+	lda #%00001000
+	sta APU_NOISE_LENGTH_CNT
+
+	ldx #3
+	jsr init_channel
 
 	rts
 
-	init_pulse_channel:
+	init_channel:
 	.(
 		; Set current sample
 		lda #0
@@ -35,19 +56,14 @@ audio_play_music:
 		;lda #0 ; useless, done above
 		sta audio_square1_wait_cnt, x
 
-		; Set current opcode
-		;TODO factorize with SAMPLE_END handling
-		tmp_addr = tmpfield1
-		tmp_addr_msb = tmpfield2
-
 		SWITCH_BANK(#MUSIC_BANK_NUMBER)
 
-		; Set default square1 parameters
-		lda #5 ; default note duration ;TODO get it from music header
-		sta audio_square1_default_note_duration, x
-
+		; Set default pulse parameters
 		cpx #2
-		bcs triangle
+		bcs end_pulse_specifics
+
+			lda #5 ; default note duration ;TODO get it from music header
+			sta audio_square1_default_note_duration, x
 
 			lda #%00111111 ; DDLC VVVV - APU mirror
 			sta audio_square1_apu_envelope_byte, x
@@ -63,21 +79,19 @@ audio_play_music:
 				ok:
 			.)
 
-			jmp end_pulse_specifics
-
-		triangle:
-
-			lda #%11111111 ; CRRR RRRR
-			sta APU_TRIANGLE_LINEAR_CNT
-
 		end_pulse_specifics:
 
-		; Get current sample's address
+		; Set current opcode
+		;TODO factorize with SAMPLE_END handling
 #if \
 	(MUSIC_HEADER_PULSE2_TRACK_OFFSET <> (MUSIC_HEADER_PULSE1_TRACK_OFFSET + 2)) || \
-	(MUSIC_HEADER_TRIANGLE_TRACK_OFFSET <>  (MUSIC_HEADER_PULSE2_TRACK_OFFSET + 2))
+	(MUSIC_HEADER_TRIANGLE_TRACK_OFFSET <>  (MUSIC_HEADER_PULSE2_TRACK_OFFSET + 2)) || \
+	(MUSIC_HEADER_NOISE_TRACK_OFFSET <>  (MUSIC_HEADER_TRIANGLE_TRACK_OFFSET + 2))
 #error code below expects channels track offset in a specific order
 #endif
+		tmp_addr = tmpfield1
+		tmp_addr_msb = tmpfield2
+
 		txa ; Y = pulse1_track_offset + 2 * X = channel's samples list address' offset in music header
 		asl
 		clc
@@ -142,6 +156,7 @@ audio_reset_music:
 	sta audio_square1_sample_num
 	sta audio_square2_sample_num
 	sta audio_triangle_sample_num
+	sta audio_noise_sample_num
 	;TODO current opcode?
 	rts
 .)
@@ -154,27 +169,6 @@ audio_music_tick:
 	current_opcode = tmpfield3
 	current_opcode_msb = tmpfield4
 	channel_number = tmpfield5
-
-	;HACK test things
-	.(
-		lda audio_music_enabled
-		beq end
-
-			lda #%00111111
-			sta APU_NOISE_ENVELOPE
-
-			lda #%10000000
-			sta APU_NOISE_PERIOD
-
-			lda #%00001000
-			sta APU_NOISE_LENGTH_CNT
-
-			lda #1
-			sta audio_music_enabled
-
-		end:
-		rts
-	.)
 
 	.(
 		SWITCH_BANK(#MUSIC_BANK_NUMBER)
@@ -199,50 +193,45 @@ audio_music_tick:
 		tmp_addr = tmpfield1
 		tmp_addr_msb = tmpfield2
 
-		; Execute effects if not silenced
-		lda audio_noise_apu_envelope_byte
+		; Pitch slide (add pitch slide value to frequency)
+		lda audio_noise_apu_period_byte
 		and #%00001111
-		beq end_effects
+		clc
+		adc audio_noise_pitch_slide
+		cmp #%00010000
+		bcs overflow
 
-			; Pitch slide (add pitch slide value to frequency)
-			lda audio_noise_apu_period_byte
-			and #%00001111
-			clc
-			adc audio_noise_pitch_slide
-			cmp #%00010000
-			bcs overflow
-
-				; No overflow, just store result (keeping original periodic flag)
-				.(
+			; No overflow, just store result (keeping original periodic flag)
+			.(
+				sta tmpfield1
+				lda audio_noise_apu_period_byte
+				bpl store_result
+					and #%10000000
+					;clc ; useless, ensured by bcs above
+					adc tmpfield1
 					sta tmpfield1
-					lda audio_noise_apu_envelope_byte
-					bpl store_result
-						and #%10000000
-						;clc ; useless, ensured by bcs above
-						adc tmpfield1
-						sta tmpfield1
-					store_result:
-					lda tmpfield1
-					sta audio_noise_apu_envelope_byte
-				.)
+				store_result:
+				lda tmpfield1
+				sta audio_noise_apu_period_byte
+			.)
 
-				jmp end_effects
+			jmp end_effects
 
-			overflow:
+		overflow:
 
-				; Overflow, cap value to zero if slide is negative or $f is slide is positive
-				.(
-					lda audio_noise_pitch_slide
-					bmi negative
-						lda #%00001111
-						ora audio_noise_apu_envelope_byte
-						jmp store_result
-					negative:
-						lda #%10000000
-						and audio_noise_apu_envelope_byte
-					store_result:
-					sta audio_noise_apu_envelope_byte
-				.)
+			; Overflow, cap value to zero if slide is negative or $f is slide is positive
+			.(
+				lda audio_noise_pitch_slide
+				bmi negative
+					lda #%00001111
+					ora audio_noise_apu_period_byte
+					jmp store_result
+				negative:
+					lda #%10000000
+					and audio_noise_apu_period_byte
+				store_result:
+				sta audio_noise_apu_period_byte
+			.)
 
 		end_effects:
 
@@ -294,11 +283,18 @@ audio_music_tick:
 		; Tick wait counter
 		dec audio_noise_wait_cnt
 
-		; Write mirrored APU registers
-		lda audio_noise_apu_envelope_byte
-		sta APU_NOISE_ENVELOPE
-		lda audio_noise_apu_period_byte
-		sta APU_NOISE_PERIOD
+		; Write mirrored APU registers, or silence the channel if silence flag is set
+		bit audio_noise_apu_period_byte
+		bvc regular_write
+			lda #0
+			sta APU_NOISE_ENVELOPE
+			jmp end_write_apu
+		regular_write:
+			lda audio_noise_apu_envelope_byte
+			sta APU_NOISE_ENVELOPE
+			lda audio_noise_apu_period_byte
+			sta APU_NOISE_PERIOD
+		end_write_apu:
 
 		rts
 	.)
@@ -308,7 +304,7 @@ audio_music_tick:
 		tmp_addr = tmpfield1
 		tmp_addr_msb = tmpfield2
 
-		; Execute effects if not silenced
+		; Execute effects if not silenced (because silence is timer=0 while pitch-slide affects timer, thus unsilencing)
 		lda audio_square1_apu_timer_low_byte, x
 		bne do_effects
 		lda audio_square1_apu_timer_high_byte, x
@@ -726,6 +722,25 @@ audio_music_tick:
 		rts
 	.)
 
+	opcode_noise_wait:
+	.(
+		; OOOO dddd
+
+		and #%00001111
+		sta audio_noise_wait_cnt
+		inc audio_noise_wait_cnt
+
+		lda #1
+		rts
+	.)
+
+	opcode_noise_long_wait:
+	.(
+		; OOOO .... DDDD DDDD
+
+		ldx #audio_noise_wait_cnt-audio_square1_wait_cnt
+		; Fallthrough
+	.)
 	opcode_long_wait:
 	.(
 		; OOOO O... DDDD DDDD
@@ -757,6 +772,25 @@ audio_music_tick:
 		rts
 	.)
 
+	opcode_noise_halt:
+	.(
+		; OOOO dddd
+
+		; dddd - set wait counter
+		lda (current_opcode), y
+		and #%00001111
+		sta audio_noise_wait_cnt
+		inc audio_noise_wait_cnt
+
+		; Silence the channel
+		lda audio_noise_apu_period_byte
+		ora #%01000000
+		sta audio_noise_apu_period_byte
+
+		lda #1
+		rts
+	.)
+
 	opcode_pitch_slide:
 	.(
 		; OOOO Oszz  TTTT TTTT
@@ -775,6 +809,71 @@ audio_music_tick:
 		sta audio_square1_pitch_slide_lsb, x
 
 		lda #2
+		rts
+	.)
+
+	opcode_noise_set_periodic:
+	.(
+		; OOOO zzzL
+
+		and #%00000001
+		beq unset
+			lda audio_noise_apu_period_byte
+			ora #%10000000
+			jmp end
+		unset:
+			lda audio_noise_apu_period_byte
+			and #%01111111
+
+		end:
+		sta audio_noise_apu_period_byte
+		lda #1
+		rts
+	.)
+
+	opcode_noise_play_timed_freq:
+	.(
+		; OOOO NNNN  dddd dddd
+
+		; NNNN - update APU mirror (and reset silence flag)
+		and #%00001111
+		sta tmpfield1
+		lda audio_noise_apu_period_byte
+		and #%10110000
+		ora tmpfield1
+		sta audio_noise_apu_period_byte
+
+		; dddd dddd
+		iny
+		lda (current_opcode), y
+		sta audio_noise_wait_cnt
+
+		lda #2
+		rts
+	.)
+
+	opcode_noise_pitch_slide_up:
+	.(
+		; OOOO TTTT
+
+		and #%00001111
+		eor #%11111111
+		clc
+		adc #1
+		sta audio_noise_pitch_slide
+
+		lda #1
+		rts
+	.)
+
+	opcode_noise_pitch_slide_down:
+	.(
+		; OOOO TTTT
+
+		and #%00001111
+		sta audio_noise_pitch_slide
+
+		lda #1
 		rts
 	.)
 
