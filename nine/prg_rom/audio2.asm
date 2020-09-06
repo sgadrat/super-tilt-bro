@@ -201,17 +201,12 @@ audio_music_tick:
 		cmp #%00010000
 		bcs overflow
 
-			; No overflow, just store result (keeping original periodic flag)
+			; No overflow, just store result (keeping original periodic and engine flags)
 			.(
 				sta tmpfield1
 				lda audio_noise_apu_period_byte
-				bpl store_result
-					and #%10000000
-					;clc ; useless, ensured by bcs above
-					adc tmpfield1
-					sta tmpfield1
-				store_result:
-				lda tmpfield1
+				and #%11110000
+				ora tmpfield1
 				sta audio_noise_apu_period_byte
 			.)
 
@@ -227,7 +222,7 @@ audio_music_tick:
 					ora audio_noise_apu_period_byte
 					jmp store_result
 				negative:
-					lda #%10000000
+					lda #%11110000
 					and audio_noise_apu_period_byte
 				store_result:
 				sta audio_noise_apu_period_byte
@@ -294,6 +289,8 @@ audio_music_tick:
 			sta APU_NOISE_ENVELOPE
 			lda audio_noise_apu_period_byte
 			sta APU_NOISE_PERIOD
+			lda #%00001000
+			sta APU_NOISE_LENGTH_CNT
 		end_write_apu:
 
 		rts

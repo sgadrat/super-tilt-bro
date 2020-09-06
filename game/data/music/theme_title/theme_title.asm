@@ -2,6 +2,7 @@ music_theme_title_begin:
 #include "game/data/music/theme_title/samples_square1.asm"
 #include "game/data/music/theme_title/samples_square2.asm"
 #include "game/data/music/theme_title/samples_triangle.asm"
+#include "game/data/music/theme_title/samples_noise.asm"
 
 track_title_info:
 .word track_title_square1
@@ -12,17 +13,22 @@ track_title_info:
 track_title_noise:
 .word noise_sample_1
 .word noise_sample_2
+.word noise_sample_3
+.word noise_sample_4
+.word noise_sample_5
+.word noise_sample_6
+.word noise_sample_7
+.word noise_sample_8
+.word noise_sample_9
+.word noise_sample_10
+.word noise_sample_11
+.word noise_sample_12
+.word noise_sample_13
+.word noise_sample_14
+.word noise_sample_15
+.word noise_sample_16
+.word noise_sample_17
 MUSIC_END
-
-noise_sample_1:
-AUDIO_NOISE_PITCH_SLIDE_UP(1)
-AUDIO_NOISE_PLAY_TIMED_FREQ(15, 15)
-SAMPLE_END
-
-noise_sample_2:
-AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
-AUDIO_NOISE_WAIT(14)
-SAMPLE_END
 
 halt_sample:
 HALT(7)
