@@ -281,7 +281,7 @@ audio_music_tick:
 		; Write mirrored APU registers, or silence the channel if silence flag is set
 		bit audio_noise_apu_period_byte
 		bvc regular_write
-			lda #0
+			lda #%00110000
 			sta APU_NOISE_ENVELOPE
 			jmp end_write_apu
 		regular_write:
