@@ -70,8 +70,8 @@ sta audio_triangle_track+1
 jsr audio_reset_music
 rts
 #else
-	ldy #<track_title_info
-	lda #>track_title_info
+	ldy #<music_title_info
+	lda #>music_title_info
 	jmp audio_play_music
 #endif
 .)
