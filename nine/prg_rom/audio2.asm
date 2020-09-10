@@ -166,9 +166,11 @@ audio_reset_music:
 ; Overwrites all registers, and tmpfield1 to tmpfield4
 audio_music_tick:
 .(
-	current_opcode = tmpfield3
-	current_opcode_msb = tmpfield4
-	channel_number = tmpfield5
+	apu_timer_high_byte = extra_tmpfield1
+	apu_timer_low_byte = extra_tmpfield2
+	current_opcode = extra_tmpfield3
+	current_opcode_msb = extra_tmpfield4
+	channel_number = extra_tmpfield5
 
 	.(
 		SWITCH_BANK(#MUSIC_BANK_NUMBER)
@@ -611,6 +613,27 @@ audio_music_tick:
 		;rts useless, jump to a routine
 	.)
 
+	opcode_set_duty:
+	.(
+		; OOOO ODDz
+
+		and #%00000110
+		asl
+		asl
+		asl
+		asl
+		asl
+		sta tmpfield1
+
+		lda audio_square1_apu_envelope_byte, x
+		and #%00111111
+		ora tmpfield1
+		sta audio_square1_apu_envelope_byte, x
+
+		lda #1
+		rts
+	.)
+
 	opcode_play_timed_freq:
 	.(
 		; OOOO OTTT  TTTT TTTT  DDDD DDDD
@@ -634,21 +657,37 @@ audio_music_tick:
 		rts
 	.)
 
+	; Extract frequency from note lookup table
+	;  register A - note index
+	;
+	; Output
+	;  apu_timer_low_byte - frequency lsb
+	;  apu_timer_high_byte - frequency msb
+	;
+	; Overwrites register A, register X, extra_tmpfield1, and extra_tmpfield2
+	note_table_lookup:
+	.(
+		tax
+
+		lda audio_notes_table_high, x
+		ora #%11111000 ;TODO this actually hardocode a long value for "length counter load", which should be adequat most times. If we want to play with it, actually use register mirroring, and add opcodes to handle this value
+		sta apu_timer_high_byte
+
+		lda audio_notes_table_low, x
+		sta apu_timer_low_byte
+
+		rts
+	.)
+
 	opcode_play_note:
 	.(
 		; OOOO ODdd  zNNN NNNN
 
-		default_note_duration = extra_tmpfield1
-		apu_timer_high_byte = extra_tmpfield2
-		apu_timer_low_byte = extra_tmpfield3
+		default_note_duration = tmpfield1
 
 		; Mirror state impacted while X is used in fixed memory location
 		lda audio_square1_default_note_duration, x
 		sta default_note_duration
-		lda audio_square1_apu_timer_high_byte, x
-		sta apu_timer_high_byte
-		lda audio_square1_apu_timer_low_byte, x
-		sta apu_timer_low_byte
 
 		; D dd - set wait counter
 		lda (current_opcode), y
@@ -683,20 +722,44 @@ audio_music_tick:
 		; NNN NNNN - set note frequency as read in the reference table
 		iny
 		lda (current_opcode), y
-		;and #%01111111 ; useless - unused bit is forced to zero by spec
-		tax
-
-		lda audio_notes_table_high, x
-		ora #%11111000 ;TODO this actually hardocode a long value for "length counter load", which should be adequat most times. If we want to play with it, actually use register mirroring, and add opcodes to handle this value
-		sta apu_timer_high_byte
-
-		lda audio_notes_table_low, x
-		sta apu_timer_low_byte
+		jsr note_table_lookup
 
 		; Copy state mirror to actual state
 		ldx channel_number
 		lda default_note_duration
 		sta audio_square1_default_note_duration, x
+		lda apu_timer_high_byte
+		sta audio_square1_apu_timer_high_byte, x
+		lda apu_timer_low_byte
+		sta audio_square1_apu_timer_low_byte, x
+
+		lda #2
+		rts
+	.)
+
+	opcode_play_timed_note:
+	.(
+		; OOOO Oddd  dNNN NNNN
+
+		; NNN NNNN - set note frequency as read in the reference table
+		iny
+		lda (current_opcode), y
+		and #%01111111
+		jsr note_table_lookup
+
+		; ddd d - set wait counter
+		lda (current_opcode), y
+		rol
+		dey
+		lda (current_opcode), y
+		rol
+		and #%00001111
+		clc
+		adc #1
+		ldx channel_number
+		sta audio_square1_wait_cnt, x
+
+		; Copy state mirror to actual state
 		lda apu_timer_high_byte
 		sta audio_square1_apu_timer_high_byte, x
 		lda apu_timer_low_byte
@@ -809,6 +872,143 @@ audio_music_tick:
 		rts
 	.)
 
+	opcode_pulse_meta_uslide:
+	.(
+		opcode_byte = tmpfield1
+
+		sta opcode_byte
+
+		lda #$ff
+		jmp opcode_pulse_meta_common
+	.)
+	opcode_pulse_meta_dslide:
+	.(
+		opcode_byte = tmpfield1
+
+		sta opcode_byte
+
+		lda #0
+		; Fallthrough
+	.)
+	opcode_pulse_meta_common:
+	.(
+		; OOOO Ovsd  zNNN NNNN  DDDD DDDD [ddzz vvvv] [SSSS SSSS]
+
+		opcode_byte = tmpfield1
+		slide_msb = tmpfield2
+		envelope_mask = tmpfield3
+		opcode_size = tmpfield4
+
+		; Store slide msb in temporary location
+		sta slide_msb
+
+		; Note
+		.(
+			; zNNN NNNN  DDDD DDDD
+
+			; zNNN NNNN
+			iny
+			lda (current_opcode), y
+			jsr note_table_lookup
+
+			ldx channel_number
+			lda apu_timer_high_byte
+			sta audio_square1_apu_timer_high_byte, x
+			lda apu_timer_low_byte
+			sta audio_square1_apu_timer_low_byte, x
+
+			; DDDD DDDD
+			iny
+			lda (current_opcode), y
+			sta audio_square1_wait_cnt, x
+		.)
+
+		; Volume and duty
+		.(
+			lda opcode_byte
+			and #%00000101
+			beq end_volume_duty
+
+				; ddzz vvvv
+
+				iny
+
+				; Compute mask for old value (with bits set for bits we want to keep)
+				lda #%00000100 ; volume present flag
+				bit opcode_byte
+				beq keep_volume
+					lda #%00110000
+					jmp set_volume_mask
+				keep_volume:
+					lda #%00111111
+				set_volume_mask:
+				sta envelope_mask
+
+				lda #%00000001 ; duty present flag
+				bit opcode_byte
+				bne replace_duty
+					lda #%11000000
+					ora envelope_mask
+					sta envelope_mask
+					; no jump, replace_duty is empty
+				replace_duty:
+					; Nothing to do, existing mask is already correct
+
+				; Apply mask to old value (bits to be changed are set to zero)
+				lda audio_square1_apu_envelope_byte, x
+				and envelope_mask
+
+				; Set bits from new value
+				ora (current_opcode), y
+				sta audio_square1_apu_envelope_byte, x
+
+			end_volume_duty:
+		.)
+
+		; Pitch slide
+		.(
+			lda opcode_byte
+			and #%00000010
+			beq end_pitch_slide
+
+				; SSSS SSSS
+
+				lda slide_msb
+				sta audio_square1_pitch_slide_msb, x
+
+				iny
+				lda (current_opcode), y
+				sta audio_square1_pitch_slide_lsb, x
+
+			end_pitch_slide:
+		.)
+
+		; Compute opcode length and return
+		lda #3 ; minimal size
+		sta opcode_size
+
+		.(
+			; +1 if any of duty/volume is present
+			lda #%00000101
+			bit opcode_byte
+			beq ok
+				inc opcode_size
+			ok:
+		.)
+
+		.(
+			; +1 if pitch slice is present
+			lda #%00000010
+			bit opcode_byte
+			beq ok
+				inc opcode_size
+			ok:
+		.)
+
+		lda opcode_size
+		rts
+	.)
+
 	opcode_noise_set_periodic:
 	.(
 		; OOOO zzzL
@@ -877,9 +1077,11 @@ audio_music_tick:
 	pulse1_opcode_routines_lsb:
 	.byt <opcode_sample_end, <opcode_chan_params, <opcode_chan_volume_low, <opcode_chan_volume_high, <opcode_play_timed_freq
 	.byt <opcode_play_note, <opcode_wait, <opcode_long_wait, <opcode_halt, <opcode_pitch_slide
+	.byt <opcode_set_duty, <opcode_play_timed_note, <opcode_pulse_meta_uslide, <opcode_pulse_meta_dslide
 	pulse1_opcode_routines_msb:
 	.byt >opcode_sample_end, >opcode_chan_params, >opcode_chan_volume_low, >opcode_chan_volume_high, >opcode_play_timed_freq
 	.byt >opcode_play_note, >opcode_wait, >opcode_long_wait, >opcode_halt, >opcode_pitch_slide
+	.byt >opcode_set_duty, >opcode_play_timed_note, >opcode_pulse_meta_uslide, >opcode_pulse_meta_dslide
 
 	noise_opcode_routines_lsb:
 	.byt <opcode_noise_sample_end, <opcode_noise_set_volume, <opcode_noise_set_periodic, <opcode_noise_play_timed_freq, <opcode_noise_wait

@@ -132,6 +132,10 @@ AUDIO_OP_WAIT = 6
 AUDIO_OP_LONG_WAIT = 7
 AUDIO_OP_HALT = 8
 AUDIO_OP_PITCH_SLIDE = 9
+AUDIO_OP_CHAN_DUTY = 10
+AUDIO_OP_PLAY_TIMED_NOTE = 11
+AUDIO_OP_META_NOTE_SLIDE_UP = 12
+AUDIO_OP_META_NOTE_SLIDE_DOWN = 13
 
 AUDIO_OP_NOISE_SET_VOLUME = 1
 AUDIO_OP_NOISE_SET_PERIODIC = 2
@@ -151,6 +155,8 @@ AUDIO_OP_NOISE_PITCH_SLIDE_DOWN = 8
 
 #define CHAN_VOLUME_HIGH(volume_minus_eight) .byt (AUDIO_OP_CHAN_VOLUME_HIGH << 3) + volume_minus_eight
 
+#define CHAN_DUTY(duty) .byt (AUDIO_OP_CHAN_DUTY << 3) + (duty << 1)
+
 #define PLAY_TIMED_FREQ(freq,duration) .byt \
 (AUDIO_OP_PLAY_TIMED_FREQ << 3) + (freq >> 8), \
 <freq, \
@@ -159,6 +165,10 @@ duration
 #define PLAY_NOTE(dir,shift,note_idx) .byt \
 (AUDIO_OP_PLAY_NOTE << 3) + (dir << 2) + shift, \
 note_idx
+
+#define PLAY_TIMED_NOTE(dur_minus_one,note_idx) .byt \
+(AUDIO_OP_PLAY_TIMED_NOTE << 3) + (dur_minus_one >> 1), \
+((dur_minus_one & %00000001) << 7) + note_idx
 
 #define WAIT(dur_minus_one) .byt (AUDIO_OP_WAIT << 3) + dur_minus_one
 
@@ -169,6 +179,84 @@ note_idx
 #define PITCH_SLIDE(step) .byt \
 (AUDIO_OP_PITCH_SLIDE << 3) + ((step >> 8) & %00000100), \
 <step
+
+#define AUDIO_PULSE_META_NOTE(note_idx,duration) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000000, \
+note_idx, \
+duration
+
+#define AUDIO_PULSE_META_NOTE_DUT(note_idx,duration,duty) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000001, \
+note_idx, \
+duration, \
+(duty << 6)
+
+#define AUDIO_PULSE_META_NOTE_VOL(note_idx,duration,volume) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000100, \
+note_idx, \
+duration, \
+volume
+
+#define AUDIO_PULSE_META_NOTE_DUT_VOL(note_idx,duration,duty,volume) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000101, \
+note_idx, \
+duration, \
+(duty << 6) + volume
+
+#define AUDIO_PULSE_META_NOTE_USLIDE(note_idx,duration,slide) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_UP << 3) + %00000010, \
+note_idx, \
+duration, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_NOTE_DUT_USLIDE(note_idx,duration,duty,slide) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_UP << 3) + %00000011, \
+note_idx, \
+duration, \
+(duty << 6), \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_NOTE_VOL_USLIDE(note_idx,duration,volume,slide) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_UP << 3) + %00000110, \
+note_idx, \
+duration, \
+volume, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_NOTE_DUT_VOL_USLIDE(note_idx,duration,duty,volume,slide) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_UP << 3) + %00000111, \
+note_idx, \
+duration, \
+(duty << 6) + volume, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_NOTE_DSLIDE(note_idx,duration,slide) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000010, \
+note_idx, \
+duration, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_NOTE_DUT_DSLIDE(note_idx,duration,duty,slide) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000011, \
+note_idx, \
+duration, \
+(duty << 6), \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_NOTE_VOL_DSLIDE(note_idx,duration,volume,slide) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000110, \
+note_idx, \
+duration, \
+volume, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(note_idx,duration,duty,volume,slide) .byt \
+(AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000111, \
+note_idx, \
+duration, \
+(duty << 6) + volume, \
+(slide & $ff)
+
 
 #define AUDIO_NOISE_SET_VOLUME(volume) .byt \
 (AUDIO_OP_NOISE_SET_VOLUME << 4) + volume
