@@ -353,12 +353,11 @@ audio_music_enabled = $c0
 audio_current_track_lsb = $c1
 audio_current_track_msb = $c2
 
-audio_engine_memory_begin = $0600
+audio_square1_sample_num = $c3
+audio_square2_sample_num = $c4
+audio_triangle_sample_num = $c5
+audio_noise_sample_num = $c6
 
-audio_square1_sample_num = $0600
-audio_square2_sample_num = $0601
-audio_triangle_sample_num = $0602
-audio_noise_sample_num = $0603
 audio_square1_current_opcode = $0604
 audio_square2_current_opcode = $0605
 audio_triangle_current_opcode = $0606

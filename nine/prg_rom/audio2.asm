@@ -374,12 +374,15 @@ audio_music_tick:
 				ldx channel_number
 
 				; Point to next opcode
-				clc
-				adc audio_square1_current_opcode, x
-				sta audio_square1_current_opcode, x
-				lda #0
-				adc audio_square1_current_opcode_msb, x
-				sta audio_square1_current_opcode_msb, x
+				cmp #0
+				beq skip_opcode_update ; Condition technically unecessary, but optimizing the worst case (SAMPLE_END returns zero and tends to be called for all channels at the same time)
+					clc
+					adc audio_square1_current_opcode, x
+					sta audio_square1_current_opcode, x
+					lda #0
+					adc audio_square1_current_opcode_msb, x
+					sta audio_square1_current_opcode_msb, x
+				skip_opcode_update:
 
 				; Loop until we are in wait mode
 				lda audio_square1_wait_cnt, x
@@ -464,7 +467,7 @@ audio_music_tick:
 #endif
 		txa ; Y = pulse1_track_offset + 2 * X = channel's samples list address' offset in music header
 		asl
-		clc
+		;clc ; useless, asl should not overflow
 		adc #MUSIC_HEADER_PULSE1_TRACK_OFFSET
 		tay
 
@@ -475,12 +478,12 @@ audio_music_tick:
 		sta tmp_addr_msb
 
 		lda audio_square1_sample_num, x ; A = (++sample_num) * 2
-		clc
+		;clc ; useless, adc should not overflow, no other carry-setting opcode since
 		adc #1
 		sta audio_square1_sample_num, x
 		asl
 
-		clc ; sample_addr = current sample's address
+		;clc; useless, still no overflow ; sample_addr = current sample's address
 		adc tmp_addr
 		sta sample_addr
 		lda #0
@@ -491,27 +494,28 @@ audio_music_tick:
 		;  Check only msb of MUSIC_END vector ($00 $00) as a sample in zero page is improbable
 		ldy #1
 		lda (sample_addr), y
-		bne end_get_sample_addr
+		bne no_track_loop
+
+			; Set current opcode to first sample's first opcode
+			lda (tmp_addr), y
+			sta audio_square1_current_opcode_msb, x
+			dey ; note, sets Y to zero, equivalent to ldy #0 with oine less byte
+			lda (tmp_addr), y
+			sta audio_square1_current_opcode, x
 
 			; Reset sample counter
-			lda #0
-			sta audio_square1_sample_num, x
+			sty audio_square1_sample_num, x
 
-			; Get first sample's address
-			lda tmp_addr ; sample_addr = first sample's addr
-			sta sample_addr
-			lda tmp_addr_msb
-			sta sample_addr_msb
+			jmp end
 
-		end_get_sample_addr:
+		no_track_loop:
 
-		; Set current opcode to new sample's first opcode
-		ldy #0
-		lda (sample_addr), y
-		sta audio_square1_current_opcode, x
-		iny
-		lda (sample_addr), y
-		sta audio_square1_current_opcode_msb, x
+			; Set current opcode to new sample's first opcode
+			lda (sample_addr), y
+			sta audio_square1_current_opcode_msb, x
+			dey ; note, sets Y to zero, equivalent to ldy #0 with oine less byte
+			lda (sample_addr), y
+			sta audio_square1_current_opcode, x
 
 		end:
 		lda #0
@@ -892,30 +896,45 @@ audio_music_tick:
 	.)
 	opcode_pulse_meta_common:
 	.(
-		; OOOO Ovsd  zNNN NNNN  DDDD DDDD [ddzz vvvv] [SSSS SSSS]
+		; OOOO Ovsd [zNNN NNNN] DDDD DDDD [ddzz vvvv] [SSSS SSSS]
 
 		opcode_byte = tmpfield1
 		slide_msb = tmpfield2
 		envelope_mask = tmpfield3
 		opcode_size = tmpfield4
+		has_note = tmpfield5
 
 		; Store slide msb in temporary location
 		sta slide_msb
 
+		; Store opcode size to be incremented while reading optional bytes
+		lda #2
+		sta opcode_size
+
 		; Note
 		.(
-			; zNNN NNNN  DDDD DDDD
+			; [zNNN NNNN] DDDD DDDD
 
 			; zNNN NNNN
-			iny
-			lda (current_opcode), y
-			jsr note_table_lookup
+			lda opcode_byte
+			and #%11111000
+			cmp #(AUDIO_OP_META_WAIT_SLIDE_UP << 3)
+			beq end_note
+			cmp #(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3)
+			beq end_note
 
-			ldx channel_number
-			lda apu_timer_high_byte
-			sta audio_square1_apu_timer_high_byte, x
-			lda apu_timer_low_byte
-			sta audio_square1_apu_timer_low_byte, x
+				inc opcode_size
+				iny
+				lda (current_opcode), y
+				jsr note_table_lookup
+
+				ldx channel_number
+				lda apu_timer_high_byte
+				sta audio_square1_apu_timer_high_byte, x
+				lda apu_timer_low_byte
+				sta audio_square1_apu_timer_low_byte, x
+
+			end_note:
 
 			; DDDD DDDD
 			iny
@@ -931,6 +950,7 @@ audio_music_tick:
 
 				; ddzz vvvv
 
+				inc opcode_size
 				iny
 
 				; Compute mask for old value (with bits set for bits we want to keep)
@@ -976,6 +996,7 @@ audio_music_tick:
 				lda slide_msb
 				sta audio_square1_pitch_slide_msb, x
 
+				inc opcode_size
 				iny
 				lda (current_opcode), y
 				sta audio_square1_pitch_slide_lsb, x
@@ -983,29 +1004,10 @@ audio_music_tick:
 			end_pitch_slide:
 		.)
 
-		; Compute opcode length and return
-		lda #3 ; minimal size
-		sta opcode_size
-
-		.(
-			; +1 if any of duty/volume is present
-			lda #%00000101
-			bit opcode_byte
-			beq ok
-				inc opcode_size
-			ok:
-		.)
-
-		.(
-			; +1 if pitch slice is present
-			lda #%00000010
-			bit opcode_byte
-			beq ok
-				inc opcode_size
-			ok:
-		.)
-
-		lda opcode_size
+		; Return pre-computed opcode size
+		lda opcode_size ;TODO yeah, better use y
+		iny
+		tya
 		rts
 	.)
 
@@ -1077,11 +1079,13 @@ audio_music_tick:
 	pulse1_opcode_routines_lsb:
 	.byt <opcode_sample_end, <opcode_chan_params, <opcode_chan_volume_low, <opcode_chan_volume_high, <opcode_play_timed_freq
 	.byt <opcode_play_note, <opcode_wait, <opcode_long_wait, <opcode_halt, <opcode_pitch_slide
-	.byt <opcode_set_duty, <opcode_play_timed_note, <opcode_pulse_meta_uslide, <opcode_pulse_meta_dslide
+	.byt <opcode_set_duty, <opcode_play_timed_note, <opcode_pulse_meta_uslide, <opcode_pulse_meta_dslide, <opcode_pulse_meta_uslide
+	.byt <opcode_pulse_meta_dslide
 	pulse1_opcode_routines_msb:
 	.byt >opcode_sample_end, >opcode_chan_params, >opcode_chan_volume_low, >opcode_chan_volume_high, >opcode_play_timed_freq
 	.byt >opcode_play_note, >opcode_wait, >opcode_long_wait, >opcode_halt, >opcode_pitch_slide
-	.byt >opcode_set_duty, >opcode_play_timed_note, >opcode_pulse_meta_uslide, >opcode_pulse_meta_dslide
+	.byt >opcode_set_duty, >opcode_play_timed_note, >opcode_pulse_meta_uslide, >opcode_pulse_meta_dslide, >opcode_pulse_meta_uslide
+	.byt >opcode_pulse_meta_dslide
 
 	noise_opcode_routines_lsb:
 	.byt <opcode_noise_sample_end, <opcode_noise_set_volume, <opcode_noise_set_periodic, <opcode_noise_play_timed_freq, <opcode_noise_wait

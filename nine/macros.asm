@@ -136,6 +136,8 @@ AUDIO_OP_CHAN_DUTY = 10
 AUDIO_OP_PLAY_TIMED_NOTE = 11
 AUDIO_OP_META_NOTE_SLIDE_UP = 12
 AUDIO_OP_META_NOTE_SLIDE_DOWN = 13
+AUDIO_OP_META_WAIT_SLIDE_UP = 14
+AUDIO_OP_META_WAIT_SLIDE_DOWN = 15
 
 AUDIO_OP_NOISE_SET_VOLUME = 1
 AUDIO_OP_NOISE_SET_PERIODIC = 2
@@ -253,6 +255,71 @@ volume, \
 #define AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(note_idx,duration,duty,volume,slide) .byt \
 (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000111, \
 note_idx, \
+duration, \
+(duty << 6) + volume, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_WAIT(duration) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3) + %00000000, \
+duration
+
+#define AUDIO_PULSE_META_WAIT_DUT(duration,duty) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3) + %00000001, \
+duration, \
+(duty << 6)
+
+#define AUDIO_PULSE_META_WAIT_VOL(duration,volume) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3) + %00000100, \
+duration, \
+volume
+
+#define AUDIO_PULSE_META_WAIT_DUT_VOL(duration,duty,volume) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3) + %00000101, \
+duration, \
+(duty << 6) + volume
+
+#define AUDIO_PULSE_META_WAIT_USLIDE(duration,slide) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_UP << 3) + %00000010, \
+duration, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_WAIT_DUT_USLIDE(duration,duty,slide) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_UP << 3) + %00000011, \
+duration, \
+(duty << 6), \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_WAIT_VOL_USLIDE(duration,volume,slide) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_UP << 3) + %00000110, \
+duration, \
+volume, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_WAIT_DUT_VOL_USLIDE(duration,duty,volume,slide) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_UP << 3) + %00000111, \
+duration, \
+(duty << 6) + volume, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_WAIT_DSLIDE(duration,slide) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3) + %00000010, \
+duration, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_WAIT_DUT_DSLIDE(duration,duty,slide) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3) + %00000011, \
+duration, \
+(duty << 6), \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_WAIT_VOL_DSLIDE(duration,volume,slide) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3) + %00000110, \
+duration, \
+volume, \
+(slide & $ff)
+
+#define AUDIO_PULSE_META_WAIT_DUT_VOL_DSLIDE(duration,duty,volume,slide) .byt \
+(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3) + %00000111, \
 duration, \
 (duty << 6) + volume, \
 (slide & $ff)
