@@ -1,7 +1,9 @@
 audio_init:
 .(
-	jmp audio_mute_music
-	;rts ; useless, jump to routine
+	jsr audio_mute_music
+	lda #%00001111 ; ---DNT21
+	STA APU_STATUS
+	rts
 .)
 
 ; Play a track
@@ -120,14 +122,24 @@ audio_play_music:
 ;  Overwrites register A
 audio_mute_music:
 .(
+	; Avoid any futher music tick
 	lda #0
 	sta audio_music_enabled
 
-	;TODO higher level silencing of channels (like an halt opcode in each channel)
-	;     (or by forcing silence in audio_music_tick at the "copy APU mirror to registers" step)
-	;     that way, complex sfx can still be played
-	lda #%00001000 ; ---DNT21
-	sta APU_STATUS ;
+	; Silence square channels
+	;lda #0 ; useless, set above
+	sta APU_SQUARE1_TIMER_LOW
+	sta APU_SQUARE1_LENGTH_CNT
+	sta APU_SQUARE2_TIMER_LOW
+	sta APU_SQUARE2_LENGTH_CNT
+
+	; Silence triangle channel
+	lda #%10000000
+	sta APU_TRIANGLE_LINEAR_CNT
+
+	; Silence noise channel
+	lda #%00110000
+	sta APU_NOISE_ENVELOPE
 
 	rts
 .)
@@ -137,12 +149,27 @@ audio_mute_music:
 ;  Overwrites register A
 audio_unmute_music:
 .(
+	; Reactivate ticks
 	lda #1
 	sta audio_music_enabled
 
-	;TODO should be useless once audio_mute_music is fixed. Channels should be enabled at startup and never touched after that
-	lda #%00001111 ; ---DNT21
-	sta APU_STATUS ;
+	; Rewrite pulse registers as conditionals at tick's end may only partially update them
+	ldx #1
+	ldy #4
+	square_reinit_loop:
+		lda audio_square1_apu_envelope_byte, x
+		sta APU_SQUARE1_ENVELOPE, y
+		lda audio_square1_apu_timer_low_byte, x
+		sta APU_SQUARE1_TIMER_LOW, y
+		lda audio_square1_apu_timer_high_byte, x
+		sta APU_SQUARE1_LENGTH_CNT, y
+
+		dey
+		dey
+		dey
+		dey
+		dex
+		bpl square_reinit_loop
 
 	rts
 .)
