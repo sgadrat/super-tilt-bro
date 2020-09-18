@@ -174,20 +174,6 @@ audio_unmute_music:
 	rts
 .)
 
-; Restart the current track from its begining
-;
-;  Overwrites register A
-audio_reset_music:
-.(
-	lda #0
-	sta audio_square1_sample_num
-	sta audio_square2_sample_num
-	sta audio_triangle_sample_num
-	sta audio_noise_sample_num
-	;TODO current opcode?
-	rts
-.)
-
 ; Play one tick of the audio engine
 ;
 ; Overwrites all registers, and tmpfield1 to tmpfield4
