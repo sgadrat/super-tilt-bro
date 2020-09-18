@@ -928,15 +928,10 @@ audio_music_tick:
 		opcode_byte = tmpfield1
 		slide_msb = tmpfield2
 		envelope_mask = tmpfield3
-		opcode_size = tmpfield4
-		has_note = tmpfield5
+		has_note = tmpfield4
 
 		; Store slide msb in temporary location
 		sta slide_msb
-
-		; Store opcode size to be incremented while reading optional bytes
-		lda #2
-		sta opcode_size
 
 		; Note
 		.(
@@ -950,7 +945,6 @@ audio_music_tick:
 			cmp #(AUDIO_OP_META_WAIT_SLIDE_DOWN << 3)
 			beq end_note
 
-				inc opcode_size
 				iny
 				lda (current_opcode), y
 				jsr note_table_lookup
@@ -977,7 +971,6 @@ audio_music_tick:
 
 				; ddzz vvvv
 
-				inc opcode_size
 				iny
 
 				; Compute mask for old value (with bits set for bits we want to keep)
@@ -1023,7 +1016,6 @@ audio_music_tick:
 				lda slide_msb
 				sta audio_square1_pitch_slide_msb, x
 
-				inc opcode_size
 				iny
 				lda (current_opcode), y
 				sta audio_square1_pitch_slide_lsb, x
@@ -1032,7 +1024,6 @@ audio_music_tick:
 		.)
 
 		; Return pre-computed opcode size
-		lda opcode_size ;TODO yeah, better use y
 		iny
 		tya
 		rts
