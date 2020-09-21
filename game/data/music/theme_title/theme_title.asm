@@ -4849,3 +4849,6 @@ music_title_sample_191:
 	SAMPLE_END
 .)
 
+#echo
+#echo music_title_size:
+#print *-music_title_info

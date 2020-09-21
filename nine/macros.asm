@@ -360,6 +360,70 @@ duration
 
 
 
+; --------------------------------------------------------------------------
+; Backward compatibility macros, deprecated wille be removed with old musics
+; --------------------------------------------------------------------------
+
+
+#define TIMED_O1_C(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 12, (duration+1)
+#define TIMED_O1_D(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 14, (duration+1)
+#define TIMED_O1_E(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 16, (duration+1)
+#define TIMED_O1_F(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 17, (duration+1)
+#define TIMED_O1_G(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 19, (duration+1)
+#define TIMED_O1_A(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 21, (duration+1)
+#define TIMED_O1_B(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 23, (duration+1)
+#define TIMED_O2_C(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 24, (duration+1)
+#define TIMED_O2_D(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 26, (duration+1)
+#define TIMED_O2_E(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 28, (duration+1)
+#define TIMED_O2_F(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 29, (duration+1)
+#define TIMED_O2_G(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 31, (duration+1)
+#define TIMED_O2_A(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 33, (duration+1)
+#define TIMED_O2_B(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 35, (duration+1)
+#define TIMED_O3_C(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 36, (duration+1)
+#define TIMED_O3_D(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 38, (duration+1)
+#define TIMED_O3_E(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 40, (duration+1)
+#define TIMED_O3_F(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 41, (duration+1)
+#define TIMED_O3_G(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 43, (duration+1)
+#define TIMED_O3_A(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 45, (duration+1)
+#define TIMED_O3_B(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 47, (duration+1)
+#define TIMED_O4_C(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 48, (duration+1)
+#define TIMED_O4_D(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 50, (duration+1)
+#define TIMED_O4_E(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 52, (duration+1)
+#define TIMED_O4_F(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 53, (duration+1)
+#define TIMED_O4_G(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 55, (duration+1)
+#define TIMED_O4_A(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 57, (duration+1)
+#define TIMED_O4_B(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 59, (duration+1)
+#define TIMED_O5_C(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 60, (duration+1)
+#define TIMED_O5_D(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 62, (duration+1)
+#define TIMED_O5_E(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 64, (duration+1)
+#define TIMED_O5_F(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 65, (duration+1)
+#define TIMED_O5_G(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 67, (duration+1)
+#define TIMED_O5_A(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 69, (duration+1)
+#define TIMED_O5_B(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 71, (duration+1)
+#define TIMED_O6_C(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 72, (duration+1)
+#define TIMED_O6_D(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 74, (duration+1)
+#define TIMED_O6_E(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 76, (duration+1)
+#define TIMED_O6_F(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 77, (duration+1)
+#define TIMED_O6_G(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 79, (duration+1)
+#define TIMED_O6_A(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 81, (duration+1)
+#define TIMED_O6_B(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 83, (duration+1)
+#define TIMED_O7_C(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 84, (duration+1)
+#define TIMED_O7_D(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 86, (duration+1)
+#define TIMED_O7_E(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 88, (duration+1)
+#define TIMED_O7_F(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 89, (duration+1)
+#define TIMED_O7_G(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 91, (duration+1)
+#define TIMED_O7_A(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 93, (duration+1)
+#define TIMED_O7_B(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 95, (duration+1)
+#define TIMED_O8_C(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 96, (duration+1)
+#define TIMED_O8_D(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 98, (duration+1)
+#define TIMED_O8_E(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 100, (duration+1)
+#define TIMED_O8_F(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 101, (duration+1)
+#define TIMED_O8_A(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 104, (duration+1)
+#define TIMED_O8_B(duration) .byt (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3), 106, (duration+1)
+
+#define AUDIO_SILENCE(duration) .byt (AUDIO_OP_HALT << 3), (AUDIO_OP_LONG_WAIT << 3), (duration+1)
+
+
 #endif
 
 ;

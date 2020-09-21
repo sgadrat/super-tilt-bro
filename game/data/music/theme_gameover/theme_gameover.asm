@@ -7,6 +7,28 @@
 #DEFINE HALF_NOTE 10
 #DEFINE QUARTER_NOTE 5
 
+music_gameover_info:
+.word track_gameover_square1
+.word track_gameover_square2
+.word music_gameover_triangle
+.word music_gameover_noise
+
+music_gameover_sample_noise_halt:
+AUDIO_NOISE_HALT(7)
+SAMPLE_END
+
+music_gameover_noise:
+.word music_gameover_sample_noise_halt
+MUSIC_END
+
+music_gameover_sample_triangle_halt:
+HALT(7)
+SAMPLE_END
+
+music_gameover_triangle:
+.word music_gameover_sample_triangle_halt
+MUSIC_END
+
 #include "game/data/music/theme_gameover/samples_square1.asm"
 #include "game/data/music/theme_gameover/samples_square2.asm"
 
@@ -29,3 +51,7 @@ MUSIC_END
 track_gameover_triangle:
 .word theme_gameover_square2_chorus ; Hack, the engine needs at least a valid sample, even for muted tracks
 MUSIC_END
+
+#echo
+#echo music_gameover_size:
+#print *-music_gameover_info

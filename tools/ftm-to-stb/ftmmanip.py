@@ -138,6 +138,7 @@ opcode_size = {
 	'2a03_noise.HALT': 1,
 	'2a03_noise.PITCH_SLIDE_UP': 1,
 	'2a03_noise.PITCH_SLIDE_DOWN': 1,
+	'2a03_noise.SET_PERIODIC': 1,
 }
 
 

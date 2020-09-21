@@ -1,6 +1,20 @@
+music_main_info:
+.word music_main_track_square1
+.word music_main_track_square2
+.word music_main_track_triangle
+.word music_main_track_noise
+
 #include "game/data/music/theme_main/samples.asm"
 
-track_main_square1:
+music_main_sample_noise_halt:
+AUDIO_NOISE_HALT(7)
+SAMPLE_END
+
+music_main_track_noise:
+.word music_main_sample_noise_halt
+MUSIC_END
+
+music_main_track_square1:
 .word theme_main_square1_intro
 .word theme_main_square1_sample1
 .word theme_main_square1_sample2
@@ -12,7 +26,7 @@ track_main_square1:
 ;.word theme_main_square1_sample4
 MUSIC_END
 
-track_main_square2:
+music_main_track_square2:
 .word theme_main_square2_intro
 .word theme_main_square2_sample1
 .word theme_main_square2_sample2
@@ -24,7 +38,7 @@ track_main_square2:
 ;.word theme_main_square2_sample4
 MUSIC_END
 
-track_main_triangle:
+music_main_track_triangle:
 .word theme_main_triangle_intro
 
 .word theme_main_triangle_helicopter, theme_main_triangle_helicopter, theme_main_triangle_helicopter, theme_main_triangle_helicopter
@@ -122,3 +136,7 @@ track_main_triangle:
 .word theme_main_triangle_epilog
 
 MUSIC_END
+
+#echo
+#echo music_main_size:
+#print *-music_main_info

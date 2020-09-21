@@ -11,8 +11,8 @@ import json
 import sys
 
 # Parameters
-MAX_OPTIM_PASSES = 0
 SOURCE_FILE_PATH = sys.argv[1]
+MAX_OPTIM_PASSES = 0 if len(sys.argv) < 3 else int(sys.argv[2])
 
 # Logging
 def log(msg):

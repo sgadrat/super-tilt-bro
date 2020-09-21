@@ -92,5 +92,9 @@ audio_notes_table_high:
 .byt >NOTE_O7_C, >NOTE_O7_Cs, >NOTE_O7_D, >NOTE_O7_Ds, >NOTE_O7_E, >NOTE_O7_F, >NOTE_O7_Fs, >NOTE_O7_G, >NOTE_O7_Gs, >NOTE_O7_A, >NOTE_O7_As, >NOTE_O7_B 
 
 #include "game/data/music/theme_title/theme_title.asm"
+;include "game/data/music/theme_main/theme_main.asm"
+#include "game/data/music/theme_perihelium.asm"
+;include "game/data/music/theme_gameover/theme_gameover.asm"
+#include "game/data/music/theme_jump_rope.asm"
 
 #endif

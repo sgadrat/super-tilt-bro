@@ -31,6 +31,10 @@ lda #>track_main_triangle
 sta audio_triangle_track+1
 
 jsr audio_reset_music
+#else
+	ldy #<music_main_info
+	lda #>music_main_info
+	jmp audio_play_music
 #endif
 rts
 .)
@@ -109,6 +113,10 @@ lda #>track_gameover_triangle
 sta audio_triangle_track+1
 
 jsr audio_reset_music
+#else
+	ldy #<music_jump_rope_info
+	lda #>music_jump_rope_info
+	jmp audio_play_music
 #endif
 rts
 .)
