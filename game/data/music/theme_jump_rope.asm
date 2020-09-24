@@ -1,4 +1,4 @@
-#define MUSIC_JUMP_ROPE_WITH_NOISE 0
+#define MUSIC_JUMP_ROPE_WITH_NOISE 1
 
 music_jump_rope_info:
 .word music_jump_rope_track_pulse1

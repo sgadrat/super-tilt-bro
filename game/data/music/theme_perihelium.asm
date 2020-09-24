@@ -107,20 +107,20 @@ music_main_track_pulse1:
 .word music_main_sample_20
 .word music_main_sample_11
 .word music_main_sample_29
-.word music_main_sample_61
-.word music_main_sample_57
 .word music_main_sample_59
+.word music_main_sample_55
 .word music_main_sample_57
-.word music_main_sample_62
-.word music_main_sample_57
-.word music_main_sample_63
+.word music_main_sample_55
+.word music_main_sample_60
+.word music_main_sample_55
+.word music_main_sample_61
 .word music_main_sample_11
 .word music_main_sample_30
+.word music_main_sample_56
+.word music_main_sample_55
+.word music_main_sample_57
+.word music_main_sample_55
 .word music_main_sample_58
-.word music_main_sample_57
-.word music_main_sample_59
-.word music_main_sample_57
-.word music_main_sample_60
 .word music_main_sample_31
 .word music_main_sample_11
 .word music_main_sample_32
@@ -148,46 +148,46 @@ music_main_track_pulse1:
 MUSIC_END
 
 music_main_track_pulse2:
-.word music_main_sample_79
-.word music_main_sample_78
+.word music_main_sample_73
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_34
 .word music_main_sample_11
-.word music_main_sample_80
-.word music_main_sample_78
+.word music_main_sample_74
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_35
-.word music_main_sample_81
-.word music_main_sample_78
+.word music_main_sample_75
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_36
 .word music_main_sample_37
 .word music_main_sample_11
-.word music_main_sample_80
-.word music_main_sample_78
+.word music_main_sample_74
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_38
 .word music_main_sample_11
 .word music_main_sample_38
 .word music_main_sample_11
 .word music_main_sample_39
-.word music_main_sample_82
-.word music_main_sample_78
+.word music_main_sample_76
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_34
 .word music_main_sample_11
-.word music_main_sample_80
-.word music_main_sample_78
+.word music_main_sample_74
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_35
-.word music_main_sample_81
-.word music_main_sample_78
+.word music_main_sample_75
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_36
 .word music_main_sample_37
 .word music_main_sample_11
-.word music_main_sample_80
-.word music_main_sample_78
+.word music_main_sample_74
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_38
 .word music_main_sample_11
@@ -195,23 +195,23 @@ music_main_track_pulse2:
 .word music_main_sample_11
 .word music_main_sample_39
 .word music_main_sample_3
-.word music_main_sample_83
-.word music_main_sample_78
+.word music_main_sample_77
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_36
 .word music_main_sample_37
 .word music_main_sample_11
-.word music_main_sample_80
-.word music_main_sample_78
+.word music_main_sample_74
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_40
-.word music_main_sample_82
-.word music_main_sample_78
+.word music_main_sample_76
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_34
 .word music_main_sample_11
-.word music_main_sample_80
-.word music_main_sample_78
+.word music_main_sample_74
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_35
 .word music_main_sample_41
@@ -221,23 +221,23 @@ music_main_track_pulse2:
 .word music_main_sample_42
 .word music_main_sample_4
 .word music_main_sample_5
-.word music_main_sample_84
 .word music_main_sample_78
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_36
 .word music_main_sample_37
 .word music_main_sample_11
-.word music_main_sample_80
-.word music_main_sample_78
+.word music_main_sample_74
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_40
-.word music_main_sample_82
-.word music_main_sample_78
+.word music_main_sample_76
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_34
 .word music_main_sample_11
-.word music_main_sample_80
-.word music_main_sample_78
+.word music_main_sample_74
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_35
 .word music_main_sample_41
@@ -245,29 +245,29 @@ music_main_track_pulse2:
 .word music_main_sample_38
 .word music_main_sample_11
 .word music_main_sample_43
-.word music_main_sample_94
-.word music_main_sample_93
-.word music_main_sample_95
+.word music_main_sample_87
+.word music_main_sample_86
+.word music_main_sample_88
 .word music_main_sample_6
-.word music_main_sample_96
-.word music_main_sample_93
-.word music_main_sample_97
-.word music_main_sample_78
+.word music_main_sample_89
+.word music_main_sample_86
+.word music_main_sample_90
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_36
 .word music_main_sample_37
 .word music_main_sample_11
-.word music_main_sample_80
-.word music_main_sample_78
+.word music_main_sample_74
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_40
-.word music_main_sample_82
-.word music_main_sample_78
+.word music_main_sample_76
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_34
 .word music_main_sample_11
-.word music_main_sample_80
-.word music_main_sample_78
+.word music_main_sample_74
+.word music_main_sample_72
 .word music_main_sample_11
 .word music_main_sample_35
 .word music_main_sample_41
@@ -280,206 +280,248 @@ MUSIC_END
 music_main_track_triangle:
 .word music_main_sample_7
 .word music_main_sample_8
-.word music_main_sample_86
-.word music_main_sample_85
-.word music_main_sample_87
-.word music_main_sample_85
+.word music_main_sample_79
+.word music_main_sample_112
+.word music_main_sample_80
+.word music_main_sample_112
+.word music_main_sample_80
+.word music_main_sample_112
+.word music_main_sample_80
+.word music_main_sample_112
+.word music_main_sample_45
+.word music_main_sample_49
+.word music_main_sample_117
 .word music_main_sample_45
 .word music_main_sample_46
+.word music_main_sample_51
+.word music_main_sample_117
 .word music_main_sample_45
 .word music_main_sample_47
 .word music_main_sample_48
 .word music_main_sample_45
 .word music_main_sample_49
+.word music_main_sample_45
 .word music_main_sample_50
-.word music_main_sample_45
-.word music_main_sample_51
-.word music_main_sample_45
-.word music_main_sample_52
-.word music_main_sample_65
-.word music_main_sample_64
-.word music_main_sample_66
-.word music_main_sample_70
-.word music_main_sample_64
-.word music_main_sample_68
-.word music_main_sample_45
-.word music_main_sample_49
-.word music_main_sample_50
-.word music_main_sample_45
-.word music_main_sample_46
-.word music_main_sample_45
-.word music_main_sample_46
-.word music_main_sample_45
-.word music_main_sample_47
-.word music_main_sample_53
-.word music_main_sample_45
-.word music_main_sample_52
-.word music_main_sample_64
-.word music_main_sample_71
-.word music_main_sample_67
-.word music_main_sample_64
-.word music_main_sample_68
-.word music_main_sample_64
-.word music_main_sample_69
-.word music_main_sample_72
-.word music_main_sample_64
-.word music_main_sample_68
-.word music_main_sample_45
-.word music_main_sample_49
-.word music_main_sample_50
-.word music_main_sample_45
-.word music_main_sample_46
-.word music_main_sample_45
-.word music_main_sample_46
-.word music_main_sample_45
-.word music_main_sample_47
-.word music_main_sample_53
-.word music_main_sample_45
-.word music_main_sample_51
-.word music_main_sample_45
-.word music_main_sample_102
-.word music_main_sample_98
-.word music_main_sample_103
-.word music_main_sample_99
-.word music_main_sample_98
-.word music_main_sample_100
-.word music_main_sample_98
 .word music_main_sample_101
-.word music_main_sample_104
-.word music_main_sample_98
-.word music_main_sample_100
-.word music_main_sample_45
-.word music_main_sample_49
-.word music_main_sample_50
-.word music_main_sample_45
-.word music_main_sample_46
-.word music_main_sample_45
-.word music_main_sample_46
+.word music_main_sample_102
+.word music_main_sample_101
+.word music_main_sample_102
+.word music_main_sample_62
+.word music_main_sample_63
+.word music_main_sample_101
+.word music_main_sample_103
+.word music_main_sample_64
+.word music_main_sample_62
+.word music_main_sample_63
 .word music_main_sample_45
 .word music_main_sample_47
-.word music_main_sample_53
+.word music_main_sample_48
 .word music_main_sample_45
+.word music_main_sample_49
+.word music_main_sample_117
+.word music_main_sample_45
+.word music_main_sample_49
+.word music_main_sample_117
+.word music_main_sample_45
+.word music_main_sample_46
 .word music_main_sample_51
 .word music_main_sample_45
-.word music_main_sample_54
+.word music_main_sample_50
+.word music_main_sample_62
+.word music_main_sample_65
+.word music_main_sample_104
+.word music_main_sample_101
+.word music_main_sample_102
+.word music_main_sample_109
+.word music_main_sample_110
+.word music_main_sample_109
+.word music_main_sample_110
+.word music_main_sample_62
+.word music_main_sample_63
+.word music_main_sample_62
+.word music_main_sample_63
+.word music_main_sample_101
+.word music_main_sample_102
+.word music_main_sample_101
+.word music_main_sample_102
+.word music_main_sample_109
+.word music_main_sample_111
+.word music_main_sample_66
+.word music_main_sample_62
+.word music_main_sample_63
+.word music_main_sample_45
+.word music_main_sample_47
+.word music_main_sample_48
+.word music_main_sample_45
+.word music_main_sample_49
+.word music_main_sample_117
+.word music_main_sample_45
+.word music_main_sample_49
+.word music_main_sample_117
+.word music_main_sample_45
+.word music_main_sample_46
+.word music_main_sample_51
+.word music_main_sample_45
+.word music_main_sample_49
+.word music_main_sample_45
+.word music_main_sample_93
+.word music_main_sample_91
+.word music_main_sample_108
+.word music_main_sample_105
+.word music_main_sample_106
+.word music_main_sample_105
+.word music_main_sample_106
+.word music_main_sample_113
+.word music_main_sample_114
+.word music_main_sample_113
+.word music_main_sample_115
+.word music_main_sample_91
+.word music_main_sample_92
+.word music_main_sample_91
+.word music_main_sample_107
+.word music_main_sample_105
+.word music_main_sample_106
+.word music_main_sample_105
+.word music_main_sample_106
+.word music_main_sample_113
+.word music_main_sample_116
+.word music_main_sample_94
+.word music_main_sample_91
+.word music_main_sample_92
+.word music_main_sample_45
+.word music_main_sample_47
+.word music_main_sample_48
+.word music_main_sample_45
+.word music_main_sample_49
+.word music_main_sample_117
+.word music_main_sample_45
+.word music_main_sample_49
+.word music_main_sample_117
+.word music_main_sample_45
+.word music_main_sample_46
+.word music_main_sample_51
+.word music_main_sample_45
+.word music_main_sample_49
+.word music_main_sample_45
+.word music_main_sample_52
 MUSIC_END
 
 #if MUSIC_PERIHELIUM_WITH_NOISE
 music_main_track_noise:
 .word music_main_sample_9
 .word music_main_sample_10
-.word music_main_sample_89
-.word music_main_sample_88
-.word music_main_sample_55
-.word music_main_sample_73
-.word music_main_sample_75
-.word music_main_sample_76
-.word music_main_sample_73
-.word music_main_sample_56
-.word music_main_sample_73
-.word music_main_sample_75
-.word music_main_sample_76
-.word music_main_sample_73
-.word music_main_sample_74
-.word music_main_sample_56
-.word music_main_sample_73
-.word music_main_sample_75
-.word music_main_sample_76
-.word music_main_sample_73
-.word music_main_sample_77
-.word music_main_sample_55
-.word music_main_sample_73
-.word music_main_sample_75
-.word music_main_sample_76
-.word music_main_sample_73
-.word music_main_sample_56
-.word music_main_sample_73
-.word music_main_sample_75
-.word music_main_sample_76
-.word music_main_sample_73
-.word music_main_sample_74
-.word music_main_sample_56
-.word music_main_sample_73
-.word music_main_sample_75
-.word music_main_sample_76
-.word music_main_sample_73
-.word music_main_sample_77
-.word music_main_sample_55
-.word music_main_sample_73
-.word music_main_sample_75
-.word music_main_sample_76
-.word music_main_sample_73
-.word music_main_sample_56
-.word music_main_sample_73
-.word music_main_sample_75
-.word music_main_sample_76
-.word music_main_sample_73
-.word music_main_sample_74
-.word music_main_sample_56
-.word music_main_sample_73
-.word music_main_sample_75
-.word music_main_sample_76
-.word music_main_sample_73
-.word music_main_sample_77
-.word music_main_sample_55
-.word music_main_sample_73
-.word music_main_sample_75
-.word music_main_sample_76
-.word music_main_sample_73
-.word music_main_sample_56
-.word music_main_sample_73
-.word music_main_sample_75
-.word music_main_sample_76
-.word music_main_sample_73
-.word music_main_sample_74
-.word music_main_sample_56
-.word music_main_sample_73
-.word music_main_sample_75
-.word music_main_sample_76
-.word music_main_sample_73
-.word music_main_sample_77
-.word music_main_sample_55
-.word music_main_sample_73
-.word music_main_sample_75
-.word music_main_sample_76
-.word music_main_sample_73
-.word music_main_sample_56
-.word music_main_sample_73
-.word music_main_sample_75
-.word music_main_sample_108
-.word music_main_sample_105
-.word music_main_sample_109
-.word music_main_sample_90
-.word music_main_sample_88
-.word music_main_sample_91
-.word music_main_sample_88
-.word music_main_sample_106
-.word music_main_sample_105
-.word music_main_sample_107
-.word music_main_sample_92
-.word music_main_sample_88
-.word music_main_sample_91
-.word music_main_sample_88
-.word music_main_sample_55
-.word music_main_sample_73
-.word music_main_sample_74
-.word music_main_sample_56
-.word music_main_sample_73
-.word music_main_sample_75
-.word music_main_sample_76
-.word music_main_sample_73
-.word music_main_sample_77
-.word music_main_sample_55
-.word music_main_sample_73
-.word music_main_sample_75
-.word music_main_sample_76
-.word music_main_sample_73
-.word music_main_sample_56
-.word music_main_sample_73
-.word music_main_sample_75
-.word music_main_sample_108
-.word music_main_sample_105
-.word music_main_sample_110
+.word music_main_sample_82
+.word music_main_sample_81
+.word music_main_sample_53
+.word music_main_sample_67
+.word music_main_sample_69
+.word music_main_sample_70
+.word music_main_sample_67
+.word music_main_sample_54
+.word music_main_sample_67
+.word music_main_sample_69
+.word music_main_sample_70
+.word music_main_sample_67
+.word music_main_sample_68
+.word music_main_sample_54
+.word music_main_sample_67
+.word music_main_sample_69
+.word music_main_sample_70
+.word music_main_sample_67
+.word music_main_sample_71
+.word music_main_sample_53
+.word music_main_sample_67
+.word music_main_sample_69
+.word music_main_sample_70
+.word music_main_sample_67
+.word music_main_sample_54
+.word music_main_sample_67
+.word music_main_sample_69
+.word music_main_sample_70
+.word music_main_sample_67
+.word music_main_sample_68
+.word music_main_sample_54
+.word music_main_sample_67
+.word music_main_sample_69
+.word music_main_sample_70
+.word music_main_sample_67
+.word music_main_sample_71
+.word music_main_sample_53
+.word music_main_sample_67
+.word music_main_sample_69
+.word music_main_sample_70
+.word music_main_sample_67
+.word music_main_sample_54
+.word music_main_sample_67
+.word music_main_sample_69
+.word music_main_sample_70
+.word music_main_sample_67
+.word music_main_sample_68
+.word music_main_sample_54
+.word music_main_sample_67
+.word music_main_sample_69
+.word music_main_sample_70
+.word music_main_sample_67
+.word music_main_sample_71
+.word music_main_sample_53
+.word music_main_sample_67
+.word music_main_sample_69
+.word music_main_sample_70
+.word music_main_sample_67
+.word music_main_sample_54
+.word music_main_sample_67
+.word music_main_sample_69
+.word music_main_sample_70
+.word music_main_sample_67
+.word music_main_sample_68
+.word music_main_sample_54
+.word music_main_sample_67
+.word music_main_sample_69
+.word music_main_sample_70
+.word music_main_sample_67
+.word music_main_sample_71
+.word music_main_sample_53
+.word music_main_sample_67
+.word music_main_sample_69
+.word music_main_sample_70
+.word music_main_sample_67
+.word music_main_sample_54
+.word music_main_sample_67
+.word music_main_sample_69
+.word music_main_sample_98
+.word music_main_sample_95
+.word music_main_sample_99
+.word music_main_sample_83
+.word music_main_sample_81
+.word music_main_sample_84
+.word music_main_sample_81
+.word music_main_sample_96
+.word music_main_sample_95
+.word music_main_sample_97
+.word music_main_sample_85
+.word music_main_sample_81
+.word music_main_sample_84
+.word music_main_sample_81
+.word music_main_sample_53
+.word music_main_sample_67
+.word music_main_sample_68
+.word music_main_sample_54
+.word music_main_sample_67
+.word music_main_sample_69
+.word music_main_sample_70
+.word music_main_sample_67
+.word music_main_sample_71
+.word music_main_sample_53
+.word music_main_sample_67
+.word music_main_sample_69
+.word music_main_sample_70
+.word music_main_sample_67
+.word music_main_sample_54
+.word music_main_sample_67
+.word music_main_sample_69
+.word music_main_sample_98
+.word music_main_sample_95
+.word music_main_sample_100
 MUSIC_END
 #endif
 
@@ -3812,80 +3854,14 @@ music_main_sample_45:
 music_main_sample_46:
 .(
 	HALT(2)
-	PLAY_TIMED_NOTE(10,36)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(2)
-	PLAY_TIMED_NOTE(10,36)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(2)
-	PLAY_TIMED_NOTE(10,29)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(2)
-	PLAY_TIMED_NOTE(10,29)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(2)
-	PLAY_TIMED_NOTE(10,31)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(2)
-	PLAY_TIMED_NOTE(10,31)
+	PLAY_TIMED_NOTE(2,36)
 	SAMPLE_END
 .)
 
 music_main_sample_47:
 .(
 	HALT(2)
-	PLAY_TIMED_NOTE(2,36)
-	SAMPLE_END
-.)
-
-music_main_sample_48:
-.(
-	WAIT(7)
+	PLAY_TIMED_NOTE(10,36)
 	PLAY_TIMED_NOTE(0,46)
 	PLAY_TIMED_NOTE(0,39)
 	PLAY_TIMED_NOTE(0,35)
@@ -3918,6 +3894,11 @@ music_main_sample_48:
 	PLAY_TIMED_NOTE(0,25)
 	PLAY_TIMED_NOTE(0,23)
 	PLAY_TIMED_NOTE(0,21)
+	SAMPLE_END
+.)
+
+music_main_sample_48:
+.(
 	PLAY_TIMED_NOTE(0,19)
 	PLAY_TIMED_NOTE(0,17)
 	HALT(2)
@@ -3953,47 +3934,13 @@ music_main_sample_49:
 .(
 	HALT(2)
 	PLAY_TIMED_NOTE(10,36)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(2)
-	PLAY_TIMED_NOTE(10,36)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(2)
-	PLAY_TIMED_NOTE(10,29)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
 	SAMPLE_END
 .)
 
 music_main_sample_50:
 .(
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
 	HALT(2)
-	PLAY_TIMED_NOTE(10,29)
+	PLAY_TIMED_NOTE(10,36)
 	PLAY_TIMED_NOTE(0,46)
 	PLAY_TIMED_NOTE(0,39)
 	PLAY_TIMED_NOTE(0,35)
@@ -4005,7 +3952,7 @@ music_main_sample_50:
 	PLAY_TIMED_NOTE(0,19)
 	PLAY_TIMED_NOTE(0,17)
 	HALT(2)
-	PLAY_TIMED_NOTE(10,31)
+	PLAY_TIMED_NOTE(10,36)
 	PLAY_TIMED_NOTE(0,46)
 	PLAY_TIMED_NOTE(0,39)
 	PLAY_TIMED_NOTE(0,35)
@@ -4017,55 +3964,17 @@ music_main_sample_50:
 	PLAY_TIMED_NOTE(0,19)
 	PLAY_TIMED_NOTE(0,17)
 	HALT(2)
-	PLAY_TIMED_NOTE(10,31)
+	PLAY_TIMED_NOTE(10,36)
 	SAMPLE_END
 .)
 
 music_main_sample_51:
 .(
-	HALT(2)
-	PLAY_TIMED_NOTE(10,36)
-	SAMPLE_END
-.)
-
-music_main_sample_52:
-.(
-	HALT(2)
-	PLAY_TIMED_NOTE(10,36)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(2)
-	PLAY_TIMED_NOTE(10,36)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(2)
-	PLAY_TIMED_NOTE(10,36)
-	SAMPLE_END
-.)
-
-music_main_sample_53:
-.(
 	WAIT(7)
 	SAMPLE_END
 .)
 
-music_main_sample_54:
+music_main_sample_52:
 .(
 	HALT(2)
 	PLAY_TIMED_FREQ(396,23)
@@ -4073,7 +3982,7 @@ music_main_sample_54:
 .)
 
 #if MUSIC_PERIHELIUM_WITH_NOISE
-music_main_sample_55:
+music_main_sample_53:
 .(
 	AUDIO_NOISE_SET_VOLUME(15)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(14,3)
@@ -4100,7 +4009,7 @@ music_main_sample_55:
 	SAMPLE_END
 .)
 
-music_main_sample_56:
+music_main_sample_54:
 .(
 	AUDIO_NOISE_SET_VOLUME(3)
 	AUDIO_NOISE_WAIT(0)
@@ -4152,7 +4061,7 @@ music_main_sample_56:
 .)
 #endif
 
-music_main_sample_57:
+music_main_sample_55:
 .(
 	CHAN_VOLUME_HIGH(6)
 	WAIT(2)
@@ -4186,7 +4095,7 @@ music_main_sample_57:
 	SAMPLE_END
 .)
 
-music_main_sample_58:
+music_main_sample_56:
 .(
 	AUDIO_PULSE_META_WAIT_DUT_VOL(1,0,0)
 	AUDIO_PULSE_META_NOTE_DUT_VOL(40,1,1,15)
@@ -4305,7 +4214,7 @@ music_main_sample_58:
 	SAMPLE_END
 .)
 
-music_main_sample_59:
+music_main_sample_57:
 .(
 	AUDIO_PULSE_META_WAIT_DUT_VOL(1,1,15)
 	CHAN_VOLUME_HIGH(6)
@@ -4353,7 +4262,7 @@ music_main_sample_59:
 	SAMPLE_END
 .)
 
-music_main_sample_60:
+music_main_sample_58:
 .(
 	AUDIO_PULSE_META_WAIT_DUT_VOL(1,1,15)
 	CHAN_VOLUME_HIGH(6)
@@ -4361,7 +4270,7 @@ music_main_sample_60:
 	SAMPLE_END
 .)
 
-music_main_sample_61:
+music_main_sample_59:
 .(
 	CHAN_VOLUME_HIGH(4)
 	WAIT(2)
@@ -4372,13 +4281,13 @@ music_main_sample_61:
 	SAMPLE_END
 .)
 
-music_main_sample_62:
+music_main_sample_60:
 .(
 	AUDIO_PULSE_META_WAIT_DUT_VOL(1,1,15)
 	SAMPLE_END
 .)
 
-music_main_sample_63:
+music_main_sample_61:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(45,1,1,15)
 	CHAN_VOLUME_HIGH(6)
@@ -4436,409 +4345,73 @@ music_main_sample_63:
 	SAMPLE_END
 .)
 
+music_main_sample_62:
+.(
+	HALT(0)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	PLAY_TIMED_NOTE(0,16)
+	PLAY_TIMED_NOTE(0,15)
+	HALT(0)
+	PLAY_TIMED_NOTE(10,31)
+	HALT(0)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	PLAY_TIMED_NOTE(0,16)
+	PLAY_TIMED_NOTE(0,15)
+	HALT(0)
+	PLAY_TIMED_NOTE(10,31)
+	HALT(0)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	PLAY_TIMED_NOTE(0,16)
+	PLAY_TIMED_NOTE(0,15)
+	HALT(0)
+	SAMPLE_END
+.)
+
+music_main_sample_63:
+.(
+	PLAY_TIMED_NOTE(10,31)
+	HALT(0)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	PLAY_TIMED_NOTE(0,16)
+	PLAY_TIMED_NOTE(0,15)
+	HALT(0)
+	PLAY_TIMED_NOTE(10,31)
+	SAMPLE_END
+.)
+
 music_main_sample_64:
-.(
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,31)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,31)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	SAMPLE_END
-.)
-
-music_main_sample_65:
-.(
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,29)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,29)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,29)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,29)
-	SAMPLE_END
-.)
-
-music_main_sample_66:
-.(
-	PLAY_TIMED_NOTE(10,31)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,31)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,29)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,29)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(2,29)
-	SAMPLE_END
-.)
-
-music_main_sample_67:
-.(
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,29)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,29)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,29)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,36)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,36)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,36)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,36)
-	SAMPLE_END
-.)
-
-music_main_sample_68:
-.(
-	PLAY_TIMED_NOTE(10,31)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,31)
-	SAMPLE_END
-.)
-
-music_main_sample_69:
-.(
-	PLAY_TIMED_NOTE(10,31)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,31)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,29)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,29)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,29)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,29)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,36)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(10,36)
-	HALT(0)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	PLAY_TIMED_NOTE(0,16)
-	PLAY_TIMED_NOTE(0,15)
-	HALT(0)
-	PLAY_TIMED_NOTE(2,36)
-	SAMPLE_END
-.)
-
-music_main_sample_70:
 .(
 	WAIT(7)
 	HALT(0)
@@ -4858,7 +4431,7 @@ music_main_sample_70:
 	SAMPLE_END
 .)
 
-music_main_sample_71:
+music_main_sample_65:
 .(
 	PLAY_TIMED_NOTE(10,31)
 	HALT(0)
@@ -4900,7 +4473,7 @@ music_main_sample_71:
 	SAMPLE_END
 .)
 
-music_main_sample_72:
+music_main_sample_66:
 .(
 	WAIT(7)
 	HALT(0)
@@ -4921,7 +4494,7 @@ music_main_sample_72:
 .)
 
 #if MUSIC_PERIHELIUM_WITH_NOISE
-music_main_sample_73:
+music_main_sample_67:
 .(
 	AUDIO_NOISE_SET_VOLUME(11)
 	AUDIO_NOISE_WAIT(0)
@@ -5024,7 +4597,7 @@ music_main_sample_73:
 	SAMPLE_END
 .)
 
-music_main_sample_74:
+music_main_sample_68:
 .(
 	AUDIO_NOISE_SET_VOLUME(3)
 	AUDIO_NOISE_WAIT(0)
@@ -5101,7 +4674,7 @@ music_main_sample_74:
 	SAMPLE_END
 .)
 
-music_main_sample_75:
+music_main_sample_69:
 .(
 	AUDIO_NOISE_SET_VOLUME(3)
 	AUDIO_NOISE_WAIT(0)
@@ -5200,7 +4773,7 @@ music_main_sample_75:
 	SAMPLE_END
 .)
 
-music_main_sample_76:
+music_main_sample_70:
 .(
 	AUDIO_NOISE_SET_VOLUME(0)
 	AUDIO_NOISE_WAIT(1)
@@ -5229,7 +4802,7 @@ music_main_sample_76:
 	SAMPLE_END
 .)
 
-music_main_sample_77:
+music_main_sample_71:
 .(
 	AUDIO_NOISE_SET_VOLUME(3)
 	AUDIO_NOISE_WAIT(0)
@@ -5259,7 +4832,7 @@ music_main_sample_77:
 .)
 #endif
 
-music_main_sample_78:
+music_main_sample_72:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(36,1,1,15)
 	CHAN_VOLUME_HIGH(6)
@@ -5293,7 +4866,7 @@ music_main_sample_78:
 	SAMPLE_END
 .)
 
-music_main_sample_79:
+music_main_sample_73:
 .(
 	CHAN_DUTY(0)
 	CHAN_VOLUME_LOW(0)
@@ -5301,7 +4874,7 @@ music_main_sample_79:
 	SAMPLE_END
 .)
 
-music_main_sample_80:
+music_main_sample_74:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(40,1,1,15)
 	CHAN_VOLUME_HIGH(6)
@@ -5336,7 +4909,7 @@ music_main_sample_80:
 	SAMPLE_END
 .)
 
-music_main_sample_81:
+music_main_sample_75:
 .(
 	WAIT(0)
 	CHAN_VOLUME_HIGH(5)
@@ -5449,13 +5022,13 @@ music_main_sample_81:
 	SAMPLE_END
 .)
 
-music_main_sample_82:
+music_main_sample_76:
 .(
 	AUDIO_PULSE_META_WAIT_DUT_VOL(1,0,0)
 	SAMPLE_END
 .)
 
-music_main_sample_83:
+music_main_sample_77:
 .(
 	WAIT(0)
 	CHAN_VOLUME_HIGH(5)
@@ -5560,7 +5133,7 @@ music_main_sample_83:
 	SAMPLE_END
 .)
 
-music_main_sample_84:
+music_main_sample_78:
 .(
 	WAIT(0)
 	CHAN_VOLUME_LOW(4)
@@ -5669,60 +5242,7 @@ music_main_sample_84:
 	SAMPLE_END
 .)
 
-music_main_sample_85:
-.(
-	PLAY_TIMED_NOTE(0,41)
-	PLAY_TIMED_NOTE(0,36)
-	PLAY_TIMED_NOTE(0,32)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,26)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,41)
-	PLAY_TIMED_NOTE(0,36)
-	PLAY_TIMED_NOTE(0,32)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,26)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,41)
-	PLAY_TIMED_NOTE(0,36)
-	PLAY_TIMED_NOTE(0,32)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,26)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,41)
-	PLAY_TIMED_NOTE(0,36)
-	PLAY_TIMED_NOTE(0,32)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,26)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,41)
-	PLAY_TIMED_NOTE(0,36)
-	PLAY_TIMED_NOTE(0,32)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,26)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,41)
-	PLAY_TIMED_NOTE(0,36)
-	PLAY_TIMED_NOTE(0,32)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,26)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,41)
-	PLAY_TIMED_NOTE(0,36)
-	PLAY_TIMED_NOTE(0,32)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,26)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,41)
-	PLAY_TIMED_NOTE(0,36)
-	PLAY_TIMED_NOTE(0,32)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,26)
-	PLAY_TIMED_NOTE(0,23)
-	SAMPLE_END
-.)
-
-music_main_sample_86:
+music_main_sample_79:
 .(
 	LONG_WAIT(16)
 	HALT(0)
@@ -5732,13 +5252,13 @@ music_main_sample_86:
 	SAMPLE_END
 .)
 
-music_main_sample_87:
+music_main_sample_80:
 .(
 	SAMPLE_END
 .)
 
 #if MUSIC_PERIHELIUM_WITH_NOISE
-music_main_sample_88:
+music_main_sample_81:
 .(
 	AUDIO_NOISE_SET_VOLUME(12)
 	AUDIO_NOISE_WAIT(0)
@@ -5757,7 +5277,7 @@ music_main_sample_88:
 	SAMPLE_END
 .)
 
-music_main_sample_89:
+music_main_sample_82:
 .(
 	AUDIO_NOISE_LONG_WAIT(160)
 	AUDIO_NOISE_SET_VOLUME(1)
@@ -5855,7 +5375,7 @@ music_main_sample_89:
 	SAMPLE_END
 .)
 
-music_main_sample_90:
+music_main_sample_83:
 .(
 	AUDIO_NOISE_LONG_WAIT(232)
 	AUDIO_NOISE_SET_VOLUME(15)
@@ -5864,14 +5384,14 @@ music_main_sample_90:
 	SAMPLE_END
 .)
 
-music_main_sample_91:
+music_main_sample_84:
 .(
 	AUDIO_NOISE_SET_VOLUME(15)
 	AUDIO_NOISE_WAIT(2)
 	SAMPLE_END
 .)
 
-music_main_sample_92:
+music_main_sample_85:
 .(
 	AUDIO_NOISE_LONG_WAIT(104)
 	AUDIO_NOISE_SET_VOLUME(15)
@@ -5881,7 +5401,7 @@ music_main_sample_92:
 .)
 #endif
 
-music_main_sample_93:
+music_main_sample_86:
 .(
 	WAIT(0)
 	AUDIO_PULSE_META_WAIT_DUT_VOL(1,0,0)
@@ -5930,7 +5450,7 @@ music_main_sample_93:
 	SAMPLE_END
 .)
 
-music_main_sample_94:
+music_main_sample_87:
 .(
 	CHAN_VOLUME_HIGH(4)
 	WAIT(2)
@@ -6050,7 +5570,7 @@ music_main_sample_94:
 	SAMPLE_END
 .)
 
-music_main_sample_95:
+music_main_sample_88:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(48,1,1,15)
 	CHAN_VOLUME_HIGH(6)
@@ -6116,7 +5636,7 @@ music_main_sample_95:
 	SAMPLE_END
 .)
 
-music_main_sample_96:
+music_main_sample_89:
 .(
 	WAIT(0)
 	CHAN_VOLUME_HIGH(5)
@@ -6127,7 +5647,7 @@ music_main_sample_96:
 	SAMPLE_END
 .)
 
-music_main_sample_97:
+music_main_sample_90:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(48,1,1,15)
 	CHAN_VOLUME_HIGH(6)
@@ -6194,7 +5714,7 @@ music_main_sample_97:
 	SAMPLE_END
 .)
 
-music_main_sample_98:
+music_main_sample_91:
 .(
 	PLAY_TIMED_NOTE(0,46)
 	PLAY_TIMED_NOTE(0,39)
@@ -6236,95 +5756,7 @@ music_main_sample_98:
 	SAMPLE_END
 .)
 
-music_main_sample_99:
-.(
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(1)
-	PLAY_TIMED_NOTE(9,29)
-	HALT(1)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(1)
-	PLAY_TIMED_NOTE(9,29)
-	HALT(1)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(1)
-	PLAY_TIMED_NOTE(9,29)
-	HALT(1)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(1)
-	PLAY_TIMED_NOTE(9,31)
-	HALT(1)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(1)
-	PLAY_TIMED_NOTE(9,31)
-	HALT(1)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(1)
-	PLAY_TIMED_NOTE(9,31)
-	HALT(1)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(1)
-	PLAY_TIMED_NOTE(9,31)
-	HALT(1)
-	SAMPLE_END
-.)
-
-music_main_sample_100:
+music_main_sample_92:
 .(
 	PLAY_TIMED_NOTE(9,33)
 	HALT(1)
@@ -6344,117 +5776,7 @@ music_main_sample_100:
 	SAMPLE_END
 .)
 
-music_main_sample_101:
-.(
-	PLAY_TIMED_NOTE(9,33)
-	HALT(1)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(1)
-	PLAY_TIMED_NOTE(9,33)
-	HALT(1)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(1)
-	PLAY_TIMED_NOTE(9,29)
-	HALT(1)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(1)
-	PLAY_TIMED_NOTE(9,29)
-	HALT(1)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(1)
-	PLAY_TIMED_NOTE(9,29)
-	HALT(1)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(1)
-	PLAY_TIMED_NOTE(9,29)
-	HALT(1)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(1)
-	PLAY_TIMED_NOTE(9,31)
-	HALT(1)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(1)
-	PLAY_TIMED_NOTE(9,31)
-	HALT(1)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(1)
-	PLAY_TIMED_NOTE(3,31)
-	SAMPLE_END
-.)
-
-music_main_sample_102:
+music_main_sample_93:
 .(
 	HALT(1)
 	PLAY_TIMED_NOTE(9,33)
@@ -6462,35 +5784,7 @@ music_main_sample_102:
 	SAMPLE_END
 .)
 
-music_main_sample_103:
-.(
-	PLAY_TIMED_NOTE(9,33)
-	HALT(1)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	PLAY_TIMED_NOTE(0,19)
-	PLAY_TIMED_NOTE(0,17)
-	HALT(1)
-	PLAY_TIMED_NOTE(9,29)
-	HALT(1)
-	PLAY_TIMED_NOTE(0,46)
-	PLAY_TIMED_NOTE(0,39)
-	PLAY_TIMED_NOTE(0,35)
-	PLAY_TIMED_NOTE(0,31)
-	PLAY_TIMED_NOTE(0,28)
-	PLAY_TIMED_NOTE(0,25)
-	PLAY_TIMED_NOTE(0,23)
-	PLAY_TIMED_NOTE(0,21)
-	SAMPLE_END
-.)
-
-music_main_sample_104:
+music_main_sample_94:
 .(
 	WAIT(5)
 	HALT(1)
@@ -6511,7 +5805,7 @@ music_main_sample_104:
 .)
 
 #if MUSIC_PERIHELIUM_WITH_NOISE
-music_main_sample_105:
+music_main_sample_95:
 .(
 	AUDIO_NOISE_SET_VOLUME(15)
 	AUDIO_NOISE_SET_PERIODIC(1)
@@ -6545,41 +5839,385 @@ music_main_sample_105:
 	SAMPLE_END
 .)
 
-music_main_sample_106:
+music_main_sample_96:
 .(
 	AUDIO_NOISE_SET_VOLUME(0)
 	AUDIO_NOISE_WAIT(0)
 	SAMPLE_END
 .)
 
-music_main_sample_107:
+music_main_sample_97:
 .(
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_LONG_WAIT(222)
 	SAMPLE_END
 .)
 
-music_main_sample_108:
+music_main_sample_98:
 .(
 	AUDIO_NOISE_SET_VOLUME(0)
 	AUDIO_NOISE_WAIT(2)
 	SAMPLE_END
 .)
 
-music_main_sample_109:
+music_main_sample_99:
 .(
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_LONG_WAIT(94)
 	SAMPLE_END
 .)
 
-music_main_sample_110:
+music_main_sample_100:
 .(
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(1)
 	SAMPLE_END
 .)
 #endif
+
+music_main_sample_101:
+.(
+	HALT(0)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	PLAY_TIMED_NOTE(0,16)
+	PLAY_TIMED_NOTE(0,15)
+	HALT(0)
+	PLAY_TIMED_NOTE(10,29)
+	HALT(0)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	PLAY_TIMED_NOTE(0,16)
+	PLAY_TIMED_NOTE(0,15)
+	HALT(0)
+	SAMPLE_END
+.)
+
+music_main_sample_102:
+.(
+	PLAY_TIMED_NOTE(10,29)
+	SAMPLE_END
+.)
+
+music_main_sample_103:
+.(
+	PLAY_TIMED_NOTE(10,29)
+	HALT(0)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	PLAY_TIMED_NOTE(0,16)
+	PLAY_TIMED_NOTE(0,15)
+	HALT(0)
+	PLAY_TIMED_NOTE(2,29)
+	SAMPLE_END
+.)
+
+music_main_sample_104:
+.(
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	PLAY_TIMED_NOTE(0,16)
+	PLAY_TIMED_NOTE(0,15)
+	HALT(0)
+	PLAY_TIMED_NOTE(10,29)
+	SAMPLE_END
+.)
+
+music_main_sample_105:
+.(
+	HALT(1)
+	PLAY_TIMED_NOTE(0,46)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	HALT(1)
+	PLAY_TIMED_NOTE(9,29)
+	HALT(1)
+	PLAY_TIMED_NOTE(0,46)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	SAMPLE_END
+.)
+
+music_main_sample_106:
+.(
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	HALT(1)
+	PLAY_TIMED_NOTE(9,29)
+	SAMPLE_END
+.)
+
+music_main_sample_107:
+.(
+	PLAY_TIMED_NOTE(9,33)
+	HALT(1)
+	PLAY_TIMED_NOTE(0,46)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	HALT(1)
+	PLAY_TIMED_NOTE(9,33)
+	SAMPLE_END
+.)
+
+music_main_sample_108:
+.(
+	PLAY_TIMED_NOTE(9,33)
+	SAMPLE_END
+.)
+
+music_main_sample_109:
+.(
+	HALT(0)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	PLAY_TIMED_NOTE(0,16)
+	PLAY_TIMED_NOTE(0,15)
+	HALT(0)
+	PLAY_TIMED_NOTE(10,36)
+	HALT(0)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	PLAY_TIMED_NOTE(0,16)
+	PLAY_TIMED_NOTE(0,15)
+	HALT(0)
+	SAMPLE_END
+.)
+
+music_main_sample_110:
+.(
+	PLAY_TIMED_NOTE(10,36)
+	SAMPLE_END
+.)
+
+music_main_sample_111:
+.(
+	PLAY_TIMED_NOTE(10,36)
+	HALT(0)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	PLAY_TIMED_NOTE(0,16)
+	PLAY_TIMED_NOTE(0,15)
+	HALT(0)
+	PLAY_TIMED_NOTE(2,36)
+	SAMPLE_END
+.)
+
+music_main_sample_112:
+.(
+	PLAY_TIMED_NOTE(0,41)
+	PLAY_TIMED_NOTE(0,36)
+	PLAY_TIMED_NOTE(0,32)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,26)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,41)
+	PLAY_TIMED_NOTE(0,36)
+	PLAY_TIMED_NOTE(0,32)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,26)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,41)
+	PLAY_TIMED_NOTE(0,36)
+	PLAY_TIMED_NOTE(0,32)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,26)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,41)
+	PLAY_TIMED_NOTE(0,36)
+	PLAY_TIMED_NOTE(0,32)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,26)
+	PLAY_TIMED_NOTE(0,23)
+	SAMPLE_END
+.)
+
+music_main_sample_113:
+.(
+	HALT(1)
+	PLAY_TIMED_NOTE(0,46)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	HALT(1)
+	PLAY_TIMED_NOTE(9,31)
+	HALT(1)
+	PLAY_TIMED_NOTE(0,46)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	HALT(1)
+	SAMPLE_END
+.)
+
+music_main_sample_114:
+.(
+	PLAY_TIMED_NOTE(9,31)
+	SAMPLE_END
+.)
+
+music_main_sample_115:
+.(
+	PLAY_TIMED_NOTE(9,31)
+	HALT(1)
+	SAMPLE_END
+.)
+
+music_main_sample_116:
+.(
+	PLAY_TIMED_NOTE(9,31)
+	HALT(1)
+	PLAY_TIMED_NOTE(0,46)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	HALT(1)
+	PLAY_TIMED_NOTE(3,31)
+	SAMPLE_END
+.)
+
+music_main_sample_117:
+.(
+	PLAY_TIMED_NOTE(0,46)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	HALT(2)
+	PLAY_TIMED_NOTE(10,36)
+	PLAY_TIMED_NOTE(0,46)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	HALT(2)
+	PLAY_TIMED_NOTE(10,29)
+	PLAY_TIMED_NOTE(0,46)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	HALT(2)
+	PLAY_TIMED_NOTE(10,29)
+	PLAY_TIMED_NOTE(0,46)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	HALT(2)
+	PLAY_TIMED_NOTE(10,31)
+	PLAY_TIMED_NOTE(0,46)
+	PLAY_TIMED_NOTE(0,39)
+	PLAY_TIMED_NOTE(0,35)
+	PLAY_TIMED_NOTE(0,31)
+	PLAY_TIMED_NOTE(0,28)
+	PLAY_TIMED_NOTE(0,25)
+	PLAY_TIMED_NOTE(0,23)
+	PLAY_TIMED_NOTE(0,21)
+	PLAY_TIMED_NOTE(0,19)
+	PLAY_TIMED_NOTE(0,17)
+	HALT(2)
+	PLAY_TIMED_NOTE(10,31)
+	SAMPLE_END
+.)
 
 #echo
 #echo music_main_size:

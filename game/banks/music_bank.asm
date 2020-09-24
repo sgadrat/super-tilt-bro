@@ -16,7 +16,7 @@ bank_music_end:
 #print $c000-*
 
 #if $c000-* < 0
-#echo *** Error: MUSIC bank occupies too much space
+#error MUSIC bank occupies too much space
 #else
 .dsb $c000-*, CURRENT_BANK_NUMBER
 #endif
