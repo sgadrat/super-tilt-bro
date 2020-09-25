@@ -24,11 +24,16 @@ audio_play_music:
 	ldx #1
 	jsr init_channel
 
-	; Init triangle channle
+	; Init triangle channel
 	lda #5 ; default note duration ;TODO get it from music header
 	sta audio_triangle_default_note_duration
 
-	lda #%11111111 ; CRRR RRRR
+	lda #0
+	sta audio_triangle_apu_timer_low_byte
+	sta audio_triangle_apu_timer_high_byte
+	sta audio_triangle_pitch_slide_lsb
+	sta audio_triangle_pitch_slide_msb
+	lda #%10000000 ; CRRR RRRR
 	sta APU_TRIANGLE_LINEAR_CNT
 
 	ldx #2
@@ -80,6 +85,16 @@ audio_play_music:
 					sta APU_SQUARE2_SWEEP
 				ok:
 			.)
+
+			; Remove any slide
+			;lda #0 ; useless, done above
+			sta audio_square1_pitch_slide_lsb, x
+			sta audio_square1_pitch_slide_msb, x
+
+			; Soft-silence channel
+			;lda #0 ; useless, done above
+			sta audio_square1_apu_timer_low_byte, x
+			sta audio_square1_apu_timer_high_byte, x
 
 		end_pulse_specifics:
 
