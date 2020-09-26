@@ -32,6 +32,11 @@ sta audio_triangle_track+1
 
 jsr audio_reset_music
 #else
+	lda #1
+	sta audio_skip_noise
+	lda #%00110000
+	sta APU_NOISE_ENVELOPE
+
 	ldy #<music_main_info
 	lda #>music_main_info
 	jmp audio_play_music
@@ -74,6 +79,9 @@ sta audio_triangle_track+1
 jsr audio_reset_music
 rts
 #else
+	lda #0
+	sta audio_skip_noise
+
 	ldy #<music_title_info
 	lda #>music_title_info
 	jmp audio_play_music
@@ -114,6 +122,9 @@ sta audio_triangle_track+1
 
 jsr audio_reset_music
 #else
+	lda #0
+	sta audio_skip_noise
+
 	ldy #<music_jump_rope_info
 	lda #>music_jump_rope_info
 	jmp audio_play_music

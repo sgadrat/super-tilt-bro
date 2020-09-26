@@ -223,6 +223,14 @@ audio_music_tick:
 		tmp_addr = tmpfield1
 		tmp_addr_msb = tmpfield2
 
+		;HACK do nothing if noise is disabled (for compatibility with old sfx)
+		.(
+			lda audio_skip_noise
+			beq ok
+			jmp end_write_apu
+			ok:
+		.)
+
 		; Pitch slide (add pitch slide value to frequency)
 		lda audio_noise_apu_period_byte
 		and #%00001111

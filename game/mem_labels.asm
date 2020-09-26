@@ -358,6 +358,8 @@ audio_square2_sample_num = $c4
 audio_triangle_sample_num = $c5
 audio_noise_sample_num = $c6
 
+audio_skip_noise = $c7 ;HACK Setting this value makes the audio engine not touch the noise channel, allowing old sfx (based on hacking noise channel) to play
+
 audio_square1_current_opcode = $0604
 audio_square2_current_opcode = $0605
 audio_triangle_current_opcode = $0606
