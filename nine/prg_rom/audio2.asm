@@ -33,8 +33,8 @@ audio_play_music:
 	sta audio_triangle_apu_timer_high_byte
 	sta audio_triangle_pitch_slide_lsb
 	sta audio_triangle_pitch_slide_msb
-	lda #%10000000 ; CRRR RRRR
-	sta APU_TRIANGLE_LINEAR_CNT
+	;lda #%10000000 ; CRRR RRRR  ; useless, channel is soft-silenced by init_channel, so next tick will mute it (even if first opcode is a WAIT)
+	;sta APU_TRIANGLE_LINEAR_CNT ;
 
 	ldx #2
 	jsr init_channel

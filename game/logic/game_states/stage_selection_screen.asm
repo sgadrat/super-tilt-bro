@@ -337,12 +337,20 @@ stage_selection_screen_tick:
 		lda #0                   ; Buffer's footer
 		sta nametable_buffers, x ;
 
-		ldx #5               ;
-		sleep:               ;
-		jsr wait_next_frame  ; Sleep between steps, do not update music to let it fade out as well
-		jsr reset_nt_buffers ;
-		dex                  ;
-		bne sleep            ;
+		tya                      ;
+		pha                      ;
+		lda #5                   ;
+		sleep:                   ;
+			pha                  ;
+			jsr wait_next_frame  ;
+			jsr audio_music_tick ; Sleep between steps
+			jsr reset_nt_buffers ;
+			pla                  ;
+			sec                  ;
+			sbc #1               ;
+			bne sleep            ;
+		pla                      ;
+		tay                      ;
 
 		cpy #32*3
 		bne fade_step
