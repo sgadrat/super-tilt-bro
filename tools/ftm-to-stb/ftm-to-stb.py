@@ -35,6 +35,7 @@ with open(SOURCE_FILE_PATH, 'r') as f:
 music = ftmmanip.get_num_channels(music)
 music = ftmmanip.flatten_orders(music)
 music = ftmmanip.unroll_f_effect(music)
+music = ftmmanip.cut_at_b_effect(music)
 music = ftmmanip.apply_g_effect(music)
 music = ftmmanip.apply_d_effect(music)
 music = ftmmanip.apply_s_effect(music)

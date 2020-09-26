@@ -510,6 +510,54 @@ def unroll_f_effect(music):
 
 	return modified
 
+def cut_at_b_effect(music):
+	"""
+	Cut each track at the first Bxx effect
+
+	Note: only B00 is handled, anything else is interpreted as B00
+	"""
+	def bxx_scanner(current_pattern_idx, current_row_idx):
+		nonlocal cut_position
+		current_row = music['tracks'][track_idx]['patterns'][current_pattern_idx]['rows'][current_row_idx]
+
+		# Check for presence of a Bxx effect anywhere in the row
+		bxx_location = None
+		for chan_idx in range(len(current_row['channels'])):
+			for effect_idx in range(len(current_row['channels'][chan_idx]['effects'])):
+				effect = current_row['channels'][chan_idx]['effects'][effect_idx]
+				if effect[0] == 'B':
+					if effect[1:] != '00':
+						warn('Bxx with "xx != 00" in {}: interpreted as B00'.format(
+							row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+						))
+					if bxx_location is not None:
+						warn('multiple Bxx in {}: some are ignored'.format(
+							row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+						))
+						current_row['channels'][bxx_location['chan']]['effects'][bxx_location['effect']] = '...'
+					bxx_location = {'chan':chan_idx, 'effect':effect_idx}
+
+		if bxx_location is not None:
+			cut_position = {'pattern': current_pattern_idx, 'row': current_row_idx}
+			return False
+
+	# Search for a cut position in each track
+	for track_idx in range(len(music['tracks'])):
+		cut_position = None
+		scan_next_chan_rows(bxx_scanner, music, track_idx, 0, 0)
+
+		if cut_position is not None:
+			track = music['tracks'][track_idx]
+			pattern = track['patterns'][cut_position['pattern']]
+
+			# Remove rows at the end of the pattern
+			pattern['rows'] = pattern['rows'][:cut_position['row']] #NOTE this will cut the row with Bxx effect (hope nobody puts anything else on the last row)
+
+			# Remove patterns after the one containing Bxx
+			track['patterns'] = track['patterns'][:cut_position['pattern']+1]
+
+	return music
+
 def apply_g_effect(music):
 	"""
 	Move rows affected by a Gxx effects

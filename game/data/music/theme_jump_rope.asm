@@ -1,21 +1,8 @@
-#define MUSIC_JUMP_ROPE_WITH_NOISE 1
-
 music_jump_rope_info:
 .word music_jump_rope_track_pulse1
 .word music_jump_rope_track_pulse2
 .word music_jump_rope_track_triangle
 .word music_jump_rope_track_noise
-
-#if MUSIC_JUMP_ROPE_WITH_NOISE
-#else
-music_jump_rope_sample_noise_halt:
-AUDIO_NOISE_HALT(7)
-SAMPLE_END
-
-music_jump_rope_track_noise:
-.word music_jump_rope_sample_noise_halt
-MUSIC_END
-#endif
 
 music_jump_rope_track_pulse1:
 .word music_jump_rope_sample_64
@@ -204,7 +191,6 @@ music_jump_rope_track_triangle:
 .word music_jump_rope_sample_1
 MUSIC_END
 
-#if MUSIC_JUMP_ROPE_WITH_NOISE
 music_jump_rope_track_noise:
 .word music_jump_rope_sample_2
 .word music_jump_rope_sample_46
@@ -319,24 +305,22 @@ music_jump_rope_track_noise:
 .word music_jump_rope_sample_40
 .word music_jump_rope_sample_41
 MUSIC_END
-#endif
 
 
 music_jump_rope_sample_0:
 .(
 	WAIT(4)
-	AUDIO_PULSE_META_WAIT_VOL(251,0)
+	CHAN_VOLUME_LOW(0)
+	WAIT(3)
 	SAMPLE_END
 .)
 
 music_jump_rope_sample_1:
 .(
-	LONG_WAIT(255)
-	WAIT(0)
+	LONG_WAIT(9)
 	SAMPLE_END
 .)
 
-#if MUSIC_JUMP_ROPE_WITH_NOISE
 music_jump_rope_sample_2:
 .(
 	AUDIO_NOISE_SET_VOLUME(0)
@@ -345,7 +329,6 @@ music_jump_rope_sample_2:
 	AUDIO_NOISE_WAIT(0)
 	SAMPLE_END
 .)
-#endif
 
 music_jump_rope_sample_3:
 .(
@@ -375,7 +358,6 @@ music_jump_rope_sample_5:
 	SAMPLE_END
 .)
 
-#if MUSIC_JUMP_ROPE_WITH_NOISE
 music_jump_rope_sample_6:
 .(
 	AUDIO_NOISE_SET_VOLUME(0)
@@ -395,7 +377,6 @@ music_jump_rope_sample_8:
 	AUDIO_NOISE_WAIT(6)
 	SAMPLE_END
 .)
-#endif
 
 music_jump_rope_sample_9:
 .(
@@ -805,7 +786,6 @@ music_jump_rope_sample_39:
 	SAMPLE_END
 .)
 
-#if MUSIC_JUMP_ROPE_WITH_NOISE
 music_jump_rope_sample_40:
 .(
 	AUDIO_NOISE_SET_VOLUME(14)
@@ -830,7 +810,7 @@ music_jump_rope_sample_40:
 music_jump_rope_sample_41:
 .(
 	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_LONG_WAIT(248)
+	AUDIO_NOISE_WAIT(0)
 	SAMPLE_END
 .)
 
@@ -926,7 +906,6 @@ music_jump_rope_sample_49:
 	AUDIO_NOISE_WAIT(0)
 	SAMPLE_END
 .)
-#endif
 
 music_jump_rope_sample_50:
 .(
