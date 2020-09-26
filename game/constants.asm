@@ -295,21 +295,3 @@ STAGE_ELEMENT_OOS_SMOOTH_PLATFORM = $04
 #define NOTE_O7_A $00e
 #define NOTE_O7_As $00d
 #define NOTE_O7_B $00c
-
-;TODO these ones are missing from the definitions above for not apparent reason, find their exact value and fix it
-#define NOTE_O0_Es NOTE_O0_E
-#define NOTE_O0_Bs NOTE_O0_B
-#define NOTE_O1_Es NOTE_O1_E
-#define NOTE_O1_Bs NOTE_O1_B
-#define NOTE_O2_Es NOTE_O2_E
-#define NOTE_O2_Bs NOTE_O2_B
-#define NOTE_O3_Es NOTE_O3_E
-#define NOTE_O3_Bs NOTE_O3_B
-#define NOTE_O4_Es NOTE_O4_E
-#define NOTE_O4_Bs NOTE_O4_B
-#define NOTE_O5_Es NOTE_O5_E
-#define NOTE_O5_Bs NOTE_O5_B
-#define NOTE_O6_Es NOTE_O6_E
-#define NOTE_O6_Bs NOTE_O6_B
-#define NOTE_O7_Es NOTE_O7_E
-#define NOTE_O7_Bs NOTE_O7_B

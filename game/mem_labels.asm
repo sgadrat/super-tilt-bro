@@ -324,30 +324,6 @@ gameover_random = $4e
 ; Audio engine labels
 ;
 
-#if 0
-;TODO remove old engine
-audio_square1_sample_counter = $c0  ;
-audio_square2_sample_counter = $c1  ; Counter in the sample - index of a note
-audio_triangle_sample_counter = $c2 ;
-
-audio_square1_note_counter = $c3  ;
-audio_square2_note_counter = $c4  ; Counter in the note - time left before next note
-audio_triangle_note_counter = $c5 ;
-
-audio_channel_mode = $c6 ; Square or triangle
-
-audio_square1_track = $c7  ;
-audio_square2_track = $c9  ; Adress of the current track for each channel
-audio_triangle_track = $cb ;
-
-audio_duty = $cd
-audio_music_enabled = $ce
-
-audio_square1_track_counter = $0600  ;
-audio_square2_track_counter = $0601  ; Counter in the track - index of a sample
-audio_triangle_track_counter = $0602 ;
-#else
-
 audio_music_enabled = $c0
 
 audio_current_track_lsb = $c1
@@ -397,7 +373,6 @@ audio_noise_apu_envelope_byte = $0624
 audio_noise_apu_period_byte = $0625 ; bit 4 used to silence the channel, so it is Ls.. PPPP with s handled by the engine
 audio_noise_pitch_slide = $0626
 
-#endif
 ;
 ; Global labels
 ;
