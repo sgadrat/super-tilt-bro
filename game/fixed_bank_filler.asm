@@ -13,23 +13,23 @@ credits_begin:
 .asc $0a
 .asc "backgrounds",$0a
 .asc "    by martin le borgne",$0a
+.asc "super tilt bro",$0a
+.asc "    by tui",$0a
 .asc "kiki",$0a
 .asc "    by tyson tan",$0a
-.asc "twin dragons",$0a
-.asc "    by surt",$0a
 .asc "sinbad",$0a
 .asc "    by zi ye",$0a
 .asc "i like jump rope",$0a
 .asc "perihelium",$0a
-.asc "termosdynamik",$0a
 .asc "    by ozzed",$0a
+.asc $0a
 .asc $0a
 .asc "           thanks",$0a
 .asc $0a
 .asc "antoine gohin   bacteriamage",$0a
 .asc "benoit ryder       bjorn nah",$0a
 .asc "fei         margarita gadrat",$0a
-.asc "supergameland",$0a
+.asc "supergameland            tui",$0a
 .byt $00
 credits_end:
 
