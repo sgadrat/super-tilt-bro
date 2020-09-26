@@ -52,12 +52,12 @@ PYTHONPATH="${root_dir}/tools:$PYTHONPATH" cmd "${root_dir}/tools/compile-mod.py
 log
 say "Assemble the game ..."
 log "====================="
-cmd /home/sylvain/workspace/xa-listing/xa/xa tilt.asm -C -o 'Super_Tilt_Bro_(E).nes'
-exe /home/sylvain/workspace/xa-listing/xa/xa -DNETWORK_AI tilt.asm -C -o 'tilt_ai_(E).nes'
-exe /home/sylvain/workspace/xa-listing/xa/xa -DNO_NETWORK tilt.asm -C -o 'tilt_no_network_(E).nes'
-exe /home/sylvain/workspace/xa-listing/xa/xa -DMAPPER_RAINBOW512 tilt.asm -C -o 'tilt_rainbow512_(E).nes'
-exe /home/sylvain/workspace/xa-listing/xa/xa -DNO_NETWORK -DMAPPER_UNROM512 tilt.asm -C -o 'tilt_no_network_unrom512_(E).nes'
-exe /home/sylvain/workspace/xa-listing/xa/xa -DNO_NETWORK -DMAPPER_UNROM tilt.asm -C -o 'tilt_no_network_unrom_(E).nes'
+cmd xa tilt.asm -C -o 'Super_Tilt_Bro_(E).nes'
+exe xa -DNETWORK_AI tilt.asm -C -o 'tilt_ai_(E).nes'
+exe xa -DNO_NETWORK tilt.asm -C -o 'tilt_no_network_(E).nes'
+exe xa -DMAPPER_RAINBOW512 tilt.asm -C -o 'tilt_rainbow512_(E).nes'
+exe xa -DNO_NETWORK -DMAPPER_UNROM512 tilt.asm -C -o 'tilt_no_network_unrom512_(E).nes'
+exe xa -DNO_NETWORK -DMAPPER_UNROM tilt.asm -C -o 'tilt_no_network_unrom_(E).nes'
 
 say
 say "======================="
