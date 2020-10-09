@@ -1,5 +1,20 @@
 Toolset to generate flamegraphs from a running emulator. Based on info extracted from xa-listing's output.
 
+Generating flame graph
+======================
+
+Run ``mesen_gather_perf.lua`` in mesen::
+
+	time mono Mesen.exe --testrunner tilt_\(E\).nes perf.lua
+
+It will output performance data in ``/tmp/nes.perf``
+
+Get flamegraph tool from ``https://github.com/brendangregg/FlameGraph``
+
+Generate the flamegraph::
+
+	cat /tmp/nes.perf | ./flamegraph.pl > /tmp/flame.svg
+
 xa-listing output format
 ========================
 
