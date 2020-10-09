@@ -9,6 +9,11 @@ Run ``mesen_gather_perf.lua`` in mesen::
 
 It will output performance data in ``/tmp/nes.perf``
 
+Optional, translate routines addresses to routine names::
+
+	# /tmp/dbg.txt is the output of compiling with xa-listing
+	cat /tmp/dbg.txt | ./routines_addresses.py | ./address_translate.py > /tmp/nes-named.perf
+
 Get flamegraph tool from ``https://github.com/brendangregg/FlameGraph``
 
 Generate the flamegraph::

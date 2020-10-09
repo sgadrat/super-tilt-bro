@@ -8,20 +8,23 @@ def parse_file(filepath, on_listing = None, on_file = None):
 	Parse a file line by line, invoking callbacks on interesting lines
 	"""
 	with open(filepath, 'r') as f:
-		line_num = 1
+		parse_fileobj(f, on_listing, on_file)
 
-		for line in f:
-			parsed = parse_line(line)
+def parse_fileobj(f, on_listing = None, on_file = None):
+	line_num = 1
 
-			ensure(parsed['type'] in ['listing', 'empty', 'filename'])
-			if parsed['type'] == 'listing':
-				if on_listing is not None:
-					on_listing(line_num, parsed['parsed'])
-			elif parsed['type'] == 'filename':
-				if on_file is not None:
-					on_file(line_num, parsed['file'])
+	for line in f:
+		parsed = parse_line(line)
 
-			line_num += 1
+		ensure(parsed['type'] in ['listing', 'empty', 'filename'])
+		if parsed['type'] == 'listing':
+			if on_listing is not None:
+				on_listing(line_num, parsed['parsed'])
+		elif parsed['type'] == 'filename':
+			if on_file is not None:
+				on_file(line_num, parsed['file'])
+
+		line_num += 1
 
 def parse_line(line):
 	"""
