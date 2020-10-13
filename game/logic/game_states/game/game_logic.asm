@@ -1030,7 +1030,7 @@ move_player:
 		;  To mitigate it more elegantly we may
 		;   - recheck only platforms before the last colliding platform (and do it until no platform collide)
 		;   - use a better formula for collision detection that does not let player cut the corners
-		;   - better formula idea (kudos darry.revok): move vertically, check vertical collisions, move horizontally, check H collisions
+		;   - better formula idea (kudos darry.revok), move vertically, check vertical collisions, move horizontally, check H collisions
 		;      - Can still cut corners (one way)
 		;      - Should not be able to be trapped by multi-platform bug described above
 		;      - Still iterate two times over objects, but each time checking less collisions (only one line per platform needed)
@@ -1043,9 +1043,9 @@ move_player:
 		;                - player[0;0] momentum[2;2] platform(upleft=[1;1],botright=[3;3]
 		;                  - player could go to [0;2] and [2;0], dumb application of this formula would state that it is ok to go to [2;2]
 		;                  - could be fixed for single platform by updating one pos before computing the other
-		;                  - multi platform fix is the same: fully compute one component before considering the other
+		;                  - multi platform fix is the same - fully compute one component before considering the other
 		;                    - that means "do not use this trick, it is dumb"
-		;      - Better optimization: do not store boxes, but just lines, make lines iterable byt type (up, down, left or right)
+		;      - Better optimization, do not store boxes, but just lines, make lines iterable byt type (up, down, left or right)
 		;        - This is a big change, impacting engine and tools
 		;
 		; TODO implement a cleaner solution
