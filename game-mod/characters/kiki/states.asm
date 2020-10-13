@@ -29,6 +29,7 @@ KIKI_AIR_FRICTION_STRENGTH = 7
 KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
 KIKI_AERIAL_SPEED = $0100
 KIKI_FASTFALL_SPEED = $04
+KIKI_PLATFORM_DURATION = 120
 
 KIKI_GROUND_FRICTION_STRENGTH = $40
 
@@ -40,6 +41,8 @@ kiki_last_anim_sprite_per_player:
 
 kiki_first_tile_index_per_player:
 .byt CHARACTERS_CHARACTER_A_FIRST_TILE, CHARACTERS_CHARACTER_B_FIRST_TILE
+
+kiki_a_platform_state = player_a_state_field3 ; aTTT TTTT - a, allowed to create a new platform - T, platform timer
 
 kiki_init:
 .(
@@ -66,6 +69,12 @@ kiki_init:
 		;ldy #0 ; useless, already set above
 		lda kiki_last_anim_sprite_per_player, x
 		sta (animation_state_vector), y
+	.)
+
+	; Init platform state
+	.(
+		lda #0
+		sta kiki_a_platform_state, x
 	.)
 
 	rts
@@ -296,6 +305,56 @@ kiki_check_aerial_inputs:
 	.)
 .)
 
+kiki_global_tick:
+.(
+	; Handle platform's lifetime
+	.(
+		lda kiki_a_platform_state, x
+		and #%01111111
+		beq destroy_platform
+
+			dec_timer:
+				; Decrement platform timer
+				sec
+				sbc #1
+				sta tmpfield1
+				lda kiki_a_platform_state, x
+				and #%10000000
+				ora tmpfield1
+				sta kiki_a_platform_state, x
+				jmp end_lifetime
+
+			destroy_platform:
+				; Destroy platform object
+				ldy #0
+				cpx #0
+				beq offset_ok
+					ldy #player_b_objects-player_a_objects
+				offset_ok:
+#if STAGE_ELEMENT_END <> 0
+#error this code expects STAGE_ELEMENT_END to be zero
+#endif
+				;lda #STAGE_ELEMENT_END ; useless, ensured by beq
+				sta player_a_objects, y ; type
+
+				; Hide platform sprites
+				lda kiki_first_wall_sprite_per_player, x
+				asl
+				asl
+				tay
+
+				lda #$fe
+				sta oam_mirror, y
+				sta oam_mirror+4,y
+
+		end_lifetime:
+	.)
+
+	;TODO make platforms blink on end of life
+	;TODO reset allowed flag on ground
+	rts
+.)
+
 kiki_start_thrown:
 .(
 	; Set the player's state
@@ -329,6 +388,8 @@ kiki_start_thrown:
 
 kiki_tick_thrown:
 .(
+	jsr kiki_global_tick
+
 	; Update velocity
 	lda player_a_hitstun, x
 	bne gravity
@@ -475,6 +536,8 @@ kiki_start_respawn:
 
 kiki_tick_respawn:
 .(
+	jsr kiki_global_tick
+
 	; Check for timeout
 	dec player_a_state_field1, x
 	bne end
@@ -538,6 +601,8 @@ kiki_start_innexistant:
 
 kiki_tick_innexistant:
 .(
+	jsr kiki_global_tick
+
 	rts
 .)
 
@@ -568,6 +633,8 @@ kiki_start_spawn:
 
 kiki_tick_spawn:
 .(
+	jsr kiki_global_tick
+
 	KIKI_STATE_SPAWN_DURATION = 50
 
 	inc player_a_state_clock, x
@@ -599,6 +666,8 @@ kiki_start_idle:
 
 kiki_tick_idle:
 .(
+	jsr kiki_global_tick
+
 	; Do not move, velocity tends toward vector (0,0)
 	lda #$00
 	sta tmpfield4
@@ -744,6 +813,8 @@ kiki_set_running_animation:
 
 kiki_tick_running:
 .(
+	jsr kiki_global_tick
+
 	; Update player's velocity dependeing on his direction
 	lda player_a_direction, x
 	beq run_left
@@ -866,6 +937,8 @@ kiki_start_jumping:
 KIKI_STATE_JUMP_PREPARATION_END = 4
 kiki_tick_jumping:
 .(
+	jsr kiki_global_tick
+
 	KIKI_STATE_JUMP_SHORT_HOP_TIME = 9
 	KIKI_STATE_JUMP_INITIAL_VELOCITY = $fb80
 	KIKI_STATE_JUMP_SHORT_HOP_VELOCITY = $fefe
@@ -1027,6 +1100,8 @@ kiki_start_falling:
 
 kiki_tick_falling:
 .(
+	jsr kiki_global_tick
+
 	jsr kiki_aerial_directional_influence
 	jsr apply_player_gravity
 	rts
@@ -1086,6 +1161,8 @@ kiki_set_landing_animation:
 
 kiki_tick_landing:
 .(
+	jsr kiki_global_tick
+
 	KIKI_STATE_LANDING_DURATION = 6
 
 	; Tick clock
@@ -1137,6 +1214,8 @@ kiki_start_crashing:
 
 kiki_tick_crashing:
 .(
+	jsr kiki_global_tick
+
 	KIKI_STATE_CRASHING_DURATION = 30
 
 	; Tick clock
@@ -1181,6 +1260,8 @@ kiki_start_helpless:
 
 kiki_tick_helpless:
 .(
+	jsr kiki_global_tick
+
 	jmp kiki_tick_falling
 .)
 
@@ -1216,6 +1297,8 @@ kiki_start_shielding:
 
 kiki_tick_shielding:
 .(
+	jsr kiki_global_tick
+
 	; Tick clock
 	lda player_a_state_clock, x
 	cmp #PLAYER_DOWN_TAP_MAX_DURATION
@@ -1357,6 +1440,8 @@ kiki_start_shieldlag:
 
 kiki_tick_shieldlag:
 .(
+	jsr kiki_global_tick
+
 	KIKI_STATE_SHIELDLAG_DURATION = 8
 
 	; Do not move, velocity tends toward vector (0,0)
@@ -1419,6 +1504,8 @@ kiki_start_side_tilt:
 
 kiki_tick_side_tilt:
 .(
+	jsr kiki_global_tick
+
 	KIKI_STATE_SIDE_TILT_DURATION = 16
 	KIKI_STATE_SIDE_TILT_FRICTION = $20
 
@@ -1489,6 +1576,10 @@ kiki_start_side_spe:
 	;  Current - rapidly slow down to (0, 0) (was done to copy-paste code from side tilt)
 	;  Idea 1 - directly stop any velocity (should feel like now, without computations per tick)
 	;  Idea 2 - stop horizontal velocity, keep vertical velocity, apply gravity on tick (should help to side spe as part of aerial gameplay)
+
+	; Reset wall state
+	lda #KIKI_PLATFORM_DURATION
+	sta kiki_a_platform_state, x
 
 	; Place wall
 	ldy #0
@@ -1632,6 +1723,8 @@ kiki_start_side_spe:
 
 kiki_tick_side_spe:
 .(
+	jsr kiki_global_tick
+
 	; TODO study velocity stuff
 	KIKI_STATE_SIDE_SPE_DURATION = 16
 	KIKI_STATE_SIDE_SPE_FRICTION = $ff
@@ -1700,6 +1793,10 @@ kiki_start_down_spe:
 	sta player_a_y_screen, x
 	lda #$ff
 	sta player_a_y_low, x
+
+	; Reset wall state
+	lda #KIKI_PLATFORM_DURATION
+	sta kiki_a_platform_state, x
 
 	; Place wall
 	;TODO factorize code with other specials
@@ -1833,6 +1930,8 @@ kiki_start_down_spe:
 
 kiki_tick_down_spe:
 .(
+	jsr kiki_global_tick
+
 	KIKI_STATE_DOWN_SPE_DURATION = 16
 
 	inc player_a_state_clock, x
@@ -1877,6 +1976,10 @@ kiki_start_up_spe:
 	sta player_a_velocity_h, x
 	sta player_a_velocity_v_low, x
 	sta player_a_velocity_v, x
+
+	; Reset wall state
+	lda #KIKI_PLATFORM_DURATION
+	sta kiki_a_platform_state, x
 
 	; Place wall
 	;TODO factorize code with other specials
@@ -2002,6 +2105,8 @@ kiki_start_up_spe:
 
 kiki_tick_up_spe:
 .(
+	jsr kiki_global_tick
+
 	KIKI_STATE_UP_SPE_DURATION = 16
 
 	inc player_a_state_clock, x
@@ -2044,6 +2149,8 @@ kiki_start_up_tilt:
 
 kiki_tick_up_tilt:
 .(
+	jsr kiki_global_tick
+
 	KIKI_STATE_UP_TILT_DURATION = 16
 	KIKI_STATE_UP_TILT_FRICTION = $20
 
@@ -2094,6 +2201,8 @@ kiki_start_up_aerial:
 
 kiki_tick_up_aerial:
 .(
+	jsr kiki_global_tick
+
 	KIKI_STATE_UP_AERIAL_DURATION = 16
 
 	jsr apply_player_gravity
@@ -2131,6 +2240,8 @@ kiki_start_down_tilt:
 
 kiki_tick_down_tilt:
 .(
+	jsr kiki_global_tick
+
 	KIKI_STATE_DOWN_TILT_DURATION = 12
 	KIKI_STATE_DOWN_TILT_FRICTION = $20
 
@@ -2196,6 +2307,8 @@ kiki_start_down_aerial:
 
 kiki_tick_down_aerial:
 .(
+	jsr kiki_global_tick
+
 	KIKI_STATE_DOWN_AERIAL_DURATION = 12
 
 	jsr apply_player_gravity
@@ -2249,6 +2362,8 @@ kiki_start_side_aerial:
 
 kiki_tick_side_aerial:
 .(
+	jsr kiki_global_tick
+
 	KIKI_STATE_SIDE_AERIAL_DURATION = 16
 
 	jsr apply_player_gravity
@@ -2286,6 +2401,8 @@ kiki_start_jabbing:
 
 kiki_tick_jabbing:
 .(
+	jsr kiki_global_tick
+
 	KIKI_STATE_JAB_DURATION = 12
 	KIKI_STATE_JAB_FRICTION = $20
 
@@ -2348,6 +2465,8 @@ kiki_start_neutral_aerial:
 
 kiki_tick_neutral_aerial:
 .(
+	jsr kiki_global_tick
+
 	KIKI_STATE_NEUTRAL_AERIAL_DURATION = 12
 
 	jsr apply_player_gravity
@@ -2386,6 +2505,8 @@ kiki_start_counter_guard:
 KIKI_STATE_COUNTER_GUARD_ACTIVE_DURATION = 12
 kiki_tick_counter_guard:
 .(
+	jsr kiki_global_tick
+
 	KIKI_STATE_COUNTER_GUARD_TOTAL_DURATION = 24
 
 	jsr apply_player_gravity
@@ -2469,6 +2590,8 @@ kiki_start_counter_strike:
 
 kiki_tick_counter_strike:
 .(
+	jsr kiki_global_tick
+
 	KIKI_STATE_COUNTER_STRIKE_DURATION = 12
 
 	jsr apply_player_gravity
