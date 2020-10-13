@@ -73,7 +73,7 @@ kiki_init:
 
 	; Init platform state
 	.(
-		lda #0
+		lda #%10000000
 		sta kiki_a_platform_state, x
 	.)
 
@@ -350,8 +350,25 @@ kiki_global_tick:
 		end_lifetime:
 	.)
 
-	;TODO make platforms blink on end of life
-	;TODO reset allowed flag on ground
+	;TODO make platform blink on end of life (will need to find a place in memory to store real sprites' Y position)
+
+	; Reset allowed flag on ground
+	.(
+		; Do not reset if not on a legit stage platform
+		jsr check_on_ground
+		bne end_ground_reset ; Not on ground
+		lda tmpfield3
+		cmp #player_a_objects-stage_data
+		bcs end_ground_reset ; Grounded on any player platform
+
+			; Set allowed flag
+			lda #%10000000
+			ora kiki_a_platform_state, x
+			sta kiki_a_platform_state, x
+
+		end_ground_reset:
+	.)
+
 	rts
 .)
 
@@ -1577,143 +1594,154 @@ kiki_start_side_spe:
 	;  Idea 1 - directly stop any velocity (should feel like now, without computations per tick)
 	;  Idea 2 - stop horizontal velocity, keep vertical velocity, apply gravity on tick (should help to side spe as part of aerial gameplay)
 
-	; Reset wall state
-	lda #KIKI_PLATFORM_DURATION
-	sta kiki_a_platform_state, x
+	; Avoid spawning wall when forbiden
+	lda kiki_a_platform_state, x
+	and #%10000000
+	bne spawn_wall
+		jmp spawn_wall_end
 
-	; Place wall
-	ldy #0
-	cpx #0
-	beq place_wall
-		ldy #player_b_objects-player_a_objects
-	place_wall:
+	; Spawn wall
+	spawn_wall:
+	.(
+		; Reset wall state
+		lda #KIKI_PLATFORM_DURATION
+		sta kiki_a_platform_state, x
 
-	lda #STAGE_ELEMENT_OOS_PLATFORM
-	sta player_a_objects, y ; type
+		; Place wall
+		ldy #0
+		cpx #0
+		beq place_wall
+			ldy #player_b_objects-player_a_objects
+		place_wall:
 
-	lda player_a_direction, x
-	cmp DIRECTION_LEFT
-	bne platform_on_right
-		lda player_a_x, x
+		lda #STAGE_ELEMENT_OOS_PLATFORM
+		sta player_a_objects, y ; type
+
+		lda player_a_direction, x
+		cmp DIRECTION_LEFT
+		bne platform_on_right
+			lda player_a_x, x
+			clc
+			adc #$ef
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+			lda player_a_x_screen, x
+			adc #$ff
+			jmp end_platform_left_positioning
+		platform_on_right:
+			lda player_a_x, x
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+			lda player_a_x_screen, x
+		end_platform_left_positioning:
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
 		clc
-		adc #$ef
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-		lda player_a_x_screen, x
-		adc #$ff
-		jmp end_platform_left_positioning
-	platform_on_right:
-		lda player_a_x, x
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-		lda player_a_x_screen, x
-	end_platform_left_positioning:
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+		adc #16
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+		adc #0
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
 
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-	clc
-	adc #16
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-	adc #0
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
-
-	lda player_a_y, x
-	clc
-	adc #16
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
-	lda player_a_y_screen, x
-	adc #0
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
-
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
-	sec
-	sbc #32
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
-	sbc #0
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
-
-	lda #STAGE_ELEMENT_END
-	sta player_a_objects+STAGE_OOS_PLATFORM_LENGTH, y ; next's type
-
-	; Compute wall's sprites position
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
-	clc
-	adc #15
-	sta sprite_y_lsb
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
-	adc #0
-	sta sprite_y_msb
-
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-	clc
-	adc #8
-	sta sprite_x_lsb
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-	adc #0
-	sta sprite_x_msb
-
-	; Set sprites properties
-	lda kiki_first_wall_sprite_per_player, x
-	asl
-	asl
-	tay
-
-	lda wall_attributes_per_player, x
-	sta oam_mirror+2, y ; First sprite attributes
-	sta oam_mirror+6, y ; Second sprite attributes
-
-	; Place upper sprite
-	lda sprite_x_msb
-	cmp #0
-	bne hide_upper_sprite
-	lda sprite_y_msb
-	bne hide_upper_sprite
-
-		lda #KIKI_TILE_WALL_BLOCK_V_UP
+		lda player_a_y, x
 		clc
-		adc kiki_first_tile_index_per_player, x
-		sta oam_mirror+1, y ; First sprite tile
+		adc #16
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
+		lda player_a_y_screen, x
+		adc #0
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
+
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
+		sec
+		sbc #32
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
+		sbc #0
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+
+		lda #STAGE_ELEMENT_END
+		sta player_a_objects+STAGE_OOS_PLATFORM_LENGTH, y ; next's type
+
+		; Compute wall's sprites position
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+		clc
+		adc #15
+		sta sprite_y_lsb
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+		adc #0
+		sta sprite_y_msb
+
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+		clc
+		adc #8
+		sta sprite_x_lsb
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+		adc #0
+		sta sprite_x_msb
+
+		; Set sprites properties
+		lda kiki_first_wall_sprite_per_player, x
+		asl
+		asl
+		tay
+
+		lda wall_attributes_per_player, x
+		sta oam_mirror+2, y ; First sprite attributes
+		sta oam_mirror+6, y ; Second sprite attributes
+
+		; Place upper sprite
+		lda sprite_x_msb
+		cmp #0
+		bne hide_upper_sprite
+		lda sprite_y_msb
+		bne hide_upper_sprite
+
+			lda #KIKI_TILE_WALL_BLOCK_V_UP
+			clc
+			adc kiki_first_tile_index_per_player, x
+			sta oam_mirror+1, y ; First sprite tile
+			lda sprite_y_lsb
+			sta oam_mirror, y ; First sprite Y
+			lda sprite_x_lsb
+			sta oam_mirror+3, y ; First sprite X
+			jmp end_upper_sprite
+
+		hide_upper_sprite:
+			lda #$fe
+			sta oam_mirror, y ; First sprite Y
+
+		end_upper_sprite:
+
+		; Place lower sprite
+		lda sprite_x_msb
+		cmp #0
+		bne hide_lower_sprite
+
 		lda sprite_y_lsb
-		sta oam_mirror, y ; First sprite Y
-		lda sprite_x_lsb
-		sta oam_mirror+3, y ; First sprite X
-		jmp end_upper_sprite
-
-	hide_upper_sprite:
-		lda #$fe
-		sta oam_mirror, y ; First sprite Y
-
-	end_upper_sprite:
-
-	; Place lower sprite
-	lda sprite_x_msb
-	cmp #0
-	bne hide_lower_sprite
-
-	lda sprite_y_lsb
-	clc
-	adc #8
-	sta sprite_y_lsb
-	lda sprite_y_msb
-	adc #0
-	bne hide_lower_sprite
-
-
-		lda #KIKI_TILE_WALL_BLOCK_V_DOWN
 		clc
-		adc kiki_first_tile_index_per_player, x
-		sta oam_mirror+5, y ; Second sprite tile
-		lda sprite_y_lsb
-		sta oam_mirror+4, y ; Second sprite Y
-		lda sprite_x_lsb
-		sta oam_mirror+7, y ; Second sprite X
-		jmp end_lower_sprite
+		adc #8
+		sta sprite_y_lsb
+		lda sprite_y_msb
+		adc #0
+		bne hide_lower_sprite
 
-	hide_lower_sprite:
-		lda #$fe
-		sta oam_mirror+4, y ; Second sprite Y
 
-	end_lower_sprite:
+			lda #KIKI_TILE_WALL_BLOCK_V_DOWN
+			clc
+			adc kiki_first_tile_index_per_player, x
+			sta oam_mirror+5, y ; Second sprite tile
+			lda sprite_y_lsb
+			sta oam_mirror+4, y ; Second sprite Y
+			lda sprite_x_lsb
+			sta oam_mirror+7, y ; Second sprite X
+			jmp end_lower_sprite
+
+		hide_lower_sprite:
+			lda #$fe
+			sta oam_mirror+4, y ; Second sprite Y
+
+		end_lower_sprite:
+	.)
+	spawn_wall_end:
 
 	rts
 
@@ -1783,144 +1811,155 @@ kiki_start_down_spe:
 	sta player_a_velocity_v_low, x
 	sta player_a_velocity_v, x
 
-	; Move player upward (to create wall on ground)
-	lda player_a_y, x
-	sec
-	sbc #8
-	sta player_a_y, x
-	lda player_a_y_screen, x
-	sbc #0
-	sta player_a_y_screen, x
-	lda #$ff
-	sta player_a_y_low, x
+	; Avoid spawning wall when forbiden
+	lda kiki_a_platform_state, x
+	and #%10000000
+	bne spawn_wall
+		jmp spawn_wall_end
 
-	; Reset wall state
-	lda #KIKI_PLATFORM_DURATION
-	sta kiki_a_platform_state, x
+	; Spawn wall
+	spawn_wall:
+	.(
+		; Move player upward (to create wall on ground)
+		lda player_a_y, x
+		sec
+		sbc #8
+		sta player_a_y, x
+		lda player_a_y_screen, x
+		sbc #0
+		sta player_a_y_screen, x
+		lda #$ff
+		sta player_a_y_low, x
 
-	; Place wall
-	;TODO factorize code with other specials
-	ldy #0
-	cpx #0
-	beq place_wall
-		ldy #player_b_objects-player_a_objects
-	place_wall:
+		; Reset wall state
+		lda #KIKI_PLATFORM_DURATION
+		sta kiki_a_platform_state, x
 
-	lda #STAGE_ELEMENT_OOS_PLATFORM
-	sta player_a_objects, y ; type
+		; Place wall
+		;TODO factorize code with other specials
+		ldy #0
+		cpx #0
+		beq place_wall
+			ldy #player_b_objects-player_a_objects
+		place_wall:
 
-	lda player_a_x, x
-	clc
-	adc #$f3
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-	lda player_a_x_screen, x
-	adc #$ff
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+		lda #STAGE_ELEMENT_OOS_PLATFORM
+		sta player_a_objects, y ; type
 
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-	clc
-	adc #24
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-	adc #0
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
-
-	lda player_a_y, x
-	clc
-	adc #24
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
-	lda player_a_y_screen, x
-	adc #0
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
-
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
-	sec
-	sbc #24
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
-	sbc #0
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
-
-	lda #STAGE_ELEMENT_END
-	sta player_a_objects+STAGE_OOS_PLATFORM_LENGTH, y ; next's type
-
-	; Compute wall's sprites position
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
-	clc
-	adc #15
-	sta sprite_y_lsb
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
-	adc #0
-	sta sprite_y_msb
-
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-	clc
-	adc #8
-	sta sprite_x_lsb
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-	adc #0
-	sta sprite_x_msb
-
-	; Set sprites properties
-	lda kiki_first_wall_sprite_per_player, x
-	asl
-	asl
-	tay
-
-	lda wall_attributes_per_player, x
-	sta oam_mirror+2, y ; First sprite attributes
-	sta oam_mirror+6, y ; Second sprite attributes
-
-	; Place left sprite
-	lda sprite_x_msb
-	cmp #0
-	bne hide_left_sprite
-	lda sprite_y_msb
-	bne hide_left_sprite
-
-		lda #KIKI_TILE_WALL_BLOCK_H_LEFT
+		lda player_a_x, x
 		clc
-		adc kiki_first_tile_index_per_player, x
-		sta oam_mirror+1, y ; First sprite tile
-		lda sprite_y_lsb
-		sta oam_mirror, y ; First sprite Y
-		lda sprite_x_lsb
-		sta oam_mirror+3, y ; First sprite X
-		jmp end_left_sprite
+		adc #$f3
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+		lda player_a_x_screen, x
+		adc #$ff
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
 
-	hide_left_sprite:
-		lda #$fe
-		sta oam_mirror, y ; First sprite Y
-
-	end_left_sprite:
-
-	; Place right sprite
-	lda sprite_x_lsb
-	clc
-	adc #8
-	sta sprite_x_lsb
-	lda sprite_x_msb
-	adc #0
-	bne hide_right_sprite
-
-	lda sprite_y_msb
-	bne hide_right_sprite
-
-		lda #KIKI_TILE_WALL_BLOCK_H_RIGHT
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
 		clc
-		adc kiki_first_tile_index_per_player, x
-		sta oam_mirror+5, y ; Second sprite tile
-		lda sprite_y_lsb
-		sta oam_mirror+4, y ; Second sprite Y
+		adc #24
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+		adc #0
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
+
+		lda player_a_y, x
+		clc
+		adc #24
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
+		lda player_a_y_screen, x
+		adc #0
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
+
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
+		sec
+		sbc #24
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
+		sbc #0
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+
+		lda #STAGE_ELEMENT_END
+		sta player_a_objects+STAGE_OOS_PLATFORM_LENGTH, y ; next's type
+
+		; Compute wall's sprites position
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+		clc
+		adc #15
+		sta sprite_y_lsb
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+		adc #0
+		sta sprite_y_msb
+
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+		clc
+		adc #8
+		sta sprite_x_lsb
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+		adc #0
+		sta sprite_x_msb
+
+		; Set sprites properties
+		lda kiki_first_wall_sprite_per_player, x
+		asl
+		asl
+		tay
+
+		lda wall_attributes_per_player, x
+		sta oam_mirror+2, y ; First sprite attributes
+		sta oam_mirror+6, y ; Second sprite attributes
+
+		; Place left sprite
+		lda sprite_x_msb
+		cmp #0
+		bne hide_left_sprite
+		lda sprite_y_msb
+		bne hide_left_sprite
+
+			lda #KIKI_TILE_WALL_BLOCK_H_LEFT
+			clc
+			adc kiki_first_tile_index_per_player, x
+			sta oam_mirror+1, y ; First sprite tile
+			lda sprite_y_lsb
+			sta oam_mirror, y ; First sprite Y
+			lda sprite_x_lsb
+			sta oam_mirror+3, y ; First sprite X
+			jmp end_left_sprite
+
+		hide_left_sprite:
+			lda #$fe
+			sta oam_mirror, y ; First sprite Y
+
+		end_left_sprite:
+
+		; Place right sprite
 		lda sprite_x_lsb
-		sta oam_mirror+7, y ; Second sprite X
-		jmp end_right_sprite
+		clc
+		adc #8
+		sta sprite_x_lsb
+		lda sprite_x_msb
+		adc #0
+		bne hide_right_sprite
 
-	hide_right_sprite:
-		lda #$fe
-		sta oam_mirror+4, y ; Second sprite Y
+		lda sprite_y_msb
+		bne hide_right_sprite
 
-	end_right_sprite:
+			lda #KIKI_TILE_WALL_BLOCK_H_RIGHT
+			clc
+			adc kiki_first_tile_index_per_player, x
+			sta oam_mirror+5, y ; Second sprite tile
+			lda sprite_y_lsb
+			sta oam_mirror+4, y ; Second sprite Y
+			lda sprite_x_lsb
+			sta oam_mirror+7, y ; Second sprite X
+			jmp end_right_sprite
+
+		hide_right_sprite:
+			lda #$fe
+			sta oam_mirror+4, y ; Second sprite Y
+
+		end_right_sprite:
+	.)
+	spawn_wall_end:
 
 	rts
 
@@ -1933,6 +1972,8 @@ kiki_tick_down_spe:
 	jsr kiki_global_tick
 
 	KIKI_STATE_DOWN_SPE_DURATION = 16
+
+	jsr apply_player_gravity
 
 	inc player_a_state_clock, x
 
@@ -1977,125 +2018,136 @@ kiki_start_up_spe:
 	sta player_a_velocity_v_low, x
 	sta player_a_velocity_v, x
 
-	; Reset wall state
-	lda #KIKI_PLATFORM_DURATION
-	sta kiki_a_platform_state, x
+	; Avoid spawning wall when forbiden
+	lda kiki_a_platform_state, x
+	and #%10000000
+	bne spawn_wall
+		jmp spawn_wall_end
 
-	; Place wall
-	;TODO factorize code with other specials
-	ldy #0
-	cpx #0
-	beq place_wall
-		ldy #player_b_objects-player_a_objects
-	place_wall:
+	; Spawn wall
+	spawn_wall:
+	.(
+		; Reset wall state
+		lda #KIKI_PLATFORM_DURATION
+		sta kiki_a_platform_state, x
 
-	lda #STAGE_ELEMENT_OOS_SMOOTH_PLATFORM
-	sta player_a_objects, y ; type
+		; Place wall
+		;TODO factorize code with other specials
+		ldy #0
+		cpx #0
+		beq place_wall
+			ldy #player_b_objects-player_a_objects
+		place_wall:
 
-	lda player_a_x, x
-	clc
-	adc #$f3
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-	lda player_a_x_screen, x
-	adc #$ff
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+		lda #STAGE_ELEMENT_OOS_SMOOTH_PLATFORM
+		sta player_a_objects, y ; type
 
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-	clc
-	adc #24
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-	adc #0
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
-
-	lda player_a_y, x
-	sec
-	sbc #24
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
-	lda player_a_y_screen, x
-	sbc #0
-	sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
-
-	lda #STAGE_ELEMENT_END
-	sta player_a_objects+STAGE_OOS_SMOOTH_PLATFORM_LENGTH, y ; next's type
-
-	; Compute wall's sprites position
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
-	clc
-	adc #15
-	sta sprite_y_lsb
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
-	adc #0
-	sta sprite_y_msb
-
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-	clc
-	adc #8
-	sta sprite_x_lsb
-	lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-	adc #0
-	sta sprite_x_msb
-
-	; Set sprites properties
-	lda kiki_first_wall_sprite_per_player, x
-	asl
-	asl
-	tay
-
-	lda wall_attributes_per_player, x
-	sta oam_mirror+2, y ; First sprite attributes
-	sta oam_mirror+6, y ; Second sprite attributes
-
-	; Place left sprite
-	lda sprite_x_msb
-	cmp #0
-	bne hide_left_sprite
-	lda sprite_y_msb
-	bne hide_left_sprite
-
-		lda #KIKI_TILE_SMOOTH_WALL_BLOCK_LEFT
+		lda player_a_x, x
 		clc
-		adc kiki_first_tile_index_per_player, x
-		sta oam_mirror+1, y ; First sprite tile
-		lda sprite_y_lsb
-		sta oam_mirror, y ; First sprite Y
-		lda sprite_x_lsb
-		sta oam_mirror+3, y ; First sprite X
-		jmp end_left_sprite
+		adc #$f3
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+		lda player_a_x_screen, x
+		adc #$ff
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
 
-	hide_left_sprite:
-		lda #$fe
-		sta oam_mirror, y ; First sprite Y
-
-	end_left_sprite:
-
-	; Place right sprite
-	lda sprite_x_lsb
-	clc
-	adc #8
-	sta sprite_x_lsb
-	lda sprite_x_msb
-	adc #0
-	bne hide_right_sprite
-
-	lda sprite_y_msb
-	bne hide_right_sprite
-
-		lda #KIKI_TILE_SMOOTH_WALL_BLOCK_RIGHT
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
 		clc
-		adc kiki_first_tile_index_per_player, x
-		sta oam_mirror+5, y ; Second sprite tile
-		lda sprite_y_lsb
-		sta oam_mirror+4, y ; Second sprite Y
+		adc #24
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+		adc #0
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
+
+		lda player_a_y, x
+		sec
+		sbc #24
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+		lda player_a_y_screen, x
+		sbc #0
+		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+
+		lda #STAGE_ELEMENT_END
+		sta player_a_objects+STAGE_OOS_SMOOTH_PLATFORM_LENGTH, y ; next's type
+
+		; Compute wall's sprites position
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+		clc
+		adc #15
+		sta sprite_y_lsb
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+		adc #0
+		sta sprite_y_msb
+
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+		clc
+		adc #8
+		sta sprite_x_lsb
+		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+		adc #0
+		sta sprite_x_msb
+
+		; Set sprites properties
+		lda kiki_first_wall_sprite_per_player, x
+		asl
+		asl
+		tay
+
+		lda wall_attributes_per_player, x
+		sta oam_mirror+2, y ; First sprite attributes
+		sta oam_mirror+6, y ; Second sprite attributes
+
+		; Place left sprite
+		lda sprite_x_msb
+		cmp #0
+		bne hide_left_sprite
+		lda sprite_y_msb
+		bne hide_left_sprite
+
+			lda #KIKI_TILE_SMOOTH_WALL_BLOCK_LEFT
+			clc
+			adc kiki_first_tile_index_per_player, x
+			sta oam_mirror+1, y ; First sprite tile
+			lda sprite_y_lsb
+			sta oam_mirror, y ; First sprite Y
+			lda sprite_x_lsb
+			sta oam_mirror+3, y ; First sprite X
+			jmp end_left_sprite
+
+		hide_left_sprite:
+			lda #$fe
+			sta oam_mirror, y ; First sprite Y
+
+		end_left_sprite:
+
+		; Place right sprite
 		lda sprite_x_lsb
-		sta oam_mirror+7, y ; Second sprite X
-		jmp end_right_sprite
+		clc
+		adc #8
+		sta sprite_x_lsb
+		lda sprite_x_msb
+		adc #0
+		bne hide_right_sprite
 
-	hide_right_sprite:
-		lda #$fe
-		sta oam_mirror+4, y ; Second sprite Y
+		lda sprite_y_msb
+		bne hide_right_sprite
 
-	end_right_sprite:
+			lda #KIKI_TILE_SMOOTH_WALL_BLOCK_RIGHT
+			clc
+			adc kiki_first_tile_index_per_player, x
+			sta oam_mirror+5, y ; Second sprite tile
+			lda sprite_y_lsb
+			sta oam_mirror+4, y ; Second sprite Y
+			lda sprite_x_lsb
+			sta oam_mirror+7, y ; Second sprite X
+			jmp end_right_sprite
+
+		hide_right_sprite:
+			lda #$fe
+			sta oam_mirror+4, y ; Second sprite Y
+
+		end_right_sprite:
+	.)
+	spawn_wall_end:
 
 	rts
 
@@ -2115,12 +2167,15 @@ kiki_tick_up_spe:
 	cmp #KIKI_STATE_UP_SPE_DURATION
 	bne end
 
-		;TODO returning to idle means that we can jump
-		;     even if there is no more aerial jump available.
-		;     We may check_on_ground to reset to falling if airborn
-		;     (sinbad also has a case like that, but it can be
-		;     significant on CPU budget)
-		jsr kiki_start_idle
+		;TODO avoid to compute check_on_ground
+		;     It is already done in kiki_global_tick, but should really be done
+		;     only once per frame by the engine (storing the result for reuse.)
+		jsr check_on_ground
+		beq on_ground
+			jsr kiki_start_falling
+			jmp end
+		on_ground:
+			jsr kiki_start_idle
 
 	end:
 	rts
