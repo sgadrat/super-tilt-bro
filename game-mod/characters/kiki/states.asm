@@ -36,6 +36,10 @@ KIKI_GROUND_FRICTION_STRENGTH = $40
 kiki_first_wall_sprite_per_player:
 .byt INGAME_PLAYER_A_LAST_SPRITE-1, INGAME_PLAYER_B_LAST_SPRITE-1
 
+; Offset of 2 bytes reserved in player's object data for storing current platform sprites Y position on screen
+kiki_first_wall_sprite_y_per_player:
+.byt (player_a_objects-stage_data)+STAGE_OOS_PLATFORM_LENGTH+1, (player_b_objects-stage_data)+STAGE_OOS_PLATFORM_LENGTH+1
+
 kiki_last_anim_sprite_per_player:
 .byt INGAME_PLAYER_A_LAST_SPRITE-2, INGAME_PLAYER_B_LAST_SPRITE-2
 
@@ -337,20 +341,63 @@ kiki_global_tick:
 				;lda #STAGE_ELEMENT_END ; useless, ensured by beq
 				sta player_a_objects, y ; type
 
-				; Hide platform sprites
-				lda kiki_first_wall_sprite_per_player, x
-				asl
-				asl
-				tay
+				; useless, ensured by blinking
+				;; Hide platform sprites
+				;lda kiki_first_wall_sprite_per_player, x
+				;asl
+				;asl
+				;tay
 
-				lda #$fe
-				sta oam_mirror, y
-				sta oam_mirror+4,y
+				;lda #$fe
+				;sta oam_mirror, y
+				;sta oam_mirror+4,y
 
 		end_lifetime:
 	.)
 
-	;TODO make platform blink on end of life (will need to find a place in memory to store real sprites' Y position)
+	; Make platform blink on end of life
+	.(
+		; Do not blink until the platform is about to disapear
+		lda kiki_a_platform_state, x
+		tay
+		and #%01100000
+		bne end_blinking
+
+			tya
+			and #%00000100
+			beq hide
+
+				show:
+					; Show platform (set Y position to the original one)
+					ldy kiki_first_wall_sprite_y_per_player, x
+					lda stage_data, y
+					pha
+					iny
+					lda stage_data, y
+					pha
+
+					jmp apply_sprites_position
+
+				hide:
+					; Hide platform (set Y position offscreen)
+					lda #$fe
+					pha
+					pha
+
+			apply_sprites_position:
+
+			lda kiki_first_wall_sprite_per_player, x
+			asl
+			asl
+			tay
+
+			pla
+			sta oam_mirror+4,y
+			pla
+			sta oam_mirror, y
+
+		end_blinking:
+	.)
 
 	; Reset allowed flag on ground
 	.(
@@ -1740,6 +1787,19 @@ kiki_start_side_spe:
 			sta oam_mirror+4, y ; Second sprite Y
 
 		end_lower_sprite:
+
+		; Mirror sprites screen position in unused object memory
+		lda oam_mirror+4, y
+		pha
+		lda oam_mirror, y
+		pha
+
+		ldy kiki_first_wall_sprite_y_per_player, x
+		pla
+		sta stage_data, y
+		iny
+		pla
+		sta stage_data, y
 	.)
 	spawn_wall_end:
 
@@ -1958,6 +2018,19 @@ kiki_start_down_spe:
 			sta oam_mirror+4, y ; Second sprite Y
 
 		end_right_sprite:
+
+		; Mirror sprites screen position in unused object memory
+		lda oam_mirror+4, y
+		pha
+		lda oam_mirror, y
+		pha
+
+		ldy kiki_first_wall_sprite_y_per_player, x
+		pla
+		sta stage_data, y
+		iny
+		pla
+		sta stage_data, y
 	.)
 	spawn_wall_end:
 
@@ -2146,6 +2219,19 @@ kiki_start_up_spe:
 			sta oam_mirror+4, y ; Second sprite Y
 
 		end_right_sprite:
+
+		; Mirror sprites screen position in unused object memory
+		lda oam_mirror+4, y
+		pha
+		lda oam_mirror, y
+		pha
+
+		ldy kiki_first_wall_sprite_y_per_player, x
+		pla
+		sta stage_data, y
+		iny
+		pla
+		sta stage_data, y
 	.)
 	spawn_wall_end:
 
