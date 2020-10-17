@@ -161,18 +161,9 @@ netplay_launch_screen_tick:
 		beq end
 
 			; Display custom server if configured
-			lda config_has_custom_server
-			beq check_message
-			bmi end_custom_server
-			check_message:
-			lda #$ff
-			sta config_has_custom_server
 			lda esp_msg_length
 			cmp #1
 			beq end_custom_server
-				lda #1
-				sta config_has_custom_server
-
 				lda #<server3_buffer_header
 				sta tmpfield1
 				lda #>server3_buffer_header

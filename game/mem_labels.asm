@@ -399,7 +399,6 @@ config_player_b_weapon_palette = $df
 config_player_a_character = $e0
 config_player_b_character = $e1
 config_game_mode = $e2
-config_has_custom_server = $e3 ; 0 - unknown ; 1 - custom server is configured ; 255 - custom server is not configured
 ; Note other $ex may be used by network engine
 
 tmpfield1 = $f0
