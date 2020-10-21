@@ -67,5 +67,8 @@ code_begin:
 #include "game/logic/logic.asm"
 code_end:
 #include "game/data/fixed-bank-data.asm"
+#ifdef SERVER_BYTECODE
+#include "game/logic/server_bytecode_extras.asm"
+#endif
 #include "game/fixed_bank_filler.asm"
 #endif

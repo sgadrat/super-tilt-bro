@@ -95,6 +95,12 @@ ANIM_INVISIBLE_ADDR = $fffa-ANIM_INVISIBLE_SIZE
 ; Set entry points vectors (also from nesmine)
 ;
 
+#ifdef SERVER_BYTECODE
+.word server_bytecode_tick  ; NMI
+.word server_bytecode_init  ; RESET
+.word server_bytecode_error ; IRQ
+#else
 .word nmi           ;entry point for VBlank interrupt  (NMI)
 .word mapper_init   ;entry point for program start     (RESET)
 .word cursed        ;entry point for masking interrupt (IRQ)
+#endif
