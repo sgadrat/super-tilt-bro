@@ -25,6 +25,9 @@ server_bytecode_init:
     sta config_ai_level
 	sta config_game_mode ; 0 is local, we don't want online (1) as it implies input-lag and ignoring controller B
 
+	lda #1
+	sta network_rollback_mode
+
 	; Standard game's initialization
 	jsr init_game_state
 
