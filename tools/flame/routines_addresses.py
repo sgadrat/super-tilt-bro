@@ -19,7 +19,7 @@ if len(sys.argv) > 1:
 # Construct mapping address -> routine
 #
 
-re_label = re.compile('^(?P<label>[a-z0-9_-]+) $')
+re_label = re.compile('^(?P<label>[a-z0-9_-]+)( +)$')
 re_open_scope = re.compile('[ \t]+\\.\\(.*')
 re_close_scope = re.compile('[ \t]+\\.\\).*')
 
