@@ -5,14 +5,14 @@ Generating flame graph
 
 Run ``mesen_gather_perf.lua`` in mesen::
 
-	time mono Mesen.exe --testrunner tilt_\(E\).nes perf.lua
+	mono Mesen.exe --testrunner tilt_\(E\).nes mesen_gather_perf.lua
 
 It will output performance data in ``/tmp/nes.perf``
 
 Optional, translate routines addresses to routine names::
 
 	# /tmp/dbg.txt is the output of compiling with xa-listing
-	cat /tmp/dbg.txt | ./routines_addresses.py | ./address_translate.py > /tmp/nes-named.perf
+	cat /tmp/dbg.txt | PYTHONPATH=$PYTHONPATH:.. ./routines_addresses.py | ./address_translate.py > /tmp/nes-named.perf
 
 Get flamegraph tool from ``https://github.com/brendangregg/FlameGraph``
 

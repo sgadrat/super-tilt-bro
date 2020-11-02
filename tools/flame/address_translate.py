@@ -35,10 +35,21 @@ with open(in_filename, 'r') as in_file:
 		if stack == '':
 			stack = ['top_level']
 		else:
+			# Split stack frames into a list
 			assert stack[-1] == ';'
 			stack = stack[:-1]
 			stack = stack.split(';')
+
+			# Add current instruction at the end of the stack list (see comment about prunning it below)
+			stack.append(m.group('instr'))
+
+			# Resolve stack frames to routine name
 			for i in range(len(stack)):
 				stack[i] = translate(stack[i])
+
+			# Keep the last element only if the instruction is not in the routine pointed by last stack frame
+			#  Allows to follow "jmp <routine_label>" while avoiding to almost always double the last routine name
+			if stack[-1] == stack[-2]:
+				stack = stack[:-1]
 
 		print('{} {}'.format(';'.join(stack), cycles))
