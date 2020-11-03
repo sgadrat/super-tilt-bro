@@ -9,7 +9,7 @@
 ; Character data
 ;
 
-#define STATE_ROUTINE(x) .byt >(x-1), <(x-1)
+#define STATE_ROUTINE(x) .word x
 
 ;
 ; Character AI

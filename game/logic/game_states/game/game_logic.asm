@@ -554,21 +554,23 @@ update_players:
 player_state_action:
 .(
 	jump_table = tmpfield1
+	routine_addr_lsb = tmpfield3
+	routine_addr_msb = tmpfield4
 
 	; Convert player state number to vector address (relative to table begining)
 	lda player_a_state, x       ; Y = state * 2
 	asl                         ; (as each element is 2 bytes long)
 	tay                         ;
 
-	; Push the state's routine address to the stack
+	; Retrieve state's routine address
 	lda (jump_table), y
-	pha
+	sta routine_addr_lsb
 	iny
 	lda (jump_table), y
-	pha
+	sta routine_addr_msb
 
-	; Return to the state's routine, it will itself return to player_state_action's caller
-	rts
+	; Jump to state's routine, it will return to player_state_action's caller
+	jmp (routine_addr_lsb)
 .)
 
 ; Update a player's state according to hitbox collisions
