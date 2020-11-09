@@ -333,26 +333,34 @@ draw_anim_frame:
 
 		; Place unused sprites off screen
 		clear_unused_sprites:
+			; Avoid doing it in rollback mode
 			lda network_rollback_mode
 			bne end
 
+			; Y = number of sprites to hide
+			inc last_sprite_index
 			lda last_sprite_index
-			cmp sprite_index
-			bcc end
+			sec
+			sbc sprite_index
+			beq end ; Skip if there is no sprite to hide
+			tay
 
-			lda sprite_index ;
-			asl              ; Set X to the byte offset of the sprite in OAM memory
-			asl              ;
-			tax              ;
+			; X = OAM index of the first sprite to hide
+			lda sprite_index
+			asl
+			asl
+			tax
 
+			; Hide sprites
 			lda #$fe
-			sta oam_mirror, x
-			sta oam_mirror+1, x
-			sta oam_mirror+2, x
-			sta oam_mirror+3, x
-
-			inc sprite_index
-			jmp clear_unused_sprites
+			clear_one_unused_sprite:
+				sta oam_mirror, x
+				inx
+				inx
+				inx
+				inx
+				dey
+				bne clear_one_unused_sprite
 
 		end:
 			rts
