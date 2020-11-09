@@ -29,6 +29,13 @@ Generate the flamegraph::
 
 	cat /tmp/nes.perf | ./flamegraph.pl > /tmp/flame.svg
 
+Annotate source code
+====================
+
+With raw performance report, and xa-listing's output you can generate source code annotated with the number of cycle per line::
+
+	PYTHONPATH=$PYTHONPATH:.. ./annotate.py /tmp/nes.perf /tmp/dbg.txt > /tmp/nes.annotate.md
+
 xa-listing output format
 ========================
 
