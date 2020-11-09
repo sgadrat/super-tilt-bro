@@ -3,16 +3,25 @@ Toolset to generate flamegraphs from a running emulator. Based on info extracted
 Generating flame graph
 ======================
 
-Run ``mesen_gather_perf.lua`` in mesen::
+Raw perf report
+---------------
+
+Run ``mesen_gather_perf.lua`` in Mesen::
 
 	mono Mesen.exe --testrunner tilt_\(E\).nes mesen_gather_perf.lua
 
 It will output performance data in ``/tmp/nes.perf``
 
+Translate adresses to routine name
+----------------------------------
+
 Optional, translate routines addresses to routine names::
 
 	# /tmp/dbg.txt is the output of compiling with xa-listing
 	cat /tmp/dbg.txt | PYTHONPATH=$PYTHONPATH:.. ./routines_addresses.py | ./address_translate.py > /tmp/nes-named.perf
+
+Construct the flamegraph
+------------------------
 
 Get flamegraph tool from ``https://github.com/brendangregg/FlameGraph``
 
