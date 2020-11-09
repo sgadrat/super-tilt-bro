@@ -133,9 +133,9 @@ init_title_screen:
 
 		palette_title_initial:
 		; Background
-		.byt $21,$21,$21,$21, $21,$0d,$20,$00, $21,$20,$0d,$00, $21,$21,$21,$21, ; 0 - logo, 1 - credits title, 2 - credits section, 3 - text and number with same colors
+		.byt $21,$21,$21,$21, $21,$0f,$20,$00, $21,$20,$0f,$00, $21,$21,$21,$21, ; 0 - logo, 1 - credits title, 2 - credits section, 3 - text and number with same colors
 		; Sprites
-		.byt $21,$21,$21,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$0d,$00,$31 ; 0 - text, 1,2 - unused, 3 - cloud
+		.byt $21,$21,$21,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$0f,$00,$31 ; 0 - text, 1,2 - unused, 3 - cloud
 	.)
 .)
 
@@ -273,7 +273,7 @@ title_screen_tick:
 			rts
 
 			logo_palette_nt_buffer:
-				.byt $01, $3f, $01, $03, $0d, $21, $30, $00 ; Continuation byte, PPU addr MSB, PPU addr LSB, data size, data..., end byte
+				.byt $01, $3f, $01, $03, $0f, $21, $30, $00 ; Continuation byte, PPU addr MSB, PPU addr LSB, data size, data..., end byte
 		.)
 
 		shake:
@@ -347,7 +347,7 @@ title_screen_tick:
 			rts
 
 			text_colors:
-				.byt $24, $17, $0d
+				.byt $24, $17, $0f
 		.)
 	.)
 .)
