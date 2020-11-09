@@ -532,6 +532,8 @@ update_players:
 		end_input_event:
 
 		; Call generic update routines
+		txa
+		sta player_number
 		jsr move_player
 		jsr check_player_position
 		lda network_rollback_mode
@@ -940,338 +942,545 @@ apply_force_vector:
 
 ; Move the player according to it's velocity and collisions with obstacles
 ;  register X - player number
+;  player_number - player number
 ;
-;  When returning
+;  Ouput
 ;   - player's position is updated
-;   - tmpfield1 contains its old X ;TODO check, seems bugged
-;   - tmpfield2 contains its old Y ;TODO check, seems bugged
-;   - tmpfield13 contains its old screen_x
-;   - tmpfield14 contains its old screen_y
+;   - tmpfield4 equals to "player_a_x, x"
+;   - tmpfield5 equals to "player_a_x_screen, x"
+;   - tmpfield7 equals to "player_a_y, x"
+;   - tmpfield8 equals to "player_a_y_screen, x"
 ;
-;  Note - As a side effect, new position is stored in some tmpfields
-;         some code may use it as an easy optimization (to fetch it
-;         from zero page instead of "zero-page, x").
-;         If this behaviour is changed, take care of dependent code.
+;  Overwrites register A, regiter Y, and tmpfield1 to tmpfield12
 move_player:
 .(
-	;TODO harmonize component names "subpixel", "pixel" and "screen"
-	old_x_collision = tmpfield1 ; Not movable, return value and parameter of check_collision
-	old_y_collision = tmpfield2 ; Not movable, return value and parameter of check_collision
-	final_x_low = tmpfield9 ; Not movable, parameter of check_collision
-	final_x_high = tmpfield3 ; Not movable, parameter of check_collision
-	final_y_low = tmpfield10 ; Not movable, parameter of check_collision
-	final_y_high = tmpfield4 ; Not movable, parameter of check_collision
-	obstacle_left = tmpfield5 ; Not movable, parameter of check_collision
-	obstacle_top = tmpfield6 ; Not movable, parameter of check_collision
-	obstacle_right = tmpfield7 ; Not movable, parameter of check_collision
-	obstacle_bottom = tmpfield8 ; Not movable, parameter of check_collision
-	final_x_screen = tmpfield11 ; Not movable, parameter of check_collision
-	final_y_screen = tmpfield12 ; Not movable, parameter of check_collision
-	old_x_screen = tmpfield13 ; Not movable, parameter of check_collision
-	old_y_screen = tmpfield14 ; Not movable, parameter of check_collision
-	action_vector = tmpfield15
-
-	old_x = extra_tmpfield1
-	old_y = extra_tmpfield2
 	elements_action_vector = tmpfield1 ; Not movable, parameter of stage_iterate_all_elements
+	;elements_action_vector_msb = tmpfield2
+	final_x_subpixel = tmpfield3
+	final_x_pixel = tmpfield4
+	final_x_screen = tmpfield5
+	final_y_subpixel = tmpfield6
+	final_y_pixel = tmpfield7
+	final_y_screen = tmpfield8
+	orig_x_pixel = tmpfield9
+	orig_x_screen = tmpfield10
+	orig_y_pixel = tmpfield11
+	orig_y_screen = tmpfield12
 
-	; Save X to ensure it is not modified by this routine
-	txa
-	pha
-
-	; Save old position
+	; Save original position
 	lda player_a_x, x
-	sta old_x
-	lda player_a_y, x
-	sta old_y
+	sta orig_x_pixel
 	lda player_a_x_screen, x
-	sta old_x_screen
+	sta orig_x_screen
+
+	lda player_a_y, x
+	sta orig_y_pixel
 	lda player_a_y_screen, x
-	sta old_y_screen
+	sta orig_y_screen
 
-	; Apply velocity to position
-	lda player_a_velocity_h_low, x
-	clc
-	adc player_a_x_low, x
-	sta final_x_low
-	lda player_a_velocity_h, x
-	adc old_x
-	sta final_x_high
-	lda player_a_velocity_h, x
-	SIGN_EXTEND()
-	adc old_x_screen
-	sta final_x_screen
+	; Apply vertical velocity, coliding with obstacles on the way
+	vertical:
+	.(
+		; Beware
+		;   Do not use final_y, not even in platform handlers,
+		;   we care only of moving the character from (orig_x;orig_y) to (orig_x;orig_y+velocity_v)
 
-	lda player_a_velocity_v_low, x
-	clc
-	adc player_a_y_low, x
-	sta final_y_low
-	lda player_a_velocity_v, x
-	adc old_y
-	sta final_y_high
-	lda player_a_velocity_v, x
-	SIGN_EXTEND()
-	adc old_y_screen
-	sta final_y_screen
+		; Apply velocity to position
+		lda player_a_velocity_v_low, x
+		clc
+		adc player_a_y_low, x
+		sta final_y_subpixel
+		lda player_a_velocity_v, x
+		adc orig_y_pixel
+		sta final_y_pixel
+		lda player_a_velocity_v, x
+		SIGN_EXTEND()
+		pha ; save velocity direction
+		adc orig_y_screen
+		sta final_y_screen
 
-	; Check collisions with stage plaforms
-	ldy #0 ; TODO seems useless, not used bu stage_iterate_all_elements
+		; Iterate on stage elements
+		.(
+			pla
+			bne up
+				down:
+					lda #<move_player_handle_one_platform_down
+					sta elements_action_vector
+					lda #>move_player_handle_one_platform_down
+					jmp end_set_callback
+				up:
+					lda #<move_player_handle_one_platform_up
+					sta elements_action_vector
+					lda #>move_player_handle_one_platform_up
+			end_set_callback:
+			sta elements_action_vector+1
+			jsr stage_iterate_all_elements
+		.)
 
-	check_platform_collision:
-		lda #<handle_one_platform
-		sta elements_action_vector
-		lda #>handle_one_platform
-		sta elements_action_vector+1
-		jsr stage_iterate_all_elements
+		; Restore X register which can be freely used by platform handlers
+		ldx player_number
+	.)
 
-		; HACK perform the check twice to mitigate the following issue
-		;  With two pateforms (A and B), if the final position is outside A
-		;  and inside B. A does not impacts movement, but collision with B
-		;  may replace the player inside A.
-		;
-		;  To mitigate it more elegantly we may
-		;   - recheck only platforms before the last colliding platform (and do it until no platform collide)
-		;   - use a better formula for collision detection that does not let player cut the corners
-		;   - better formula idea (kudos darry.revok), move vertically, check vertical collisions, move horizontally, check H collisions
-		;      - Can still cut corners (one way)
-		;      - Should not be able to be trapped by multi-platform bug described above
-		;      - Still iterate two times over objects, but each time checking less collisions (only one line per platform needed)
-		;        - Maybe improvable by computing full movement, and interating once, but considering (old_x, new_y) and (old_y, new_x) on each platform
-		;          - Save one iteration (same number of collision check) at the cost of complexity
-		;          - Possibly incompatible with slopes (to be determined, not yet needed)
-		;          - thinking about it, it is dumb
-		;            - some vertical positions will be checked without the final horz position
-		;              - (multiple platform) bugs may appear
-		;                - player[0;0] momentum[2;2] platform(upleft=[1;1],botright=[3;3]
-		;                  - player could go to [0;2] and [2;0], dumb application of this formula would state that it is ok to go to [2;2]
-		;                  - could be fixed for single platform by updating one pos before computing the other
-		;                  - multi platform fix is the same - fully compute one component before considering the other
-		;                    - that means "do not use this trick, it is dumb"
-		;      - Better optimization, do not store boxes, but just lines, make lines iterable byt type (up, down, left or right)
-		;        - This is a big change, impacting engine and tools
-		;
-		; TODO implement a cleaner solution
-		lda #<handle_one_platform
-		sta elements_action_vector
-		lda #>handle_one_platform
-		sta elements_action_vector+1
-		jsr stage_iterate_all_elements
+	; Apply horizontal velocity, coliding with obstacles on the way
+	horizontal:
+	.(
+		; Beware
+		;   Do not use orig_y, not even in platform handlers,
+		;   we care only of moving the character from (orig_x;final_y) to (orig_x+velocity_h;final_y)
 
-	end:
-		; Restore X
-		pla
-		tax
+		; Apply velocity to position
+		lda player_a_velocity_h_low, x
+		clc
+		adc player_a_x_low, x
+		sta final_x_subpixel
+		lda player_a_velocity_h, x
+		adc orig_x_pixel
+		sta final_x_pixel
+		lda player_a_velocity_h, x
+		SIGN_EXTEND()
+		pha ; save velocity direction
+		adc orig_x_screen
+		sta final_x_screen
 
-		; Store final velocity in player's position
-		lda final_x_screen
-		sta player_a_x_screen, x
-		lda final_y_screen
-		sta player_a_y_screen, x
-		lda final_x_high
-		sta player_a_x, x
-		lda final_y_high
-		sta player_a_y, x
-		lda final_x_low
-		sta player_a_x_low, x
-		lda final_y_low
-		sta player_a_y_low, x
+		; Iterate on stage elements
+		.(
+			pla
+			bne left
+				right:
+					lda #<move_player_handle_one_platform_right
+					sta elements_action_vector
+					lda #>move_player_handle_one_platform_right
+					jmp end_set_callback
+				left:
+					lda #<move_player_handle_one_platform_left
+					sta elements_action_vector
+					lda #>move_player_handle_one_platform_left
+			end_set_callback:
+			sta elements_action_vector+1
+			jsr stage_iterate_all_elements
+		.)
+
+		; Restore X register which can be freely used by platform handlers
+		ldx player_number
+	.)
+
+	; Update actual player positon, x has been messed with but player_number is there
+	lda final_x_subpixel
+	sta player_a_x_low, x
+	lda final_x_pixel
+	sta player_a_x, x
+	lda final_x_screen
+	sta player_a_x_screen, x
+
+	lda final_y_subpixel
+	sta player_a_y_low, x
+	lda final_y_pixel
+	sta player_a_y, x
+	lda final_y_screen
+	sta player_a_y_screen, x
+
 	rts
+.)
 
-	handle_one_platform:
+;TODO move these routines inside move_player's scope (and do not redefine shared labels)
+move_player_handle_one_platform_left:
+.(
+	elements_action_vector = tmpfield1 ; Not movable, parameter of stage_iterate_all_elements
+	;elements_action_vector_msb = tmpfield2
+	final_x_subpixel = tmpfield3
+	final_x_pixel = tmpfield4
+	final_x_screen = tmpfield5
+	final_y_subpixel = tmpfield6
+	final_y_pixel = tmpfield7
+	final_y_screen = tmpfield8
+	orig_x_pixel = tmpfield9
+	orig_x_screen = tmpfield10
+	orig_y_pixel = tmpfield11
+	orig_y_screen = tmpfield12
+
+	platform_specific_handler_lsb = tmpfield13
+	platform_specific_handler_msb = tmpfield14
+
+	; Call appropriate handler for this kind of elements
+	tax
+	lda platform_specific_handlers_lsb, x
+	sta platform_specific_handler_lsb
+	lda platform_specific_handlers_msb, x
+	sta platform_specific_handler_msb
+	jmp (platform_specific_handler_lsb)
+	; No return, the handler will rts
+
+	;    unused,         PLATFORM,             SMOOTH,         OOS_PLATFORM,  OOS_SMOOTH
+	platform_specific_handlers_lsb:
+	.byt <dummy_routine, <one_screen_platform, <dummy_routine, <oos_platform, <dummy_routine
+	platform_specific_handlers_msb:
+	.byt >dummy_routine, >one_screen_platform, >dummy_routine, >oos_platform, >dummy_routine
+
+	one_screen_platform:
 	.(
-		; Use element type as jump-table index
-		ldx stage_data, y
-		dex
+		; No collision if player is above the platform
+		SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0)
+		bmi no_collision
 
-		; Jump to correct action
-		lda platform_actions_low, x
-		sta action_vector
-		lda platform_actions_high, x
-		sta action_vector+1
-		jmp (action_vector)
+		; No collision if player is under the platform
+		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_BOTTOM COMMA y, #0, final_y_pixel, final_y_screen)
+		bmi no_collision
 
-		;rts ; useless, we jump to a routine
+		; No collision if original position is on the left of the edge
+		SIGNED_CMP(orig_x_pixel, orig_x_screen, stage_data+STAGE_PLATFORM_OFFSET_RIGHT COMMA y, #0)
+		bmi no_collision
+
+		; No collision if final position is on the right of the edge
+		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_RIGHT COMMA y, #0, final_x_pixel, final_x_screen)
+		bmi no_collision
+
+		; Collision, set final_x to platform right edge, plus one pixel (consider the obstacle filling its last pixel)
+		lda #$00
+		sta final_x_subpixel
+		lda stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
+		clc
+		adc #1
+		sta final_x_pixel
+		lda #0
+		adc #0
+		sta final_x_screen
+
+		no_collision:
+		rts
 	.)
 
-	solid_platform_collision:
+	oos_platform:
 	.(
-		; Prepare parameters for check_collision
-		lda old_x
-		sta old_x_collision
-		lda old_y
-		sta old_y_collision
+		; No collision if player is above the platform
+		SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB COMMA y)
+		bmi no_collision
+
+		; No collision if player is under the platform
+		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB COMMA y, final_y_pixel, final_y_screen)
+		bmi no_collision
+
+		; No collision if original position is on the left of the edge
+		SIGNED_CMP(orig_x_pixel, orig_x_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB COMMA y)
+		bmi no_collision
+
+		; No collision if final position is on the right of the edge
+		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB COMMA y, final_x_pixel, final_x_screen)
+		bmi no_collision
+
+		; Collision, set final_x to platform right edge, plus one pixel (consider the obstacle filling its last pixel)
+		lda #$00
+		sta final_x_subpixel
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
+		clc
+		adc #1
+		sta final_x_pixel
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
+		adc #0
+		sta final_x_screen
+
+		no_collision:
+		rts
+	.)
+.)
+
+move_player_handle_one_platform_right:
+.(
+	elements_action_vector = tmpfield1 ; Not movable, parameter of stage_iterate_all_elements
+	;elements_action_vector_msb = tmpfield2
+	final_x_subpixel = tmpfield3
+	final_x_pixel = tmpfield4
+	final_x_screen = tmpfield5
+	final_y_subpixel = tmpfield6
+	final_y_pixel = tmpfield7
+	final_y_screen = tmpfield8
+	orig_x_pixel = tmpfield9
+	orig_x_screen = tmpfield10
+	orig_y_pixel = tmpfield11
+	orig_y_screen = tmpfield12
+
+	platform_specific_handler_lsb = tmpfield13
+	platform_specific_handler_msb = tmpfield14
+
+	; Call appropriate handler for this kind of elements
+	tax
+	lda platform_specific_handlers_lsb, x
+	sta platform_specific_handler_lsb
+	lda platform_specific_handlers_msb, x
+	sta platform_specific_handler_msb
+	jmp (platform_specific_handler_lsb)
+	; No return, the handler will rts
+
+	;    unused,         PLATFORM,             SMOOTH,         OOS_PLATFORM,  OOS_SMOOTH
+	platform_specific_handlers_lsb:
+	.byt <dummy_routine, <one_screen_platform, <dummy_routine, <oos_platform, <dummy_routine
+	platform_specific_handlers_msb:
+	.byt >dummy_routine, >one_screen_platform, >dummy_routine, >oos_platform, >dummy_routine
+
+	one_screen_platform:
+	.(
+		; No collision if player is above the platform
+		SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0)
+		bmi no_collision
+
+		; No collision if player is under the platform
+		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_BOTTOM COMMA y, #0, final_y_pixel, final_y_screen)
+		bmi no_collision
+
+		; No collision if original position is on the right of the edge
+		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_LEFT COMMA y, #0, orig_x_pixel, orig_x_screen)
+		bmi no_collision
+
+		; No collision if final position is on the left of the edge
+		SIGNED_CMP(final_x_pixel, final_x_screen, stage_data+STAGE_PLATFORM_OFFSET_LEFT COMMA y, #0)
+		bmi no_collision
+
+		; Collision, set final_x to platform left edge, minus one sub pixel
+		lda #$ff
+		sta final_x_subpixel
 		lda stage_data+STAGE_PLATFORM_OFFSET_LEFT, y
-		sta obstacle_left
-		lda stage_data+STAGE_PLATFORM_OFFSET_TOP, y
-		sta obstacle_top
-		lda stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
-		sta obstacle_right
+		sec
+		sbc #1
+		sta final_x_pixel
+		lda #0
+		sbc #0
+		sta final_x_screen
+
+		no_collision:
+		rts
+	.)
+
+	oos_platform:
+	.(
+		; No collision if player is above the platform
+		SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB COMMA y)
+		bmi no_collision
+
+		; No collision if player is under the platform
+		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB COMMA y, final_y_pixel, final_y_screen)
+		bmi no_collision
+
+		; No collision if original position is on the right of the edge
+		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB COMMA y, orig_x_pixel, orig_x_screen)
+		bmi no_collision
+
+		; No collision if final position is on the left of the edge
+		SIGNED_CMP(final_x_pixel, final_x_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB COMMA y)
+		bmi no_collision
+
+		; Collision, set final_x to platform left edge, minus one sub pixel
+		lda #$ff
+		sta final_x_subpixel
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+		sec
+		sbc #1
+		sta final_x_pixel
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+		sbc #0
+		sta final_x_screen
+
+		no_collision:
+		rts
+	.)
+.)
+
+move_player_handle_one_platform_up:
+.(
+	elements_action_vector = tmpfield1 ; Not movable, parameter of stage_iterate_all_elements
+	;elements_action_vector_msb = tmpfield2
+	final_x_subpixel = tmpfield3
+	final_x_pixel = tmpfield4
+	final_x_screen = tmpfield5
+	final_y_subpixel = tmpfield6
+	final_y_pixel = tmpfield7
+	final_y_screen = tmpfield8
+	orig_x_pixel = tmpfield9
+	orig_x_screen = tmpfield10
+	orig_y_pixel = tmpfield11
+	orig_y_screen = tmpfield12
+
+	platform_specific_handler_lsb = tmpfield13
+	platform_specific_handler_msb = tmpfield14
+
+	; Call appropriate handler for this kind of elements
+	tax
+	lda platform_specific_handlers_lsb, x
+	sta platform_specific_handler_lsb
+	lda platform_specific_handlers_msb, x
+	sta platform_specific_handler_msb
+	jmp (platform_specific_handler_lsb)
+	; No return, the handler will rts
+
+	;    unused,         PLATFORM,             SMOOTH,         OOS_PLATFORM,  OOS_SMOOTH
+	platform_specific_handlers_lsb:
+	.byt <dummy_routine, <one_screen_platform, <dummy_routine, <oos_platform, <dummy_routine
+	platform_specific_handlers_msb:
+	.byt >dummy_routine, >one_screen_platform, >dummy_routine, >oos_platform, >dummy_routine
+
+	one_screen_platform:
+	.(
+		; No collision if player is on the left of the platform
+		SIGNED_CMP(orig_x_pixel, orig_x_screen, stage_data+STAGE_PLATFORM_OFFSET_LEFT COMMA y, #0)
+		bmi no_collision
+
+		; No collision if player is on the right of the platform
+		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_RIGHT COMMA y, #0, orig_x_pixel, orig_x_screen)
+		bmi no_collision
+
+		; No collision if original position is above the edge
+		SIGNED_CMP(orig_y_pixel, orig_y_screen, stage_data+STAGE_PLATFORM_OFFSET_BOTTOM COMMA y, #0)
+		bmi no_collision
+
+		; No collision if final position is under the edge
+		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_BOTTOM COMMA y, #0, final_y_pixel, final_y_screen)
+		bmi no_collision
+
+		; Collision, set final_y to platform bottom edge, plus one pixel (consider the obstacle filling its last pixel)
+		lda #$00
+		sta final_y_subpixel
 		lda stage_data+STAGE_PLATFORM_OFFSET_BOTTOM, y
-		sta obstacle_bottom
+		clc
+		adc #1
+		sta final_y_pixel
 		lda #0
-		pha
-		pha
-		pha
-		pha
+		adc #0
+		sta final_y_screen
 
-		; Call check collision and clean stack parameters
-		jsr check_collision
-		pla
-		pla
-		pla
-		pla
-
-		; Move computed position to its non-conflicting place
-		lda old_x_collision
-		sta old_x
-		lda old_y_collision
-		sta old_y
-
-		; Restore iteration action vector, erased by "old position" parameter
-		lda #<handle_one_platform
-		sta elements_action_vector
-		lda #>handle_one_platform
-		sta elements_action_vector+1
-
+		no_collision:
 		rts
 	.)
 
-	smooth_platform_collision:
+	oos_platform:
 	.(
-		; Prepare parameters for check_top_collision
-		lda old_x
-		sta old_x_collision
-		lda old_y
-		sta old_y_collision
-		lda stage_data+STAGE_PLATFORM_OFFSET_LEFT, y
-		sta obstacle_left
-		lda stage_data+STAGE_PLATFORM_OFFSET_TOP, y
-		sta obstacle_top
-		lda stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
-		sta obstacle_right
-		lda #0
-		pha
-		pha
-		pha
+		; No collision if player is on the left of the platform
+		SIGNED_CMP(orig_x_pixel, orig_x_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB COMMA y)
+		bmi no_collision
 
-		; Call check collision and clean stack parameters
-		jsr check_top_collision
-		pla
-		pla
-		pla
+		; No collision if player is on the right of the platform
+		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB COMMA y, orig_x_pixel, orig_x_screen)
+		bmi no_collision
 
-		; Move computed position to its non-conflicting place
-		lda old_x_collision
-		sta old_x
-		lda old_y_collision
-		sta old_y
+		; No collision if original position is above the edge
+		SIGNED_CMP(orig_y_pixel, orig_y_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB COMMA y)
+		bmi no_collision
 
-		; Restore iteration action vector, erased by "old position" parameter
-		lda #<handle_one_platform
-		sta elements_action_vector
-		lda #>handle_one_platform
-		sta elements_action_vector+1
+		; No collision if final position is under the edge
+		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB COMMA y, final_y_pixel, final_y_screen)
+		bmi no_collision
 
-		rts
-	.)
-
-	oos_solid_platform_collision:
-	.(
-		; Prepare parameters for check_collision
-		lda old_x
-		sta old_x_collision
-		lda old_y
-		sta old_y_collision
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-		sta obstacle_left
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
-		sta obstacle_top
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
-		sta obstacle_right
+		; Collision, set final_y to platform bottom edge, plus one pixel (consider the obstacle filling its last pixel)
+		lda #$00
+		sta final_y_subpixel
 		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
-		sta obstacle_bottom
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-		pha
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
-		pha
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
-		pha
+		clc
+		adc #1
+		sta final_y_pixel
 		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
-		pha
+		adc #0
+		sta final_y_screen
 
-		; Call check collision and clean stack parameters
-		jsr check_collision
-		pla
-		pla
-		pla
-		pla
-
-		; Move computed position to its non-conflicting place
-		lda old_x_collision
-		sta old_x
-		lda old_y_collision
-		sta old_y
-
-		; Restore iteration action vector, erased by "old position" parameter
-		lda #<handle_one_platform
-		sta elements_action_vector
-		lda #>handle_one_platform
-		sta elements_action_vector+1
-
+		no_collision:
 		rts
 	.)
+.)
 
-	oos_smooth_platform_collision:
+move_player_handle_one_platform_down:
+.(
+	elements_action_vector = tmpfield1 ; Not movable, parameter of stage_iterate_all_elements
+	;elements_action_vector_msb = tmpfield2
+	final_x_subpixel = tmpfield3
+	final_x_pixel = tmpfield4
+	final_x_screen = tmpfield5
+	final_y_subpixel = tmpfield6
+	final_y_pixel = tmpfield7
+	final_y_screen = tmpfield8
+	orig_x_pixel = tmpfield9
+	orig_x_screen = tmpfield10
+	orig_y_pixel = tmpfield11
+	orig_y_screen = tmpfield12
+
+	platform_specific_handler_lsb = tmpfield13
+	platform_specific_handler_msb = tmpfield14
+
+	; Call appropriate handler for this kind of elements
+	tax
+	lda platform_specific_handlers_lsb, x
+	sta platform_specific_handler_lsb
+	lda platform_specific_handlers_msb, x
+	sta platform_specific_handler_msb
+	jmp (platform_specific_handler_lsb)
+	; No return, the handler will rts
+
+	;    unused,         PLATFORM,             SMOOTH,               OOS_PLATFORM,  OOS_SMOOTH
+	platform_specific_handlers_lsb:
+	.byt <dummy_routine, <one_screen_platform, <one_screen_platform, <oos_platform, <oos_platform
+	platform_specific_handlers_msb:
+	.byt >dummy_routine, >one_screen_platform, >one_screen_platform, >oos_platform, >oos_platform
+
+	one_screen_platform:
 	.(
-		; Prepare parameters for check_top_collision
-		lda old_x
-		sta old_x_collision
-		lda old_y
-		sta old_y_collision
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-		sta obstacle_left
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
-		sta obstacle_top
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
-		sta obstacle_right
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-		pha
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
-		pha
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
-		pha
+		; No collision if player is on the left of the platform
+		SIGNED_CMP(orig_x_pixel, orig_x_screen, stage_data+STAGE_PLATFORM_OFFSET_LEFT COMMA y, #0)
+		bmi no_collision
 
-		; Call check collision and clean stack parameters
-		jsr check_top_collision
-		pla
-		pla
-		pla
+		; No collision if player is on the right of the platform
+		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_RIGHT COMMA y, #0, orig_x_pixel, orig_x_screen)
+		bmi no_collision
 
-		; Move computed position to its non-conflicting place
-		lda old_x_collision
-		sta old_x
-		lda old_y_collision
-		sta old_y
+		; No collision if original position is under the edge
+		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0, orig_y_pixel, orig_y_screen)
+		bmi no_collision
 
-		; Restore iteration action vector, erased by "old position" parameter
-		lda #<handle_one_platform
-		sta elements_action_vector
-		lda #>handle_one_platform
-		sta elements_action_vector+1
+		; No collision if final position is above the edge
+		SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0)
+		bmi no_collision
 
+		; Collision, set final_y to platform top edge, minus one subpixel
+		lda #$ff
+		sta final_y_subpixel
+		lda stage_data+STAGE_PLATFORM_OFFSET_TOP, y
+		sec
+		sbc #1
+		sta final_y_pixel
+		lda #0
+		sbc #0
+		sta final_y_screen
+
+		no_collision:
 		rts
 	.)
 
-	platform_actions_low:
-		.byt <solid_platform_collision
-		.byt <smooth_platform_collision
-		.byt <oos_solid_platform_collision
-		.byt <oos_smooth_platform_collision
-	platform_actions_high:
-		.byt >solid_platform_collision
-		.byt >smooth_platform_collision
-		.byt >oos_solid_platform_collision
-		.byt >oos_smooth_platform_collision
+	oos_platform:
+	.(
+		; No collision if player is on the left of the platform
+		SIGNED_CMP(orig_x_pixel, orig_x_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB COMMA y)
+		bmi no_collision
+
+		; No collision if player is on the right of the platform
+		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB COMMA y, orig_x_pixel, orig_x_screen)
+		bmi no_collision
+
+		; No collision if original position is under the edge
+		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB COMMA y, orig_y_pixel, orig_y_screen)
+		bmi no_collision
+
+		; No collision if final position is above the edge
+		SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB COMMA y)
+		bmi no_collision
+
+		; Collision, set final_y to platform top edge, minus one subpixel
+		lda #$ff
+		sta final_y_subpixel
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+		sec
+		sbc #1
+		sta final_y_pixel
+		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+		sbc #0
+		sta final_y_screen
+
+		no_collision:
+		rts
+	.)
 .)
 
 ; Check the player's position and modify the current state accordingly
@@ -1288,10 +1497,12 @@ check_player_position:
 .(
 	capped_x = tmpfield1 ; Not movable, used by particle_death_start
 	capped_y = tmpfield2 ; Not movable, used by particle_death_start
-	current_x_pixel = tmpfield3 ; Dispensable, shall be equal to "player_a_x, x"
-	current_y_pixel = tmpfield4 ; Dispensable, shall be equal to "player_a_y, x"
-	current_x_screen = tmpfield11
-	current_y_screen = tmpfield12
+
+	; Shortcut, set by move_player, equal to "player_a_x, x" and friends
+	current_x_pixel = tmpfield4
+	current_x_screen = tmpfield5
+	current_y_pixel = tmpfield7
+	current_y_screen = tmpfield8
 
 	; Check death
 	SIGNED_CMP(current_x_pixel, current_x_screen, #<STAGE_BLAST_LEFT, #>STAGE_BLAST_LEFT)

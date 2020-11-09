@@ -1,3 +1,4 @@
+#if 0
 ; Check if a movement collide with an obstacle
 ;  tmpfield1 - Original position X
 ;  tmpfield2 - Original position Y
@@ -161,7 +162,9 @@ check_collision:
 	end:
 	rts
 .)
+#endif
 
+#if 0
 ; Check if a movement passes through a line from above to under
 ;  tmpfield2 - Original position Y
 ;  tmpfield3 - Final position X (high byte)
@@ -229,6 +232,7 @@ check_top_collision:
 	end:
 	rts
 .)
+#endif
 
 ; Check if two rectangles collide
 ;  tmpfield1 - Rectangle 1 left (pixel)

@@ -152,8 +152,9 @@ stage_iterate_all_elements:
 ;
 ;  Overwrites register A and register Y.
 ;
-; For each call, the element can be accessed at address
-; "stage_data, y"
+; For each call
+;  - the element can be accessed at address "stage_data, y",
+;  - register A contains the element type.
 ;
 ; Called subroutine can stop the iteration by setting Y to $ff, else
 ; it must not modify the Y register.
