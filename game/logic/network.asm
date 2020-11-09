@@ -34,8 +34,8 @@ network_init_stage:
 	; lda #0 ; ensured by above code
 	ldx #0
 	clear_one_input:
-		sta network_player_local_btns_history
-		sta network_player_remote_btns_history
+		sta network_player_local_btns_history, x
+		sta network_player_remote_btns_history, x
 
 		inx
 		cpx #32
