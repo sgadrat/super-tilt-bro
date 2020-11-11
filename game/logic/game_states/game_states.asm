@@ -28,19 +28,7 @@ VECTOR(donation_screen_tick)
 VECTOR(donation_qr_screen_tick)
 VECTOR(donation_qr_screen_tick)
 
-#define GAME_STATE_INGAME $00
-#define GAME_STATE_TITLE $01
-#define GAME_STATE_GAMEOVER $02
-#define GAME_STATE_CREDITS $03
-#define GAME_STATE_CONFIG $04
-#define GAME_STATE_STAGE_SELECTION $05
-#define GAME_STATE_CHARACTER_SELECTION $06
-#define GAME_STATE_MODE_SELECTION $07
-#define GAME_STATE_NETPLAY_LAUNCH $08
-#define GAME_STATE_DONATION $09
-#define GAME_STATE_DONATION_BTC $0a
-#define GAME_STATE_DONATION_PAYPAL $0b
-;NOTE maximum supported value is $0f, because get_transition_id returns an ID on one byte. To handle more than 16 states, it should be changed.
+;NOTE if you change these tables, do not forget to update GAME_STATE_* constants
 
 #include "game/logic/game_states/character_selection_screen.asm"
 #include "game/logic/game_states/config_screen.asm"
