@@ -606,9 +606,9 @@ check_in_platform:
 	simple_platform_handler:
 	.(
 		; Check that point is not out of screen
-		lda point_x_msb, x
+		lda point_x_msb
 		bne not_in_platform
-		lda point_y_msb, x
+		lda point_y_msb
 		bne not_in_platform
 
 			; Not in platform if on the left of left edge
