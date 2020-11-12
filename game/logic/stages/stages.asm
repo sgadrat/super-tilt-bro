@@ -1,6 +1,3 @@
-stage_elements_size:
-.byt STAGE_PLATFORM_LENGTH, STAGE_SMOOTH_PLATFORM_LENGTH, STAGE_OOS_PLATFORM_LENGTH, STAGE_OOS_SMOOTH_PLATFORM_LENGTH
-
 ; Code common to most stage initialization
 ;
 ; Overwrites all registers, tmpfield1, tmpfield2 and tmpfield15
@@ -66,22 +63,15 @@ stage_generic_init:
 	bne copy_header_loop
 
 	copy_elements_loop:
-		; Copy element header and retrieve element length
-		txa
-		pha
-
+		; Copy element header and store element length
 		lda (tmpfield1), y
 		sta stage_data, x
 		beq copy_data_end
 
-		tax
-		dex
-		lda stage_elements_size, x
+		lda #STAGE_ELEMENT_SIZE
 		sta element_length
 		dec element_length
 
-		pla
-		tax
 		iny
 		inx
 
@@ -96,7 +86,6 @@ stage_generic_init:
 		jmp copy_elements_loop
 
 		copy_data_end:
-		pla
 
 	rts
 .)
@@ -163,32 +152,19 @@ stage_iterate_all_elements:
 stage_iterate_elements:
 .(
 	check_current_element:
-	lda stage_data, y
-	beq end
+		lda stage_data, y
+		beq end
 
 		; Call element handler
 		jsr call_pointed_subroutine
 		cpy #$ff
 		beq end
 
-		; Save X (stage_iterate_elements is not allowed to modify it)
-		txa
-		pha
-
-		; Find element's size index
-		lda stage_data, y
-		tax
-		dex
-
-		; Add element's size to Y
+		; Update offset to next element
 		tya
-		clc
-		adc stage_elements_size, x
+		;clc ; useless, cpy cleared cary flag
+		adc #STAGE_ELEMENT_SIZE
 		tay
-
-		; Restore X
-		pla
-		tax
 
 		; Handle next element
 		jmp check_current_element

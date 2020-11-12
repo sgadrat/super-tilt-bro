@@ -93,7 +93,7 @@ stage_pit_tick:
 
 			jsr apply_platform_waypoint
 
-			ldx #STAGE_SMOOTH_PLATFORM_LENGTH
+			ldx #STAGE_ELEMENT_SIZE
 			iny
 			cpy #2
 			bne change_one_platform_direction
@@ -157,9 +157,9 @@ stage_pit_tick:
 			sta stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_RIGHT, y
 
 			; Prepare next platform
-			cpy #STAGE_SMOOTH_PLATFORM_LENGTH
+			cpy #STAGE_ELEMENT_SIZE
 			beq end_move_platforms
-			ldy #STAGE_SMOOTH_PLATFORM_LENGTH
+			ldy #STAGE_ELEMENT_SIZE
 			ldx #0
 			lda stage_pit_platform2_direction_v
 			sta tmpfield4

@@ -38,7 +38,7 @@ kiki_first_wall_sprite_per_player:
 
 ; Offset of 2 bytes reserved in player's object data for storing current platform sprites Y position on screen
 kiki_first_wall_sprite_y_per_player:
-.byt (player_a_objects-stage_data)+STAGE_OOS_PLATFORM_LENGTH+1, (player_b_objects-stage_data)+STAGE_OOS_PLATFORM_LENGTH+1
+.byt (player_a_objects-stage_data)+STAGE_ELEMENT_SIZE+1, (player_b_objects-stage_data)+STAGE_ELEMENT_SIZE+1
 
 kiki_last_anim_sprite_per_player:
 .byt INGAME_PLAYER_A_LAST_SPRITE-2, INGAME_PLAYER_B_LAST_SPRITE-2
@@ -1706,7 +1706,7 @@ kiki_start_side_spe:
 		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
 
 		lda #STAGE_ELEMENT_END
-		sta player_a_objects+STAGE_OOS_PLATFORM_LENGTH, y ; next's type
+		sta player_a_objects+STAGE_ELEMENT_SIZE, y ; next's type
 
 		; Compute wall's sprites position
 		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
@@ -1939,7 +1939,7 @@ kiki_start_down_spe:
 		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
 
 		lda #STAGE_ELEMENT_END
-		sta player_a_objects+STAGE_OOS_PLATFORM_LENGTH, y ; next's type
+		sta player_a_objects+STAGE_ELEMENT_SIZE, y ; next's type
 
 		; Compute wall's sprites position
 		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
@@ -2140,7 +2140,7 @@ kiki_start_up_spe:
 		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
 
 		lda #STAGE_ELEMENT_END
-		sta player_a_objects+STAGE_OOS_SMOOTH_PLATFORM_LENGTH, y ; next's type
+		sta player_a_objects+STAGE_ELEMENT_SIZE, y ; next's type
 
 		; Compute wall's sprites position
 		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
