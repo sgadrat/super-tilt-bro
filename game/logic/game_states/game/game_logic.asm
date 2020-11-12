@@ -1843,55 +1843,57 @@ update_sprites:
 	camera_x = tmpfield13         ; Not movable - Used as parameter for stb_animation_draw subroutine
 	camera_y = tmpfield15         ; Not movable - Used as parameter for stb_animation_draw subroutine
 
-	ldx #0 ; X is the player number
-	ldy #0 ; Y is the offset of player's animation state
+	ldx #1 ; X is the player number
 	update_one_player_sprites:
 		; Select character's bank
-		tya
-		pha
 		ldy config_player_a_character, x
 		SWITCH_BANK(characters_bank_number COMMA y)
-		pla
-		tay
 
 		; Player
-		lda player_a_x, x
-		sta player_a_animation+ANIMATION_STATE_OFFSET_X_LSB, y
-		lda player_a_y, x
-		sta player_a_animation+ANIMATION_STATE_OFFSET_Y_LSB, y
-		lda player_a_x_screen, x
-		sta player_a_animation+ANIMATION_STATE_OFFSET_X_MSB, y
-		lda player_a_y_screen, x
-		sta player_a_animation+ANIMATION_STATE_OFFSET_Y_MSB, y
+		.(
+			; Get a vector to the player's animation state
+			lda anim_state_per_player_lsb, x
+			sta animation_vector
+			lda anim_state_per_player_msb, x
+			sta animation_vector+1
 
-		lda #<player_a_animation
-		sta animation_vector
-		tya
-		clc
-		adc animation_vector
-		sta animation_vector
-		lda #>player_a_animation
-		adc #0
-		sta animation_vector+1
-		lda #0
-		sta camera_x
-		sta camera_x+1
-		sta camera_y
-		sta camera_y+1
-		txa
-		sta player_number
-		pha
-		tya
-		pha
-		jsr stb_animation_draw
-		jsr animation_tick
-		pla
-		tay
-		pla
-		tax
+			lda player_a_x, x
+			ldy #ANIMATION_STATE_OFFSET_X_LSB
+			sta (animation_vector), y
+			lda player_a_y, x
+			ldy #ANIMATION_STATE_OFFSET_Y_LSB
+			sta (animation_vector), y
+			lda player_a_x_screen, x
+			ldy #ANIMATION_STATE_OFFSET_X_MSB
+			sta (animation_vector), y
+			lda player_a_y_screen, x
+			ldy #ANIMATION_STATE_OFFSET_Y_MSB
+			sta (animation_vector), y
+
+			lda #0
+			sta camera_x
+			sta camera_x+1
+			sta camera_y
+			sta camera_y+1
+			stx player_number
+			jsr stb_animation_draw
+			jsr animation_tick
+			ldx player_number
+		.)
+
+		; Stop there in rollback mode, only player animations are game impacting (for hitboxes)
+		lda network_rollback_mode
+		bne loop
 
 		; Player's out of screen indicator
 		.(
+			; Get a vector to the player's oos animation state
+			lda oos_anim_state_per_player_lsb, x
+			sta animation_vector
+			lda oos_anim_state_per_player_msb, x
+			sta animation_vector+1
+
+			; Choose on which edge to place the oos animation
 			lda player_a_x_screen, x
 			bmi oos_left
 			bne oos_right
@@ -1902,78 +1904,70 @@ update_sprites:
 
 			oos_left:
 				lda player_a_y, x ; TODO cap to min 0 - max 240-8
-				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_Y_LSB, y
+				ldy #ANIMATION_STATE_OFFSET_Y_LSB
+				sta (animation_vector), y
 				lda DIRECTION_LEFT
-				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_DIRECTION, y
+				ldy #ANIMATION_STATE_OFFSET_DIRECTION
+				sta (animation_vector), y
 				lda #0
-				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_X_LSB, y
+				ldy #ANIMATION_STATE_OFFSET_X_LSB
+				sta (animation_vector), y
 				jmp oos_indicator_placed
 
 			oos_right:
 				lda player_a_y, x ; TODO cap to min 0 - max 240-8
-				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_Y_LSB, y
+				ldy #ANIMATION_STATE_OFFSET_Y_LSB
+				sta (animation_vector), y
 				lda DIRECTION_RIGHT
-				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_DIRECTION, y
+				ldy #ANIMATION_STATE_OFFSET_DIRECTION
+				sta (animation_vector), y
 				lda #255-8
-				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_X_LSB, y
+				ldy #ANIMATION_STATE_OFFSET_X_LSB
+				sta (animation_vector), y
 				jmp oos_indicator_placed
 
 			oss_top:
 				lda player_a_x, x ; TODO cap to min 0 - max 255-8
-				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_X_LSB, y
+				ldy #ANIMATION_STATE_OFFSET_X_LSB
+				sta (animation_vector), y
 				lda DIRECTION_LEFT
-				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_DIRECTION, y
+				ldy #ANIMATION_STATE_OFFSET_DIRECTION
+				sta (animation_vector), y
 				lda #0
-				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_Y_LSB, y
+				ldy #ANIMATION_STATE_OFFSET_Y_LSB
+				sta (animation_vector), y
 				jmp oos_indicator_placed
 
 			oos_bot:
 				lda player_a_x, x ; TODO cap to min 0 - max 255-8
-				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_X_LSB, y
+				ldy #ANIMATION_STATE_OFFSET_X_LSB
+				sta (animation_vector), y
 				lda DIRECTION_RIGHT
-				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_DIRECTION, y
+				ldy #ANIMATION_STATE_OFFSET_DIRECTION
+				sta (animation_vector), y
 				lda #240-8
-				sta player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_Y_LSB, y
+				ldy #ANIMATION_STATE_OFFSET_Y_LSB
+				sta (animation_vector), y
 				;jmp oos_indicator_placed
 
 			oos_indicator_placed:
-				lda #<player_a_out_of_screen_indicator
-				sta animation_vector
-				tya
-				clc
-				adc animation_vector
-				sta animation_vector
-				lda #>player_a_out_of_screen_indicator
-				adc #0
-				sta animation_vector+1
 				lda #0
 				sta camera_x
 				sta camera_x+1
 				sta camera_y
 				sta camera_y+1
-				txa
-				sta player_number
-				pha
-				tya
-				pha
+				stx player_number
 				jsr animation_draw
 				jsr animation_tick
-				pla
-				tay
-				pla
-				tax
+				ldx player_number
 
 			oos_indicator_drawn:
 		.)
 
 		; Loop for both players
-		inx
-		tya
-		clc
-		adc #ANIMATION_STATE_LENGTH
-		tay
-		cpx #2
-		beq all_player_sprites_updated
+		loop:
+		dex
+		bmi all_player_sprites_updated
 		jmp update_one_player_sprites
 	all_player_sprites_updated:
 
@@ -1982,6 +1976,16 @@ update_sprites:
 	;jsr show_hitboxes
 
 	rts
+
+	anim_state_per_player_lsb:
+	.byt <player_a_animation, <player_a_animation+ANIMATION_STATE_LENGTH
+	anim_state_per_player_msb:
+	.byt >player_a_animation, >player_a_animation+ANIMATION_STATE_LENGTH
+
+	oos_anim_state_per_player_lsb:
+	.byt <player_a_out_of_screen_indicator, <player_a_out_of_screen_indicator+ANIMATION_STATE_LENGTH
+	oos_anim_state_per_player_msb:
+	.byt >player_a_out_of_screen_indicator, >player_a_out_of_screen_indicator+ANIMATION_STATE_LENGTH
 .)
 
 ; Debug subroutine to show hitboxes and hurtboxes
