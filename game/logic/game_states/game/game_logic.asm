@@ -950,6 +950,7 @@ apply_force_vector:
 ;   - tmpfield5 equals to "player_a_x_screen, x"
 ;   - tmpfield7 equals to "player_a_y, x"
 ;   - tmpfield8 equals to "player_a_y_screen, x"
+;   - "player_a_grounded, x", "player_a_walled, x", and "player_a_walled_direction, x" are set according to collisions
 ;
 ;  Overwrites register A, regiter Y, and tmpfield1 to tmpfield12
 move_player:
@@ -999,6 +1000,10 @@ move_player:
 		adc orig_y_screen
 		sta final_y_screen
 
+		; Clear grounded flag (to be set by collision handlers)
+		lda #0
+		sta player_a_grounded, x
+
 		; Iterate on stage elements
 		.(
 			pla
@@ -1042,6 +1047,10 @@ move_player:
 		adc orig_x_screen
 		sta final_x_screen
 
+		; Clear walled flag (to be set by collision handlers)
+		lda #0
+		sta player_a_walled, x
+
 		; Iterate on stage elements
 		.(
 			pla
@@ -1062,6 +1071,8 @@ move_player:
 
 		; Restore X register which can be freely used by platform handlers
 		ldx player_number
+
+		horizontal_end:
 	.)
 
 	; Update actual player positon, x has been messed with but player_number is there
@@ -1134,16 +1145,22 @@ move_player_handle_one_platform_left:
 		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_RIGHT COMMA y, #0, final_x_pixel, final_x_screen)
 		bmi no_collision
 
-		; Collision, set final_x to platform right edge, plus one pixel (consider the obstacle filling its last pixel)
-		lda #$00
-		sta final_x_subpixel
-		lda stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
-		clc
-		adc #1
-		sta final_x_pixel
-		lda #0
-		adc #0
-		sta final_x_screen
+			; Collision, set final_x to platform right edge, plus one pixel (consider the obstacle filling its last pixel)
+			lda #$00
+			sta final_x_subpixel
+			lda stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
+			;clc
+			;adc #1
+			sta final_x_pixel
+			lda #0
+			;adc #0
+			sta final_x_screen
+
+			; Set walled flag
+			ldx player_number
+			sty player_a_walled, x
+			lda DIRECTION_RIGHT
+			sta player_a_walled_direction, x
 
 		no_collision:
 		rts
@@ -1167,16 +1184,22 @@ move_player_handle_one_platform_left:
 		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB COMMA y, final_x_pixel, final_x_screen)
 		bmi no_collision
 
-		; Collision, set final_x to platform right edge, plus one pixel (consider the obstacle filling its last pixel)
-		lda #$00
-		sta final_x_subpixel
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
-		clc
-		adc #1
-		sta final_x_pixel
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
-		adc #0
-		sta final_x_screen
+			; Collision, set final_x to platform right edge, plus one pixel (consider the obstacle filling its last pixel)
+			lda #$00
+			sta final_x_subpixel
+			lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
+			;clc
+			;adc #1
+			sta final_x_pixel
+			lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
+			;adc #0
+			sta final_x_screen
+
+			; Set walled flag
+			ldx player_number
+			sty player_a_walled, x
+			lda DIRECTION_RIGHT
+			sta player_a_walled_direction, x
 
 		no_collision:
 		rts
@@ -1234,16 +1257,22 @@ move_player_handle_one_platform_right:
 		SIGNED_CMP(final_x_pixel, final_x_screen, stage_data+STAGE_PLATFORM_OFFSET_LEFT COMMA y, #0)
 		bmi no_collision
 
-		; Collision, set final_x to platform left edge, minus one sub pixel
-		lda #$ff
-		sta final_x_subpixel
-		lda stage_data+STAGE_PLATFORM_OFFSET_LEFT, y
-		sec
-		sbc #1
-		sta final_x_pixel
-		lda #0
-		sbc #0
-		sta final_x_screen
+			; Collision, set final_x to platform left edge, minus one sub pixel
+			lda #$ff
+			sta final_x_subpixel
+			lda stage_data+STAGE_PLATFORM_OFFSET_LEFT, y
+			;sec
+			;sbc #1
+			sta final_x_pixel
+			lda #0
+			;sbc #0
+			sta final_x_screen
+
+			; Set walled flag
+			ldx player_number
+			sty player_a_walled, x
+			lda DIRECTION_LEFT
+			sta player_a_walled_direction, x
 
 		no_collision:
 		rts
@@ -1267,16 +1296,22 @@ move_player_handle_one_platform_right:
 		SIGNED_CMP(final_x_pixel, final_x_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB COMMA y)
 		bmi no_collision
 
-		; Collision, set final_x to platform left edge, minus one sub pixel
-		lda #$ff
-		sta final_x_subpixel
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-		sec
-		sbc #1
-		sta final_x_pixel
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-		sbc #0
-		sta final_x_screen
+			; Collision, set final_x to platform left edge, minus one sub pixel
+			lda #$ff
+			sta final_x_subpixel
+			lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+			;sec
+			;sbc #1
+			sta final_x_pixel
+			lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+			;sbc #0
+			sta final_x_screen
+
+			; Set walled flag
+			ldx player_number
+			sty player_a_walled, x
+			lda DIRECTION_LEFT
+			sta player_a_walled_direction, x
 
 		no_collision:
 		rts
@@ -1334,16 +1369,16 @@ move_player_handle_one_platform_up:
 		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_BOTTOM COMMA y, #0, final_y_pixel, final_y_screen)
 		bmi no_collision
 
-		; Collision, set final_y to platform bottom edge, plus one pixel (consider the obstacle filling its last pixel)
-		lda #$00
-		sta final_y_subpixel
-		lda stage_data+STAGE_PLATFORM_OFFSET_BOTTOM, y
-		clc
-		adc #1
-		sta final_y_pixel
-		lda #0
-		adc #0
-		sta final_y_screen
+			; Collision, set final_y to platform bottom edge, plus one pixel (consider the obstacle filling its last pixel)
+			lda #$00
+			sta final_y_subpixel
+			lda stage_data+STAGE_PLATFORM_OFFSET_BOTTOM, y
+			;clc
+			;adc #1
+			sta final_y_pixel
+			lda #0
+			;adc #0
+			sta final_y_screen
 
 		no_collision:
 		rts
@@ -1367,16 +1402,16 @@ move_player_handle_one_platform_up:
 		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB COMMA y, final_y_pixel, final_y_screen)
 		bmi no_collision
 
-		; Collision, set final_y to platform bottom edge, plus one pixel (consider the obstacle filling its last pixel)
-		lda #$00
-		sta final_y_subpixel
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
-		clc
-		adc #1
-		sta final_y_pixel
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
-		adc #0
-		sta final_y_screen
+			; Collision, set final_y to platform bottom edge, plus one pixel (consider the obstacle filling its last pixel)
+			lda #$00
+			sta final_y_subpixel
+			lda stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
+			;clc
+			;adc #1
+			sta final_y_pixel
+			lda stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
+			;adc #0
+			sta final_y_screen
 
 		no_collision:
 		rts
@@ -1434,16 +1469,20 @@ move_player_handle_one_platform_down:
 		SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0)
 		bmi no_collision
 
-		; Collision, set final_y to platform top edge, minus one subpixel
-		lda #$ff
-		sta final_y_subpixel
-		lda stage_data+STAGE_PLATFORM_OFFSET_TOP, y
-		sec
-		sbc #1
-		sta final_y_pixel
-		lda #0
-		sbc #0
-		sta final_y_screen
+			; Collision, set final_y to platform top edge, minus one subpixel
+			lda #$ff
+			sta final_y_subpixel
+			lda stage_data+STAGE_PLATFORM_OFFSET_TOP, y
+			;sec
+			;sbc #1
+			sta final_y_pixel
+			lda #0
+			;sbc #0
+			sta final_y_screen
+
+			; Set grounded flag
+			ldx player_number
+			sty player_a_grounded, x
 
 		no_collision:
 		rts
@@ -1467,16 +1506,20 @@ move_player_handle_one_platform_down:
 		SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB COMMA y)
 		bmi no_collision
 
-		; Collision, set final_y to platform top edge, minus one subpixel
-		lda #$ff
-		sta final_y_subpixel
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
-		sec
-		sbc #1
-		sta final_y_pixel
-		lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
-		sbc #0
-		sta final_y_screen
+			; Collision, set final_y to platform top edge, minus one subpixel
+			lda #$ff
+			sta final_y_subpixel
+			lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+			;sec
+			;sbc #1
+			sta final_y_pixel
+			lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+			;sbc #0
+			sta final_y_screen
+
+			; Set grounded flag
+			ldx player_number
+			sty player_a_grounded, x
 
 		no_collision:
 		rts
@@ -1515,8 +1558,8 @@ check_player_position:
 	bmi set_death_state
 
 	; Check if on ground
-	jsr check_on_ground
-	bne offground
+	lda player_a_grounded, x
+	beq offground
 
 		; On ground
 

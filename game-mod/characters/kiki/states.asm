@@ -402,9 +402,8 @@ kiki_global_tick:
 	; Reset allowed flag on ground
 	.(
 		; Do not reset if not on a legit stage platform
-		jsr check_on_ground
-		bne end_ground_reset ; Not on ground
-		lda tmpfield3
+		lda player_a_grounded, x
+		beq end_ground_reset ; Not on ground
 		cmp #player_a_objects-stage_data
 		bcs end_ground_reset ; Grounded on any player platform
 
@@ -1392,9 +1391,8 @@ kiki_input_shielding:
 		cmp player_a_state_clock, x
 		beq shieldlag
 		bcc shieldlag
-			jsr check_on_ground
-			bne shieldlag
-				ldy tmpfield3
+			ldy player_a_grounded, x
+			beq shieldlag
 				lda stage_data, y
 				cmp #STAGE_ELEMENT_PLATFORM
 				beq shieldlag
@@ -2253,11 +2251,8 @@ kiki_tick_up_spe:
 	cmp #KIKI_STATE_UP_SPE_DURATION
 	bne end
 
-		;TODO avoid to compute check_on_ground
-		;     It is already done in kiki_global_tick, but should really be done
-		;     only once per frame by the engine (storing the result for reuse.)
-		jsr check_on_ground
-		beq on_ground
+		lda player_a_grounded
+		bne on_ground
 			jsr kiki_start_falling
 			jmp end
 		on_ground:

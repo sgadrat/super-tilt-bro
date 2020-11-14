@@ -1693,8 +1693,8 @@ cmp STATE_SINBAD_SPE_DOWN_DURATION
 bne end
 
 ; Return to falling or standing
-jsr check_on_ground
-beq on_ground
+lda player_a_grounded, x
+bne on_ground
 jsr sinbad_start_falling
 jmp end
 on_ground
@@ -1816,9 +1816,8 @@ sinbad_input_shielding:
 		cmp player_a_state_clock, x
 		beq shieldlag
 		bcc shieldlag
-			jsr check_on_ground
-			bne shieldlag
-				ldy tmpfield3
+			ldy player_a_grounded, x
+			beq shieldlag
 				lda stage_data, y
 				cmp #STAGE_ELEMENT_PLATFORM
 				beq shieldlag

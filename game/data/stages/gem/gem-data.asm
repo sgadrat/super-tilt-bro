@@ -5,9 +5,9 @@
 stage_gem_data:
 	STAGE_HEADER($5000, $a800, $a000, $a000, $7800, $7800) ; player_a_x, player_b_x, player_a_y, player_b_y, respawn_x, respawn_y
 stage_gem_elements:
-	PLATFORM($29, $cf, $a1, $ff) ; left, right, top, bot
-	SMOOTH_PLATFORM($21, $4f, $83) ; left, right, top
-	SMOOTH_PLATFORM($b1, $df, $73) ; left, right, top
+	PLATFORM($28, $d0, $a0, $ff) ; left, right, top, bot
+	SMOOTH_PLATFORM($20, $50, $82) ; left, right, top
+	SMOOTH_PLATFORM($b0, $e0, $72) ; left, right, top
 END_OF_STAGE
 
 ;

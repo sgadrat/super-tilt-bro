@@ -1,5 +1,5 @@
-STAGE_PIT_MOVING_PLATFORM_1_OFFSET=18
-STAGE_PIT_MOVING_PLATFORM_2_OFFSET=22
+STAGE_PIT_MOVING_PLATFORM_1_OFFSET = STAGE_ELEMENT_SIZE * 2
+STAGE_PIT_MOVING_PLATFORM_2_OFFSET = STAGE_PIT_MOVING_PLATFORM_1_OFFSET + STAGE_ELEMENT_SIZE
 
 #define STAGE_PIT_MOVING_PLATFORM_SPRITES $20
 #define STAGE_PIT_NB_MOVING_PLATFORM_SPRITES 8
@@ -109,21 +109,11 @@ stage_pit_tick:
 		check_one_player_one_platform:
 
 			; Move players that are on platforms
-			;  Note - Player's subpixel is not accounted,
-			;         we prefer to move a player that is not really grounded
-			;         than moving the platform through him
 			move_players_on_platform:
-				lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_LEFT, y
-				sta tmpfield1
-				lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_RIGHT, y
-				sta tmpfield2
-				lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_TOP, y
-				sta tmpfield3
-				lda player_a_y_low, x
-				pha
-				lda #$ff
-				sta player_a_y_low, x
-				jsr check_on_platform
+				tya
+				clc
+				adc #STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET
+				cmp player_a_grounded, x
 				bne next_check
 
 					lda player_a_y, x
@@ -136,8 +126,6 @@ stage_pit_tick:
 					sta player_a_x, x
 
 				next_check:
-				pla
-				sta player_a_y_low, x
 				inx
 				cpx #2
 				bne move_players_on_platform

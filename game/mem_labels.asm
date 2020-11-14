@@ -112,6 +112,13 @@ player_b_hitbox_top_msb = $64
 player_a_hitbox_bottom_msb = $65
 player_b_hitbox_bottom_msb = $66
 
+player_a_grounded = $67 ; $00 if not grounded, else the offset of grounded platform from stage_data
+player_b_grounded = $68
+player_a_walled = $69 ; $00 if not touching a wall, else the offset of the platform from stage_data
+player_b_walled = $6a
+player_a_walled_direction = $6b ; DIRECTION_LEFT - player is on the left of the wall
+player_b_walled_direction = $6c ; DIRECTION_RIGHT - player is on the right of the wall
+
 screen_shake_counter = $70
 screen_shake_nextval_x = $71
 screen_shake_nextval_y = $72

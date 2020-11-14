@@ -390,15 +390,11 @@ ai_chase_selector:
 	collision_point_x_msb = tmpfield5
 	collision_point_y_msb = tmpfield6
 
-	grounded_platform = tmpfield3
-
 	; If grounded on smooth platform and opponent bellow, tap down
 	SIGNED_CMP(player_b_y, player_b_y_screen, player_a_y, player_a_y_screen)
 	bpl no_tap_down
-		ldx #1
-		jsr check_on_ground
-		bne no_tap_down
-			ldx grounded_platform
+		ldx player_b_grounded
+		beq no_tap_down
 			lda stage_data, x
 			cmp #STAGE_ELEMENT_SMOOTH_PLATFORM
 			beq tap_down
