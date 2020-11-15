@@ -1149,11 +1149,8 @@ move_player_handle_one_platform_left:
 			lda #$00
 			sta final_x_subpixel
 			lda stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
-			;clc
-			;adc #1
 			sta final_x_pixel
 			lda #0
-			;adc #0
 			sta final_x_screen
 
 			; Set walled flag
@@ -1188,11 +1185,8 @@ move_player_handle_one_platform_left:
 			lda #$00
 			sta final_x_subpixel
 			lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
-			;clc
-			;adc #1
 			sta final_x_pixel
 			lda stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
-			;adc #0
 			sta final_x_screen
 
 			; Set walled flag
@@ -1261,11 +1255,8 @@ move_player_handle_one_platform_right:
 			lda #$ff
 			sta final_x_subpixel
 			lda stage_data+STAGE_PLATFORM_OFFSET_LEFT, y
-			;sec
-			;sbc #1
 			sta final_x_pixel
 			lda #0
-			;sbc #0
 			sta final_x_screen
 
 			; Set walled flag
@@ -1300,11 +1291,8 @@ move_player_handle_one_platform_right:
 			lda #$ff
 			sta final_x_subpixel
 			lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-			;sec
-			;sbc #1
 			sta final_x_pixel
 			lda stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-			;sbc #0
 			sta final_x_screen
 
 			; Set walled flag
@@ -1373,11 +1361,8 @@ move_player_handle_one_platform_up:
 			lda #$00
 			sta final_y_subpixel
 			lda stage_data+STAGE_PLATFORM_OFFSET_BOTTOM, y
-			;clc
-			;adc #1
 			sta final_y_pixel
 			lda #0
-			;adc #0
 			sta final_y_screen
 
 		no_collision:
@@ -1406,11 +1391,8 @@ move_player_handle_one_platform_up:
 			lda #$00
 			sta final_y_subpixel
 			lda stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
-			;clc
-			;adc #1
 			sta final_y_pixel
 			lda stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
-			;adc #0
 			sta final_y_screen
 
 		no_collision:
@@ -1473,11 +1455,8 @@ move_player_handle_one_platform_down:
 			lda #$ff
 			sta final_y_subpixel
 			lda stage_data+STAGE_PLATFORM_OFFSET_TOP, y
-			;sec
-			;sbc #1
 			sta final_y_pixel
 			lda #0
-			;sbc #0
 			sta final_y_screen
 
 			; Set grounded flag
@@ -1510,11 +1489,8 @@ move_player_handle_one_platform_down:
 			lda #$ff
 			sta final_y_subpixel
 			lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
-			;sec
-			;sbc #1
 			sta final_y_pixel
 			lda stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
-			;sbc #0
 			sta final_y_screen
 
 			; Set grounded flag
