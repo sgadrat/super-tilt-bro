@@ -151,7 +151,7 @@ stage_gem_tick:
 		lda player_a_state, x
 		cmp stage_gem_last_opponent_state
 		beq end_throw_handling
-		cmp PLAYER_STATE_THROWN
+		cmp #PLAYER_STATE_THROWN
 		bne end_throw_handling
 
 			; Deal bonus damages

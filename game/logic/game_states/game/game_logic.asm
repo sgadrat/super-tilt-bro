@@ -166,7 +166,7 @@ init_game_state:
 			SWITCH_BANK(characters_bank_number COMMA y)
 
 			; Call character's start routine
-			lda PLAYER_STATE_SPAWN
+			lda #PLAYER_STATE_SPAWN
 			sta player_a_state, x
 			lda characters_start_routines_table_lsb, y
 			sta tmpfield1
@@ -679,7 +679,7 @@ check_player_hit:
 				sta player_a_velocity_v, x
 				sta player_a_velocity_v_low, x
 
-				lda PLAYER_STATE_THROWN
+				lda #PLAYER_STATE_THROWN
 				sta player_a_state, x
 				ldy config_player_a_character, x
 				SWITCH_BANK(characters_bank_number COMMA y)
@@ -777,7 +777,7 @@ hurt_player:
 	sta player_a_damages, x ;
 
 	; Set opponent to thrown state
-	lda PLAYER_STATE_THROWN
+	lda #PLAYER_STATE_THROWN
 	sta player_a_state, x
 	ldy config_player_a_character, x
 	lda characters_start_routines_table_lsb, y
@@ -1646,7 +1646,7 @@ check_player_position:
 		bmi gameover
 
 		; Set respawn state
-		lda PLAYER_STATE_RESPAWN
+		lda #PLAYER_STATE_RESPAWN
 		sta player_a_state, x
 		ldy config_player_a_character, x
 		lda characters_start_routines_table_lsb, y
@@ -1672,7 +1672,7 @@ check_player_position:
 		sta player_a_stocks, x
 
 		; Hide dead player
-		lda PLAYER_STATE_INNEXISTANT
+		lda #PLAYER_STATE_INNEXISTANT
 		sta player_a_state, x
 		ldy config_player_a_character, x
 		lda characters_start_routines_table_lsb, y

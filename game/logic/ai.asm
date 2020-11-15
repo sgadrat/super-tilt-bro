@@ -414,9 +414,9 @@ ai_chase_selector:
 
 	; Choose between jumping or not
 	lda player_b_state
-	cmp PLAYER_STATE_STANDING
+	cmp #PLAYER_STATE_STANDING
 	beq jump_if_higher
-	cmp PLAYER_STATE_RUNNING
+	cmp #PLAYER_STATE_RUNNING
 	bne dont_jump
 
 	jump_if_higher:

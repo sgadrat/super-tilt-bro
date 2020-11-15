@@ -1,3 +1,30 @@
+SINBAD_STATE_THROWN = PLAYER_STATE_THROWN
+SINBAD_STATE_RESPAWN = PLAYER_STATE_RESPAWN
+SINBAD_STATE_INNEXISTANT = PLAYER_STATE_INNEXISTANT
+SINBAD_STATE_SPAWN = PLAYER_STATE_SPAWN
+SINBAD_STATE_STANDING = PLAYER_STATE_STANDING
+SINBAD_STATE_RUNNING = PLAYER_STATE_RUNNING
+SINBAD_STATE_FALLING = CUSTOM_PLAYER_STATES_BEGIN + 0
+SINBAD_STATE_JUMPING = CUSTOM_PLAYER_STATES_BEGIN + 1
+SINBAD_STATE_JABBING = CUSTOM_PLAYER_STATES_BEGIN + 2
+SINBAD_STATE_SIDE_TILT = CUSTOM_PLAYER_STATES_BEGIN + 3
+SINBAD_STATE_SPECIAL = CUSTOM_PLAYER_STATES_BEGIN + 4
+SINBAD_STATE_SIDE_SPECIAL = CUSTOM_PLAYER_STATES_BEGIN + 5
+SINBAD_STATE_HELPLESS = CUSTOM_PLAYER_STATES_BEGIN + 6
+SINBAD_STATE_LANDING = CUSTOM_PLAYER_STATES_BEGIN + 7
+SINBAD_STATE_CRASHING = CUSTOM_PLAYER_STATES_BEGIN + 8
+SINBAD_STATE_DOWN_TILT = CUSTOM_PLAYER_STATES_BEGIN + 9
+SINBAD_STATE_AERIAL_SIDE = CUSTOM_PLAYER_STATES_BEGIN + 10
+SINBAD_STATE_AERIAL_DOWN = CUSTOM_PLAYER_STATES_BEGIN + 11
+SINBAD_STATE_AERIAL_UP = CUSTOM_PLAYER_STATES_BEGIN + 12
+SINBAD_STATE_AERIAL_NEUTRAL = CUSTOM_PLAYER_STATES_BEGIN + 13
+SINBAD_STATE_AERIAL_SPE_NEUTRAL = CUSTOM_PLAYER_STATES_BEGIN + 14
+SINBAD_STATE_SPE_UP = CUSTOM_PLAYER_STATES_BEGIN + 15
+SINBAD_STATE_SPE_DOWN = CUSTOM_PLAYER_STATES_BEGIN + 16
+SINBAD_STATE_UP_TILT = CUSTOM_PLAYER_STATES_BEGIN + 17
+SINBAD_STATE_SHIELDING = CUSTOM_PLAYER_STATES_BEGIN + 18
+SINBAD_STATE_SHIELDLAG = CUSTOM_PLAYER_STATES_BEGIN + 19
+
 SINBAD_FASTFALL_GRAVITY = $05
 
 ; Change the player's state if an aerial move is input on the controller
@@ -215,7 +242,7 @@ sinbad_start_standing:
 	jsr set_player_animation
 
 	; Set the player's state
-	lda PLAYER_STATE_STANDING
+	lda #SINBAD_STATE_STANDING
 	sta player_a_state, x
 	rts
 .)
@@ -348,7 +375,7 @@ sinbad_input_standing:
 
 sinbad_start_running:
 .(
-	lda PLAYER_STATE_RUNNING
+	lda #SINBAD_STATE_RUNNING
 	sta player_a_state, x
 	; Fallthrough
 .)
@@ -487,7 +514,7 @@ sinbad_input_running:
 
 sinbad_start_falling:
 .(
-	lda PLAYER_STATE_FALLING
+	lda #SINBAD_STATE_FALLING
 	sta player_a_state, x
 
 	; Fallthrough to set the animation
@@ -515,7 +542,7 @@ sinbad_tick_falling:
 
 sinbad_start_jumping:
 .(
-	lda PLAYER_STATE_JUMPING
+	lda #SINBAD_STATE_JUMPING
 	sta player_a_state, x
 
 	lda #0
@@ -553,42 +580,42 @@ sinbad_tick_jumping:
 	beq top_reached
 	bpl top_reached
 
-	; The top is not reached, stay in jumping state but apply gravity and directional influence
-	jsr sinbad_tick_falling ; Hack - We just use sinbad_tick_falling which do exactly what we want
+		; The top is not reached, stay in jumping state but apply gravity and directional influence
+		jsr sinbad_tick_falling ; Hack - We just use sinbad_tick_falling which do exactly what we want
 
-	; Check if it is time to stop a short-hop
-	lda player_a_velocity_v, x
-	cmp #$fd
-	bcs stop_short_hop
-	jmp end
+		; Check if it is time to stop a short-hop
+		lda player_a_velocity_v, x
+		cmp #$fd
+		bcs stop_short_hop
+		jmp end
 
 	; The top is reached, return to falling
 	top_reached:
-	jsr sinbad_start_falling
-	jmp end
+		jsr sinbad_start_falling
+		jmp end
 
 	; If the jump button is no more pressed mid jump, convert the jump to a short-hop
 	stop_short_hop:
-	lda player_a_state_field1, x ;
-	bne end                      ; Check for short hop only once
-	inc player_a_state_field1, x ;
+		lda player_a_state_field1, x ;
+		bne end                      ; Check for short hop only once
+		inc player_a_state_field1, x ;
 
-	lda controller_a_btns, x   ;
-	and #CONTROLLER_INPUT_JUMP ; If the jump button is still pressed, this is not a short-hop
-	bne end                    ;
+		lda controller_a_btns, x   ;
+		and #CONTROLLER_INPUT_JUMP ; If the jump button is still pressed, this is not a short-hop
+		bne end                    ;
 
-	lda #$fe                       ;
-	sta player_a_velocity_v, x     ;
-	sta player_a_velocity_v_low, x ; Reduce upward momentum to end the jump earlier
-	jmp end                        ;
+		lda #$fe                       ;
+		sta player_a_velocity_v, x     ;
+		sta player_a_velocity_v_low, x ; Reduce upward momentum to end the jump earlier
+		jmp end                        ;
 
 	; Put initial jumping velocity
 	begin_to_jump:
-	lda #$fb
-	sta player_a_velocity_v, x
-	lda #$80
-	sta player_a_velocity_v_low, x
-	jmp end
+		lda #$fb
+		sta player_a_velocity_v, x
+		lda #$80
+		sta player_a_velocity_v_low, x
+		jmp end
 
 	end:
 	rts
@@ -646,7 +673,7 @@ sinbad_start_aerial_jumping:
 
 	; Trick - aerial_jumping set the state to jumping. It is the same state with
 	; the starting conditions as the only differences
-	lda PLAYER_STATE_JUMPING
+	lda #SINBAD_STATE_JUMPING
 	sta player_a_state, x
 
 	; Reset clock
@@ -674,7 +701,7 @@ set_aerial_jumping_animation:
 
 sinbad_start_jabbing:
 .(
-	lda PLAYER_STATE_JABBING
+	lda #SINBAD_STATE_JABBING
 	sta player_a_state, x
 	lda #0
 	sta player_a_state_clock, x
@@ -734,7 +761,7 @@ sinbad_input_jabbing:
 sinbad_start_thrown:
 .(
 	; Set player's state
-	lda PLAYER_STATE_THROWN
+	lda #SINBAD_STATE_THROWN
 	sta player_a_state, x
 
 	; Initialize tech counter
@@ -871,7 +898,7 @@ thrown_player_on_ground:
 sinbad_start_respawn:
 .(
 	; Set the player's state
-	lda PLAYER_STATE_RESPAWN
+	lda #SINBAD_STATE_RESPAWN
 	sta player_a_state, x
 
 	; Place player to the respawn spot
@@ -930,7 +957,7 @@ sinbad_input_respawn:
 	;  platform
 	jsr check_aerial_inputs
 	lda player_a_state, x
-	cmp PLAYER_STATE_RESPAWN
+	cmp #SINBAD_STATE_RESPAWN
 	bne end
 
 	jsr sinbad_start_falling
@@ -949,7 +976,7 @@ sinbad_start_side_tilt:
 	jsr set_player_animation
 
 	; Set the player's state
-	lda PLAYER_STATE_SIDE_TILT
+	lda #SINBAD_STATE_SIDE_TILT
 	sta player_a_state, x
 
 	; Initialize the clock
@@ -1014,7 +1041,7 @@ sinbad_start_special:
 	jsr set_player_animation
 
 	; Set the player's state
-	lda PLAYER_STATE_SPECIAL
+	lda #SINBAD_STATE_SPECIAL
 	sta player_a_state, x
 
 	; Place the player above ground
@@ -1047,7 +1074,7 @@ sinbad_input_special:
 sinbad_start_side_special:
 .(
 	; Set state
-	lda PLAYER_STATE_SIDE_SPECIAL
+	lda #SINBAD_STATE_SIDE_SPECIAL
 	sta player_a_state, x
 
 	; Set initial velocity
@@ -1158,7 +1185,7 @@ sinbad_tick_side_special:
 sinbad_start_helpless:
 .(
 	; Set state
-	lda PLAYER_STATE_HELPLESS
+	lda #SINBAD_STATE_HELPLESS
 	sta player_a_state, x
 
 	; Fallthrough to set the animation
@@ -1185,7 +1212,7 @@ sinbad_tick_helpless:
 sinbad_start_landing:
 .(
 	; Set state
-	lda PLAYER_STATE_LANDING
+	lda #SINBAD_STATE_LANDING
 	sta player_a_state, x
 
 	; Reset clock
@@ -1255,7 +1282,7 @@ sinbad_tick_landing:
 sinbad_start_crashing:
 .(
 	; Set state
-	lda PLAYER_STATE_CRASHING
+	lda #SINBAD_STATE_CRASHING
 	sta player_a_state, x
 
 	; Reset clock
@@ -1308,7 +1335,7 @@ sinbad_tick_crashing:
 sinbad_start_down_tilt:
 .(
 	; Set state
-	lda PLAYER_STATE_DOWN_TILT
+	lda #SINBAD_STATE_DOWN_TILT
 	sta player_a_state, x
 
 	; Reset clock
@@ -1358,7 +1385,7 @@ sinbad_tick_down_tilt:
 sinbad_start_aerial_side:
 .(
 	; Set state
-	lda PLAYER_STATE_AERIAL_SIDE
+	lda #SINBAD_STATE_AERIAL_SIDE
 	sta player_a_state, x
 
 	; Reset clock
@@ -1398,7 +1425,7 @@ sinbad_tick_aerial_side:
 sinbad_start_aerial_down:
 .(
 	; Set state
-	lda PLAYER_STATE_AERIAL_DOWN
+	lda #SINBAD_STATE_AERIAL_DOWN
 	sta player_a_state, x
 
 	; Reset clock
@@ -1452,7 +1479,7 @@ sinbad_tick_aerial_down:
 sinbad_start_aerial_up:
 .(
 	; Set state
-	lda PLAYER_STATE_AERIAL_UP
+	lda #SINBAD_STATE_AERIAL_UP
 	sta player_a_state, x
 
 	; Reset clock
@@ -1492,7 +1519,7 @@ sinbad_tick_aerial_up:
 sinbad_start_aerial_neutral:
 .(
 	; Set state
-	lda PLAYER_STATE_AERIAL_NEUTRAL
+	lda #SINBAD_STATE_AERIAL_NEUTRAL
 	sta player_a_state, x
 
 	; Reset clock
@@ -1532,7 +1559,7 @@ sinbad_tick_aerial_neutral:
 sinbad_start_aerial_spe:
 .(
 	; Set state
-	lda PLAYER_STATE_AERIAL_SPE_NEUTRAL
+	lda #SINBAD_STATE_AERIAL_SPE_NEUTRAL
 	sta player_a_state, x
 
 	; Fallthrough to set the animation
@@ -1580,7 +1607,7 @@ sinbad_tick_aerial_spe:
 sinbad_start_spe_up:
 .(
 	; Set state
-	lda PLAYER_STATE_SPE_UP
+	lda #SINBAD_STATE_SPE_UP
 	sta player_a_state, x
 
 	; Set initial velocity
@@ -1668,7 +1695,7 @@ sinbad_tick_spe_up:
 sinbad_start_spe_down:
 .(
 	; Set state
-	lda PLAYER_STATE_SPE_DOWN
+	lda #SINBAD_STATE_SPE_DOWN
 	sta player_a_state, x
 
 	; Reset clock
@@ -1715,7 +1742,7 @@ sinbad_tick_spe_down:
 sinbad_start_up_tilt:
 .(
 	; Set state
-	lda PLAYER_STATE_UP_TILT
+	lda #SINBAD_STATE_UP_TILT
 	sta player_a_state, x
 
 	; Reset clock
@@ -1763,7 +1790,7 @@ sinbad_tick_up_tilt:
 sinbad_start_shielding:
 .(
 	; Set state
-	lda PLAYER_STATE_SHIELDING
+	lda #SINBAD_STATE_SHIELDING
 	sta player_a_state, x
 
 	; Reset clock
@@ -1915,7 +1942,7 @@ sinbad_hurt_shielding:
 sinbad_start_shieldlag:
 .(
 	; Set state
-	lda PLAYER_STATE_SHIELDLAG
+	lda #SINBAD_STATE_SHIELDLAG
 	sta player_a_state, x
 
 	; Reset clock
@@ -1963,7 +1990,7 @@ sinbad_tick_shieldlag:
 sinbad_start_innexistant:
 .(
 	; Set state
-	lda PLAYER_STATE_INNEXISTANT
+	lda #SINBAD_STATE_INNEXISTANT
 	sta player_a_state, x
 
 	; Set to a fixed place
@@ -2000,7 +2027,7 @@ sinbad_tick_innexistant:
 
 sinbad_start_spawn:
 .(
-	lda PLAYER_STATE_SPAWN
+	lda #SINBAD_STATE_SPAWN
 	sta player_a_state, x
 
 	; Reset clock

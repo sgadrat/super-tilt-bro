@@ -364,7 +364,7 @@
 	"states": [
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_THROWN",
+			"name": "SINBAD_STATE_THROWN",
 			"start_routine": "sinbad_start_thrown",
 			"update_routine": "sinbad_tick_thrown",
 			"offground_routine": "dummy_routine",
@@ -374,7 +374,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_RESPAWN",
+			"name": "SINBAD_STATE_RESPAWN",
 			"start_routine": "sinbad_start_respawn",
 			"update_routine": "sinbad_tick_respawn",
 			"offground_routine": "dummy_routine",
@@ -384,7 +384,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_INNEXISTANT",
+			"name": "SINBAD_STATE_INNEXISTANT",
 			"start_routine": "sinbad_start_innexistant",
 			"update_routine": "sinbad_tick_innexistant",
 			"offground_routine": "dummy_routine",
@@ -394,7 +394,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_SPAWN",
+			"name": "SINBAD_STATE_SPAWN",
 			"start_routine": "sinbad_start_spawn",
 			"update_routine": "sinbad_tick_spawn",
 			"offground_routine": "dummy_routine",
@@ -404,7 +404,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_STANDING",
+			"name": "SINBAD_STATE_STANDING",
 			"update_routine": "sinbad_tick_standing",
 			"offground_routine": "sinbad_start_falling",
 			"onground_routine": "dummy_routine",
@@ -413,7 +413,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_RUNNING",
+			"name": "SINBAD_STATE_RUNNING",
 			"update_routine": "sinbad_tick_running",
 			"offground_routine": "sinbad_start_falling",
 			"onground_routine": "dummy_routine",
@@ -422,7 +422,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_FALLING",
+			"name": "SINBAD_STATE_FALLING",
 			"update_routine": "sinbad_tick_falling",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_start_landing",
@@ -431,7 +431,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_JUMPING",
+			"name": "SINBAD_STATE_JUMPING",
 			"update_routine": "sinbad_tick_jumping",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "dummy_routine",
@@ -440,7 +440,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_JABBING",
+			"name": "SINBAD_STATE_JABBING",
 			"update_routine": "sinbad_tick_jabbing",
 			"offground_routine": "sinbad_start_falling",
 			"onground_routine": "dummy_routine",
@@ -449,7 +449,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_SIDE_TILT",
+			"name": "SINBAD_STATE_SIDE_TILT",
 			"update_routine": "sinbad_tick_side_tilt",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "dummy_routine",
@@ -458,7 +458,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_SPECIAL",
+			"name": "SINBAD_STATE_SPECIAL",
 			"update_routine": "sinbad_tick_special",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "dummy_routine",
@@ -467,7 +467,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_SIDE_SPECIAL",
+			"name": "SINBAD_STATE_SIDE_SPECIAL",
 			"update_routine": "sinbad_tick_side_special",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "dummy_routine",
@@ -476,7 +476,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_HELPLESS",
+			"name": "SINBAD_STATE_HELPLESS",
 			"update_routine": "sinbad_tick_helpless",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_start_landing",
@@ -485,7 +485,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_LANDING",
+			"name": "SINBAD_STATE_LANDING",
 			"update_routine": "sinbad_tick_landing",
 			"offground_routine": "sinbad_start_falling",
 			"onground_routine": "dummy_routine",
@@ -494,7 +494,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_CRASHING",
+			"name": "SINBAD_STATE_CRASHING",
 			"update_routine": "sinbad_tick_crashing",
 			"offground_routine": "sinbad_start_falling",
 			"onground_routine": "dummy_routine",
@@ -503,7 +503,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_DOWN_TILT",
+			"name": "SINBAD_STATE_DOWN_TILT",
 			"update_routine": "sinbad_tick_down_tilt",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "dummy_routine",
@@ -512,7 +512,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_AERIAL_SIDE",
+			"name": "SINBAD_STATE_AERIAL_SIDE",
 			"update_routine": "sinbad_tick_aerial_side",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_start_landing",
@@ -521,7 +521,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_AERIAL_DOWN",
+			"name": "SINBAD_STATE_AERIAL_DOWN",
 			"update_routine": "sinbad_tick_aerial_down",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_start_landing",
@@ -530,7 +530,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_AERIAL_UP",
+			"name": "SINBAD_STATE_AERIAL_UP",
 			"update_routine": "sinbad_tick_aerial_up",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_start_landing",
@@ -539,7 +539,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_AERIAL_NEUTRAL",
+			"name": "SINBAD_STATE_AERIAL_NEUTRAL",
 			"update_routine": "sinbad_tick_aerial_neutral",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_start_landing",
@@ -548,7 +548,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_AERIAL_SPE_NEUTRAL",
+			"name": "SINBAD_STATE_AERIAL_SPE_NEUTRAL",
 			"update_routine": "sinbad_tick_aerial_spe",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_start_landing",
@@ -557,7 +557,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_SPE_UP",
+			"name": "SINBAD_STATE_SPE_UP",
 			"update_routine": "sinbad_tick_spe_up",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "dummy_routine",
@@ -566,7 +566,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_SPE_DOWN",
+			"name": "SINBAD_STATE_SPE_DOWN",
 			"update_routine": "sinbad_tick_spe_down",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "dummy_routine",
@@ -575,7 +575,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_UP_TILT",
+			"name": "SINBAD_STATE_UP_TILT",
 			"update_routine": "sinbad_tick_up_tilt",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "dummy_routine",
@@ -584,7 +584,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_SHIELDING",
+			"name": "SINBAD_STATE_SHIELDING",
 			"update_routine": "sinbad_tick_shielding",
 			"offground_routine": "sinbad_start_falling",
 			"onground_routine": "dummy_routine",
@@ -593,7 +593,7 @@
 		},
 		{
 			"type": "character_state",
-			"name": "PLAYER_STATE_SHIELDLAG",
+			"name": "SINBAD_STATE_SHIELDLAG",
 			"update_routine": "sinbad_tick_shieldlag",
 			"offground_routine": "sinbad_start_falling",
 			"onground_routine": "dummy_routine",

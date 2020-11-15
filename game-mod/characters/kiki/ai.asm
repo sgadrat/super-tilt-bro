@@ -44,9 +44,9 @@ kiki_ai_recover_selector:
 			bne set_idle_action
 
 			lda player_b_state
-			cmp PLAYER_STATE_FALLING
+			cmp #KIKI_STATE_FALLING
 			beq dont_set_idle_action
-			cmp PLAYER_STATE_THROWN
+			cmp #KIKI_STATE_THROWN
 			bne set_idle_action
 			dont_set_idle_action:
 
