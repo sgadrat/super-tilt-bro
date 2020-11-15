@@ -368,7 +368,7 @@
 			"start_routine": "sinbad_start_thrown",
 			"update_routine": "sinbad_tick_thrown",
 			"offground_routine": "dummy_routine",
-			"onground_routine": "thrown_player_on_ground",
+			"onground_routine": "sinbad_thrown_on_ground",
 			"input_routine": "sinbad_input_thrown",
 			"onhurt_routine": "hurt_player"
 		},
@@ -378,7 +378,7 @@
 			"start_routine": "sinbad_start_respawn",
 			"update_routine": "sinbad_tick_respawn",
 			"offground_routine": "dummy_routine",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "sinbad_input_respawn",
 			"onhurt_routine": "dummy_routine"
 		},
@@ -388,7 +388,7 @@
 			"start_routine": "sinbad_start_innexistant",
 			"update_routine": "sinbad_tick_innexistant",
 			"offground_routine": "dummy_routine",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "dummy_routine",
 			"onhurt_routine": "dummy_routine"
 		},
@@ -398,7 +398,7 @@
 			"start_routine": "sinbad_start_spawn",
 			"update_routine": "sinbad_tick_spawn",
 			"offground_routine": "dummy_routine",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "keep_input_dirty",
 			"onhurt_routine": "dummy_routine"
 		},
@@ -407,7 +407,7 @@
 			"name": "SINBAD_STATE_STANDING",
 			"update_routine": "sinbad_tick_standing",
 			"offground_routine": "sinbad_start_falling",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "sinbad_input_standing",
 			"onhurt_routine": "hurt_player"
 		},
@@ -416,7 +416,7 @@
 			"name": "SINBAD_STATE_RUNNING",
 			"update_routine": "sinbad_tick_running",
 			"offground_routine": "sinbad_start_falling",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "sinbad_input_running",
 			"onhurt_routine": "hurt_player"
 		},
@@ -434,7 +434,7 @@
 			"name": "SINBAD_STATE_JUMPING",
 			"update_routine": "sinbad_tick_jumping",
 			"offground_routine": "dummy_routine",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "sinbad_input_jumping",
 			"onhurt_routine": "hurt_player"
 		},
@@ -443,7 +443,7 @@
 			"name": "SINBAD_STATE_JABBING",
 			"update_routine": "sinbad_tick_jabbing",
 			"offground_routine": "sinbad_start_falling",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "sinbad_input_jabbing",
 			"onhurt_routine": "hurt_player"
 		},
@@ -452,7 +452,7 @@
 			"name": "SINBAD_STATE_SIDE_TILT",
 			"update_routine": "sinbad_tick_side_tilt",
 			"offground_routine": "dummy_routine",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "keep_input_dirty",
 			"onhurt_routine": "hurt_player"
 		},
@@ -461,7 +461,7 @@
 			"name": "SINBAD_STATE_SPECIAL",
 			"update_routine": "sinbad_tick_special",
 			"offground_routine": "dummy_routine",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "sinbad_input_special",
 			"onhurt_routine": "hurt_player"
 		},
@@ -470,7 +470,7 @@
 			"name": "SINBAD_STATE_SIDE_SPECIAL",
 			"update_routine": "sinbad_tick_side_special",
 			"offground_routine": "dummy_routine",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "dummy_routine",
 			"onhurt_routine": "hurt_player"
 		},
@@ -480,7 +480,7 @@
 			"update_routine": "sinbad_tick_helpless",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_start_landing",
-			"input_routine": "keep_input_dirty",
+			"input_routine": "sinbad_input_helpless",
 			"onhurt_routine": "hurt_player"
 		},
 		{
@@ -488,7 +488,7 @@
 			"name": "SINBAD_STATE_LANDING",
 			"update_routine": "sinbad_tick_landing",
 			"offground_routine": "sinbad_start_falling",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "keep_input_dirty",
 			"onhurt_routine": "hurt_player"
 		},
@@ -497,7 +497,7 @@
 			"name": "SINBAD_STATE_CRASHING",
 			"update_routine": "sinbad_tick_crashing",
 			"offground_routine": "sinbad_start_falling",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "keep_input_dirty",
 			"onhurt_routine": "hurt_player"
 		},
@@ -506,7 +506,7 @@
 			"name": "SINBAD_STATE_DOWN_TILT",
 			"update_routine": "sinbad_tick_down_tilt",
 			"offground_routine": "dummy_routine",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "keep_input_dirty",
 			"onhurt_routine": "hurt_player"
 		},
@@ -560,7 +560,7 @@
 			"name": "SINBAD_STATE_SPE_UP",
 			"update_routine": "sinbad_tick_spe_up",
 			"offground_routine": "dummy_routine",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "dummy_routine",
 			"onhurt_routine": "hurt_player"
 		},
@@ -569,7 +569,7 @@
 			"name": "SINBAD_STATE_SPE_DOWN",
 			"update_routine": "sinbad_tick_spe_down",
 			"offground_routine": "dummy_routine",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "keep_input_dirty",
 			"onhurt_routine": "hurt_player"
 		},
@@ -578,7 +578,7 @@
 			"name": "SINBAD_STATE_UP_TILT",
 			"update_routine": "sinbad_tick_up_tilt",
 			"offground_routine": "dummy_routine",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "keep_input_dirty",
 			"onhurt_routine": "hurt_player"
 		},
@@ -587,7 +587,7 @@
 			"name": "SINBAD_STATE_SHIELDING",
 			"update_routine": "sinbad_tick_shielding",
 			"offground_routine": "sinbad_start_falling",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "sinbad_input_shielding",
 			"onhurt_routine": "sinbad_hurt_shielding"
 		},
@@ -596,8 +596,17 @@
 			"name": "SINBAD_STATE_SHIELDLAG",
 			"update_routine": "sinbad_tick_shieldlag",
 			"offground_routine": "sinbad_start_falling",
-			"onground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
 			"input_routine": "keep_input_dirty",
+			"onhurt_routine": "hurt_player"
+		},
+		{
+			"type": "character_state",
+			"name": "SINBAD_STATE_WALJUMPING",
+			"update_routine": "sinbad_tick_walljumping",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
+			"input_routine": "sinbad_input_walljumping",
 			"onhurt_routine": "hurt_player"
 		}
 	]

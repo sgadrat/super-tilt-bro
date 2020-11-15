@@ -24,8 +24,21 @@ SINBAD_STATE_SPE_DOWN = CUSTOM_PLAYER_STATES_BEGIN + 16
 SINBAD_STATE_UP_TILT = CUSTOM_PLAYER_STATES_BEGIN + 17
 SINBAD_STATE_SHIELDING = CUSTOM_PLAYER_STATES_BEGIN + 18
 SINBAD_STATE_SHIELDLAG = CUSTOM_PLAYER_STATES_BEGIN + 19
+SINBAD_STATE_WALLJUMPING = CUSTOM_PLAYER_STATES_BEGIN + 20
 
 SINBAD_FASTFALL_GRAVITY = $05
+SINBAD_MAX_WALLJUMPS = 1
+
+sinbad_a_num_walljumps = player_a_state_field3
+
+sinbad_init:
+sinbad_global_onground:
+.(
+	; Initialize walljump counter
+	lda #SINBAD_MAX_WALLJUMPS
+	sta sinbad_a_num_walljumps, x
+	rts
+.)
 
 ; Change the player's state if an aerial move is input on the controller
 ;  register X - Player number
@@ -112,6 +125,22 @@ check_aerial_inputs:
 			rts
 		.)
 
+		; Jump, choose between aerial jump or wall jump
+		jump:
+		.(
+			lda player_a_walled, x
+			beq aerial_jump
+			lda sinbad_a_num_walljumps, x
+			beq aerial_jump
+				wall_jump:
+					lda player_a_walled_direction, x
+					sta player_a_direction, x
+					jmp sinbad_start_walljumping
+				aerial_jump:
+					jmp sinbad_start_aerial_jumping
+			;rts ; useless, both branches jump to subroutine
+		.)
+
 		; If no input, unmark the input flag and return
 		no_input:
 		.(
@@ -128,12 +157,12 @@ check_aerial_inputs:
 		.byt CONTROLLER_INPUT_SPECIAL,        CONTROLLER_INPUT_SPECIAL_UP,       CONTROLLER_INPUT_SPECIAL_DOWN,    CONTROLLER_INPUT_TECH,        CONTROLLER_INPUT_ATTACK_UP_RIGHT
 		.byt CONTROLLER_INPUT_ATTACK_UP_LEFT, CONTROLLER_INPUT_SPECIAL_UP_RIGHT, CONTROLLER_INPUT_SPECIAL_UP_LEFT
 		controller_callbacks_lo:
-		.byt <sinbad_start_side_special,      <sinbad_start_side_special,        <sinbad_start_aerial_jumping,     <sinbad_start_aerial_jumping, <sinbad_start_aerial_jumping
+		.byt <sinbad_start_side_special,      <sinbad_start_side_special,        <jump,                            <jump,                        <jump
 		.byt <sinbad_start_aerial_side,       <sinbad_start_aerial_side,         <sinbad_start_aerial_down,        <sinbad_start_aerial_up,      <sinbad_start_aerial_neutral
 		.byt <sinbad_start_aerial_spe,        <sinbad_start_spe_up,              <sinbad_start_spe_down,           <fast_fall,                   <sinbad_start_aerial_up
 		.byt <sinbad_start_aerial_up,         <sinbad_start_spe_up,              <sinbad_start_spe_up
 		controller_callbacks_hi:
-		.byt >sinbad_start_side_special,      >sinbad_start_side_special,        >sinbad_start_aerial_jumping,     >sinbad_start_aerial_jumping, >sinbad_start_aerial_jumping
+		.byt >sinbad_start_side_special,      >sinbad_start_side_special,        >jump,                            >jump,                        >jump
 		.byt >sinbad_start_aerial_side,       >sinbad_start_aerial_side,         >sinbad_start_aerial_down,        >sinbad_start_aerial_up,      >sinbad_start_aerial_neutral
 		.byt >sinbad_start_aerial_spe,        >sinbad_start_spe_up,              >sinbad_start_spe_down,           >fast_fall,                   >sinbad_start_aerial_up
 		.byt >sinbad_start_aerial_up,         >sinbad_start_spe_up,              >sinbad_start_spe_up
@@ -858,38 +887,40 @@ sinbad_input_thrown:
 .)
 
 ; Routine to be called when hitting the ground from thrown state
-thrown_player_on_ground:
+sinbad_thrown_on_ground:
 .(
+	;jsr sinbad_global_onground ; useless, will be done by start_landing or start_crashing
+
 	; If the tech counter is bellow the threshold, just crash
 	lda #TECH_NB_FORBIDDEN_FRAMES
 	cmp player_a_state_field1, x
 	bcs crash
 
-	; A valid tech was entered, land with momentum depending on tech's direction
-	jsr sinbad_start_landing
-	lda player_a_state_field2, x
-	beq no_momentum
-	cmp #$01
-	beq momentum_right
-		lda #$fc
-		sta player_a_velocity_h, x
-		lda #$00
-		sta player_a_velocity_h_low, x
-		jmp end
-	no_momentum:
-		lda #$00
-		sta player_a_velocity_h, x
-		sta player_a_velocity_h_low, x
-		jmp end
-	momentum_right:
-		lda #$04
-		sta player_a_velocity_h, x
-		lda #$00
-		sta player_a_velocity_h_low, x
-		jmp end
+		; A valid tech was entered, land with momentum depending on tech's direction
+		jsr sinbad_start_landing
+		lda player_a_state_field2, x
+		beq no_momentum
+		cmp #$01
+		beq momentum_right
+			lda #$fc
+			sta player_a_velocity_h, x
+			lda #$00
+			sta player_a_velocity_h_low, x
+			jmp end
+		no_momentum:
+			lda #$00
+			sta player_a_velocity_h, x
+			sta player_a_velocity_h_low, x
+			jmp end
+		momentum_right:
+			lda #$04
+			sta player_a_velocity_h, x
+			lda #$00
+			sta player_a_velocity_h_low, x
+			jmp end
 
 	crash:
-	jsr sinbad_start_crashing
+		jsr sinbad_start_crashing
 
 	end:
 	rts
@@ -919,9 +950,13 @@ sinbad_start_respawn:
 	sta player_a_velocity_v_low, x
 	sta player_a_damages, x
 
-	; Initialise state's timer
+	; Initialize state's timer
 	lda #PLAYER_RESPAWN_MAX_DURATION
 	sta player_a_state_field1, x
+
+	; Reinitialize walljump counter
+	lda #SINBAD_MAX_WALLJUMPS
+	sta sinbad_a_num_walljumps, x
 
 	; Set the appropriate animation
 	lda #<anim_sinbad_respawn
@@ -1202,15 +1237,32 @@ set_helpless_animation:
 	rts
 .)
 
-; Update a player that is helplessly falling
 sinbad_tick_helpless:
 .(
 	jsr sinbad_tick_falling
 	rts
 .)
 
+sinbad_input_helpless:
+.(
+	; Allow to escape helpless mode with a walljump, else keep input dirty
+	lda player_a_walled, x
+	beq no_jump
+	lda sinbad_a_num_walljumps, x
+	beq no_jump
+		jump:
+			lda player_a_walled_direction, x
+			sta player_a_direction, x
+			jmp sinbad_start_walljumping
+		no_jump:
+			jmp keep_input_dirty
+	;rts ; useless, both branches jump to a subroutine
+.)
+
 sinbad_start_landing:
 .(
+	jsr sinbad_global_onground
+
 	; Set state
 	lda #SINBAD_STATE_LANDING
 	sta player_a_state, x
@@ -1281,6 +1333,8 @@ sinbad_tick_landing:
 
 sinbad_start_crashing:
 .(
+	jsr sinbad_global_onground
+
 	; Set state
 	lda #SINBAD_STATE_CRASHING
 	sta player_a_state, x
@@ -2027,6 +2081,11 @@ sinbad_tick_innexistant:
 
 sinbad_start_spawn:
 .(
+	; Hack - there is no ensured call to a character init function
+	;        expect start_spawn to be called once at the begining of a game
+	jsr sinbad_init
+
+	; Set the player's state
 	lda #SINBAD_STATE_SPAWN
 	sta player_a_state, x
 
@@ -2058,5 +2117,107 @@ sinbad_tick_spawn:
 	jsr sinbad_start_standing
 
 	end:
+	rts
+.)
+
+sinbad_start_walljumping:
+.(
+	; Deny to start jump state if the player used all it's jumps
+	;lda sinbad_a_num_walljumps, x ; useless, all calls to sinbad_start_walljumping actually do this check
+	;beq end
+
+	; Update wall jump counter
+	dec sinbad_a_num_walljumps, x
+
+	; Set player's state
+	lda #SINBAD_STATE_WALLJUMPING
+	sta player_a_state, x
+
+	; Reset clock
+	lda #0
+	sta player_a_state_clock, x
+
+	; Stop any momentum, sinbad does not fall during jumpsquat
+	sta player_a_velocity_h, x
+	sta player_a_velocity_h_low, x
+	sta player_a_velocity_v, x
+	sta player_a_velocity_v_low, x
+
+	; Set the appropriate animation
+	;TODO specific animation
+	lda #<anim_sinbad_jumping
+	sta tmpfield13
+	lda #>anim_sinbad_jumping
+	sta tmpfield14
+	jsr set_player_animation
+
+	end:
+	rts
+.)
+
+SINBAD_WALL_JUMP_SQUAT_END = 4
+sinbad_tick_walljumping:
+.(
+	; Tick clock
+	inc player_a_state_clock, x
+
+	; Wait for the preparation to end to begin to jump
+	lda player_a_state_clock, x
+	cmp #SINBAD_WALL_JUMP_SQUAT_END
+	bcc end
+	beq begin_to_jump
+
+	; Check if the top of the jump is reached
+	lda player_a_velocity_v, x
+	beq top_reached
+	bpl top_reached
+
+		; The top is not reached, stay in walljumping state but apply gravity, without directional influence
+		jmp apply_player_gravity
+		;jmp end ; useless, jump to a subroutine
+
+	; The top is reached, return to falling
+	top_reached:
+		jmp sinbad_start_falling
+		;jmp end ; useless, jump to a subroutine
+
+	; Put initial jumping velocity
+	begin_to_jump:
+		;TODO set animation
+
+		; Vertical velocity
+		lda #$fb
+		sta player_a_velocity_v, x
+		lda #$80
+		sta player_a_velocity_v_low, x
+
+		; Horizontal velocity
+		lda player_a_direction, x
+		;cmp DIRECTION_LEFT ; useless while DIRECTION_LEFT is $00
+		bne jump_right
+			jump_left:
+				lda #$ff
+				jmp end_jump_direction
+			jump_right:
+				lda #1
+		end_jump_direction;
+		sta player_a_velocity_h, x
+
+		;jmp end ; useless, fallthrough
+
+	end:
+	rts
+.)
+
+sinbad_input_walljumping:
+.(
+	; The jump is cancellable by aerial movements, but only after preparation
+	lda #SINBAD_WALL_JUMP_SQUAT_END
+	cmp player_a_state_clock, x
+	bcs grounded
+		not_grounded:
+			jmp check_aerial_inputs
+			; no return, jump to a subroutine
+	grounded:
 	rts
 .)
