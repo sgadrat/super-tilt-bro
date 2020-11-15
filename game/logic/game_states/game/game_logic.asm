@@ -1129,13 +1129,13 @@ move_player_handle_one_platform_left:
 
 	one_screen_platform:
 	.(
-		; No collision if player is above the platform
-		SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0)
-		bmi no_collision
+		; No collision if player is above the platform (the very last pixel is not counted)
+		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0, final_y_pixel, final_y_screen)
+		bpl no_collision
 
-		; No collision if player is under the platform
-		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_BOTTOM COMMA y, #0, final_y_pixel, final_y_screen)
-		bmi no_collision
+		; No collision if player is under the platform (the very last pixel is not counted)
+		SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_PLATFORM_OFFSET_BOTTOM COMMA y, #0)
+		bpl no_collision
 
 		; No collision if original position is on the left of the edge
 		SIGNED_CMP(orig_x_pixel, orig_x_screen, stage_data+STAGE_PLATFORM_OFFSET_RIGHT COMMA y, #0)
@@ -1168,13 +1168,13 @@ move_player_handle_one_platform_left:
 
 	oos_platform:
 	.(
-		; No collision if player is above the platform
-		SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB COMMA y)
-		bmi no_collision
+		; No collision if player is above the platform (the very last pixel is not counted)
+		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB COMMA y, final_y_pixel, final_y_screen)
+		bpl no_collision
 
-		; No collision if player is under the platform
-		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB COMMA y, final_y_pixel, final_y_screen)
-		bmi no_collision
+		; No collision if player is under the platform (the very last pixel is not counted)
+		SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB COMMA y)
+		bpl no_collision
 
 		; No collision if original position is on the left of the edge
 		SIGNED_CMP(orig_x_pixel, orig_x_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB COMMA y)
@@ -1241,13 +1241,13 @@ move_player_handle_one_platform_right:
 
 	one_screen_platform:
 	.(
-		; No collision if player is above the platform
-		SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0)
-		bmi no_collision
+		; No collision if player is above the platform (the very last pixel is not counted)
+		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0, final_y_pixel, final_y_screen)
+		bpl no_collision
 
-		; No collision if player is under the platform
-		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_BOTTOM COMMA y, #0, final_y_pixel, final_y_screen)
-		bmi no_collision
+		; No collision if player is under the platform (the very last pixel is not counted)
+		SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_PLATFORM_OFFSET_BOTTOM COMMA y, #0)
+		bpl no_collision
 
 		; No collision if original position is on the right of the edge
 		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_LEFT COMMA y, #0, orig_x_pixel, orig_x_screen)
@@ -1280,13 +1280,13 @@ move_player_handle_one_platform_right:
 
 	oos_platform:
 	.(
-		; No collision if player is above the platform
-		SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB COMMA y)
-		bmi no_collision
+		; No collision if player is above the platform (the very last pixel is not counted)
+		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB COMMA y, final_y_pixel, final_y_screen)
+		bpl no_collision
 
-		; No collision if player is under the platform
-		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB COMMA y, final_y_pixel, final_y_screen)
-		bmi no_collision
+		; No collision if player is under the platform (the very last pixel is not counted)
+		SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB COMMA y)
+		bpl no_collision
 
 		; No collision if original position is on the right of the edge
 		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB COMMA y, orig_x_pixel, orig_x_screen)
@@ -1353,13 +1353,13 @@ move_player_handle_one_platform_up:
 
 	one_screen_platform:
 	.(
-		; No collision if player is on the left of the platform
-		SIGNED_CMP(orig_x_pixel, orig_x_screen, stage_data+STAGE_PLATFORM_OFFSET_LEFT COMMA y, #0)
-		bmi no_collision
+		; No collision if player is on the left of the platform (the very last pixel is not counted)
+		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_LEFT COMMA y, #0, orig_x_pixel, orig_x_screen)
+		bpl no_collision
 
-		; No collision if player is on the right of the platform
-		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_RIGHT COMMA y, #0, orig_x_pixel, orig_x_screen)
-		bmi no_collision
+		; No collision if player is on the right of the platform (the very last pixel is not counted)
+		SIGNED_CMP(orig_x_pixel, orig_x_screen, stage_data+STAGE_PLATFORM_OFFSET_RIGHT COMMA y, #0)
+		bpl no_collision
 
 		; No collision if original position is above the edge
 		SIGNED_CMP(orig_y_pixel, orig_y_screen, stage_data+STAGE_PLATFORM_OFFSET_BOTTOM COMMA y, #0)
@@ -1386,13 +1386,13 @@ move_player_handle_one_platform_up:
 
 	oos_platform:
 	.(
-		; No collision if player is on the left of the platform
-		SIGNED_CMP(orig_x_pixel, orig_x_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB COMMA y)
-		bmi no_collision
+		; No collision if player is on the left of the platform (the very last pixel is not counted)
+		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB COMMA y, orig_x_pixel, orig_x_screen)
+		bpl no_collision
 
-		; No collision if player is on the right of the platform
-		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB COMMA y, orig_x_pixel, orig_x_screen)
-		bmi no_collision
+		; No collision if player is on the right of the platform (the very last pixel is not counted)
+		SIGNED_CMP(orig_x_pixel, orig_x_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB COMMA y)
+		bpl no_collision
 
 		; No collision if original position is above the edge
 		SIGNED_CMP(orig_y_pixel, orig_y_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB COMMA y)
@@ -1453,13 +1453,13 @@ move_player_handle_one_platform_down:
 
 	one_screen_platform:
 	.(
-		; No collision if player is on the left of the platform
-		SIGNED_CMP(orig_x_pixel, orig_x_screen, stage_data+STAGE_PLATFORM_OFFSET_LEFT COMMA y, #0)
-		bmi no_collision
+		; No collision if player is on the left of the platform (the very last pixel is not counted)
+		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_LEFT COMMA y, #0, orig_x_pixel, orig_x_screen)
+		bpl no_collision
 
-		; No collision if player is on the right of the platform
-		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_RIGHT COMMA y, #0, orig_x_pixel, orig_x_screen)
-		bmi no_collision
+		; No collision if player is on the right of the platform (the very last pixel is not counted)
+		SIGNED_CMP(orig_x_pixel, orig_x_screen, stage_data+STAGE_PLATFORM_OFFSET_RIGHT COMMA y, #0)
+		bpl no_collision
 
 		; No collision if original position is under the edge
 		SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0, orig_y_pixel, orig_y_screen)
@@ -1490,13 +1490,13 @@ move_player_handle_one_platform_down:
 
 	oos_platform:
 	.(
-		; No collision if player is on the left of the platform
-		SIGNED_CMP(orig_x_pixel, orig_x_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB COMMA y)
-		bmi no_collision
+		; No collision if player is on the left of the platform (the very last pixel is not counted)
+		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB COMMA y, orig_x_pixel, orig_x_screen)
+		bpl no_collision
 
-		; No collision if player is on the right of the platform
-		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB COMMA y, orig_x_pixel, orig_x_screen)
-		bmi no_collision
+		; No collision if player is on the right of the platform (the very last pixel is not counted)
+		SIGNED_CMP(orig_x_pixel, orig_x_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB COMMA y)
+		bpl no_collision
 
 		; No collision if original position is under the edge
 		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB COMMA y, orig_y_pixel, orig_y_screen)
