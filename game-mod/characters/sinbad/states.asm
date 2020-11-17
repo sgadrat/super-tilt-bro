@@ -30,6 +30,7 @@ SINBAD_FASTFALL_GRAVITY = $05
 SINBAD_MAX_WALLJUMPS = 1
 
 sinbad_a_num_walljumps = player_a_state_field3
+sinbad_b_num_walljumps = player_b_state_field3
 
 sinbad_init:
 sinbad_global_onground:
