@@ -552,7 +552,7 @@
 			"update_routine": "sinbad_tick_aerial_spe",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_start_landing",
-			"input_routine": "dummy_routine",
+			"input_routine": "sinbad_input_aerial_spe",
 			"onhurt_routine": "hurt_player"
 		},
 		{

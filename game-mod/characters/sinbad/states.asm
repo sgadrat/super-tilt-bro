@@ -1616,6 +1616,10 @@ sinbad_start_aerial_spe:
 	lda #SINBAD_STATE_AERIAL_SPE_NEUTRAL
 	sta player_a_state, x
 
+	; Set substate to "not cancelable"
+	lda #0
+	sta player_a_state_field1, x
+
 	; Fallthrough to set the animation
 .)
 set_aerial_spe_animation:
@@ -1655,6 +1659,33 @@ sinbad_tick_aerial_spe:
 	sta tmpfield5
 	jsr merge_to_player_velocity
 
+	rts
+.)
+
+sinbad_input_aerial_spe:
+.(
+	lda player_a_state_field1, x
+	beq check_release
+
+		check_cancel:
+			; Press B again to cancel into helpless
+			lda controller_a_btns, x
+			and #CONTROLLER_BTN_B
+			beq end
+
+				jmp sinbad_start_helpless
+				; No return, jump to a subroutine
+
+		check_release:
+			; Release B to pass in "cancelable" substate
+			lda controller_a_btns, x
+			and #CONTROLLER_BTN_B
+			bne end
+
+				inc player_a_state_field1, x
+				; Fallthrough
+
+	end:
 	rts
 .)
 
