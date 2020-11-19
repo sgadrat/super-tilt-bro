@@ -8,23 +8,24 @@ SINBAD_STATE_FALLING = CUSTOM_PLAYER_STATES_BEGIN + 0
 SINBAD_STATE_JUMPING = CUSTOM_PLAYER_STATES_BEGIN + 1
 SINBAD_STATE_JABBING = CUSTOM_PLAYER_STATES_BEGIN + 2
 SINBAD_STATE_SIDE_TILT = CUSTOM_PLAYER_STATES_BEGIN + 3
-SINBAD_STATE_SPECIAL = CUSTOM_PLAYER_STATES_BEGIN + 4
-SINBAD_STATE_SIDE_SPECIAL = CUSTOM_PLAYER_STATES_BEGIN + 5
-SINBAD_STATE_HELPLESS = CUSTOM_PLAYER_STATES_BEGIN + 6
-SINBAD_STATE_LANDING = CUSTOM_PLAYER_STATES_BEGIN + 7
-SINBAD_STATE_CRASHING = CUSTOM_PLAYER_STATES_BEGIN + 8
-SINBAD_STATE_DOWN_TILT = CUSTOM_PLAYER_STATES_BEGIN + 9
-SINBAD_STATE_AERIAL_SIDE = CUSTOM_PLAYER_STATES_BEGIN + 10
-SINBAD_STATE_AERIAL_DOWN = CUSTOM_PLAYER_STATES_BEGIN + 11
-SINBAD_STATE_AERIAL_UP = CUSTOM_PLAYER_STATES_BEGIN + 12
-SINBAD_STATE_AERIAL_NEUTRAL = CUSTOM_PLAYER_STATES_BEGIN + 13
-SINBAD_STATE_AERIAL_SPE_NEUTRAL = CUSTOM_PLAYER_STATES_BEGIN + 14
-SINBAD_STATE_SPE_UP = CUSTOM_PLAYER_STATES_BEGIN + 15
-SINBAD_STATE_SPE_DOWN = CUSTOM_PLAYER_STATES_BEGIN + 16
-SINBAD_STATE_UP_TILT = CUSTOM_PLAYER_STATES_BEGIN + 17
-SINBAD_STATE_SHIELDING = CUSTOM_PLAYER_STATES_BEGIN + 18
-SINBAD_STATE_SHIELDLAG = CUSTOM_PLAYER_STATES_BEGIN + 19
-SINBAD_STATE_WALLJUMPING = CUSTOM_PLAYER_STATES_BEGIN + 20
+SINBAD_STATE_SPECIAL_CHARGE = CUSTOM_PLAYER_STATES_BEGIN + 4
+SINBAD_STATE_SPECIAL_STRIKE = CUSTOM_PLAYER_STATES_BEGIN + 5
+SINBAD_STATE_SIDE_SPECIAL = CUSTOM_PLAYER_STATES_BEGIN + 6
+SINBAD_STATE_HELPLESS = CUSTOM_PLAYER_STATES_BEGIN + 7
+SINBAD_STATE_LANDING = CUSTOM_PLAYER_STATES_BEGIN + 8
+SINBAD_STATE_CRASHING = CUSTOM_PLAYER_STATES_BEGIN + 9
+SINBAD_STATE_DOWN_TILT = CUSTOM_PLAYER_STATES_BEGIN + 10
+SINBAD_STATE_AERIAL_SIDE = CUSTOM_PLAYER_STATES_BEGIN + 11
+SINBAD_STATE_AERIAL_DOWN = CUSTOM_PLAYER_STATES_BEGIN + 12
+SINBAD_STATE_AERIAL_UP = CUSTOM_PLAYER_STATES_BEGIN + 13
+SINBAD_STATE_AERIAL_NEUTRAL = CUSTOM_PLAYER_STATES_BEGIN + 14
+SINBAD_STATE_AERIAL_SPE_NEUTRAL = CUSTOM_PLAYER_STATES_BEGIN + 15
+SINBAD_STATE_SPE_UP = CUSTOM_PLAYER_STATES_BEGIN + 16
+SINBAD_STATE_SPE_DOWN = CUSTOM_PLAYER_STATES_BEGIN + 17
+SINBAD_STATE_UP_TILT = CUSTOM_PLAYER_STATES_BEGIN + 18
+SINBAD_STATE_SHIELDING = CUSTOM_PLAYER_STATES_BEGIN + 19
+SINBAD_STATE_SHIELDLAG = CUSTOM_PLAYER_STATES_BEGIN + 20
+SINBAD_STATE_WALLJUMPING = CUSTOM_PLAYER_STATES_BEGIN + 21
 
 SINBAD_FASTFALL_GRAVITY = $05
 SINBAD_MAX_WALLJUMPS = 1
@@ -1069,6 +1070,47 @@ sinbad_tick_side_tilt:
 
 sinbad_start_special:
 .(
+	SINBAD_GROUNDED_SPECIAL_CHARGE_DURATION = 20
+
+	; Set the appropriate animation
+	lda #<anim_sinbad_special_charge
+	sta tmpfield13
+	lda #>anim_sinbad_special_charge
+	sta tmpfield14
+	jsr set_player_animation
+
+	; Set the player's state
+	lda #SINBAD_STATE_SPECIAL_CHARGE
+	sta player_a_state, x
+
+	; Stop any momentum
+	lda #$00
+	sta player_a_velocity_h_low, x
+	sta player_a_velocity_h, x
+	sta player_a_velocity_v_low, x
+	sta player_a_velocity_v, x
+
+	; Initialize the clock
+	lda #SINBAD_GROUNDED_SPECIAL_CHARGE_DURATION
+	sta player_a_state_clock, x
+
+	rts
+.)
+
+sinbad_tick_special_charge:
+.(
+	dec player_a_state_clock, x
+	bne end
+		jmp sinbad_start_special_strike
+		; No return, jump to a subroutine
+	end:
+	rts
+.)
+
+sinbad_start_special_strike:
+.(
+	SINBAD_GROUNDED_SPECIAL_STRIKE_DURATION = 32
+
 	; Set the appropriate animation
 	lda #<anim_sinbad_special
 	sta tmpfield13
@@ -1077,7 +1119,7 @@ sinbad_start_special:
 	jsr set_player_animation
 
 	; Set the player's state
-	lda #SINBAD_STATE_SPECIAL
+	lda #SINBAD_STATE_SPECIAL_STRIKE
 	sta player_a_state, x
 
 	; Place the player above ground
@@ -1086,23 +1128,19 @@ sinbad_start_special:
 	sbc #$10
 	sta player_a_y, x
 
+	; Initialize the clock
+	lda #SINBAD_GROUNDED_SPECIAL_STRIKE_DURATION
+	sta player_a_state_clock, x
+
 	rts
 .)
 
-; Update a player that is performing a grounded neutral special move
-;  register X must contain the player number
-sinbad_tick_special:
+sinbad_tick_special_strike:
 .(
-	rts
-.)
-
-sinbad_input_special:
-.(
-	lda controller_a_btns, x
-	cmp #CONTROLLER_INPUT_SPECIAL
-	beq end
-	jsr sinbad_start_standing
-
+	dec player_a_state_clock, x
+	bne end
+		jmp sinbad_start_helpless
+		; No return, jump to a subroutine
 	end:
 	rts
 .)

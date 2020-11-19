@@ -1,0 +1,594 @@
+{
+	"frames": [
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": -4,
+				"right": 8,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_TINY_1",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 8
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_TINY_1",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -6,
+					"y": 9
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 2,
+					"y": 9
+				},
+				{
+					"attr": 0,
+					"foreground": true,
+					"tile": "TILE_RUNNING_SINBAD_2_1",
+					"type": "animation_sprite",
+					"x": -2,
+					"y": 3
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_2_BOT",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 17,
+				"left": -3,
+				"right": 9,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_TINY_2",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 8
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_TINY_2",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -6,
+					"y": 9
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 2,
+					"y": 9
+				},
+				{
+					"attr": 0,
+					"foreground": true,
+					"tile": "TILE_RUNNING_SINBAD_2_1",
+					"type": "animation_sprite",
+					"x": -2,
+					"y": 3
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_2_BOT",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": -5,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_LITTLE_1",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 8
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_LITTLE_1",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -6,
+					"y": 9
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 2,
+					"y": 9
+				},
+				{
+					"attr": 0,
+					"foreground": true,
+					"tile": "TILE_RUNNING_SINBAD_2_1",
+					"type": "animation_sprite",
+					"x": -2,
+					"y": 3
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_2_BOT",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 17,
+				"left": -3,
+				"right": 9,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_LITTLE_2",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 8
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_LITTLE_2",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -6,
+					"y": 9
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 2,
+					"y": 9
+				},
+				{
+					"attr": 0,
+					"foreground": true,
+					"tile": "TILE_RUNNING_SINBAD_2_1",
+					"type": "animation_sprite",
+					"x": -2,
+					"y": 3
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_2_BOT",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": -5,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_MEDIUM_1",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 8
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_MEDIUM_1",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -6,
+					"y": 9
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 2,
+					"y": 9
+				},
+				{
+					"attr": 0,
+					"foreground": true,
+					"tile": "TILE_RUNNING_SINBAD_2_1",
+					"type": "animation_sprite",
+					"x": -2,
+					"y": 3
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_2_BOT",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 17,
+				"left": -3,
+				"right": 9,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_MEDIUM_2",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 8
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_MEDIUM_2",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -6,
+					"y": 9
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 2,
+					"y": 9
+				},
+				{
+					"attr": 0,
+					"foreground": true,
+					"tile": "TILE_RUNNING_SINBAD_2_1",
+					"type": "animation_sprite",
+					"x": -2,
+					"y": 3
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_2_BOT",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": -5,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_LARGE_1",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 8
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_LARGE_1",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -6,
+					"y": 9
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 2,
+					"y": 9
+				},
+				{
+					"attr": 0,
+					"foreground": true,
+					"tile": "TILE_RUNNING_SINBAD_2_1",
+					"type": "animation_sprite",
+					"x": -2,
+					"y": 3
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_2_BOT",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 17,
+				"left": -3,
+				"right": 9,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_LARGE_2",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 8
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "TILE_SINBAD_POWER_FLAMES_LARGE_2",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_BLADE",
+					"type": "animation_sprite",
+					"x": -6,
+					"y": 9
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "TILE_SCIMITAR_HANDLE",
+					"type": "animation_sprite",
+					"x": 2,
+					"y": 9
+				},
+				{
+					"attr": 0,
+					"foreground": true,
+					"tile": "TILE_RUNNING_SINBAD_2_1",
+					"type": "animation_sprite",
+					"x": -2,
+					"y": 3
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "TILE_LANDING_SINBAD_2_BOT",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 14,
+				"left": 0,
+				"right": 8,
+				"top": -2,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+			{
+				"attr": 1,
+				"foreground": false,
+				"tile": "TILE_ANGLED_SCIMITAR_BLADE",
+				"type": "animation_sprite",
+				"x": -3,
+				"y": -4
+			},
+			{
+				"attr": 1,
+				"foreground": false,
+				"tile": "TILE_ANGLED_SCIMITAR_HANDLE",
+				"type": "animation_sprite",
+				"x": -3,
+				"y": 4
+			},
+			{
+				"attr": 0,
+				"foreground": false,
+				"tile": "TILE_SIDE_TILT_SINBAD_2_1",
+				"type": "animation_sprite",
+				"x": 0,
+				"y": -2
+			},
+			{
+				"attr": 0,
+				"foreground": false,
+				"tile": "TILE_JUMPING_SINBAD_2",
+				"type": "animation_sprite",
+				"x": 0,
+				"y": 6
+			}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 200,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 8,
+				"left": 0,
+				"right": 8,
+				"top": -8,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+			{
+				"attr": 1,
+				"foreground": false,
+				"tile": "TILE_ANGLED_SCIMITAR_BLADE",
+				"type": "animation_sprite",
+				"x": -3,
+				"y": -10
+			},
+			{
+				"attr": 1,
+				"foreground": false,
+				"tile": "TILE_ANGLED_SCIMITAR_HANDLE",
+				"type": "animation_sprite",
+				"x": -3,
+				"y": -2
+			},
+			{
+				"attr": 0,
+				"foreground": false,
+				"tile": "TILE_SIDE_TILT_SINBAD_2_1",
+				"type": "animation_sprite",
+				"x": 0,
+				"y": -8
+			},
+			{
+				"attr": 0,
+				"foreground": false,
+				"tile": "TILE_JUMPING_SINBAD_2",
+				"type": "animation_sprite",
+				"x": 0,
+				"y": 0
+			}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "anim_sinbad_special_charge",
+	"type": "animation"
+}

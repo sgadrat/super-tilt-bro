@@ -244,6 +244,7 @@
 		{"type": "import", "src": "characters/sinbad/animations/side_tilt.json"},
 		{"type": "import", "src": "characters/sinbad/animations/spawn.json"},
 		{"type": "import", "src": "characters/sinbad/animations/special.json"},
+		{"type": "import", "src": "characters/sinbad/animations/special_charge.json"},
 		{"type": "import", "src": "characters/sinbad/animations/spe_down.json"},
 		{"type": "import", "src": "characters/sinbad/animations/spe_up_prepare.json"},
 		{"type": "import", "src": "characters/sinbad/animations/spe_up_jump.json"},
@@ -458,11 +459,20 @@
 		},
 		{
 			"type": "character_state",
-			"name": "SINBAD_STATE_SPECIAL",
-			"update_routine": "sinbad_tick_special",
+			"name": "SINBAD_STATE_SPECIAL_CHARGE",
+			"update_routine": "sinbad_tick_special_charge",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_global_onground",
-			"input_routine": "sinbad_input_special",
+			"input_routine": "dummy_routine",
+			"onhurt_routine": "hurt_player"
+		},
+		{
+			"type": "character_state",
+			"name": "SINBAD_STATE_SPECIAL_STRIKE",
+			"update_routine": "sinbad_tick_special_strike",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
+			"input_routine": "dummy_routine",
 			"onhurt_routine": "hurt_player"
 		},
 		{
