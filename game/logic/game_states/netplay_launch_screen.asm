@@ -27,10 +27,27 @@ init_netplay_launch_screen:
 	lda #0
 	sta netplay_launch_state
 
+	; Wait for ESP to be ready
+	wait_esp:
+	.(
+		ESP_SEND_CMD(esp_status_cmd)
+		lda #<netplay_launch_received_msg
+		sta tmpfield1
+		lda #>netplay_launch_received_msg
+		sta tmpfield2
+		jsr esp_get_msg
+
+		cpy #0
+		beq wait_esp
+	.)
+
 	; Initialize UDP socket
 	ESP_SEND_CMD(set_udp_cmd)
 
 	rts
+
+	esp_status_cmd:
+		.byt 1, TOESP_MSG_GET_ESP_STATUS
 
 	set_udp_cmd:
 		.byt 2, TOESP_MSG_SET_SERVER_PROTOCOL, ESP_PROTOCOL_UDP
@@ -58,8 +75,9 @@ netplay_launch_screen_tick:
 	.)
 
 	state_routines_lsb:
-	.byt <select_server_query_settings, <select_server_draw, <select_server
 	.byt <the_purge
+	.byt <connecting_wifi_query, <connecting_wifi_wait
+	.byt <select_server_query_settings, <select_server_draw, <select_server
 	.byt <client_id_request_rnd, <client_id_set_low, <client_id_request_rnd, <client_id_set_hi
 	.byt <estimate_latency_1, <estimate_latency_2
 	.byt <connection_title, <connection_send_msg, <connection_wait_msg
@@ -68,8 +86,9 @@ netplay_launch_screen_tick:
 	.byt <no_contact, <bad_ping, <crazy_msg, <disconnected
 
 	state_routines_msb:
-	.byt >select_server_query_settings, >select_server_draw, >select_server
 	.byt >the_purge
+	.byt >connecting_wifi_query, >connecting_wifi_wait
+	.byt >select_server_query_settings, >select_server_draw, >select_server
 	.byt >client_id_request_rnd, >client_id_set_low, >client_id_request_rnd, >client_id_set_hi
 	.byt >estimate_latency_1, >estimate_latency_2
 	.byt >connection_title, >connection_send_msg, >connection_wait_msg
@@ -82,6 +101,75 @@ netplay_launch_screen_tick:
 	ERROR_STATE_BAD_PING = FIRST_ERROR_STATE + 1
 	ERROR_STATE_CRAZY_MESSAGE = FIRST_ERROR_STATE + 2
 	ERROR_STATE_DISCONNECTED = FIRST_ERROR_STATE + 3
+
+	connecting_wifi_query:
+	.(
+		; Show progress to the user
+		lda #<step_title
+		ldy #>step_title
+		jsr show_step_name
+
+		ESP_SEND_CMD(cmd_get_wifi_status)
+
+		inc netplay_launch_state
+		jmp back_on_b
+
+		step_title:
+			.byt $02, $02, $e8, $f4, $f3, $f3, $ea, $e8, $f9, $ee, $f3, $ec, $02, $fc, $ee, $eb, $ee, $02, $02, $02
+
+		cmd_get_wifi_status:
+			.byt 1, TOESP_MSG_GET_WIFI_STATUS
+	.)
+
+	connecting_wifi_wait:
+	.(
+		; Wait for wifi status info
+		lda #<netplay_launch_received_msg
+		sta tmpfield1
+		lda #>netplay_launch_received_msg
+		sta tmpfield2
+		jsr esp_get_msg
+
+		cpy #0
+		beq end
+
+			ldx netplay_launch_received_msg+2
+			cpx #wifi_status_action_msb-wifi_status_action_lsb
+			bcs crazy
+
+			lda wifi_status_action_lsb, x
+			sta tmpfield1
+			lda wifi_status_action_msb, x
+			sta tmpfield2
+			jmp (tmpfield1)
+
+			connected:
+				inc netplay_launch_state
+				jmp end
+
+			failed:
+				lda #ERROR_STATE_NO_CONTACT
+				sta netplay_launch_state
+				jmp end
+
+			crazy:
+				lda #ERROR_STATE_CRAZY_MESSAGE
+				sta netplay_launch_state
+				jmp end
+
+			in_progress:
+				dec netplay_launch_state
+				; Fallthrough
+
+		end:
+		jmp back_on_b
+
+		wifi_status_action_lsb:
+			;    IDLE_STATUS   NO_SSID_AVAIL SCAN_COMPLETED CONNECTED   CONNECT_FAILED CONNECTION_LOST DISCONNECTED
+			.byt <in_progress, <in_progress, <in_progress,  <connected, <failed,       <failed,        <failed
+		wifi_status_action_msb:
+			.byt >in_progress, >in_progress, >in_progress,  >connected, >failed,       >failed,        >failed
+	.)
 
 	select_server_query_settings:
 	.(
