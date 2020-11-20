@@ -726,11 +726,91 @@ netplay_launch_screen_tick:
 		lda netplay_launch_received_msg+2+STNP_START_GAME_FIELD_PLAYER_NUMBER
 		sta network_local_player_number
 
+		; Draw info on players connection
+		tax
+		lda buffers_you_are_addr_lsb, x
+		ldy buffers_you_are_addr_msb, x
+		jsr push_nt_buffer
+		jsr wait_next_frame
+
+		lda #<buffer_player_a_ping
+		ldy #>buffer_player_a_ping
+		jsr push_nt_buffer
+		lda #<buffer_player_b_ping
+		ldy #>buffer_player_b_ping
+		jsr push_nt_buffer
+		jsr wait_next_frame
+
+		lda netplay_launch_received_msg+2+STNP_START_GAME_FIELD_PLAYER_A_CONNECTION
+		lsr
+		lsr
+		lsr
+		lsr
+		tax
+		lda indicator_lsb, x
+		sta tmpfield3
+		lda indicator_msb, x
+		sta tmpfield4
+		lda #<header_player_a_indicator
+		sta tmpfield1
+		lda #>header_player_a_indicator
+		sta tmpfield2
+		jsr construct_nt_buffer
+
+		lda netplay_launch_received_msg+2+STNP_START_GAME_FIELD_PLAYER_A_CONNECTION
+		and #%00000011
+		tax
+		lda indicator_lsb, x
+		sta tmpfield3
+		lda indicator_msb, x
+		sta tmpfield4
+		lda #<header_player_b_indicator
+		sta tmpfield1
+		lda #>header_player_b_indicator
+		sta tmpfield2
+		jsr construct_nt_buffer
+
+		; Wait some frames
+		ldx #200
+		wait_one_frame:
+			jsr wait_next_frame
+			dex
+			bne wait_one_frame
+
 		; Start game
 		lda #GAME_STATE_INGAME
 		jsr change_global_game_state
 
 		;rts ; change_global_game_state does not return
+
+		buffer_you_are_player_a:
+			.byt $21, $c6, 16, $fe, $f4, $fa, $02, $e6, $f7, $ea, $02, $f5, $f1, $e6, $fe, $ea, $f7, $02, $e6
+		buffer_you_are_player_b:
+			.byt $21, $c6, 16, $fe, $f4, $fa, $02, $e6, $f7, $ea, $02, $f5, $f1, $e6, $fe, $ea, $f7, $02, $e7
+		buffers_you_are_addr_lsb:
+			.byt <buffer_you_are_player_a, <buffer_you_are_player_b
+		buffers_you_are_addr_msb:
+			.byt >buffer_you_are_player_a, >buffer_you_are_player_b
+
+		buffer_player_a_ping:
+			.byt $21, $e6, 15, $f5, $f1, $e6, $fe, $ea, $f7, $02, $e6, $02, $f5, $ee, $f3, $ec, $02, $02
+		buffer_player_b_ping:
+			.byt $22, $06, 15, $f5, $f1, $e6, $fe, $ea, $f7, $02, $e7, $02, $f5, $ee, $f3, $ec, $02, $02
+
+		header_player_a_indicator:
+			.byt $21, $f5, 9
+		header_player_b_indicator:
+			.byt $22, $15, 9
+		indicator_excellent:
+			.byt $ea, $fd, $e8, $ea, $f1, $f1, $ea, $f3, $f9
+		indicator_good:
+			.byt $ec, $f4, $f4, $e9, $02, $02, $02, $02, $02
+		indicator_poor:
+			.byt $f5, $f4, $f4, $f7, $02, $02, $02, $02, $02
+		indicator_lsb:
+			.byt <indicator_excellent, <indicator_good, <indicator_poor
+		indicator_msb:
+			.byt >indicator_excellent, >indicator_good, >indicator_poor
 	.)
 
 	no_contact:

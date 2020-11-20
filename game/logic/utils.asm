@@ -39,6 +39,24 @@ construct_palettes_nt_buffer:
 	rts
 .)
 
+; Copy a nametable buffer in the process list
+;  A - buffer's address LSB
+;  Y - buffer's address MSB
+;
+; Overwrites registers, tmpfield1, tmpfield2, tmpfield3, tmpfield4
+push_nt_buffer:
+.(
+	sta tmpfield1
+	clc
+	adc #3
+	sta tmpfield3
+	tya
+	sta tmpfield2
+	adc #0
+	sta tmpfield4
+	; Falltrhough to construct_nt_buffer
+.)
+
 ; Construct a nametable buffer from its header and payload
 ;  tmpfield1, tmpfield2 - header address
 ;  tmpfield3, tmpfield4 - payload address
