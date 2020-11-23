@@ -101,6 +101,29 @@ kiki_init:
 		.byt <player_b_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
 .)
 
+kiki_apply_air_friction:
+.(
+	; merge_to_player_velocity parameter names
+	merged_v_low = tmpfield1
+	merged_v_high = tmpfield3
+	merged_h_low = tmpfield2
+	merged_h_high = tmpfield4
+	merge_step = tmpfield5
+
+	; Apply air friction
+	lda player_a_velocity_v_low, x
+	sta merged_v_low
+	lda player_a_velocity_v, x
+	sta merged_v_high
+	lda #$00
+	sta merged_h_low
+	sta merged_h_high
+	lda #KIKI_AIR_FRICTION_STRENGTH
+	sta merge_step
+	jmp merge_to_player_velocity
+	;rts; useless, jump to a subroutine
+.)
+
 kiki_aerial_directional_influence:
 .(
 	; merge_to_player_velocity parameter names
@@ -119,7 +142,9 @@ kiki_aerial_directional_influence:
 	and #CONTROLLER_INPUT_RIGHT
 	bne go_right
 
-	jmp air_friction
+	air_friction:
+		jmp kiki_apply_air_friction
+		; No return, jump to a subroutine
 
 	go_left:
 		; Go to the left
@@ -134,18 +159,18 @@ kiki_aerial_directional_influence:
 		jsr signed_cmp
 		bpl end
 
-		lda player_a_velocity_v_low, x
-		sta merged_v_low
-		lda player_a_velocity_v, x
-		sta merged_v_high
-		lda #<-KIKI_AERIAL_SPEED
-		sta merged_h_low
-		lda #>-KIKI_AERIAL_SPEED
-		sta merged_h_high
-		lda #KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH
-		sta merge_step
-		jsr merge_to_player_velocity
-		jmp end
+			lda player_a_velocity_v_low, x
+			sta merged_v_low
+			lda player_a_velocity_v, x
+			sta merged_v_high
+			lda #<-KIKI_AERIAL_SPEED
+			sta merged_h_low
+			lda #>-KIKI_AERIAL_SPEED
+			sta merged_h_high
+			lda #KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH
+			sta merge_step
+			jmp merge_to_player_velocity
+			; No return, jump to a subroutine
 
 	go_right:
 		; Go to the right
@@ -160,31 +185,18 @@ kiki_aerial_directional_influence:
 		jsr signed_cmp
 		bpl end
 
-		lda player_a_velocity_v_low, x
-		sta merged_v_low
-		lda player_a_velocity_v, x
-		sta merged_v_high
-		lda #<KIKI_AERIAL_SPEED
-		sta merged_h_low
-		lda #>KIKI_AERIAL_SPEED
-		sta merged_h_high
-		lda #KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH
-		sta merge_step
-		jsr merge_to_player_velocity
-		jmp end
-
-	air_friction:
-		; Apply air friction
-		lda player_a_velocity_v_low, x
-		sta merged_v_low
-		lda player_a_velocity_v, x
-		sta merged_v_high
-		lda #$00
-		sta merged_h_low
-		sta merged_h_high
-		lda #KIKI_AIR_FRICTION_STRENGTH
-		sta merge_step
-		jsr merge_to_player_velocity
+			lda player_a_velocity_v_low, x
+			sta merged_v_low
+			lda player_a_velocity_v, x
+			sta merged_v_high
+			lda #<KIKI_AERIAL_SPEED
+			sta merged_h_low
+			lda #>KIKI_AERIAL_SPEED
+			sta merged_h_high
+			lda #KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH
+			sta merge_step
+			jmp merge_to_player_velocity
+			; No return, jump to a subroutine
 
 	end:
 	rts
@@ -2645,7 +2657,23 @@ kiki_tick_counter_guard:
 
 	KIKI_STATE_COUNTER_GUARD_TOTAL_DURATION = 24
 
-	jsr apply_player_gravity
+	lda player_a_grounded, x
+	beq air_friction
+		ground_friction:
+			lda #$00
+			sta tmpfield4
+			sta tmpfield3
+			sta tmpfield2
+			sta tmpfield1
+			lda #KIKI_GROUND_FRICTION_STRENGTH/3
+			sta tmpfield5
+			jsr merge_to_player_velocity
+			jmp end_friction
+		air_friction:
+			jsr kiki_apply_air_friction
+			jsr apply_player_gravity
+			; Fallthrough
+	end_friction:
 
 	inc player_a_state_clock, x
 
