@@ -29,6 +29,10 @@ init_config_screen:
 
 		; Call code exported to extra bank
 		SWITCH_BANK(#CONFIG_SCREEN_EXTRA_BANK_NUMBER)
+		lda #<c_stack_end
+		sta _sp0
+		lda #>c_stack_end
+		sta _sp1
 		jsr init_config_screen_extra
 
 		; Construct nt buffers for palettes (to avoid changing it mid-frame)

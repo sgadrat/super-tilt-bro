@@ -3,6 +3,7 @@
 set -e
 
 xa_bin="${XA_BIN:-xa}"
+cc_bin="${CC_BIN:-6502-gcc}"
 root_dir=`readlink -m $(dirname "$0")`
 log_file="${root_dir}/build.log"
 
@@ -41,7 +42,12 @@ rm -f "$log_file"
 # TODO do not hardcode character names here
 say "Clean ..."
 log "========="
+
 cmd rm -rf "${root_dir}"/game/data/characters/{sinbad,kiki,characters-index.asm} "${root_dir}"/game/data/tilesets/ruins.asm
+
+for f in `find . -name '*.build.asm'`; do
+	cmd rm "$f"
+done
 
 # Compile game mod
 log
@@ -49,12 +55,23 @@ say "Compile game mod ..."
 log "===================="
 PYTHONPATH="${root_dir}/tools:$PYTHONPATH" cmd "${root_dir}/tools/compile-mod.py" "${root_dir}/game-mod/mod.json" "${root_dir}"
 
+# Compile C files
+log
+say "Compile C files ..."
+log "==================="
+
+for c_source in `find . -name '*.c'`; do
+	asm_source="`dirname "$c_source"`/`basename "$c_source" .c`.built.asm"
+	"$cc_bin" $c_source -S -I game/ -O3 -fdelete-null-pointer-checks -fno-isolate-erroneous-paths-dereference -o "$asm_source"
+	tools/asm_converter.py "$asm_source"
+done
+
 # Assemble the game
 log
 say "Assemble the game ..."
 log "====================="
-cmd "$xa_bin" tilt.asm -C -o 'Super_Tilt_Bro_(E).nes'
-exe "$xa_bin" -DSERVER_BYTECODE -DNO_INES_HEADER tilt.asm -C -o 'server_bytecode.nes'
+cmd "$xa_bin" tilt.asm -C -o 'Super_Tilt_Bro_(E).nes' -P /tmp/rainbow.lst
+exe "$xa_bin" -DSERVER_BYTECODE -DNO_INES_HEADER tilt.asm -C -o 'server_bytecode.nes' -P /tmp/bytecode.lst
 exe "$xa_bin" -DNETWORK_AI tilt.asm -C -o 'tilt_ai_(E).nes'
 exe "$xa_bin" -DNO_NETWORK tilt.asm -C -o 'tilt_no_network_(E).nes'
 exe "$xa_bin" -DMAPPER_RAINBOW512 tilt.asm -C -o 'tilt_rainbow512_(E).nes'

@@ -3,6 +3,7 @@
 *.nes.deb
 *.nl
 *.bin
+*.built.asm
 build.log
 build.log.err
 game/data/characters/characters-index.asm

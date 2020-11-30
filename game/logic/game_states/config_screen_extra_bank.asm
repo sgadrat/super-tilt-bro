@@ -2,51 +2,7 @@ CONFIG_SCREEN_EXTRA_BANK_NUMBER = CURRENT_BANK_NUMBER
 
 #define CONFIG_SCREEN_NB_OPTIONS 3
 
-init_config_screen_extra:
-.(
-	.(
-		; Place sprites
-		ldx #0
-		sprite_loop:
-		lda sprites, x
-		sta oam_mirror, x
-		inx
-		cpx #48
-		bne sprite_loop
-
-		; Init local options values from global state
-		lda audio_music_enabled
-		sta config_music_enabled
-		lda #0
-		sta config_selected_option
-
-		; Adapt to configuration's state
-		jsr config_update_screen
-
-		; Process the batch of nt buffers immediately (while the PPU is disabled)
-		jsr process_nt_buffers
-		jsr reset_nt_buffers
-
-		; Initialize common menus effects
-		jsr re_init_menu
-
-		rts
-
-		sprites:
-		.byt $4f, TILE_ICON_MUSIC_1, $00, $50
-		.byt $4f, TILE_ICON_MUSIC_2, $00, $58
-		.byt $57, TILE_ICON_MUSIC_3, $00, $50
-		.byt $57, TILE_ICON_MUSIC_4, $00, $58
-		.byt $6f, TILE_ICON_STOCKS_1, $00, $50
-		.byt $6f, TILE_ICON_STOCKS_2, $00, $58
-		.byt $77, TILE_ICON_STOCKS_3, $00, $50
-		.byt $77, TILE_ICON_STOCKS_4, $00, $58
-		.byt $8f, TILE_ICON_PLAYER_1, $00, $50
-		.byt $8f, TILE_ICON_PLAYER_2, $00, $58
-		.byt $97, TILE_ICON_PLAYER_3, $00, $50
-		.byt $97, TILE_ICON_PLAYER_4, $00, $58
-	.)
-.)
+#include "game/logic/game_states/config_screen_extra_bank.built.asm"
 
 config_screen_tick_extra:
 .(

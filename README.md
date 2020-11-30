@@ -6,13 +6,22 @@ Last tagged build is [playable here](https://sgadrat.itch.io/super-tilt-bro).
 
 ## Building
 
-You will need the XA cross assembler for 6502. It may be found on Archlinux in the package "community/xa", on ubuntu in the package "xa65"  and for others you may find information [here](http://www.floodgap.com/retrotech/xa/).
+Build dependencies
+------------------
 
-You will also need python >= 3.2 and the pillow library.
+- XA cross assembler for 6502.
+  - It may be found on Archlinux in the package "community/xa", on ubuntu in the package "xa65"  and for others you may find information [here](http://www.floodgap.com/retrotech/xa/).
+- 6502-gcc
+  - [Build it from](https://github.com/itszor/gcc-6502-bits)
+- python >= 3.2
+- pillow library for python
+
+Building
+--------
 
 From the source repository run
 ```
-./build.sh
+XA_BIN=/path/to/xa CC_BIN=/path/to/6502-gcc ./build.sh
 ```
 
 It will generate the game as `Super_Tilt_Bro_(E).nes`. If any problem occurs you may find clues in the `build.log` file.
