@@ -55,7 +55,7 @@ def convert_gcc_to_xa(source):
 
 			# Print resulting line
 			res.append(line)
-	res.append('#include "game/cstb/lib1funcs.asm"')
+	res.append('#include "game/cstb/compiler_routines.asm"')
 	res.append('.)')
 
 	# Second pass, resolve references to unnamed labels

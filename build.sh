@@ -7,6 +7,10 @@ cc_bin="${CC_BIN:-6502-gcc}"
 root_dir=`readlink -m $(dirname "$0")`
 log_file="${root_dir}/build.log"
 
+c_optim="-O3"
+c_compat="-fdelete-null-pointer-checks -fno-isolate-erroneous-paths-dereference" # We may want to dereference address zero at times
+c_flags="$c_optim $c_compat"
+
 # Print a message in console and log file
 say() {
 	echo "$@"
@@ -62,7 +66,7 @@ log "==================="
 
 for c_source in `find . -name '*.c'`; do
 	asm_source="`dirname "$c_source"`/`basename "$c_source" .c`.built.asm"
-	"$cc_bin" $c_source -S -I game/ -O3 -fdelete-null-pointer-checks -fno-isolate-erroneous-paths-dereference -o "$asm_source"
+	"$cc_bin" $c_source -S -I game/ $c_flags -o "$asm_source"
 	tools/asm_converter.py "$asm_source"
 done
 
