@@ -27,12 +27,14 @@ init_config_screen:
 		sta tmpfield2
 		jsr draw_zipped_nametable
 
-		; Call code exported to extra bank
-		SWITCH_BANK(#CONFIG_SCREEN_EXTRA_BANK_NUMBER)
+		; Initialize C stack
 		lda #<c_stack_end
 		sta _sp0
 		lda #>c_stack_end
 		sta _sp1
+
+		; Call code exported to extra bank
+		SWITCH_BANK(#CONFIG_SCREEN_EXTRA_BANK_NUMBER)
 		jsr init_config_screen_extra
 
 		; Construct nt buffers for palettes (to avoid changing it mid-frame)
