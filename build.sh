@@ -4,6 +4,8 @@ set -e
 
 xa_bin="${XA_BIN:-xa}"
 cc_bin="${CC_BIN:-6502-gcc}"
+perf_listings="${XA_LST:-0}"
+
 root_dir=`readlink -m $(dirname "$0")`
 log_file="${root_dir}/build.log"
 
@@ -34,6 +36,20 @@ exe() {
 	echo "+ $@" >> "$log_file.err"
 	$@ >> "$log_file.err" 2>&1
 	rm "$log_file.err"
+}
+
+# Assemble the game with specific options
+asm() {
+	local log_dest="$1"
+	local rom_name="$2"
+	local asm_flags="$3"
+
+	local listing_opts=""
+	if [ $perf_listings -ne 0 ]; then
+		listing_opts="-P /tmp/$rom_name.lst"
+	fi
+
+	"$log_dest" "$xa_bin" $asm_flags tilt.asm -C -o "$rom_name.nes" $listing_opts
 }
 
 #TODO check dependencies (python >= 3.2, xa, pillow)
@@ -74,13 +90,13 @@ done
 log
 say "Assemble the game ..."
 log "====================="
-cmd "$xa_bin" tilt.asm -C -o 'Super_Tilt_Bro_(E).nes' -P /tmp/rainbow.lst
-exe "$xa_bin" -DSERVER_BYTECODE -DNO_INES_HEADER tilt.asm -C -o 'server_bytecode.nes' -P /tmp/bytecode.lst
-exe "$xa_bin" -DNETWORK_AI tilt.asm -C -o 'tilt_ai_(E).nes'
-exe "$xa_bin" -DNO_NETWORK tilt.asm -C -o 'tilt_no_network_(E).nes'
-exe "$xa_bin" -DMAPPER_RAINBOW512 tilt.asm -C -o 'tilt_rainbow512_(E).nes'
-exe "$xa_bin" -DNO_NETWORK -DMAPPER_UNROM512 tilt.asm -C -o 'tilt_no_network_unrom512_(E).nes'
-exe "$xa_bin" -DNO_NETWORK -DMAPPER_UNROM tilt.asm -C -o 'tilt_no_network_unrom_(E).nes'
+asm cmd 'Super_Tilt_Bro_(E)'           ''
+asm exe 'server_bytecode'              '-DSERVER_BYTECODE -DNO_INES_HEADER'
+asm exe 'tilt_ai_(E)'                  '-DNETWORK_AI'
+asm exe 'tilt_no_network_(E)'          '-DNO_NETWORK'
+asm exe 'tilt_rainbow512_(E)'          '-DMAPPER_RAINBOW512'
+asm exe 'tilt_no_network_unrom512_(E)' '-DNO_NETWORK -DMAPPER_UNROM512'
+asm exe 'tilt_no_network_unrom_(E)'    '-DNO_NETWORK -DMAPPER_UNROM'
 
 say
 say "======================="
