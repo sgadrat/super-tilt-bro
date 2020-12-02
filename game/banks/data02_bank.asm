@@ -15,6 +15,10 @@ bank_data02_stage_gem_begin:
 #include "game/data/stages/gem/gem.asm"
 bank_data02_stage_gem_end:
 
+bank_data02_stage_miniatures_begin:
+#include "game/data/tilesets/stage_miniatures.asm"
+bank_data02_stage_miniatures_end:
+
 bank_data02_end:
 
 #echo
@@ -29,6 +33,9 @@ bank_data02_end:
 #echo
 #echo DATA02-bank Gem size:
 #print bank_data02_stage_gem_end-bank_data02_stage_gem_begin
+#echo
+#echo DATA02-bank Gem size:
+#print bank_data02_stage_miniatures_end-bank_data02_stage_miniatures_begin
 #echo
 #echo DATA02-bank free space:
 #print $c000-*

@@ -9,9 +9,10 @@ perf_listings="${XA_LST:-0}"
 root_dir=`readlink -m $(dirname "$0")`
 log_file="${root_dir}/build.log"
 
-c_optim="-O3"
+c_optim="-Os"
+c_warnings="-Wall -Wextra -Werror"
 c_compat="-fdelete-null-pointer-checks -fno-isolate-erroneous-paths-dereference" # We may want to dereference address zero at times
-c_flags="$c_optim $c_compat"
+c_flags="$c_optim $c_warnings $c_compat"
 
 # Print a message in console and log file
 say() {
@@ -79,6 +80,8 @@ PYTHONPATH="${root_dir}/tools:$PYTHONPATH" cmd "${root_dir}/tools/compile-mod.py
 log
 say "Compile C files ..."
 log "==================="
+
+tools/c_constants_files.py
 
 for c_source in `find . -name '*.c'`; do
 	asm_source="`dirname "$c_source"`/`basename "$c_source" .c`.built.asm"

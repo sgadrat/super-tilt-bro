@@ -21,6 +21,17 @@ bank_data01_tileset_logo_end:
 bank_data01_config_screen_extra_begin:
 #include "game/logic/game_states/config_screen_extra_bank.asm"
 bank_data01_config_screen_extra_end:
+bank_data01_char_select_screen_extra_data_begin:
+#include "game/data/menu_char_select/screen.asm"
+#include "game/data/menu_char_select/tilesets.asm"
+#include "game/data/menu_char_select/anims.asm"
+bank_data01_char_select_screen_extra_data_end:
+bank_data01_char_select_screen_extra_code_begin:
+#include "game/logic/game_states/character_selection_screen/character_selection_screen_extra_code.asm"
+bank_data01_char_select_screen_extra_code_end:
+bank_data01_gameover_data_begin:
+#include "game/data/menu_gameover/tilesets.asm"
+bank_data01_gameover_data_end:
 bank_data01_end:
 
 #echo
@@ -44,6 +55,15 @@ bank_data01_end:
 #echo
 #echo DATA01-bank Configuration screen extras:
 #print bank_data01_config_screen_extra_end-bank_data01_config_screen_extra_begin
+#echo
+#echo DATA01-bank Character selection screen extra data:
+#print bank_data01_char_select_screen_extra_data_end-bank_data01_char_select_screen_extra_data_begin
+#echo
+#echo DATA01-bank Character selection screen extra code:
+#print bank_data01_char_select_screen_extra_code_end-bank_data01_char_select_screen_extra_code_begin
+#echo
+#echo DATA01-bank Gameover screen data:
+#print bank_data01_gameover_data_end-bank_data01_gameover_data_begin
 #echo
 #echo DATA01-bank free space:
 #print $c000-*

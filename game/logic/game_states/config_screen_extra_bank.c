@@ -20,8 +20,8 @@ static uint8_t const TILE_ICON_PLAYER_4 = 0xf3;
 
 static uint8_t const CONFIG_SCREEN_NB_OPTIONS = 3;
 static uint8_t const OPTION_MUSIC = 0;
-static uint8_t const OPTION_STOCKS = 1;
-static uint8_t const OPTION_AI = 2;
+//static uint8_t const OPTION_STOCKS = 1;
+//static uint8_t const OPTION_AI = 2;
 
 static uint8_t const sprites[] = {
 		0x4f, TILE_ICON_MUSIC_1, 0x00, 0x50,

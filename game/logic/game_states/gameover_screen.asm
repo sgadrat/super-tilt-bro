@@ -2,7 +2,7 @@
 
 init_gameover_screen:
 .(
-	; set tileset
+	; Set background tileset
 	.(
 		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tiles
 		;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tiles
@@ -22,6 +22,31 @@ init_gameover_screen:
 		lda #$10
 		sta PPUADDR
 		lda #$00
+		sta PPUADDR
+
+		jsr cpu_to_ppu_copy_tiles
+	.)
+
+	; Set sprites tileset
+	.(
+		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tiles
+		;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tiles
+		tiles_count = tmpfield3 ; Not movable, used by cpu_to_ppu_copy_tiles
+
+		lda #<(tileset_gameover_sprites+1)
+		sta tileset_addr
+		lda #>(tileset_gameover_sprites+1)
+		sta tileset_addr+1
+
+		SWITCH_BANK(#TILESET_GAMEOVER_BANK_NUMBER)
+
+		lda tileset_gameover_sprites
+		sta tiles_count
+
+		lda PPUSTATUS
+		lda #>CHARACTERS_END_TILES_OFFSET
+		sta PPUADDR
+		lda #<CHARACTERS_END_TILES_OFFSET
 		sta PPUADDR
 
 		jsr cpu_to_ppu_copy_tiles

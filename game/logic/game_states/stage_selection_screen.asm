@@ -1,5 +1,34 @@
 init_stage_selection_screen:
 .(
+	; Copy menus tileset in CHR-RAM
+	jsr set_menu_chr
+
+	; Copy stages miniatures in CHR-RAM
+	.(
+		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tiles
+		;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tiles
+		tiles_count = tmpfield3 ; Not movable, used by cpu_to_ppu_copy_tiles
+
+		SWITCH_BANK(#TILESET_STAGE_MINIATURES_BANK_NUMBER)
+
+		lda #<(tileset_stage_miniatures_tiles)
+		sta tileset_addr
+		lda #>(tileset_stage_miniatures_tiles)
+		sta tileset_addr+1
+
+		lda tileset_stage_miniatures
+		sta tiles_count
+
+		PPU_TILES_ADDR = $0000
+		lda PPUSTATUS
+		lda #>PPU_TILES_ADDR
+		sta PPUADDR
+		lda #<PPU_TILES_ADDR
+		sta PPUADDR
+
+		jsr cpu_to_ppu_copy_tiles
+	.)
+
 	; This state only use the generic data bank
 	SWITCH_BANK(#DATA_BANK_NUMBER)
 

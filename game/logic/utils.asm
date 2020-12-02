@@ -139,7 +139,6 @@ clear_bg_bot_left:
 ; Change active PRG-BANK
 ;  register A - number of the PRG-BANK to activate
 ; TODO - handle CHR-BANK switching
-; TODO - handle bus conflict (which can be turned off at compile time to avoid to store the big table)
 ; See macro with the same name
 switch_bank:
 .(

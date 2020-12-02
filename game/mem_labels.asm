@@ -1,4 +1,68 @@
 ;
+; C code labels
+;
+
+c_stack_end = $07ff
+_sp0 = $00
+_sp1 = $01
+_fp0 = $02
+_fp1 = $03
+_r0 = $04
+_r1 = $05
+_r2 = $06
+_r3 = $07
+_r4 = $08
+_r5 = $09
+_r6 = $0a
+_r7 = $0b
+_s0 = $0c
+_s1 = $0d
+_s2 = $0e
+_s3 = $0f
+_s4 = $10
+_s5 = $11
+_s6 = $12
+_s7 = $13
+_e0 = $14
+_e1 = $15
+_e2 = $16
+_e3 = $17
+_e4 = $18
+_e5 = $19
+_e6 = $1a
+_e7 = $1b
+_e8 = $1c
+_e9 = $1d
+_e10 = $1e
+_e11 = $1f
+_e12 = $20
+_e13 = $21
+_e14 = $22
+_e15 = $23
+_e16 = $24
+_e17 = $25
+_e18 = $26
+_e19 = $27
+_e20 = $28
+_e21 = $29
+_e22 = $2a
+_e23 = $2b
+_e24 = $2c
+_e25 = $2d
+_e26 = $2e
+_e27 = $2f
+_e28 = $30
+_e29 = $31
+_e30 = $32
+_e31 = $33
+_tmp0 = $34
+_tmp1 = $35
+_sa = $36
+_sx = $37
+_sy = $38
+last_c_label = _sy
+
+;
 ; INGAME labels
 ;
 
@@ -85,6 +149,7 @@ player_b_stocks = $4c
 player_a_gravity = $4d
 player_b_gravity = $4e
 
+;TODO put is with other registers, it is used by multiple states (and animation code)
 player_number = $4f ; Extra register to hold a player number, used when register X is inconvenient
 
 ai_current_action_lsb = $50
@@ -144,6 +209,7 @@ death_particles_player_b_counter = $7e
 
 slow_down_counter = $7f
 
+players_palettes = $0580 ; $0580 to $059f - 4 nametable buffers (8 bytes each) containing avatars palettes in normal and alternate mode
 player_a_animation = $05a0 ; $05a0 to $05ab - player a's animation state
 player_b_animation = $05ac ; $05ac to $05b7 - player b's animation state
 player_a_out_of_screen_indicator = $05b8 ; $05b8 to $05c3 - player a's out of screen animation state
@@ -234,22 +300,20 @@ config_music_enabled = last_c_label+2
 ; CHARACTER_SELECTION labels
 ;
 
-character_selection_player_a_selected_option = $00
-character_selection_player_b_selected_option = $01
-character_selection_player_a_async_job_prg_tiles = $02
-character_selection_player_b_async_job_prg_tiles = $03
-character_selection_player_a_async_job_prg_tiles_msb = $04
-character_selection_player_b_async_job_prg_tiles_msb = $05
-character_selection_player_a_async_job_ppu_tiles = $06
-character_selection_player_b_async_job_ppu_tiles = $07
-character_selection_player_a_async_job_ppu_tiles_msb = $08
-character_selection_player_b_async_job_ppu_tiles_msb = $09
-character_selection_player_a_async_job_ppu_write_count = $0a
-character_selection_player_b_async_job_ppu_write_count = $0b
-character_selection_player_a_async_job_active = $0c
-character_selection_player_b_async_job_active = $0d
-character_selection_player_a_animation = $05a0 ; $05a0 to $05ab - player a's animation state
-character_selection_player_b_animation = $05ac ; $05ac to $05b7 - player b's animation state
+character_selection_player_a_bg_task = last_c_label+1
+character_selection_player_b_bg_task = character_selection_player_a_bg_task+7
+character_selection_player_a_ready = character_selection_player_b_bg_task+7
+character_selection_player_b_ready = character_selection_player_a_ready+1
+character_selection_control_scheme = character_selection_player_b_ready+1
+
+character_selection_mem_buffer = $0580 ; $0580 to $05bf (4 tiles of 16 bytes each)
+character_selection_player_a_cursor_anim = $05c0 ; $05c0 to $05cb
+character_selection_player_b_cursor_anim = $05cc ; $05cc to $05d7
+character_selection_player_a_char_anim = $05d8 ; $05d8 to $05e3
+character_selection_player_b_char_anim = $05e4 ; $05e4 to $05ef
+;$05f0-$05ff unused
+character_selection_player_a_builder_anim = $0680 ; $0680 to $068b
+character_selection_player_b_builder_anim = $068c ; $068c to $0697
 
 ;
 ; NETPLAY_LAUNCH labels
@@ -436,8 +500,7 @@ particle_blocks = $0500
 particle_block_0 = $0500
 particle_block_1 = $0520
 previous_global_game_state = $540
-players_palettes = $0580 ; $0580 to $059f - 4 nametable buffers (8 bytes each) containing avatars palettes in normal and alternate mode
-;$05a0 to $05cf used by in-game state
+;$0580 to $05ff may be used by game states
 ;$06xx may be used by audio engine, see "Audio engine labels"
 virtual_frame_cnt = $0700
 skip_frames_to_50hz = $0701
@@ -445,67 +508,3 @@ network_last_known_remote_input = $07bf
 network_player_local_btns_history = $07c0 ; one byte per frame, circular buffers, 32 entries
 network_player_remote_btns_history = $07e0 ;
 netplay_launch_received_msg = $0702
-
-;
-; C code labels
-;
-
-c_stack_end = $07ff
-_sp0 = $00
-_sp1 = $01
-_fp0 = $02
-_fp1 = $03
-_r0 = $04
-_r1 = $05
-_r2 = $06
-_r3 = $07
-_r4 = $08
-_r5 = $09
-_r6 = $0a
-_r7 = $0b
-_s0 = $0c
-_s1 = $0d
-_s2 = $0e
-_s3 = $0f
-_s4 = $10
-_s5 = $11
-_s6 = $12
-_s7 = $13
-_e0 = $14
-_e1 = $15
-_e2 = $16
-_e3 = $17
-_e4 = $18
-_e5 = $19
-_e6 = $1a
-_e7 = $1b
-_e8 = $1c
-_e9 = $1d
-_e10 = $1e
-_e11 = $1f
-_e12 = $20
-_e13 = $21
-_e14 = $22
-_e15 = $23
-_e16 = $24
-_e17 = $25
-_e18 = $26
-_e19 = $27
-_e20 = $28
-_e21 = $29
-_e22 = $2a
-_e23 = $2b
-_e24 = $2c
-_e25 = $2d
-_e26 = $2e
-_e27 = $2f
-_e28 = $30
-_e29 = $31
-_e30 = $32
-_e31 = $33
-_tmp0 = $34
-_tmp1 = $35
-_sa = $36
-_sx = $37
-_sy = $38
-last_c_label = _sy

@@ -4,7 +4,15 @@ import re
 from stblib.utils import asmint
 
 # Build memory layout header
-#TODO
+with open('game/mem_labels.asm', 'r') as source_file:
+	with open('game/cstb/mem_labels.h', 'w') as dest_file:
+		dest_file.write('#include <stdint.h>\n\n')
+		for line in source_file:
+			processed = line.rstrip('\n')
+			processed = re.sub(';', '//', processed)
+			processed = re.sub(r'^([a-zA-Z0-9_]+) = \$([0-9a-f]+)', r'static uint8_t* const \1 = (uint8_t* const)0x\2;', processed)
+			processed = re.sub(r'^([a-zA-Z0-9_]+) = (.*)', r'static uint8_t* const \1 = \2;', processed)
+			dest_file.write(processed + '\n')
 
 # Build project wide constants header
 def base_prefix(asm_prefix):

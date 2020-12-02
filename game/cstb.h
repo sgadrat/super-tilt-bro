@@ -1,3 +1,5 @@
+#include "cstb/nes_labels.h"
 #include "cstb/mem_labels.h"
 #include "cstb/constants.h"
 #include "cstb/asm_routines.h"
+#include "cstb/utils.h"

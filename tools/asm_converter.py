@@ -11,7 +11,9 @@ def convert_gcc_to_xa(source):
 
 	def mangle_labels(line):
 		line = re.sub('L@([0-9]+)', r'clbl_\1', line)
-		line = re.sub(r'([0-9a-zA-Z_]+)\$([0-9]+)', r'\1_n_\2', line)
+		line = re.sub('LC@([0-9]+)', r'clbl_c_\1', line)
+		while re.search(r'([0-9a-zA-Z_]+)\$([a-z0-9_]+)', line) is not None:
+			line = re.sub(r'([0-9a-zA-Z_]+)\$([a-z0-9_]+)', r'\1_n_\2', line)
 		return line
 
 	# First pass: read header, do most transforms, name unnamed labels
