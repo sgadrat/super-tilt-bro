@@ -219,6 +219,7 @@ def ora_to_character(image_file, char_name):
 
 	# Extract illustrations
 	ensure(illustrations_stack is not None, 'no illustrations stack found')
+	illustrations_found = []
 	for illustration_layer in illustrations_stack['childs']:
 		if illustration_layer['name'] == 'illustrations.small':
 			ensure(illustration_layer['raster'].size[0] == 16 and illustration_layer['raster'].size[1] == 16, 'unnexpected size of {}x{} for small illustration'.format(illustration_layer['raster'].size[0], illustration_layer['raster'].size[1]))
@@ -228,9 +229,14 @@ def ora_to_character(image_file, char_name):
 			ensure(illustration_layer['raster'].size[0] == 8 and illustration_layer['raster'].size[1] == 8, 'unnexpected size of {}x{} for small illustration'.format(illustration_layer['raster'].size[0], illustration_layer['raster'].size[1]))
 			illustration_id = 'TOKEN'
 			tileset = character.illustration_token
+		elif illustration_layer['name'] == 'illustrations.large':
+			ensure(illustration_layer['raster'].size[0] == 48 and illustration_layer['raster'].size[1] == 64, 'unnexpected size of {}x{} for large illustration'.format(illustration_layer['raster'].size[0], illustration_layer['raster'].size[1]))
+			illustration_id = 'LARGE'
+			tileset = character.illustration_large
 		else:
 			ensure(False, 'uknown illustration "{}"'.format(illustration_layer['name']))
 
+		illustrations_found.append(illustration_layer['name'])
 		tileset.tiles = []
 		tileset.tilenames = []
 		for subraster in tile_subrasters(illustration_layer):
@@ -242,6 +248,12 @@ def ora_to_character(image_file, char_name):
 			)
 			tileset.tiles.append(tile)
 			tileset.tilenames.append('{}_ILLUSTRATION_{}_{}'.format(character.name.upper(), illustration_id, len(tileset.tiles)))
+
+	expected_illustrations = ['illustrations.large', 'illustrations.small', 'illustrations.token']
+	ensure(
+		sorted(illustrations_found) == expected_illustrations,
+		'missing illustrations "{}"'.format(', '.join([x for x in expected_illustrations if x not in illustrations_found]))
+	)
 
 	# Place extra sprites in tileset
 	if extra_sprites_stack is not None:
@@ -433,6 +445,7 @@ orig_character.animations = character.animations
 orig_character.victory_animation = character.victory_animation
 orig_character.defeat_animation = character.defeat_animation
 orig_character.menu_select_animation = character.menu_select_animation
+orig_character.illustration_large = character.illustration_large
 orig_character.illustration_small = character.illustration_small
 orig_character.illustration_token = character.illustration_token
 orig_character.check()

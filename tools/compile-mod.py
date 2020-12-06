@@ -103,22 +103,32 @@ def generate_character(char, game_dir):
 		index_expression = '(*-{})/16'.format(illustrations_label_name)
 
 		# Token illustration
+		chr_illustrations_file.write(';\n; Token\n;\n\n')
 		ensure(len(char.illustration_token.tilenames) == 1)
 		ensure(len(char.illustration_token.tiles) == len(char.illustration_token.tilenames))
 		chr_illustrations_file.write('{}\n\n'.format(stblib.asmformat.tiles.tile_to_asm(char.illustration_token.tiles[0])))
 
 		# Small illustration
+		chr_illustrations_file.write(';\n; Small\n;\n\n')
 		ensure(len(char.illustration_small.tilenames) == 4)
 		ensure(len(char.illustration_small.tiles) == len(char.illustration_small.tilenames))
 		for tile_index in range(len(char.illustration_small.tilenames)):
 			tile = char.illustration_small.tiles[tile_index]
 			chr_illustrations_file.write('{}\n\n'.format(stblib.asmformat.tiles.tile_to_asm(tile)))
 
+		# Large illustration
+		chr_illustrations_file.write(';\n; Large\n;\n\n')
+		ensure(len(char.illustration_large.tilenames) == 48)
+		ensure(len(char.illustration_large.tiles) == len(char.illustration_large.tilenames))
+		for tile_index in range(len(char.illustration_large.tilenames)):
+			tile = char.illustration_large.tiles[tile_index]
+			chr_illustrations_file.write('{}\n\n'.format(stblib.asmformat.tiles.tile_to_asm(tile)))
+
 		# Illustration footer
 		chr_illustrations_file.write(textwrap.dedent("""\
 			{name_upper}_ILLUSTRATION_TILES_NUMBER = {index_expression}
 			#print {name_upper}_ILLUSTRATION_TILES_NUMBER
-			#if {name_upper}_ILLUSTRATION_TILES_NUMBER <> 5
+			#if {name_upper}_ILLUSTRATION_TILES_NUMBER <> 53
 			#error bad count of illustration tiles for character {name_upper}
 			#endif
 		""".format_map(locals())))

@@ -176,6 +176,12 @@ def _jsonify_character(character, base_path):
 	del character['tileset']['tiles']
 	character['tileset']['src'] = '{}/tileset.gif'.format(character_path_rel)
 
+	illustration_large_src = '{}/large.gif'.format(illustrations_path)
+	illustration_large_img = tileset_to_img(character['illustration_large']['tiles'], 6, 8)
+	illustration_large_img.save(illustration_large_src)
+	del character['illustration_large']['tiles']
+	character['illustration_large']['src'] = '{}/large.gif'.format(illustrations_path_rel)
+
 	illustration_small_src = '{}/small.gif'.format(illustrations_path)
 	illustration_small_img = tileset_to_img(character['illustration_small']['tiles'], 2, 2)
 	illustration_small_img.save(illustration_small_src)

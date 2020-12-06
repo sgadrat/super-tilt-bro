@@ -165,7 +165,7 @@ class Ai:
 		ensure(isinstance(self.sourcecode, str))
 
 class Character:
-	def __init__(self, name='', weapon_name='', sourcecode='', tileset=None, victory_animation=None, defeat_animation=None, menu_select_animation=None, animations=None, color_swaps=None, states=None, illustration_small=None, illustration_token=None, ai=None):
+	def __init__(self, name='', weapon_name='', sourcecode='', tileset=None, victory_animation=None, defeat_animation=None, menu_select_animation=None, animations=None, color_swaps=None, states=None, illustration_large=None, illustration_small=None, illustration_token=None, ai=None):
 		self.name = name
 		self.weapon_name = weapon_name
 		self.sourcecode = sourcecode
@@ -176,6 +176,7 @@ class Character:
 		self.animations = animations if animations is not None else []
 		self.color_swaps = color_swaps if color_swaps is not None else Colorswaps()
 		self.states = states if states is not None else []
+		self.illustration_large = illustration_large if illustration_large is not None else stblib.tiles.Tileset()
 		self.illustration_small = illustration_small if illustration_small is not None else stblib.tiles.Tileset()
 		self.illustration_token = illustration_token if illustration_token is not None else stblib.tiles.Tileset()
 		self.ai = ai if ai is not None else Ai()
@@ -221,13 +222,17 @@ class Character:
 			ensure(isinstance(state, State))
 			state.check()
 
+		ensure(isinstance(self.illustration_large, stblib.tiles.Tileset))
+		self.illustration_large.check()
+		ensure(len(self.illustration_large.tiles) == 48, "bad number of tiles in large illustration {} instead of 48".format(len(self.illustration_large.tiles)))
+
 		ensure(isinstance(self.illustration_small, stblib.tiles.Tileset))
 		self.illustration_small.check()
-		ensure(len(self.illustration_small.tiles) == 4)
+		ensure(len(self.illustration_small.tiles) == 4, "bad number of tiles in small illustration {} instead of 4".format(len(self.illustration_small.tiles)))
 
 		ensure(isinstance(self.illustration_token, stblib.tiles.Tileset))
 		self.illustration_token.check()
-		ensure(len(self.illustration_token.tiles) == 1)
+		ensure(len(self.illustration_token.tiles) == 1, "bad number of tiles in token illustration {} instead of 1".format(len(self.illustration_token.tiles)))
 
 		ensure(isinstance(self.ai, Ai))
 		self.ai.check()

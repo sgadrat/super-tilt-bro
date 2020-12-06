@@ -91,6 +91,7 @@ def parse_character(source):
 		animations = _import_list(source['animations']),
 		color_swaps = import_from_dict(source['color_swaps']),
 		states = _import_list(source['states']),
+		illustration_large = import_from_dict(source['illustration_large']),
 		illustration_small = import_from_dict(source['illustration_small']),
 		illustration_token = import_from_dict(source['illustration_token']),
 		ai = import_from_dict(source['ai'])
