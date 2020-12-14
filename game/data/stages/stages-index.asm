@@ -28,6 +28,12 @@ RAW_VECTOR(stage_pit_data) ; Pit
 RAW_VECTOR(stage_shelf_data) ; Shelf
 RAW_VECTOR(stage_gem_data) ; Gem
 
+stages_illustration:
+RAW_VECTOR(stage_plateau_illustration) ; Plateau
+RAW_VECTOR(stage_pit_illustration) ; Pit
+RAW_VECTOR(stage_shelf_illustration) ; Shelf
+RAW_VECTOR(stage_gem_illustration) ; Gem
+
 stages_bank:
 .byt STAGE_PLATEAU_BANK_NUMBER ; Plateau
 .byt STAGE_PIT_BANK_NUMBER ; Pit

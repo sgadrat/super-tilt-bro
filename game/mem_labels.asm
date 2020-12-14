@@ -305,6 +305,7 @@ character_selection_player_b_bg_task = character_selection_player_a_bg_task+7
 character_selection_player_a_ready = character_selection_player_b_bg_task+7
 character_selection_player_b_ready = character_selection_player_a_ready+1
 character_selection_control_scheme = character_selection_player_b_ready+1
+character_selection_fix_screen_bg_task = character_selection_control_scheme+1
 
 character_selection_mem_buffer = $0580 ; $0580 to $05bf (4 tiles of 16 bytes each)
 character_selection_player_a_cursor_anim = $05c0 ; $05c0 to $05cb
@@ -314,6 +315,15 @@ character_selection_player_b_char_anim = $05e4 ; $05e4 to $05ef
 ;$05f0-$05ff unused
 character_selection_player_a_builder_anim = $0680 ; $0680 to $068b
 character_selection_player_b_builder_anim = $068c ; $068c to $0697
+
+;
+; STAGE_SELECTION labels
+;
+
+stage_selection_cursor_anim = last_c_label+1
+stage_selection_bg_task = stage_selection_cursor_anim+12
+
+stage_selection_mem_buffer = $0580 ; $0580 to $05bf (4*16 bytes)
 
 ;
 ; NETPLAY_LAUNCH labels

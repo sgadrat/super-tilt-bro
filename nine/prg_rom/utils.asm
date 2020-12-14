@@ -217,38 +217,42 @@ rts
 ; Overwrites register X and tmpfield1
 process_nt_buffers:
 .(
-ldx #$00
-handle_nt_buffer:
+	lda PPUSTATUS ; reset PPUADDR state
 
-lda nametable_buffers, x ; Check continuation byte
-beq end_buffers          ;
-inx                      ;
+	ldx #$00
+	handle_nt_buffer:
 
-lda PPUSTATUS            ; Set PPU destination address
-lda nametable_buffers, x ;
-sta PPUADDR              ;
-inx                      ;
-lda nametable_buffers, x ;
-sta PPUADDR              ;
-inx                      ;
+		; Check continuation byte
+		lda nametable_buffers, x
+		beq end_buffers
+		inx
 
-lda nametable_buffers, x ; Save tiles counter to tmpfield1
-sta tmpfield1            ;
-inx                      ;
+		; Set PPU destination address
+		lda nametable_buffers, x
+		sta PPUADDR
+		inx
+		lda nametable_buffers, x
+		sta PPUADDR
+		inx
 
-write_one_tile:
-lda tmpfield1            ; Check if there is still a tile to write
-beq handle_nt_buffer     ;
+		; Save tiles counter to tmpfield1
+		lda nametable_buffers, x
+		sta tmpfield1
+		inx
 
-lda nametable_buffers, x ; Write current tile to PPU
-sta PPUDATA              ;
+		write_one_tile:
+			; Write current tile to PPU
+			lda nametable_buffers, x
+			sta PPUDATA
 
-dec tmpfield1            ; Next tile
-inx                      ;
-jmp write_one_tile       ;
+			; Next tile
+			inx
+			dec tmpfield1
+			bne write_one_tile
+			jmp handle_nt_buffer
 
-end_buffers:
-rts
+	end_buffers:
+	rts
 .)
 
 ; Produce a list of three tile indexes representing a number
@@ -495,6 +499,46 @@ change_global_game_state:
 	.)
 .)
 
+; Change global game state, without trigerring any transition code
+;  tmpfield1,tmpfield2 - new state initialization routine
+;  tmpfield3 - new game state
+;
+; NOTE - the initialization routine is called while rendering is active (unlike change_global_game_state)
+; WARNING - This routine never returns. It changes the state then restarts the main loop.
+change_global_game_state_lite:
+.(
+	init_routine = tmpfield1      ; Not movable, parameter of call_pointed_subroutine
+	init_routinei_msb = tmpfield2 ;
+	new_state = tmpfield3
+
+	; Save previous game state and set the global_game_state variable
+	lda global_game_state
+	sta previous_global_game_state
+	lda new_state
+	sta global_game_state
+
+	; Move all sprites offscreen
+	ldx #$00
+	lda #$fe
+	clr_sprites:
+		sta oam_mirror, x    ;move all sprites off screen
+		inx
+		inx
+		inx
+		inx
+		bne clr_sprites
+
+	; Call the appropriate initialization routine
+	jsr call_pointed_subroutine
+
+	; Clear stack
+	ldx #$ff
+	txs
+
+	; Go straight to the main loop
+	jmp forever
+.)
+
 ; Copy a compressed nametable to PPU
 ;  tmpfield1 - compressed nametable address (low)
 ;  tmpfield2 - compressed nametable address (high)
@@ -502,51 +546,52 @@ change_global_game_state:
 ; Overwrites all registers, tmpfield1 and tmpfield2
 draw_zipped_nametable:
 .(
-compressed_nametable = tmpfield1
+	compressed_nametable = tmpfield1
 
-lda PPUSTATUS
-lda #$20
-sta PPUADDR
-lda #$00
-sta PPUADDR
-ldy #$00
+	lda PPUSTATUS
+	lda #$20
+	sta PPUADDR
+	lda #$00
+	sta PPUADDR
 
-load_background:
-lda (compressed_nametable), y
-beq opcode
+	ldy #$00
+	load_background:
+		lda (compressed_nametable), y
+		beq opcode
 
-; Standard byte, just write it to PPUDATA
-sta PPUDATA
-jsr next_byte
-jmp load_background
+		; Standard byte, just write it to PPUDATA
+		normal_byte:
+			sta PPUDATA
+			jsr next_byte
+			jmp load_background
 
-; Got the opcode
-opcode:
-jsr next_byte                 ;
-lda (compressed_nametable), y ; Load parameter in a, if it is zero it means that
-beq end                       ; the nametable is over
+		; Got the opcode
+		opcode:
+			jsr next_byte                 ;
+			lda (compressed_nametable), y ; Load parameter in a, if it is zero it means that
+			beq end                       ; the nametable is over
 
-tax                ;
-lda #$00           ;
-write_one_byte:    ; Write 0 the number of times specified by parameter
-sta PPUDATA        ;
-dex                ;
-bne write_one_byte ;
+			tax                    ;
+			lda #$00               ;
+			write_one_byte:        ; Write 0 the number of times specified by parameter
+				sta PPUDATA        ;
+				dex                ;
+				bne write_one_byte ;
 
-jsr next_byte       ; Continue reading the table
-jmp load_background ;
+			jsr next_byte       ; Continue reading the table
+			jmp load_background ;
 
-end:
-rts
+	end:
+	rts
 
-next_byte:
-.(
-inc compressed_nametable
-bne end_inc_vector
-inc compressed_nametable+1
-end_inc_vector:
-rts
-.)
+	next_byte:
+	.(
+		inc compressed_nametable
+		bne end_inc_vector
+		inc compressed_nametable+1
+		end_inc_vector:
+		rts
+	.)
 .)
 
 ; Allows to inderectly call a pointed subroutine normally with jsr

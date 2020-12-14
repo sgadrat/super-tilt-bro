@@ -6,6 +6,7 @@ from stblib.utils import asmint
 # Build memory layout header
 with open('game/mem_labels.asm', 'r') as source_file:
 	with open('game/cstb/mem_labels.h', 'w') as dest_file:
+		dest_file.write('#pragma once\n\n')
 		dest_file.write('#include <stdint.h>\n\n')
 		for line in source_file:
 			processed = line.rstrip('\n')
@@ -20,6 +21,8 @@ def base_prefix(asm_prefix):
 
 with open('game/constants.asm', 'r') as source_file:
 	with open('game/cstb/constants.h', 'w') as dest_file:
+		dest_file.write('#pragma once\n\n')
+		dest_file.write('#include <stdint.h>\n\n')
 		for line in source_file:
 			line = line.rstrip('\n')
 			processed = line

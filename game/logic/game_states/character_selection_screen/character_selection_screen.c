@@ -4,23 +4,17 @@
 // C types for structured data
 ///////////////////////////////////////
 
-struct Animation {
-	uint16_t x;
-	uint16_t y;
-	uint8_t const* data;
-	uint8_t direction;
-	uint8_t clock;
-	uint8_t first_sprite_num;
-	uint8_t last_sprite_num;
-	uint8_t const* frame_vector;
-} __attribute__((__packed__));
-
 struct BgTaskState {
 	uint8_t step;
 
 	uint8_t player;
 	uint16_t ppu_addr;
 	uint8_t const* prg_addr;
+	uint8_t count;
+} __attribute__((__packed__));
+
+struct FixScreenTaskState {
+	uint8_t step;
 	uint8_t count;
 } __attribute__((__packed__));
 
@@ -63,6 +57,8 @@ void character_selection_tick_char_anims();
 void character_selection_copy_to_nt_buffer();
 void character_selection_get_char_property();
 void character_selection_construct_char_nt_buffer();
+void character_selection_change_global_game_state_lite();
+void character_selection_get_unzipped_bytes();
 
 static void wrap_character_selection_copy_to_nt_buffer(uint8_t character, uint16_t ppu_addr, uint8_t n_bytes, uint8_t const* prg_addr) {
 	*tmpfield1 = character;
@@ -97,6 +93,15 @@ static void wrap_character_selection_screen_copy_property(uint8_t character, uin
 	character_selection_screen_copy_property();
 }
 
+static void wrap_character_selection_get_unzipped_bytes(uint8_t const* zipped, uint16_t offset, uint8_t count) {
+	*tmpfield1 = ptr_lsb(zipped);
+	*tmpfield2 = ptr_msb(zipped);
+	*tmpfield3 = u16_lsb(offset);
+	*tmpfield4 = u16_msb(offset);
+	*tmpfield5 = count;
+	character_selection_get_unzipped_bytes();
+}
+
 ///////////////////////////////////////
 // Constants specific to this file
 ///////////////////////////////////////
@@ -116,8 +121,16 @@ static uint8_t const BG_STEP_ANIMATION = 5;
 static uint8_t const BG_STEP_UPDATE_PALETTES = 6;
 static uint8_t const BG_STEP_DEACTIVATED = 255;
 
+static uint8_t const FIX_SCREEN_FIRST_STEP = 0;
+static uint8_t const FIX_SCREEN_STEP_BG_INIT = 0;
+static uint8_t const FIX_SCREEN_STEP_BG = 1;
+static uint8_t const FIX_SCREEN_STEP_PORTRAITS = 2;
+static uint8_t const FIX_SCREEN_STEP_DEACTIVATED = 255;
+
 static uint8_t const CONTROL_ONE_PLAYER = 0;
 static uint8_t const CONTROL_TWO_PLAYERS = 1;
+
+static uint16_t const portrait_screen_pos[] = {0x224e, 0x2290, 0x22ce, 0x2310, 0x234e};
 
 struct Position16 {
 	uint16_t x;
@@ -133,16 +146,12 @@ static struct Position16 const builder_anims_start_pos[] = {{32,79}, {176,79}};
 // Utility functions
 ///////////////////////////////////////
 
-static struct Animation* Anim(uint8_t* raw) {
-	return (struct Animation*)raw;
-}
-
 static struct BgTaskState* Task(uint8_t* raw) {
 	return (struct BgTaskState*)raw;
 }
 
-static uint8_t const* ptr(uint8_t lsb, uint8_t msb) {
-	return (uint8_t const*)((((uint16_t)(msb)) << 8) + lsb);
+static struct FixScreenTaskState* FixScreen() {
+	return (struct FixScreenTaskState*)character_selection_fix_screen_bg_task;
 }
 
 static uint8_t bitswap(uint8_t val) {
@@ -195,14 +204,16 @@ static void construct_sprite_palette_buffer(uint8_t player, uint8_t palette_num,
 	wrap_character_selection_construct_char_nt_buffer(character, character_selection_mem_buffer, data);
 }
 
-void audio_play_parry();
-void sound_effect_click() {
-	audio_play_parry();
-}
-
 ///////////////////////////////////////
 // State implementation
 ///////////////////////////////////////
+
+static void tick_bg_tasks();
+
+void audio_play_parry();
+static void sound_effect_click() {
+	audio_play_parry();
+}
 
 static void change_screen_cleaning() {
 	// Resolve random characters
@@ -211,6 +222,30 @@ static void change_screen_cleaning() {
 			config_player_a_character[player_num] = 0; //TODO random number
 		}
 	}
+}
+
+static void next_screen() {
+	change_screen_cleaning();
+
+	// Finish any remaining drawings
+	while(
+		Task(character_selection_player_a_bg_task)->step <= BG_STEP_STATUE_2 ||
+		Task(character_selection_player_b_bg_task)->step <= BG_STEP_STATUE_2
+	)
+	{
+		wait_next_frame();
+		reset_nt_buffers();
+		tick_bg_tasks();
+	}
+	wait_next_frame();
+
+	// Change state (without change_global_game_state(), we do not want transition)
+	reset_nt_buffers();
+	character_selection_change_global_game_state_lite();
+}
+
+static void previous_screen() {
+	change_screen_cleaning();
 
 	// Force sky-blue as background color to avoid a black flash during transition
 	// (voluntary side effect: cancels any remaining nt buffer to not risk to have nmi longer than vblank)
@@ -218,16 +253,109 @@ static void change_screen_cleaning() {
 	for (uint8_t i = 0; i < sizeof(palette_buffer); ++i) {
 		nametable_buffers[i] = palette_buffer[i];
 	}
-}
 
-static void next_screen() {
-	change_screen_cleaning();
-	wrap_change_global_game_state(GAME_STATE_STAGE_SELECTION);
-}
-
-static void previous_screen() {
-	change_screen_cleaning();
 	wrap_change_global_game_state(GAME_STATE_CONFIG);
+}
+
+static void tick_fix_screen() {
+	struct FixScreenTaskState* task = FixScreen();
+
+	switch (task->step) {
+		case FIX_SCREEN_STEP_DEACTIVATED:
+			break;
+
+		case FIX_SCREEN_STEP_BG_INIT:
+			task->count = 17;
+			character_selection_mem_buffer[18] = 16;
+			++task->step;
+			__attribute__((fallthrough));
+
+		case FIX_SCREEN_STEP_BG: {
+			// Update palette of reconstructed rows
+			static uint8_t const attribute_buffers[][7] = {
+				{0x23, 0xe2, 4, 0x00, 0x40, 0x00, 0x00},
+				{0x23, 0xea, 4, 0xaa, 0x40, 0x01, 0xaa},
+				{0x23, 0xf2, 4, 0xaa, 0x40, 0x01, 0xaa},
+			};
+
+			if (task->count == 12 || task->count == 8 || task->count == 4) {
+				uint8_t const buffer_num = (task->count / 4) - 1;
+				wrap_push_nt_buffer(attribute_buffers[buffer_num]);
+			}
+
+			// Reconstruct a raw from the zipped nametable
+			--task->count;
+			uint16_t const nametable_offset = 0x1c8 + 32 * task->count;
+			character_selection_mem_buffer[16] = u16_msb(0x2000 + nametable_offset);
+			character_selection_mem_buffer[17] = u16_lsb(nametable_offset);
+			wrap_character_selection_get_unzipped_bytes(&char_selection_nametable, nametable_offset, 16);
+			wrap_construct_nt_buffer(character_selection_mem_buffer + 16, character_selection_mem_buffer);
+
+			if (task->count == 0) {
+				++task->step;
+			}
+			break;
+		}
+
+		case FIX_SCREEN_STEP_PORTRAITS: {
+			// Draw character portraits
+			uint8_t* mem_buffer = character_selection_mem_buffer;
+			uint8_t character_idx;
+			for (character_idx = 0; character_idx < (uint16_t)(&CHARACTERS_NUMBER); ++character_idx) {
+				// Place portrait on screen
+				uint8_t const first_tile = tileset_menu_char_select + (4 * character_idx);
+				uint16_t const screen_pos = portrait_screen_pos[character_idx];
+				uint16_t const screen_pos_line2 = screen_pos + 32;
+				mem_buffer[0] = u16_msb(screen_pos);
+				mem_buffer[1] = u16_lsb(screen_pos);
+				mem_buffer[2] = 2;
+				if (character_idx & 1) {
+					mem_buffer[3] = first_tile + 1;
+					mem_buffer[4] = first_tile;
+				}else {
+					mem_buffer[3] = first_tile;
+					mem_buffer[4] = first_tile + 1;
+				}
+				wrap_push_nt_buffer(mem_buffer);
+
+				mem_buffer[0] = u16_msb(screen_pos_line2);
+				mem_buffer[1] = u16_lsb(screen_pos_line2);
+				mem_buffer[2] = 2;
+				if (character_idx & 1) {
+					mem_buffer[3] = first_tile + 3;
+					mem_buffer[4] = first_tile + 2;
+				}else {
+					mem_buffer[3] = first_tile + 2;
+					mem_buffer[4] = first_tile + 3;
+				}
+				wrap_push_nt_buffer(mem_buffer);
+			}
+
+			// Place random's portrait
+			uint16_t const screen_pos = portrait_screen_pos[character_idx];
+			uint16_t const screen_pos_line2 = screen_pos + 32;
+			mem_buffer[0] = u16_msb(screen_pos);
+			mem_buffer[1] = u16_lsb(screen_pos);
+			mem_buffer[2] = 2;
+			mem_buffer[3] = TILE_DICE_NW;
+			mem_buffer[4] = TILE_DICE_NE;
+			wrap_push_nt_buffer(mem_buffer);
+
+			mem_buffer[0] = u16_msb(screen_pos_line2);
+			mem_buffer[1] = u16_lsb(screen_pos_line2);
+			mem_buffer[2] = 2;
+			mem_buffer[3] = TILE_DICE_SW;
+			mem_buffer[4] = TILE_DICE_SE;
+			wrap_push_nt_buffer(mem_buffer);
+
+			++task->step;
+			break;
+		}
+
+		default:
+			task->step = FIX_SCREEN_STEP_DEACTIVATED;
+			break;
+	}
 }
 
 static void tick_bg_task(struct BgTaskState* task) {
@@ -395,10 +523,17 @@ static void tick_bg_task(struct BgTaskState* task) {
 		default:
 			task->step = BG_STEP_DEACTIVATED;
 			break;
-	};
+	}
 }
 
 static void tick_bg_tasks() {
+	// Fixing screen from stage selection leftovers, absolute priority
+	if (FixScreen()->step != FIX_SCREEN_STEP_DEACTIVATED) {
+		tick_fix_screen();
+		return;
+	}
+
+	// Tick the background task that is late
 	struct BgTaskState* const pa_task = Task(character_selection_player_a_bg_task);
 	struct BgTaskState* const pb_task = Task(character_selection_player_b_bg_task);
 
@@ -445,7 +580,7 @@ static void refresh_player_palettes(uint8_t player) {
 
 static void take_input(uint8_t player_num, uint8_t controller_btns, uint8_t last_fame_btns) {
 	if (controller_btns != last_fame_btns) {
-		switch(controller_btns) {
+		switch (controller_btns) {
 			case CONTROLLER_BTN_DOWN:
 				if (!character_selection_player_a_ready[player_num]) {
 					sound_effect_click();
@@ -511,12 +646,70 @@ static void take_input(uint8_t player_num, uint8_t controller_btns, uint8_t last
 	}
 }
 
-void init_character_selection_screen_extra() {
-	static uint16_t const portrait_screen_pos[] = {0x224e, 0x2290, 0x22ce, 0x2310, 0x234e};
+/**
+ * Initialization common to full init and reinit.
+ *
+ * Mainly memory of the gamestate,
+ * also nametable buffers that need to wait next vblank.
+ */
+static void init_character_selection_screen_common() {
+	// Initial palette
+	wrap_construct_palettes_nt_buffer(&char_selection_palette);
 
+	// Initialize players readiness
+	*character_selection_player_a_ready = 0;
+	*character_selection_player_b_ready = 0;
+
+	// Initialize control scheme
+	*character_selection_control_scheme = (*config_ai_level == 0 ? CONTROL_TWO_PLAYERS : CONTROL_ONE_PLAYER);
+
+	// Initialize Character animations
+	wrap_animation_init_state(character_selection_player_a_char_anim, &anim_empty);
+	Anim(character_selection_player_a_char_anim)->x = 108;
+	Anim(character_selection_player_a_char_anim)->y = 114;
+	Anim(character_selection_player_a_char_anim)->first_sprite_num = INGAME_PLAYER_A_FIRST_SPRITE;
+	Anim(character_selection_player_a_char_anim)->last_sprite_num = INGAME_PLAYER_A_LAST_SPRITE;
+
+	wrap_animation_init_state(character_selection_player_b_char_anim, &anim_empty);
+	Anim(character_selection_player_b_char_anim)->x = 140;
+	Anim(character_selection_player_b_char_anim)->y = 114;
+	Anim(character_selection_player_b_char_anim)->first_sprite_num = INGAME_PLAYER_B_FIRST_SPRITE;
+	Anim(character_selection_player_b_char_anim)->last_sprite_num = INGAME_PLAYER_B_LAST_SPRITE;
+
+	// Initialize token animations
+	wrap_animation_init_state(character_selection_player_a_cursor_anim, &menu_character_selection_anim_p1_token);
+	Anim(character_selection_player_a_cursor_anim)->x = player_a_token_positions[*config_player_a_character].x;
+	Anim(character_selection_player_a_cursor_anim)->y = player_a_token_positions[*config_player_a_character].y;
+	Anim(character_selection_player_a_cursor_anim)->first_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 1;
+	Anim(character_selection_player_a_cursor_anim)->last_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 2;
+
+	wrap_animation_init_state(character_selection_player_b_cursor_anim, &menu_character_selection_anim_p2_token);
+	Anim(character_selection_player_b_cursor_anim)->x = player_b_token_positions[*config_player_b_character].x;
+	Anim(character_selection_player_b_cursor_anim)->y = player_b_token_positions[*config_player_b_character].y;
+	Anim(character_selection_player_b_cursor_anim)->first_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 3;
+	Anim(character_selection_player_b_cursor_anim)->last_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 4;
+
+	// Initialize statue builder animations
+	wrap_animation_init_state(character_selection_player_a_builder_anim, &anim_empty);
+	Anim(character_selection_player_a_builder_anim)->x = 0;
+	Anim(character_selection_player_a_builder_anim)->y = 0;
+	Anim(character_selection_player_a_builder_anim)->first_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 5;
+	Anim(character_selection_player_a_builder_anim)->last_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 8;
+
+	wrap_animation_init_state(character_selection_player_b_builder_anim, &anim_empty);
+	Anim(character_selection_player_b_builder_anim)->x = 0;
+	Anim(character_selection_player_b_builder_anim)->y = 0;
+	Anim(character_selection_player_b_builder_anim)->first_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 9;
+	Anim(character_selection_player_b_builder_anim)->last_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 12;
+
+	// Initialize background tasks
+	refresh_player_character(0);
+	refresh_player_character(1);
+}
+
+void init_character_selection_screen_extra() {
 	// Draw static part of the screen
 	wrap_draw_zipped_nametable(&char_selection_nametable);
-	wrap_construct_palettes_nt_buffer(&char_selection_palette);
 	wrap_cpu_to_ppu_copy_tiles((&tileset_menu_char_select)+1, 0x1000, tileset_menu_char_select);
 
 	// Draw character portraits
@@ -605,55 +798,18 @@ void init_character_selection_screen_extra() {
 	// Place tiles for sprites from the menu in VRAM
 	wrap_cpu_to_ppu_copy_tiles((&tileset_menu_char_select_sprites)+1, CHARACTERS_END_TILES_OFFSET, tileset_menu_char_select_sprites);
 
-	// Initialize players readiness
-	*character_selection_player_a_ready = 0;
-	*character_selection_player_b_ready = 0;
+	// Initialize state's memory
+	FixScreen()->step = FIX_SCREEN_STEP_DEACTIVATED;
+	init_character_selection_screen_common();
+}
 
-	// Initialize control scheme
-	*character_selection_control_scheme = (*config_ai_level == 0 ? CONTROL_TWO_PLAYERS : CONTROL_ONE_PLAYER);
+void character_selection_reinit() {
+	// Initialize state's memory
+	reset_nt_buffers();
+	init_character_selection_screen_common();
 
-	// Initialize Character animations
-	wrap_animation_init_state(character_selection_player_a_char_anim, &anim_empty);
-	Anim(character_selection_player_a_char_anim)->x = 108;
-	Anim(character_selection_player_a_char_anim)->y = 114;
-	Anim(character_selection_player_a_char_anim)->first_sprite_num = INGAME_PLAYER_A_FIRST_SPRITE;
-	Anim(character_selection_player_a_char_anim)->last_sprite_num = INGAME_PLAYER_A_LAST_SPRITE;
-
-	wrap_animation_init_state(character_selection_player_b_char_anim, &anim_empty);
-	Anim(character_selection_player_b_char_anim)->x = 140;
-	Anim(character_selection_player_b_char_anim)->y = 114;
-	Anim(character_selection_player_b_char_anim)->first_sprite_num = INGAME_PLAYER_B_FIRST_SPRITE;
-	Anim(character_selection_player_b_char_anim)->last_sprite_num = INGAME_PLAYER_B_LAST_SPRITE;
-
-	// Initialize token animations
-	wrap_animation_init_state(character_selection_player_a_cursor_anim, &menu_character_selection_anim_p1_token);
-	Anim(character_selection_player_a_cursor_anim)->x = player_a_token_positions[*config_player_a_character].x;
-	Anim(character_selection_player_a_cursor_anim)->y = player_a_token_positions[*config_player_a_character].y;
-	Anim(character_selection_player_a_cursor_anim)->first_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 1;
-	Anim(character_selection_player_a_cursor_anim)->last_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 2;
-
-	wrap_animation_init_state(character_selection_player_b_cursor_anim, &menu_character_selection_anim_p2_token);
-	Anim(character_selection_player_b_cursor_anim)->x = player_b_token_positions[*config_player_b_character].x;
-	Anim(character_selection_player_b_cursor_anim)->y = player_b_token_positions[*config_player_b_character].y;
-	Anim(character_selection_player_b_cursor_anim)->first_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 3;
-	Anim(character_selection_player_b_cursor_anim)->last_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 4;
-
-	// Initialize statue builder animations
-	wrap_animation_init_state(character_selection_player_a_builder_anim, &anim_empty);
-	Anim(character_selection_player_a_builder_anim)->x = 0;
-	Anim(character_selection_player_a_builder_anim)->y = 0;
-	Anim(character_selection_player_a_builder_anim)->first_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 5;
-	Anim(character_selection_player_a_builder_anim)->last_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 8;
-
-	wrap_animation_init_state(character_selection_player_b_builder_anim, &anim_empty);
-	Anim(character_selection_player_b_builder_anim)->x = 0;
-	Anim(character_selection_player_b_builder_anim)->y = 0;
-	Anim(character_selection_player_b_builder_anim)->first_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 9;
-	Anim(character_selection_player_b_builder_anim)->last_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 12;
-
-	// Initialize background tasks
-	refresh_player_character(0);
-	refresh_player_character(1);
+	// Start special background task that redraw screen over stage selection's leftovers
+	FixScreen()->step = FIX_SCREEN_FIRST_STEP;
 }
 
 void character_selection_screen_tick_extra() {

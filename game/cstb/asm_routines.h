@@ -1,5 +1,8 @@
 #pragma once
 #include "cstb/utils.h"
+#include "cstb/mem_labels.h"
+#include "cstb/nes_labels.h"
+#include <stdint.h>
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-function"
 
@@ -8,12 +11,15 @@
 //  simply declare it as extern
 ////////////////////////////////////
 
+void audio_music_tick();
 void audio_mute_music();
 void audio_unmute_music();
+void dummy_routine();
 void process_nt_buffers();
 void reset_nt_buffers();
 void re_init_menu();
 void tick_menu();
+void wait_next_frame();
 
 ////////////////////////////////////
 // Routines that need some glue code
@@ -63,7 +69,7 @@ static void wrap_change_global_game_state(uint8_t new_state) {
 		"jsr change_global_game_state"
 		:
 		: "r"(new_state)
-		:
+		: "memory" // do not clobber "a", change_global_game_state will not return anyway ; clobber "memory", we want all previous memory writes to be effective
 	);
 }
 
@@ -110,13 +116,14 @@ void push_nt_buffer();
 static void wrap_push_nt_buffer(uint8_t const* buffer) {
 	uint8_t const msb = (uint8_t)((int)(buffer) >> 8);
 	uint8_t const lsb = (uint8_t)((int)(buffer) & 0x00ff);
+
 	asm(
 		"ldy %0\n\t"
 		"lda %1\n\t"
 		"jsr push_nt_buffer"
 		:
 		: "r"(msb), "r"(lsb)
-		: "a", "x", "y"
+		: "a", "x", "y", "memory"
 	);
 }
 

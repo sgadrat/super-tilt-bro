@@ -10,3 +10,4 @@ SMOOTH_PLATFORM($48, $b0, $50) ; left, right, top
 END_OF_STAGE
 
 #include "game/data/stages/shelf/screen.asm"
+#include "game/data/stages/shelf/illustration.asm"

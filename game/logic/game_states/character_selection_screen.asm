@@ -229,3 +229,36 @@ character_selection_construct_char_nt_buffer:
 	SWITCH_BANK(#CHAR_SELECT_SCREEN_EXTRA_BANK_NUMBER)
 	rts
 .)
+
+; Change global game state, without trigerring any transition code
+;  Never returns, jumps to main loop
+;  Hardcoded destination state to stage selection menu
+character_selection_change_global_game_state_lite:
+.(
+	; Save previous game state and set the global_game_state variable
+	lda global_game_state
+	sta previous_global_game_state
+	lda #GAME_STATE_STAGE_SELECTION
+	sta global_game_state
+
+	; Move all sprites offscreen
+	ldx #$00
+	lda #$fe
+	clr_sprites:
+		sta oam_mirror, x    ;move all sprites off screen
+		inx
+		inx
+		inx
+		inx
+		bne clr_sprites
+
+	; Call the appropriate initialization routine
+	jsr init_stage_selection_screen
+
+	; Clear stack
+	ldx #$ff
+	txs
+
+	; Go straight to the main loop
+	jmp forever
+.)
