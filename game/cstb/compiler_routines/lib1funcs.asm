@@ -2,7 +2,7 @@
 
 #iflused __bswapsi2
 __bswapsi2:
-	.scope
+.(
 	lda _r3
 	ldx _r0
 	stx _r3
@@ -12,12 +12,12 @@ __bswapsi2:
 	stx _r2
 	sta _r1
 	rts
-	.endscope
+.)
 #endif
 
 #iflused __bswapdi2
 __bswapdi2:
-	.scope
+.(
 	ldx #0
 	ldy #7
 loop:
@@ -32,7 +32,7 @@ loop:
 	cpx #4
 	bne loop
 	rts
-	.endscope
+.)
 	rts
 #endif
 
@@ -538,7 +538,7 @@ __negdi2:
 
 #iflused __ashlqi3
 __ashlqi3:
-	.scope
+.(
 	ldx _r1
 	beq done
 loop:
@@ -547,12 +547,12 @@ loop:
 	bne loop
 done:
 	rts
-	.endscope
+.)
 #endif
 
 #iflused __lshrqi3
 __lshrqi3:
-	.scope
+.(
 	ldx _r1
 	beq done
 loop:
@@ -561,12 +561,12 @@ loop:
 	bne loop
 done:
 	rts
-	.endscope
+.)
 #endif
 
 #iflused __ashrqi3
 __ashrqi3:
-	.scope
+.(
 	ldx _r1
 	beq done
 	lda _r0
@@ -578,12 +578,12 @@ loop:
 	sta _r0
 done:
 	rts
-	.endscope
+.)
 #endif
 
 #iflused __ashlhi3
 __ashlhi3:
-	.scope
+.(
 	ldx _r2
 	beq done
 	lda _r0
@@ -594,13 +594,13 @@ loop:
 	bne loop
 	sta _r0
 done:
-	.endscope
+.)
 	rts
 #endif
 
 #iflused __lshrhi3
 __lshrhi3:
-	.scope
+.(
 	ldx _r2
 	beq done
 	lda _r1
@@ -611,13 +611,13 @@ loop:
 	bne loop
 	sta _r1
 done:
-	.endscope
+.)
 	rts
 #endif
 
 #iflused __ashrhi3
 __ashrhi3:
-	.scope
+.(
 	ldx _r2
 	beq done
 	lda _r1
@@ -630,12 +630,12 @@ loop:
 	sta _r1
 done:
 	rts
-	.endscope
+.)
 #endif
 
 #iflused __ashlsi3
 __ashlsi3:
-	.scope
+.(
 	ldx _r4
 	beq done
 	lda _r0
@@ -649,12 +649,12 @@ loop:
 	sta _r0
 done:
 	rts
-	.endscope
+.)
 #endif
 
 #iflused __lshrsi3
 __lshrsi3:
-	.scope
+.(
 	ldx _r4
 	beq done
 	lda _r3
@@ -668,12 +668,12 @@ loop:
 	sta _r3
 done:
 	rts
-	.endscope
+.)
 #endif
 
 #iflused __ashrsi3
 __ashrsi3:
-	.scope
+.(
 	ldx _r4
 	beq done
 	lda _r3
@@ -688,12 +688,12 @@ loop:
 	sta _r3
 done:
 	rts
-	.endscope
+.)
 #endif
 
 #iflused __mulqi3
 __mulqi3:
-	.scope
+.(
 	ldx #0
 loop:
 	lsr _r1
@@ -707,7 +707,7 @@ no_add:
 	bne loop
 	stx _r0
 	rts
-	.endscope
+.)
 #endif
 
 #iflused __mulhi3
@@ -738,7 +738,7 @@ no_add:
 
 #iflused __mulsi3
 __mulsi3:
-	.scope
+.(
 	lda _s0
 	pha
 	lda _s1
@@ -801,12 +801,12 @@ no_add:
 	pla
 	sta _s0
 	rts
-	.endscope
+.)
 #endif
 
 #iflused __udivqi3
 __udivqi3:
-	.scope
+.(
 	lda #0
 	sta _r2		; quotient
 	sta _r3		; remainder
@@ -833,7 +833,7 @@ done:
 	lda _r3
 	sta _r1
 	rts
-	.endscope
+.)
 #endif
 
 #iflused __umodqi3
@@ -959,7 +959,7 @@ result_positive:
         ; This might as well use the _eN registers instead of clobbering the
         ; _sN registers. FIXME!
 __udivsi3:
-	.scope
+.(
 	lda _s0
 	pha
 	lda _s1
@@ -1072,7 +1072,7 @@ next_bit:
 	pla
 	sta _s0
 	rts
-	.endscope
+.)
 #endif
 
 #iflused __umodsi3
@@ -1169,7 +1169,7 @@ result_positive:
 	;   - 0x80 for "less than" result
 	;   - zero for "greater than or equal" result.
 __m65x_fpcmp:
-	.scope
+.(
 	lda _r2
 	tax
 	and #$80
@@ -1212,7 +1212,7 @@ not_one_only:
 	cpy #0
 	bne reverse_cmp
 forward_cmp:
-	.scope
+.(
 	; mantissa
 	lda _r0
 	cmp _r4
@@ -1229,13 +1229,13 @@ forward_cmp:
 less:
 	lda #$80
 	rts
-	.endscope
+.)
 
 maybe_reverse_cmp:
 	cpy #0
 	bne forward_cmp
 reverse_cmp:
-	.scope
+.(
 	; mantissa
 	lda _r4
 	cmp _r0
@@ -1252,8 +1252,8 @@ reverse_cmp:
 less:
 	lda #$80
 	rts
-	.endscope
-	.endscope
+.)
+.)
 
 __ltsf2:
 	ldy #0
@@ -1290,7 +1290,7 @@ __lesf2:
 
 #iflused __eqsf2
 __eqsf2:
-	.scope
+.(
 	lda _r2
 	and #$7f
 	ora _r3
@@ -1326,7 +1326,7 @@ ne:
 	lda #0
 	sta _r0
 	rts
-	.endscope
+.)
 #endif
 
 #iflused __nesf2
@@ -1364,7 +1364,7 @@ __mulsf3:
 	and #$80
 	sta _m65x_fpe0_sign
 	
-	.scope
+.(
 	lda _r2
 	and #$7f
 	ldx _r3
@@ -1382,7 +1382,7 @@ a_exp_zero:
 b_exp_zero:
 	stx _m65x_fpe1_exp
 	tax
-	.endscope
+.)
 	
 	lda _r4
 	sta _r3
@@ -1391,7 +1391,7 @@ b_exp_zero:
 	stx _r5
 	
 	; Do the actual multiplication.
-	.scope
+.(
 	
 	lda #0
 	sta _r6
@@ -1453,7 +1453,7 @@ no_add:
 	rol _m65x_fpe0_mant+3
 	rol _m65x_fpe0_mant+4
 
-	.endscope
+.)
 	
 	ldx #0
 	
@@ -1474,7 +1474,7 @@ no_add:
 	:
 	; FIXME: clamping to zero/max_float goes here.
 
-	.scope
+.(
 	lda _m65x_fpe0_mant+1
 	ora _m65x_fpe0_mant+2
 	ora _m65x_fpe0_mant+3
@@ -1484,7 +1484,7 @@ no_add:
 not_zero:
 	jsr _m65x_renormalize_right
 done:
-	.endscope
+.)
 
 	lda _m65x_fpe0_mant+1
 	sta _r0
@@ -1534,7 +1534,7 @@ __divsf3:
 	and #$80
 	sta _m65x_fpe0_sign
 	
-	.scope
+.(
 	lda _r2
 	and #$7f
 	ldx _r3
@@ -1552,7 +1552,7 @@ a_exp_zero:
 b_exp_zero:
 	sta _r6
 	stx _m65x_fpe1_exp
-	.endscope
+.)
 	
 	lda #0
 	sta _s2
@@ -1585,7 +1585,7 @@ b_exp_zero:
 	ror _s0
 	
 	; result[47:0] = r2,r1,r0,s2,s1,s0 / r6,r5,r4
-	.scope
+.(
 	ldx #48
 loop:
 	; get the i'th bit of N (starting from highest-order bit).
@@ -1656,7 +1656,7 @@ less:
 next_bit:
 	dex
 	bne loop
-	.endscope
+.)
 	
 	; Remove junk in high-order & low-order bits.
 	lda #0
@@ -1684,7 +1684,7 @@ next_bit:
 	
 	; FIXME: Handle exponent overflow/underflow here.
 	
-	.scope
+.(
 	lda _m65x_fpe0_mant+1
 	ora _m65x_fpe0_mant+2
 	ora _m65x_fpe0_mant+3
@@ -1694,7 +1694,7 @@ next_bit:
 not_zero:
 	jsr _m65x_renormalize_left
 done:
-	.endscope
+.)
 	
 	lda _m65x_fpe0_mant+1
 	sta _r0
@@ -1771,7 +1771,7 @@ over_one:
 	lda #0
 	sta _r3
 	
-	.scope
+.(
 	lda #150
 	sec
 	sbc _m65x_fpe0_exp
@@ -1799,7 +1799,7 @@ left_shift_loop:
 	rol _r3
 	dex
 	bne left_shift_loop
-	.endscope
+.)
 	
 	rts
 #endif
