@@ -259,13 +259,17 @@ gameover_screen_tick:
 			jmp update_animations
 
 		next_screen:
-			lda #GAME_STATE_TITLE
-			jsr change_global_game_state
+			ldx config_game_mode
+			lda next_screen_by_game_mode, x
+			jmp change_global_game_state
 
 		update_animations:
 			jsr gamover_update_players
 			jsr update_balloons
 			rts
+
+		next_screen_by_game_mode:
+		.byt GAME_STATE_CHARACTER_SELECTION, GAME_STATE_TITLE
 	.)
 
 	gamover_update_players:

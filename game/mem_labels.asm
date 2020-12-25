@@ -349,20 +349,20 @@ donation_method = $00
 ;  Common to TITLE, CONFIG, CHARACTER_SELECTION, STAGE_SELECTION and CREDITS
 ;
 
-menu_common_tick_num = $10
+menu_common_tick_num = $50
 
-menu_common_cloud_1_x = $11
-menu_common_cloud_2_x = $12
-menu_common_cloud_3_x = $13
-menu_common_cloud_1_y = $14
-menu_common_cloud_2_y = $15
-menu_common_cloud_3_y = $16
-menu_common_cloud_1_y_msb = $17
-menu_common_cloud_2_y_msb = $18
-menu_common_cloud_3_y_msb = $19
+menu_common_cloud_1_x = $51
+menu_common_cloud_2_x = $52
+menu_common_cloud_3_x = $53
+menu_common_cloud_1_y = $54
+menu_common_cloud_2_y = $55
+menu_common_cloud_3_y = $56
+menu_common_cloud_1_y_msb = $57
+menu_common_cloud_2_y_msb = $58
+menu_common_cloud_3_y_msb = $59
 
-screen_sprites_y_lsb = $20 ; $20 to $5f
-screen_sprites_y_msb = $60 ; $60 to $a0
+screen_sprites_y_lsb = $0400 ; $0400 to $043f
+screen_sprites_y_msb = $0440 ; $0440 to $047f
 
 ;
 ; GAMEOVER labels

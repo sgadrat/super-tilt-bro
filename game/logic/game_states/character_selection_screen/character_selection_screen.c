@@ -59,6 +59,7 @@ void character_selection_get_char_property();
 void character_selection_construct_char_nt_buffer();
 void character_selection_change_global_game_state_lite();
 void character_selection_get_unzipped_bytes();
+void character_selection_reset_music();
 
 static void wrap_character_selection_copy_to_nt_buffer(uint8_t character, uint16_t ppu_addr, uint8_t n_bytes, uint8_t const* prg_addr) {
 	*tmpfield1 = character;
@@ -797,6 +798,11 @@ void init_character_selection_screen_extra() {
 
 	// Place tiles for sprites from the menu in VRAM
 	wrap_cpu_to_ppu_copy_tiles((&tileset_menu_char_select_sprites)+1, CHARACTERS_END_TILES_OFFSET, tileset_menu_char_select_sprites);
+
+	// Reset music if we come from a state with another music
+	if (*previous_global_game_state == GAME_STATE_GAMEOVER) {
+		character_selection_reset_music();
+	}
 
 	// Initialize state's memory
 	FixScreen()->step = FIX_SCREEN_STEP_DEACTIVATED;

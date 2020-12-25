@@ -2,9 +2,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-//TODO thys ar asm lobel
-//CONFIG_SCREEN_EXTRA_BANK_NUMBER = CURRENT_BANK_NUMBER
-
 static uint8_t const TILE_ICON_MUSIC_1 = 0xe8;
 static uint8_t const TILE_ICON_MUSIC_2 = 0xe9;
 static uint8_t const TILE_ICON_MUSIC_3 = 0xea;
@@ -157,7 +154,21 @@ void init_config_screen_extra() {
 	reset_nt_buffers();
 
 	// Initialize common menus effects
-	re_init_menu();
+	if (*previous_global_game_state == GAME_STATE_MODE_SELECTION) {
+		// Transitioning from a screen with menu effects, simply reinit
+		re_init_menu();
+	}else {
+		// Common menu effects
+		init_menu();
+
+		// Set clouds Y position
+		*menu_common_cloud_1_y = 0x21;
+		*menu_common_cloud_1_y_msb = 0xff;
+		*menu_common_cloud_2_y = 0xba;
+		*menu_common_cloud_2_y_msb = 0xfe;
+		*menu_common_cloud_3_y = 0x65;
+		*menu_common_cloud_3_y_msb = 0xff;
+	}
 }
 
 void config_screen_tick_extra() {

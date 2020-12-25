@@ -262,3 +262,11 @@ character_selection_change_global_game_state_lite:
 	; Go straight to the main loop
 	jmp forever
 .)
+
+character_selection_reset_music:
+.(
+	SWITCH_BANK(#DATA_BANK_NUMBER)
+	jsr audio_music_weak
+	SWITCH_BANK(#CONFIG_SCREEN_EXTRA_BANK_NUMBER)
+	rts
+.)

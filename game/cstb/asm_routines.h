@@ -15,6 +15,7 @@ void audio_music_tick();
 void audio_mute_music();
 void audio_unmute_music();
 void dummy_routine();
+void init_menu();
 void process_nt_buffers();
 void reset_nt_buffers();
 void re_init_menu();
