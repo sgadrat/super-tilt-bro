@@ -3,6 +3,7 @@
 #iflused __bswapsi2
 __bswapsi2:
 .(
+.(
 	lda _r3
 	ldx _r0
 	stx _r3
@@ -13,10 +14,12 @@ __bswapsi2:
 	sta _r1
 	rts
 .)
+.)
 #endif
 
 #iflused __bswapdi2
 __bswapdi2:
+.(
 .(
 	ldx #0
 	ldy #7
@@ -34,10 +37,12 @@ loop:
 	rts
 .)
 	rts
+.)
 #endif
 
 #iflused __cmpsi2
 __cmpsi2:
+.(
 	lda _r0
 	cmp _r4
 	lda _r1
@@ -78,10 +83,12 @@ less:
 	sta _r0
 	sta _r1
 	rts
+.)
 #endif
 
 #iflused __cmpdi2
 __cmpdi2:
+.(
         ldy #0
         lda _r0
         cmp (_sp0),y
@@ -134,10 +141,12 @@ less:
         sta _r0
         sta _r1
         rts
+.)
 #endif
 
 #iflused __ucmpdi2
 __ucmpdi2:
+.(
         ldy #7
         lda _r7
         cmp (_sp0),y
@@ -194,10 +203,12 @@ greater:
         lda #0
         sta _r1
         rts
+.)
 #endif
 
 #iflused __ashldi3
 __ashldi3:
+.(
         ldy #0
         lda (_sp0),y
         tax
@@ -217,10 +228,12 @@ loop:
         sta _r0
 done:
         rts
+.)
 #endif
 
 #iflused __lshrdi3
 __lshrdi3:
+.(
         ldy #0
         lda (_sp0),y
         tax
@@ -240,10 +253,12 @@ loop:
         sta _r7
 done:
         rts
+.)
 #endif
 
 #iflused __ashrdi3
 __ashrdi3:
+.(
         ldy #0
         lda (_sp0),y
         tax
@@ -264,10 +279,12 @@ loop:
         sta _r7
 done:
         rts
+.)
 #endif
 
 #iflused __muldi3
 __muldi3:
+.(
         ldy #0
         ldx #0
 copyop2:
@@ -333,10 +350,12 @@ copyout:
         cpx #8
         bne copyout
         rts
+.)
 #endif
 
 #iflused __udivdi3
 __udivdi3:
+.(
         lda #0
         ldx #0
         ; e0...e7 are the quotient.
@@ -456,10 +475,12 @@ copyout:
         bne copyout
 
         rts
+.)
 #endif
 
 #iflused __umoddi3
 __umoddi3:
+.(
         jsr __udivdi3
         ; The above function left the remainder in e8...e15.  Those aren't
         ; normally live across procedure call boundaries, but it doesn't matter
@@ -472,10 +493,12 @@ copyout:
         cpx #8
         bne copyout
         rts
+.)
 #endif
 
 #iflused __neghi2
 __neghi2:
+.(
         lda #0
         sec
         sbc _r0
@@ -484,10 +507,12 @@ __neghi2:
         sbc _r1
         sta _r1
         rts
+.)
 #endif
 
 #iflused __negsi2
 __negsi2:
+.(
 	ldx #0
 	txa
 	sec
@@ -503,10 +528,12 @@ __negsi2:
 	sbc _r3
 	sta _r3
 	rts
+.)
 #endif
 
 #iflused __negdi2
 __negdi2:
+.(
         ldx #0
         txa
         sec
@@ -534,10 +561,12 @@ __negdi2:
         sbc _r7
         sta _r7
         rts
+.)
 #endif
 
 #iflused __ashlqi3
 __ashlqi3:
+.(
 .(
 	ldx _r1
 	beq done
@@ -548,10 +577,12 @@ loop:
 done:
 	rts
 .)
+.)
 #endif
 
 #iflused __lshrqi3
 __lshrqi3:
+.(
 .(
 	ldx _r1
 	beq done
@@ -562,10 +593,12 @@ loop:
 done:
 	rts
 .)
+.)
 #endif
 
 #iflused __ashrqi3
 __ashrqi3:
+.(
 .(
 	ldx _r1
 	beq done
@@ -579,10 +612,12 @@ loop:
 done:
 	rts
 .)
+.)
 #endif
 
 #iflused __ashlhi3
 __ashlhi3:
+.(
 .(
 	ldx _r2
 	beq done
@@ -596,10 +631,12 @@ loop:
 done:
 .)
 	rts
+.)
 #endif
 
 #iflused __lshrhi3
 __lshrhi3:
+.(
 .(
 	ldx _r2
 	beq done
@@ -613,10 +650,12 @@ loop:
 done:
 .)
 	rts
+.)
 #endif
 
 #iflused __ashrhi3
 __ashrhi3:
+.(
 .(
 	ldx _r2
 	beq done
@@ -631,10 +670,12 @@ loop:
 done:
 	rts
 .)
+.)
 #endif
 
 #iflused __ashlsi3
 __ashlsi3:
+.(
 .(
 	ldx _r4
 	beq done
@@ -650,10 +691,12 @@ loop:
 done:
 	rts
 .)
+.)
 #endif
 
 #iflused __lshrsi3
 __lshrsi3:
+.(
 .(
 	ldx _r4
 	beq done
@@ -669,10 +712,12 @@ loop:
 done:
 	rts
 .)
+.)
 #endif
 
 #iflused __ashrsi3
 __ashrsi3:
+.(
 .(
 	ldx _r4
 	beq done
@@ -689,10 +734,12 @@ loop:
 done:
 	rts
 .)
+.)
 #endif
 
 #iflused __mulqi3
 __mulqi3:
+.(
 .(
 	ldx #0
 loop:
@@ -708,10 +755,12 @@ no_add:
 	stx _r0
 	rts
 .)
+.)
 #endif
 
 #iflused __mulhi3
 __mulhi3:
+.(
         ldx #0
         ldy #0
 loop:
@@ -734,10 +783,12 @@ no_add:
         stx _r0
         sty _r1
         rts
+.)
 #endif
 
 #iflused __mulsi3
 __mulsi3:
+.(
 .(
 	lda _s0
 	pha
@@ -802,10 +853,12 @@ no_add:
 	sta _s0
 	rts
 .)
+.)
 #endif
 
 #iflused __udivqi3
 __udivqi3:
+.(
 .(
 	lda #0
 	sta _r2		; quotient
@@ -834,18 +887,69 @@ done:
 	sta _r1
 	rts
 .)
+.)
 #endif
 
 #iflused __umodqi3
 __umodqi3:
+.(
 	jsr __udivqi3
 	lda _r1
 	sta _r0
 	rts
+.)
+#endif
+
+#iflused __umodhi3
+__umodhi3:
+.(
+        jsr __udivhi3
+        lda _r6
+        sta _r0
+        lda _r7
+        sta _r1
+        rts
+.)
+#endif
+
+#iflused __divhi3
+__divhi3:
+.(
+        lda _r1
+        eor _r3
+        pha
+
+        lda _r1
+        bpl a_positive
+        jsr __neghi2
+a_positive:
+
+        lda _r3
+        bpl b_positive
+        lda #0
+        sec
+        sbc _r2
+        sta _r2
+        lda #0
+        sbc _r3
+        sta _r3
+b_positive:
+
+        jsr __udivhi3
+
+        pla
+        bpl res_positive
+        ; tailcall
+        jmp __neghi2
+res_positive:
+
+        rts
+.)
 #endif
 
 #iflused __udivhi3
 __udivhi3:
+.(
         ; (_r1, _r0) / (_r3, _r2)
         ; quotient in _r5, _r4
         ; remainder in _r7, _r6
@@ -883,53 +987,12 @@ next:
         lda _r5
         sta _r1
         rts
-#endif
-
-#iflused __umodhi3
-__umodhi3:
-        jsr __udivhi3
-        lda _r6
-        sta _r0
-        lda _r7
-        sta _r1
-        rts
-#endif
-
-#iflused __divhi3
-__divhi3:
-        lda _r1
-        eor _r3
-        pha
-
-        lda _r1
-        bpl a_positive
-        jsr __neghi2
-a_positive:
-
-        lda _r3
-        bpl b_positive
-        lda #0
-        sec
-        sbc _r2
-        sta _r2
-        lda #0
-        sbc _r3
-        sta _r3
-b_positive:
-
-        jsr __udivhi3
-
-        pla
-        bpl res_positive
-        ; tailcall
-        jmp __neghi2
-res_positive:
-
-        rts
+.)
 #endif
 
 #iflused __modhi3
 __modhi3:
+.(
         lda _r1
         pha
         
@@ -953,6 +1016,7 @@ denominator_positive:
         jmp __neghi2
 result_positive:
         rts
+.)
 #endif
 
 #iflused __udivsi3
@@ -1073,10 +1137,12 @@ next_bit:
 	sta _s0
 	rts
 .)
+.)
 #endif
 
 #iflused __umodsi3
 __umodsi3:
+.(
 	jsr __udivsi3
 	lda _r4
 	sta _r0
@@ -1087,10 +1153,12 @@ __umodsi3:
 	lda _r7
 	sta _r3
 	rts
+.)
 #endif
 
 #iflused __divsi3
 __divsi3:
+.(
 	lda _r3
 	eor _r7
 	pha
@@ -1123,10 +1191,12 @@ denominator_positive:
 	jmp __negsi2
 result_positive:
 	rts
+.)
 #endif
 
 #iflused __modsi3
 __modsi3:
+.(
 	lda _r3
 	pha
 	
@@ -1157,6 +1227,7 @@ denominator_positive:
 	jmp __negsi2
 result_positive:
 	rts
+.)
 #endif
 
 #iflused __ltsf2
@@ -1260,36 +1331,44 @@ __ltsf2:
 	jsr __m65x_fpcmp
 	sta _r0
 	rts
+.)
 #endif
 
 #iflused __gesf2
 __gesf2:
+.(
 	ldy #0
 	jsr __m65x_fpcmp
 	eor #$80
 	sta _r0
 	rts
+.)
 #endif
 
 #iflused __gtsf2
 __gtsf2:
+.(
 	ldy #1
 	jsr __m65x_fpcmp
 	sta _r0
 	rts
+.)
 #endif
 
 #iflused __lesf2
 __lesf2:
+.(
 	ldy #1
 	jsr __m65x_fpcmp
 	eor #$80
 	sta _r0
 	rts
+.)
 #endif
 
 #iflused __eqsf2
 __eqsf2:
+.(
 .(
 	lda _r2
 	and #$7f
@@ -1327,31 +1406,38 @@ ne:
 	sta _r0
 	rts
 .)
+.)
 #endif
 
 #iflused __nesf2
 __nesf2:
+.(
 	jsr __eqsf2
 	lda _r0
 	eor #1
 	sta _r0
 	rts
+.)
 #endif
 
 #iflused __addsf3
 #include "addsf3.S"
+.)
 #endif
 
 #iflused __subsf3
 __subsf3:
+.(
 	lda _r6
 	eor #$80
 	sta _r6
 	jmp __addsf3
+.)
 #endif
 
 #iflused __mulsf3
 __mulsf3:
+.(
 	lda _s2
 	pha
 	lda _s1
@@ -1505,6 +1591,7 @@ done:
 	sta _s2
 
 	rts
+.)
 #endif
 
 #iflused __divsf3
@@ -1715,10 +1802,12 @@ done:
 	sta _s2
 	
 	rts
+.)
 #endif
 
 #iflused __fixsfsi
 __fixsfsi:
+.(
 	lda _r2
 	and #$80
 	sta _m65x_fpe0_sign
@@ -1744,10 +1833,12 @@ __fixsfsi:
 not_negative:
 
 	rts
+.)
 #endif
 
 #iflused __fixunssfsi
 __fixunssfsi:
+.(
 	lda _r2
 	and #$7f
 	ldx _r3
@@ -1802,10 +1893,12 @@ left_shift_loop:
 .)
 	
 	rts
+.)
 #endif
 
 #iflused __floatunsisf
 __floatunsisf:
+.(
 	; All zero, just return zero.
 	lda _r0
 	ora _r1
@@ -1862,10 +1955,12 @@ no_rounding:
 	sta _r3
 
 	rts
+.)
 #endif
 
 #iflused __floatsisf
 __floatsisf:
+.(
 	lda _r3
 	and #$80
 	sta _m65x_fpe0_sign
@@ -1892,4 +1987,5 @@ not_negative:
 	sta _r2
 
 	rts
+.)
 #endif

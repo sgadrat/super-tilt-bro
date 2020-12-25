@@ -300,12 +300,14 @@ config_music_enabled = last_c_label+2
 ; CHARACTER_SELECTION labels
 ;
 
-character_selection_player_a_bg_task = last_c_label+1
-character_selection_player_b_bg_task = character_selection_player_a_bg_task+7
-character_selection_player_a_ready = character_selection_player_b_bg_task+7
-character_selection_player_b_ready = character_selection_player_a_ready+1
-character_selection_control_scheme = character_selection_player_b_ready+1
-character_selection_fix_screen_bg_task = character_selection_control_scheme+1
+character_selection_player_a_bg_task = last_c_label+1 ; $39-$3f
+character_selection_player_b_bg_task = character_selection_player_a_bg_task+7 ; $40-$46
+character_selection_player_a_ready = character_selection_player_b_bg_task+7 ; $47
+character_selection_player_b_ready = character_selection_player_a_ready+1 ; $48
+character_selection_player_a_rnd = character_selection_player_b_ready+1 ; $49
+character_selection_player_b_rnd = character_selection_player_a_rnd+1 ; $4a
+character_selection_control_scheme = character_selection_player_b_rnd+1 ; $4b
+character_selection_fix_screen_bg_task = character_selection_control_scheme+1 ; $4c
 
 character_selection_mem_buffer = $0580 ; $0580 to $05bf (4 tiles of 16 bytes each)
 character_selection_player_a_cursor_anim = $05c0 ; $05c0 to $05cb

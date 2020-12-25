@@ -219,7 +219,7 @@ static void change_screen_cleaning() {
 	// Resolve random characters
 	for (uint8_t player_num = 0; player_num < 2; ++player_num) {
 		if (config_player_a_character[player_num] == (uint16_t)(&CHARACTERS_NUMBER)) {
-			config_player_a_character[player_num] = 0; //TODO random number
+			config_player_a_character[player_num] = character_selection_player_a_rnd[player_num] % (uint16_t)(&CHARACTERS_NUMBER);
 		}
 	}
 }
@@ -816,6 +816,13 @@ void character_selection_screen_tick_extra() {
 	// Update background tasks
 	reset_nt_buffers();
 	tick_bg_tasks();
+
+	// Update random numbers (frame counter until a player is ready)
+	for (uint8_t player_num = 0; player_num < 2; ++player_num) {
+		if (!character_selection_player_a_ready[player_num]) {
+			++character_selection_player_a_rnd[player_num];
+		}
+	}
 
 	// Draw characters animations
 	character_selection_tick_char_anims();

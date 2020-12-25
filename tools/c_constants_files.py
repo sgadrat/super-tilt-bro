@@ -12,7 +12,7 @@ with open('game/mem_labels.asm', 'r') as source_file:
 			processed = line.rstrip('\n')
 			processed = re.sub(';', '//', processed)
 			processed = re.sub(r'^([a-zA-Z0-9_]+) = \$([0-9a-f]+)', r'static uint8_t* const \1 = (uint8_t* const)0x\2;', processed)
-			processed = re.sub(r'^([a-zA-Z0-9_]+) = (.*)', r'static uint8_t* const \1 = \2;', processed)
+			processed = re.sub(r'^([a-zA-Z0-9_]+) = ([^/]*)( //.*)?$', r'static uint8_t* const \1 = \2;\3', processed)
 			dest_file.write(processed + '\n')
 
 # Build project wide constants header
