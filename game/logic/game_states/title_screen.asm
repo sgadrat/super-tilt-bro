@@ -52,6 +52,10 @@ init_title_screen:
 	; Copy title screen's tileset in CHR-RAM
 	jsr set_title_chr
 
+	; Save original music state
+	lda audio_music_enabled
+	sta title_original_music_state
+
 	; Choose between soft (keep continuity) or hard (reboot) initialization of music and menu animations
 	lda previous_global_game_state
 	cmp #GAME_STATE_MODE_SELECTION
@@ -110,10 +114,6 @@ init_title_screen:
 
 	init_title_animation:
 	.(
-		; Save original music state
-		lda audio_music_enabled
-		sta title_original_music_state
-
 		; Mute music
 		jsr audio_mute_music
 
