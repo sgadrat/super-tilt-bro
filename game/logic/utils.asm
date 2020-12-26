@@ -552,3 +552,13 @@ controller_callbacks:
 	sta callback_addr+1      ;
 	jmp (callback_addr) ; Jump to stored address
 .)
+
+; wait_next_frame while still ticking music
+;
+; Overwrites all registers, and some tmpfields and extra_tmpfields (see audio_music_tick)
+sleep_frame:
+.(
+	jsr wait_next_frame
+	jmp audio_music_tick
+	; rts ; useless, jump to a subroutine
+.)

@@ -731,7 +731,7 @@ netplay_launch_screen_tick:
 		lda buffers_you_are_addr_lsb, x
 		ldy buffers_you_are_addr_msb, x
 		jsr push_nt_buffer
-		jsr wait_next_frame
+		jsr sleep_frame
 
 		lda #<buffer_player_a_ping
 		ldy #>buffer_player_a_ping
@@ -739,7 +739,7 @@ netplay_launch_screen_tick:
 		lda #<buffer_player_b_ping
 		ldy #>buffer_player_b_ping
 		jsr push_nt_buffer
-		jsr wait_next_frame
+		jsr sleep_frame
 
 		lda netplay_launch_received_msg+2+STNP_START_GAME_FIELD_PLAYER_A_CONNECTION
 		lsr
@@ -771,10 +771,13 @@ netplay_launch_screen_tick:
 		jsr construct_nt_buffer
 
 		; Wait some frames
-		ldx #200
+		lda #200
 		wait_one_frame:
-			jsr wait_next_frame
-			dex
+			pha
+			jsr sleep_frame
+			pla
+			sec
+			sbc #1
 			bne wait_one_frame
 
 		; Start game

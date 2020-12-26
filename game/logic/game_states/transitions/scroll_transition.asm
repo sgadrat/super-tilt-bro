@@ -382,11 +382,4 @@ scroll_transition:
 		end:
 		rts
 	.)
-
-	sleep_frame:
-	.(
-		jsr wait_next_frame
-		jsr audio_music_tick
-		rts
-	.)
 .)
