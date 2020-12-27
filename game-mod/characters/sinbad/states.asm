@@ -27,7 +27,9 @@ SINBAD_STATE_SHIELDING = CUSTOM_PLAYER_STATES_BEGIN + 19
 SINBAD_STATE_SHIELDLAG = CUSTOM_PLAYER_STATES_BEGIN + 20
 SINBAD_STATE_WALLJUMPING = CUSTOM_PLAYER_STATES_BEGIN + 21
 
+SINBAD_AIR_FRICTION_STRENGTH = 7
 SINBAD_FASTFALL_GRAVITY = $05
+SINBAD_GROUND_FRICTION_STRENGTH = $40
 SINBAD_MAX_WALLJUMPS = 1
 
 sinbad_a_num_walljumps = player_a_state_field3
@@ -40,6 +42,29 @@ sinbad_global_onground:
 	lda #SINBAD_MAX_WALLJUMPS
 	sta sinbad_a_num_walljumps, x
 	rts
+.)
+
+sinbad_apply_air_friction:
+.(
+	; merge_to_player_velocity parameter names
+	merged_v_low = tmpfield1
+	merged_v_high = tmpfield3
+	merged_h_low = tmpfield2
+	merged_h_high = tmpfield4
+	merge_step = tmpfield5
+
+	; Apply air friction
+	lda player_a_velocity_v_low, x
+	sta merged_v_low
+	lda player_a_velocity_v, x
+	sta merged_v_high
+	lda #$00
+	sta merged_h_low
+	sta merged_h_high
+	lda #SINBAD_AIR_FRICTION_STRENGTH
+	sta merge_step
+	jmp merge_to_player_velocity
+	;rts ; useless, jump to a subroutine
 .)
 
 ; Change the player's state if an aerial move is input on the controller
@@ -173,7 +198,6 @@ check_aerial_inputs:
 	.)
 .)
 
-#define AIR_FRICTION_STRENGTH 7
 aerial_directional_influence:
 .(
 	; merge_to_player_velocity parameter names
@@ -192,7 +216,9 @@ aerial_directional_influence:
 	and #CONTROLLER_INPUT_RIGHT
 	bne go_right
 
-	jmp air_friction
+	air_friction:
+		jmp sinbad_apply_air_friction
+		; No return, jump to a subroutine
 
 	go_left:
 		; Go to the left
@@ -207,18 +233,18 @@ aerial_directional_influence:
 		jsr signed_cmp
 		bpl end
 
-		lda player_a_velocity_v_low, x
-		sta merged_v_low
-		lda player_a_velocity_v, x
-		sta merged_v_high
-		lda #$00
-		sta merged_h_low
-		lda #$ff
-		sta merged_h_high
-		lda #$80
-		sta merge_step
-		jsr merge_to_player_velocity
-		jmp end
+			lda player_a_velocity_v_low, x
+			sta merged_v_low
+			lda player_a_velocity_v, x
+			sta merged_v_high
+			lda #$00
+			sta merged_h_low
+			lda #$ff
+			sta merged_h_high
+			lda #$80
+			sta merge_step
+			jmp merge_to_player_velocity
+			; No return, jump to a subroutine
 
 	go_right:
 		; Go to the right
@@ -233,31 +259,18 @@ aerial_directional_influence:
 		jsr signed_cmp
 		bpl end
 
-		lda player_a_velocity_v_low, x
-		sta merged_v_low
-		lda player_a_velocity_v, x
-		sta merged_v_high
-		lda #$00
-		sta merged_h_low
-		lda #$01
-		sta merged_h_high
-		lda #$80
-		sta merge_step
-		jsr merge_to_player_velocity
-		jmp end
-
-	air_friction:
-		; Apply air friction
-		lda player_a_velocity_v_low, x
-		sta merged_v_low
-		lda player_a_velocity_v, x
-		sta merged_v_high
-		lda #$00
-		sta merged_h_low
-		sta merged_h_high
-		lda #AIR_FRICTION_STRENGTH
-		sta merge_step
-		jsr merge_to_player_velocity
+			lda player_a_velocity_v_low, x
+			sta merged_v_low
+			lda player_a_velocity_v, x
+			sta merged_v_high
+			lda #$00
+			sta merged_h_low
+			lda #$01
+			sta merged_h_high
+			lda #$80
+			sta merge_step
+			jmp merge_to_player_velocity
+			; No return, jump to a subroutine
 
 	end:
 	rts
@@ -1356,7 +1369,7 @@ sinbad_tick_landing:
 	sta tmpfield3
 	sta tmpfield2
 	sta tmpfield1
-	lda #$40
+	lda #SINBAD_GROUND_FRICTION_STRENGTH
 	sta tmpfield5
 	jsr merge_to_player_velocity
 
@@ -1411,7 +1424,7 @@ sinbad_tick_crashing:
 	sta tmpfield3
 	sta tmpfield2
 	sta tmpfield1
-	lda #$80
+	lda #SINBAD_GROUND_FRICTION_STRENGTH*2
 	sta tmpfield5
 	jsr merge_to_player_velocity
 
@@ -1843,7 +1856,23 @@ set_spe_down_animation:
 #define STATE_SINBAD_SPE_DOWN_DURATION #21
 sinbad_tick_spe_down:
 .(
-	jsr apply_player_gravity
+	lda player_a_grounded, x
+	beq air_friction
+		ground_friction:
+			lda #$00
+			sta tmpfield4
+			sta tmpfield3
+			sta tmpfield2
+			sta tmpfield1
+			lda #SINBAD_GROUND_FRICTION_STRENGTH/3
+			sta tmpfield5
+			jsr merge_to_player_velocity
+			jmp end_friction
+		air_friction:
+			jsr sinbad_apply_air_friction
+			jsr apply_player_gravity
+			; Fallthrough
+	end_friction:
 
 	; Wait for move's timeout
 	inc player_a_state_clock, x
