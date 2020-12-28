@@ -126,7 +126,7 @@ network_tick_ingame:
 
 			; Check length
 			lda RAINBOW_DATA
-			cmp #133+NETWORK_INPUT_LAG ; 1 byte for ESP type + 132 for fixed payload length + delayed inputs
+			cmp #121+NETWORK_INPUT_LAG ; 1 byte for ESP type + 120 for fixed payload length + delayed inputs
 			bne skip_message
 
 				lda RAINBOW_DATA ; Burn ESP message type, length match and there is no reason it is not MESSAGE_FROM_SERVER
@@ -331,15 +331,31 @@ network_tick_ingame:
 
 		; Copy animation states
 		.(
-			ldx #0
-			copy_one_byte:
+			lda RAINBOW_DATA
+			sta player_a_animation+ANIMATION_STATE_OFFSET_DATA_VECTOR_LSB
+			lda RAINBOW_DATA
+			sta player_a_animation+ANIMATION_STATE_OFFSET_DATA_VECTOR_MSB
+			lda RAINBOW_DATA
+			sta player_a_animation+ANIMATION_STATE_OFFSET_DIRECTION
+			lda RAINBOW_DATA
+			sta player_a_animation+ANIMATION_STATE_OFFSET_CLOCK
+			lda RAINBOW_DATA
+			sta player_a_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB
+			lda RAINBOW_DATA
+			sta player_a_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB
 
-				lda RAINBOW_DATA ; 4 cycles
-				sta player_a_animation, x ; 5 cycles
-
-			inx ; 2 cycles
-			cpx #12*2 ; 3 cycles
-			bne copy_one_byte ; 3 cycles
+			lda RAINBOW_DATA
+			sta player_b_animation+ANIMATION_STATE_OFFSET_DATA_VECTOR_LSB
+			lda RAINBOW_DATA
+			sta player_b_animation+ANIMATION_STATE_OFFSET_DATA_VECTOR_MSB
+			lda RAINBOW_DATA
+			sta player_b_animation+ANIMATION_STATE_OFFSET_DIRECTION
+			lda RAINBOW_DATA
+			sta player_b_animation+ANIMATION_STATE_OFFSET_CLOCK
+			lda RAINBOW_DATA
+			sta player_b_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB
+			lda RAINBOW_DATA
+			sta player_b_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB
 		.)
 
 		; Update game state until the current frame is at least equal to the one we where before reading the message
