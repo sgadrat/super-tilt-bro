@@ -406,6 +406,16 @@ def generate_characters_index(characters, game_dir):
 			'characters_weapon_palettes_msb',
 			lambda c: '>{}_weapon_palettes'.format(c.name)
 		)
+		_w_table(
+			'Routine to load character specific state from network',
+			'characters_netload_routine_lsb',
+			lambda c: '<{}'.format(c.netload_routine)
+		)
+		_w_table(
+			'',
+			'characters_netload_routine_msb',
+			lambda c: '>{}'.format(c.netload_routine)
+		)
 
 		_w('; Begining of character\'s jump tables\n')
 		for routine_type in ['start', 'update', 'offground', 'onground', 'input', 'onhurt']:

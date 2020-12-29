@@ -128,26 +128,27 @@ network_tick_ingame:
 			lda RAINBOW_DATA
 			nop
 
-			; Check length
+			; Trash length byte (consistency check is not trivial as message has variable length)
 			lda RAINBOW_DATA
-			cmp #121+NETWORK_INPUT_LAG ; 1 byte for ESP type + 120 for fixed payload length + delayed inputs
+			nop
+
+			; Check message type
+			lda RAINBOW_DATA
+			cmp #FROMESP_MSG_MESSAGE_FROM_SERVER
 			bne skip_message
 
-				lda RAINBOW_DATA ; Burn ESP message type, length match and there is no reason it is not MESSAGE_FROM_SERVER
-				nop
+			lda RAINBOW_DATA ; Message type from payload
+			cmp #STNP_SRV_MSG_TYPE_NEWSTATE
+			bne skip_message
 
-				lda RAINBOW_DATA ; Message type from payload
-				cmp #STNP_SRV_MSG_TYPE_NEWSTATE
-				bne skip_message
+				; Burn prediction ID
+				; TODO use it to avoid useless state reset
+				lda RAINBOW_DATA
 
-					; Burn prediction ID
-					; TODO use it to avoid useless state reset
-					lda RAINBOW_DATA
+				; Override gamestate with the one in message's payload
+				jsr update_state
 
-					; Override gamestate with the one in message's payload
-					jsr update_state
-
-					jmp state_updated
+				jmp state_updated
 
 			skip_message:
 				; Clear buffered message
@@ -360,6 +361,27 @@ network_tick_ingame:
 			sta player_b_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB
 			lda RAINBOW_DATA
 			sta player_b_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB
+		.)
+
+		; Copy character specific data
+		.(
+			ldx #0
+			copy_one_char:
+				ldy config_player_a_character, x
+
+				lda characters_netload_routine_lsb, y
+				sta tmpfield1
+				lda characters_netload_routine_msb, y
+				sta tmpfield2
+
+				SWITCH_BANK(characters_bank_number COMMA y)
+				stx player_number
+				jsr call_pointed_subroutine
+				ldx player_number
+
+				inx
+				cpx #2
+				bne copy_one_char
 		.)
 
 		; Update game state until the current frame is at least equal to the one we where before reading the message

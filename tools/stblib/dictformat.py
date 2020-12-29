@@ -17,6 +17,14 @@ def export_to_dict(obj):
 		return obj
 	return globals()['serialize_{}'.format(_mangle(type(obj)))](obj)
 
+def mandatory_get(source, field, typename=None):
+	if field in source:
+		return source[field]
+
+	if typename is None:
+		typename = source['type']
+	raise Exception('object of type "{}" must contain a "{}" field'.format(typename, field))
+
 def _mangle(t):
 	name = None
 	if isinstance(t, type):
@@ -33,47 +41,47 @@ def _import_list(source):
 
 def parse_animation(source):
 	return stblib.animations.Animation(
-		name = source['name'],
-		frames = _import_list(source['frames'])
+		name = mandatory_get(source, 'name'),
+		frames = _import_list(mandatory_get(source, 'frames'))
 	)
 
 def parse_animation_frame(source):
 	return stblib.animations.Frame(
-		duration = source['duration'],
-		hurtbox = import_from_dict(source['hurtbox']),
-		hitbox = import_from_dict(source['hitbox']),
-		sprites = _import_list(source['sprites'])
+		duration = mandatory_get(source, 'duration'),
+		hurtbox = import_from_dict(mandatory_get(source, 'hurtbox')),
+		hitbox = import_from_dict(mandatory_get(source, 'hitbox')),
+		sprites = _import_list(mandatory_get(source, 'sprites'))
 	)
 
 def parse_animation_hitbox(source):
 	return stblib.animations.Hitbox(
-		enabled = source['enabled'],
-		damages = source['damages'],
-		base_h = source['base_h'],
-		base_v = source['base_v'],
-		force_h = source['force_h'],
-		force_v = source['force_v'],
-		left = source['left'],
-		right = source['right'],
-		top = source['top'],
-		bottom = source['bottom']
+		enabled = mandatory_get(source, 'enabled'),
+		damages = mandatory_get(source, 'damages'),
+		base_h = mandatory_get(source, 'base_h'),
+		base_v = mandatory_get(source, 'base_v'),
+		force_h = mandatory_get(source, 'force_h'),
+		force_v = mandatory_get(source, 'force_v'),
+		left = mandatory_get(source, 'left'),
+		right = mandatory_get(source, 'right'),
+		top = mandatory_get(source, 'top'),
+		bottom = mandatory_get(source, 'bottom')
 	)
 
 def parse_animation_hurtbox(source):
 	return stblib.animations.Hurtbox(
-		left = source['left'],
-		right = source['right'],
-		top = source['top'],
-		bottom = source['bottom']
+		left = mandatory_get(source, 'left'),
+		right = mandatory_get(source, 'right'),
+		top = mandatory_get(source, 'top'),
+		bottom = mandatory_get(source, 'bottom')
 	)
 
 def parse_animation_sprite(source):
 	return stblib.animations.Sprite(
-		y = source['y'],
-		tile = source['tile'],
+		y = mandatory_get(source, 'y'),
+		tile = mandatory_get(source, 'tile'),
 		attr = source['attr'] if isinstance(source['attr'], int) else import_from_dict(source['attr']),
-		x = source['x'],
-		foreground = source['foreground']
+		x = mandatory_get(source, 'x'),
+		foreground = mandatory_get(source, 'foreground')
 	)
 
 def parse_bg_metatile(source):
@@ -81,88 +89,89 @@ def parse_bg_metatile(source):
 
 def parse_character(source):
 	return stblib.character.Character(
-		name = source['name'],
-		weapon_name = source['weapon_name'],
-		sourcecode = source['sourcecode'],
-		tileset = import_from_dict(source['tileset']),
-		victory_animation = import_from_dict(source['victory_animation']),
-		defeat_animation = import_from_dict(source['defeat_animation']),
-		menu_select_animation = import_from_dict(source['menu_select_animation']),
-		animations = _import_list(source['animations']),
-		color_swaps = import_from_dict(source['color_swaps']),
-		states = _import_list(source['states']),
-		illustration_large = import_from_dict(source['illustration_large']),
-		illustration_small = import_from_dict(source['illustration_small']),
-		illustration_token = import_from_dict(source['illustration_token']),
-		ai = import_from_dict(source['ai'])
+		name = mandatory_get(source, 'name'),
+		weapon_name = mandatory_get(source, 'weapon_name'),
+		sourcecode = mandatory_get(source, 'sourcecode'),
+		tileset = import_from_dict(mandatory_get(source, 'tileset')),
+		victory_animation = import_from_dict(mandatory_get(source, 'victory_animation')),
+		defeat_animation = import_from_dict(mandatory_get(source, 'defeat_animation')),
+		menu_select_animation = import_from_dict(mandatory_get(source, 'menu_select_animation')),
+		animations = _import_list(mandatory_get(source, 'animations')),
+		color_swaps = import_from_dict(mandatory_get(source, 'color_swaps')),
+		states = _import_list(mandatory_get(source, 'states')),
+		illustration_large = import_from_dict(mandatory_get(source, 'illustration_large')),
+		illustration_small = import_from_dict(mandatory_get(source, 'illustration_small')),
+		illustration_token = import_from_dict(mandatory_get(source, 'illustration_token')),
+		ai = import_from_dict(mandatory_get(source, 'ai')),
+		netload_routine = mandatory_get(source, 'netload_routine')
 	)
 
 def parse_character_ai(source):
 	return stblib.character.Ai(
-		action_selectors = source['action_selectors'],
-		attacks = _import_list(source['attacks']),
-		actions = _import_list(source['actions']),
-		sourcecode = source['sourcecode']
+		action_selectors = mandatory_get(source, 'action_selectors'),
+		attacks = _import_list(mandatory_get(source, 'attacks')),
+		actions = _import_list(mandatory_get(source, 'actions')),
+		sourcecode = mandatory_get(source, 'sourcecode')
 	)
 
 def parse_character_ai_action(source):
 	return stblib.character.AiAction(
-		name = source['name'],
-		steps = _import_list(source['steps'])
+		name = mandatory_get(source, 'name'),
+		steps = _import_list(mandatory_get(source, 'steps'))
 	)
 
 def parse_character_ai_action_step(source):
 	return stblib.character.AiActionStep(
-		input = source['input'],
-		duration = source['duration']
+		input = mandatory_get(source, 'input'),
+		duration = mandatory_get(source, 'duration')
 	)
 
 def parse_character_ai_attack(source):
 	return stblib.character.AiAttack(
-		action = source['action'],
-		hitbox = import_from_dict(source['hitbox']),
-		constraints = source['constraints']
+		action = mandatory_get(source, 'action'),
+		hitbox = import_from_dict(mandatory_get(source, 'hitbox')),
+		constraints = mandatory_get(source, 'constraints')
 	)
 
 def parse_character_ai_hitbox(source):
 	return stblib.character.AiHitbox(
-		left = source['left'],
-		right = source['right'],
-		top = source['top'],
-		bottom = source['bottom']
+		left = mandatory_get(source, 'left'),
+		right = mandatory_get(source, 'right'),
+		top = mandatory_get(source, 'top'),
+		bottom = mandatory_get(source, 'bottom')
 	)
 
 def parse_character_colors(source):
 	return stblib.character.Colorswaps(
-		primary_names = source['primary_names'],
-		secondary_names = source['secondary_names'],
-		primary_colors = _import_list(source['primary_colors']),
-		alternate_colors = _import_list(source['alternate_colors']),
-		secondary_colors = _import_list(source['secondary_colors'])
+		primary_names = mandatory_get(source, 'primary_names'),
+		secondary_names = mandatory_get(source, 'secondary_names'),
+		primary_colors = _import_list(mandatory_get(source, 'primary_colors')),
+		alternate_colors = _import_list(mandatory_get(source, 'alternate_colors')),
+		secondary_colors = _import_list(mandatory_get(source, 'secondary_colors'))
 	)
 
 def parse_character_state(source):
 	return stblib.character.State(
-		name = source['name'],
+		name = mandatory_get(source, 'name'),
 		start_routine = source.get('start_routine'),
-		update_routine = source['update_routine'],
-		offground_routine = source['offground_routine'],
-		onground_routine = source['onground_routine'],
-		input_routine = source['input_routine'],
-		onhurt_routine = source['onhurt_routine']
+		update_routine = mandatory_get(source, 'update_routine'),
+		offground_routine = mandatory_get(source, 'offground_routine'),
+		onground_routine = mandatory_get(source, 'onground_routine'),
+		input_routine = mandatory_get(source, 'input_routine'),
+		onhurt_routine = mandatory_get(source, 'onhurt_routine')
 	)
 
 def parse_gamemod(source):
 	return stblib.gamemod.GameMod(
-		characters = _import_list(source['characters']),
-		tilesets = _import_list(source['tilesets'])
+		characters = _import_list(mandatory_get(source, 'characters')),
+		tilesets = _import_list(mandatory_get(source, 'tilesets'))
 	)
 
 def parse_nametable(source):
 	return stblib.nametables.Nametable(name = source['name'], tilemap = source['tilemap'], attributes = source['attributes'])
 
 def parse_palette(source):
-	return stblib.character.Palette(colors = source['colors'])
+	return stblib.character.Palette(colors = mandatory_get(source, 'colors'))
 
 def parse_platform(source):
 	return stblib.stages.Platform(
@@ -176,34 +185,34 @@ def parse_smooth_platform(source):
 
 def parse_sprite_attributes(source):
 	int_attributes = 0
-	if source['flip_v']:
+	if mandatory_get(source, 'flip_v'):
 		int_attributes += 0x80
-	if source['flip_h']:
+	if mandatory_get(source, 'flip_h'):
 		int_attributes += 0x40
-	if source['background']:
+	if mandatory_get(source, 'background'):
 		int_attributes += 0x20
-	int_attributes += source['palette']
+	int_attributes += mandatory_get(source, 'palette')
 	return int_attributes
 
 def parse_stage(source):
 	return stblib.stages.Stage(
 		name = source['name'], description = source['description'],
-		player_a_position = tuple(source['player_a_position']),
-		player_b_position = tuple(source['player_b_position']),
-		respawn_position = tuple(source['respawn_position']),
-		platforms = _import_list(source['platforms']),
-		bg_metatiles = _import_list(source['metatiles'])
+		player_a_position = tuple(mandatory_get(source, 'player_a_position')),
+		player_b_position = tuple(mandatory_get(source, 'player_b_position')),
+		respawn_position = tuple(mandatory_get(source, 'respawn_position')),
+		platforms = _import_list(mandatory_get(source, 'platforms')),
+		bg_metatiles = _import_list(mandatory_get(source, 'metatiles'))
 	)
 
 def parse_tile(source):
 	return stblib.tiles.Tile(
-		representation = source['representation']
+		representation = mandatory_get(source, 'representation')
 	)
 
 def parse_tileset(source):
 	return stblib.tiles.Tileset(
-		tiles = _import_list(source['tiles']),
-		tilenames = source['tilenames'],
+		tiles = _import_list(mandatory_get(source, 'tiles')),
+		tilenames = mandatory_get(source, 'tilenames'),
 		name = source.get('name')
 	)
 

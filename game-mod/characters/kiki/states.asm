@@ -81,6 +81,12 @@ kiki_init:
 		sta kiki_a_platform_state, x
 	.)
 
+	; Stop player's elements after the platform
+	.(
+		lda #STAGE_ELEMENT_END
+		sta player_a_objects+STAGE_ELEMENT_SIZE, y
+	.)
+
 	rts
 
 	;TODO may be optmizable
@@ -99,6 +105,48 @@ kiki_init:
 	oos_last_sprite_num_per_player_lsb:
 		.byt <player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
 		.byt <player_b_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+.)
+
+kiki_netload:
+.(
+	; NOTE performance can be improved by having a branch per player (avoiding "indirect, y" indexing)
+	ldy #0
+	cpx #0
+	beq load_element
+		ldy #player_b_objects-player_a_objects
+	load_element:
+
+	; Platform stage-element
+	lda RAINBOW_DATA
+	sta player_a_objects+0, y
+	lda RAINBOW_DATA
+	sta player_a_objects+1, y
+	lda RAINBOW_DATA
+	sta player_a_objects+2, y
+	lda RAINBOW_DATA
+	sta player_a_objects+3, y
+	lda RAINBOW_DATA
+	sta player_a_objects+4, y
+	lda RAINBOW_DATA
+	sta player_a_objects+5, y
+	lda RAINBOW_DATA
+	sta player_a_objects+6, y
+	lda RAINBOW_DATA
+	sta player_a_objects+7, y
+	lda RAINBOW_DATA
+	sta player_a_objects+8, y
+
+#if STAGE_ELEMENT_SIZE <> 9
+#error above code expects stage elements to be 9 bytes
+#endif
+
+	; Y pos of the platform (kiki_first_wall_sprite_y_per_player)
+	lda RAINBOW_DATA
+	sta player_a_objects+10, y
+	lda RAINBOW_DATA
+	sta player_a_objects+11, y
+
+	rts
 .)
 
 kiki_apply_air_friction:
@@ -1715,8 +1763,8 @@ kiki_start_side_spe:
 		sbc #0
 		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
 
-		lda #STAGE_ELEMENT_END
-		sta player_a_objects+STAGE_ELEMENT_SIZE, y ; next's type
+		;lda #STAGE_ELEMENT_END
+		;sta player_a_objects+STAGE_ELEMENT_SIZE, y ; next's type, useless, set at init time
 
 		; Compute wall's sprites position
 		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
@@ -1948,8 +1996,8 @@ kiki_start_down_spe:
 		sbc #0
 		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
 
-		lda #STAGE_ELEMENT_END
-		sta player_a_objects+STAGE_ELEMENT_SIZE, y ; next's type
+		;lda #STAGE_ELEMENT_END
+		;sta player_a_objects+STAGE_ELEMENT_SIZE, y ; next's type, useless, set at init time
 
 		; Compute wall's sprites position
 		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
@@ -2149,8 +2197,8 @@ kiki_start_up_spe:
 		sbc #0
 		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
 
-		lda #STAGE_ELEMENT_END
-		sta player_a_objects+STAGE_ELEMENT_SIZE, y ; next's type
+		;lda #STAGE_ELEMENT_END
+		;sta player_a_objects+STAGE_ELEMENT_SIZE, y ; next's type, useless, set at init time
 
 		; Compute wall's sprites position
 		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y

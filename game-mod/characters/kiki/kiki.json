@@ -508,6 +508,7 @@
 		"type": "import"
 	},
 	"name": "kiki",
+	"netload_routine": "kiki_netload",
 	"sourcecode_file": "characters/kiki/states.asm",
 	"states": [
 		{

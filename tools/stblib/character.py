@@ -165,7 +165,7 @@ class Ai:
 		ensure(isinstance(self.sourcecode, str))
 
 class Character:
-	def __init__(self, name='', weapon_name='', sourcecode='', tileset=None, victory_animation=None, defeat_animation=None, menu_select_animation=None, animations=None, color_swaps=None, states=None, illustration_large=None, illustration_small=None, illustration_token=None, ai=None):
+	def __init__(self, name='', weapon_name='', sourcecode='', tileset=None, victory_animation=None, defeat_animation=None, menu_select_animation=None, animations=None, color_swaps=None, states=None, illustration_large=None, illustration_small=None, illustration_token=None, ai=None, netload_routine=None):
 		self.name = name
 		self.weapon_name = weapon_name
 		self.sourcecode = sourcecode
@@ -180,6 +180,7 @@ class Character:
 		self.illustration_small = illustration_small if illustration_small is not None else stblib.tiles.Tileset()
 		self.illustration_token = illustration_token if illustration_token is not None else stblib.tiles.Tileset()
 		self.ai = ai if ai is not None else Ai()
+		self.netload_routine = netload_routine
 
 	def check(self):
 		ensure(isinstance(self.name, str))
@@ -236,3 +237,5 @@ class Character:
 
 		ensure(isinstance(self.ai, Ai))
 		self.ai.check()
+
+		ensure(isinstance(self.netload_routine, str), "netload_routine shall be the label of a network state-loading routine")
