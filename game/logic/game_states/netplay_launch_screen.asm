@@ -580,7 +580,7 @@ netplay_launch_screen_tick:
 		flags_byte = tmpfield1
 
 		; Send connection message
-		lda #11                                ; ESP header
+		lda #14                                ; ESP header
 		sta RAINBOW_DATA
 		lda #TOESP_MSG_SEND_MESSAGE_TO_SERVER
 		sta RAINBOW_DATA
@@ -597,7 +597,7 @@ netplay_launch_screen_tick:
 		sta RAINBOW_DATA
 		lda netplay_launch_ping_min ; min ping
 		sta RAINBOW_DATA
-		lda #2 ; protocol_version
+		lda #3 ; protocol_version
 		sta RAINBOW_DATA
 		lda netplay_launch_ping_max ; max ping
 		sta RAINBOW_DATA
@@ -616,6 +616,13 @@ netplay_launch_screen_tick:
 		sta RAINBOW_DATA
 
 		lda #<GAME_VERSION ; version_minor
+		sta RAINBOW_DATA
+
+		lda config_player_a_character ; selected_character
+		sta RAINBOW_DATA
+		lda config_player_a_character_palette ; selected_palette
+		sta RAINBOW_DATA
+		lda config_selected_stage ; selected_stage
 		sta RAINBOW_DATA
 
 		; Next step - wait for a response
@@ -705,17 +712,10 @@ netplay_launch_screen_tick:
 	got_start_game_msg:
 	.(
 		; Configure game
-		lda #0
 #ifndef NETWORK_AI
+		lda #0
 		sta config_ai_level
 #endif
-		sta config_player_a_character
-		sta config_player_b_character
-		sta config_player_a_character_palette
-		sta config_player_a_weapon_palette
-		lda #1
-		sta config_player_b_character_palette
-		sta config_player_b_weapon_palette
 
 		lda netplay_launch_received_msg+2+STNP_START_GAME_FIELD_STAGE
 		sta config_selected_stage
@@ -726,8 +726,22 @@ netplay_launch_screen_tick:
 		lda netplay_launch_received_msg+2+STNP_START_GAME_FIELD_PLAYER_NUMBER
 		sta network_local_player_number
 
+		lda netplay_launch_received_msg+2+STNP_START_GAME_FIELD_PA_CHARACTER
+		sta config_player_a_character
+
+		lda netplay_launch_received_msg+2+STNP_START_GAME_FIELD_PB_CHARACTER
+		sta config_player_b_character
+
+		lda netplay_launch_received_msg+2+STNP_START_GAME_FIELD_PA_PALETTE
+		sta config_player_a_character_palette
+		sta config_player_a_weapon_palette
+
+		lda netplay_launch_received_msg+2+STNP_START_GAME_FIELD_PB_PALETTE
+		sta config_player_b_character_palette
+		sta config_player_b_weapon_palette
+
 		; Draw info on players connection
-		tax
+		ldx network_local_player_number
 		lda buffers_you_are_addr_lsb, x
 		ldy buffers_you_are_addr_msb, x
 		jsr push_nt_buffer
@@ -741,7 +755,7 @@ netplay_launch_screen_tick:
 		jsr push_nt_buffer
 		jsr sleep_frame
 
-		lda netplay_launch_received_msg+2+STNP_START_GAME_FIELD_PLAYER_A_CONNECTION
+		lda netplay_launch_received_msg+2+STNP_START_GAME_FIELD_PLAYER_CONNECTIONS
 		lsr
 		lsr
 		lsr
@@ -757,7 +771,7 @@ netplay_launch_screen_tick:
 		sta tmpfield2
 		jsr construct_nt_buffer
 
-		lda netplay_launch_received_msg+2+STNP_START_GAME_FIELD_PLAYER_A_CONNECTION
+		lda netplay_launch_received_msg+2+STNP_START_GAME_FIELD_PLAYER_CONNECTIONS
 		and #%00000011
 		tax
 		lda indicator_lsb, x
