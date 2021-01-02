@@ -384,6 +384,19 @@ network_tick_ingame:
 				bne copy_one_char
 		.)
 
+		; Copy stage specific data
+		.(
+			ldy config_selected_stage
+
+			lda stages_netload_routine_lsb, y
+			sta tmpfield1
+			lda stages_netload_routine_msb, y
+			sta tmpfield2
+
+			SWITCH_BANK(stages_bank COMMA y)
+			jsr call_pointed_subroutine
+		.)
+
 		; Update game state until the current frame is at least equal to the one we where before reading the message
 		lda #1
 		sta network_rollback_mode

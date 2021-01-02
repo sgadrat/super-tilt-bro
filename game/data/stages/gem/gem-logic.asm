@@ -25,7 +25,26 @@
 
 #define STAGE_GEM_GEM_STATE_COOLDOWN 0
 #define STAGE_GEM_GEM_STATE_ACTIVE 1
-#define STAGE_GEM_GEM_STATE_BUFF 2
+#define STAGE_GEM_GEM_STATE_BREAKING 2
+#define STAGE_GEM_GEM_STATE_BUFF 3
+
+#define STAGE_GEM_HIDE_SPRITES .( :\
+	lda #$fe :\
+	ldx #STAGE_GEM_FIRST_SPRITE_OAM_OFFSET :\
+	hide_one_sprite:\
+		sta oam_mirror, x :\
+		inx :\
+		inx :\
+		inx :\
+		inx :\
+		cpx #(STAGE_GEM_LAST_SPRITE_OAM_OFFSET)+4 :\
+		bne hide_one_sprite :\
+.)
+
+; Pause music, avoid audio_mute_music which changes the configuration ;TODO This is hacky as fuck (and may break with new audio engine)
+#define STAGE_GEM_PAUSE_MUSIC lda #%00001000 : sta APU_STATUS
+; Play music, avoid audio_unmute_music which changes the configuration
+#define STAGE_GEM_RESUME_MUSIC lda #%00001111 : sta APU_STATUS
 
 stage_gem_init:
 .(
@@ -65,34 +84,156 @@ stage_gem_init:
 	rts
 .)
 
+stage_gem_netload:
+.(
+	; Load gem's state
+	ldx RAINBOW_DATA
+	stx stage_gem_gem_state
+
+	; Load fields for the new state
+	lda gem_state_netload_routines_lsb, x
+	sta tmpfield1
+	lda gem_state_netload_routines_msb, x
+	sta tmpfield2
+	jmp (tmpfield1)
+
+	gem_netload_cooldown:
+	.(
+		; Load state's variables
+		lda RAINBOW_DATA
+		sta stage_gem_gem_cooldown_low
+		lda RAINBOW_DATA
+		sta stage_gem_gem_cooldown_high
+
+		; Ensure sprites consistency
+		STAGE_GEM_HIDE_SPRITES
+
+		rts
+	.)
+
+	gem_netload_active:
+	.(
+		; Load state's variables
+		lda RAINBOW_DATA
+		sta stage_gem_gem_position_x_low
+		lda RAINBOW_DATA
+		sta stage_gem_gem_position_x_high
+		lda RAINBOW_DATA
+		sta stage_gem_gem_position_y_low
+		lda RAINBOW_DATA
+		sta stage_gem_gem_position_y_high
+		lda RAINBOW_DATA
+		sta stage_gem_gem_velocity_h_low
+		lda RAINBOW_DATA
+		sta stage_gem_gem_velocity_h_high
+		lda RAINBOW_DATA
+		sta stage_gem_gem_velocity_v_low
+		lda RAINBOW_DATA
+		sta stage_gem_gem_velocity_v_high
+
+		; Ensure sprites consistency
+		STAGE_GEM_HIDE_SPRITES ; Note, just in case we were in "buff" state previously (should be really rare)
+
+		lda #TILE_GEM
+		sta STAGE_GEM_GEM_SPRITE_OAM+1 ; Tile number
+		lda #3
+		sta STAGE_GEM_GEM_SPRITE_OAM+2 ; Attributes
+
+		rts
+	.)
+
+	gem_netload_breaking:
+	.(
+		; Load state's variables
+		lda RAINBOW_DATA
+		sta stage_gem_buffed_player
+
+		; Ensure sprites consistency
+		;  Nothing to do, animation code is called each frame
+
+		; Ensure music is paused
+		STAGE_GEM_PAUSE_MUSIC
+
+		rts
+	.)
+
+	gem_netload_buff:
+	.(
+		; Load state's variables
+		lda RAINBOW_DATA
+		sta stage_gem_gem_cooldown_low
+		lda RAINBOW_DATA
+		sta stage_gem_gem_cooldown_high
+		lda RAINBOW_DATA
+		sta stage_gem_last_opponent_state
+		lda RAINBOW_DATA
+		sta stage_gem_buffed_player
+
+		; Ensure sprites consistency
+		;  Nothing to do, animation code is called each frame
+
+		; Ensure music is running
+		;  Note - This is fragile, if a game in "breaking" state loads to something else than "buff" state, the music will stay paused
+		STAGE_GEM_RESUME_MUSIC
+
+		rts
+	.)
+
+	gem_state_netload_routines_lsb:
+	.byt <gem_netload_cooldown, <gem_netload_active, <gem_netload_breaking, <gem_netload_buff
+	gem_state_netload_routines_msb:
+	.byt >gem_netload_cooldown, >gem_netload_active, >gem_netload_breaking, >gem_netload_buff
+.)
+
+stage_gem_freezed_tick:
+.(
+	; Update gem breaking state if it is the cause of the freeze
+	lda stage_gem_gem_state
+	cmp #STAGE_GEM_GEM_STATE_BREAKING
+	bne end
+
+		jmp stage_gem_tick_state_breaking
+		; No return, jump to subroutine
+
+	end:
+	rts
+.)
+
 stage_gem_tick:
 .(
 	.(
 		; Update lava tiles
-		inc stage_gem_frame_cnt
-		lda #%0010000
-		bit stage_gem_frame_cnt
-		beq even_frame
-			ldx #1
-			jmp x_ok
-		even_frame:
-			ldx #0
-		x_ok:
+		;  NOTE - despite its name, stage_gem_frame_cnt is only used for one purpose, animating lava.
+		;         If this change, the "inc" should certainly be done even in rollback mode.
+		lda network_rollback_mode
+		bne lava_tiles_ok
 
-		lda lava_bg_frames_lsb, x
-		sta tmpfield1
-		lda lava_bg_frames_msb, x
-		sta tmpfield2
+			inc stage_gem_frame_cnt
+			lda #%0010000
+			bit stage_gem_frame_cnt
+			beq even_frame
+				ldx #1
+				jmp x_ok
+			even_frame:
+				ldx #0
+			x_ok:
 
-		jsr last_nt_buffer
-		ldy #0
-		copy_one_byte:
-			lda (tmpfield1), y
-			sta nametable_buffers, x
-			inx
-			iny
-			cpy #LAVA_TILE_ANIM_BUFF_LEN
-			bne copy_one_byte
+			lda lava_bg_frames_lsb, x
+			sta tmpfield1
+			lda lava_bg_frames_msb, x
+			sta tmpfield2
+
+			jsr last_nt_buffer
+			ldy #0
+			copy_one_byte:
+				lda (tmpfield1), y
+				sta nametable_buffers, x
+				inx
+				iny
+				cpy #LAVA_TILE_ANIM_BUFF_LEN
+				bne copy_one_byte
+
+		lava_tiles_ok:
 
 		; Call the correct tick routine according to gem's state
 		ldx stage_gem_gem_state
@@ -105,9 +246,9 @@ stage_gem_tick:
 
 		; gem state tick routines
 		stage_gem_tick_state_routines_lsb:
-			.byt <stage_gem_tick_state_cooldown, <stage_gem_tick_state_active, <stage_gem_tick_state_buff
+			.byt <stage_gem_tick_state_cooldown, <stage_gem_tick_state_active, <stage_gem_tick_state_breaking, <stage_gem_tick_state_buff
 		stage_gem_tick_state_routines_msb:
-			.byt >stage_gem_tick_state_cooldown, >stage_gem_tick_state_active, >stage_gem_tick_state_buff
+			.byt >stage_gem_tick_state_cooldown, >stage_gem_tick_state_active, >stage_gem_tick_state_breaking, >stage_gem_tick_state_buff
 	.)
 
 	stage_gem_tick_state_cooldown:
@@ -125,48 +266,133 @@ stage_gem_tick:
 	stage_gem_tick_state_active:
 	.(
 		jsr move_gem
-		jsr stage_gem_place_gem
-		jsr check_gem_hit
-		rts
+
+		lda network_rollback_mode
+		bne end_place_gem
+			jsr stage_gem_place_gem
+		end_place_gem:
+
+		jmp check_gem_hit
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	&stage_gem_tick_state_breaking:
+	.(
+		lda screen_shake_counter
+		bne update_anim
+
+			stop_anim:
+			.(
+				lda audio_music_enabled
+				beq music_ok
+					STAGE_GEM_RESUME_MUSIC
+				music_ok:
+				jmp stage_gem_set_state_buff
+				;rts ; useless, jump to subroutine
+			.)
+
+			update_anim:
+			.(
+				; Draw the gem explosion animation
+				;  Overwrites all registers and almost all tmpfields
+				.(
+					; Do not draw in rollback mode
+					lda network_rollback_mode
+					bne end_draw_anim
+
+						; Search the current frame number
+						lda #STAGE_GEM_BREAK_DURATION
+						sec
+						sbc screen_shake_counter
+						lsr
+						lsr
+
+						cmp gem_explosion_last_frame_index
+						bcc frame_number_ok
+						lda gem_explosion_last_frame_index
+
+						frame_number_ok:
+						tax
+
+						; Call draw_anim_frame
+						lda stage_gem_gem_position_x_high
+						sta tmpfield1
+						lda stage_gem_gem_position_y_high
+						sta tmpfield2
+						lda gem_explosion_frames_addr_lsb, x
+						sta tmpfield3
+						lda gem_explosion_frames_addr_msb, x
+						sta tmpfield4
+						lda #STAGE_GEM_STAGE_SPRITES
+						sta tmpfield5
+						lda #STAGE_GEM_STAGE_SPRITES+STAGE_GEM_NB_STAGE_SPRITES-1
+						sta tmpfield6
+						lda #0
+						sta tmpfield7
+						sta tmpfield8
+						sta tmpfield9
+						lda #1
+						stx player_number
+
+						jsr draw_anim_frame
+
+					end_draw_anim:
+				.)
+
+				; Audio effect
+				lda #STAGE_GEM_BREAK_DURATION
+				sec
+				sbc screen_shake_counter
+				tax
+				jmp play_gem_hit
+
+				;rts ; useless, jump to subroutine
+			.)
 	.)
 
 	stage_gem_tick_state_buff:
 	.(
 		; Update buff animation
-		lda stage_gem_gem_cooldown_low ; Compute current frame number (the animation must have exactly 8 frames)
-		lsr
-		lsr
-		and #%00000111
-		tax
+		lda network_rollback_mode
+		bne end_update_anim
 
-		lda gem_buff_frames_addr_lsb, x
-		sta tmpfield3
-		lda gem_buff_frames_addr_msb, x
-		sta tmpfield4
-		lda #STAGE_GEM_STAGE_SPRITES
-		sta tmpfield5
-		lda #STAGE_GEM_STAGE_SPRITES+STAGE_GEM_NB_STAGE_SPRITES-1
-		sta tmpfield6
+			lda stage_gem_gem_cooldown_low ; Compute current frame number (the animation must have exactly 8 frames)
+			lsr
+			lsr
+			and #%00000111
+			tax
 
-		ldx stage_gem_buffed_player
-		stx player_number
-		lda player_a_x, x
-		sta tmpfield1
-		lda player_a_y, x
-		sta tmpfield2
-		lda player_a_x_screen, x
-		sta tmpfield8
-		lda player_a_y_screen, x
-		sta tmpfield9
-		lda player_a_direction, x
-		sta tmpfield7
+			lda gem_buff_frames_addr_lsb, x
+			sta tmpfield3
+			lda gem_buff_frames_addr_msb, x
+			sta tmpfield4
+			lda #STAGE_GEM_STAGE_SPRITES
+			sta tmpfield5
+			lda #STAGE_GEM_STAGE_SPRITES+STAGE_GEM_NB_STAGE_SPRITES-1
+			sta tmpfield6
 
-		lda player_a_hitbox_enabled, x
-		pha
-		jsr draw_anim_frame
-		pla
-		ldx stage_gem_buffed_player
-		sta player_a_hitbox_enabled, x
+			ldx stage_gem_buffed_player
+			stx player_number
+			lda player_a_x, x
+			sta tmpfield1
+			lda player_a_y, x
+			sta tmpfield2
+			lda player_a_x_screen, x
+			sta tmpfield8
+			lda player_a_y_screen, x
+			sta tmpfield9
+			lda player_a_direction, x
+			sta tmpfield7
+
+			lda player_a_hitbox_enabled, x
+			pha
+			jsr draw_anim_frame
+			pla
+			ldx stage_gem_buffed_player
+			sta player_a_hitbox_enabled, x
+
+		end_update_anim:
 
 		; Detect if the opponent just got thrown
 		ldx stage_gem_buffed_player
@@ -216,7 +442,8 @@ stage_gem_tick:
 		jsr dec_cooldown
 		bne end_cd_check
 
-			jsr stage_gem_set_state_cooldown
+			jmp stage_gem_set_state_cooldown
+			; No return, jump to subroutine
 
 		end_cd_check:
 
@@ -229,16 +456,17 @@ stage_gem_tick:
 	.(
 		; Decrement cooldown
 		lda stage_gem_gem_cooldown_low
-		sec
-		sbc #1
-		sta stage_gem_gem_cooldown_low
+		bne no_carry
+			carry:
+				dec stage_gem_gem_cooldown_high
+			no_carry:
+				dec stage_gem_gem_cooldown_low
+
+		; Z flag = (stage_gem_gem_cooldown_low == 0 && stage_gem_gem_cooldown_high == 0)
+		bne end
 		lda stage_gem_gem_cooldown_high
-		sbc #0
-		sta stage_gem_gem_cooldown_high
 
-		; Z flag = (stage_gem_gem_cooldown_high OR stage_gem_gem_cooldown_low) == 0
-		ora stage_gem_gem_cooldown_low
-
+		end:
 		rts
 	.)
 
@@ -306,38 +534,8 @@ stage_gem_tick:
 			; Save buffed player number
 			stx stage_gem_buffed_player
 
-			; Pause music and all animations but the breaking gem
-			lda #%00001000 ; Pause music, avoid audio_mute_music which changes the configuration ;TODO This is hacky as fuck (and may break with new audio engine)
-			sta APU_STATUS
-
-			ldx #0
-			break_tick:
-				; Avoid the game loop
-				jsr wait_next_frame
-
-				; Update gem explosion animation
-				txa
-				pha
-				jsr update_gem_explosion
-				pla
-				tax
-				inx
-
-				; Play explosion audio effect
-				jsr play_gem_hit
-
-				cpx #STAGE_GEM_BREAK_DURATION
-				bne break_tick
-
-			; Play music again, if the enabled
-			lda audio_music_enabled
-			beq music_ok
-				lda #%00001111 ; Play music, avoid audio_unmute_music which changes the configuration
-				sta APU_STATUS
-			music_ok:
-
-			; Activate the buff
-			jsr stage_gem_set_state_buff
+			; Set gem in breaking state
+			jsr stage_gem_set_state_breaking
 
 		end:
 			rts
@@ -384,46 +582,6 @@ stage_gem_tick:
 			.byt <audio_play_hit, <audio_play_death
 		sound_frames_msb:
 			.byt >audio_play_hit, >audio_play_death
-	.)
-
-	; Draw the gem explosion animation
-	;  Overwrites all registers and almost all tmpfields
-	update_gem_explosion:
-	.(
-		; Search the current frame number
-		txa
-		lsr
-		lsr
-		tax
-		cmp gem_explosion_last_frame_index
-		bcc frame_number_ok
-		lda gem_explosion_last_frame_index
-		tax
-		frame_number_ok:
-
-		; Call draw_anim_frame
-		lda stage_gem_gem_position_x_high
-		sta tmpfield1
-		lda stage_gem_gem_position_y_high
-		sta tmpfield2
-		lda gem_explosion_frames_addr_lsb, x
-		sta tmpfield3
-		lda gem_explosion_frames_addr_msb, x
-		sta tmpfield4
-		lda #STAGE_GEM_STAGE_SPRITES
-		sta tmpfield5
-		lda #STAGE_GEM_STAGE_SPRITES+STAGE_GEM_NB_STAGE_SPRITES-1
-		sta tmpfield6
-		lda #0
-		sta tmpfield7
-		sta tmpfield8
-		sta tmpfield9
-		lda #1
-		stx player_number
-
-		jsr draw_anim_frame
-
-		rts
 	.)
 
 	; Update gem's position
@@ -632,16 +790,7 @@ stage_gem_set_state_cooldown:
 	sta stage_gem_gem_state
 
 	; Hide all stage's sprites
-	lda #$fe
-	ldx #STAGE_GEM_FIRST_SPRITE_OAM_OFFSET
-	hide_one_sprite:
-		sta oam_mirror, x
-		inx
-		inx
-		inx
-		inx
-		cpx #(STAGE_GEM_LAST_SPRITE_OAM_OFFSET)+4
-		bne hide_one_sprite
+	STAGE_GEM_HIDE_SPRITES
 
 	; Reset cooldown
 	lda #STAGE_GEM_GEM_COOLDOWN_LSB
@@ -679,7 +828,34 @@ stage_gem_set_state_active:
 	sta STAGE_GEM_GEM_SPRITE_OAM+2 ; Attributes
 
 	; Show gem
-	jsr stage_gem_place_gem
+	.(
+		lda network_rollback_mode
+		beq show_gem
+			rts
+		show_gem:
+			jmp stage_gem_place_gem
+			; No return, jump to subroutine
+	.)
+
+	;rts ; useless, above code does it or jump to subroutine
+.)
+
+; Puts the gem in breaking state
+stage_gem_set_state_breaking:
+.(
+	; Set the state
+	lda #STAGE_GEM_GEM_STATE_BREAKING
+	sta stage_gem_gem_state
+
+	; Freeze the screen for the duration of the breaking animation
+	lda #0
+	sta screen_shake_nextval_x
+	sta screen_shake_nextval_y
+	lda #STAGE_GEM_BREAK_DURATION
+	sta screen_shake_counter
+
+	; Pause music
+	STAGE_GEM_PAUSE_MUSIC
 
 	rts
 .)

@@ -415,16 +415,29 @@ game_tick:
 	; Shake screen and do nothing until shaking is over
 	lda screen_shake_counter
 	beq no_screen_shake
-	jsr shake_screen
-	lda network_rollback_mode
-	bne end_effects
-		ldx #0
-		jsr player_effects
-		ldx #1
-		jsr player_effects
-		jsr particle_draw
-	end_effects:
-	rts
+
+		; Shake the screen
+		jsr shake_screen
+
+		; Call stage's logic
+		ldx config_selected_stage
+		SWITCH_BANK(stages_bank COMMA x)
+		lda stages_freezed_tick_routine_lsb, x
+		sta tmpfield1
+		lda stages_freezed_tick_routine_msb, x
+		sta tmpfield2
+		jsr call_pointed_subroutine
+
+		; Update visual effects
+		lda network_rollback_mode
+		bne end_effects
+			ldx #0
+			jsr player_effects
+			ldx #1
+			jsr player_effects
+			jsr particle_draw
+		end_effects:
+		rts
 	no_screen_shake:
 
 	; Do nothing during a slowdown skipped frame

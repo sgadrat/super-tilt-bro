@@ -10,6 +10,36 @@ STAGE_PIT_MOVING_PLATFORM_2_OFFSET = STAGE_PIT_MOVING_PLATFORM_1_OFFSET + STAGE_
 #define STAGE_PIT_PLATFORM_LEFTMOST 73
 #define STAGE_PIT_PLATFORM_RIGHTMOST 137
 
+stage_pit_netload:
+.(
+	lda RAINBOW_DATA
+	sta stage_pit_platform1_direction_v
+	lda RAINBOW_DATA
+	sta stage_pit_platform2_direction_v
+	lda RAINBOW_DATA
+	sta stage_pit_platform1_direction_h
+	lda RAINBOW_DATA
+	sta stage_pit_platform2_direction_h
+
+	lda RAINBOW_DATA
+	sta stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_TOP
+	lda RAINBOW_DATA
+	sta stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_LEFT
+	clc
+	adc #38
+	sta stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_RIGHT
+
+	lda RAINBOW_DATA
+	sta stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_2_OFFSET+STAGE_PLATFORM_OFFSET_TOP
+	lda RAINBOW_DATA
+	sta stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_2_OFFSET+STAGE_PLATFORM_OFFSET_LEFT
+	;clc ; useless, last ADC should not overflow (platforms stay on screen)
+	adc #38
+	sta stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_2_OFFSET+STAGE_PLATFORM_OFFSET_RIGHT
+
+	rts
+.)
+
 stage_pit_init:
 .(
 	; Generic initialization stuff
@@ -24,22 +54,7 @@ stage_pit_init:
 	sta stage_pit_platform1_direction_h
 	sta stage_pit_platform2_direction_h
 
-	; Place moving platform sprites
-	lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_TOP  ;
-	clc
-	adc #15
-	sta oam_mirror+STAGE_PIT_MOVING_PLATFORM_SPRITES*4                                                 ;
-	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+1)*4                                             ; Y positions
-	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+2)*4                                             ;
-	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+3)*4                                             ;
-	lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_2_OFFSET+STAGE_PLATFORM_OFFSET_TOP  ;
-	clc
-	adc #15
-	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+4)*4                                             ;
-	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+5)*4                                             ;
-	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+6)*4                                             ;
-	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+7)*4                                             ;
-
+	; Init moving platform sprites
 	lda #TILE_MOVING_PLATFORM                                ;
 	sta oam_mirror+STAGE_PIT_MOVING_PLATFORM_SPRITES*4+1     ;
 	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+1)*4+1 ; Tile number
@@ -60,25 +75,54 @@ stage_pit_init:
 	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+6)*4+2 ;
 	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+7)*4+2 ;
 
-	lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_LEFT  ;
+	; Place moving platform sprites
+	; Fallthrough stage_pit_place_platform_sprites
+.)
+
+stage_pit_place_platform_sprites:
+.(
+	; Avoid placing sprites in rollback mode
+	lda network_rollback_mode
+	beq do_it
+		rts
+	do_it:
+
+	; Y positions
+	lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_TOP
+	clc
+	adc #15
+	sta oam_mirror+STAGE_PIT_MOVING_PLATFORM_SPRITES*4
+	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+1)*4
+	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+2)*4
+	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+3)*4
+	lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_2_OFFSET+STAGE_PLATFORM_OFFSET_TOP
+	clc
+	adc #15
+	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+4)*4
+	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+5)*4
+	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+6)*4
+	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+7)*4
+
+	; X positions
+	lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_LEFT
 	clc
 	adc #7
-	sta oam_mirror+STAGE_PIT_MOVING_PLATFORM_SPRITES*4+3                                                ;
+	sta oam_mirror+STAGE_PIT_MOVING_PLATFORM_SPRITES*4+3
 	adc #8
-	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+1)*4+3                                            ;
+	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+1)*4+3
 	adc #8
-	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+2)*4+3                                            ; X positions
+	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+2)*4+3
 	adc #8
-	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+3)*4+3                                            ;
-	lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_2_OFFSET+STAGE_PLATFORM_OFFSET_LEFT  ;
+	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+3)*4+3
+	lda stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_2_OFFSET+STAGE_PLATFORM_OFFSET_LEFT
 	adc #7
-	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+4)*4+3                                            ;
+	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+4)*4+3
 	adc #8
-	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+5)*4+3                                            ;
+	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+5)*4+3
 	adc #8
-	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+6)*4+3                                            ;
+	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+6)*4+3
 	adc #8
-	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+7)*4+3                                            ;
+	sta oam_mirror+(STAGE_PIT_MOVING_PLATFORM_SPRITES+7)*4+3
 
 	rts
 .)
@@ -157,35 +201,10 @@ stage_pit_tick:
 
 		end_move_platforms:
 
-		; Move first platforms' sprites
-		ldx #0 ; X = sprite's offset from first platform's first sprite
-		ldy #0 ; Y = platform index
-		move_one_sprite:
+		; Move platform sprites
+		jmp stage_pit_place_platform_sprites
 
-			cpx #STAGE_PIT_NB_MOVING_PLATFORM_SPRITES*4/2 ;
-			bne end_platform_change                       ; Check if we just changed platform
-			iny                                           ;
-			end_platform_change:                          ;
-
-			lda oam_mirror+STAGE_PIT_MOVING_PLATFORM_SPRITES*4, x   ;
-			clc                                                     ;
-			adc stage_pit_platform1_direction_v, y                  ;
-			sta oam_mirror+STAGE_PIT_MOVING_PLATFORM_SPRITES*4, x   ; Apply movement to the sprite
-			lda oam_mirror+STAGE_PIT_MOVING_PLATFORM_SPRITES*4+3, x ;
-			clc                                                     ;
-			adc stage_pit_platform1_direction_h, y                  ;
-			sta oam_mirror+STAGE_PIT_MOVING_PLATFORM_SPRITES*4+3, x ;
-
-			inx ;
-			inx ; Point to the next sprite
-			inx ;
-			inx ;
-
-			cpx #STAGE_PIT_NB_MOVING_PLATFORM_SPRITES*4 ; Loop on all platforms' sprites
-			bne move_one_sprite                         ;
-
-		end:
-		rts
+		;rts ; useless, jump to a subroutine
 	.)
 
 	; Modify platform's direction if on a waypoint

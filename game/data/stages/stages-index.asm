@@ -10,6 +10,18 @@ RAW_VECTOR(stage_pit_tick) ; Pit
 RAW_VECTOR(dummy_routine) ; Shelf
 RAW_VECTOR(stage_gem_tick) ; Gem
 
+stages_freezed_tick_routine_lsb:
+.byt <dummy_routine ; Plateau
+.byt <dummy_routine ; Pit
+.byt <dummy_routine ; Shelf
+.byt <stage_gem_freezed_tick ; Gem
+
+stages_freezed_tick_routine_msb:
+.byt >dummy_routine ; Plateau
+.byt >dummy_routine ; Pit
+.byt >dummy_routine ; Shelf
+.byt >stage_gem_freezed_tick ; Gem
+
 stages_nametable:
 RAW_VECTOR(nametable_flatland) ; Plateau
 RAW_VECTOR(nametable_stage_pit) ; Pit
@@ -33,6 +45,18 @@ RAW_VECTOR(stage_plateau_illustration) ; Plateau
 RAW_VECTOR(stage_pit_illustration) ; Pit
 RAW_VECTOR(stage_shelf_illustration) ; Shelf
 RAW_VECTOR(stage_gem_illustration) ; Gem
+
+stages_netload_routine_lsb:
+.byt <dummy_routine ; Plateau
+.byt <stage_pit_netload ; Pit
+.byt <dummy_routine ; Shelf
+.byt <stage_gem_netload ; Gem
+
+stages_netload_routine_msb:
+.byt >dummy_routine ; Plateau
+.byt >stage_pit_netload ; Pit
+.byt >dummy_routine ; Shelf
+.byt >stage_gem_netload ; Gem
 
 stages_bank:
 .byt STAGE_PLATEAU_BANK_NUMBER ; Plateau
