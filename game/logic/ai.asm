@@ -369,6 +369,55 @@ ai_attack_selector:
 	rts
 .)
 
+; Selector that makes the character move toward a safe distance of its opponent
+;
+; It will take action only if in thrown state, the idea is to try to come back to
+; a neutral game after being hit.
+ai_space_selector:
+.(
+	spot_x = tmpfield1
+
+	lda player_b_state
+	cmp #PLAYER_STATE_THROWN
+	bne end
+
+		; Compute spot's position
+		lda player_a_x
+		cmp player_b_x
+		bcs bot_on_the_left
+			bot_on_the_right:
+				clc
+				adc #32
+				jmp spot_computed
+			bot_on_the_left:
+				sec
+				sbc #32
+		spot_computed:
+		sta spot_x
+
+		; Set the modifier to spot's direction
+		lda #CONTROLLER_BTN_LEFT
+		sta ai_current_action_modifier
+		lda spot_x
+		cmp player_b_x
+		bcc direction_set
+		lda #CONTROLLER_BTN_RIGHT
+		sta ai_current_action_modifier
+		direction_set:
+
+		; Set idle action (we count on the modifier to move the character)
+		lda #<ai_action_idle
+		sta ai_current_action_lsb
+		lda #>ai_action_idle
+		sta ai_current_action_msb
+		lda #0
+		sta ai_current_action_step
+		sta ai_current_action_counter
+
+	end:
+	rts
+.)
+
 ; Selector that makes the character move toward its opponent
 ;
 ; This selector always selects an action.

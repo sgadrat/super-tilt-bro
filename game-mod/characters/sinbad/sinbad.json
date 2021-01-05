@@ -72,6 +72,7 @@
 		"action_selectors": [
 			"ai_attack_selector",
 			"sinbad_ai_recover_selector",
+			"ai_space_selector",
 			"ai_chase_selector"
 		],
 		"actions": [
