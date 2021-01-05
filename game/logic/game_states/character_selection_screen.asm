@@ -155,7 +155,7 @@ character_selection_tick_char_anims:
 .(
 	ldx #0
 	stx player_number
-	ldy config_player_a_character
+	ldy config_requested_player_a_character
 	SWITCH_BANK(characters_bank_number COMMA y)
 	lda #<character_selection_player_a_char_anim
 	sta tmpfield11
@@ -164,7 +164,7 @@ character_selection_tick_char_anims:
 
 	ldx #1
 	stx player_number
-	ldy config_player_b_character
+	ldy config_requested_player_b_character
 	SWITCH_BANK(characters_bank_number COMMA y)
 	lda #<character_selection_player_b_char_anim
 	sta tmpfield11

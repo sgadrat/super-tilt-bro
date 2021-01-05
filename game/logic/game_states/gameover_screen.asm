@@ -269,7 +269,7 @@ gameover_screen_tick:
 			rts
 
 		next_screen_by_game_mode:
-		.byt GAME_STATE_CHARACTER_SELECTION, GAME_STATE_TITLE
+		.byt GAME_STATE_CHARACTER_SELECTION, GAME_STATE_CHARACTER_SELECTION
 	.)
 
 	gamover_update_players:

@@ -1,5 +1,7 @@
 init_netplay_launch_screen:
 .(
+	jsr set_menu_chr
+
 	SWITCH_BANK(#DATA_BANK_NUMBER)
 
 	; Enable ESP

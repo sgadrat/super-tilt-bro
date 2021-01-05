@@ -130,6 +130,7 @@ static uint8_t const FIX_SCREEN_STEP_DEACTIVATED = 255;
 
 static uint8_t const CONTROL_ONE_PLAYER = 0;
 static uint8_t const CONTROL_TWO_PLAYERS = 1;
+static uint8_t const CONTROL_ONE_CHARACTER = 2;
 
 static uint16_t const portrait_screen_pos[] = {0x224e, 0x2290, 0x22ce, 0x2310, 0x234e};
 
@@ -201,7 +202,7 @@ static void construct_sprite_palette_buffer(uint8_t player, uint8_t palette_num,
 	character_selection_mem_buffer[1] = 0x11 + player * 8 + palette_num * 4;
 	character_selection_mem_buffer[2] = 3;
 
-	uint8_t const character = config_player_a_character[player];
+	uint8_t const character = config_requested_player_a_character[player];
 	wrap_character_selection_construct_char_nt_buffer(character, character_selection_mem_buffer, data);
 }
 
@@ -217,6 +218,14 @@ static void sound_effect_click() {
 }
 
 static void change_screen_cleaning() {
+	// Copy selected values in actual values
+	*config_player_a_character = *config_requested_player_a_character;
+	*config_player_b_character = *config_requested_player_b_character;
+	*config_player_a_weapon_palette = *config_requested_player_a_palette;
+	*config_player_a_character_palette = *config_requested_player_a_palette;
+	*config_player_b_weapon_palette = *config_requested_player_b_palette;
+	*config_player_b_character_palette = *config_requested_player_b_palette;
+
 	// Resolve random characters
 	for (uint8_t player_num = 0; player_num < 2; ++player_num) {
 		if (config_player_a_character[player_num] == (uint16_t)(&CHARACTERS_NUMBER)) {
@@ -255,7 +264,7 @@ static void previous_screen() {
 		nametable_buffers[i] = palette_buffer[i];
 	}
 
-	wrap_change_global_game_state(GAME_STATE_CONFIG);
+	wrap_change_global_game_state(*config_game_mode == GAME_MODE_ONLINE ? GAME_STATE_MODE_SELECTION : GAME_STATE_CONFIG);
 }
 
 static void tick_fix_screen() {
@@ -386,7 +395,7 @@ static void tick_bg_task(struct BgTaskState* task) {
 
 		// Write character's name
 		case BG_STEP_CHAR_NAME: {
-			uint8_t const character = config_player_a_character[task->player];
+			uint8_t const character = config_requested_player_a_character[task->player];
 			if (character < (uint16_t)&CHARACTERS_NUMBER) {
 				wrap_character_selection_screen_copy_property(
 					character,
@@ -419,10 +428,10 @@ static void tick_bg_task(struct BgTaskState* task) {
 
 			// Compute ppu_addr/prg_addr at the begining of the tileset
 			task->ppu_addr = 0x1000 + 16 * (tileset_menu_char_select + 2 * 4 + task->player * 48);
-			if (config_player_a_character[task->player] < (uint16_t)&CHARACTERS_NUMBER) {
+			if (config_requested_player_a_character[task->player] < (uint16_t)&CHARACTERS_NUMBER) {
 				// Normal character, get its large illustration address
 				task->prg_addr = (uint8_t const*)wrap_character_selection_get_char_property(
-					config_player_a_character[task->player],
+					config_requested_player_a_character[task->player],
 					CHARACTERS_PROPERTIES_ILLUSTRATIONS_ADDR_OFFSET
 				);
 				task->prg_addr += 16 * 5;
@@ -440,7 +449,7 @@ static void tick_bg_task(struct BgTaskState* task) {
 			__attribute__((fallthrough));
 		}
 		case BG_STEP_STATUE_2:
-			wrap_character_selection_copy_to_nt_buffer(config_player_a_character[task->player], task->ppu_addr, STATUE_BYTES_PER_TICK, task->prg_addr);
+			wrap_character_selection_copy_to_nt_buffer(config_requested_player_a_character[task->player], task->ppu_addr, STATUE_BYTES_PER_TICK, task->prg_addr);
 			++task->count;
 			if (task->count < STATUE_NB_TICKS) {
 				Anim(character_selection_player_a_builder_anim + (task->player * ANIMATION_STATE_LENGTH))->y -= 4;
@@ -454,7 +463,7 @@ static void tick_bg_task(struct BgTaskState* task) {
 				);
 
 				// Change step (stop there if there is no actual character selected)
-				if (config_player_a_character[task->player] < (uint16_t)&CHARACTERS_NUMBER) {
+				if (config_requested_player_a_character[task->player] < (uint16_t)&CHARACTERS_NUMBER) {
 					++task->step;
 				}else {
 					task->step = BG_STEP_DEACTIVATED;
@@ -466,14 +475,14 @@ static void tick_bg_task(struct BgTaskState* task) {
 		case BG_STEP_CHAR_TILESET_1: {
 			task->count = 0;
 			task->ppu_addr = task->player * (CHARACTERS_NUM_TILES_PER_CHAR * 16);
-			uint8_t const prg_addr_lsb = (&characters_tiles_data_lsb)[config_player_a_character[task->player]];
-			uint8_t const prg_addr_msb = (&characters_tiles_data_msb)[config_player_a_character[task->player]];
+			uint8_t const prg_addr_lsb = (&characters_tiles_data_lsb)[config_requested_player_a_character[task->player]];
+			uint8_t const prg_addr_msb = (&characters_tiles_data_msb)[config_requested_player_a_character[task->player]];
 			task->prg_addr = ptr(prg_addr_lsb, prg_addr_msb);
 			++task->step;
 			__attribute__((fallthrough));
 		}
 		case BG_STEP_CHAR_TILESET_2:
-			wrap_character_selection_copy_to_nt_buffer(config_player_a_character[task->player], task->ppu_addr, CHAR_BYTES_PER_TICK, task->prg_addr);
+			wrap_character_selection_copy_to_nt_buffer(config_requested_player_a_character[task->player], task->ppu_addr, CHAR_BYTES_PER_TICK, task->prg_addr);
 			++task->count;
 			if (task->count < CHAR_NB_TICKS) {
 				task->ppu_addr += CHAR_BYTES_PER_TICK;
@@ -487,7 +496,7 @@ static void tick_bg_task(struct BgTaskState* task) {
 		case BG_STEP_ANIMATION: {
 			// Change animation
 			uint8_t const* anim_addr = (uint8_t const*)wrap_character_selection_get_char_property(
-				config_player_a_character[task->player],
+				config_requested_player_a_character[task->player],
 				CHARACTERS_PROPERTIES_MENU_SELECT_ANIM_OFFSET
 			);
 			wrap_animation_state_change_animation(
@@ -504,15 +513,15 @@ static void tick_bg_task(struct BgTaskState* task) {
 
 		case BG_STEP_UPDATE_PALETTES: {
 			// Set avatar's palettes
-			uint8_t const character = config_player_a_character[task->player];
+			uint8_t const character = config_requested_player_a_character[task->player];
 
 			uint8_t const char_palette_lsb = *(&characters_palettes_lsb + character);
 			uint8_t const char_palette_msb = *(&characters_palettes_msb + character);
-			uint8_t const* char_palette = ptr(char_palette_lsb, char_palette_msb) + 3 * config_player_a_weapon_palette[task->player];
+			uint8_t const* char_palette = ptr(char_palette_lsb, char_palette_msb) + 3 * config_requested_player_a_palette[task->player];
 
 			uint8_t const weapon_palette_lsb = *(&characters_weapon_palettes_lsb + character);
 			uint8_t const weapon_palette_msb = *(&characters_weapon_palettes_msb + character);
-			uint8_t const* weapon_palette = ptr(weapon_palette_lsb, weapon_palette_msb) + 3 * config_player_a_weapon_palette[task->player];
+			uint8_t const* weapon_palette = ptr(weapon_palette_lsb, weapon_palette_msb) + 3 * config_requested_player_a_palette[task->player];
 
 			construct_sprite_palette_buffer(task->player, 0, char_palette);
 			construct_sprite_palette_buffer(task->player, 1, weapon_palette);
@@ -570,7 +579,7 @@ static void refresh_player_palettes(uint8_t player) {
 	// Start async job directly at the "update palettes step"
 	//  only if the job is innactive, or already passed the palettes step
 	//  and if on an actual character (not random selector)
-	if (config_player_a_character[player] < (uint16_t)(&CHARACTERS_NUMBER)) {
+	if (config_requested_player_a_character[player] < (uint16_t)(&CHARACTERS_NUMBER)) {
 		struct BgTaskState* const task = &(Task(character_selection_player_a_bg_task)[player]);
 		if (task->step == BG_STEP_DEACTIVATED || task->step > BG_STEP_UPDATE_PALETTES) {
 			task->step = BG_STEP_UPDATE_PALETTES;
@@ -585,9 +594,9 @@ static void take_input(uint8_t player_num, uint8_t controller_btns, uint8_t last
 			case CONTROLLER_BTN_DOWN:
 				if (!character_selection_player_a_ready[player_num]) {
 					sound_effect_click();
-					++config_player_a_character[player_num];
-					if (config_player_a_character[player_num] > (uint16_t)(&CHARACTERS_NUMBER)) {
-						config_player_a_character[player_num] = 0;
+					++config_requested_player_a_character[player_num];
+					if (config_requested_player_a_character[player_num] > (uint16_t)(&CHARACTERS_NUMBER)) {
+						config_requested_player_a_character[player_num] = 0;
 					}
 					refresh_player_character(player_num);
 				}
@@ -595,22 +604,20 @@ static void take_input(uint8_t player_num, uint8_t controller_btns, uint8_t last
 			case CONTROLLER_BTN_UP:
 				if (!character_selection_player_a_ready[player_num]) {
 					sound_effect_click();
-					if (config_player_a_character[player_num] > 0) {
-						--config_player_a_character[player_num];
+					if (config_requested_player_a_character[player_num] > 0) {
+						--config_requested_player_a_character[player_num];
 					}else {
-						config_player_a_character[player_num] = (uint16_t)(&CHARACTERS_NUMBER);
+						config_requested_player_a_character[player_num] = (uint16_t)(&CHARACTERS_NUMBER);
 					}
 					refresh_player_character(player_num);
 				}
 				break;
 			case CONTROLLER_BTN_SELECT:
 				sound_effect_click();
-				if (config_player_a_character_palette[player_num] < NB_CHARACTER_PALETTES - 1) {
-					++config_player_a_character_palette[player_num];
-					++config_player_a_weapon_palette[player_num];
+				if (config_requested_player_a_palette[player_num] < NB_CHARACTER_PALETTES - 1) {
+					++config_requested_player_a_palette[player_num];
 				}else {
-					config_player_a_character_palette[player_num] = 0;
-					config_player_a_weapon_palette[player_num] = 0;
+					config_requested_player_a_palette[player_num] = 0;
 				}
 				refresh_player_palettes(player_num);
 				break;
@@ -662,7 +669,18 @@ static void init_character_selection_screen_common() {
 	*character_selection_player_b_ready = 0;
 
 	// Initialize control scheme
-	*character_selection_control_scheme = (*config_ai_level == 0 ? CONTROL_TWO_PLAYERS : CONTROL_ONE_PLAYER);
+	*character_selection_control_scheme = CONTROL_ONE_PLAYER;
+	if (*config_game_mode == GAME_MODE_ONLINE) {
+		*character_selection_control_scheme = CONTROL_ONE_CHARACTER;
+	}else if (*config_ai_level == 0) {
+		*character_selection_control_scheme = CONTROL_TWO_PLAYERS;
+	}
+
+	// Set initial selection
+	if (*character_selection_control_scheme == CONTROL_ONE_CHARACTER) {
+		*config_requested_player_b_character = (uint8_t)((uint16_t)(&CHARACTERS_NUMBER));
+		*character_selection_player_b_ready = 1;
+	}
 
 	// Initialize Character animations
 	wrap_animation_init_state(character_selection_player_a_char_anim, &anim_empty);
@@ -679,14 +697,14 @@ static void init_character_selection_screen_common() {
 
 	// Initialize token animations
 	wrap_animation_init_state(character_selection_player_a_cursor_anim, &menu_character_selection_anim_p1_token);
-	Anim(character_selection_player_a_cursor_anim)->x = player_a_token_positions[*config_player_a_character].x;
-	Anim(character_selection_player_a_cursor_anim)->y = player_a_token_positions[*config_player_a_character].y;
+	Anim(character_selection_player_a_cursor_anim)->x = player_a_token_positions[*config_requested_player_a_character].x;
+	Anim(character_selection_player_a_cursor_anim)->y = player_a_token_positions[*config_requested_player_a_character].y;
 	Anim(character_selection_player_a_cursor_anim)->first_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 1;
 	Anim(character_selection_player_a_cursor_anim)->last_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 2;
 
 	wrap_animation_init_state(character_selection_player_b_cursor_anim, &menu_character_selection_anim_p2_token);
-	Anim(character_selection_player_b_cursor_anim)->x = player_b_token_positions[*config_player_b_character].x;
-	Anim(character_selection_player_b_cursor_anim)->y = player_b_token_positions[*config_player_b_character].y;
+	Anim(character_selection_player_b_cursor_anim)->x = player_b_token_positions[*config_requested_player_b_character].x;
+	Anim(character_selection_player_b_cursor_anim)->y = player_b_token_positions[*config_requested_player_b_character].y;
 	Anim(character_selection_player_b_cursor_anim)->first_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 3;
 	Anim(character_selection_player_b_cursor_anim)->last_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 4;
 
@@ -857,38 +875,49 @@ void character_selection_screen_tick_extra() {
 
 	// Move tokens
 	{
-		int16_t const dest_x = player_a_token_positions[*config_player_a_character].x;
+		int16_t const dest_x = player_a_token_positions[*config_requested_player_a_character].x;
 		int16_t const diff_x = dest_x - (int16_t)Anim(character_selection_player_a_cursor_anim)->x;
 		int16_t const move_x = max(-4, min(4, diff_x));
 		Anim(character_selection_player_a_cursor_anim)->x += move_x;
 
-		int16_t const dest_y = player_a_token_positions[*config_player_a_character].y;
+		int16_t const dest_y = player_a_token_positions[*config_requested_player_a_character].y;
 		int16_t const diff_y = dest_y - (int16_t)Anim(character_selection_player_a_cursor_anim)->y;
 		int16_t const move_y = max(-4, min(4, diff_y));
 		Anim(character_selection_player_a_cursor_anim)->y += move_y;
 	}
 
 	{
-		int16_t const dest_x = player_b_token_positions[*config_player_b_character].x;
+		int16_t const dest_x = player_b_token_positions[*config_requested_player_b_character].x;
 		int16_t const diff_x = dest_x - (int16_t)Anim(character_selection_player_b_cursor_anim)->x;
 		int16_t const move_x = max(-4, min(4, diff_x));
 		Anim(character_selection_player_b_cursor_anim)->x += move_x;
 
-		int16_t const dest_y = player_b_token_positions[*config_player_b_character].y;
+		int16_t const dest_y = player_b_token_positions[*config_requested_player_b_character].y;
 		int16_t const diff_y = dest_y - (int16_t)Anim(character_selection_player_b_cursor_anim)->y;
 		int16_t const move_y = max(-4, min(4, diff_y));
 		Anim(character_selection_player_b_cursor_anim)->y += move_y;
 	}
 
 	// Take inputs
-	if (*character_selection_control_scheme == CONTROL_TWO_PLAYERS) {
-		for (uint8_t player_num = 0; player_num < 2; ++player_num) {
-			uint8_t const controller_btns = controller_a_btns[player_num];
-			uint8_t const last_fame_btns = controller_a_last_frame_btns[player_num];
-			take_input(player_num, controller_btns, last_fame_btns);
+	switch (*character_selection_control_scheme) {
+		case CONTROL_TWO_PLAYERS: {
+			for (uint8_t player_num = 0; player_num < 2; ++player_num) {
+				uint8_t const controller_btns = controller_a_btns[player_num];
+				uint8_t const last_fame_btns = controller_a_last_frame_btns[player_num];
+				take_input(player_num, controller_btns, last_fame_btns);
+			}
+			break;
 		}
-	}else {
-		uint8_t const player_num = *character_selection_player_a_ready;
-		take_input(player_num, *controller_a_btns, *controller_a_last_frame_btns);
+
+		case CONTROL_ONE_PLAYER: {
+			uint8_t const player_num = *character_selection_player_a_ready;
+			take_input(player_num, *controller_a_btns, *controller_a_last_frame_btns);
+			break;
+		}
+
+		case CONTROL_ONE_CHARACTER: {
+			take_input(0, *controller_a_btns, *controller_a_last_frame_btns);
+			break;
+		}
 	}
 }

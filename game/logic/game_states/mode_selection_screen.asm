@@ -111,7 +111,7 @@ mode_selection_screen_tick:
 		go_next_screen:
 			ldx mode_selection_current_option
 #ifdef NO_NETWORK
-			cpx #1
+			cpx #GAME_MODE_ONLINE
 			beq end
 #endif
 			stx config_game_mode
@@ -123,7 +123,7 @@ mode_selection_screen_tick:
 			rts
 
 		option_to_game_state:
-			.byt GAME_STATE_CONFIG, GAME_STATE_NETPLAY_LAUNCH, GAME_STATE_DONATION
+			.byt GAME_STATE_CONFIG, GAME_STATE_CHARACTER_SELECTION, GAME_STATE_DONATION
 	.)
 
 	show_selected_option:

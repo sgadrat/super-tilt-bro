@@ -81,6 +81,11 @@ static void sound_effect_click() {
 	audio_play_parry();
 }
 
+static void change_screen_cleaning() {
+	// Copy selected values in actual values
+	*config_selected_stage = *config_requested_stage;
+}
+
 static void skip_frame() {
 	wait_next_frame();
 	stage_selection_tick_music();
@@ -170,7 +175,7 @@ static void tick_bg_task() {
 
 		case BG_STEP_STAGE_PICTURE_INIT:
 			// Move selector, and reset it to its first frame (forcing it to be visible)
-			Anim(stage_selection_cursor_anim)->x = selector_position_x[*config_selected_stage];
+			Anim(stage_selection_cursor_anim)->x = selector_position_x[*config_requested_stage];
 			wrap_animation_state_change_animation(stage_selection_cursor_anim, &menu_stage_selection_selector_anim);
 
 			task->count = 0;
@@ -180,8 +185,8 @@ static void tick_bg_task() {
 			__attribute__((fallthrough));
 
 		case BG_STEP_STAGE_PICTURE: {
-			uint8_t const stage_bank = (&stages_bank)[*config_selected_stage];
-			uint8_t const* const stage_illustration = ((uint8_t const**)(&stages_illustration))[*config_selected_stage];
+			uint8_t const stage_bank = (&stages_bank)[*config_requested_stage];
+			uint8_t const* const stage_illustration = ((uint8_t const**)(&stages_illustration))[*config_requested_stage];
 			for (uint8_t i = 0; i < 4; ++ i) {
 				stage_selection_mem_buffer[1] = (uint8_t)(stage_graphic_first_row & 0xff) + task->count;
 				wrap_stage_selection_screen_long_memcopy(stage_selection_mem_buffer + 3, stage_bank, stage_illustration + 12 * task->count);
@@ -209,7 +214,7 @@ void init_stage_selection_screen_extra() {
 
 	// Initialize selector animation
 	wrap_animation_init_state(stage_selection_cursor_anim, &menu_stage_selection_selector_anim);
-	Anim(stage_selection_cursor_anim)->x = selector_position_x[*config_selected_stage];
+	Anim(stage_selection_cursor_anim)->x = selector_position_x[*config_requested_stage];
 	Anim(stage_selection_cursor_anim)->y = 111;
 	Anim(stage_selection_cursor_anim)->first_sprite_num = 0;
 	Anim(stage_selection_cursor_anim)->last_sprite_num = 1;
@@ -233,10 +238,10 @@ void stage_selection_screen_tick_extra() {
 			switch (controller_btns) {
 				case CONTROLLER_BTN_RIGHT:
 					sound_effect_click();
-					if (*config_selected_stage < 3) {
-						++*config_selected_stage;
+					if (*config_requested_stage < 3) {
+						++*config_requested_stage;
 					}else {
-						*config_selected_stage = 0;
+						*config_requested_stage = 0;
 					}
 					if (Task(stage_selection_bg_task)->step >= BG_STEP_STAGE_PICTURE_INIT) {
 						Task(stage_selection_bg_task)->step = BG_STEP_STAGE_PICTURE_INIT;
@@ -246,10 +251,10 @@ void stage_selection_screen_tick_extra() {
 
 				case CONTROLLER_BTN_LEFT:
 					sound_effect_click();
-					if (*config_selected_stage > 0) {
-						--*config_selected_stage;
+					if (*config_requested_stage > 0) {
+						--*config_requested_stage;
 					}else {
-						*config_selected_stage = 3;
+						*config_requested_stage = 3;
 					}
 					if (Task(stage_selection_bg_task)->step >= BG_STEP_STAGE_PICTURE_INIT) {
 						Task(stage_selection_bg_task)->step = BG_STEP_STAGE_PICTURE_INIT;
@@ -263,12 +268,14 @@ void stage_selection_screen_tick_extra() {
 						case CONTROLLER_BTN_A:
 						case CONTROLLER_BTN_START:
 							sound_effect_click();
+							change_screen_cleaning();
 							fade_out();
-							wrap_change_global_game_state(GAME_STATE_INGAME);
+							wrap_change_global_game_state(*config_game_mode == GAME_MODE_ONLINE ? GAME_STATE_NETPLAY_LAUNCH : GAME_STATE_INGAME);
 							break;
 
 						case CONTROLLER_BTN_B:
 							sound_effect_click();
+							change_screen_cleaning();
 							nt_buffers_horizontal();
 							skip_frame();
 							stage_selection_back_to_char_select();

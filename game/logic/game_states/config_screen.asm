@@ -2,17 +2,29 @@ default_config:
 .(
 	lda #MAX_STOCKS
 	sta config_initial_stocks
+
 	lda #$01
 	sta config_ai_level
 	sta config_player_b_character
+	sta config_requested_player_b_character
+
 	lda #$00
 	sta config_selected_stage
+	sta config_requested_stage
+
 	sta config_player_a_character_palette
 	sta config_player_a_weapon_palette
+	sta config_requested_player_a_palette
+
 	sta config_player_a_character
+	sta config_requested_player_a_character
+
 	sta config_player_b_character_palette
 	sta config_player_b_weapon_palette
+	sta config_requested_player_b_palette
+
 	sta config_game_mode
+
 	rts
 .)
 

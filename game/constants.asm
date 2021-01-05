@@ -21,6 +21,10 @@ GAME_STATE_DONATION_PAYPAL = $0b
 
 DEFAULT_GRAVITY = $02
 
+; Variants of ingame state
+GAME_MODE_LOCAL = $00
+GAME_MODE_ONLINE = $01
+
 ; States used by the game engine, they must have a referenced start_routine
 PLAYER_STATE_THROWN = $00
 PLAYER_STATE_RESPAWN = $01

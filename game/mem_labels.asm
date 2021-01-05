@@ -505,15 +505,25 @@ tmpfield16 = $ff
 stack = $0100
 oam_mirror = $0200
 nametable_buffers = $0300
+
 stage_data = $0400
 player_a_objects = $0480 ; Objects independent to character's state like floating hitboxes, temporary platforms, etc
 player_b_objects = $04c0 ;
+
 particle_blocks = $0500
 particle_block_0 = $0500
 particle_block_1 = $0520
-previous_global_game_state = $540
+
+previous_global_game_state = $0540
+config_requested_stage = $0541
+config_requested_player_a_character = $0542
+config_requested_player_b_character = $0543
+config_requested_player_a_palette = $0544
+config_requested_player_b_palette = $0545
 ;$0580 to $05ff may be used by game states
+
 ;$06xx may be used by audio engine, see "Audio engine labels"
+
 virtual_frame_cnt = $0700
 skip_frames_to_50hz = $0701
 network_last_known_remote_input = $07bf
