@@ -369,6 +369,50 @@ ai_attack_selector:
 	rts
 .)
 
+; Selector that makes the character shield if about to be hit
+ai_shield_selector:
+.(
+	; Do not try to shield mid-air
+	ldx player_b_grounded
+	beq end
+
+	; Do not shield if opponent's hitbox is inactive
+	ldx player_a_hitbox_enabled
+	beq end
+
+	; Do not shield if opponent's hitbox is far away
+	lda player_a_x
+	cmp player_b_x
+	bcs bot_on_the_left
+		bot_on_the_right:
+			lda player_b_x
+			sec
+			sbc player_a_hitbox_right
+			jmp distance_computed
+		bot_on_the_left:
+			lda player_a_hitbox_left
+			sec
+			sbc player_b_x
+	distance_computed:
+	cmp #32
+	bcs end
+
+		; Set idle action with down modifier (aka shield)
+		lda #CONTROLLER_BTN_DOWN+CONTROLLER_BTN_LEFT
+		sta ai_current_action_modifier
+
+		lda #<ai_action_idle
+		sta ai_current_action_lsb
+		lda #>ai_action_idle
+		sta ai_current_action_msb
+		lda #0
+		sta ai_current_action_step
+		sta ai_current_action_counter
+
+	end:
+	rts
+.)
+
 ; Selector that makes the character move toward a safe distance of its opponent
 ;
 ; It will take action only if in thrown state, the idea is to try to come back to

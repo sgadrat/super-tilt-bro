@@ -70,7 +70,8 @@
 			}
 		],
 		"action_selectors": [
-			"ai_attack_selector",
+			"ai_shield_selector",
+			"sinbad_ai_attack_selector",
 			"sinbad_ai_recover_selector",
 			"ai_space_selector",
 			"ai_chase_selector"

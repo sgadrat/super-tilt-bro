@@ -1987,16 +1987,16 @@ sinbad_tick_shielding:
 
 sinbad_input_shielding:
 .(
-	; Do the same as standing player except when
-	;  all buttons are released - start shieldlag (or falling if on smooth platform and it was a short-tap)
-	;  down is pressed - avoid to reset the shield state (and hit counter)
+	; Maintain down to stay on shield
+	; Down-a and down-b are allowed as out of shield moves
+	; Any other combination ends the shield (with shield lag or falling from smooth platform)
 	lda controller_a_btns, x
-	beq end_shield
 	cmp #CONTROLLER_INPUT_TECH
 	beq end
-
-		jsr sinbad_input_standing
-		jmp end
+	cmp #CONTROLLER_INPUT_DOWN_TILT
+	beq handle_input
+	cmp #CONTROLLER_INPUT_SPECIAL_DOWN
+	beq handle_input
 
 	end_shield:
 
@@ -2024,11 +2024,17 @@ sinbad_input_shielding:
 			adc #0
 			sta player_a_y_screen, x
 
-			jsr sinbad_start_falling
-			jmp end
+			jmp sinbad_start_falling
+			; No return, jump to subroutine
 
 		shieldlag:
-			jsr sinbad_start_shieldlag
+			jmp sinbad_start_shieldlag
+			; No return, jump to subroutine
+
+	handle_input:
+
+		jmp sinbad_input_standing
+		; No return, jump to subroutine
 
 	end:
 	rts

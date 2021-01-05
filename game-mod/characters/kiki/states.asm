@@ -1434,16 +1434,16 @@ kiki_tick_shielding:
 
 kiki_input_shielding:
 .(
-	; Do the same as standing player except when
-	;  all buttons are released - start shieldlag (or falling if on smooth platform and it was a short-tap)
-	;  down is pressed - avoid to reset the shield state (and hit counter)
+	; Maintain down to stay on shield
+	; Down-a and down-b are allowed as out of shield moves
+	; Any other combination ends the shield (with shield lag or falling from smooth platform)
 	lda controller_a_btns, x
-	beq end_shield
 	cmp #CONTROLLER_INPUT_TECH
 	beq end
-
-		jsr kiki_input_idle
-		jmp end
+	cmp #CONTROLLER_INPUT_DOWN_TILT
+	beq handle_input
+	cmp #CONTROLLER_INPUT_SPECIAL_DOWN
+	beq handle_input
 
 	end_shield:
 
@@ -1471,11 +1471,17 @@ kiki_input_shielding:
 			adc #0
 			sta player_a_y_screen, x
 
-			jsr kiki_start_falling
-			jmp end
+			jmp kiki_start_falling
+			; No return, jump to subroutine
 
 		shieldlag:
-			jsr kiki_start_shieldlag
+			jmp kiki_start_shieldlag
+			; No return, jump to subroutine
+
+	handle_input:
+
+		jmp kiki_input_idle
+		; No return, jump to subroutine
 
 	end:
 	rts

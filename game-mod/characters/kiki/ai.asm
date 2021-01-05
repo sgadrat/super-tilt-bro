@@ -1,3 +1,14 @@
+kiki_ai_attack_selector:
+.(
+	; Do not try to attack in incapacited states, it would ruin ai reactivity after such states
+	lda player_b_state
+	cmp #KIKI_STATE_CRASHING
+	beq end
+		jmp ai_attack_selector
+		; No return, jump to subroutine
+	end:
+	rts
+.)
 kiki_ai_recover_selector:
 .(
 	platform_handler_lsb = tmpfield1
