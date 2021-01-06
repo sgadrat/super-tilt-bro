@@ -82,20 +82,20 @@ rts
 ; See also the macro with the same name (capitalized)
 signed_cmp:
 .(
-; Trick from http://www.6502.org/tutorials/compare_beyond.html
-a_low = tmpfield6
-a_high = tmpfield7
-b_low = tmpfield8
-b_high = tmpfield9
+	; Trick from http://www.6502.org/tutorials/compare_beyond.html
+	a_low = tmpfield6
+	a_high = tmpfield7
+	b_low = tmpfield8
+	b_high = tmpfield9
 
-lda a_low
-cmp b_low
-lda a_high
-sbc b_high
-bvc end
-eor #%10000000
-end:
-rts
+	lda a_low
+	cmp b_low
+	lda a_high
+	sbc b_high
+	bvc end
+		eor #%10000000
+	end:
+	rts
 .)
 
 ; Change A to its absolute unsigned value

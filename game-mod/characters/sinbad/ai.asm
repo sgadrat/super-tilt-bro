@@ -19,6 +19,10 @@ sinbad_ai_recover_selector:
 	;tmpfield5 used by platform handler
 
 	.(
+		; Skip everything if the player is grounded
+		lda player_b_grounded
+		bne dont_try_to_recover
+
 		; Check that the player is offstage - no platform behind him
 		lda #1
 		sta endangered
@@ -33,7 +37,10 @@ sinbad_ai_recover_selector:
 
 		lda endangered
 		bne try_to_recover
-		jmp end
+
+		dont_try_to_recover:
+			jmp end
+
 		try_to_recover:
 			; Set action modifier to the platform's direction
 			lda #CONTROLLER_BTN_RIGHT

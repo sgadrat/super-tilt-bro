@@ -397,7 +397,7 @@ ai_shield_selector:
 	cmp #32
 	bcs end
 
-		; Set idle action with down modifier (aka shield)
+		; Set idle action with down-left modifier (aka shield, or slide-tech depending on conditions)
 		lda #CONTROLLER_BTN_DOWN+CONTROLLER_BTN_LEFT
 		sta ai_current_action_modifier
 

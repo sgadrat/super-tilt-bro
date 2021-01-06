@@ -354,6 +354,8 @@ apply_player_gravity:
 ;
 ; Compatible with stage_iterate_all_elements routine
 ;
+; Note, it consideres the collision line to be outside of the platform (as characters can move on it)
+;
 ; Ovewrites Register A and register Y
 check_in_platform:
 .(
@@ -384,28 +386,24 @@ check_in_platform:
 			; Not in platform if on the left of left edge
 			lda stage_data+STAGE_PLATFORM_OFFSET_LEFT, y
 			cmp point_x_lsb
-			beq end_left_edge
 			bcs not_in_platform
 			end_left_edge:
 
 			; Not in platform if on the right of right edge
 			lda point_x_lsb
 			cmp stage_data+STAGE_PLATFORM_OFFSET_RIGHT, y
-			beq end_right_edge
 			bcs not_in_platform
 			end_right_edge:
 
 			; Not in platform if above top edge
 			lda stage_data+STAGE_PLATFORM_OFFSET_TOP, y
 			cmp point_y_lsb
-			beq end_top_edge
 			bcs not_in_platform
 			end_top_edge:
 
 			; Not in platform if under bottom edge
 			lda point_y_lsb
 			cmp stage_data+STAGE_PLATFORM_OFFSET_BOTTOM, y
-			beq end_bottom_edge
 			bcs not_in_platform
 			end_bottom_edge:
 
@@ -420,23 +418,37 @@ check_in_platform:
 			rts
 	.)
 
+#define WORD_EQ(eq_lbl, a_lsb, a_msb, b_lsb, b_msb) .(:\
+	lda a_lsb:\
+	cmp b_lsb:\
+	bne not_eq:\
+		lda a_msb:\
+		cmp b_msb:\
+		beq eq_lbl:\
+	not_eq:\
+.)
+
 	oos_platform_handler:
 	.(
 		; Not in platform if on the left of left edge
 		SIGNED_CMP(point_x_lsb, point_x_msb, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB COMMA y)
 		bmi not_in_platform
+		WORD_EQ(not_in_platform, point_x_lsb, point_x_msb, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB COMMA y)
 
 		; Not in platform if on the right of right edge
 		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB COMMA y, point_x_lsb, point_x_msb)
 		bmi not_in_platform
+		WORD_EQ(not_in_platform, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB COMMA y, point_x_lsb, point_x_msb)
 
 		; Not in platform if above top edge
 		SIGNED_CMP(point_y_lsb, point_y_msb, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB COMMA y)
 		bmi not_in_platform
+		WORD_EQ(not_in_platform, point_y_lsb, point_y_msb, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB COMMA y)
 
 		; Not in platform if under bottom edge
 		SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB COMMA y, point_y_lsb, point_y_msb)
 		bmi not_in_platform
+		WORD_EQ(not_in_platform, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB COMMA y, point_y_lsb, point_y_msb)
 
 			; All checks failed, the point is in the platform
 			;jmp in_platform ; useless, fallthrough
