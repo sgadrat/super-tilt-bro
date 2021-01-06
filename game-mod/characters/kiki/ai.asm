@@ -9,6 +9,7 @@ kiki_ai_attack_selector:
 	end:
 	rts
 .)
+
 kiki_ai_recover_selector:
 .(
 	platform_handler_lsb = tmpfield1
