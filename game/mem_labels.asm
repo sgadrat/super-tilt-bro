@@ -290,6 +290,12 @@ title_original_music_state = $03
 mode_selection_current_option = $00
 
 ;
+; ONLINE_MODE_SELECTION labels
+;
+
+online_mode_selection_current_option = last_c_label+1
+
+;
 ; CONFIG labels
 ;
 

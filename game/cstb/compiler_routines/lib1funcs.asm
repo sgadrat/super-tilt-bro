@@ -341,7 +341,7 @@ no_add:
         rol _e7
         dex
         bne loop
-        
+
         ldx #0
 copyout:
         lda _e8,x
@@ -384,7 +384,7 @@ loop:
         rol _e13
         rol _e14
         rol _e15
-        
+
         ldy #0
         sec
         lda _e8
@@ -492,20 +492,6 @@ copyout:
         inx
         cpx #8
         bne copyout
-        rts
-.)
-#endif
-
-#iflused __neghi2
-__neghi2:
-.(
-        lda #0
-        sec
-        sbc _r0
-        sta _r0
-        lda #0
-        sbc _r1
-        sta _r1
         rts
 .)
 #endif
@@ -900,18 +886,6 @@ __umodqi3:
 .)
 #endif
 
-#iflused __umodhi3
-__umodhi3:
-.(
-        jsr __udivhi3
-        lda _r6
-        sta _r0
-        lda _r7
-        sta _r1
-        rts
-.)
-#endif
-
 #iflused __divhi3
 __divhi3:
 .(
@@ -943,6 +917,61 @@ b_positive:
         jmp __neghi2
 res_positive:
 
+        rts
+.)
+#endif
+
+#iflused __modhi3
+__modhi3:
+.(
+        lda _r1
+        pha
+
+        bpl numerator_positive
+        jsr __neghi2
+numerator_positive:
+        lda _r3
+        bpl denominator_positive
+        lda #0
+        sec
+        sbc _r2
+        sta _r2
+        lda #0
+        sbc _r3
+        sta _r3
+denominator_positive:
+        jsr __umodhi3
+        pla
+        bpl result_positive
+        ; tailcall
+        jmp __neghi2
+result_positive:
+        rts
+.)
+#endif
+
+#iflused __neghi2
+__neghi2:
+.(
+        lda #0
+        sec
+        sbc _r0
+        sta _r0
+        lda #0
+        sbc _r1
+        sta _r1
+        rts
+.)
+#endif
+
+#iflused __umodhi3
+__umodhi3:
+.(
+        jsr __udivhi3
+        lda _r6
+        sta _r0
+        lda _r7
+        sta _r1
         rts
 .)
 #endif
@@ -990,35 +1019,6 @@ next:
 .)
 #endif
 
-#iflused __modhi3
-__modhi3:
-.(
-        lda _r1
-        pha
-        
-        bpl numerator_positive
-        jsr __neghi2
-numerator_positive:
-        lda _r3
-        bpl denominator_positive
-        lda #0
-        sec
-        sbc _r2
-        sta _r2
-        lda #0
-        sbc _r3
-        sta _r3
-denominator_positive:
-        jsr __umodhi3
-        pla
-        bpl result_positive
-        ; tailcall
-        jmp __neghi2
-result_positive:
-        rts
-.)
-#endif
-
 #iflused __udivsi3
         ; This might as well use the _eN registers instead of clobbering the
         ; _sN registers. FIXME!
@@ -1040,7 +1040,7 @@ __udivsi3:
 	pha
 	lda _s7
 	pha
-	
+
 	lda #0
 	sta _s0		; quotient
 	sta _s1
@@ -1050,7 +1050,7 @@ __udivsi3:
 	sta _s5
 	sta _s6
 	sta _s7
-	
+
 	ldx #32
 loop:
 	asl _r0		; shift numerator
@@ -1061,7 +1061,7 @@ loop:
 	rol _s5
 	rol _s6
 	rol _s7
-	
+
 	sec
 	lda _s4
 	sbc _r4
@@ -1108,7 +1108,7 @@ next_bit:
 	sta _r2
 	lda _s3
 	sta _r3
-	
+
 	; Stash remainder too
 	lda _s4
 	sta _r4
@@ -1162,7 +1162,7 @@ __divsi3:
 	lda _r3
 	eor _r7
 	pha
-	
+
 	lda _r3
 	bpl numerator_positive
 	jsr __negsi2
@@ -1199,7 +1199,7 @@ __modsi3:
 .(
 	lda _r3
 	pha
-	
+
 	bpl numerator_positive
 	jsr __negsi2
 numerator_positive:
@@ -1248,7 +1248,7 @@ __m65x_fpcmp:
 	txa
 	and #$7f
 	sta _r2
-	
+
 	lda _r6
 	tax
 	and #$80
@@ -1256,7 +1256,7 @@ __m65x_fpcmp:
 	txa
 	and #$7f
 	sta _r6
-	
+
 	; -X < -Y == X > Y == Y < X
 	lda _tmp0
 	and _tmp1
@@ -1449,7 +1449,7 @@ __mulsf3:
 	eor _r6
 	and #$80
 	sta _m65x_fpe0_sign
-	
+
 .(
 	lda _r2
 	and #$7f
@@ -1459,7 +1459,7 @@ __mulsf3:
 a_exp_zero:
 	sta _r2
 	stx _m65x_fpe0_exp
-	
+
 	lda _r6
 	and #$7f
 	ldx _r7
@@ -1469,16 +1469,16 @@ b_exp_zero:
 	stx _m65x_fpe1_exp
 	tax
 .)
-	
+
 	lda _r4
 	sta _r3
 	lda _r5
 	sta _r4
 	stx _r5
-	
+
 	; Do the actual multiplication.
 .(
-	
+
 	lda #0
 	sta _r6
 	sta _r7
@@ -1487,12 +1487,12 @@ b_exp_zero:
 	sta _m65x_fpe0_mant+2
 	sta _m65x_fpe0_mant+3
 	sta _m65x_fpe0_mant+4
-	
+
 	; s2,s1,s0,r2,r1,r0
 	sta _s0
 	sta _s1
 	sta _s2
-	
+
 	ldx #24
 loop:
 	lsr _r5
@@ -1540,9 +1540,9 @@ no_add:
 	rol _m65x_fpe0_mant+4
 
 .)
-	
+
 	ldx #0
-	
+
 	lda _m65x_fpe0_exp
 	clc
 	adc _m65x_fpe1_exp
@@ -1550,7 +1550,7 @@ no_add:
 	bcc :+
 	inx
 	:
-	
+
 	lda _m65x_fpe0_exp
 	sec
 	sbc #127
@@ -1620,7 +1620,7 @@ __divsf3:
 	eor _r6
 	and #$80
 	sta _m65x_fpe0_sign
-	
+
 .(
 	lda _r2
 	and #$7f
@@ -1630,7 +1630,7 @@ __divsf3:
 a_exp_zero:
 	sta _r2
 	stx _m65x_fpe0_exp
-	
+
 	lda _r6
 	and #$7f
 	ldx _r7
@@ -1640,12 +1640,12 @@ b_exp_zero:
 	sta _r6
 	stx _m65x_fpe1_exp
 .)
-	
+
 	lda #0
 	sta _s2
 	sta _s1
 	sta _s0
-	
+
 	; Result goes here. We want the eventual answer in fpe0_mant+[1,2,3].
 	sta _m65x_fpe0_mant
 	sta _m65x_fpe0_mant+1
@@ -1653,7 +1653,7 @@ b_exp_zero:
 	sta _m65x_fpe0_mant+3
 	sta _m65x_fpe0_mant+4
 	sta _r3
-	
+
 	; The remainder
 	sta _m65x_fpe1_mant
 	sta _m65x_fpe1_mant+1
@@ -1661,16 +1661,16 @@ b_exp_zero:
 	sta _m65x_fpe1_mant+3
 	sta _m65x_fpe1_mant+4
 	sta _r7
-	
+
 	; r2,r1,r0,s2,s1,s0 = a_mant << 23
-	
+
 	lsr _r2
 	ror _r1
 	ror _r0
 	ror _s2
 	ror _s1
 	ror _s0
-	
+
 	; result[47:0] = r2,r1,r0,s2,s1,s0 / r6,r5,r4
 .(
 	ldx #48
@@ -1689,7 +1689,7 @@ loop:
 	rol _m65x_fpe1_mant+3
 	rol _m65x_fpe1_mant+4
 	rol _r7
-	
+
 	; Test D <= R
 	sec
 	lda _m65x_fpe1_mant
@@ -1744,15 +1744,15 @@ next_bit:
 	dex
 	bne loop
 .)
-	
+
 	; Remove junk in high-order & low-order bits.
 	lda #0
 	sta _m65x_fpe0_mant
 	sta _m65x_fpe0_mant+4
-	
+
 	; High-order exponent byte.
 	ldx #0
-	
+
 	lda _m65x_fpe0_exp
 	sec
 	sbc _m65x_fpe1_exp
@@ -1760,7 +1760,7 @@ next_bit:
 	bcs :+
 	dex
 	:
-	
+
 	lda _m65x_fpe0_exp
 	clc
 	adc #127
@@ -1768,9 +1768,9 @@ next_bit:
 	bcc :+
 	inx
 	:
-	
+
 	; FIXME: Handle exponent overflow/underflow here.
-	
+
 .(
 	lda _m65x_fpe0_mant+1
 	ora _m65x_fpe0_mant+2
@@ -1782,7 +1782,7 @@ not_zero:
 	jsr _m65x_renormalize_left
 done:
 .)
-	
+
 	lda _m65x_fpe0_mant+1
 	sta _r0
 	lda _m65x_fpe0_mant+2
@@ -1793,14 +1793,14 @@ done:
 	sta _r2
 	lda _m65x_fpe0_exp
 	sta _r3
-	
+
 	pla
 	sta _s0
 	pla
 	sta _s1
 	pla
 	sta _s2
-	
+
 	rts
 .)
 #endif
@@ -1811,7 +1811,7 @@ __fixsfsi:
 	lda _r2
 	and #$80
 	sta _m65x_fpe0_sign
-	
+
 	jsr __fixunssfsi
 
 	lda _m65x_fpe0_sign
@@ -1847,7 +1847,7 @@ __fixunssfsi:
 a_exp_zero:
 	sta _r2
 	stx _m65x_fpe0_exp
-	
+
 	cpx #127
 	bcs over_one
 	lda #0
@@ -1857,11 +1857,11 @@ a_exp_zero:
 	sta _r3
 	rts
 over_one:
-	
+
 	; r3 is part of the result now.
 	lda #0
 	sta _r3
-	
+
 .(
 	lda #150
 	sec
@@ -1891,7 +1891,7 @@ left_shift_loop:
 	dex
 	bne left_shift_loop
 .)
-	
+
 	rts
 .)
 #endif
@@ -1943,7 +1943,7 @@ repack:
 	inc _m65x_fpe0_mant+4
 	jsr _m65x_renormalize_right
 no_rounding:
-	
+
 	lda _m65x_fpe0_mant+1
 	sta _r0
 	lda _m65x_fpe0_mant+2
@@ -1981,7 +1981,7 @@ __floatsisf:
 	sta _r3
 not_negative:
 	jsr __floatunsisf
-	
+
 	lda _r2
 	ora _m65x_fpe0_sign
 	sta _r2

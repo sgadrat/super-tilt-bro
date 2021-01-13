@@ -14,6 +14,15 @@ bank_data_stage_selection_extra_code_begin:
 #include "game/logic/game_states/stage_selection_screen/stage_selection_extra_code.asm"
 bank_data_stage_selection_extra_code_end:
 
+bank_data_online_mode_extra_data_begin:
+#include "game/data/menu_online_mode/screen.asm"
+#include "game/data/menu_online_mode/tileset.asm"
+bank_data_online_mode_extra_data_end:
+
+bank_data_online_mode_extra_code_begin:
+#include "game/logic/game_states/online_mode_screen/online_mode_screen_extra_code.asm"
+bank_data_online_mode_extra_code_end:
+
 bank_data_end:
 
 #echo
@@ -31,6 +40,12 @@ bank_data_end:
 #echo
 #echo DATA-bank stage select extra code size:
 #print bank_data_stage_selection_extra_code_end-bank_data_stage_selection_extra_code_begin
+#echo
+#echo DATA-bank online mode extra data size:
+#print bank_data_online_mode_extra_data_end-bank_data_online_mode_extra_data_begin
+#echo
+#echo DATA-bank online mode extra code size:
+#print bank_data_online_mode_extra_code_end-bank_data_online_mode_extra_code_begin
 #echo
 #echo DATA-bank free space:
 #print $c000-*

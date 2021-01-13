@@ -12,6 +12,7 @@ VECTOR(init_netplay_launch_screen)
 VECTOR(init_donation_screen)
 VECTOR(init_donation_btc_screen)
 VECTOR(init_donation_paypal_screen)
+VECTOR(init_online_mode_screen)
 
 ; Subroutine called each frame
 game_states_tick:
@@ -27,6 +28,7 @@ VECTOR(netplay_launch_screen_tick)
 VECTOR(donation_screen_tick)
 VECTOR(donation_qr_screen_tick)
 VECTOR(donation_qr_screen_tick)
+VECTOR(online_mode_screen_tick)
 
 ;NOTE if you change these tables, do not forget to update GAME_STATE_* constants
 
@@ -35,10 +37,11 @@ VECTOR(donation_qr_screen_tick)
 #include "game/logic/game_states/credits_screen.asm"
 #include "game/logic/game_states/donation_screen.asm"
 #include "game/logic/game_states/donation_qr.asm"
-#include "game/logic/game_states//game/game.asm"
+#include "game/logic/game_states/game/game.asm"
 #include "game/logic/game_states/gameover_screen.asm"
 #include "game/logic/game_states/mode_selection_screen.asm"
 #include "game/logic/game_states/netplay_launch_screen.asm"
+#include "game/logic/game_states/online_mode_screen.asm"
 #include "game/logic/game_states/stage_selection_screen.asm"
 #include "game/logic/game_states/title_screen.asm"
 #include "game/logic/game_states/transitions/transitions.asm"
