@@ -275,6 +275,16 @@ server_current_frame_byte3 = $ee
 network_rollback_mode = $ef ; 0 - normal, 1 - rolling ; Note - also used by game tick to know if a frame will be drawn, may be renamed something more generic like "dummy_frame"
 
 ;
+; Network login labels
+;
+
+; TODO for now expects RAINBOW's WRAM at $6000, should fit in normal NES RAM + RAINBOW files
+
+network_login = $6000 ; $6000-$600f
+network_passord = $6010 ; $6010-$601f
+network_logged = $6020
+
+;
 ; TITLE labels
 ;
 
@@ -294,6 +304,8 @@ mode_selection_current_option = $00
 ;
 
 online_mode_selection_current_option = last_c_label+1
+
+online_mode_selection_mem_buffer = $0580 ; $0580 to $05bf (64 bytes)
 
 ;
 ; CONFIG labels

@@ -2,5 +2,6 @@
 #include "cstb/constants.h"
 #include "cstb/mem_labels.h"
 #include "cstb/nes_labels.h"
+#include "cstb/rainbow.h"
 #include "cstb/types.h"
 #include "cstb/utils.h"

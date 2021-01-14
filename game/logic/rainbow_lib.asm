@@ -127,6 +127,7 @@ esp_send_cmd:
 ; Note
 ;  - Y returns the contents of the "message length" field, so it is one less than the number
 ;    of bytes writen in memory.
+;  - First byte of destination is always written (to zero if there was no message)
 ;  - It is indistinguishable if there was a message with a length field of zero or there
 ;    was no message.
 ;

@@ -80,7 +80,6 @@ netplay_launch_screen_tick:
 	.byt <the_purge
 	.byt <connecting_wifi_query, <connecting_wifi_wait
 	.byt <select_server_query_settings, <select_server_draw, <select_server
-	.byt <client_id_request_rnd, <client_id_set_low, <client_id_request_rnd, <client_id_set_hi
 	.byt <estimate_latency_1, <estimate_latency_2
 	.byt <connection_title, <connection_send_msg, <connection_wait_msg
 	.byt <wait_game
@@ -91,7 +90,6 @@ netplay_launch_screen_tick:
 	.byt >the_purge
 	.byt >connecting_wifi_query, >connecting_wifi_wait
 	.byt >select_server_query_settings, >select_server_draw, >select_server
-	.byt >client_id_request_rnd, >client_id_set_low, >client_id_request_rnd, >client_id_set_hi
 	.byt >estimate_latency_1, >estimate_latency_2
 	.byt >connection_title, >connection_send_msg, >connection_wait_msg
 	.byt >wait_game
@@ -352,14 +350,20 @@ netplay_launch_screen_tick:
 			; Set server settings and connect
 			ldx netplay_launch_server
 			cpx #CUSTOM_SERVER_IDX
-			beq server_set ; Skip setting server if "custom" is selected (pre-configured)
+			beq custom_server
 
-				; Set server settings for the selected server
-				lda server_cfg_lsb, x
-				sta tmpfield1
-				lda server_cfg_msb, x
-				sta tmpfield2
-				jsr esp_send_cmd
+				standard_server:
+					; Set server settings for the selected server
+					lda server_cfg_lsb, x
+					sta tmpfield1
+					lda server_cfg_msb, x
+					sta tmpfield2
+					jsr esp_send_cmd
+					jmp server_set
+
+				custom_server:
+					; Pre-configured server, restore server settings from configuration
+					ESP_SEND_CMD(restore_server_config_cmd)
 
 			server_set:
 			ESP_SEND_CMD(connect_cmd)
@@ -395,6 +399,9 @@ netplay_launch_screen_tick:
 			inc netplay_launch_state
 			jmp end
 		.)
+
+		restore_server_config_cmd:
+			.byt 1, TOESP_MSG_RESTORE_SERVER_SETTINGS
 
 		connect_cmd:
 			.byt 1, TOESP_MSG_CONNECT_TO_SERVER
@@ -432,55 +439,6 @@ netplay_launch_screen_tick:
 
 		step_title:
 			.byt $ee, $f3, $ee, $f9, $ee, $e6, $f1, $ee, $ff, $ea, $02, $f8, $f9, $fa, $eb, $eb, $02, $02, $02, $02
-	.)
-
-	client_id_request_rnd:
-	.(
-		lda #1
-		sta RAINBOW_DATA
-		lda #TOESP_MSG_GET_RND_WORD
-		sta RAINBOW_DATA
-
-		inc netplay_launch_state
-		rts
-	.)
-
-	client_id_set_generic:
-	.(
-		bit RAINBOW_FLAGS
-		bpl end
-
-			; Read random bytes from ESP
-			lda RAINBOW_DATA ; Garbage byte
-			nop
-			lda RAINBOW_DATA ; Size (should be 3)
-			nop
-			lda RAINBOW_DATA ; Type - TODO verify that it is actually FROMESP_MSG_RND_WORD
-			nop
-
-			lda RAINBOW_DATA ; Random byte
-			sta network_client_id_byte0, x
-			inx
-			lda RAINBOW_DATA ; Random byte
-			sta network_client_id_byte0, x
-
-			; Next step
-			inc netplay_launch_state
-
-		end:
-		rts
-	.)
-
-	client_id_set_low:
-	.(
-		ldx #0
-		jmp client_id_set_generic
-	.)
-
-	client_id_set_hi:
-	.(
-		ldx #2
-		jmp client_id_set_generic
 	.)
 
 	estimate_latency_1:
