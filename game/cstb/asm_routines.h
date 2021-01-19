@@ -15,6 +15,7 @@ void audio_music_tick();
 void audio_mute_music();
 void audio_unmute_music();
 void dummy_routine();
+void fetch_controllers();
 void init_menu();
 void process_nt_buffers();
 void reset_nt_buffers();
@@ -111,6 +112,18 @@ static void wrap_draw_zipped_nametable(uint8_t const* nametable) {
 	*tmpfield1 = ptr_lsb(nametable);
 	*tmpfield2 = ptr_msb(nametable);
 	draw_zipped_nametable();
+}
+
+void get_unzipped_bytes();
+static void wrap_get_unzipped_bytes(uint8_t* dest, uint8_t const* zipped, uint16_t offset, uint8_t count) {
+	*tmpfield1 = ptr_lsb(zipped);
+	*tmpfield2 = ptr_msb(zipped);
+	*tmpfield3 = u16_lsb(offset);
+	*tmpfield4 = u16_msb(offset);
+	*tmpfield5 = count;
+	*tmpfield6 = ptr_lsb(dest);
+	*tmpfield7 = ptr_msb(dest);
+	get_unzipped_bytes();
 }
 
 void push_nt_buffer();

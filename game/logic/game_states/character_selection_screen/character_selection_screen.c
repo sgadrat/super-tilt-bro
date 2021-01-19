@@ -94,6 +94,8 @@ static void wrap_character_selection_screen_copy_property(uint8_t character, uin
 	character_selection_screen_copy_property();
 }
 
+//TODO Check if reasonable to remove this implementation, and call "get_unzipped_bytes" instead
+//     (should be slightly slower)
 static void wrap_character_selection_get_unzipped_bytes(uint8_t const* zipped, uint16_t offset, uint8_t count) {
 	*tmpfield1 = ptr_lsb(zipped);
 	*tmpfield2 = ptr_msb(zipped);

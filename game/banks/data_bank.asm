@@ -15,6 +15,7 @@ bank_data_stage_selection_extra_code_begin:
 bank_data_stage_selection_extra_code_end:
 
 bank_data_online_mode_extra_data_begin:
+#include "game/data/menu_online_mode/anims.asm"
 #include "game/data/menu_online_mode/screen.asm"
 #include "game/data/menu_online_mode/tileset.asm"
 bank_data_online_mode_extra_data_end:

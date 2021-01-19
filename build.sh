@@ -5,6 +5,7 @@ set -e
 xa_bin="${XA_BIN:-xa}"
 cc_bin="${CC_BIN:-6502-gcc}"
 perf_listings="${XA_LST:-0}"
+force_network="${FORCE_NETWORK:-0}"
 
 root_dir=`readlink -m $(dirname "$0")`
 log_file="${root_dir}/build.log"
@@ -93,13 +94,17 @@ done
 log
 say "Assemble the game ..."
 log "====================="
-asm cmd 'Super_Tilt_Bro_(E)'           ''
-asm exe 'server_bytecode'              '-DSERVER_BYTECODE -DNO_INES_HEADER'
-asm exe 'tilt_ai_(E)'                  '-DNETWORK_AI'
-asm exe 'tilt_no_network_(E)'          '-DNO_NETWORK'
-asm exe 'tilt_rainbow512_(E)'          '-DMAPPER_RAINBOW512'
-asm exe 'tilt_no_network_unrom512_(E)' '-DNO_NETWORK -DMAPPER_UNROM512'
-asm exe 'tilt_no_network_unrom_(E)'    '-DNO_NETWORK -DMAPPER_UNROM'
+no_network_flag='-DNO_NETWORK'
+if [ $force_network -ne 0 ]; then
+	no_network_flag=''
+fi
+asm cmd 'Super_Tilt_Bro_(E)'           ""
+asm exe 'server_bytecode'              "-DSERVER_BYTECODE -DNO_INES_HEADER"
+asm exe 'tilt_ai_(E)'                  "-DNETWORK_AI"
+asm exe 'tilt_no_network_(E)'          "$no_network_flag"
+asm exe 'tilt_rainbow512_(E)'          "-DMAPPER_RAINBOW512"
+asm exe 'tilt_no_network_unrom512_(E)' "$no_network_flag -DMAPPER_UNROM512"
+asm exe 'tilt_no_network_unrom_(E)'    "$no_network_flag -DMAPPER_UNROM"
 
 say
 say "======================="

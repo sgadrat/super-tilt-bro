@@ -281,7 +281,7 @@ network_rollback_mode = $ef ; 0 - normal, 1 - rolling ; Note - also used by game
 ; TODO for now expects RAINBOW's WRAM at $6000, should fit in normal NES RAM + RAINBOW files
 
 network_login = $6000 ; $6000-$600f
-network_passord = $6010 ; $6010-$601f
+network_password = $6010 ; $6010-$601f
 network_logged = $6020
 
 ;
@@ -306,6 +306,7 @@ mode_selection_current_option = $00
 online_mode_selection_current_option = last_c_label+1
 
 online_mode_selection_mem_buffer = $0580 ; $0580 to $05bf (64 bytes)
+online_mode_selection_cursor_anim = $05c0 ; $05c0 to $05cb
 
 ;
 ; CONFIG labels
