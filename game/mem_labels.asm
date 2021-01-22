@@ -283,6 +283,7 @@ network_rollback_mode = $ef ; 0 - normal, 1 - rolling ; Note - also used by game
 network_login = $6000 ; $6000-$600f
 network_password = $6010 ; $6010-$601f
 network_logged = $6020
+network_ranked = $6021
 
 ;
 ; TITLE labels

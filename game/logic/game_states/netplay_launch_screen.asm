@@ -540,7 +540,7 @@ netplay_launch_screen_tick:
 		flags_byte = tmpfield1
 
 		; Send connection message
-		lda #14                                ; ESP header
+		lda #15                                ; ESP header
 		sta RAINBOW_DATA
 		lda #TOESP_MSG_SEND_MESSAGE_TO_SERVER
 		sta RAINBOW_DATA
@@ -557,7 +557,7 @@ netplay_launch_screen_tick:
 		sta RAINBOW_DATA
 		lda netplay_launch_ping_min ; min ping
 		sta RAINBOW_DATA
-		lda #3 ; protocol_version
+		lda #4 ; protocol_version
 		sta RAINBOW_DATA
 		lda netplay_launch_ping_max ; max ping
 		sta RAINBOW_DATA
@@ -583,6 +583,9 @@ netplay_launch_screen_tick:
 		lda config_player_a_character_palette ; selected_palette
 		sta RAINBOW_DATA
 		lda config_selected_stage ; selected_stage
+		sta RAINBOW_DATA
+
+		lda network_ranked ; ranked_play
 		sta RAINBOW_DATA
 
 		; Next step - wait for a response
