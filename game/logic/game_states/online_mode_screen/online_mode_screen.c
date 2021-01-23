@@ -154,6 +154,24 @@ static uint8_t const STNP_LOGIN_MSG_TYPE = 255;
 static uint8_t const STNP_LOGIN_ANONYMOUS = 0;
 static uint8_t const STNP_LOGIN_PASSWORD = 1;
 
+// Server message types
+static uint8_t const STNP_LOGIN_FROM_SERVER_LOGGED_IN = 0;
+static uint8_t const STNP_LOGIN_FROM_SERVER_LOGIN_FAILED = 1;
+
+// Charset
+static uint8_t const STNP_LOGIN_CHARSET[] = {
+	TILE_EMPTY_TEXT,
+
+	TILE_CHAR_A, TILE_CHAR_B, TILE_CHAR_C, TILE_CHAR_D, TILE_CHAR_E, TILE_CHAR_F, TILE_CHAR_G, TILE_CHAR_H, TILE_CHAR_I, TILE_CHAR_J,
+	TILE_CHAR_K, TILE_CHAR_L, TILE_CHAR_M, TILE_CHAR_N, TILE_CHAR_O, TILE_CHAR_P, TILE_CHAR_Q, TILE_CHAR_R, TILE_CHAR_S, TILE_CHAR_T,
+	TILE_CHAR_U, TILE_CHAR_V, TILE_CHAR_W, TILE_CHAR_X, TILE_CHAR_Y, TILE_CHAR_Z,
+
+	TILE_SPACE,
+
+	TILE_CHAR_0, TILE_CHAR_1, TILE_CHAR_2, TILE_CHAR_3, TILE_CHAR_4, TILE_CHAR_5, TILE_CHAR_6, TILE_CHAR_7, TILE_CHAR_8, TILE_CHAR_9,
+};
+static uint8_t const STNP_LOGIN_CHARSET_SIZE = sizeof(STNP_LOGIN_CHARSET);
+
 ///////////////////////////////////////
 // Utility functions
 ///////////////////////////////////////
@@ -321,9 +339,23 @@ static void anonymous_login() {
 #endif
 }
 
+static uint8_t check_login_message(uint8_t type) {
+	return
+		online_mode_selection_mem_buffer[0] >= 2 &&
+		online_mode_selection_mem_buffer[1] == FROMESP_MSG_MESSAGE_FROM_SERVER &&
+		online_mode_selection_mem_buffer[2] == STNP_LOGIN_MSG_TYPE &&
+		online_mode_selection_mem_buffer[3] == type
+	;
+}
+
 static void password_login_pocess() {
-	// Clear ESP messages queue (avoid the mem_buffer being overflowed by a big remaining message)
+	// Clear login fields
 	//TODO draw "connecting to server" message
+	for (uint8_t sprite_num = Anim(online_mode_selection_cursor_anim)->first_sprite_num; sprite_num <= Anim(online_mode_selection_cursor_anim)->last_sprite_num; ++sprite_num) {
+		oam_mirror[sprite_num * 4] = 0xfe;
+	}
+
+	// Clear ESP messages queue (avoid the mem_buffer being overflowed by a big remaining message)
 	wrap_esp_send_cmd(esp_clear_cmd);
 	yield();
 
@@ -345,44 +377,99 @@ static void password_login_pocess() {
 
 	// Wait answer
 	//TODO periodically resend login message
-	//TODO handle access denied
-	while(
-		wrap_esp_get_msg(online_mode_selection_mem_buffer) != 8 ||
-		online_mode_selection_mem_buffer[1] != FROMESP_MSG_MESSAGE_FROM_SERVER ||
-		online_mode_selection_mem_buffer[2] != STNP_LOGIN_MSG_TYPE
-	)
-	{
-		yield();
+	while (1) {
+		// Cancel everything if B is pressed
 		if (*controller_a_last_frame_btns == CONTROLLER_BTN_B && *controller_a_btns == 0) {
-			return;
+			break;
 		}
+
+		// Handle incoming message
+		if (wrap_esp_get_msg(online_mode_selection_mem_buffer) != 0) {
+			uint8_t const msg_payload_offset = 4;
+
+			if (check_login_message(STNP_LOGIN_FROM_SERVER_LOGGED_IN)) {
+				//TODO check first payload byte which should be STNP_LOGIN_PASSWORD (not anonymous login)
+				// Store received ID
+				network_client_id_byte0[0] = online_mode_selection_mem_buffer[msg_payload_offset + 1];
+				network_client_id_byte0[1] = online_mode_selection_mem_buffer[msg_payload_offset + 2];
+				network_client_id_byte0[2] = online_mode_selection_mem_buffer[msg_payload_offset + 3];
+				network_client_id_byte0[3] = online_mode_selection_mem_buffer[msg_payload_offset + 4];
+
+				// Mark logged as anonymous
+				*network_logged = LOGIN_LOGGED;
+
+				// Stop waiting a message
+				break;
+			}else if (check_login_message(STNP_LOGIN_FROM_SERVER_LOGIN_FAILED)) {
+				// Set invariable window content
+				static uint8_t const title_buffer[] = {
+					0x21, 0x6a, 12,
+					TILE_CHAR_L, TILE_CHAR_O, TILE_CHAR_G, TILE_CHAR_I, TILE_CHAR_N,
+					TILE_SPACE, TILE_CHAR_F, TILE_CHAR_A, TILE_CHAR_I, TILE_CHAR_L,
+					TILE_CHAR_E, TILE_CHAR_D
+				};
+				static uint8_t const separator_buffer[] = {
+					0x21, 0x88, 9,
+					TILE_SPACE, TILE_SPACE, TILE_SPACE, TILE_SPACE, TILE_SPACE,
+					TILE_SPACE, TILE_SPACE, TILE_SPACE, TILE_SPACE
+				};
+				wrap_push_nt_buffer(title_buffer);
+				wrap_push_nt_buffer(separator_buffer);
+				yield();
+
+				// Replace window content by server's message
+				static uint8_t const msg_lines_headers[][3] = {
+					{0x21, 0xa7, 18},
+					{0x21, 0xc7, 18},
+					{0x21, 0xe7, 18},
+					{0x22, 0x07, 18},
+				};
+				for (uint8_t line_num = 0; line_num < 4; ++line_num) {
+					// Convert line from STNP charset to tiles index
+					uint8_t const line_offset = msg_payload_offset + (18 * line_num);
+					for (uint8_t char_pos = line_offset; char_pos < line_offset + 18; ++char_pos) {
+						online_mode_selection_mem_buffer[char_pos] = STNP_LOGIN_CHARSET[online_mode_selection_mem_buffer[char_pos]];
+					}
+
+					// Draw line on screen
+					wrap_construct_nt_buffer(msg_lines_headers[line_num], online_mode_selection_mem_buffer + msg_payload_offset + (18 * line_num));
+					yield();
+				}
+
+				// Wait user acknoledge
+				while (
+					*controller_a_btns != 0 ||
+					(*controller_a_last_frame_btns != CONTROLLER_BTN_B && *controller_a_last_frame_btns != CONTROLLER_BTN_START)
+				)
+				{
+					yield();
+				}
+
+				// Stop waiting a message
+				break;
+			}
+		}
+
+		// Wait one more frame
+		yield();
 	}
-
-	// Store received ID
-	network_client_id_byte0[0] = online_mode_selection_mem_buffer[5];
-	network_client_id_byte0[1] = online_mode_selection_mem_buffer[6];
-	network_client_id_byte0[2] = online_mode_selection_mem_buffer[7];
-	network_client_id_byte0[3] = online_mode_selection_mem_buffer[8];
-
-	// Mark logged as anonymous
-	*network_logged = LOGIN_LOGGED;
 }
 
-static void password_login_input(uint8_t controller_btns, uint8_t last_fame_btns, uint8_t* current_field, uint8_t* char_cursor, uint8_t charset_size, uint8_t* stay_in_window) {
+static void password_login_input(uint8_t controller_btns, uint8_t last_fame_btns, uint8_t* current_field, uint8_t* char_cursor, uint8_t* stay_in_window) {
 	if (controller_btns != last_fame_btns) {
 		uint8_t* field_value = (*current_field == 0 ? network_login : network_password);
 		switch (controller_btns) {
 			case CONTROLLER_BTN_DOWN:
 				sound_effect_click();
 				if (field_value[*char_cursor] == 0) {
-					field_value[*char_cursor] = charset_size - 1;
+					field_value[*char_cursor] = STNP_LOGIN_CHARSET_SIZE - 1;
 				}else {
 					--field_value[*char_cursor];
 				}
 				break;
 			case CONTROLLER_BTN_UP:
 				sound_effect_click();
-				if (field_value[*char_cursor] == charset_size - 1) {
+				if (field_value[*char_cursor] == STNP_LOGIN_CHARSET_SIZE - 1) {
 					field_value[*char_cursor] = 0;
 				}else {
 					++field_value[*char_cursor];
@@ -478,19 +565,6 @@ static void password_login() {
 	static uint8_t const login_nt_header[] = {0x21, 0xa8, 16};
 	static uint8_t const password_nt_header[] = {0x22, 0x08, 16};
 
-	static uint8_t const char_to_tile[] = {
-		TILE_EMPTY_TEXT,
-
-		TILE_CHAR_A, TILE_CHAR_B, TILE_CHAR_C, TILE_CHAR_D, TILE_CHAR_E, TILE_CHAR_F, TILE_CHAR_G, TILE_CHAR_H, TILE_CHAR_I, TILE_CHAR_J,
-		TILE_CHAR_K, TILE_CHAR_L, TILE_CHAR_M, TILE_CHAR_N, TILE_CHAR_O, TILE_CHAR_P, TILE_CHAR_Q, TILE_CHAR_R, TILE_CHAR_S, TILE_CHAR_T,
-		TILE_CHAR_U, TILE_CHAR_V, TILE_CHAR_W, TILE_CHAR_X, TILE_CHAR_Y, TILE_CHAR_Z,
-
-		TILE_SPACE,
-
-		TILE_CHAR_0, TILE_CHAR_1, TILE_CHAR_2, TILE_CHAR_3, TILE_CHAR_4, TILE_CHAR_5, TILE_CHAR_6, TILE_CHAR_7, TILE_CHAR_8, TILE_CHAR_9,
-	};
-	static uint8_t const charset_size = sizeof(char_to_tile);
-
 	uint8_t current_field = 0;
 	uint8_t char_cursor = 0;
 	uint8_t stay_in_window = 1;
@@ -513,12 +587,12 @@ static void password_login() {
 
 		// Take input
 		for (uint8_t player = 0; player < 2; ++player) {
-			password_login_input(controller_a_btns[player], controller_a_last_frame_btns[player], &current_field, &char_cursor, charset_size, &stay_in_window);
+			password_login_input(controller_a_btns[player], controller_a_last_frame_btns[player], &current_field, &char_cursor, &stay_in_window);
 		}
 
 		// Draw current login
 		for (uint8_t char_num = 0; char_num < 16; ++char_num) {
-			online_mode_selection_mem_buffer[char_num] = char_to_tile[network_login[char_num]];
+			online_mode_selection_mem_buffer[char_num] = STNP_LOGIN_CHARSET[network_login[char_num]];
 		}
 		wrap_construct_nt_buffer(login_nt_header, online_mode_selection_mem_buffer);
 
@@ -526,7 +600,7 @@ static void password_login() {
 		for (uint8_t char_num = 0; char_num < 16; ++char_num) {
 			uint8_t const character = network_password[char_num];
 			if (character == 0 || (current_field == 1 && char_cursor == char_num)) {
-				online_mode_selection_mem_buffer[char_num] = char_to_tile[character];
+				online_mode_selection_mem_buffer[char_num] = STNP_LOGIN_CHARSET[character];
 			}else {
 				online_mode_selection_mem_buffer[char_num] = TILE_CHAR_HIDDEN;
 			}
@@ -537,9 +611,6 @@ static void password_login() {
 	}
 
 	// Repair damages caused to the screen
-	for (uint8_t sprite_num = cursor_anim_first_sprite; sprite_num <= cursor_anim_last_sprite; ++sprite_num) {
-		oam_mirror[sprite_num * 4] = 0xfe;
-	}
 	hide_dialog(0x2146, &menu_online_mode_login_window, 2);
 }
 

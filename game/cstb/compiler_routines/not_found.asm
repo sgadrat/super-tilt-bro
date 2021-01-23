@@ -2,6 +2,7 @@
 
 .(
 #iflused memcpy
+;TODO preserve _r0 and _r1 to return the expected value
 &memcpy:
 .(
 	dest_lsb = _r0
