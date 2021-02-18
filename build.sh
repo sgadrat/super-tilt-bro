@@ -78,6 +78,7 @@ log "===================="
 PYTHONPATH="${root_dir}/tools:$PYTHONPATH" cmd "${root_dir}/tools/compile-mod.py" "${root_dir}/game-mod/mod.json" "${root_dir}"
 
 # Compile C files
+if [ -z $SKIP_C ]; then
 log
 say "Compile C files ..."
 log "==================="
@@ -89,6 +90,7 @@ for c_source in `find . -name '*.c'`; do
 	"$cc_bin" $c_source -S -I game/ $c_flags -o "$asm_source"
 	tools/asm_converter.py "$asm_source"
 done
+fi
 
 # Assemble the game
 log
