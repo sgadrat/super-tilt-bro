@@ -29,6 +29,7 @@ KIKI_AIR_FRICTION_STRENGTH = 7
 KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
 KIKI_AERIAL_SPEED = $0100
 KIKI_FASTFALL_SPEED = $04
+KIKI_COUNTER_GRAVITY = $01
 KIKI_PLATFORM_DURATION = 120
 
 KIKI_GROUND_FRICTION_STRENGTH = $40
@@ -2701,15 +2702,26 @@ kiki_start_counter_guard:
 	lda #0
 	sta player_a_state_clock,x
 
+	; Cancel momentum
+	;lda #0 ; useless, done above
+	sta player_a_velocity_h_low, x
+	sta player_a_velocity_h, x
+	sta player_a_velocity_v_low, x
+	sta player_a_velocity_v, x
+
+	; Lower gravity
+	lda #KIKI_COUNTER_GRAVITY
+	sta player_a_gravity, x
+
 	rts
 .)
 
-KIKI_STATE_COUNTER_GUARD_ACTIVE_DURATION = 12
+KIKI_STATE_COUNTER_GUARD_ACTIVE_DURATION = 18
 kiki_tick_counter_guard:
 .(
 	jsr kiki_global_tick
 
-	KIKI_STATE_COUNTER_GUARD_TOTAL_DURATION = 24
+	KIKI_STATE_COUNTER_GUARD_TOTAL_DURATION = 43
 
 	lda player_a_grounded, x
 	beq air_friction
@@ -2742,11 +2754,17 @@ kiki_tick_counter_guard:
 		sta tmpfield14
 		jsr set_player_animation
 
+		; Reset fall speed
+		lda #DEFAULT_GRAVITY
+		sta player_a_gravity, x
+
 	check_total_duration:
 	cmp #KIKI_STATE_COUNTER_GUARD_TOTAL_DURATION
 	bne end
 
 		; Total duration is over, return to a neutral state
+		lda #DEFAULT_GRAVITY
+		sta player_a_gravity, x
 		jsr kiki_start_falling
 
 	end:
@@ -2771,6 +2789,9 @@ kiki_hurt_counter_guard:
 		ldy striker_player
 		lda HITBOX_DISABLED
 		sta player_a_hitbox_enabled, y
+
+		lda #DEFAULT_GRAVITY
+		sta player_a_gravity, x
 
 		jsr kiki_start_counter_strike
 		jmp end
