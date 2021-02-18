@@ -54,9 +54,9 @@ init_credits_screen:
 		jsr fill_attributes_line
 		lda #%00000000
 		jsr fill_attributes_line
-		lda #%00000000
+		lda #%00001010
 		jsr fill_attributes_line
-		lda #%10100000
+		lda #%00000000
 		jsr fill_attributes_line
 		lda PPUSTATUS
 		lda #$23
