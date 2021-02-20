@@ -113,7 +113,7 @@ static uint8_t const esp_clear_cmd[] = {1, TOESP_MSG_CLEAR_BUFFERS};
 static uint8_t const connect_cmd[] = {1, TOESP_MSG_CONNECT_TO_SERVER};
 
 static uint8_t const set_server_cmd[] = {
-#if 0
+#ifndef LOCAL_LOGIN_SERVER
 	// ESP header
 	23, TOESP_MSG_SET_SERVER_SETTINGS,
 	// Port
@@ -496,8 +496,12 @@ static void password_login_input(uint8_t controller_btns, uint8_t last_fame_btns
 					case CONTROLLER_BTN_START:
 						sound_effect_click();
 						if (*current_field == 0) {
+							uint8_t last_char = 0;
+							while (network_password[last_char] != 0 && last_char != 15) {
+								++last_char;
+							}
+							*char_cursor = last_char;
 							*current_field = 1;
-							*char_cursor = 0;
 						}else {
 							password_login_pocess();
 							*stay_in_window = 0;
@@ -507,7 +511,7 @@ static void password_login_input(uint8_t controller_btns, uint8_t last_fame_btns
 						sound_effect_click();
 						if (*current_field == 1) {
 							uint8_t last_char = 0;
-							while (network_login[last_char] != 0) {
+							while (network_login[last_char] != 0 && last_char != 15) {
 								++last_char;
 							}
 							*char_cursor = last_char;
