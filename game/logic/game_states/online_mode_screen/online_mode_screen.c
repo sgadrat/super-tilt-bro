@@ -247,6 +247,28 @@ static void sound_effect_click() {
 	audio_play_parry();
 }
 
+static void draw_logged_name() {
+	// nt buffer header: 16 characters in the tittle bar
+	static uint8_t const buffer_header[] = {0x20, 0x6d, 16};
+
+	// Compute nt buffer payload
+	uint8_t const TILE_TITLE_SPACE = 0x03;
+	if (*network_logged != LOGIN_LOGGED) {
+		for (uint8_t char_num = 0; char_num < 16; ++char_num) {
+			online_mode_selection_mem_buffer[char_num] = TILE_TITLE_SPACE;
+		}
+	}else {
+		for (uint8_t char_num = 0; char_num < 16; ++char_num) {
+			uint8_t const original_char = network_login[char_num];
+			uint8_t const buffer_char = (original_char == 0 ? TILE_TITLE_SPACE : STNP_LOGIN_CHARSET[original_char]);
+			online_mode_selection_mem_buffer[char_num] = buffer_char;
+		}
+	}
+
+	// Construct nt buffer
+	wrap_construct_nt_buffer(buffer_header, online_mode_selection_mem_buffer);
+}
+
 static void place_earth_sprites() {
 	for (uint8_t option = 0; option < NB_OPTIONS; ++option) {
 		struct Position16 const sprites_postion = first_earth_sprite_per_option[option];
@@ -457,6 +479,10 @@ static void password_login_process() {
 		// Wait one more frame
 		yield();
 	}
+
+	// Update login indicator
+	draw_logged_name();
+	yield();
 }
 
 static void password_login_input(uint8_t controller_btns, uint8_t last_frame_btns, uint8_t* current_field, uint8_t* char_cursor, uint8_t* stay_in_window, uint8_t* cursor_state) {
@@ -787,6 +813,9 @@ void init_online_mode_screen_extra() {
 			network_client_id_byte0[i] = 0;
 		}
 	}
+
+	// Draw login indicator
+	draw_logged_name();
 }
 
 void online_mode_screen_tick_extra() {
