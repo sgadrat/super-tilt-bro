@@ -650,15 +650,13 @@ static void take_input(uint8_t controller_btns, uint8_t last_fame_btns) {
 	if (controller_btns != last_fame_btns) {
 		switch (controller_btns) {
 			case CONTROLLER_BTN_DOWN:
-				sound_effect_click();
-				*online_mode_selection_current_option = (*online_mode_selection_current_option + 2) % NB_OPTIONS;
-				break;
 			case CONTROLLER_BTN_UP:
 				sound_effect_click();
 				if (*online_mode_selection_current_option < 2) {
-					*online_mode_selection_current_option += NB_OPTIONS;
+					*online_mode_selection_current_option = 2;
+				}else {
+					*online_mode_selection_current_option = 0;
 				}
-				*online_mode_selection_current_option -= 2;
 				break;
 			case CONTROLLER_BTN_LEFT:
 				sound_effect_click();
