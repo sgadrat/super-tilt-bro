@@ -348,12 +348,16 @@ static uint8_t check_login_message(uint8_t type) {
 	;
 }
 
-static void password_login_process() {
-	// Clear login fields
-	//TODO draw "connecting to server" message
+static void clear_form_cursor() {
 	for (uint8_t sprite_num = Anim(online_mode_selection_cursor_anim)->first_sprite_num; sprite_num <= Anim(online_mode_selection_cursor_anim)->last_sprite_num; ++sprite_num) {
 		oam_mirror[sprite_num * 4] = 0xfe;
 	}
+}
+
+static void password_login_process() {
+	// Clear login fields
+	//TODO draw "connecting to server" message
+	clear_form_cursor();
 
 	// Clear ESP messages queue (avoid the mem_buffer being overflowed by a big remaining message)
 	wrap_esp_send_cmd(esp_clear_cmd);
@@ -629,6 +633,7 @@ static void password_login() {
 	}
 
 	// Repair damages caused to the screen
+	clear_form_cursor();
 	hide_dialog(0x2146, &menu_online_mode_login_window, 2);
 }
 
