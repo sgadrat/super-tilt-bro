@@ -68,5 +68,11 @@ global_init:
 	lda #$01
 	sta audio_music_enabled
 
+	; Network config
+#ifndef NO_NETWORK
+	lda #0 ; LOGIN_UNLOGGED
+	sta network_logged
+#endif
+
 	rts
 .)

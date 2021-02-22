@@ -777,14 +777,15 @@ void init_online_mode_screen_extra() {
 	// Initialize state
 	*online_mode_selection_current_option = 0;
 
-	// Initialize State in WRAM (TODO do it only once, to stay logged even after quitting the menu)
-	*network_logged = 0;
-	for (uint8_t i = 0; i < 16; ++i) {
-		network_login[i] = 0;
-		network_password[i] = 0;
-	}
-	for (uint8_t i = 0; i < 4; ++i) {
-		network_client_id_byte0[i] = 0;
+	// Initialize State in WRAM
+	if (*network_logged == LOGIN_UNLOGGED) {
+		for (uint8_t i = 0; i < 16; ++i) {
+			network_login[i] = 0;
+			network_password[i] = 0;
+		}
+		for (uint8_t i = 0; i < 4; ++i) {
+			network_client_id_byte0[i] = 0;
+		}
 	}
 }
 
