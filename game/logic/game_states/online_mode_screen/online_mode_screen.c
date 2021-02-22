@@ -348,7 +348,7 @@ static uint8_t check_login_message(uint8_t type) {
 	;
 }
 
-static void password_login_pocess() {
+static void password_login_process() {
 	// Clear login fields
 	//TODO draw "connecting to server" message
 	for (uint8_t sprite_num = Anim(online_mode_selection_cursor_anim)->first_sprite_num; sprite_num <= Anim(online_mode_selection_cursor_anim)->last_sprite_num; ++sprite_num) {
@@ -455,8 +455,19 @@ static void password_login_pocess() {
 	}
 }
 
-static void password_login_input(uint8_t controller_btns, uint8_t last_fame_btns, uint8_t* current_field, uint8_t* char_cursor, uint8_t* stay_in_window) {
-	if (controller_btns != last_fame_btns) {
+static void password_login_input(uint8_t controller_btns, uint8_t last_frame_btns, uint8_t* current_field, uint8_t* char_cursor, uint8_t* stay_in_window, uint8_t* cursor_state) {
+	uint8_t const AUTOFIRE_THRESHOLD = 14;
+	uint8_t const AUTOFIRE_TICK = AUTOFIRE_THRESHOLD + 10;
+	if (controller_btns != last_frame_btns) {
+		*cursor_state = 0;
+	}else {
+		if (*cursor_state == AUTOFIRE_TICK) {
+			*cursor_state = AUTOFIRE_THRESHOLD;
+		}
+		++*cursor_state;
+	}
+
+	if (controller_btns != last_frame_btns || *cursor_state == AUTOFIRE_TICK) {
 		uint8_t* field_value = (*current_field == 0 ? network_login : network_password);
 		switch (controller_btns) {
 			case CONTROLLER_BTN_DOWN:
@@ -491,7 +502,7 @@ static void password_login_input(uint8_t controller_btns, uint8_t last_fame_btns
 
 			// Buttons that take effect on release
 			case 0:
-				switch (last_fame_btns) {
+				switch (last_frame_btns) {
 					case CONTROLLER_BTN_A:
 					case CONTROLLER_BTN_START:
 						sound_effect_click();
@@ -503,7 +514,7 @@ static void password_login_input(uint8_t controller_btns, uint8_t last_fame_btns
 							*char_cursor = last_char;
 							*current_field = 1;
 						}else {
-							password_login_pocess();
+							password_login_process();
 							*stay_in_window = 0;
 						}
 						break;
@@ -572,6 +583,7 @@ static void password_login() {
 	uint8_t current_field = 0;
 	uint8_t char_cursor = 0;
 	uint8_t stay_in_window = 1;
+	uint8_t cursor_state = 0;
 	while (stay_in_window) {
 		// Place cursor
 		uint8_t const dest_x = fields_x + 8 * char_cursor;
@@ -590,9 +602,11 @@ static void password_login() {
 		wrap_animation_tick(online_mode_selection_cursor_anim);
 
 		// Take input
-		for (uint8_t player = 0; player < 2; ++player) {
-			password_login_input(controller_a_btns[player], controller_a_last_frame_btns[player], &current_field, &char_cursor, &stay_in_window);
-		}
+		password_login_input(
+			*controller_a_btns, *controller_a_last_frame_btns,
+			&current_field,
+			&char_cursor, &stay_in_window, &cursor_state
+		);
 
 		// Draw current login
 		for (uint8_t char_num = 0; char_num < 16; ++char_num) {
