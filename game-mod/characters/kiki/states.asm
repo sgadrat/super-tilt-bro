@@ -31,8 +31,13 @@ KIKI_AERIAL_SPEED = $0100
 KIKI_FASTFALL_SPEED = $04
 KIKI_COUNTER_GRAVITY = $01
 KIKI_PLATFORM_DURATION = 120
+KIKI_PLATFORM_BLINK_THRESHOLD_MASK = %01100000 ; Platform is blinking if "timer > 0 && (MASK & timer == 0)"
+KIKI_PLATFORM_BLINK_MASK = %00000100 ; Blinking platform is shown on frames where "MASK & timer == 1"
 
 KIKI_GROUND_FRICTION_STRENGTH = $40
+
+kiki_wall_attributes_per_player:
+.byt 1, 3
 
 kiki_first_wall_sprite_per_player:
 .byt INGAME_PLAYER_A_LAST_SPRITE-1, INGAME_PLAYER_B_LAST_SPRITE-1
@@ -74,6 +79,18 @@ kiki_init:
 		;ldy #0 ; useless, already set above
 		lda kiki_last_anim_sprite_per_player, x
 		sta (animation_state_vector), y
+	.)
+
+	; Set wall sprites attributes
+	.(
+		lda kiki_first_wall_sprite_per_player, x
+		asl
+		asl
+		tay
+
+		lda kiki_wall_attributes_per_player, x
+		sta oam_mirror+2, y ; First sprite attributes
+		sta oam_mirror+6, y ; Second sprite attributes
 	.)
 
 	; Init platform state
@@ -146,6 +163,45 @@ kiki_netload:
 	sta player_a_objects+10, y
 	lda RAINBOW_DATA
 	sta player_a_objects+11, y
+
+	; X pos of the platform tiles
+	lda kiki_first_wall_sprite_per_player, x
+	asl
+	asl
+	tay
+
+	lda RAINBOW_DATA
+	sta oam_mirror+3, y
+	lda RAINBOW_DATA
+	sta oam_mirror+4+3, y
+
+	; Platform tiles
+	lda RAINBOW_DATA
+	sta oam_mirror+1, y
+	lda RAINBOW_DATA
+	sta oam_mirror+4+1, y
+
+	; Ensure platform is correctly displayed
+	.(
+		; Shall be drawn if
+		;  timer > blink threshold, or
+		;  blink is in a visible tick
+		lda kiki_a_platform_state, x
+		and #KIKI_PLATFORM_BLINK_THRESHOLD_MASK
+		bne displayed
+		lda kiki_a_platform_state, x
+		and #KIKI_PLATFORM_BLINK_MASK
+		bne displayed
+
+			hidden:
+				jsr kiki_hide_platform
+				jmp end_place_platform
+
+			displayed:
+				jsr kiki_show_platform
+
+		end_place_platform:
+	.)
 
 	rts
 .)
@@ -370,6 +426,44 @@ kiki_check_aerial_inputs:
 	.)
 .)
 
+kiki_hide_platform:
+.(
+	; Hide platform (set sprites Y position offscreen)
+	lda kiki_first_wall_sprite_per_player, x
+	asl
+	asl
+	tay
+
+	lda #$fe
+	sta oam_mirror+4, y
+	sta oam_mirror, y
+
+	rts
+.)
+
+kiki_show_platform:
+.(
+	; Show platform (set sprites Y position to the original one)
+	ldy kiki_first_wall_sprite_y_per_player, x
+	lda stage_data, y
+	pha
+	iny
+	lda stage_data, y
+	pha
+
+	lda kiki_first_wall_sprite_per_player, x
+	asl
+	asl
+	tay
+
+	pla
+	sta oam_mirror+4, y
+	pla
+	sta oam_mirror, y
+
+	rts
+.)
+
 kiki_global_tick:
 .(
 	; Handle platform's lifetime
@@ -421,41 +515,19 @@ kiki_global_tick:
 		; Do not blink until the platform is about to disapear
 		lda kiki_a_platform_state, x
 		tay
-		and #%01100000
+		and #KIKI_PLATFORM_BLINK_THRESHOLD_MASK
 		bne end_blinking
 
 			tya
-			and #%00000100
+			and #KIKI_PLATFORM_BLINK_MASK
 			beq hide
 
 				show:
-					; Show platform (set Y position to the original one)
-					ldy kiki_first_wall_sprite_y_per_player, x
-					lda stage_data, y
-					pha
-					iny
-					lda stage_data, y
-					pha
-
-					jmp apply_sprites_position
+					jsr kiki_show_platform
+					jmp end_blinking
 
 				hide:
-					; Hide platform (set Y position offscreen)
-					lda #$fe
-					pha
-					pha
-
-			apply_sprites_position:
-
-			lda kiki_first_wall_sprite_per_player, x
-			asl
-			asl
-			tay
-
-			pla
-			sta oam_mirror+4,y
-			pla
-			sta oam_mirror, y
+					jsr kiki_hide_platform
 
 		end_blinking:
 	.)
@@ -1790,15 +1862,11 @@ kiki_start_side_spe:
 		adc #0
 		sta sprite_x_msb
 
-		; Set sprites properties
+		; Y = first wall sprite offset
 		lda kiki_first_wall_sprite_per_player, x
 		asl
 		asl
 		tay
-
-		lda wall_attributes_per_player, x
-		sta oam_mirror+2, y ; First sprite attributes
-		sta oam_mirror+6, y ; Second sprite attributes
 
 		; Place upper sprite
 		lda sprite_x_msb
@@ -1869,9 +1937,6 @@ kiki_start_side_spe:
 	spawn_wall_end:
 
 	rts
-
-	wall_attributes_per_player:
-	.byt 1, 3
 .)
 
 kiki_tick_side_spe:
@@ -2023,15 +2088,11 @@ kiki_start_down_wall:
 		adc #0
 		sta sprite_x_msb
 
-		; Set sprites properties
+		; Y = first wall sprite offset
 		lda kiki_first_wall_sprite_per_player, x
 		asl
 		asl
 		tay
-
-		lda wall_attributes_per_player, x
-		sta oam_mirror+2, y ; First sprite attributes
-		sta oam_mirror+6, y ; Second sprite attributes
 
 		; Place left sprite
 		lda sprite_x_msb
@@ -2100,9 +2161,6 @@ kiki_start_down_wall:
 	spawn_wall_end:
 
 	rts
-
-	wall_attributes_per_player:
-	.byt 1, 3
 .)
 
 kiki_tick_down_wall:
@@ -2224,15 +2282,11 @@ kiki_start_up_spe:
 		adc #0
 		sta sprite_x_msb
 
-		; Set sprites properties
+		; Y = first wall sprite offset
 		lda kiki_first_wall_sprite_per_player, x
 		asl
 		asl
 		tay
-
-		lda wall_attributes_per_player, x
-		sta oam_mirror+2, y ; First sprite attributes
-		sta oam_mirror+6, y ; Second sprite attributes
 
 		; Place left sprite
 		lda sprite_x_msb
@@ -2301,9 +2355,6 @@ kiki_start_up_spe:
 	spawn_wall_end:
 
 	rts
-
-	wall_attributes_per_player:
-	.byt 1, 3
 .)
 
 kiki_tick_up_spe:
