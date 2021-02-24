@@ -266,7 +266,7 @@ static void previous_screen() {
 		nametable_buffers[i] = palette_buffer[i];
 	}
 
-	wrap_change_global_game_state(*config_game_mode == GAME_MODE_ONLINE ? GAME_STATE_MODE_SELECTION : GAME_STATE_CONFIG);
+	wrap_change_global_game_state(*config_game_mode == GAME_MODE_ONLINE ? GAME_STATE_ONLINE_MODE_SELECTION : GAME_STATE_CONFIG);
 }
 
 static void tick_fix_screen() {
