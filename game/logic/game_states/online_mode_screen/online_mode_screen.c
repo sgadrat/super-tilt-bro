@@ -10,6 +10,7 @@
 ///////////////////////////////////////
 
 extern uint8_t const menu_online_mode_anim_cursor;
+extern uint8_t const menu_online_mode_anim_ship;
 extern uint8_t const menu_online_mode_login_window;
 extern uint8_t const menu_online_mode_nametable;
 extern uint8_t const menu_online_mode_palette;
@@ -63,6 +64,12 @@ static uint8_t const TILE_CHAR_Z = TILE_CHAR_A + ('Z' - 'A');
 void online_mode_screen_tick_music();
 
 ///////////////////////////////////////
+// Screen specific ASM labels
+///////////////////////////////////////
+
+uint32_t* const rnd = (uint32_t*) online_mode_rnd;
+
+///////////////////////////////////////
 // Constants specific to this file
 ///////////////////////////////////////
 
@@ -74,6 +81,13 @@ static uint8_t const NB_OPTIONS = 3;
 static uint8_t const OPTION_CASUAL = 0;
 static uint8_t const OPTION_RANKED = 1;
 static uint8_t const OPTION_LOGIN = 2;
+
+static uint8_t const CURSOR_ANIM_FIRST_SPRITE = 0;
+static uint8_t const CURSOR_ANIM_LAST_SPRITE = 5;
+
+// Animations displayed while earth sprites are placed, carfully pick sprite indexes to not collide with earth
+static uint8_t const SHIP_ANIM_FIRST_SPRITE = 4;
+static uint8_t const SHIP_ANIM_LAST_SPRITE = 4;
 
 typedef enum {
 	LOGIN_UNLOGGED = 0,
@@ -139,6 +153,22 @@ static struct Position16 const first_earth_sprite_per_option[] = {
 	{80, 79},
 	{144, 79},
 	{80, 143},
+};
+
+static struct Position16 const ship_east_waypoints[] = {
+	{146, 136},
+	{120, 112},
+	{124, 123},
+	{120, 119},
+	{124, 126},
+};
+
+static struct Position16 const ship_west_waypoints[] = {
+	{91, 120},
+	{106, 127},
+	{88, 112},
+	{113, 131},
+	{117, 134},
 };
 
 ///////////////////////////////////////
@@ -271,13 +301,13 @@ static void draw_logged_name() {
 
 static void place_earth_sprites() {
 	for (uint8_t option = 0; option < NB_OPTIONS; ++option) {
-		struct Position16 const sprites_postion = first_earth_sprite_per_option[option];
+		struct Position16 const sprites_position = first_earth_sprite_per_option[option];
 		for (uint8_t y = 0; y < 4; ++y) {
-			uint8_t const pixel_y = sprites_postion.y + 8 * y;
+			uint8_t const pixel_y = sprites_position.y + 8 * y;
 			for (uint8_t x = 0; x < 4; ++x) {
 				uint8_t const tile_index = earth_sprite_per_option[option][y * 4 + x];
 				if (tile_index != 255) {
-					uint8_t const pixel_x = sprites_postion.x + 8 * x;
+					uint8_t const pixel_x = sprites_position.x + 8 * x;
 					uint8_t const sprite_num = option * NB_SPRITE_PER_OPTION + y * 4 + x;
 					uint8_t const sprite_offset = sprite_num * 4;
 					oam_mirror[sprite_offset + 0] = pixel_y;
@@ -595,16 +625,14 @@ static void password_login() {
 	yield();
 
 	// Initialize cursor animation
-	uint8_t const cursor_anim_first_sprite = 0;
-	uint8_t const cursor_anim_last_sprite = 5;
 	uint8_t const fields_x = 64;
 	uint8_t const login_field_y = 104;
 	uint8_t const password_field_y = 128;
 	wrap_animation_init_state(online_mode_selection_cursor_anim, &menu_online_mode_anim_cursor);
 	Anim(online_mode_selection_cursor_anim)->x = fields_x;
 	Anim(online_mode_selection_cursor_anim)->y = login_field_y;
-	Anim(online_mode_selection_cursor_anim)->first_sprite_num = cursor_anim_first_sprite;
-	Anim(online_mode_selection_cursor_anim)->last_sprite_num = cursor_anim_last_sprite;
+	Anim(online_mode_selection_cursor_anim)->first_sprite_num = CURSOR_ANIM_FIRST_SPRITE;
+	Anim(online_mode_selection_cursor_anim)->last_sprite_num = CURSOR_ANIM_LAST_SPRITE;
 
 	// Let user enter its credentials
 	static uint8_t const login_nt_header[] = {0x21, 0xa8, 16};
@@ -787,6 +815,49 @@ static void highlight_option() {
 	wrap_push_nt_buffer(buffers_header[*online_mode_selection_current_option]);
 }
 
+static void init_ship_anim() {
+	// Init ship path
+	*online_mode_ship_dest_x = ship_west_waypoints[0].x;
+	*online_mode_ship_dest_y = ship_west_waypoints[0].y;
+
+	// Init ship animation
+	wrap_animation_init_state(online_mode_selection_ship_anim, &menu_online_mode_anim_ship);
+	Anim(online_mode_selection_ship_anim)->direction = DIRECTION_LEFT;
+	Anim(online_mode_selection_ship_anim)->x = 128;
+	Anim(online_mode_selection_ship_anim)->y = 128;
+	Anim(online_mode_selection_ship_anim)->first_sprite_num = SHIP_ANIM_FIRST_SPRITE;
+	Anim(online_mode_selection_ship_anim)->last_sprite_num = SHIP_ANIM_LAST_SPRITE;
+}
+
+static void tick_ship() {
+	// Move ship animation
+	struct Animation* ship = Anim(online_mode_selection_ship_anim);
+
+	if (ship->x == *online_mode_ship_dest_x && ship->y == *online_mode_ship_dest_y) {
+		*rnd = random(*rnd);
+		uint8_t const waypoint_num = (*rnd & 0x3);
+
+		ship->direction = (ship->direction == DIRECTION_LEFT ? DIRECTION_RIGHT : DIRECTION_LEFT);
+		struct Position16 const* const waypoints = (ship->direction == DIRECTION_RIGHT ? ship_east_waypoints : ship_west_waypoints);
+		*online_mode_ship_dest_x = waypoints[waypoint_num].x;
+		*online_mode_ship_dest_y = waypoints[waypoint_num].y;
+	}
+
+	if ((*online_mode_frame_count & 0x07) == 0) {
+		if (*online_mode_ship_dest_x < ship->x) --ship->x;
+		if (*online_mode_ship_dest_x > ship->x) ++ship->x;
+		if (*online_mode_ship_dest_x < ship->x) --ship->x;
+		if (*online_mode_ship_dest_x > ship->x) ++ship->x;
+		if (*online_mode_ship_dest_y < ship->y) --ship->y;
+		if (*online_mode_ship_dest_y > ship->y) ++ship->y;
+	}
+
+	// Draw ship animation
+	*player_number = 0;
+	wrap_animation_draw(online_mode_selection_ship_anim, 0, 0);
+	wrap_animation_tick(online_mode_selection_ship_anim);
+}
+
 void init_online_mode_screen_extra() {
 	// Draw static part of the screen
 	wrap_construct_palettes_nt_buffer(&menu_online_mode_palette);
@@ -796,6 +867,13 @@ void init_online_mode_screen_extra() {
 
 	// Place earth sprites
 	place_earth_sprites();
+
+	// Initialize RNG
+	*rnd = 0xdeadbeef;
+
+	// Initialize earth animations
+	*online_mode_frame_count = 0;
+	init_ship_anim();
 
 	// Force RAINBOW WRAM in $6000-$7fff range
 	RAINBOW_WRAM_BANKING = 0x80;
@@ -820,6 +898,9 @@ void init_online_mode_screen_extra() {
 
 void online_mode_screen_tick_extra() {
 	reset_nt_buffers();
+	++*online_mode_frame_count;
+
+	tick_ship();
 
 	for (uint8_t player = 0; player < 2; ++player) {
 		take_input(controller_a_btns[player], controller_a_last_frame_btns[player]);

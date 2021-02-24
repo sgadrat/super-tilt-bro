@@ -32,4 +32,12 @@ static int16_t max(int16_t a, int16_t b) {
 	return a > b ? a : b;
 }
 
+static uint32_t random(uint32_t seed)
+{
+  seed ^= seed << 13;
+  seed ^= seed >> 17;
+  seed ^= seed << 5;
+  return seed;
+}
+
 #pragma GCC diagnostic pop
