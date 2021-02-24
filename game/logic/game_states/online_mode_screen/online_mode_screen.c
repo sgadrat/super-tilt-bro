@@ -10,6 +10,7 @@
 ///////////////////////////////////////
 
 extern uint8_t const menu_online_mode_anim_cursor;
+extern uint8_t const menu_online_mode_anim_monster;
 extern uint8_t const menu_online_mode_anim_ship;
 extern uint8_t const menu_online_mode_login_window;
 extern uint8_t const menu_online_mode_nametable;
@@ -88,6 +89,8 @@ static uint8_t const CURSOR_ANIM_LAST_SPRITE = 5;
 // Animations displayed while earth sprites are placed, carfully pick sprite indexes to not collide with earth
 static uint8_t const SHIP_ANIM_FIRST_SPRITE = 4;
 static uint8_t const SHIP_ANIM_LAST_SPRITE = 4;
+static uint8_t const MONSTER_ANIM_FIRST_SPRITE = 0;
+static uint8_t const MONSTER_ANIM_LAST_SPRITE = 1;
 
 typedef enum {
 	LOGIN_UNLOGGED = 0,
@@ -858,6 +861,23 @@ static void tick_ship() {
 	wrap_animation_tick(online_mode_selection_ship_anim);
 }
 
+static void init_monster_anim() {
+	// Init monster animation
+	wrap_animation_init_state(online_mode_selection_monster_anim, &menu_online_mode_anim_monster);
+	Anim(online_mode_selection_monster_anim)->direction = DIRECTION_LEFT;
+	Anim(online_mode_selection_monster_anim)->x = 127;
+	Anim(online_mode_selection_monster_anim)->y = 159;
+	Anim(online_mode_selection_monster_anim)->first_sprite_num = MONSTER_ANIM_FIRST_SPRITE;
+	Anim(online_mode_selection_monster_anim)->last_sprite_num = MONSTER_ANIM_LAST_SPRITE;
+}
+
+static void tick_monster() {
+	// Draw monster animation
+	*player_number = 0;
+	wrap_animation_draw(online_mode_selection_monster_anim, 0, 0);
+	wrap_animation_tick(online_mode_selection_monster_anim);
+}
+
 void init_online_mode_screen_extra() {
 	// Draw static part of the screen
 	wrap_construct_palettes_nt_buffer(&menu_online_mode_palette);
@@ -874,6 +894,7 @@ void init_online_mode_screen_extra() {
 	// Initialize earth animations
 	*online_mode_frame_count = 0;
 	init_ship_anim();
+	init_monster_anim();
 
 	// Force RAINBOW WRAM in $6000-$7fff range
 	RAINBOW_WRAM_BANKING = 0x80;
@@ -901,6 +922,7 @@ void online_mode_screen_tick_extra() {
 	++*online_mode_frame_count;
 
 	tick_ship();
+	tick_monster();
 
 	for (uint8_t player = 0; player < 2; ++player) {
 		take_input(controller_a_btns[player], controller_a_last_frame_btns[player]);

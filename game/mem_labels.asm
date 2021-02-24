@@ -313,6 +313,7 @@ online_mode_rnd = online_mode_frame_count+1
 online_mode_selection_mem_buffer = $0580 ; $0580 to $05bf (64 bytes)
 online_mode_selection_cursor_anim = $05c0 ; $05c0 to $05cb
 online_mode_selection_ship_anim = $05cc ; $05cc to $05d7
+online_mode_selection_monster_anim = $05d8 ; $05d8 to $05e3
 
 ;
 ; CONFIG labels
