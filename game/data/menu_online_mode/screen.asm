@@ -1,6 +1,6 @@
 menu_online_mode_palette:
 ; Background
-.byt $21,$0f,$12,$19, $21,$20,$28,$00, $21,$00,$00,$00, $21,$0f,$20,$10 ; 0-earth, 1-active_box, 2-unused, 3-title
+.byt $21,$0f,$12,$19, $21,$20,$28,$00, $21,$0f,$20,$20, $21,$0f,$20,$10 ; 0-earth, 1-active_box, 2-alphanumeric, 3-title ;TODO use 3 for alphanumeric and fix digit charset to share same bg color than letters
 ; Sprites
 .byt $21,$0f,$12,$19, $21,$28,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00 ; 0-earth, 1-cursor, 2-unused, 3-unused
 
