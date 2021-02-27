@@ -31,7 +31,7 @@ menu_online_mode_nametable:
 .byt           $0e, $03,  $03, $03, $03, $03,  $03, $03, $03, $03,  $03, $0f, $48, $03,  $03, $03, $49, $4a,  $4b, $4c, $00,$0c
 ;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
 .byt           $0e, $03,  $03, $03, $03, $03,  $03, $03, $03, $03,  $03, $0f, $4d, $03,  $03, $03, $4e, $4f,  $50, $00,$0d
-.byt           $0e, $03,  $03, $06, $04, $51,  $07, $05, $03, $03,  $03, $0f, $52, $53,  $54, $55, $56, $57,  $00,$0e
+.byt           $0e, $03,  $f5, $f7, $ee, $fb,  $e6, $f9, $ea, $03,  $03, $0f, $52, $53,  $54, $55, $56, $57,  $00,$0e
 .byt           $0e, $03,  $03, $03, $03, $03,  $03, $03, $03, $03,  $03, $0f, $00,$14
 .byt           $0e, $03,  $03, $03, $03, $03,  $03, $03, $03, $03,  $03, $0f, $00,$14
 ;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
@@ -50,22 +50,33 @@ menu_online_mode_nametable_attributes:
 menu_online_mode_nametable_end:
 .byt ZIPNT_END
 
-menu_online_mode_login_window:
 .(
 	CA = TILE_CHAR_A
 	CB = TILE_CHAR_B
 	CC = TILE_CHAR_C
 	CD = TILE_CHAR_D
 	CE = TILE_CHAR_E
+	CF = TILE_CHAR_F
+	CG = TILE_CHAR_G
+	CH = TILE_CHAR_H
+	CI = TILE_CHAR_I
+	CJ = TILE_CHAR_J
 	CK = TILE_CHAR_K
+	CL = TILE_CHAR_L
 	CM = TILE_CHAR_M
 	CN = TILE_CHAR_N
 	CO = TILE_CHAR_O
 	CP = TILE_CHAR_P
+	CQ = TILE_CHAR_Q
 	CR = TILE_CHAR_R
 	CS = TILE_CHAR_S
+	CT = TILE_CHAR_T
 	CU = TILE_CHAR_U
+	CV = TILE_CHAR_V
 	CW = TILE_CHAR_W
+	CX = TILE_CHAR_X
+	CY = TILE_CHAR_Y
+	CZ = TILE_CHAR_Z
 
 	T0 = TILE_MENU_ONLINE_MODE_DIALOGS_00
 	T1 = TILE_MENU_ONLINE_MODE_DIALOGS_01
@@ -83,6 +94,7 @@ menu_online_mode_login_window:
 	TD = TILE_MENU_ONLINE_MODE_DIALOGS_0D
 	TE = TILE_MENU_ONLINE_MODE_DIALOGS_0E
 
+	&menu_online_mode_login_window:
 	.byt 20, 10 ; width, height (in tiles)
 	.byt T0, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T2
 	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
@@ -90,6 +102,19 @@ menu_online_mode_login_window:
 	.byt T3, T4, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T4, T5
 	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
 	.byt T3, T4, CP, CA, CS, CS, CW, CO, CR, CD, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
+	.byt T3, T4, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T4, T5
+	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
+	.byt T3, T4, T7, T8, T9, TA, T4, CO, CK, T4, T4, T4, TB, T4, CB, CA, CC, CK, T4, T5
+	.byt TC, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TE
+
+	&menu_online_mode_game_password_window:
+	.byt 20, 10 ; width, height (in tiles)
+	.byt T0, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T2
+	.byt T3, T4, CS, CH, CA, CR, CE, T4, CP, CA, CS, CS, CW, CO, CR, CD, T4, T4, T4, T5
+	.byt T3, T4, CW, CI, CT, CH, T4, CY, CO, CU, CR, T4, CF, CR, CI, CE, CN, CD, T4, T5
+	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
+	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
+	.byt T3, T4, CG, CA, CM, CE, T4, CP, CA, CS, CS, CW, CO, CR, CD, T4, T4, T4, T4, T5
 	.byt T3, T4, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T6, T4, T5
 	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
 	.byt T3, T4, T7, T8, T9, TA, T4, CO, CK, T4, T4, T4, TB, T4, CB, CA, CC, CK, T4, T5

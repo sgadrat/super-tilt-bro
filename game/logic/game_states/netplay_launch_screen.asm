@@ -540,7 +540,7 @@ netplay_launch_screen_tick:
 		flags_byte = tmpfield1
 
 		; Send connection message
-		lda #15                                ; ESP header
+		lda #31                                ; ESP header
 		sta RAINBOW_DATA
 		lda #TOESP_MSG_SEND_MESSAGE_TO_SERVER
 		sta RAINBOW_DATA
@@ -587,6 +587,16 @@ netplay_launch_screen_tick:
 
 		lda network_ranked ; ranked_play
 		sta RAINBOW_DATA
+
+		.( ; password
+			ldx #0
+			copy_one_byte:
+				lda network_game_password, x
+				sta RAINBOW_DATA
+				inx
+				cpx #16
+				bne copy_one_byte
+		.)
 
 		; Next step - wait for a response
 		lda #NETPLAY_LAUNCH_REEMISSION_TIMER

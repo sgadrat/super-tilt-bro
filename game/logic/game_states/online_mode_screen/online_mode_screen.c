@@ -24,6 +24,7 @@ extern uint8_t const menu_online_mode_anim_cursor;
 extern uint8_t const menu_online_mode_anim_monster;
 extern uint8_t const menu_online_mode_anim_satellite;
 extern uint8_t const menu_online_mode_anim_ship;
+extern uint8_t const menu_online_mode_game_password_window;
 extern uint8_t const menu_online_mode_login_window;
 extern uint8_t const menu_online_mode_nametable;
 extern uint8_t const menu_online_mode_palette;
@@ -257,6 +258,12 @@ static void draw_dialog(uint16_t position, uint8_t const* window, uint8_t lines_
 			line += width;
 		}
 		yield();
+	}
+}
+
+static void hide_earth_sprites() {
+	for (uint8_t sprite_num = 0; sprite_num < NB_OPTIONS * NB_SPRITE_PER_OPTION; ++sprite_num) {
+		oam_mirror[sprite_num * 4] = 0xfe;
 	}
 }
 
@@ -534,6 +541,14 @@ static void password_login_process() {
 	yield();
 }
 
+static void init_cursor_anim(uint16_t x, uint16_t y) {
+	wrap_animation_init_state(online_mode_selection_cursor_anim, &menu_online_mode_anim_cursor);
+	Anim(online_mode_selection_cursor_anim)->x = x;
+	Anim(online_mode_selection_cursor_anim)->y = y;
+	Anim(online_mode_selection_cursor_anim)->first_sprite_num = CURSOR_ANIM_FIRST_SPRITE;
+	Anim(online_mode_selection_cursor_anim)->last_sprite_num = CURSOR_ANIM_LAST_SPRITE;
+}
+
 static void password_login_input(uint8_t controller_btns, uint8_t last_frame_btns, uint8_t* current_field, uint8_t* char_cursor, uint8_t* stay_in_window, uint8_t* cursor_state) {
 	uint8_t const AUTOFIRE_THRESHOLD = 14;
 	uint8_t const AUTOFIRE_TICK = AUTOFIRE_THRESHOLD + 10;
@@ -621,37 +636,22 @@ static void password_login_input(uint8_t controller_btns, uint8_t last_frame_btn
 static void password_login() {
 	// Display login window
 	draw_dialog(0x2146, &menu_online_mode_login_window, 3);
+	hide_earth_sprites();
 
-	for (uint8_t sprite_num = 0; sprite_num < NB_OPTIONS * NB_SPRITE_PER_OPTION; ++sprite_num) {
-		oam_mirror[sprite_num * 4] = 0xfe;
-	}
-
-	static uint8_t const palette_buffer[][25] = {
-		{
+	static uint8_t const palette_buffer[] = {
 			0x23, 0xd1, 22,
 			/*.*/ 0xc0, 0xf0, 0xf0, 0xf5, 0xf5, 0x75, 0x55,
 			0x00, 0xcc, 0xaa, 0xaa, 0xaa, 0xaa, 0x37, 0x55,
 			0x00, 0xcc, 0xfa, 0xfa, 0xfa, 0xfa, 0x33
-		},
-		{
-			0x23, 0xd1, 22,
-			/*.*/ 0xc0, 0xf0, 0xf0, 0xf0, 0xf0, 0x30, 0x00,
-			0x00, 0xcc, 0xaa, 0xaa, 0xaa, 0xaa, 0x33, 0x00,
-			0x55, 0xdc, 0xfa, 0xfa, 0xfa, 0xfa, 0x33
-		},
 	};
-	wrap_push_nt_buffer(palette_buffer[(*online_mode_selection_current_option) - 1]);
+	wrap_push_nt_buffer(palette_buffer);
 	yield();
 
 	// Initialize cursor animation
 	uint8_t const fields_x = 64;
 	uint8_t const login_field_y = 104;
 	uint8_t const password_field_y = 128;
-	wrap_animation_init_state(online_mode_selection_cursor_anim, &menu_online_mode_anim_cursor);
-	Anim(online_mode_selection_cursor_anim)->x = fields_x;
-	Anim(online_mode_selection_cursor_anim)->y = login_field_y;
-	Anim(online_mode_selection_cursor_anim)->first_sprite_num = CURSOR_ANIM_FIRST_SPRITE;
-	Anim(online_mode_selection_cursor_anim)->last_sprite_num = CURSOR_ANIM_LAST_SPRITE;
+	init_cursor_anim(fields_x, login_field_y);
 
 	// Let user enter its credentials
 	static uint8_t const login_nt_header[] = {0x21, 0xa8, 16};
@@ -710,12 +710,149 @@ static void password_login() {
 	hide_dialog(0x2146, &menu_online_mode_login_window, 2);
 }
 
+static void clear_game_password() {
+	for (uint8_t i = 0; i < 16; ++i) {
+		network_game_password[i] = 0;
+	}
+}
+
+static void game_password_input(uint8_t controller_btns, uint8_t last_frame_btns, uint8_t* char_cursor, uint8_t* stay_in_window, uint8_t* cursor_state) {
+	uint8_t const AUTOFIRE_THRESHOLD = 14;
+	uint8_t const AUTOFIRE_TICK = AUTOFIRE_THRESHOLD + 10;
+	if (controller_btns != last_frame_btns) {
+		*cursor_state = 0;
+	}else {
+		if (*cursor_state == AUTOFIRE_TICK) {
+			*cursor_state = AUTOFIRE_THRESHOLD;
+		}
+		++*cursor_state;
+	}
+
+	if (controller_btns != last_frame_btns || *cursor_state == AUTOFIRE_TICK) {
+		uint8_t* field_value = network_game_password;
+		switch (controller_btns) {
+			case CONTROLLER_BTN_DOWN:
+				sound_effect_click();
+				if (field_value[*char_cursor] == 0) {
+					field_value[*char_cursor] = STNP_LOGIN_CHARSET_SIZE - 1;
+				}else {
+					--field_value[*char_cursor];
+				}
+				break;
+			case CONTROLLER_BTN_UP:
+				sound_effect_click();
+				if (field_value[*char_cursor] == STNP_LOGIN_CHARSET_SIZE - 1) {
+					field_value[*char_cursor] = 0;
+				}else {
+					++field_value[*char_cursor];
+				}
+				break;
+			case CONTROLLER_BTN_LEFT:
+				sound_effect_click();
+				if (*char_cursor > 0) {
+					field_value[*char_cursor] = 0;
+					--*char_cursor;
+				}
+				break;
+			case CONTROLLER_BTN_RIGHT:
+				sound_effect_click();
+				if (field_value[*char_cursor] != 0 && *char_cursor != 15) {
+					++*char_cursor;
+				}
+				break;
+
+			// Buttons that take effect on release
+			case 0:
+				switch (last_frame_btns) {
+					case CONTROLLER_BTN_A:
+					case CONTROLLER_BTN_START:
+						sound_effect_click();
+						*stay_in_window = 1;
+						break;
+					case CONTROLLER_BTN_B:
+						sound_effect_click();
+						*stay_in_window = 2;
+						break;
+					default:
+						break;
+				};
+				break;
+		}
+	}
+}
+
+static uint8_t enter_game_password() {
+	// Display password window
+	draw_dialog(0x2146, &menu_online_mode_game_password_window, 3);
+	hide_earth_sprites();
+
+	static uint8_t const palette_buffer[] = {
+		0x23, 0xd1, 22,
+		/*.*/ 0xc0, 0xf0, 0xf0, 0xf0, 0xf0, 0x30, 0x00,
+		0x00, 0xcc, 0xaa, 0xaa, 0xaa, 0xaa, 0x33, 0x00,
+		0x55, 0xdc, 0xfa, 0xfa, 0xfa, 0xfa, 0x33
+	};
+	wrap_push_nt_buffer(palette_buffer);
+	yield();
+
+	// Initialize cursor animation
+	uint8_t const field_x = 64;
+	uint8_t const field_y = 128;
+	init_cursor_anim(field_x, field_y);
+
+	// Let user enter its credentials
+	static uint8_t const password_nt_header[] = {0x22, 0x08, 16};
+
+	uint8_t char_cursor = 0;
+	uint8_t stay_in_window = 0;
+	uint8_t cursor_state = 0;
+	while (stay_in_window == 0) {
+		// Place cursor
+		uint8_t const dest_x = field_x + 8 * char_cursor;
+		int16_t const diff_x = dest_x - (int16_t)Anim(online_mode_selection_cursor_anim)->x;
+		int16_t const max_move = 4;
+		int16_t const move_x = max(-max_move, min(max_move, diff_x));
+		Anim(online_mode_selection_cursor_anim)->x += move_x;
+
+		*player_number = 0;
+		wrap_animation_draw(online_mode_selection_cursor_anim, 0, 0);
+		wrap_animation_tick(online_mode_selection_cursor_anim);
+
+		// Take input
+		game_password_input(
+			*controller_a_btns, *controller_a_last_frame_btns,
+			&char_cursor, &stay_in_window, &cursor_state
+		);
+
+		// Draw current password
+		for (uint8_t char_num = 0; char_num < 16; ++char_num) {
+			online_mode_selection_mem_buffer[char_num] = STNP_LOGIN_CHARSET[network_game_password[char_num]];
+		}
+		wrap_construct_nt_buffer(password_nt_header, online_mode_selection_mem_buffer);
+
+		yield();
+	}
+
+	uint8_t const password_validated = (stay_in_window == 1);
+
+	// Repair damages caused to the screen
+	//  Only when cancelled, to avoid useless screen-redraw glitch before changing screen
+	if (!password_validated) {
+		clear_form_cursor();
+		hide_dialog(0x2146, &menu_online_mode_login_window, 2);
+	}
+
+	// Return OK if passowrd is validated
+	return password_validated;
+}
+
 static void next_screen() {
 	switch (*online_mode_selection_current_option) {
 		case OPTION_CASUAL:
 			if (*network_logged == LOGIN_UNLOGGED) {
 				anonymous_login();
 			}
+			clear_game_password();
 			*network_ranked = 0;
 			wrap_change_global_game_state(GAME_STATE_CHARACTER_SELECTION);
 			break;
@@ -724,12 +861,19 @@ static void next_screen() {
 				password_login();
 			}
 			if (*network_logged == LOGIN_LOGGED) {
+				clear_game_password();
 				*network_ranked = 1;
 				wrap_change_global_game_state(GAME_STATE_CHARACTER_SELECTION);
 			}
 			break;
 		case OPTION_LOGIN:
-			password_login();
+			if (enter_game_password()) {
+				if (*network_logged == LOGIN_UNLOGGED) {
+					anonymous_login();
+				}
+				*network_ranked = 0;
+				wrap_change_global_game_state(GAME_STATE_CHARACTER_SELECTION);
+			}
 			break;
 	}
 }
@@ -974,6 +1118,8 @@ void init_online_mode_screen_extra() {
 			network_client_id_byte0[i] = 0;
 		}
 	}
+
+	clear_game_password();
 
 	// Draw login indicator
 	draw_logged_name();
