@@ -5,12 +5,24 @@
 // C types for structured data
 ///////////////////////////////////////
 
+struct SatelliteState {
+	int16_t velocity_h;
+	int16_t velocity_v;
+	int16_t x;
+	int16_t y;
+} __attribute__((__packed__));
+
+static struct SatelliteState* Satellite(uint8_t* raw) {
+    return (struct SatelliteState*)raw;
+}
+
 ///////////////////////////////////////
 // Global labels from the ASM codebase
 ///////////////////////////////////////
 
 extern uint8_t const menu_online_mode_anim_cursor;
 extern uint8_t const menu_online_mode_anim_monster;
+extern uint8_t const menu_online_mode_anim_satellite;
 extern uint8_t const menu_online_mode_anim_ship;
 extern uint8_t const menu_online_mode_login_window;
 extern uint8_t const menu_online_mode_nametable;
@@ -87,10 +99,14 @@ static uint8_t const CURSOR_ANIM_FIRST_SPRITE = 0;
 static uint8_t const CURSOR_ANIM_LAST_SPRITE = 5;
 
 // Animations displayed while earth sprites are placed, carfully pick sprite indexes to not collide with earth
-static uint8_t const SHIP_ANIM_FIRST_SPRITE = 4;
-static uint8_t const SHIP_ANIM_LAST_SPRITE = 4;
+static uint8_t const SHIP_ANIM_FIRST_SPRITE = 23;
+static uint8_t const SHIP_ANIM_LAST_SPRITE = 23;
 static uint8_t const MONSTER_ANIM_FIRST_SPRITE = 0;
 static uint8_t const MONSTER_ANIM_LAST_SPRITE = 1;
+static uint8_t const SATELLITE_ANIM_FIRST_SPRITE = 4;
+static uint8_t const SATELLITE_ANIM_LAST_SPRITE = 4;
+
+int16_t const SATELLITE_MAX_VELOCITY = (1 << 8);
 
 typedef enum {
 	LOGIN_UNLOGGED = 0,
@@ -878,6 +894,51 @@ static void tick_monster() {
 	wrap_animation_tick(online_mode_selection_monster_anim);
 }
 
+static void init_satellite_anim() {
+	// Init satellite animation
+	wrap_animation_init_state(online_mode_selection_satellite_anim, &menu_online_mode_anim_satellite);
+	Anim(online_mode_selection_satellite_anim)->direction = DIRECTION_LEFT;
+	Anim(online_mode_selection_satellite_anim)->first_sprite_num = SATELLITE_ANIM_FIRST_SPRITE;
+	Anim(online_mode_selection_satellite_anim)->last_sprite_num = SATELLITE_ANIM_LAST_SPRITE;
+
+	// Init satellite state
+	struct SatelliteState* state = Satellite(online_mode_satellite_state);
+	state->velocity_h = SATELLITE_MAX_VELOCITY;
+	state->velocity_v = 0;
+	state->x = (128 << 8);
+	state->y = (114 << 8);
+}
+
+static void tick_satellite() {
+	struct SatelliteState* state = Satellite(online_mode_satellite_state);
+
+	// Compute new velocity
+	int16_t const target_x = 127;
+	int16_t const target_y = 128;
+
+	int16_t const to_target_x = target_x - i16_msb(state->x);
+	int16_t const to_target_y = target_y - i16_msb(state->y);
+
+	state->velocity_h += to_target_x / 8;
+	state->velocity_v += to_target_y / 8;
+
+	state->velocity_h = min(SATELLITE_MAX_VELOCITY, state->velocity_h);
+	state->velocity_v = min(SATELLITE_MAX_VELOCITY, state->velocity_v);
+	state->velocity_h = max(-SATELLITE_MAX_VELOCITY, state->velocity_h);
+	state->velocity_v = max(-SATELLITE_MAX_VELOCITY, state->velocity_v);
+
+	// Update position
+	state->x += state->velocity_h;
+	state->y += state->velocity_v;
+
+	// Draw satellite animation
+	Anim(online_mode_selection_satellite_anim)->x = i16_msb(state->x);
+	Anim(online_mode_selection_satellite_anim)->y = i16_msb(state->y);
+	*player_number = 0;
+	wrap_animation_draw(online_mode_selection_satellite_anim, 0, 0);
+	wrap_animation_tick(online_mode_selection_satellite_anim);
+}
+
 void init_online_mode_screen_extra() {
 	// Draw static part of the screen
 	wrap_construct_palettes_nt_buffer(&menu_online_mode_palette);
@@ -895,6 +956,7 @@ void init_online_mode_screen_extra() {
 	*online_mode_frame_count = 0;
 	init_ship_anim();
 	init_monster_anim();
+	init_satellite_anim();
 
 	// Force RAINBOW WRAM in $6000-$7fff range
 	RAINBOW_WRAM_BANKING = 0x80;
@@ -923,6 +985,7 @@ void online_mode_screen_tick_extra() {
 
 	tick_ship();
 	tick_monster();
+	tick_satellite();
 
 	for (uint8_t player = 0; player < 2; ++player) {
 		take_input(controller_a_btns[player], controller_a_last_frame_btns[player]);

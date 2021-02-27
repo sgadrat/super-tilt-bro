@@ -304,16 +304,18 @@ mode_selection_current_option = $00
 ; ONLINE_MODE_SELECTION labels
 ;
 
-online_mode_selection_current_option = last_c_label+1
-online_mode_ship_dest_x = online_mode_selection_current_option+1
-online_mode_ship_dest_y = online_mode_ship_dest_x+1
-online_mode_frame_count = online_mode_ship_dest_y+1
-online_mode_rnd = online_mode_frame_count+1
+online_mode_selection_current_option = last_c_label+1 ; $39
+online_mode_ship_dest_x = online_mode_selection_current_option+1 ; $3a
+online_mode_ship_dest_y = online_mode_ship_dest_x+1 ; $3b
+online_mode_frame_count = online_mode_ship_dest_y+1 ; $3c
+online_mode_rnd = online_mode_frame_count+1 ; $3d-$40
+online_mode_satellite_state = online_mode_rnd+4 ; $41-$49
 
 online_mode_selection_mem_buffer = $0580 ; $0580 to $05bf (64 bytes)
 online_mode_selection_cursor_anim = $05c0 ; $05c0 to $05cb
 online_mode_selection_ship_anim = $05cc ; $05cc to $05d7
 online_mode_selection_monster_anim = $05d8 ; $05d8 to $05e3
+online_mode_selection_satellite_anim = $05e4 ; $05e4 to $05ef
 
 ;
 ; CONFIG labels
