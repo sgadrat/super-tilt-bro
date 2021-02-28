@@ -370,12 +370,23 @@ static void anonymous_login() {
 	wrap_esp_send_cmd(login_msg_cmd);
 	yield();
 
+	// Wait for server's response
+	uint8_t const RESEND_PERIOD = 60;
+	uint8_t resend_counter = RESEND_PERIOD;
 	while(
 		wrap_esp_get_msg(online_mode_selection_mem_buffer) != 8 ||
 		online_mode_selection_mem_buffer[1] != FROMESP_MSG_MESSAGE_FROM_SERVER ||
 		online_mode_selection_mem_buffer[2] != STNP_LOGIN_MSG_TYPE
 	)
 	{
+		// Reemit periodically
+		--resend_counter;
+		if (resend_counter == 0) {
+			wrap_esp_send_cmd(login_msg_cmd);
+			resend_counter = RESEND_PERIOD;
+		}
+
+		// Wait one more frame
 		yield();
 	}
 
@@ -432,6 +443,16 @@ static void clear_form_cursor() {
 	}
 }
 
+static void password_login_send_request() {
+	online_mode_selection_mem_buffer[0] = 35;
+	online_mode_selection_mem_buffer[1] = TOESP_MSG_SEND_MESSAGE_TO_SERVER;
+	online_mode_selection_mem_buffer[2] = STNP_LOGIN_MSG_TYPE;
+	online_mode_selection_mem_buffer[3] = STNP_LOGIN_PASSWORD;
+	memcpy(online_mode_selection_mem_buffer+4, network_login, 16);
+	memcpy(online_mode_selection_mem_buffer+20, network_password, 16);
+	wrap_esp_send_cmd(online_mode_selection_mem_buffer);
+}
+
 static void password_login_process() {
 	// Clear login fields
 	//TODO draw "connecting to server" message
@@ -448,17 +469,12 @@ static void password_login_process() {
 	yield();
 
 	// Send login request
-	online_mode_selection_mem_buffer[0] = 35;
-	online_mode_selection_mem_buffer[1] = TOESP_MSG_SEND_MESSAGE_TO_SERVER;
-	online_mode_selection_mem_buffer[2] = STNP_LOGIN_MSG_TYPE;
-	online_mode_selection_mem_buffer[3] = STNP_LOGIN_PASSWORD;
-	memcpy(online_mode_selection_mem_buffer+4, network_login, 16);
-	memcpy(online_mode_selection_mem_buffer+20, network_password, 16);
-	wrap_esp_send_cmd(online_mode_selection_mem_buffer);
+	password_login_send_request();
 	yield();
 
 	// Wait answer
-	//TODO periodically resend login message
+	uint8_t const RESEND_PERIOD = 60;
+	uint8_t resend_counter = RESEND_PERIOD;
 	while (1) {
 		// Cancel everything if B is pressed
 		if (*controller_a_last_frame_btns == CONTROLLER_BTN_B && *controller_a_btns == 0) {
@@ -530,6 +546,13 @@ static void password_login_process() {
 				// Stop waiting a message
 				break;
 			}
+		}
+
+		// Reemit periodically
+		--resend_counter;
+		if (resend_counter == 0) {
+			password_login_send_request();
+			resend_counter = RESEND_PERIOD;
 		}
 
 		// Wait one more frame
