@@ -37,6 +37,13 @@ cmd() {
 	$@ >> "$log_file" 2>&1
 }
 
+# Execute a command after logging it
+run() {
+	echo >> "$log_file"
+	echo "+ $@" >> "$log_file"
+	$@
+}
+
 # Execute a command while logging its output only if it fails
 exe() {
 	echo "+ $@" >> "$log_file.err"
@@ -91,7 +98,7 @@ tools/c_constants_files.py
 
 for c_source in `find . -name '*.c'`; do
 	asm_source="`dirname "$c_source"`/`basename "$c_source" .c`.built.asm"
-	cmd "$cc_bin" $c_source -S -I game/ $c_flags -o "$asm_source"
+	run "$cc_bin" $c_source -S -I game/ $c_flags -o "$asm_source"
 	tools/asm_converter.py "$asm_source"
 done
 fi
