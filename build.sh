@@ -13,7 +13,11 @@ log_file="${root_dir}/build.log"
 c_optim="-Os"
 c_warnings="-Wall -Wextra -Werror"
 c_compat="-fdelete-null-pointer-checks -fno-isolate-erroneous-paths-dereference" # We may want to dereference address zero at times
-c_flags="$c_optim $c_warnings $c_compat"
+c_defines=""
+if [ ! -z "$LOCAL_LOGIN" ]; then
+	c_defines+="-DLOCAL_LOGIN_SERVER"
+fi
+c_flags="$c_optim $c_warnings $c_compat $c_defines"
 
 # Print a message in console and log file
 say() {
@@ -87,7 +91,7 @@ tools/c_constants_files.py
 
 for c_source in `find . -name '*.c'`; do
 	asm_source="`dirname "$c_source"`/`basename "$c_source" .c`.built.asm"
-	"$cc_bin" $c_source -S -I game/ $c_flags -o "$asm_source"
+	cmd "$cc_bin" $c_source -S -I game/ $c_flags -o "$asm_source"
 	tools/asm_converter.py "$asm_source"
 done
 fi
