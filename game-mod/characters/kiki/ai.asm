@@ -1,3 +1,7 @@
+kiki_ai_action_special_neutral:
+AI_ACTION_STEP(CONTROLLER_INPUT_SPECIAL, 0)
+AI_ACTION_END_STEPS
+
 kiki_ai_attack_selector:
 .(
 	; Do not try to attack in incapacited states, it would ruin ai reactivity after such states
@@ -68,7 +72,7 @@ kiki_ai_recover_selector:
 			bne set_jump_action
 
 			; Create some floor since no other action was found
-			jmp set_special_down_action
+			jmp set_draw_low_platform_action
 
 			; Set an action
 			set_idle_action:
@@ -85,12 +89,12 @@ kiki_ai_recover_selector:
 				sta ai_current_action_msb
 				jmp begin_action
 
-			set_special_down_action:
+			set_draw_low_platform_action:
 				lda #$00
 				sta ai_current_action_modifier
-				lda #<ai_action_special_down
+				lda #<kiki_ai_action_special_neutral
 				sta ai_current_action_lsb
-				lda #>ai_action_special_down
+				lda #>kiki_ai_action_special_neutral
 				sta ai_current_action_msb
 				;jmp begin_action ; useless, fallthrough
 
