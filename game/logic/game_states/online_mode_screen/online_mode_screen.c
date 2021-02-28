@@ -24,6 +24,7 @@ extern uint8_t const menu_online_mode_anim_cursor;
 extern uint8_t const menu_online_mode_anim_monster;
 extern uint8_t const menu_online_mode_anim_satellite;
 extern uint8_t const menu_online_mode_anim_ship;
+extern uint8_t const menu_online_mode_connexion_window;
 extern uint8_t const menu_online_mode_game_password_window;
 extern uint8_t const menu_online_mode_login_window;
 extern uint8_t const menu_online_mode_nametable;
@@ -346,6 +347,41 @@ static void place_earth_sprites() {
 	}
 }
 
+static void clear_form_cursor() {
+	for (uint8_t sprite_num = Anim(online_mode_selection_cursor_anim)->first_sprite_num; sprite_num <= Anim(online_mode_selection_cursor_anim)->last_sprite_num; ++sprite_num) {
+		oam_mirror[sprite_num * 4] = 0xfe;
+	}
+}
+
+static void anonymous_login_draw_connexion_window() {
+	draw_dialog(0x2146, &menu_online_mode_connexion_window, 3);
+
+	switch (*online_mode_selection_current_option) {
+		case 0: {
+			static uint8_t const palette_buffer_option0[] = {
+				0x23, 0xd1, 22,
+				/*.*/ 0xd5, 0xf5, 0xf5, 0xf0, 0xf0, 0x30, 0x00,
+				0x55, 0xdd, 0xaa, 0xaa, 0xaa, 0xaa, 0x33, 0x00,
+				0x00, 0xcc, 0xfa, 0xfa, 0xfa, 0xfa, 0x33
+			};
+			wrap_push_nt_buffer(palette_buffer_option0);
+			hide_earth_sprites();
+			break;
+		}
+		case 2: {
+			static uint8_t const palette_buffer_option2[] = {
+				0x23, 0xd1, 22,
+				/*.*/ 0xc0, 0xf0, 0xf0, 0xf0, 0xf0, 0x30, 0x00,
+				0x00, 0xcc, 0xaa, 0xaa, 0xaa, 0xaa, 0x33, 0x00,
+				0x55, 0xdc, 0xfa, 0xfa, 0xfa, 0xfa, 0x33
+			};
+			wrap_push_nt_buffer(palette_buffer_option2);
+			clear_form_cursor();
+			break;
+		}
+	}
+}
+
 static void anonymous_login() {
 	static uint8_t const login_msg_cmd[] = {
 		// ESP header
@@ -357,7 +393,6 @@ static void anonymous_login() {
 	};
 
 	// Clear ESP messages queue (avoid the mem_buffer being overflowed by a big remaining message)
-	//TODO draw "connecting to server" window
 	wrap_esp_send_cmd(esp_clear_cmd);
 	yield();
 
@@ -383,6 +418,7 @@ static void anonymous_login() {
 		--resend_counter;
 		if (resend_counter == 0) {
 			wrap_esp_send_cmd(login_msg_cmd);
+			anonymous_login_draw_connexion_window();
 			resend_counter = RESEND_PERIOD;
 		}
 
@@ -437,12 +473,6 @@ static uint8_t check_login_message(uint8_t type) {
 	;
 }
 
-static void clear_form_cursor() {
-	for (uint8_t sprite_num = Anim(online_mode_selection_cursor_anim)->first_sprite_num; sprite_num <= Anim(online_mode_selection_cursor_anim)->last_sprite_num; ++sprite_num) {
-		oam_mirror[sprite_num * 4] = 0xfe;
-	}
-}
-
 static void password_login_send_request() {
 	online_mode_selection_mem_buffer[0] = 35;
 	online_mode_selection_mem_buffer[1] = TOESP_MSG_SEND_MESSAGE_TO_SERVER;
@@ -455,8 +485,8 @@ static void password_login_send_request() {
 
 static void password_login_process() {
 	// Clear login fields
-	//TODO draw "connecting to server" message
 	clear_form_cursor();
+	draw_dialog(0x2146, &menu_online_mode_connexion_window, 3);
 
 	// Clear ESP messages queue (avoid the mem_buffer being overflowed by a big remaining message)
 	wrap_esp_send_cmd(esp_clear_cmd);
