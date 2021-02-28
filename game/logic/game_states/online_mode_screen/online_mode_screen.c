@@ -95,7 +95,7 @@ static uint8_t const TILE_CHAR_HIDDEN = 103;
 static uint8_t const NB_OPTIONS = 3;
 static uint8_t const OPTION_CASUAL = 0;
 static uint8_t const OPTION_RANKED = 1;
-static uint8_t const OPTION_LOGIN = 2;
+static uint8_t const OPTION_PRIVATE = 2;
 
 static uint8_t const CURSOR_ANIM_FIRST_SPRITE = 0;
 static uint8_t const CURSOR_ANIM_LAST_SPRITE = 5;
@@ -919,7 +919,7 @@ static void next_screen() {
 				wrap_change_global_game_state(GAME_STATE_CHARACTER_SELECTION);
 			}
 			break;
-		case OPTION_LOGIN:
+		case OPTION_PRIVATE:
 			if (enter_game_password()) {
 				if (*network_logged == LOGIN_UNLOGGED) {
 					anonymous_login();
