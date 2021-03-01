@@ -38,7 +38,8 @@ start_pos = origin_to_start_position(args.origin)
 force_multiplier = damage // 4
 knockback_h = force_h * force_multiplier + base_h
 knockback_v = force_v * force_multiplier + base_v
-hitstun_duration = (2 * (abs(knockback_v) + abs(knockback_h))) >> 8
+knockback_total = abs(knockback_v) + abs(knockback_h)
+hitstun_duration = ((2 * knockback_total) >> 8) + (knockback_total >> 8)
 screen_shake_duration = hitstun_duration // 2
 
 # Compute implied values (not explicitely computed, just consequences)

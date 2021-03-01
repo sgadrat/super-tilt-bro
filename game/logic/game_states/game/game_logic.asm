@@ -889,7 +889,7 @@ apply_force_vector:
 	sta player_a_velocity_v_low, x ;
 
 	; Apply hitstun to the opponent
-	; hitstun duration = high byte of 2 * (abs(velotcity_v) + abs(velocity_h))
+	; hitstun duration = high byte of 3 * (abs(velotcity_v) + abs(velocity_h)) [approximated]
 	lda player_a_velocity_h, x         ;
 	bpl passthrough_kb_h               ;
 		lda player_a_velocity_h_low, x ;
@@ -935,8 +935,10 @@ apply_force_vector:
 	sta knockback_h_high ;
 
 	asl knockback_h_low     ;
-	lda knockback_h_high    ; Oponent player hitstun = high byte of 2 * knockback_h
-	rol                     ;
+	lda knockback_h_high    ;
+	rol                     ; Oponent player hitstun = high byte of 3 * knockback_h
+	;clc ; useless          ;   approximated, it is actually "msb(2 * knockback_h) + msb(knockback_h)"
+	adc knockback_h_high    ;   CLC ignored, should not happen, precision loss is one frame, and if knockback is this high we don't care of hitstun anyway
 	sta player_a_hitstun, x ;
 
 	; Start screenshake of duration = hitstun / 2
