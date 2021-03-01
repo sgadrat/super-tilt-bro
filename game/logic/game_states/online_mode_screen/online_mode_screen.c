@@ -105,8 +105,8 @@ static uint8_t const SHIP_ANIM_FIRST_SPRITE = 23;
 static uint8_t const SHIP_ANIM_LAST_SPRITE = 23;
 static uint8_t const MONSTER_ANIM_FIRST_SPRITE = 0;
 static uint8_t const MONSTER_ANIM_LAST_SPRITE = 1;
-static uint8_t const SATELLITE_ANIM_FIRST_SPRITE = 4;
-static uint8_t const SATELLITE_ANIM_LAST_SPRITE = 4;
+static uint8_t const SATELLITE_ANIM_SPRITE_FG = 4;
+static uint8_t const SATELLITE_ANIM_SPRITE_BG = 63;
 
 int16_t const SATELLITE_MAX_VELOCITY = (1 << 8);
 
@@ -1107,8 +1107,8 @@ static void init_satellite_anim() {
 	// Init satellite animation
 	wrap_animation_init_state(online_mode_selection_satellite_anim, &menu_online_mode_anim_satellite);
 	Anim(online_mode_selection_satellite_anim)->direction = DIRECTION_LEFT;
-	Anim(online_mode_selection_satellite_anim)->first_sprite_num = SATELLITE_ANIM_FIRST_SPRITE;
-	Anim(online_mode_selection_satellite_anim)->last_sprite_num = SATELLITE_ANIM_LAST_SPRITE;
+	Anim(online_mode_selection_satellite_anim)->first_sprite_num = SATELLITE_ANIM_SPRITE_FG;
+	Anim(online_mode_selection_satellite_anim)->last_sprite_num = SATELLITE_ANIM_SPRITE_FG;
 
 	// Init satellite state
 	struct SatelliteState* state = Satellite(online_mode_satellite_state);
@@ -1140,12 +1140,29 @@ static void tick_satellite() {
 	state->x += state->velocity_h;
 	state->y += state->velocity_v;
 
-	// Draw satellite animation
+	// Place satellite animation
 	Anim(online_mode_selection_satellite_anim)->x = i16_msb(state->x);
 	Anim(online_mode_selection_satellite_anim)->y = i16_msb(state->y);
+	if (state->velocity_h > 0) {
+		// Change sprite for a higher numbered when if should be beihing earth
+		Anim(online_mode_selection_satellite_anim)->first_sprite_num = SATELLITE_ANIM_SPRITE_BG;
+		Anim(online_mode_selection_satellite_anim)->last_sprite_num = SATELLITE_ANIM_SPRITE_BG;
+		oam_mirror[SATELLITE_ANIM_SPRITE_FG * 4] = 0xfe;
+	}else {
+		Anim(online_mode_selection_satellite_anim)->first_sprite_num = SATELLITE_ANIM_SPRITE_FG;
+		Anim(online_mode_selection_satellite_anim)->last_sprite_num = SATELLITE_ANIM_SPRITE_FG;
+		oam_mirror[SATELLITE_ANIM_SPRITE_BG * 4] = 0xfe;
+	}
+
+	// Draw satellite animation
 	*player_number = 0;
 	wrap_animation_draw(online_mode_selection_satellite_anim, 0, 0);
 	wrap_animation_tick(online_mode_selection_satellite_anim);
+
+	// Hack sprite to have it behind background when is should be behind earth
+	if (Anim(online_mode_selection_satellite_anim)->first_sprite_num == SATELLITE_ANIM_SPRITE_BG) {
+		oam_mirror[SATELLITE_ANIM_SPRITE_BG * 4 + 2] = 0x21;
+	}
 }
 
 void init_online_mode_screen_extra() {
