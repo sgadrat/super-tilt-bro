@@ -429,7 +429,7 @@ static void tick_bg_task(struct BgTaskState* task) {
 			builders_anim->y = builder_anims_start_pos[task->player].y;
 
 			// Compute ppu_addr/prg_addr at the begining of the tileset
-			task->ppu_addr = 0x1000 + 16 * (tileset_menu_char_select + 2 * 4 + task->player * 48);
+			task->ppu_addr = 0x1000 + 16 * (tileset_menu_char_select + (uint16_t)(&CHARACTERS_NUMBER) * 4 + task->player * 48);
 			if (config_requested_player_a_character[task->player] < (uint16_t)&CHARACTERS_NUMBER) {
 				// Normal character, get its large illustration address
 				task->prg_addr = (uint8_t const*)wrap_character_selection_get_char_property(
@@ -803,7 +803,7 @@ void init_character_selection_screen_extra() {
 	*PPUDATA = TILE_DICE_SE;
 
 	// Init empty statues tiles
-	uint16_t const ppu_tiles_statues_addr = 0x1000 + 16 * (tileset_menu_char_select + 4*2);
+	uint16_t const ppu_tiles_statues_addr = 0x1000 + 16 * (tileset_menu_char_select + 4*(uint16_t)(&CHARACTERS_NUMBER));
 	*PPUSTATUS;
 	*PPUADDR = u16_msb(ppu_tiles_statues_addr);
 	*PPUADDR = u16_lsb(ppu_tiles_statues_addr);

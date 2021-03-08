@@ -4,7 +4,7 @@ char_selection_palette:
 ; Sprites
 .byt $0f,$0f,$3d,$0f, $0f,$00,$00,$00, $0f,$0f,$3d,$0f, $0f,$00,$00,$00
 
-#define A $4c
+#define A $44+4*CHARACTERS_NUMBER
 #define B A+48
 char_selection_nametable:
 .byt $00,$84
