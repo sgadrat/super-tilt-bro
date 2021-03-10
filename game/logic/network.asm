@@ -80,6 +80,47 @@ network_tick_ingame:
 		lda controller_a_btns
 		sta network_player_local_btns_history, y
 
+#if 0
+		;HACK pre-fill the buffer in case we receive a message in the future
+		; Real solution
+		;  - have both players input-buffer in NewGameState messages
+		;  - if NewGameState is in the future, copy local player buffer from message
+		.(
+			.(
+			iny
+			cpy #%00100000
+			bne ok
+				ldy #0
+			ok:
+			.)
+			sta network_player_local_btns_history, y
+			.(
+			iny
+			cpy #%00100000
+			bne ok
+				ldy #0
+			ok:
+			.)
+			sta network_player_local_btns_history, y
+			.(
+			iny
+			cpy #%00100000
+			bne ok
+				ldy #0
+			ok:
+			.)
+			sta network_player_local_btns_history, y
+			.(
+			iny
+			cpy #%00100000
+			bne ok
+				ldy #0
+			ok:
+			.)
+			sta network_player_local_btns_history, y
+		.)
+#endif
+
 		; Send controller's state
 		lda network_last_sent_btns ; NOTE - optimizable as "controller_a_btns" is already in register A
 		cmp controller_a_btns
@@ -308,6 +349,7 @@ network_tick_ingame:
 			;       That would avoid desynchronizing if a ControllerState packet is lost (= not seen by server)
 			;     Beware of race conditions, if the server receives the ControllerState packet after sending the NewState
 			;       That would cause desychronization (until next NewGameState received), because we updated history with predicted info from server
+#if 1
 			lda network_local_player_number
 			bne player_b
 
@@ -332,6 +374,30 @@ network_tick_ingame:
 			tay
 			pla
 			sta network_player_remote_btns_history, y
+#else
+			lda server_current_frame_byte0
+			and #%00011111
+			tay
+
+			lda network_local_player_number
+			bne player_b
+
+				player_a:
+					; Local player is player A
+					lda RAINBOW_DATA
+					sta network_player_local_btns_history, y
+					lda RAINBOW_DATA
+					sta network_player_remote_btns_history, y
+					jmp ok
+
+				player_b:
+					; Local player is player B
+					lda RAINBOW_DATA
+					sta network_player_remote_btns_history, y
+					lda RAINBOW_DATA
+					sta network_player_local_btns_history, y
+			ok:
+#endif
 		.)
 
 		; Copy animation states
