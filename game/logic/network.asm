@@ -80,47 +80,6 @@ network_tick_ingame:
 		lda controller_a_btns
 		sta network_player_local_btns_history, y
 
-#if 0
-		;HACK pre-fill the buffer in case we receive a message in the future
-		; Real solution
-		;  - have both players input-buffer in NewGameState messages
-		;  - if NewGameState is in the future, copy local player buffer from message
-		.(
-			.(
-			iny
-			cpy #%00100000
-			bne ok
-				ldy #0
-			ok:
-			.)
-			sta network_player_local_btns_history, y
-			.(
-			iny
-			cpy #%00100000
-			bne ok
-				ldy #0
-			ok:
-			.)
-			sta network_player_local_btns_history, y
-			.(
-			iny
-			cpy #%00100000
-			bne ok
-				ldy #0
-			ok:
-			.)
-			sta network_player_local_btns_history, y
-			.(
-			iny
-			cpy #%00100000
-			bne ok
-				ldy #0
-			ok:
-			.)
-			sta network_player_local_btns_history, y
-		.)
-#endif
-
 		; Send controller's state
 		lda network_last_sent_btns ; NOTE - optimizable as "controller_a_btns" is already in register A
 		cmp controller_a_btns
@@ -229,322 +188,350 @@ network_tick_ingame:
 
 	update_state:
 	.(
-		; Extract frame counter
-		lda RAINBOW_DATA
-		sta server_current_frame_byte0
-		lda RAINBOW_DATA
-		sta server_current_frame_byte1
-		lda RAINBOW_DATA
-		sta server_current_frame_byte2
-		lda RAINBOW_DATA
-		sta server_current_frame_byte3
+		packet_time_flag = tmpfield1
+		PACKET_TIME_PAST = 0
+		PACKET_TIME_FUTURE = 1
 
-		;TODO select action from message type -  ancient, past or futur
-		;NOTE in a first draft the current rollback implementation should handle all cases
-		;     correctly, even if sub-optimal (notably doing unecessary rollbacks for "past"
-		;     messages.
-		;     one advantage of this solution is to resync with server on any occasion
-
-		ancient:
-			jsr rollback_state
-			jmp end
-
-		past:
-			;TODO
-
-		future:
-			;TODO
-
-		end:
-		rts
-	.)
-
-	rollback_state:
-	.(
-		; Copy delayed inputs from message in opponent's input history
 		.(
-			; Get first delayed input index in history
+			; Extract frame counter, and compare it to local timestamp
+			lda RAINBOW_DATA
+			sta server_current_frame_byte0
+			cmp network_current_frame_byte0
+			lda RAINBOW_DATA
+			sta server_current_frame_byte1
+			sbc network_current_frame_byte1
+			lda RAINBOW_DATA
+			sta server_current_frame_byte2
+			sbc network_current_frame_byte2
+			lda RAINBOW_DATA
+			sta server_current_frame_byte3
+			sbc network_current_frame_byte3
+
+			; Select action from message type -  ancient, past or futur
+			;NOTE in a first draft the current rollback implementation should handle all cases
+			;     correctly, even if sub-optimal (notably doing unecessary rollbacks for "past")
+			;     messages.
+			;     one advantage of this solution is to resync with server on any occasion
+			bcc past
 			lda server_current_frame_byte0
-			clc
-			adc #1
-			and #%00011111
-			tay
+			cmp network_current_frame_byte0 ; one-byte equality, we'll have other troubles if difference is more than 255 frames anyway
+			beq present
 
-			; Copy delayed inputs
-			ldx #NETWORK_INPUT_LAG
-			copy_one_byte:
-				lda RAINBOW_DATA
-				sta network_player_remote_btns_history, y
-				sty network_last_known_remote_input
+			future:
+				lda #PACKET_TIME_FUTURE
+				jmp end
 
-				iny
-				tya
+			present:
+			past:
+				lda #PACKET_TIME_PAST
+
+			end:
+			sta packet_time_flag
+			;rts ; Fallthrough to rollback_state
+		.)
+
+		rollback_state:
+		.(
+			; Copy delayed inputs from message in opponent's input history
+			.(
+				; Get first delayed input index in history
+				lda server_current_frame_byte0
+				clc
+				adc #1
 				and #%00011111
 				tay
 
-				dex
-				bne copy_one_byte
-		.)
+				; Copy delayed inputs
+				ldx #NETWORK_INPUT_LAG
+				copy_one_byte:
+					; Local input buffer
+					;  Keep only if packet is in the future, we know our past inputs (and the server may not yet have the last one)
+					lda packet_time_flag
+					cmp #PACKET_TIME_FUTURE
+					beq local_keep
+						lda RAINBOW_DATA
+						jmp local_ok
+					local_keep:
+						lda RAINBOW_DATA
+						sta network_player_local_btns_history, y
+					local_ok:
 
-		; Copy gamestate
-		.(
-			ldx #0
-			copy_one_byte:
+					; Remote input buffer
+					lda RAINBOW_DATA
+					sta network_player_remote_btns_history, y
+					sty network_last_known_remote_input
 
-				lda RAINBOW_DATA  ; 4 cycles
-				sta $00, x        ; 4 cycles
+					; Increment circular buffer index
+					iny
+					tya
+					and #%00011111
+					tay
 
-			inx ; 2 cycles
-			cpx #$4f ; 3 cycles
-			bne copy_one_byte ; 3 cycles
-		.)
+					; Loop
+					dex
+					bne copy_one_byte
+			.)
 
-		; Note
-		;  Total - (4+4+2+3+3) * 79 = 16 * 79 = 1264
-		;  Unroll - (4+3) * 79 = 7 * 79 = 553
+			; Copy gamestate
+			.(
+				ldx #0
+				copy_one_byte:
 
-		; Copy hitboxes MSB
-		.(
-			ldx #0
-			copy_one_byte:
+					lda RAINBOW_DATA  ; 4 cycles
+					sta $00, x        ; 4 cycles
 
-				lda RAINBOW_DATA                 ; 4 cycles
-				sta player_a_hurtbox_left_msb, x ; 4 cycles
+				inx ; 2 cycles
+				cpx #$4f ; 3 cycles
+				bne copy_one_byte ; 3 cycles
+			.)
 
-			inx ; 2 cycles
-			cpx #$10 ; 3 cycles
-			bne copy_one_byte ; 3 cycles
-		.)
+			; Note
+			;  Total - (4+4+2+3+3) * 79 = 16 * 79 = 1264
+			;  Unroll - (4+3) * 79 = 7 * 79 = 553
 
-		; Note
-		;  Total - (4+4+2+3+3) * 16 = 16 * 16 = 256
-		;  Unroll - (4+3) * 16 = 7 * 16 = 112
+			; Copy hitboxes MSB
+			.(
+				ldx #0
+				copy_one_byte:
 
-		; Copy special state
-		lda RAINBOW_DATA
-		sta screen_shake_counter
-		bne screen_shake_updated
-			; Received a "no screen shake", ensure that scrolling is reset
-			;lda #$00 ; useless - ensured by bne
-			sta scroll_y
-			sta scroll_x
-			lda #%10010000
-			sta ppuctrl_val
-		screen_shake_updated:
+					lda RAINBOW_DATA                 ; 4 cycles
+					sta player_a_hurtbox_left_msb, x ; 4 cycles
 
-		; Copy controllers state
-		lda RAINBOW_DATA
-		sta controller_a_btns
-		lda RAINBOW_DATA
-		sta controller_b_btns
-		lda RAINBOW_DATA
-		sta controller_a_last_frame_btns
-		lda RAINBOW_DATA
-		sta controller_b_last_frame_btns
+				inx ; 2 cycles
+				cpx #$10 ; 3 cycles
+				bne copy_one_byte ; 3 cycles
+			.)
 
-		; Copy actually pressed opponent btns (keep_input_dirty may mess with normal values, but not this one)
-		.(
-			;TODO Investigate
-			;     We may want to write received buttons in local player history instead of burning it
-			;       That would avoid desynchronizing if a ControllerState packet is lost (= not seen by server)
-			;     Beware of race conditions, if the server receives the ControllerState packet after sending the NewState
-			;       That would cause desychronization (until next NewGameState received), because we updated history with predicted info from server
+			; Note
+			;  Total - (4+4+2+3+3) * 16 = 16 * 16 = 256
+			;  Unroll - (4+3) * 16 = 7 * 16 = 112
+
+			; Copy special state
+			lda RAINBOW_DATA
+			sta screen_shake_counter
+			bne screen_shake_updated
+				; Received a "no screen shake", ensure that scrolling is reset
+				;lda #$00 ; useless - ensured by bne
+				sta scroll_y
+				sta scroll_x
+				lda #%10010000
+				sta ppuctrl_val
+			screen_shake_updated:
+
+			; Copy controllers state
+			lda RAINBOW_DATA
+			sta controller_a_btns
+			lda RAINBOW_DATA
+			sta controller_b_btns
+			lda RAINBOW_DATA
+			sta controller_a_last_frame_btns
+			lda RAINBOW_DATA
+			sta controller_b_last_frame_btns
+
+			; Copy actually pressed opponent btns (keep_input_dirty may mess with normal values, but not this one)
+			.(
+				;TODO Investigate
+				;     We may want to write received buttons in local player history instead of burning it
+				;       That would avoid desynchronizing if a ControllerState packet is lost (= not seen by server)
+				;     Beware of race conditions, if the server receives the ControllerState packet after sending the NewState
+				;       That would cause desychronization (until next NewGameState received), because we updated history with predicted info from server
 #if 1
-			lda network_local_player_number
-			bne player_b
+				lda network_local_player_number
+				bne player_b
 
-				player_a:
-					; Local player is player A, burn its buttons (already in our history)
-					lda RAINBOW_DATA
-					nop
-					lda RAINBOW_DATA
-					pha
-					jmp ok
+					player_a:
+						; Local player is player A, burn its buttons (already in our history)
+						lda RAINBOW_DATA
+						nop
+						lda RAINBOW_DATA
+						pha
+						jmp ok
 
-				player_b:
-					; Local player is player B, burn its buttons (already in our history)
-					lda RAINBOW_DATA
-					pha
-					lda RAINBOW_DATA
-			ok:
+					player_b:
+						; Local player is player B, burn its buttons (already in our history)
+						lda RAINBOW_DATA
+						pha
+						lda RAINBOW_DATA
+				ok:
 
-			; Register it in opponent's input history
-			lda server_current_frame_byte0
-			and #%00011111
-			tay
-			pla
-			sta network_player_remote_btns_history, y
+				; Register it in opponent's input history
+				lda server_current_frame_byte0
+				and #%00011111
+				tay
+				pla
+				sta network_player_remote_btns_history, y
 #else
-			lda server_current_frame_byte0
-			and #%00011111
-			tay
+				lda server_current_frame_byte0
+				and #%00011111
+				tay
 
-			lda network_local_player_number
-			bne player_b
+				lda network_local_player_number
+				bne player_b
 
-				player_a:
-					; Local player is player A
-					lda RAINBOW_DATA
-					sta network_player_local_btns_history, y
-					lda RAINBOW_DATA
-					sta network_player_remote_btns_history, y
-					jmp ok
+					player_a:
+						; Local player is player A
+						lda RAINBOW_DATA
+						sta network_player_local_btns_history, y
+						lda RAINBOW_DATA
+						sta network_player_remote_btns_history, y
+						jmp ok
 
-				player_b:
-					; Local player is player B
-					lda RAINBOW_DATA
-					sta network_player_remote_btns_history, y
-					lda RAINBOW_DATA
-					sta network_player_local_btns_history, y
-			ok:
+					player_b:
+						; Local player is player B
+						lda RAINBOW_DATA
+						sta network_player_remote_btns_history, y
+						lda RAINBOW_DATA
+						sta network_player_local_btns_history, y
+				ok:
 #endif
-		.)
+			.)
 
-		; Copy animation states
-		.(
-			lda RAINBOW_DATA
-			sta player_a_animation+ANIMATION_STATE_OFFSET_DATA_VECTOR_LSB
-			lda RAINBOW_DATA
-			sta player_a_animation+ANIMATION_STATE_OFFSET_DATA_VECTOR_MSB
-			lda RAINBOW_DATA
-			sta player_a_animation+ANIMATION_STATE_OFFSET_DIRECTION
-			lda RAINBOW_DATA
-			sta player_a_animation+ANIMATION_STATE_OFFSET_CLOCK
-			lda RAINBOW_DATA
-			sta player_a_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB
-			lda RAINBOW_DATA
-			sta player_a_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB
+			; Copy animation states
+			.(
+				lda RAINBOW_DATA
+				sta player_a_animation+ANIMATION_STATE_OFFSET_DATA_VECTOR_LSB
+				lda RAINBOW_DATA
+				sta player_a_animation+ANIMATION_STATE_OFFSET_DATA_VECTOR_MSB
+				lda RAINBOW_DATA
+				sta player_a_animation+ANIMATION_STATE_OFFSET_DIRECTION
+				lda RAINBOW_DATA
+				sta player_a_animation+ANIMATION_STATE_OFFSET_CLOCK
+				lda RAINBOW_DATA
+				sta player_a_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB
+				lda RAINBOW_DATA
+				sta player_a_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB
 
-			lda RAINBOW_DATA
-			sta player_b_animation+ANIMATION_STATE_OFFSET_DATA_VECTOR_LSB
-			lda RAINBOW_DATA
-			sta player_b_animation+ANIMATION_STATE_OFFSET_DATA_VECTOR_MSB
-			lda RAINBOW_DATA
-			sta player_b_animation+ANIMATION_STATE_OFFSET_DIRECTION
-			lda RAINBOW_DATA
-			sta player_b_animation+ANIMATION_STATE_OFFSET_CLOCK
-			lda RAINBOW_DATA
-			sta player_b_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB
-			lda RAINBOW_DATA
-			sta player_b_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB
-		.)
+				lda RAINBOW_DATA
+				sta player_b_animation+ANIMATION_STATE_OFFSET_DATA_VECTOR_LSB
+				lda RAINBOW_DATA
+				sta player_b_animation+ANIMATION_STATE_OFFSET_DATA_VECTOR_MSB
+				lda RAINBOW_DATA
+				sta player_b_animation+ANIMATION_STATE_OFFSET_DIRECTION
+				lda RAINBOW_DATA
+				sta player_b_animation+ANIMATION_STATE_OFFSET_CLOCK
+				lda RAINBOW_DATA
+				sta player_b_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB
+				lda RAINBOW_DATA
+				sta player_b_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB
+			.)
 
-		; Copy character specific data
-		.(
-			ldx #0
-			copy_one_char:
-				ldy config_player_a_character, x
+			; Copy character specific data
+			.(
+				ldx #0
+				copy_one_char:
+					ldy config_player_a_character, x
 
-				lda characters_netload_routine_lsb, y
+					lda characters_netload_routine_lsb, y
+					sta tmpfield1
+					lda characters_netload_routine_msb, y
+					sta tmpfield2
+
+					SWITCH_BANK(characters_bank_number COMMA y)
+					stx player_number
+					jsr call_pointed_subroutine
+					ldx player_number
+
+					inx
+					cpx #2
+					bne copy_one_char
+			.)
+
+			; Copy stage specific data
+			.(
+				ldy config_selected_stage
+
+				lda stages_netload_routine_lsb, y
 				sta tmpfield1
-				lda characters_netload_routine_msb, y
+				lda stages_netload_routine_msb, y
 				sta tmpfield2
 
-				SWITCH_BANK(characters_bank_number COMMA y)
-				stx player_number
+				SWITCH_BANK(stages_bank COMMA y)
 				jsr call_pointed_subroutine
-				ldx player_number
+			.)
 
-				inx
-				cpx #2
-				bne copy_one_char
-		.)
+			; Update game state until the current frame is at least equal to the one we where before reading the message
+			lda #1
+			sta network_rollback_mode
+			roll_forward_one_step:
+			.(
+				; If sever's frame is inferior to local frame
+				; TODO optimization - could be implemented like in signed_cmp
+				;      one CMP, followed by SBCs, branching at the end on carry flag
+				;      to be determined, but considering 255 out of 256 times only the LSB is changing, it should be speeder
+				lda server_current_frame_byte3
+				cmp network_current_frame_byte3
+				bcc do_it
+				bne dont_do_it
+				lda server_current_frame_byte2
+				cmp network_current_frame_byte2
+				bcc do_it
+				bne dont_do_it
+				lda server_current_frame_byte1
+				cmp network_current_frame_byte1
+				bcc do_it
+				bne dont_do_it
+				lda server_current_frame_byte0
+				cmp network_current_frame_byte0
+				bcc do_it
+				jmp dont_do_it
 
-		; Copy stage specific data
-		.(
-			ldy config_selected_stage
+				do_it:
 
-			lda stages_netload_routine_lsb, y
-			sta tmpfield1
-			lda stages_netload_routine_msb, y
-			sta tmpfield2
+					; Update last_frame_btns
+					;  it is not done by fetch_controller because we don't use the main loop
+					lda controller_a_btns
+					sta controller_a_last_frame_btns
+					lda controller_b_btns
+					sta controller_b_last_frame_btns
 
-			SWITCH_BANK(stages_bank COMMA y)
-			jsr call_pointed_subroutine
-		.)
+					; Set local player input according to history
+					ldx network_local_player_number ; X = local player number
 
-		; Update game state until the current frame is at least equal to the one we where before reading the message
-		lda #1
-		sta network_rollback_mode
-		roll_forward_one_step:
-		.(
-			; If sever's frame is inferior to local frame
-			; TODO optimization - could be implemented like in signed_cmp
-			;      one CMP, followed by SBCs, branching at the end on carry flag
-			;      to be determined, but considering 255 out of 256 times only the LSB is changing, it should be speeder
-			lda server_current_frame_byte3
-			cmp network_current_frame_byte3
-			bcc do_it
-			bne dont_do_it
-			lda server_current_frame_byte2
-			cmp network_current_frame_byte2
-			bcc do_it
-			bne dont_do_it
-			lda server_current_frame_byte1
-			cmp network_current_frame_byte1
-			bcc do_it
-			bne dont_do_it
+					lda server_current_frame_byte0 ; Y = input offset in history
+					and #%00011111
+					tay
+
+					lda network_player_local_btns_history, y ; write current input
+					sta controller_a_btns, x
+
+					; Set remote player input according to history
+					jsr switch_selected_player
+					jsr set_opponent_buttons_from_history
+
+					; Update game state
+					jsr game_tick
+
+					; Inc server_current_frame_byte
+					inc server_current_frame_byte0
+					bne end_inc
+					inc server_current_frame_byte1
+					bne end_inc
+					inc server_current_frame_byte2
+					bne end_inc
+					inc server_current_frame_byte3
+					end_inc:
+
+					; Loop
+					jmp roll_forward_one_step
+
+				end_loop:
+				dont_do_it:
+			.)
+			lda #0
+			sta network_rollback_mode
+
+			; Copy (updated) server frame number to the local one
 			lda server_current_frame_byte0
-			cmp network_current_frame_byte0
-			bcc do_it
-			jmp dont_do_it
+			sta network_current_frame_byte0
+			lda server_current_frame_byte1
+			sta network_current_frame_byte1
+			lda server_current_frame_byte2
+			sta network_current_frame_byte2
+			lda server_current_frame_byte3
+			sta network_current_frame_byte3
 
-			do_it:
-
-				; Update last_frame_btns
-				;  it is not done by fetch_controller because we don't use the main loop
-				lda controller_a_btns
-				sta controller_a_last_frame_btns
-				lda controller_b_btns
-				sta controller_b_last_frame_btns
-
-				; Set local player input according to history
-				ldx network_local_player_number ; X = local player number
-
-				lda server_current_frame_byte0 ; Y = input offset in history
-				and #%00011111
-				tay
-
-				lda network_player_local_btns_history, y ; write current input
-				sta controller_a_btns, x
-
-				; Set remote player input according to history
-				jsr switch_selected_player
-				jsr set_opponent_buttons_from_history
-
-				; Update game state
-				jsr game_tick
-
-				; Inc server_current_frame_byte
-				inc server_current_frame_byte0
-				bne end_inc
-				inc server_current_frame_byte1
-				bne end_inc
-				inc server_current_frame_byte2
-				bne end_inc
-				inc server_current_frame_byte3
-				end_inc:
-
-				; Loop
-				jmp roll_forward_one_step
-
-			end_loop:
-			dont_do_it:
+			rts
 		.)
-		lda #0
-		sta network_rollback_mode
-
-		; Copy (updated) server frame number to the local one
-		lda server_current_frame_byte0
-		sta network_current_frame_byte0
-		lda server_current_frame_byte1
-		sta network_current_frame_byte1
-		lda server_current_frame_byte2
-		sta network_current_frame_byte2
-		lda server_current_frame_byte3
-		sta network_current_frame_byte3
-
-		rts
 	.)
 
 	; Get opponent'input if known, else predict it

@@ -557,7 +557,7 @@ netplay_launch_screen_tick:
 		sta RAINBOW_DATA
 		lda netplay_launch_ping_min ; min ping
 		sta RAINBOW_DATA
-		lda #4 ; protocol_version
+		lda #5 ; protocol_version
 		sta RAINBOW_DATA
 		lda netplay_launch_ping_max ; max ping
 		sta RAINBOW_DATA
