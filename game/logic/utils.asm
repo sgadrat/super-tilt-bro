@@ -165,6 +165,54 @@ switch_bank:
 	rts
 .)
 
+; Execute a routine while another PRG bank is selected
+;  extra_tmpfield1, extra_tmpfield2 - routine to execute
+;  extra_tmpfield3 - number of the PRG-BANK to activate
+;  extra_tmpfield4 - number of the PRG-BANK to return to
+;
+; Overwrites register A
+trampoline:
+.(
+	lda extra_tmpfield4
+	pha
+	lda extra_tmpfield3
+	jsr switch_bank
+	jsr exec
+	pla
+	jmp switch_bank
+	;rts ; useless, jump to subroutine
+
+	exec:
+		jmp (extra_tmpfield1)
+		;rts ; useless, jump to subroutine
+.)
+
+; Copy a tileset from CPU memory to PPU memory
+;  tmpfield1, tmpfield2 - Address of the tileset in CPU memory
+;
+; PPUADDR must be set to the destination address
+; PPUCTRL's I bit should not be set (if set, writes every 32 bytes)
+;
+; Overwrites register A, register Y, tmpfield1, tmpfield2 and tmpfield3
+cpu_to_ppu_copy_tileset:
+.(
+	addr_lsb = tmpfield1
+	addr_msb = tmpfield2
+
+	; Fetch tileset size
+	ldy #0
+	lda (addr_lsb), y
+	sta tmpfield3
+
+	; Compute tileset data address
+	inc addr_lsb
+	bne inc_ok
+		inc addr_msb
+	inc_ok:
+
+	; Fallthrough to cpu_to_ppu_copy_tiles
+.)
+
 ; Copy tiles data from CPU memory to PPU memory
 ;  tmpfield1, tmpfield2 - Address of CPU data to be copied
 ;  tmpfield3 - number of tiles to copy (zero means 255)

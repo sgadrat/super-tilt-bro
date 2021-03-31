@@ -34,6 +34,9 @@ extern uint8_t const tileset_menu_online_mode_sprites;
 
 extern uint8_t volatile RAINBOW_WRAM_BANKING;
 
+extern uint8_t const MENU_ONLINE_MODE_TILESET_BANK_NUMBER; // Actually a label, use its address or "tileset_bank()"
+extern uint8_t const ONLINE_MODE_SCREEN_EXTRA_BANK_NUMBER; // Actually a label, use its address or "code_bank()"
+
 static uint8_t const TILE_CHAR_0 = 219;
 static uint8_t const TILE_CHAR_1 = TILE_CHAR_0 + ('1' - '0');
 static uint8_t const TILE_CHAR_2 = TILE_CHAR_0 + ('2' - '0');
@@ -88,14 +91,15 @@ uint32_t* const rnd = (uint32_t*) online_mode_rnd;
 // Constants specific to this file
 ///////////////////////////////////////
 
-static uint8_t const TILE_EMPTY_TEXT = 94;
-static uint8_t const TILE_SPACE = 92;
-static uint8_t const TILE_CHAR_HIDDEN = 103;
+static uint8_t const TILE_EMPTY_TEXT = 85;
+static uint8_t const TILE_SPACE = 3;
+static uint8_t const TILE_CHAR_HIDDEN = 94;
 
-static uint8_t const NB_OPTIONS = 3;
+static uint8_t const NB_OPTIONS = 4;
 static uint8_t const OPTION_CASUAL = 0;
 static uint8_t const OPTION_RANKED = 1;
 static uint8_t const OPTION_PRIVATE = 2;
+static uint8_t const OPTION_SETTINGS = 3;
 
 static uint8_t const CURSOR_ANIM_FIRST_SPRITE = 0;
 static uint8_t const CURSOR_ANIM_LAST_SPRITE = 5;
@@ -108,7 +112,7 @@ static uint8_t const MONSTER_ANIM_LAST_SPRITE = 1;
 static uint8_t const SATELLITE_ANIM_SPRITE_FG = 4;
 static uint8_t const SATELLITE_ANIM_SPRITE_BG = 63;
 
-int16_t const SATELLITE_MAX_VELOCITY = (1 << 8);
+int16_t const SATELLITE_MAX_VELOCITY = (1 << 8) + 32;
 
 typedef enum {
 	LOGIN_UNLOGGED = 0,
@@ -137,6 +141,12 @@ static uint8_t const earth_sprite_per_option[][NB_SPRITE_PER_OPTION] = {
 		30, 31, 32, 33,
 		255, 34, 35, 36,
 		255, 255, 37, 38
+	},
+	{
+		39, 40, 41, 42,
+		43, 44, 45, 46,
+		47, 48, 49, 255,
+		50, 51, 255, 255
 	},
 };
 
@@ -174,10 +184,11 @@ static struct Position16 const first_earth_sprite_per_option[] = {
 	{80, 79},
 	{144, 79},
 	{80, 143},
+	{144, 143},
 };
 
 static struct Position16 const ship_east_waypoints[] = {
-	{146, 136},
+	{146, 135},
 	{120, 112},
 	{124, 123},
 	{120, 119},
@@ -229,6 +240,28 @@ static uint8_t const STNP_LOGIN_CHARSET_SIZE = sizeof(STNP_LOGIN_CHARSET);
 
 static void place_earth_sprites();
 static void highlight_option();
+
+static uint8_t tileset_bank() {
+	return ptr_lsb(&MENU_ONLINE_MODE_TILESET_BANK_NUMBER);
+}
+
+static uint8_t code_bank() {
+	return ptr_lsb(&ONLINE_MODE_SCREEN_EXTRA_BANK_NUMBER);
+}
+
+static void long_cpu_to_ppu_copy_tileset(uint8_t bank, uint8_t const* tileset, uint16_t ppu_addr) {
+	// Set cpu_to_ppu_copy_tileset parameters
+	*tmpfield1 = ptr_lsb(tileset);
+	*tmpfield2 = ptr_msb(tileset);
+
+	// Set PPU ADDR to destination
+	*PPUSTATUS;
+	*PPUADDR = u16_msb(ppu_addr);
+	*PPUADDR = u16_lsb(ppu_addr);
+
+	// Call
+	wrap_trampoline(bank, code_bank(), &cpu_to_ppu_copy_tileset);
+}
 
 /** Not a real yield, pass a frame "as if" it gone through main loop */
 static void yield() {
@@ -940,6 +973,9 @@ static void next_screen() {
 				wrap_change_global_game_state(GAME_STATE_CHARACTER_SELECTION);
 			}
 			break;
+		case OPTION_SETTINGS:
+			//TODO
+			break;
 	}
 }
 
@@ -954,9 +990,9 @@ static void take_input(uint8_t controller_btns, uint8_t last_fame_btns) {
 			case CONTROLLER_BTN_UP:
 				sound_effect_click();
 				if (*online_mode_selection_current_option < 2) {
-					*online_mode_selection_current_option = 2;
+					*online_mode_selection_current_option += 2;
 				}else {
-					*online_mode_selection_current_option = 0;
+					*online_mode_selection_current_option -= 2;
 				}
 				break;
 			case CONTROLLER_BTN_LEFT:
@@ -1039,6 +1075,15 @@ static void highlight_option() {
 			0x55, 0x55, 0x55, 0x11, 0x00, 0x00, 0x00, 0x00,
 			0x05, 0x05, 0x05, 0x05, 0x00, 0x00, 0x00, 0x00,
 		},
+		{
+			0x23, 0xc8, 48,
+			0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x40, 0x50, 0x50, 0x50,
+			0x00, 0x00, 0x00, 0x00, 0x44, 0x55, 0x55, 0x55,
+			0x00, 0x00, 0x00, 0x00, 0x05, 0x05, 0x05, 0x05,
+		},
 	};
 	wrap_push_nt_buffer(buffers_header[*online_mode_selection_current_option]);
 }
@@ -1114,7 +1159,7 @@ static void init_satellite_anim() {
 	struct SatelliteState* state = Satellite(online_mode_satellite_state);
 	state->velocity_h = SATELLITE_MAX_VELOCITY;
 	state->velocity_v = 0;
-	state->x = (128 << 8);
+	state->x = (127 << 8);
 	state->y = (114 << 8);
 }
 
@@ -1123,7 +1168,7 @@ static void tick_satellite() {
 
 	// Compute new velocity
 	int16_t const target_x = 127;
-	int16_t const target_y = 128;
+	int16_t const target_y = 124;
 
 	int16_t const to_target_x = target_x - i16_msb(state->x);
 	int16_t const to_target_y = target_y - i16_msb(state->y);
@@ -1144,7 +1189,7 @@ static void tick_satellite() {
 	Anim(online_mode_selection_satellite_anim)->x = i16_msb(state->x);
 	Anim(online_mode_selection_satellite_anim)->y = i16_msb(state->y);
 	if (state->velocity_h > 0) {
-		// Change sprite for a higher numbered when if should be beihing earth
+		// Change sprite for a higher numbered when if should be behind earth
 		Anim(online_mode_selection_satellite_anim)->first_sprite_num = SATELLITE_ANIM_SPRITE_BG;
 		Anim(online_mode_selection_satellite_anim)->last_sprite_num = SATELLITE_ANIM_SPRITE_BG;
 		oam_mirror[SATELLITE_ANIM_SPRITE_FG * 4] = 0xfe;
@@ -1169,8 +1214,8 @@ void init_online_mode_screen_extra() {
 	// Draw static part of the screen
 	wrap_construct_palettes_nt_buffer(&menu_online_mode_palette);
 	wrap_draw_zipped_nametable(&menu_online_mode_nametable);
-	wrap_cpu_to_ppu_copy_tiles((&tileset_menu_online_mode)+1, 0x1000, tileset_menu_online_mode);
-	wrap_cpu_to_ppu_copy_tiles((&tileset_menu_online_mode_sprites)+1, 0x0000, tileset_menu_online_mode_sprites);
+	long_cpu_to_ppu_copy_tileset(tileset_bank(), &tileset_menu_online_mode, 0x1000);
+	long_cpu_to_ppu_copy_tileset(tileset_bank(), &tileset_menu_online_mode_sprites, 0x0000);
 
 	// Place earth sprites
 	place_earth_sprites();

@@ -20,11 +20,11 @@ static uint8_t i16_msb(int16_t val) {
 	return (((int)val) >> 8) & 0x00ff;
 }
 
-static uint8_t ptr_lsb(uint8_t const* ptr) {
+static uint8_t ptr_lsb(void const* ptr) {
 	return u16_lsb((uint16_t)ptr);
 }
 
-static uint8_t ptr_msb(uint8_t const* ptr) {
+static uint8_t ptr_msb(void const* ptr) {
 	return u16_msb((uint16_t)ptr);
 }
 

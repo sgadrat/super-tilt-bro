@@ -19,6 +19,10 @@ bank_data02_stage_miniatures_begin:
 #include "game/data/tilesets/stage_miniatures.asm"
 bank_data02_stage_miniatures_end:
 
+bank_data02_online_mode_extra_data_begin:
+#include "game/data/menu_online_mode/tileset.asm"
+bank_data02_online_mode_extra_data_end:
+
 bank_data02_end:
 
 #echo
@@ -37,11 +41,14 @@ bank_data02_end:
 #echo DATA02-bank Gem size:
 #print bank_data02_stage_miniatures_end-bank_data02_stage_miniatures_begin
 #echo
+#echo DATA02-bank online mode extra data size:
+#print bank_data02_online_mode_extra_data_end-bank_data02_online_mode_extra_data_begin
+#echo
 #echo DATA02-bank free space:
 #print $c000-*
 
 #if $c000-* < 0
-#echo *** Error: DATA02 bank occupies too much space
+#error DATA02 bank occupies too much space
 #else
 .dsb $c000-*, CURRENT_BANK_NUMBER
 #endif

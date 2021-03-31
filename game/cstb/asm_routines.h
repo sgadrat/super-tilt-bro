@@ -75,6 +75,30 @@ static void wrap_change_global_game_state(uint8_t new_state) {
 	);
 }
 
+void trampoline();
+static void wrap_trampoline(uint8_t call_bank, uint8_t return_bank, void(*routine)()) {
+	*extra_tmpfield1 = ptr_lsb(routine);
+	*extra_tmpfield2 = ptr_msb(routine);
+	*extra_tmpfield3 = call_bank;
+	*extra_tmpfield4 = return_bank;
+	trampoline();
+}
+
+void cpu_to_ppu_copy_tileset();
+static void wrap_cpu_to_ppu_copy_tileset(uint8_t const* tileset, uint16_t ppu_addr) {
+	// Set cpu_to_ppu_copy_tileset parameters
+	*tmpfield1 = ptr_lsb(tileset);
+	*tmpfield2 = ptr_msb(tileset);
+
+	// Set PPU ADDR to destination
+	*PPUSTATUS;
+	*PPUADDR = u16_msb(ppu_addr);
+	*PPUADDR = u16_lsb(ppu_addr);
+
+	// Call
+	cpu_to_ppu_copy_tileset();
+}
+
 void cpu_to_ppu_copy_tiles();
 static void wrap_cpu_to_ppu_copy_tiles(uint8_t const* tileset, uint16_t ppu_addr, uint8_t num_bytes) {
 	// Set cpu_to_ppu_copy_tiles parameters
