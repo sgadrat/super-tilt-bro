@@ -141,23 +141,23 @@ static uint8_t const earth_sprite_per_option[][NB_SPRITE_PER_OPTION] = {
 };
 
 static uint8_t const set_protocol_cmd[] = {
-	2, TOESP_MSG_SET_SERVER_PROTOCOL,
+	2, TOESP_MSG_SERVER_SET_PROTOCOL,
 	ESP_PROTOCOL_UDP
 };
 static uint8_t const esp_clear_cmd[] = {1, TOESP_MSG_CLEAR_BUFFERS};
-static uint8_t const connect_cmd[] = {1, TOESP_MSG_CONNECT_TO_SERVER};
+static uint8_t const connect_cmd[] = {1, TOESP_MSG_SERVER_CONNECT};
 
 static uint8_t const set_server_cmd[] = {
 #ifndef LOCAL_LOGIN_SERVER
 	// ESP header
-	23, TOESP_MSG_SET_SERVER_SETTINGS,
+	23, TOESP_MSG_SERVER_SET_SETTINGS,
 	// Port
 	0x12, 0x34,
 	// Address
 	's', 't', 'b', '-', 'l', 'o', 'g', 'i', 'n', '.', 'w', 'o', 'n', 't', 'f', 'i', 'x', '.', 'i', 't',
 #else
 	// ESP header
-	12, TOESP_MSG_SET_SERVER_SETTINGS,
+	12, TOESP_MSG_SERVER_SET_SETTINGS,
 	// Port
 	0x12, 0x34,
 	// Address
@@ -385,7 +385,7 @@ static void anonymous_login_draw_connexion_window() {
 static uint8_t anonymous_login() {
 	static uint8_t const login_msg_cmd[] = {
 		// ESP header
-		3, TOESP_MSG_SEND_MESSAGE_TO_SERVER,
+		3, TOESP_MSG_SERVER_SEND_MESSAGE,
 		// STNP message type
 		STNP_LOGIN_MSG_TYPE,
 		// Anonymous login
@@ -483,7 +483,7 @@ static uint8_t check_login_message(uint8_t type) {
 
 static void password_login_send_request() {
 	online_mode_selection_mem_buffer[0] = 35;
-	online_mode_selection_mem_buffer[1] = TOESP_MSG_SEND_MESSAGE_TO_SERVER;
+	online_mode_selection_mem_buffer[1] = TOESP_MSG_SERVER_SEND_MESSAGE;
 	online_mode_selection_mem_buffer[2] = STNP_LOGIN_MSG_TYPE;
 	online_mode_selection_mem_buffer[3] = STNP_LOGIN_PASSWORD;
 	memcpy(online_mode_selection_mem_buffer+4, network_login, 16);

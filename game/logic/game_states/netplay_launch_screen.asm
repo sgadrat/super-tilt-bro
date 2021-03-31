@@ -52,7 +52,7 @@ init_netplay_launch_screen:
 		.byt 1, TOESP_MSG_GET_ESP_STATUS
 
 	set_udp_cmd:
-		.byt 2, TOESP_MSG_SET_SERVER_PROTOCOL, ESP_PROTOCOL_UDP
+		.byt 2, TOESP_MSG_SERVER_SET_PROTOCOL, ESP_PROTOCOL_UDP
 .)
 
 netplay_launch_screen_tick:
@@ -189,7 +189,7 @@ netplay_launch_screen_tick:
 		step_title:
 			.byt $e8, $ed, $ea, $e8, $f0, $02, $f3, $ea, $f9, $fc, $f4, $f7, $f0, $02, $e8, $f4, $f3, $eb, $ee, $ec
 		cmd_get_server_settings:
-			.byt 1, TOESP_MSG_GET_SERVER_CONFIG_SETTINGS
+			.byt 1, TOESP_MSG_SERVER_GET_CONFIG_SETTINGS
 	.)
 
 	NB_KNOWN_SERVERS = 2
@@ -401,15 +401,15 @@ netplay_launch_screen_tick:
 		.)
 
 		restore_server_config_cmd:
-			.byt 1, TOESP_MSG_RESTORE_SERVER_SETTINGS
+			.byt 1, TOESP_MSG_SERVER_RESTORE_SETTINGS
 
 		connect_cmd:
-			.byt 1, TOESP_MSG_CONNECT_TO_SERVER
+			.byt 1, TOESP_MSG_SERVER_CONNECT
 
 		server_north_america_settings:
-			.byt 21, TOESP_MSG_SET_SERVER_SETTINGS, >3000, <3000, "stb-nae.wontfix.it"
+			.byt 21, TOESP_MSG_SERVER_SET_SETTINGS, >3000, <3000, "stb-nae.wontfix.it"
 		server_europe_settings:
-			.byt 21, TOESP_MSG_SET_SERVER_SETTINGS, >3000, <3000, "stb-euw.wontfix.it"
+			.byt 21, TOESP_MSG_SERVER_SET_SETTINGS, >3000, <3000, "stb-euw.wontfix.it"
 		server_cfg_msb:
 			.byt >server_north_america_settings, >server_europe_settings
 		server_cfg_lsb:
@@ -459,7 +459,7 @@ netplay_launch_screen_tick:
 		estimate_latency_msg:
 			.byt $ea, $f8, $f9, $ee, $f2, $e6, $f9, $ea, $02, $f1, $e6, $f9, $ea, $f3, $e8, $fe, $02, $02, $02, $02
 		cmd_ping:
-			.byt 2, TOESP_MSG_GET_SERVER_PING, 3
+			.byt 2, TOESP_MSG_SERVER_PING, 3
 	.)
 
 	estimate_latency_2:
@@ -542,7 +542,7 @@ netplay_launch_screen_tick:
 		; Send connection message
 		lda #31                                ; ESP header
 		sta RAINBOW_DATA
-		lda #TOESP_MSG_SEND_MESSAGE_TO_SERVER
+		lda #TOESP_MSG_SERVER_SEND_MESSAGE
 		sta RAINBOW_DATA
 
 		lda #STNP_CLI_MSG_TYPE_CONNECTION ; message_type

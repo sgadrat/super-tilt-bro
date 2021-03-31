@@ -8,6 +8,7 @@ build.log
 build.log.err
 game/cstb/mem_labels.h
 game/cstb/constants.h
+game/cstb/rainbow_constants.h
 game/data/characters/characters-index.asm
 game/data/characters/sinbad/
 game/data/characters/kiki/

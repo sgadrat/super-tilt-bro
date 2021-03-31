@@ -89,7 +89,7 @@ network_tick_ingame:
 			lda #11          ; Message length (10 bytes of payload + 1 byte for ESP message type)
 			sta RAINBOW_DATA
 
-			lda #TOESP_MSG_SEND_MESSAGE_TO_SERVER ; ESP message type
+			lda #TOESP_MSG_SERVER_SEND_MESSAGE ; ESP message type
 			sta RAINBOW_DATA
 
 			; Payload

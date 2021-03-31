@@ -51,3 +51,26 @@ with open('game/constants.asm', 'r') as source_file:
 
 			# Write processed line
 			dest_file.write(processed + '\n')
+
+# Build rainbow constants
+with open('game/logic/rainbow_lib.asm', 'r') as source_file:
+	with open('game/cstb/rainbow_constants.h', 'w') as dest_file:
+		dest_file.write('#pragma once\n\n')
+		dest_file.write('#include <stdint.h>\n\n')
+		for line in source_file:
+			line = line.rstrip('\n')
+			processed = None
+
+			# Common transformation
+			line = re.sub(';', '//', line)
+
+			# Convert known line formats to C++
+			m = re.match(r'^(?P<lbl>((FROMESP)|(TOESP)|(ESP))_[A-Z0-9_]+)( +)= (?P<val>[0-9a-f$%]+)(?P<cmt> +//.*)?$', line)
+			if m is not None:
+				processed = 'static uint8_t const {} = {};{}'.format(
+					m.group('lbl'), asmint(m.group('val')), '' if m.group('cmt') is None else m.group('cmt')
+				)
+
+			# Write processed line
+			if processed is not None:
+				dest_file.write(processed + '\n')

@@ -13,6 +13,10 @@ bank_table:
 mapper_init:
 .(
 #ifdef MAPPER_RAINBOW
+	; Enable ESP
+	lda #%00000001
+	sta RAINBOW_FLAGS
+
 	; Configure rainbow mapper
 	lda #%00011110 ; ssmmrccp - horizontal mirroring, CHR-RAM, 8k CHR window, 16k+8k+8k PRG banking
 	sta RAINBOW_CONFIGURATION
