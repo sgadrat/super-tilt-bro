@@ -21,6 +21,7 @@ static struct SatelliteState* Satellite(uint8_t* raw) {
 ///////////////////////////////////////
 
 extern uint8_t const menu_online_mode_anim_cursor;
+extern uint8_t const menu_online_mode_anim_line_cursor;
 extern uint8_t const menu_online_mode_anim_monster;
 extern uint8_t const menu_online_mode_anim_satellite;
 extern uint8_t const menu_online_mode_anim_ship;
@@ -29,6 +30,7 @@ extern uint8_t const menu_online_mode_game_password_window;
 extern uint8_t const menu_online_mode_login_window;
 extern uint8_t const menu_online_mode_nametable;
 extern uint8_t const menu_online_mode_palette;
+extern uint8_t const menu_online_mode_setting_select_window;
 extern uint8_t const tileset_menu_online_mode;
 extern uint8_t const tileset_menu_online_mode_sprites;
 
@@ -100,6 +102,11 @@ static uint8_t const OPTION_CASUAL = 0;
 static uint8_t const OPTION_RANKED = 1;
 static uint8_t const OPTION_PRIVATE = 2;
 static uint8_t const OPTION_SETTINGS = 3;
+
+static uint8_t const NB_SETTINGS = 2;
+static uint8_t const SETTING_CREATE_ACCOUNT = 0;
+static uint8_t const SETTING_CONFIGURE_WIFI = 1;
+static uint8_t const SETTING_INVALID = 255;
 
 static uint8_t const CURSOR_ANIM_FIRST_SPRITE = 0;
 static uint8_t const CURSOR_ANIM_LAST_SPRITE = 5;
@@ -383,6 +390,91 @@ static void place_earth_sprites() {
 static void clear_form_cursor() {
 	for (uint8_t sprite_num = Anim(online_mode_selection_cursor_anim)->first_sprite_num; sprite_num <= Anim(online_mode_selection_cursor_anim)->last_sprite_num; ++sprite_num) {
 		oam_mirror[sprite_num * 4] = 0xfe;
+	}
+}
+
+static uint8_t select_setting_input(uint8_t* current_setting, uint8_t controller_btns, uint8_t last_frame_btns) {
+	if (controller_btns != last_frame_btns) {
+		switch (controller_btns) {
+			case CONTROLLER_BTN_DOWN:
+				sound_effect_click();
+				if (*current_setting == 0) {
+					*current_setting = NB_SETTINGS - 1;
+				}else {
+					--*current_setting;
+				}
+				break;
+			case CONTROLLER_BTN_UP:
+				sound_effect_click();
+				if (*current_setting == NB_SETTINGS - 1) {
+					*current_setting = 0;
+				}else {
+					++*current_setting;
+				}
+				break;
+
+			// Buttons that take effect on release
+			case 0:
+				switch (last_frame_btns) {
+					case CONTROLLER_BTN_A:
+					case CONTROLLER_BTN_START:
+						sound_effect_click();
+						return 1;
+					case CONTROLLER_BTN_B:
+						sound_effect_click();
+						return 2;
+				};
+				break;
+		}
+	}
+	return 0;
+}
+
+static uint8_t select_setting() {
+	// Display selection window
+	draw_dialog(0x2146, &menu_online_mode_setting_select_window, 3);
+	hide_earth_sprites();
+
+	static uint8_t const palette_buffer[] = {
+			0x23, 0xd1, 22,
+			/*.*/ 0xc0, 0xf0, 0xf0, 0xf0, 0xf0, 0x30, 0x00,
+			0x00, 0xcc, 0xaa, 0xaa, 0xaa, 0xaa, 0x33, 0x00,
+			0x00, 0xcc, 0xfa, 0xfa, 0xfa, 0xfa, 0x73
+	};
+	wrap_push_nt_buffer(palette_buffer);
+	yield();
+
+	// Initialize cursor animation
+	int16_t const first_option_position = 112;
+	wrap_animation_init_state(online_mode_selection_cursor_anim, &menu_online_mode_anim_line_cursor);
+	Anim(online_mode_selection_cursor_anim)->x = 64;
+	Anim(online_mode_selection_cursor_anim)->y = first_option_position;
+	Anim(online_mode_selection_cursor_anim)->first_sprite_num = CURSOR_ANIM_FIRST_SPRITE;
+	Anim(online_mode_selection_cursor_anim)->last_sprite_num = CURSOR_ANIM_LAST_SPRITE;
+
+	// Process window logic until the player selects an option
+	uint8_t stay_in_window = 0;
+	uint8_t current_setting = 0;
+	while (stay_in_window == 0) {
+		// Handle inputs
+		stay_in_window = select_setting_input(&current_setting, *controller_a_btns, *controller_a_last_frame_btns);
+
+		// Pace cursor
+		Anim(online_mode_selection_cursor_anim)->y = first_option_position + 8 * current_setting;
+		wrap_animation_draw(online_mode_selection_cursor_anim, 0, 0);
+		wrap_animation_tick(online_mode_selection_cursor_anim);
+
+		// Wait next frame
+		yield();
+	}
+
+	// Handle action selected by the player
+	if (stay_in_window == 1) {
+		// Choice validated
+		return current_setting;
+	}else {
+		// Choice cancelled
+		return SETTING_INVALID;
 	}
 }
 
@@ -974,7 +1066,15 @@ static void next_screen() {
 			}
 			break;
 		case OPTION_SETTINGS:
-			//TODO
+			switch (select_setting()) {
+				case SETTING_CREATE_ACCOUNT:
+					//TODO
+					break;
+				case SETTING_CONFIGURE_WIFI:
+					//TODO
+					break;
+			}
+			hide_dialog(0x2146, &menu_online_mode_setting_select_window, 2);
 			break;
 	}
 }
