@@ -222,6 +222,7 @@ static uint8_t const STNP_LOGIN_MSG_TYPE = 255;
 // Login method
 static uint8_t const STNP_LOGIN_ANONYMOUS = 0;
 static uint8_t const STNP_LOGIN_PASSWORD = 1;
+static uint8_t const STNP_LOGIN_CREATE_ACCOUNT = 2;
 
 // Server message types
 static uint8_t const STNP_LOGIN_FROM_SERVER_LOGGED_IN = 0;
@@ -606,17 +607,17 @@ static uint8_t check_login_message(uint8_t type) {
 	;
 }
 
-static void password_login_send_request() {
+static void password_login_send_request(uint8_t create) {
 	online_mode_selection_mem_buffer[0] = 35;
 	online_mode_selection_mem_buffer[1] = TOESP_MSG_SERVER_SEND_MESSAGE;
 	online_mode_selection_mem_buffer[2] = STNP_LOGIN_MSG_TYPE;
-	online_mode_selection_mem_buffer[3] = STNP_LOGIN_PASSWORD;
+	online_mode_selection_mem_buffer[3] = (create == 0 ? STNP_LOGIN_PASSWORD : STNP_LOGIN_CREATE_ACCOUNT);
 	memcpy(online_mode_selection_mem_buffer+4, network_login, 16);
 	memcpy(online_mode_selection_mem_buffer+20, network_password, 16);
 	wrap_esp_send_cmd(online_mode_selection_mem_buffer);
 }
 
-static void password_login_process() {
+static void password_login_process(uint8_t create) {
 	// Clear login fields
 	clear_form_cursor();
 	draw_dialog(0x2146, &menu_online_mode_connexion_window, 3);
@@ -632,7 +633,7 @@ static void password_login_process() {
 	yield();
 
 	// Send login request
-	password_login_send_request();
+	password_login_send_request(create);
 	yield();
 
 	// Wait answer
@@ -649,32 +650,42 @@ static void password_login_process() {
 			uint8_t const msg_payload_offset = 4;
 
 			if (check_login_message(STNP_LOGIN_FROM_SERVER_LOGGED_IN)) {
-				//TODO check first payload byte which should be STNP_LOGIN_PASSWORD (not anonymous login)
+				//TODO check first payload byte which should be STNP_LOGIN_PASSWORD or STNP_LOGIN_CREATE_ACCOUNT (not anonymous login)
 				// Store received ID
 				network_client_id_byte0[0] = online_mode_selection_mem_buffer[msg_payload_offset + 1];
 				network_client_id_byte0[1] = online_mode_selection_mem_buffer[msg_payload_offset + 2];
 				network_client_id_byte0[2] = online_mode_selection_mem_buffer[msg_payload_offset + 3];
 				network_client_id_byte0[3] = online_mode_selection_mem_buffer[msg_payload_offset + 4];
 
-				// Mark logged as anonymous
+				// Mark logged as authentified
 				*network_logged = LOGIN_LOGGED;
 
 				// Stop waiting a message
 				break;
 			}else if (check_login_message(STNP_LOGIN_FROM_SERVER_LOGIN_FAILED)) {
 				// Set invariable window content
-				static uint8_t const title_buffer[] = {
-					0x21, 0x6a, 12,
-					TILE_CHAR_L, TILE_CHAR_O, TILE_CHAR_G, TILE_CHAR_I, TILE_CHAR_N,
-					TILE_SPACE, TILE_CHAR_F, TILE_CHAR_A, TILE_CHAR_I, TILE_CHAR_L,
-					TILE_CHAR_E, TILE_CHAR_D
+				static uint8_t const title_buffer[][18] = {
+					{
+						0x21, 0x68, 15,
+						TILE_SPACE, TILE_SPACE,
+						TILE_CHAR_L, TILE_CHAR_O, TILE_CHAR_G, TILE_CHAR_I, TILE_CHAR_N,
+						TILE_SPACE, TILE_CHAR_F, TILE_CHAR_A, TILE_CHAR_I, TILE_CHAR_L,
+						TILE_CHAR_E, TILE_CHAR_D,
+						TILE_SPACE
+					},
+					{
+						0x21, 0x68, 15,
+						TILE_CHAR_C, TILE_CHAR_R, TILE_CHAR_E, TILE_CHAR_A, TILE_CHAR_T,
+						TILE_CHAR_I, TILE_CHAR_O, TILE_CHAR_N, TILE_SPACE, TILE_CHAR_F,
+						TILE_CHAR_A, TILE_CHAR_I, TILE_CHAR_L, TILE_CHAR_E, TILE_CHAR_D
+					},
 				};
 				static uint8_t const separator_buffer[] = {
 					0x21, 0x88, 9,
 					TILE_SPACE, TILE_SPACE, TILE_SPACE, TILE_SPACE, TILE_SPACE,
 					TILE_SPACE, TILE_SPACE, TILE_SPACE, TILE_SPACE
 				};
-				wrap_push_nt_buffer(title_buffer);
+				wrap_push_nt_buffer(title_buffer[create]);
 				wrap_push_nt_buffer(separator_buffer);
 				yield();
 
@@ -706,6 +717,9 @@ static void password_login_process() {
 					yield();
 				}
 
+				// Mark user as unlogged
+				*network_logged = LOGIN_UNLOGGED;
+
 				// Stop waiting a message
 				break;
 			}
@@ -714,7 +728,7 @@ static void password_login_process() {
 		// Reemit periodically
 		--resend_counter;
 		if (resend_counter == 0) {
-			password_login_send_request();
+			password_login_send_request(create);
 			resend_counter = RESEND_PERIOD;
 		}
 
@@ -735,7 +749,7 @@ static void init_cursor_anim(uint16_t x, uint16_t y) {
 	Anim(online_mode_selection_cursor_anim)->last_sprite_num = CURSOR_ANIM_LAST_SPRITE;
 }
 
-static void password_login_input(uint8_t controller_btns, uint8_t last_frame_btns, uint8_t* current_field, uint8_t* char_cursor, uint8_t* stay_in_window, uint8_t* cursor_state) {
+static void password_login_input(uint8_t controller_btns, uint8_t last_frame_btns, uint8_t* current_field, uint8_t* char_cursor, uint8_t* stay_in_window, uint8_t* cursor_state, uint8_t create) {
 	uint8_t const AUTOFIRE_THRESHOLD = 14;
 	uint8_t const AUTOFIRE_TICK = AUTOFIRE_THRESHOLD + 10;
 	if (controller_btns != last_frame_btns) {
@@ -794,7 +808,7 @@ static void password_login_input(uint8_t controller_btns, uint8_t last_frame_btn
 							*char_cursor = last_char;
 							*current_field = 1;
 						}else {
-							password_login_process();
+							password_login_process(create);
 							*stay_in_window = 0;
 						}
 						break;
@@ -819,18 +833,26 @@ static void password_login_input(uint8_t controller_btns, uint8_t last_frame_btn
 	}
 }
 
-static void password_login() {
+static void password_login(uint8_t create) {
 	// Display login window
 	draw_dialog(0x2146, &menu_online_mode_login_window, 3);
 	hide_earth_sprites();
 
-	static uint8_t const palette_buffer[] = {
+	static uint8_t const palette_buffer[][25] = {
+		{
 			0x23, 0xd1, 22,
 			/*.*/ 0xc0, 0xf0, 0xf0, 0xf5, 0xf5, 0x75, 0x55,
 			0x00, 0xcc, 0xaa, 0xaa, 0xaa, 0xaa, 0x37, 0x55,
 			0x00, 0xcc, 0xfa, 0xfa, 0xfa, 0xfa, 0x33
+		},
+		{
+			0x23, 0xd1, 22,
+			/*.*/ 0xc0, 0xf0, 0xf0, 0xf0, 0xf0, 0x30, 0x00,
+			0x00, 0xcc, 0xaa, 0xaa, 0xaa, 0xaa, 0x33, 0x00,
+			0x00, 0xcc, 0xfa, 0xfa, 0xfa, 0xfa, 0x73
+		},
 	};
-	wrap_push_nt_buffer(palette_buffer);
+	wrap_push_nt_buffer(palette_buffer[create]);
 	yield();
 
 	// Initialize cursor animation
@@ -868,7 +890,8 @@ static void password_login() {
 		password_login_input(
 			*controller_a_btns, *controller_a_last_frame_btns,
 			&current_field,
-			&char_cursor, &stay_in_window, &cursor_state
+			&char_cursor, &stay_in_window, &cursor_state,
+			create
 		);
 
 		// Draw current login
@@ -894,6 +917,10 @@ static void password_login() {
 	// Repair damages caused to the screen
 	clear_form_cursor();
 	hide_dialog(0x2146, &menu_online_mode_login_window, 2);
+}
+
+static void create_account() {
+	password_login(1);
 }
 
 static void clear_game_password() {
@@ -1046,7 +1073,7 @@ static void next_screen() {
 			break;
 		case OPTION_RANKED:
 			if (*network_logged != LOGIN_LOGGED) {
-				password_login();
+				password_login(0);
 			}
 			if (*network_logged == LOGIN_LOGGED) {
 				clear_game_password();
@@ -1068,7 +1095,7 @@ static void next_screen() {
 		case OPTION_SETTINGS:
 			switch (select_setting()) {
 				case SETTING_CREATE_ACCOUNT:
-					//TODO
+					create_account();
 					break;
 				case SETTING_CONFIGURE_WIFI:
 					//TODO
