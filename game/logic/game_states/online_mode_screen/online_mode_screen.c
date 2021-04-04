@@ -1098,7 +1098,7 @@ static void next_screen() {
 					create_account();
 					break;
 				case SETTING_CONFIGURE_WIFI:
-					//TODO
+					wrap_change_global_game_state(GAME_STATE_WIFI_SETTINGS);
 					break;
 			}
 			hide_dialog(0x2146, &menu_online_mode_setting_select_window, 2);

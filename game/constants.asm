@@ -18,6 +18,7 @@ GAME_STATE_DONATION = $09
 GAME_STATE_DONATION_BTC = $0a
 GAME_STATE_DONATION_PAYPAL = $0b
 GAME_STATE_ONLINE_MODE_SELECTION = $0c
+GAME_STATE_WIFI_SETTINGS = $0d
 ;NOTE maximum supported value is $0f, because get_transition_id returns an ID on one byte. To handle more than 16 states, it should be changed.
 
 DEFAULT_GRAVITY = $02
