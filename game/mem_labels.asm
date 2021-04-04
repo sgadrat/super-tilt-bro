@@ -320,6 +320,13 @@ online_mode_selection_monster_anim = $05d8 ; $05d8 to $05e3
 online_mode_selection_satellite_anim = $05e4 ; $05e4 to $05ef
 
 ;
+; WIFI_SETTINGS labels
+;
+
+wifi_settings_zp_mem = last_c_label+1
+wifi_settings_mem = $0580
+
+;
 ; CONFIG labels
 ;
 

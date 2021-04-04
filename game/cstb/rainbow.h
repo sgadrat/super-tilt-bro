@@ -11,6 +11,10 @@
 
 #include "cstb/rainbow_constants.h"
 
+static uint8_t const ESP_MSG_SIZE = 0;
+static uint8_t const ESP_MSG_TYPE = 1;
+static uint8_t const ESP_MSG_PAYLOAD = 2;
+
 ////////////////////////////////////
 // Registers
 ////////////////////////////////////

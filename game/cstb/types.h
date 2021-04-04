@@ -27,4 +27,4 @@ static struct Animation* Anim(uint8_t* raw) {
 	return (struct Animation*)raw;
 }
 
-#pragma GCC diagnostic push
+#pragma GCC diagnostic pop
