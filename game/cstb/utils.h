@@ -48,4 +48,13 @@ static uint32_t random(uint32_t seed)
   return seed;
 }
 
+/** strnlen working on 8bit values */
+static uint8_t strnlen8(char const* s, uint8_t maxlen) {
+	uint8_t len = 0;
+	while (len < maxlen && s[len] != 0) {
+		++len;
+	}
+	return len;
+}
+
 #pragma GCC diagnostic pop

@@ -5,7 +5,7 @@
 // Common STB structures
 //
 
-struct Animation {
+typedef struct Animation {
 	uint16_t x;
 	uint16_t y;
 	uint8_t const* data;
@@ -14,7 +14,7 @@ struct Animation {
 	uint8_t first_sprite_num;
 	uint8_t last_sprite_num;
 	uint8_t const* frame_vector;
-} __attribute__((__packed__));
+} __attribute__((__packed__)) Animation;
 
 //
 // Easy casts from pointers in mem_labels

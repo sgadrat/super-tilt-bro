@@ -19,6 +19,8 @@ static uint8_t const ESP_MSG_PAYLOAD = 2;
 // Registers
 ////////////////////////////////////
 
+extern uint8_t volatile RAINBOW_DATA;
+extern uint8_t volatile RAINBOW_FLAGS;
 extern uint8_t volatile RAINBOW_WRAM_BANKING;
 
 ////////////////////////////////////

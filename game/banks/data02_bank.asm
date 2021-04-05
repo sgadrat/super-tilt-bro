@@ -28,8 +28,9 @@ bank_data02_tileset_ascii_begin:
 bank_data02_tileset_ascii_end:
 
 bank_data02_wifi_settings_extra_data_begin:
-#include "game/data/menu_wifi_settings/screen.asm"
+#include "game/data/menu_wifi_settings/anims.asm"
 #include "game/data/menu_wifi_settings/tileset.asm"
+#include "game/data/menu_wifi_settings/screen.asm"
 bank_data02_wifi_settings_extra_data_end:
 
 bank_data02_wifi_settings_extra_code_begin:

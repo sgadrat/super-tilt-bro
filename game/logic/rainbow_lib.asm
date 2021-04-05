@@ -51,6 +51,7 @@ TOESP_MSG_FILE_COUNT                       = 36  ; Count files in a specific pat
 TOESP_MSG_FILE_GET_LIST                    = 37  ; Get list of existing files in a path
 TOESP_MSG_FILE_GET_FREE_ID                 = 38  ; Get an unexisting file ID in a specific path
 TOESP_MSG_FILE_GET_INFO                    = 39  ; Get file info (size + crc32)
+TOESP_MSG_FILE_DOWNLOAD                    = 40  ; Download a file from a giving URL to a specific path index / file index
 
 ;-------------------------------------------------------------------------------
 ; Commands from ESP to NES
@@ -85,6 +86,7 @@ FROMESP_MSG_FILE_DATA                      = 16  ; Returns file data (FILE_READ)
 FROMESP_MSG_FILE_COUNT                     = 17  ; Returns file count in a specific path
 FROMESP_MSG_FILE_ID                        = 18  ; Returns a free file ID (FILE_GET_FREE_ID)
 FROMESP_MSG_FILE_INFO                      = 19  ; Returns file info (size + CRC32) (FILE_GET_INFO)
+FROMESP_MSG_FILE_DOWNLOAD                  = 20  ; Returns download result code
 
 ;-------------------------------------------------------------------------------
 ; Constants to be used in commands

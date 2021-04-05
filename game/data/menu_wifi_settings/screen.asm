@@ -1,8 +1,8 @@
 menu_wifi_settings_palette:
 ; Background
-.byt $21,$0f,$12,$19, $21,$00,$00,$00, $21,$00,$00,$00, $21,$0f,$20,$10 ; 0-dialog, 1-unused, 2-unused, 3-title
+.byt $21,$0f,$20,$10, $21,$00,$00,$00, $21,$00,$00,$00, $21,$0f,$20,$10 ; 0-dialog, 1-unused, 2-unused, 3-title
 ; Sprites
-.byt $21,$00,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00 ; 0-unused, 1-unused, 2-unused, 3-unused
+.byt $21,$00,$00,$00, $21,$28,$00,$00, $21,$00,$00,$00, $21,$00,$00,$00 ; 0-unused, 1-cursor, 2-unused, 3-unused
 
 menu_wifi_settings_nametable:
 .byt $00,$62
@@ -50,3 +50,60 @@ menu_wifi_settings_nametable_attributes:
 menu_wifi_settings_nametable_end:
 .byt ZIPNT_END
 
+.(
+	CA = TILE_CHAR_A
+	CB = TILE_CHAR_B
+	CC = TILE_CHAR_C
+	CD = TILE_CHAR_D
+	CE = TILE_CHAR_E
+	CF = TILE_CHAR_F
+	CG = TILE_CHAR_G
+	CH = TILE_CHAR_H
+	CI = TILE_CHAR_I
+	CJ = TILE_CHAR_J
+	CK = TILE_CHAR_K
+	CL = TILE_CHAR_L
+	CM = TILE_CHAR_M
+	CN = TILE_CHAR_N
+	CO = TILE_CHAR_O
+	CP = TILE_CHAR_P
+	CQ = TILE_CHAR_Q
+	CR = TILE_CHAR_R
+	CS = TILE_CHAR_S
+	CT = TILE_CHAR_T
+	CU = TILE_CHAR_U
+	CV = TILE_CHAR_V
+	CW = TILE_CHAR_W
+	CX = TILE_CHAR_X
+	CY = TILE_CHAR_Y
+	CZ = TILE_CHAR_Z
+
+	W0 = TILE_MENU_WIFI_SETTINGS_DIALOGS_00
+	W1 = TILE_MENU_WIFI_SETTINGS_DIALOGS_01
+	W2 = TILE_MENU_WIFI_SETTINGS_DIALOGS_02
+	W3 = TILE_MENU_WIFI_SETTINGS_DIALOGS_03
+	W4 = TILE_MENU_WIFI_SETTINGS_DIALOGS_04
+	W5 = TILE_MENU_WIFI_SETTINGS_DIALOGS_05
+	W6 = TILE_MENU_WIFI_SETTINGS_DIALOGS_06
+	W7 = TILE_MENU_WIFI_SETTINGS_DIALOGS_07
+	W8 = TILE_MENU_WIFI_SETTINGS_DIALOGS_08
+	W9 = TILE_MENU_WIFI_SETTINGS_DIALOGS_09
+	WA = TILE_MENU_WIFI_SETTINGS_DIALOGS_0A
+	WB = TILE_MENU_WIFI_SETTINGS_DIALOGS_0B
+	WC = TILE_MENU_WIFI_SETTINGS_DIALOGS_0C
+	WD = TILE_MENU_WIFI_SETTINGS_DIALOGS_0D
+	WE = TILE_MENU_WIFI_SETTINGS_DIALOGS_0E
+
+	&menu_wifi_settings_password_window:
+	.byt 20, 10 ; width, height (in tiles)
+	.byt W0, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W2
+	.byt W3, W4, W4, W4, W4, W4, CP, CA, CS, CS, CW, CO, CR, CD, W4, W4, W4, W4, W4, W5
+	.byt W3, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W5
+	.byt W3, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W5
+	.byt W3, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W5
+	.byt W3, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W5
+	.byt W3, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W5
+	.byt W3, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W5
+	.byt W3, W4, W7, W8, W9, WA, W4, CO, CK, W4, W4, W4, WB, W4, CB, CA, CC, CK, W4, W5
+	.byt WC, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WE
+.)
