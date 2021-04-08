@@ -6,6 +6,12 @@
 
 typedef struct {
 	uint8_t refresh_timer;
+
+	// HACK
+	//  Used by net_list coroutine to block requests to ESP by wifi_status
+	//  Prototype cart tends to mess-up when generating two responses at the same time
+	// FIXME remove this variable and all reference to it once cartridges are fixed
+	uint8_t blocked;
 } __attribute__((__packed__)) WifiStatusCtx;
 
 typedef struct {
@@ -220,8 +226,10 @@ static void display_wifi_status() {
 	if (vars()->wifi_status_ctx.refresh_timer == 50) {
 		vars()->wifi_status_ctx.refresh_timer = 0;
 
-		static uint8_t const cmd_get_wifi_status[] = {1, TOESP_MSG_GET_WIFI_STATUS};
-		wrap_esp_send_cmd(cmd_get_wifi_status);
+		if (vars()->wifi_status_ctx.blocked == 0) {
+			static uint8_t const cmd_get_wifi_status[] = {1, TOESP_MSG_GET_WIFI_STATUS};
+			wrap_esp_send_cmd(cmd_get_wifi_status);
+		}
 	}
 	++vars()->wifi_status_ctx.refresh_timer;
 }
@@ -434,6 +442,9 @@ static void update_net_list() {
 			yield();
 		}
 
+		// Unblock other requests
+		vars()->wifi_status_ctx.blocked = 0;
+
 		// Set current network
 		if (ctx->net_count != 0) {
 			vars()->current_network = 0;
@@ -505,6 +516,7 @@ void init_wifi_settings_screen_extra() {
 
 	// Init state
 	vars()->wifi_status_ctx.refresh_timer = 0;
+	vars()->wifi_status_ctx.blocked = 0;
 	vars()->net_list_ctx.step = 0;
 	vars()->password_window_ctx.step = 0;
 	vars()->current_network = 255;
