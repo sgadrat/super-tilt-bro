@@ -34,8 +34,6 @@ extern uint8_t const menu_online_mode_setting_select_window;
 extern uint8_t const tileset_menu_online_mode;
 extern uint8_t const tileset_menu_online_mode_sprites;
 
-extern uint8_t volatile RAINBOW_WRAM_BANKING;
-
 extern uint8_t const MENU_ONLINE_MODE_TILESET_BANK_NUMBER; // Actually a label, use its address or "tileset_bank()"
 extern uint8_t const ONLINE_MODE_SCREEN_EXTRA_BANK_NUMBER; // Actually a label, use its address or "code_bank()"
 
@@ -1067,7 +1065,6 @@ static void next_screen() {
 					break;
 				}
 			}
-			clear_game_password();
 			*network_ranked = 0;
 			wrap_change_global_game_state(GAME_STATE_CHARACTER_SELECTION);
 			break;
@@ -1076,7 +1073,6 @@ static void next_screen() {
 				password_login(0);
 			}
 			if (*network_logged == LOGIN_LOGGED) {
-				clear_game_password();
 				*network_ranked = 1;
 				wrap_change_global_game_state(GAME_STATE_CHARACTER_SELECTION);
 			}
@@ -1355,9 +1351,6 @@ void init_online_mode_screen_extra() {
 	init_ship_anim();
 	init_monster_anim();
 	init_satellite_anim();
-
-	// Force RAINBOW WRAM in $6000-$7fff range
-	RAINBOW_WRAM_BANKING = 0x80;
 
 	// Initialize state
 	*online_mode_selection_current_option = 0;

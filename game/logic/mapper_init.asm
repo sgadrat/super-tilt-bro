@@ -22,12 +22,16 @@ mapper_init:
 	sta RAINBOW_CONFIGURATION
 
 	; Select the PRG bank just before the last for the variable 8k window (emulating 16k variable + 16k fixed banking)
-	lda #%00111110 ; c.BBBBbb - PRG-ROM, befor the last bank
+	lda #%00111110 ; c.BBBBbb - PRG-ROM, before the last bank
 	sta RAINBOW_PRG_BANKING_3
 
 	; Select the first CHR-BANK (Actually we don't care, the game don't use CHR banking, but let's be consistent)
 	lda #%00000000 ; BBBBBBBB - first bank
 	sta RAINBOW_CHR_BANKING_1
+
+	; Select the first WRAM bank
+	lda #%10000000 ; c.BBBBbb - WRAM, first bank
+	sta RAINBOW_WRAM_BANKING
 
 	; Disable scanline IRQ
 	sta RAINBOW_IRQ_DISABLE
