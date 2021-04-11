@@ -107,6 +107,18 @@ sta skip_frames_to_50hz
 pal:
 .)
 
+; Enter rescue mode if magic buttons are pressed
+; TODO move this call to mapper_init to reduce dependency of code being in the readonly segment
+.(
+jsr fetch_controllers
+lda controller_a_btns
+cmp #CONTROLLER_BTN_UP+CONTROLLER_BTN_SELECT+CONTROLLER_BTN_B
+bne no_rescue
+	jmp rescue
+no_rescue:
+.)
+
+; Prepare to start the game
 jsr audio_init
 jsr global_init
 

@@ -153,6 +153,18 @@ RAINBOW_IRQ_ENABLE = $5c07
 ; Utility routines
 ;-------------------------------------------------------------------------------
 
+; Shorter call convetion for esp_send_cmd
+;  register A - address of the command data (lsb)
+;  register X - address of the command data (msb)
+;
+; Overwrites all registers, tmpfield1 and tmpfield2
+esp_send_cmd_short:
+.(
+	sta tmpfield1
+	stx tmpfield2
+	;rts ; Fallthrough to esp_send_cmd
+.)
+
 ; Send a command to the ESP
 ;  tmpfield1,tmpfield2 - address of the command data
 ;

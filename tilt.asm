@@ -34,7 +34,7 @@
 #define MAPPER_RAINBOW
 	MAPPER_NUMBER=3871
 	SUBMAPPER_NUMBER=0
-	MAPPER_BATTERY_FLAG=0
+	MAPPER_BATTERY_FLAG=1
 #endif
 
 ; iNES header
@@ -70,5 +70,6 @@ code_end:
 #ifdef SERVER_BYTECODE
 #include "game/logic/server_bytecode_extras.asm"
 #endif
+#include "game/logic/rescue.asm"
 #include "game/fixed_bank_filler.asm"
 #endif
