@@ -14,6 +14,6 @@ game/data/characters/sinbad/
 game/data/characters/kiki/
 game/data/tilesets/ruins.asm
 game/extra_banks.asm
-game/banks/data05_bank.asm
 game/banks/data06_bank.asm
 game/banks/data07_bank.asm
+game/banks/data08_bank.asm

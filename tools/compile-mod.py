@@ -488,9 +488,12 @@ def generate_banks(char_to_bank, tileset_to_bank, game_dir):
 
 			#define CURRENT_BANK_NUMBER $04
 			#include "game/banks/data02_bank.asm"
+
+			#define CURRENT_BANK_NUMBER $05
+			#include "game/banks/data05_bank.asm"
 		"""))
 
-		for bank_number in range(5, 31):
+		for bank_number in range(6, 31):
 			bank_index_file.write('\n#define CURRENT_BANK_NUMBER {}\n'.format(stblib.utils.uintasm8(bank_number)))
 			if bank_number in char_to_bank.values() or bank_number in tileset_to_bank.values():
 				bank_index_file.write('#include "game/banks/data{:02d}_bank.asm"\n'.format(bank_number))
@@ -574,7 +577,7 @@ def generate_banks(char_to_bank, tileset_to_bank, game_dir):
 			""".format_map(locals())))
 
 def main():
-	FIRST_AVAILABLE_BANK = 5
+	FIRST_AVAILABLE_BANK = 6
 
 	# Parse command line
 	if len(sys.argv) < 3 or sys.argv[1] == '-h' or sys.argv[1] == '--help':

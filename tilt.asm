@@ -57,19 +57,5 @@
 #ifndef NO_PRG_ROM
 
 #include "game/extra_banks.asm"
-
-#echo
-#echo ===== FIXED-BANK =====
-* = $c000 ; $c000 is where the PRG fixed bank rom is mapped in CPU space, so code position is relative to it
-code_begin:
-#include "game/logic/animation_opcodes.asm"
-#include "nine/prg_rom/prg_rom.asm"
-#include "game/logic/logic.asm"
-code_end:
-#include "game/data/fixed-bank-data.asm"
-#ifdef SERVER_BYTECODE
-#include "game/logic/server_bytecode_extras.asm"
-#endif
-#include "game/logic/rescue.asm"
-#include "game/fixed_bank_filler.asm"
-#endif
+#include "game/fixed_bank_updatable.asm"
+#include "game/static_bank.asm"
