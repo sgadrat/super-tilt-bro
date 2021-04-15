@@ -57,4 +57,8 @@ static uint8_t strnlen8(char const* s, uint8_t maxlen) {
 	return len;
 }
 
+#define CONST_HUNDREDS(val) ((((val) % 1000) / 100))
+#define CONST_TENS(val) ((((val) % 100) / 10))
+#define CONST_UNITS(val) ((val) % 10)
+
 #pragma GCC diagnostic pop

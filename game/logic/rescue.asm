@@ -1,24 +1,77 @@
-;TODO make it relocatable, to be executable from RAM
-rescue:
 .(
-	current_sector = $00
-	num_blocks = $01
-	current_write_addr = $02
-	current_write_addr_msb = $03
 
-	; Set banking to 8+8+8+8 mode
-	lda #1
-	sta RAINBOW_CONFIGURATION ; change PRG mode to mode 1
-	sta RAINBOW_PRG_BANKING_2 ; select 8K bank @ $A000
-	lda #2
-	sta RAINBOW_PRG_BANKING_3 ; select 8K bank @ $C000
+current_sector = $00
+num_blocks = $01
+current_write_addr = $02
+current_write_addr_msb = $03
 
+; Self flash the PRG with raw ROM file in ESP/ROMS/0, and reboot
+;
+;  - Expects NMI to be disabled
+&rescue:
+.(
 	;TODO check ROM file existence
 
 	; Open factory ROM file
 	lda #<cmd_open_file
 	ldx #>cmd_open_file
 	jsr esp_send_cmd_short
+
+	; Flash safe sectors
+	jsr flash_safe_sectors_and_return
+
+	;TODO Select between flashing the static sector or reset there
+	jmp ($fffc)
+	;rts ; useless, jumped to reset vector
+
+	cmd_open_file:
+		.byt 3, TOESP_MSG_FILE_OPEN, ESP_FILE_PATH_ROMS, 0
+.)
+
+
+; Self flash the PRG with data read from open ESP file, and reboot
+;
+;  - Expects NMI to be disabled
+;  - Expects to be able to read 127 blocks of 4KB with ESP FILE_READ commands
+;  - Does not flash the last sector (containing rescue code)
+&flash_safe_sectors:
+.(
+	; Flash sectors
+	jsr flash_safe_sectors_and_return
+
+	; Reset
+	jmp ($fffc)
+.)
+
+; Self flash the PRG with data read from open ESP file, and reboot
+;
+;  - Expects NMI to be disabled
+;  - Expects to be able to read 128 blocks of 4KB with ESP FILE_READ commands
+;  - Flashes the last sector (containing rescue code), this is unsafe, may need to reprogram the ROM externally on fail
+&flash_all_sectors:
+.(
+	; Flash sectors
+	jsr flash_safe_sectors_and_return
+	jmp flash_static_sector
+.)
+
+flash_static_sector:
+.(
+	;TODO copy flash_one_sector in memory, and flash the static sector
+	;TODO flash_one_sector shall be relocatable for that
+
+	; Reset
+	jmp ($fffc)
+.)
+
+flash_safe_sectors_and_return:
+.(
+	; Set banking to 8+8+8+8 mode
+	lda #1
+	sta RAINBOW_CONFIGURATION ; change PRG mode to mode 1
+	sta RAINBOW_PRG_BANKING_2 ; select 8K bank @ $A000
+	lda #2
+	sta RAINBOW_PRG_BANKING_3 ; select 8K bank @ $C000
 
 	; Flash each sector
 	lda #0
@@ -73,31 +126,14 @@ rescue:
 		write_one_block:
 		.(
 			; Read one block
+			;TODO not relocatable - absolute address of cmd_read_block, and dependency on external routine
 			lda #<cmd_read_block
 			ldx #>cmd_read_block
 			jsr esp_send_cmd_short
 
-			;TODO remove me, dbug
-			lda PPUSTATUS
-			lda #$3f
-			sta PPUADDR
-			lda #$00
-			sta PPUADDR
-			lda #$20
-			sta PPUDATA
-
 			wait_answer:
 				bit RAINBOW_FLAGS
 				bpl wait_answer
-
-			;TODO remove me, dbug
-			lda PPUSTATUS
-			lda #$3f
-			sta PPUADDR
-			lda #$00
-			sta PPUADDR
-			lda #$18
-			sta PPUDATA
 
 			; Burn response header
 			lda RAINBOW_DATA ; Garbage byte
@@ -148,17 +184,15 @@ rescue:
 		; Loop
 		inc current_sector
 		lda current_sector
-		cmp #127 ;TODO select between 128 (full rom flashing) or 127 (avoid flashing last sector)
+		cmp #127 ; Notice, 127 sectors, do not override the last (128th) sector
 		beq end
-			jmp flash_one_sector
+			jmp flash_one_sector ; TODO not relocatable, absolute address of flash_one_sector
 		end:
 	.)
 
-	; Restart
-	jmp ($fffc)
+	; Return
+	rts
 
-	cmd_open_file:
-		.byt 3, TOESP_MSG_FILE_OPEN, ESP_FILE_PATH_ROMS, 0
 	cmd_read_block:
 		.byt 2, TOESP_MSG_FILE_READ, 128
 .)
@@ -167,3 +201,5 @@ rescue_end:
 #echo
 #echo rescue code size:
 #print rescue_end-rescue
+
+.)

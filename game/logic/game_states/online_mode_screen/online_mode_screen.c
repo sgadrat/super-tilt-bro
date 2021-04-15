@@ -25,6 +25,7 @@ extern uint8_t const menu_online_mode_anim_line_cursor;
 extern uint8_t const menu_online_mode_anim_monster;
 extern uint8_t const menu_online_mode_anim_satellite;
 extern uint8_t const menu_online_mode_anim_ship;
+extern uint8_t const menu_online_mode_check_update_window;
 extern uint8_t const menu_online_mode_connexion_window;
 extern uint8_t const menu_online_mode_game_password_window;
 extern uint8_t const menu_online_mode_login_window;
@@ -101,9 +102,10 @@ static uint8_t const OPTION_RANKED = 1;
 static uint8_t const OPTION_PRIVATE = 2;
 static uint8_t const OPTION_SETTINGS = 3;
 
-static uint8_t const NB_SETTINGS = 2;
+static uint8_t const NB_SETTINGS = 3;
 static uint8_t const SETTING_CREATE_ACCOUNT = 0;
 static uint8_t const SETTING_CONFIGURE_WIFI = 1;
+static uint8_t const SETTING_UPDATE_GAME = 2;
 static uint8_t const SETTING_INVALID = 255;
 
 static uint8_t const CURSOR_ANIM_FIRST_SPRITE = 0;
@@ -392,23 +394,115 @@ static void clear_form_cursor() {
 	}
 }
 
+static void esp_read_file(uint8_t size) {
+	// Send read command to ESP
+	RAINBOW_DATA = 2;
+	RAINBOW_DATA = TOESP_MSG_FILE_READ;
+	RAINBOW_DATA = size;
+
+	// Wait answer
+	do{
+		yield();
+	}while ((RAINBOW_FLAGS & 0x80) == 0);
+
+	// Burn response header
+	//TODO check that response type is the good one
+	//TODO check that read size match requested size
+	RAINBOW_DATA; // Garbage byte
+	RAINBOW_DATA; // Message size
+	RAINBOW_DATA; // Message type
+	RAINBOW_DATA; // Read size
+}
+
+static void update_game() {
+	// Draw "checking updates"
+	draw_dialog(0x2146, &menu_online_mode_check_update_window, 3);
+	//TODO hide cursor
+	// Note: no attribute update / earth hide, only path to this window already sets it correctly
+
+	// Download update file
+	uint8_t const UPDATE_ROM_FILE = 1;
+	static uint8_t const cmd_download_update[] = {
+		// Message header
+		1+2+54, TOESP_MSG_FILE_DOWNLOAD,
+
+		// Destination
+		ESP_FILE_PATH_ROMS, UPDATE_ROM_FILE,
+
+		// URL
+		'h', 't', 't', 'p', ':', '/', '/', 'u', 'p', 'g', 'r', 'a', 'd', 'e', '.', 's', 'u', 'p', 'e', 'r', '-', 't', 'i', 'l', 't', '-', 'b', 'r', 'o', '.', 'c', 'o', 'm', '/', 'g', 'e', 't', '_', 'f', 'r', 'o', 'm', '/',
+		'0'+CONST_HUNDREDS(GAME_VERSION_MAJOR), '0'+CONST_TENS(GAME_VERSION_MAJOR), '0'+CONST_UNITS(GAME_VERSION_MAJOR), '-',
+		'0'+CONST_HUNDREDS(GAME_VERSION_TYPE),  '0'+CONST_TENS(GAME_VERSION_TYPE),  '0'+CONST_UNITS(GAME_VERSION_TYPE), '-',
+		'0'+CONST_HUNDREDS(GAME_VERSION_MINOR), '0'+CONST_TENS(GAME_VERSION_MINOR), '0'+CONST_UNITS(GAME_VERSION_MINOR),
+	};
+	wrap_esp_send_cmd(cmd_download_update);
+
+	while(
+		wrap_esp_get_msg(online_mode_selection_mem_buffer) != 2 ||
+		online_mode_selection_mem_buffer[1] != FROMESP_MSG_FILE_DOWNLOAD
+	)
+	{
+		if (*controller_a_btns == 0 && *controller_a_last_frame_btns == CONTROLLER_BTN_B) {
+			return;
+		}
+		yield();
+	}
+
+	uint8_t const success = (online_mode_selection_mem_buffer[2] == 0);
+	if (!success) {
+		//TODO Draw "no update available" message and wait for input before returning
+		return;
+	}
+
+	// Parse ROM header
+	static uint8_t const cmd_open_file[] = {3, TOESP_MSG_FILE_OPEN, ESP_FILE_PATH_ROMS, UPDATE_ROM_FILE};
+	wrap_esp_send_cmd(cmd_open_file);
+
+	esp_read_file(1);
+	uint8_t header_len = RAINBOW_DATA;
+	if (header_len < 1) {
+		//TODO error message
+		return;
+	}
+
+	esp_read_file(header_len);
+	uint8_t const safe = RAINBOW_DATA; --header_len;
+
+	// Burn unknown header bytes
+	while (header_len != 0) {
+		RAINBOW_DATA;
+		--header_len;
+	}
+
+	// Show confirmation dialogue
+	//TODO
+
+	// Call flash routine
+	*PPUCTRL = ((*ppuctrl_val) & 0x7f); // Disable NMI
+	if (safe) {
+		flash_safe_sectors();
+	}else {
+		flash_all_sectors();
+	}
+}
+
 static uint8_t select_setting_input(uint8_t* current_setting, uint8_t controller_btns, uint8_t last_frame_btns) {
 	if (controller_btns != last_frame_btns) {
 		switch (controller_btns) {
 			case CONTROLLER_BTN_DOWN:
 				sound_effect_click();
-				if (*current_setting == 0) {
-					*current_setting = NB_SETTINGS - 1;
-				}else {
-					--*current_setting;
-				}
-				break;
-			case CONTROLLER_BTN_UP:
-				sound_effect_click();
 				if (*current_setting == NB_SETTINGS - 1) {
 					*current_setting = 0;
 				}else {
 					++*current_setting;
+				}
+				break;
+			case CONTROLLER_BTN_UP:
+				sound_effect_click();
+				if (*current_setting == 0) {
+					*current_setting = NB_SETTINGS - 1;
+				}else {
+					--*current_setting;
 				}
 				break;
 
@@ -444,7 +538,7 @@ static uint8_t select_setting() {
 	yield();
 
 	// Initialize cursor animation
-	int16_t const first_option_position = 112;
+	int16_t const first_option_position = 104;
 	wrap_animation_init_state(online_mode_selection_cursor_anim, &menu_online_mode_anim_line_cursor);
 	Anim(online_mode_selection_cursor_anim)->x = 64;
 	Anim(online_mode_selection_cursor_anim)->y = first_option_position;
@@ -1095,6 +1189,9 @@ static void next_screen() {
 					break;
 				case SETTING_CONFIGURE_WIFI:
 					wrap_change_global_game_state(GAME_STATE_WIFI_SETTINGS);
+					break;
+				case SETTING_UPDATE_GAME:
+					update_game();
 					break;
 			}
 			hide_dialog(0x2146, &menu_online_mode_setting_select_window, 2);
