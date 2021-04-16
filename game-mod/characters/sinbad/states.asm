@@ -141,14 +141,18 @@ check_aerial_inputs:
 		jmp controller_callbacks
 		;rts ; useless, jump to subroutine
 
-		; Fast fall, gravity * 1.5
+		; Fast fall on release of CONTROLLER_INPUT_TECH, gravity * 1.5
 		fast_fall:
 		.(
-			lda #SINBAD_FASTFALL_GRAVITY
-			sta player_a_gravity, x
-			sta player_a_velocity_v, x
-			lda #$00
-			sta player_a_velocity_v_low, x
+			lda controller_a_last_frame_btns, x
+			cmp #CONTROLLER_INPUT_TECH
+			bne no_fast_fall
+				lda #SINBAD_FASTFALL_GRAVITY
+				sta player_a_gravity, x
+				sta player_a_velocity_v, x
+				lda #$00
+				sta player_a_velocity_v_low, x
+			no_fast_fall:
 			rts
 		.)
 
@@ -179,20 +183,35 @@ check_aerial_inputs:
 		; Impactful controller states and associated callbacks
 		; Note - We have to put subroutines as callbacks since we do not expect a return unless we used the default callback
 		controller_inputs:
-		.byt CONTROLLER_INPUT_SPECIAL_RIGHT,  CONTROLLER_INPUT_SPECIAL_LEFT,     CONTROLLER_INPUT_JUMP,            CONTROLLER_INPUT_JUMP_RIGHT,  CONTROLLER_INPUT_JUMP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_LEFT,    CONTROLLER_INPUT_ATTACK_RIGHT,     CONTROLLER_INPUT_DOWN_TILT,       CONTROLLER_INPUT_ATTACK_UP,   CONTROLLER_INPUT_JAB
-		.byt CONTROLLER_INPUT_SPECIAL,        CONTROLLER_INPUT_SPECIAL_UP,       CONTROLLER_INPUT_SPECIAL_DOWN,    CONTROLLER_INPUT_TECH,        CONTROLLER_INPUT_ATTACK_UP_RIGHT
-		.byt CONTROLLER_INPUT_ATTACK_UP_LEFT, CONTROLLER_INPUT_SPECIAL_UP_RIGHT, CONTROLLER_INPUT_SPECIAL_UP_LEFT
+		.byt CONTROLLER_INPUT_NONE,             CONTROLLER_INPUT_SPECIAL_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_LEFT,     CONTROLLER_INPUT_JUMP
+		.byt CONTROLLER_INPUT_JUMP_RIGHT,       CONTROLLER_INPUT_JUMP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_LEFT,      CONTROLLER_INPUT_ATTACK_RIGHT
+		.byt CONTROLLER_INPUT_DOWN_TILT,        CONTROLLER_INPUT_ATTACK_UP
+		.byt CONTROLLER_INPUT_JAB,              CONTROLLER_INPUT_SPECIAL
+		.byt CONTROLLER_INPUT_SPECIAL_UP,       CONTROLLER_INPUT_SPECIAL_DOWN
+		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,  CONTROLLER_INPUT_ATTACK_UP_LEFT
+		.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT, CONTROLLER_INPUT_SPECIAL_UP_LEFT
 		controller_callbacks_lo:
-		.byt <sinbad_start_side_special,      <sinbad_start_side_special,        <jump,                            <jump,                        <jump
-		.byt <sinbad_start_aerial_side,       <sinbad_start_aerial_side,         <sinbad_start_aerial_down,        <sinbad_start_aerial_up,      <sinbad_start_aerial_neutral
-		.byt <sinbad_start_aerial_spe,        <sinbad_start_spe_up,              <sinbad_start_spe_down,           <fast_fall,                   <sinbad_start_aerial_up
-		.byt <sinbad_start_aerial_up,         <sinbad_start_spe_up,              <sinbad_start_spe_up
+		.byt <fast_fall,                   <sinbad_start_side_special
+		.byt <sinbad_start_side_special,   <jump
+		.byt <jump,                        <jump
+		.byt <sinbad_start_aerial_side,    <sinbad_start_aerial_side
+		.byt <sinbad_start_aerial_down,    <sinbad_start_aerial_up
+		.byt <sinbad_start_aerial_neutral, <sinbad_start_aerial_spe
+		.byt <sinbad_start_spe_up,         <sinbad_start_spe_down
+		.byt <sinbad_start_aerial_up,      <sinbad_start_aerial_up
+		.byt <sinbad_start_spe_up,         <sinbad_start_spe_up
 		controller_callbacks_hi:
-		.byt >sinbad_start_side_special,      >sinbad_start_side_special,        >jump,                            >jump,                        >jump
-		.byt >sinbad_start_aerial_side,       >sinbad_start_aerial_side,         >sinbad_start_aerial_down,        >sinbad_start_aerial_up,      >sinbad_start_aerial_neutral
-		.byt >sinbad_start_aerial_spe,        >sinbad_start_spe_up,              >sinbad_start_spe_down,           >fast_fall,                   >sinbad_start_aerial_up
-		.byt >sinbad_start_aerial_up,         >sinbad_start_spe_up,              >sinbad_start_spe_up
+		.byt >fast_fall,                   >sinbad_start_side_special
+		.byt >sinbad_start_side_special,   >jump
+		.byt >jump,                        >jump
+		.byt >sinbad_start_aerial_side,    >sinbad_start_aerial_side
+		.byt >sinbad_start_aerial_down,    >sinbad_start_aerial_up
+		.byt >sinbad_start_aerial_neutral, >sinbad_start_aerial_spe
+		.byt >sinbad_start_spe_up,         >sinbad_start_spe_down
+		.byt >sinbad_start_aerial_up,      >sinbad_start_aerial_up
+		.byt >sinbad_start_spe_up,         >sinbad_start_spe_up
 		controller_default_callback:
 		.word no_input
 	.)
