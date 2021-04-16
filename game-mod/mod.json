@@ -2,7 +2,8 @@
 	"type": "gamemod",
 	"characters": [
 		{"type": "import", "src": "characters/sinbad/sinbad.json"},
-		{"type": "import", "src": "characters/kiki/kiki.json"}
+		{"type": "import", "src": "characters/kiki/kiki.json"},
+		{"type": "import", "src": "characters/pepper/pepper.json"}
 	],
 	"tilesets": [
 		{"type": "import", "src": "tilesets/ruins.json"},

@@ -2324,7 +2324,7 @@ sinbad_tick_walljumping:
 				jmp end_jump_direction
 			jump_right:
 				lda #1
-		end_jump_direction;
+		end_jump_direction:
 		sta player_a_velocity_h, x
 
 		;jmp end ; useless, fallthrough

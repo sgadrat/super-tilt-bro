@@ -1,0 +1,384 @@
+{
+	"ai": {
+		"action_selectors": [],
+		"actions": [],
+		"attacks": [],
+		"sourcecode": "",
+		"sourcecode_file": null,
+		"type": "character_ai"
+	},
+	"animations": [
+		{
+			"src": "characters/pepper/animations/pepper_anim_crash.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_falling.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_helpless.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_idle.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_jump.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_landing.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_respawn.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_run.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_shield_full.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_shield_limit.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_shield_partial.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_shield_remove.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_spawn.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_thrown.json",
+			"type": "import"
+		}
+	],
+	"color_swaps": {
+		"alternate_colors": [
+			{
+				"colors": [
+					0,
+					16,
+					32
+				],
+				"type": "palette"
+			}
+		],
+		"primary_colors": [
+			{
+				"colors": [
+					7,
+					6,
+					54
+				],
+				"type": "palette"
+			}
+		],
+		"primary_names": [
+			"color a"
+		],
+		"secondary_colors": [
+			{
+				"colors": [
+					15,
+					0,
+					16
+				],
+				"type": "palette"
+			}
+		],
+		"secondary_names": [
+			"color a"
+		],
+		"type": "character_colors"
+	},
+	"defeat_animation": {
+		"src": "characters/pepper/animations/pepper_anim_defeat.json",
+		"type": "import"
+	},
+	"illustration_large": {
+		"name": null,
+		"src": "characters/pepper/illustrations/large.gif",
+		"tilenames": [
+			"PEPPER_ILLUSTRATION_LARGE_1",
+			"PEPPER_ILLUSTRATION_LARGE_2",
+			"PEPPER_ILLUSTRATION_LARGE_3",
+			"PEPPER_ILLUSTRATION_LARGE_4",
+			"PEPPER_ILLUSTRATION_LARGE_5",
+			"PEPPER_ILLUSTRATION_LARGE_6",
+			"PEPPER_ILLUSTRATION_LARGE_7",
+			"PEPPER_ILLUSTRATION_LARGE_8",
+			"PEPPER_ILLUSTRATION_LARGE_9",
+			"PEPPER_ILLUSTRATION_LARGE_10",
+			"PEPPER_ILLUSTRATION_LARGE_11",
+			"PEPPER_ILLUSTRATION_LARGE_12",
+			"PEPPER_ILLUSTRATION_LARGE_13",
+			"PEPPER_ILLUSTRATION_LARGE_14",
+			"PEPPER_ILLUSTRATION_LARGE_15",
+			"PEPPER_ILLUSTRATION_LARGE_16",
+			"PEPPER_ILLUSTRATION_LARGE_17",
+			"PEPPER_ILLUSTRATION_LARGE_18",
+			"PEPPER_ILLUSTRATION_LARGE_19",
+			"PEPPER_ILLUSTRATION_LARGE_20",
+			"PEPPER_ILLUSTRATION_LARGE_21",
+			"PEPPER_ILLUSTRATION_LARGE_22",
+			"PEPPER_ILLUSTRATION_LARGE_23",
+			"PEPPER_ILLUSTRATION_LARGE_24",
+			"PEPPER_ILLUSTRATION_LARGE_25",
+			"PEPPER_ILLUSTRATION_LARGE_26",
+			"PEPPER_ILLUSTRATION_LARGE_27",
+			"PEPPER_ILLUSTRATION_LARGE_28",
+			"PEPPER_ILLUSTRATION_LARGE_29",
+			"PEPPER_ILLUSTRATION_LARGE_30",
+			"PEPPER_ILLUSTRATION_LARGE_31",
+			"PEPPER_ILLUSTRATION_LARGE_32",
+			"PEPPER_ILLUSTRATION_LARGE_33",
+			"PEPPER_ILLUSTRATION_LARGE_34",
+			"PEPPER_ILLUSTRATION_LARGE_35",
+			"PEPPER_ILLUSTRATION_LARGE_36",
+			"PEPPER_ILLUSTRATION_LARGE_37",
+			"PEPPER_ILLUSTRATION_LARGE_38",
+			"PEPPER_ILLUSTRATION_LARGE_39",
+			"PEPPER_ILLUSTRATION_LARGE_40",
+			"PEPPER_ILLUSTRATION_LARGE_41",
+			"PEPPER_ILLUSTRATION_LARGE_42",
+			"PEPPER_ILLUSTRATION_LARGE_43",
+			"PEPPER_ILLUSTRATION_LARGE_44",
+			"PEPPER_ILLUSTRATION_LARGE_45",
+			"PEPPER_ILLUSTRATION_LARGE_46",
+			"PEPPER_ILLUSTRATION_LARGE_47",
+			"PEPPER_ILLUSTRATION_LARGE_48"
+		],
+		"type": "tileset"
+	},
+	"illustration_small": {
+		"name": null,
+		"src": "characters/pepper/illustrations/small.gif",
+		"tilenames": [
+			"PEPPER_ILLUSTRATION_SMALL_1",
+			"PEPPER_ILLUSTRATION_SMALL_2",
+			"PEPPER_ILLUSTRATION_SMALL_3",
+			"PEPPER_ILLUSTRATION_SMALL_4"
+		],
+		"type": "tileset"
+	},
+	"illustration_token": {
+		"name": null,
+		"src": "characters/pepper/illustrations/token.gif",
+		"tilenames": [
+			"PEPPER_ILLUSTRATION_TOKEN_1"
+		],
+		"type": "tileset"
+	},
+	"menu_select_animation": {
+		"src": "characters/pepper/animations/pepper_anim_menu_select.json",
+		"type": "import"
+	},
+	"name": "pepper",
+	"netload_routine": "dummy_routine",
+	"sourcecode_file": "characters/pepper/states.asm",
+	"states": [
+		{
+			"input_routine": "pepper_input_thrown",
+			"name": "PEPPER_STATE_THROWN",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "pepper_onground_thrown",
+			"onhurt_routine": "hurt_player",
+			"start_routine": "pepper_start_thrown",
+			"type": "character_state",
+			"update_routine": "pepper_tick_thrown"
+		},
+		{
+			"input_routine": "pepper_input_respawn",
+			"name": "PEPPER_STATE_RESPAWN",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "pepper_global_onground",
+			"onhurt_routine": "dummy_routine",
+			"start_routine": "pepper_start_respawn",
+			"type": "character_state",
+			"update_routine": "pepper_tick_respawn"
+		},
+		{
+			"input_routine": "dummy_routine",
+			"name": "PEPPER_STATE_INNEXISTANT",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "pepper_global_onground",
+			"onhurt_routine": "dummy_routine",
+			"start_routine": "pepper_start_innexistant",
+			"type": "character_state",
+			"update_routine": "pepper_tick_innexistant"
+		},
+		{
+			"input_routine": "dummy_routine",
+			"name": "PEPPER_STATE_SPAWN",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "pepper_global_onground",
+			"onhurt_routine": "dummy_routine",
+			"start_routine": "pepper_start_spawn",
+			"type": "character_state",
+			"update_routine": "pepper_tick_spawn"
+		},
+		{
+			"input_routine": "pepper_input_idle",
+			"name": "PEPPER_STATE_IDLE",
+			"offground_routine": "pepper_start_falling",
+			"onground_routine": "pepper_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_idle"
+		},
+		{
+			"input_routine": "pepper_input_running",
+			"name": "PEPPER_STATE_RUNNING",
+			"offground_routine": "pepper_start_falling",
+			"onground_routine": "pepper_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_running"
+		},
+		{
+			"input_routine": "pepper_check_aerial_inputs",
+			"name": "PEPPER_STATE_FALLING",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "pepper_start_landing",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_falling"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_LANDING",
+			"offground_routine": "pepper_start_falling",
+			"onground_routine": "pepper_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_landing"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_CRASHING",
+			"offground_routine": "pepper_start_falling",
+			"onground_routine": "pepper_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_crashing"
+		},
+		{
+			"input_routine": "pepper_input_helpless",
+			"name": "PEPPER_STATE_HELPLESS",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "pepper_start_landing",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_helpless"
+		},
+		{
+			"input_routine": "pepper_input_jumping",
+			"name": "PEPPER_STATE_JUMPING",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "pepper_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_jumping"
+		},
+		{
+			"input_routine": "pepper_input_shielding",
+			"name": "PEPPER_STATE_SHIELDING",
+			"offground_routine": "pepper_start_falling",
+			"onground_routine": "pepper_global_onground",
+			"onhurt_routine": "pepper_hurt_shielding",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_shielding"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_SHIELDLAG",
+			"offground_routine": "pepper_start_falling",
+			"onground_routine": "pepper_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_shieldlag"
+		},
+		{
+			"input_routine": "pepper_input_walljumping",
+			"name": "PEPPER_STATE_WALLJUMPING",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "pepper_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_walljumping"
+		}
+	],
+	"tileset": {
+		"name": null,
+		"src": "characters/pepper/tileset.gif",
+		"tilenames": [
+			"PEPPER_TILE_0",
+			"PEPPER_TILE_1",
+			"PEPPER_TILE_2",
+			"PEPPER_TILE_3",
+			"PEPPER_TILE_4",
+			"PEPPER_TILE_5",
+			"PEPPER_TILE_6",
+			"PEPPER_TILE_7",
+			"PEPPER_TILE_8",
+			"PEPPER_TILE_9",
+			"PEPPER_TILE_10",
+			"PEPPER_TILE_11",
+			"PEPPER_TILE_12",
+			"PEPPER_TILE_13",
+			"PEPPER_TILE_14",
+			"PEPPER_TILE_15",
+			"PEPPER_TILE_16",
+			"PEPPER_TILE_17",
+			"PEPPER_TILE_18",
+			"PEPPER_TILE_19",
+			"PEPPER_TILE_20",
+			"PEPPER_TILE_21",
+			"PEPPER_TILE_22",
+			"PEPPER_TILE_23",
+			"PEPPER_TILE_24",
+			"PEPPER_TILE_25",
+			"PEPPER_TILE_26",
+			"PEPPER_TILE_27",
+			"PEPPER_TILE_28",
+			"PEPPER_TILE_29",
+			"PEPPER_TILE_30",
+			"PEPPER_TILE_31",
+			"PEPPER_TILE_32",
+			"PEPPER_TILE_33",
+			"PEPPER_TILE_34",
+			"PEPPER_TILE_35",
+			"PEPPER_TILE_36"
+		],
+		"type": "tileset"
+	},
+	"type": "character",
+	"victory_animation": {
+		"src": "characters/pepper/animations/pepper_anim_victory.json",
+		"type": "import"
+	},
+	"weapon_name": "weapon"
+}
