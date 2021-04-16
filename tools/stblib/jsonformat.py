@@ -168,6 +168,7 @@ def _jsonify_character(character, base_path):
 	illustrations_path = '{}/{}'.format(base_path, illustrations_path_rel)
 	os.makedirs(character_path, exist_ok=True)
 	os.makedirs(animations_path, exist_ok=True)
+	os.makedirs(illustrations_path, exist_ok=True)
 
 	# Convert tilesets to gif based tileset
 	tileset_src = '{}/tileset.gif'.format(character_path)
