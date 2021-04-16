@@ -14,7 +14,7 @@ KIKI_STATE_SHIELDLAG = CUSTOM_PLAYER_STATES_BEGIN + 6
 KIKI_STATE_SIDE_TILT = CUSTOM_PLAYER_STATES_BEGIN + 7
 KIKI_STATE_SIDE_SPE = CUSTOM_PLAYER_STATES_BEGIN + 8
 KIKI_STATE_DOWN_WALL = CUSTOM_PLAYER_STATES_BEGIN + 9
-KIKI_STATE_UP_SPE = CUSTOM_PLAYER_STATES_BEGIN + 10
+KIKI_STATE_TOP_WALL = CUSTOM_PLAYER_STATES_BEGIN + 10
 KIKI_STATE_UP_TILT = CUSTOM_PLAYER_STATES_BEGIN + 11
 KIKI_STATE_UP_AERIAL = CUSTOM_PLAYER_STATES_BEGIN + 12
 KIKI_STATE_DOWN_TILT = CUSTOM_PLAYER_STATES_BEGIN + 13
@@ -426,20 +426,20 @@ kiki_check_aerial_inputs:
 		.byt <kiki_start_aerial_jumping,   <kiki_start_aerial_jumping
 		.byt <kiki_start_side_aerial_left, <kiki_start_side_aerial_right
 		.byt <kiki_start_down_aerial,      <kiki_start_up_aerial
-		.byt <kiki_start_neutral_aerial,   <kiki_start_down_wall
-		.byt <kiki_start_up_spe,           <kiki_start_counter_guard
+		.byt <kiki_start_neutral_aerial,   <kiki_start_top_wall
+		.byt <kiki_start_down_wall,        <kiki_start_counter_guard
 		.byt <kiki_start_up_aerial,        <kiki_start_up_aerial
-		.byt <kiki_start_up_spe,           <kiki_start_up_spe
+		.byt <kiki_start_down_wall,        <kiki_start_down_wall
 		controller_callbacks_hi:
 		.byt >fast_fall,                   >kiki_start_side_spe_right
 		.byt >kiki_start_side_spe_left,    >kiki_start_aerial_jumping
 		.byt >kiki_start_aerial_jumping,   >kiki_start_aerial_jumping
 		.byt >kiki_start_side_aerial_left, >kiki_start_side_aerial_right
 		.byt >kiki_start_down_aerial,      >kiki_start_up_aerial
-		.byt >kiki_start_neutral_aerial,   >kiki_start_down_wall
-		.byt >kiki_start_up_spe,           >kiki_start_counter_guard
+		.byt >kiki_start_neutral_aerial,   >kiki_start_top_wall
+		.byt >kiki_start_down_wall,        >kiki_start_counter_guard
 		.byt >kiki_start_up_aerial,        >kiki_start_up_aerial
-		.byt >kiki_start_up_spe,           >kiki_start_up_spe
+		.byt >kiki_start_down_wall,        >kiki_start_down_wall
 		controller_default_callback:
 		.word no_input
 	.)
@@ -932,23 +932,41 @@ kiki_input_idle:
 		table_length:
 		.byt 22
 		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,           CONTROLLER_INPUT_RIGHT,           CONTROLLER_INPUT_JUMP,          CONTROLLER_INPUT_JUMP_RIGHT,      CONTROLLER_INPUT_JUMP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_RIGHT,   CONTROLLER_INPUT_ATTACK_LEFT,     CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT,    CONTROLLER_INPUT_TECH
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN,   CONTROLLER_INPUT_SPECIAL_UP,      CONTROLLER_INPUT_ATTACK_UP,     CONTROLLER_INPUT_DOWN_TILT,       CONTROLLER_INPUT_JAB
-		.byt CONTROLLER_INPUT_SPECIAL,        CONTROLLER_INPUT_TECH_LEFT,       CONTROLLER_INPUT_TECH_RIGHT,    CONTROLLER_INPUT_SPECIAL_UP_LEFT, CONTROLLER_INPUT_SPECIAL_UP_RIGHT
-		.byt CONTROLLER_INPUT_ATTACK_UP_LEFT, CONTROLLER_INPUT_ATTACK_UP_RIGHT
+		.byt CONTROLLER_INPUT_LEFT,            CONTROLLER_INPUT_RIGHT
+		.byt CONTROLLER_INPUT_JUMP,            CONTROLLER_INPUT_JUMP_RIGHT
+		.byt CONTROLLER_INPUT_JUMP_LEFT,       CONTROLLER_INPUT_ATTACK_RIGHT
+		.byt CONTROLLER_INPUT_ATTACK_LEFT,     CONTROLLER_INPUT_SPECIAL_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_LEFT,    CONTROLLER_INPUT_TECH
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN,    CONTROLLER_INPUT_SPECIAL_UP
+		.byt CONTROLLER_INPUT_ATTACK_UP,       CONTROLLER_INPUT_DOWN_TILT
+		.byt CONTROLLER_INPUT_JAB,             CONTROLLER_INPUT_SPECIAL
+		.byt CONTROLLER_INPUT_TECH_LEFT,       CONTROLLER_INPUT_TECH_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT, CONTROLLER_INPUT_SPECIAL_UP_RIGHT
+		.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,  CONTROLLER_INPUT_ATTACK_UP_RIGHT
 		controller_callbacks_lsb:
-		.byt <kiki_input_idle_left,           <kiki_input_idle_right,           <kiki_start_jumping,            <kiki_input_idle_jump_right,      <kiki_input_idle_jump_left
-		.byt <kiki_start_side_tilt_right,     <kiki_start_side_tilt_left,       <kiki_start_side_spe_right,     <kiki_start_side_spe_left,        <kiki_start_shielding
-		.byt <kiki_start_counter_guard,       <kiki_start_up_spe,               <kiki_start_up_tilt,            <kiki_start_down_tilt,            <kiki_start_jabbing
-		.byt <kiki_start_down_wall,           <kiki_start_shielding,            <kiki_start_shielding,          <kiki_start_up_spe,               <kiki_start_up_spe
-		.byt <kiki_start_up_tilt,             <kiki_start_up_tilt
+		.byt <kiki_input_idle_left,      <kiki_input_idle_right
+		.byt <kiki_start_jumping,        <kiki_input_idle_jump_right
+		.byt <kiki_input_idle_jump_left, <kiki_start_side_tilt_right
+		.byt <kiki_start_side_tilt_left, <kiki_start_side_spe_right
+		.byt <kiki_start_side_spe_left,  <kiki_start_shielding
+		.byt <kiki_start_counter_guard,  <kiki_start_down_wall
+		.byt <kiki_start_up_tilt,        <kiki_start_down_tilt
+		.byt <kiki_start_jabbing,        <kiki_start_top_wall
+		.byt <kiki_start_shielding,      <kiki_start_shielding
+		.byt <kiki_start_down_wall,      <kiki_start_down_wall
+		.byt <kiki_start_up_tilt,        <kiki_start_up_tilt
 		controller_callbacks_msb:
-		.byt >kiki_input_idle_left,           >kiki_input_idle_right,           >kiki_start_jumping,            >kiki_input_idle_jump_right,      >kiki_input_idle_jump_left
-		.byt >kiki_start_side_tilt_right,     >kiki_start_side_tilt_left,       >kiki_start_side_spe_right,     >kiki_start_side_spe_left,        >kiki_start_shielding
-		.byt >kiki_start_counter_guard,       >kiki_start_up_spe,               >kiki_start_up_tilt,            >kiki_start_down_tilt,            >kiki_start_jabbing
-		.byt >kiki_start_down_wall,           >kiki_start_shielding,            >kiki_start_shielding,          >kiki_start_up_spe,               >kiki_start_up_spe
-		.byt >kiki_start_up_tilt,             >kiki_start_up_tilt
+		.byt >kiki_input_idle_left,      >kiki_input_idle_right
+		.byt >kiki_start_jumping,        >kiki_input_idle_jump_right
+		.byt >kiki_input_idle_jump_left, >kiki_start_side_tilt_right
+		.byt >kiki_start_side_tilt_left, >kiki_start_side_spe_right
+		.byt >kiki_start_side_spe_left,  >kiki_start_shielding
+		.byt >kiki_start_counter_guard,  >kiki_start_down_wall
+		.byt >kiki_start_up_tilt,        >kiki_start_down_tilt
+		.byt >kiki_start_jabbing,        >kiki_start_top_wall
+		.byt >kiki_start_shielding,      >kiki_start_shielding
+		.byt >kiki_start_down_wall,      >kiki_start_down_wall
+		.byt >kiki_start_up_tilt,        >kiki_start_up_tilt
 
 		controller_default_callback:
 		.word end
@@ -1107,23 +1125,41 @@ kiki_input_running:
 		table_length:
 		.byt 22
 		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,           CONTROLLER_INPUT_RIGHT,           CONTROLLER_INPUT_JUMP,          CONTROLLER_INPUT_JUMP_RIGHT,      CONTROLLER_INPUT_JUMP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_LEFT,    CONTROLLER_INPUT_ATTACK_RIGHT,    CONTROLLER_INPUT_SPECIAL_LEFT,  CONTROLLER_INPUT_SPECIAL_RIGHT,   CONTROLLER_INPUT_TECH
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN,   CONTROLLER_INPUT_SPECIAL_UP,      CONTROLLER_INPUT_ATTACK_UP,     CONTROLLER_INPUT_DOWN_TILT,       CONTROLLER_INPUT_JAB
-		.byt CONTROLLER_INPUT_SPECIAL,        CONTROLLER_INPUT_TECH_LEFT,       CONTROLLER_INPUT_TECH_RIGHT,    CONTROLLER_INPUT_SPECIAL_UP_LEFT, CONTROLLER_INPUT_SPECIAL_UP_RIGHT
-		.byt CONTROLLER_INPUT_ATTACK_UP_LEFT, CONTROLLER_INPUT_ATTACK_UP_RIGHT
+		.byt CONTROLLER_INPUT_LEFT,            CONTROLLER_INPUT_RIGHT
+		.byt CONTROLLER_INPUT_JUMP,            CONTROLLER_INPUT_JUMP_RIGHT
+		.byt CONTROLLER_INPUT_JUMP_LEFT,       CONTROLLER_INPUT_ATTACK_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_RIGHT,    CONTROLLER_INPUT_SPECIAL_LEFT
+		.byt CONTROLLER_INPUT_SPECIAL_RIGHT,   CONTROLLER_INPUT_TECH
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN,    CONTROLLER_INPUT_SPECIAL_UP
+		.byt CONTROLLER_INPUT_ATTACK_UP,       CONTROLLER_INPUT_DOWN_TILT
+		.byt CONTROLLER_INPUT_JAB,             CONTROLLER_INPUT_SPECIAL
+		.byt CONTROLLER_INPUT_TECH_LEFT,       CONTROLLER_INPUT_TECH_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT, CONTROLLER_INPUT_SPECIAL_UP_RIGHT
+		.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,  CONTROLLER_INPUT_ATTACK_UP_RIGHT
 		controller_callbacks_lsb:
-		.byt <kiki_input_running_left,        <kiki_input_running_right,        <kiki_start_jumping,            <kiki_start_jumping,              <kiki_start_jumping
-		.byt <kiki_start_side_tilt_left,      <kiki_start_side_tilt_right,      <kiki_start_side_spe_left,      <kiki_start_side_spe_right,       <kiki_start_shielding
-		.byt <kiki_start_counter_guard,       <kiki_start_up_spe,               <kiki_start_up_tilt,            <kiki_start_down_tilt,            <kiki_start_jabbing
-		.byt <kiki_start_down_wall,           <kiki_start_shielding,            <kiki_start_shielding,          <kiki_start_up_spe,               <kiki_start_up_spe
-		.byt <kiki_start_up_tilt,             <kiki_start_up_tilt
+		.byt <kiki_input_running_left,    <kiki_input_running_right
+		.byt <kiki_start_jumping,         <kiki_start_jumping
+		.byt <kiki_start_jumping,         <kiki_start_side_tilt_left
+		.byt <kiki_start_side_tilt_right, <kiki_start_side_spe_left
+		.byt <kiki_start_side_spe_right,  <kiki_start_shielding
+		.byt <kiki_start_counter_guard,   <kiki_start_down_wall
+		.byt <kiki_start_up_tilt,         <kiki_start_down_tilt
+		.byt <kiki_start_jabbing,         <kiki_start_top_wall
+		.byt <kiki_start_shielding,       <kiki_start_shielding
+		.byt <kiki_start_down_wall,       <kiki_start_down_wall
+		.byt <kiki_start_up_tilt,         <kiki_start_up_tilt
 		controller_callbacks_msb:
-		.byt >kiki_input_running_left,        >kiki_input_running_right,        >kiki_start_jumping,            >kiki_start_jumping,              >kiki_start_jumping
-		.byt >kiki_start_side_tilt_left,      >kiki_start_side_tilt_right,      >kiki_start_side_spe_left,      >kiki_start_side_spe_right,       >kiki_start_shielding
-		.byt >kiki_start_counter_guard,       >kiki_start_up_spe,               >kiki_start_up_tilt,            >kiki_start_down_tilt,            >kiki_start_jabbing
-		.byt >kiki_start_down_wall,           >kiki_start_shielding,            >kiki_start_shielding,          >kiki_start_up_spe,               >kiki_start_up_spe
-		.byt >kiki_start_up_tilt,             >kiki_start_up_tilt
+		.byt >kiki_input_running_left,    >kiki_input_running_right
+		.byt >kiki_start_jumping,         >kiki_start_jumping
+		.byt >kiki_start_jumping,         >kiki_start_side_tilt_left
+		.byt >kiki_start_side_tilt_right, >kiki_start_side_spe_left
+		.byt >kiki_start_side_spe_right,  >kiki_start_shielding
+		.byt >kiki_start_counter_guard,   >kiki_start_down_wall
+		.byt >kiki_start_up_tilt,         >kiki_start_down_tilt
+		.byt >kiki_start_jabbing,         >kiki_start_top_wall
+		.byt >kiki_start_shielding,       >kiki_start_shielding
+		.byt >kiki_start_down_wall,       >kiki_start_down_wall
+		.byt >kiki_start_up_tilt,         >kiki_start_up_tilt
 		controller_default_callback:
 		.word kiki_start_idle
 	.)
@@ -1251,9 +1287,9 @@ kiki_input_jumping:
 		controller_inputs:
 		.byt CONTROLLER_INPUT_ATTACK_UP, CONTROLLER_INPUT_SPECIAL_UP
 		controller_callbacks_lo:
-		.byt <kiki_start_up_tilt, <kiki_start_up_spe
+		.byt <kiki_start_up_tilt, <kiki_start_down_wall
 		controller_callbacks_hi:
-		.byt >kiki_start_up_tilt, >kiki_start_up_spe
+		.byt >kiki_start_up_tilt, >kiki_start_down_wall
 		controller_default_callback:
 		.word end
 	.)
@@ -2202,7 +2238,7 @@ kiki_tick_down_wall:
 .)
 
 
-kiki_start_up_spe:
+kiki_start_top_wall:
 .(
 	sprite_x_lsb = tmpfield1
 	sprite_x_msb = tmpfield2
@@ -2218,7 +2254,7 @@ kiki_start_up_spe:
 	jsr set_player_animation
 
 	; Set the player's state
-	lda #KIKI_STATE_UP_SPE
+	lda #KIKI_STATE_TOP_WALL
 	sta player_a_state, x
 
 	; Initialize the clock
@@ -2376,16 +2412,16 @@ kiki_start_up_spe:
 	rts
 .)
 
-kiki_tick_up_spe:
+kiki_tick_top_wall:
 .(
 	jsr kiki_global_tick
 
-	KIKI_STATE_UP_SPE_DURATION = 16
+	KIKI_STATE_TOP_WALL_DURATION = 16
 
 	inc player_a_state_clock, x
 
 	lda player_a_state_clock, x
-	cmp #KIKI_STATE_UP_SPE_DURATION
+	cmp #KIKI_STATE_TOP_WALL_DURATION
 	bne end
 
 		lda player_a_grounded
