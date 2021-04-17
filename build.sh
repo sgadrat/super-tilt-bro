@@ -76,7 +76,7 @@ rm -f "$log_file"
 say "Clean ..."
 log "========="
 
-cmd rm -rf "${root_dir}"/game/data/characters/{sinbad,kiki,characters-index.asm} "${root_dir}"/game/data/tilesets/ruins.asm
+cmd rm -rf "${root_dir}"/game/data/characters/{sinbad,kiki,pepper,characters-index.asm} "${root_dir}"/game/data/tilesets/ruins.asm
 
 for f in `find . -name '*.build.asm'`; do
 	cmd rm "$f"
@@ -128,7 +128,7 @@ say "======================="
 #  Static bank cannot be safely upgraded, so avoid modifying it
 #  Only a warning for ease of development, should be an error when carts are distributed to non-technical players.
 static_bank_hash=`tail -c 4096 'Super_Tilt_Bro_(E).nes' | md5sum - | grep -Eo '^[0-9a-f]+'`
-if [ "$static_bank_hash" != '49463905f44340dc9e366a186073d7d9' ]; then
+if [ "$static_bank_hash" != '38369e38aa1f5502129593088e17ed50' ]; then
 	say "WARNING: static bank changed"
 	say "======================="
 fi

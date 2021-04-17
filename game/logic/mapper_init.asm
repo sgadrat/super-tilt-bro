@@ -12,6 +12,19 @@ bank_table:
 
 mapper_init:
 .(
+	; Generic initialization code
+	sei               ; disable IRQs
+	ldx #$40
+	cld               ; disable decimal mode
+	stx APU_FRAMECNT  ; disable APU frame IRQ
+	ldx #$FF
+	txs               ; Set up stack
+	inx               ; now X = 0
+	stx PPUCTRL       ; disable NMI
+	stx ppuctrl_val   ;
+	stx PPUMASK       ; disable rendering
+	stx APU_DMC_FLAGS ; disable DMC IRQs
+
 #ifdef MAPPER_RAINBOW
 	; Enable ESP
 	lda #%00000001
@@ -41,6 +54,16 @@ mapper_init:
 	sta RAINBOW_PULSE_CHANNEL_1_FREQ_HIGH
 	sta RAINBOW_PULSE_CHANNEL_2_FREQ_HIGH
 	sta RAINBOW_SAW_CHANNEL_FREQ_HIGH
+
+	; Enter rescue mode if magic buttons are pressed
+	.(
+		jsr fetch_controllers
+		lda controller_a_btns
+		cmp #CONTROLLER_BTN_UP+CONTROLLER_BTN_SELECT+CONTROLLER_BTN_B
+		bne no_rescue
+			jmp rescue
+		no_rescue:
+	.)
 #endif
 
 	jmp reset ; mapper_init is the physical entry point, let's jump to the generic entry point

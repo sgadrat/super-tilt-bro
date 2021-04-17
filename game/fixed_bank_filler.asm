@@ -27,9 +27,6 @@
 #echo FIXED-bank (static) total space:
 #print $10000-$f000
 #echo
-#echo FIXED-bank (static) audio engine size:
-#print ninegine_audio_engine_end-ninegine_audio_engine_begin
-#echo
 #echo FIXED-bank (static) free space:
 #print $fffa-*
 

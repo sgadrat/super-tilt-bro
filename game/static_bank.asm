@@ -29,13 +29,13 @@
 ;
 
 #include "game/logic/rainbow_lib.asm"
-#include "nine/prg_rom/prg_rom.asm"
+#include "nine/static_bank.asm"
 
 ;
 ; Generic utilities to fill unused space
 ;
 
-#include "game/logic/utils.asm"
+#include "game/logic/utils_static.asm"
 
 ;
 ; Filler
