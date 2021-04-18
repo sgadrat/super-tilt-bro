@@ -76,7 +76,7 @@ rm -f "$log_file"
 say "Clean ..."
 log "========="
 
-cmd rm -rf "${root_dir}"/game/data/characters/{sinbad,kiki,pepper,characters-index.asm} "${root_dir}"/game/data/tilesets/ruins.asm
+cmd rm -rf "${root_dir}"/game/data/characters/{characters-data,characters-index.asm} "${root_dir}"/game/data/tilesets/ruins.asm
 
 for f in `find . -name '*.build.asm'`; do
 	cmd rm "$f"

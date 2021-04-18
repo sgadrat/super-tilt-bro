@@ -10,8 +10,7 @@ game/cstb/mem_labels.h
 game/cstb/constants.h
 game/cstb/rainbow_constants.h
 game/data/characters/characters-index.asm
-game/data/characters/sinbad/
-game/data/characters/kiki/
+game/data/characters/characters-data/
 game/data/tilesets/ruins.asm
 game/extra_banks.asm
 game/banks/data06_bank.asm

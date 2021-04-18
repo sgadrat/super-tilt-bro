@@ -32,7 +32,7 @@ def generate_character(char, game_dir):
 	name_upper = char.name.upper()
 
 	# Create destination directories
-	rel_char_dir = 'game/data/characters/{}'.format(char.name)
+	rel_char_dir = 'game/data/characters/characters-data/{}'.format(char.name)
 	rel_anim_dir = '{}/animations'.format(rel_char_dir)
 	char_dir = '{}/{}'.format(game_dir, rel_char_dir)
 	anim_dir = '{}/{}'.format(game_dir, rel_anim_dir)
@@ -522,7 +522,7 @@ def generate_banks(char_to_bank, tileset_to_bank, game_dir):
 				if char_to_bank[char_name] == bank_number:
 					bank_file.write(textwrap.dedent("""\
 						bank_data{bank_number:02d}_character_{char_name}_begin:
-						#include "game/data/characters/{char_name}/{char_name}.asm"
+						#include "game/data/characters/characters-data/{char_name}/{char_name}.asm"
 						bank_data{bank_number:02d}_character_{char_name}_end:
 					""".format_map(locals())))
 
