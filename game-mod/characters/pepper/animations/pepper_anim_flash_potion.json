@@ -1,0 +1,666 @@
+{
+	"frames": [
+		{
+			"duration": 4,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 9,
+				"top": -2,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_0",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_1",
+					"type": "animation_sprite",
+					"x": 8,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_5",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_5",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_43",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_44",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_45",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": {
+				"base_h": -400,
+				"base_v": -800,
+				"bottom": 9,
+				"damages": 1,
+				"enabled": true,
+				"force_h": 0,
+				"force_v": 0,
+				"left": -5,
+				"right": 1,
+				"top": 3,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 16,
+				"left": -2,
+				"right": 7,
+				"top": -1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_0",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_1",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_2",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_9",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_10",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_54",
+					"type": "animation_sprite",
+					"x": -5,
+					"y": 3
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": {
+				"base_h": -400,
+				"base_v": -800,
+				"bottom": 14,
+				"damages": 1,
+				"enabled": true,
+				"force_h": 0,
+				"force_v": 0,
+				"left": -15,
+				"right": -9,
+				"top": 8,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 16,
+				"left": -2,
+				"right": 7,
+				"top": -1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_0",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_1",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_2",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_9",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_10",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_55",
+					"type": "animation_sprite",
+					"x": -15,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": {
+				"base_h": -400,
+				"base_v": -800,
+				"bottom": 16,
+				"damages": 1,
+				"enabled": true,
+				"force_h": -2,
+				"force_v": -16,
+				"left": -19,
+				"right": -7,
+				"top": 0,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 16,
+				"left": -2,
+				"right": 7,
+				"top": -1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_0",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_1",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_2",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_9",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_10",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_20",
+					"type": "animation_sprite",
+					"x": -19,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_20",
+					"type": "animation_sprite",
+					"x": -15,
+					"y": 7
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 9,
+				"top": -2,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_0",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_1",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_2",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_3",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_4",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_5",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_21",
+					"type": "animation_sprite",
+					"x": -19,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_21",
+					"type": "animation_sprite",
+					"x": -15,
+					"y": 7
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 9,
+				"top": -2,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_0",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_1",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_2",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_3",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_4",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_5",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_21",
+					"type": "animation_sprite",
+					"x": -18,
+					"y": 2
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_21",
+					"type": "animation_sprite",
+					"x": -15,
+					"y": -1
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_22",
+					"type": "animation_sprite",
+					"x": -15,
+					"y": 7
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_22",
+					"type": "animation_sprite",
+					"x": -19,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 9,
+				"top": -2,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_0",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_1",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_2",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_3",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_4",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_5",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_21",
+					"type": "animation_sprite",
+					"x": -17,
+					"y": -1
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_22",
+					"type": "animation_sprite",
+					"x": -15,
+					"y": -1
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_22",
+					"type": "animation_sprite",
+					"x": -18,
+					"y": 2
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_23",
+					"type": "animation_sprite",
+					"x": -15,
+					"y": 7
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_23",
+					"type": "animation_sprite",
+					"x": -19,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 9,
+				"top": -2,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_0",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_1",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_2",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_3",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_4",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_5",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_22",
+					"type": "animation_sprite",
+					"x": -17,
+					"y": -1
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_23",
+					"type": "animation_sprite",
+					"x": -15,
+					"y": -1
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_23",
+					"type": "animation_sprite",
+					"x": -18,
+					"y": 2
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "pepper_anim_flash_potion",
+	"type": "animation"
+}

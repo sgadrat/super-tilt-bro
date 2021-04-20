@@ -1,0 +1,220 @@
+{
+	"frames": [
+		{
+			"duration": 4,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 9,
+				"top": -2,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 0,
+					"foreground": true,
+					"tile": "PEPPER_TILE_27",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": -1
+				},
+				{
+					"attr": 0,
+					"foreground": true,
+					"tile": "PEPPER_TILE_28",
+					"type": "animation_sprite",
+					"x": 8,
+					"y": -1
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_56",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": -1
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "PEPPER_TILE_56",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": -1
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_57",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 7
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "PEPPER_TILE_57",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 7
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 1,
+			"hitbox": {
+				"base_h": 0,
+				"base_v": -1500,
+				"bottom": 14,
+				"damages": 1,
+				"enabled": true,
+				"force_h": 0,
+				"force_v": 0,
+				"left": -2,
+				"right": 10,
+				"top": 2,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 13,
+				"left": 0,
+				"right": 8,
+				"top": 5,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_58",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 5
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 3,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 13,
+				"left": 0,
+				"right": 8,
+				"top": 5,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_58",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 5
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": {
+				"base_h": 0,
+				"base_v": 800,
+				"bottom": 14,
+				"damages": 1,
+				"enabled": true,
+				"force_h": 0,
+				"force_v": 0,
+				"left": -2,
+				"right": 10,
+				"top": 2,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
+				"bottom": 13,
+				"left": 0,
+				"right": 8,
+				"top": 5,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_58",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 5
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 9,
+				"top": -2,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 0,
+					"foreground": true,
+					"tile": "PEPPER_TILE_27",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": -1
+				},
+				{
+					"attr": 0,
+					"foreground": true,
+					"tile": "PEPPER_TILE_28",
+					"type": "animation_sprite",
+					"x": 8,
+					"y": -1
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_56",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": -1
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "PEPPER_TILE_56",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": -1
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_57",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 7
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "PEPPER_TILE_57",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 7
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "pepper_anim_teleport",
+	"type": "animation"
+}

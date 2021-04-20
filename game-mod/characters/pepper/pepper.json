@@ -9,7 +9,27 @@
 	},
 	"animations": [
 		{
+			"src": "characters/pepper/animations/pepper_anim_aerial_wrench.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_aerial_wrench_grab.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_carrot.json",
+			"type": "import"
+		},
+		{
 			"src": "characters/pepper/animations/pepper_anim_crash.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_dark_stare.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_dtilt.json",
 			"type": "import"
 		},
 		{
@@ -17,7 +37,23 @@
 			"type": "import"
 		},
 		{
+			"src": "characters/pepper/animations/pepper_anim_firework.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_flash_potion.json",
+			"type": "import"
+		},
+		{
 			"src": "characters/pepper/animations/pepper_anim_helpless.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_hyperspeed_crash.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_hyperspeed_flying.json",
 			"type": "import"
 		},
 		{
@@ -33,11 +69,19 @@
 			"type": "import"
 		},
 		{
+			"src": "characters/pepper/animations/pepper_anim_potion_smash.json",
+			"type": "import"
+		},
+		{
 			"src": "characters/pepper/animations/pepper_anim_respawn.json",
 			"type": "import"
 		},
 		{
 			"src": "characters/pepper/animations/pepper_anim_run.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_send_carrot.json",
 			"type": "import"
 		},
 		{
@@ -61,7 +105,23 @@
 			"type": "import"
 		},
 		{
+			"src": "characters/pepper/animations/pepper_anim_teleport.json",
+			"type": "import"
+		},
+		{
 			"src": "characters/pepper/animations/pepper_anim_thrown.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_up_tilt.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_witch_fly.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_wrench_grab.json",
 			"type": "import"
 		}
 	],
@@ -92,9 +152,9 @@
 		"secondary_colors": [
 			{
 				"colors": [
-					15,
-					0,
-					16
+					7,
+					23,
+					39
 				],
 				"type": "palette"
 			}
@@ -329,6 +389,146 @@
 			"start_routine": null,
 			"type": "character_state",
 			"update_routine": "pepper_tick_walljumping"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_DTILT",
+			"offground_routine": "pepper_start_falling",
+			"onground_routine": "pepper_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_down_tilt"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_STILT",
+			"offground_routine": "pepper_start_falling",
+			"onground_routine": "pepper_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_side_tilt"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_UTILT",
+			"offground_routine": "pepper_start_falling",
+			"onground_routine": "pepper_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_up_tilt"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_FLASH_POTION",
+			"offground_routine": "pepper_start_falling",
+			"onground_routine": "pepper_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_flash_potion"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_AERIAL_SIDE",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "pepper_start_landing",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_aerial_side"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_AERIAL_FIREWORK",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "pepper_start_landing",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_aerial_firework"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_HYPERSPEED_LANDING",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "pepper_start_hyperspeed_crashing",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_hyperspeed_landing"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_HYPERSPEED_CRASHING",
+			"offground_routine": "pepper_start_falling",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_hyperspeed_crashing"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_AERIAL_WRENCH_GRAB",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "pepper_start_landing",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_aerial_wrench_grab"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_POTION_SMASH",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "pepper_start_landing",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_potion_smash"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_SEND_CARROT",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_send_carrot"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_WITCH_FLY",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_witch_fly"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_TELEPORT",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_teleport"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_WRENCH_GRAB",
+			"offground_routine": "pepper_start_falling",
+			"onground_routine": "pepper_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_wrench_grab"
 		}
 	],
 	"tileset": {
@@ -371,7 +571,35 @@
 			"PEPPER_TILE_33",
 			"PEPPER_TILE_34",
 			"PEPPER_TILE_35",
-			"PEPPER_TILE_36"
+			"PEPPER_TILE_36",
+			"PEPPER_TILE_37",
+			"PEPPER_TILE_38",
+			"PEPPER_TILE_39",
+			"PEPPER_TILE_40",
+			"PEPPER_TILE_41",
+			"PEPPER_TILE_42",
+			"PEPPER_TILE_43",
+			"PEPPER_TILE_44",
+			"PEPPER_TILE_45",
+			"PEPPER_TILE_46",
+			"PEPPER_TILE_47",
+			"PEPPER_TILE_48",
+			"PEPPER_TILE_49",
+			"PEPPER_TILE_50",
+			"PEPPER_TILE_51",
+			"PEPPER_TILE_52",
+			"PEPPER_TILE_53",
+			"PEPPER_TILE_54",
+			"PEPPER_TILE_55",
+			"PEPPER_TILE_56",
+			"PEPPER_TILE_57",
+			"PEPPER_TILE_58",
+			"PEPPER_TILE_59",
+			"PEPPER_TILE_60",
+			"PEPPER_TILE_61",
+			"PEPPER_TILE_62",
+			"PEPPER_TILE_63",
+			"PEPPER_TILE_64"
 		],
 		"type": "tileset"
 	},

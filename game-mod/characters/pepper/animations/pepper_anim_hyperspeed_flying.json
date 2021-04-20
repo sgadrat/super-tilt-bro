@@ -1,479 +1,502 @@
 {
 	"frames": [
 		{
-			"duration": 26,
+			"duration": 4,
 			"hitbox": null,
 			"hurtbox": {
-				"bottom": 15,
-				"left": 0,
-				"right": 9,
-				"top": 0,
+				"bottom": 16,
+				"left": -3,
+				"right": 8,
+				"top": -2,
 				"type": "animation_hurtbox"
 			},
-			"sprites": [],
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "PEPPER_TILE_20",
+					"type": "animation_sprite",
+					"x": 9,
+					"y": 6
+				},
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "PEPPER_TILE_59",
+					"type": "animation_sprite",
+					"x": -5,
+					"y": 5
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_0",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_1",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_2",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_3",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_10",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_52",
+					"type": "animation_sprite",
+					"x": 6,
+					"y": 10
+				}
+			],
 			"type": "animation_frame"
 		},
 		{
 			"duration": 4,
 			"hitbox": null,
 			"hurtbox": {
+				"bottom": 16,
+				"left": -3,
+				"right": 8,
+				"top": -2,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "PEPPER_TILE_21",
+					"type": "animation_sprite",
+					"x": 9,
+					"y": 6
+				},
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "PEPPER_TILE_20",
+					"type": "animation_sprite",
+					"x": 3,
+					"y": 14
+				},
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "PEPPER_TILE_59",
+					"type": "animation_sprite",
+					"x": -5,
+					"y": 5
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_0",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_1",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_2",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_3",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_10",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_52",
+					"type": "animation_sprite",
+					"x": 6,
+					"y": 10
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": -3,
+				"right": 8,
+				"top": -2,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "PEPPER_TILE_22",
+					"type": "animation_sprite",
+					"x": 9,
+					"y": 6
+				},
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "PEPPER_TILE_21",
+					"type": "animation_sprite",
+					"x": 3,
+					"y": 14
+				},
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "PEPPER_TILE_59",
+					"type": "animation_sprite",
+					"x": -5,
+					"y": 5
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_0",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_1",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_2",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_3",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_10",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "PEPPER_TILE_52",
+					"type": "animation_sprite",
+					"x": 6,
+					"y": 10
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": -3,
+				"right": 8,
+				"top": -2,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "PEPPER_TILE_22",
+					"type": "animation_sprite",
+					"x": 3,
+					"y": 14
+				},
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "PEPPER_TILE_23",
+					"type": "animation_sprite",
+					"x": 9,
+					"y": 6
+				},
+				{
+					"attr": 129,
+					"foreground": true,
+					"tile": "PEPPER_TILE_59",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 12
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_0",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_1",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_2",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_3",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_10",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				},
+				{
+					"attr": 129,
+					"foreground": false,
+					"tile": "PEPPER_TILE_52",
+					"type": "animation_sprite",
+					"x": 6,
+					"y": 6
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": -3,
+				"right": 8,
+				"top": -2,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "PEPPER_TILE_23",
+					"type": "animation_sprite",
+					"x": 3,
+					"y": 14
+				},
+				{
+					"attr": 129,
+					"foreground": true,
+					"tile": "PEPPER_TILE_59",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 12
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_0",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_1",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": -8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_2",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_3",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_10",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				},
+				{
+					"attr": 129,
+					"foreground": false,
+					"tile": "PEPPER_TILE_52",
+					"type": "animation_sprite",
+					"x": 6,
+					"y": 6
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 255,
+			"hitbox": {
+				"base_h": -500,
+				"base_v": -1000,
+				"bottom": 16,
+				"damages": 2,
+				"enabled": true,
+				"force_h": -2,
+				"force_v": -4,
+				"left": -4,
+				"right": 12,
+				"top": 8,
+				"type": "animation_hitbox"
+			},
+			"hurtbox": {
 				"bottom": 15,
 				"left": 0,
 				"right": 9,
-				"top": 0,
+				"top": -2,
 				"type": "animation_hurtbox"
 			},
 			"sprites": [
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "PEPPER_TILE_20",
+					"tile": "PEPPER_TILE_51",
 					"type": "animation_sprite",
-					"x": -4,
-					"y": 8
+					"x": -3,
+					"y": 10
 				},
 				{
-					"attr": 1,
+					"attr": 128,
 					"foreground": false,
-					"tile": "PEPPER_TILE_21",
+					"tile": "PEPPER_TILE_15",
 					"type": "animation_sprite",
 					"x": 1,
-					"y": 7
+					"y": 4
 				},
 				{
-					"attr": 1,
+					"attr": 0,
 					"foreground": false,
-					"tile": "PEPPER_TILE_20",
+					"tile": "PEPPER_TILE_12",
 					"type": "animation_sprite",
-					"x": 6,
-					"y": 10
-				}
-			],
-			"type": "animation_frame"
-		},
-		{
-			"duration": 4,
-			"hitbox": null,
-			"hurtbox": {
-				"bottom": 15,
-				"left": 0,
-				"right": 9,
-				"top": 0,
-				"type": "animation_hurtbox"
-			},
-			"sprites": [
-				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_20",
-					"type": "animation_sprite",
-					"x": -3,
-					"y": 3
+					"x": -7,
+					"y": 1
 				},
 				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_21",
-					"type": "animation_sprite",
-					"x": -4,
-					"y": 8
-				},
-				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_20",
-					"type": "animation_sprite",
-					"x": 6,
-					"y": 3
-				},
-				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_21",
-					"type": "animation_sprite",
-					"x": 6,
-					"y": 10
-				},
-				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_22",
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_13",
 					"type": "animation_sprite",
 					"x": 1,
-					"y": 7
-				}
-			],
-			"type": "animation_frame"
-		},
-		{
-			"duration": 4,
-			"hitbox": null,
-			"hurtbox": {
-				"bottom": 15,
-				"left": 0,
-				"right": 9,
-				"top": 0,
-				"type": "animation_hurtbox"
-			},
-			"sprites": [
-				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_21",
-					"type": "animation_sprite",
-					"x": -3,
-					"y": 3
+					"y": 1
 				},
 				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_20",
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_14",
 					"type": "animation_sprite",
-					"x": 2,
-					"y": -3
+					"x": -7,
+					"y": 9
 				},
 				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_21",
-					"type": "animation_sprite",
-					"x": 6,
-					"y": 3
-				},
-				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_22",
-					"type": "animation_sprite",
-					"x": 6,
-					"y": 10
-				},
-				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_22",
-					"type": "animation_sprite",
-					"x": -4,
-					"y": 8
-				},
-				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_23",
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_5",
 					"type": "animation_sprite",
 					"x": 1,
-					"y": 7
+					"y": 9
 				},
 				{
-					"attr": 0,
+					"attr": 129,
 					"foreground": false,
-					"tile": "PEPPER_TILE_0",
+					"tile": "PEPPER_TILE_52",
 					"type": "animation_sprite",
-					"x": -1,
-					"y": -8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_1",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": -8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_2",
-					"type": "animation_sprite",
-					"x": -1,
-					"y": 0
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_3",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 0
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_4",
-					"type": "animation_sprite",
-					"x": -1,
-					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_5",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 8
-				}
-			],
-			"type": "animation_frame"
-		},
-		{
-			"duration": 4,
-			"hitbox": null,
-			"hurtbox": {
-				"bottom": 15,
-				"left": 0,
-				"right": 9,
-				"top": 0,
-				"type": "animation_hurtbox"
-			},
-			"sprites": [
-				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_21",
-					"type": "animation_sprite",
-					"x": 2,
-					"y": -3
-				},
-				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_22",
-					"type": "animation_sprite",
-					"x": 6,
+					"x": 5,
 					"y": 3
-				},
-				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_22",
-					"type": "animation_sprite",
-					"x": -3,
-					"y": 3
-				},
-				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_23",
-					"type": "animation_sprite",
-					"x": 6,
-					"y": 10
-				},
-				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_23",
-					"type": "animation_sprite",
-					"x": -4,
-					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_0",
-					"type": "animation_sprite",
-					"x": -1,
-					"y": -8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_1",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": -8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_2",
-					"type": "animation_sprite",
-					"x": -1,
-					"y": 0
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_3",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 0
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_4",
-					"type": "animation_sprite",
-					"x": -1,
-					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_5",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 8
-				}
-			],
-			"type": "animation_frame"
-		},
-		{
-			"duration": 4,
-			"hitbox": null,
-			"hurtbox": {
-				"bottom": 15,
-				"left": 0,
-				"right": 9,
-				"top": 0,
-				"type": "animation_hurtbox"
-			},
-			"sprites": [
-				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_22",
-					"type": "animation_sprite",
-					"x": 2,
-					"y": -3
-				},
-				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_23",
-					"type": "animation_sprite",
-					"x": 6,
-					"y": 3
-				},
-				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_23",
-					"type": "animation_sprite",
-					"x": -3,
-					"y": 3
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_0",
-					"type": "animation_sprite",
-					"x": -1,
-					"y": -8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_1",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": -8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_2",
-					"type": "animation_sprite",
-					"x": -1,
-					"y": 0
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_3",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 0
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_4",
-					"type": "animation_sprite",
-					"x": -1,
-					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_5",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 8
-				}
-			],
-			"type": "animation_frame"
-		},
-		{
-			"duration": 4,
-			"hitbox": null,
-			"hurtbox": {
-				"bottom": 15,
-				"left": 0,
-				"right": 9,
-				"top": 0,
-				"type": "animation_hurtbox"
-			},
-			"sprites": [
-				{
-					"attr": 1,
-					"foreground": true,
-					"tile": "PEPPER_TILE_23",
-					"type": "animation_sprite",
-					"x": 2,
-					"y": -3
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_0",
-					"type": "animation_sprite",
-					"x": -1,
-					"y": -8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_1",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": -8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_2",
-					"type": "animation_sprite",
-					"x": -1,
-					"y": 0
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_3",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 0
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_4",
-					"type": "animation_sprite",
-					"x": -1,
-					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_5",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 8
 				}
 			],
 			"type": "animation_frame"
 		}
 	],
-	"name": "pepper_anim_spawn",
+	"name": "pepper_anim_hyperspeed_flying",
 	"type": "animation"
 }

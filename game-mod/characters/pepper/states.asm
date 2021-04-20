@@ -1,21 +1,3 @@
-; Character code handling movment
-;
-; This code is the implementation of very common movement and reaction to hits. It leads to a character able to move around, but unable to attack.
-;
-; Animations needed:
-;  pepper_anim_crash
-;  pepper_anim_falling
-;  pepper_anim_helpless
-;  pepper_anim_idle
-;  pepper_anim_jump
-;  pepper_anim_landing
-;  pepper_anim_respawn
-;  pepper_anim_run
-;  pepper_anim_spawn
-;  pepper_anim_thrown
-;
-;  pepper_anim_aerial_jump can easily be introduced, see related TODO
-
 PEPPER_STATE_THROWN = 0
 PEPPER_STATE_RESPAWN = 1
 PEPPER_STATE_INNEXISTANT = 2
@@ -30,6 +12,20 @@ PEPPER_STATE_JUMPING = CUSTOM_PLAYER_STATES_BEGIN + 4
 PEPPER_STATE_SHIELDING = CUSTOM_PLAYER_STATES_BEGIN + 5
 PEPPER_STATE_SHIELDLAG = CUSTOM_PLAYER_STATES_BEGIN + 6
 PEPPER_STATE_WALLJUMPING = CUSTOM_PLAYER_STATES_BEGIN + 7
+PEPPER_STATE_DTILT = CUSTOM_PLAYER_STATES_BEGIN + 8
+PEPPER_STATE_STILT = CUSTOM_PLAYER_STATES_BEGIN + 9
+PEPPER_STATE_UTILT = CUSTOM_PLAYER_STATES_BEGIN + 10
+PEPPER_STATE_FLASH_POTION = CUSTOM_PLAYER_STATES_BEGIN + 11
+PEPPER_STATE_AERIAL_SIDE = CUSTOM_PLAYER_STATES_BEGIN + 12
+PEPPER_STATE_AERIAL_FIREWORK = CUSTOM_PLAYER_STATES_BEGIN + 13
+PEPPER_STATE_HYPERSPEED_LANDING = CUSTOM_PLAYER_STATES_BEGIN + 14
+PEPPER_STATE_HYPERSPEED_CRASHING = CUSTOM_PLAYER_STATES_BEGIN + 15
+PEPPER_STATE_AERIAL_WRENCH_GRAB = CUSTOM_PLAYER_STATES_BEGIN + 16
+PEPPER_STATE_POTION_SMASH = CUSTOM_PLAYER_STATES_BEGIN + 17
+PEPPER_STATE_SEND_CARROT = CUSTOM_PLAYER_STATES_BEGIN + 18
+PEPPER_STATE_WITCH_FLY = CUSTOM_PLAYER_STATES_BEGIN + 19
+PEPPER_STATE_TELEPORT = CUSTOM_PLAYER_STATES_BEGIN + 20
+PEPPER_STATE_WRENCH_GRAB = CUSTOM_PLAYER_STATES_BEGIN + 21
 
 PEPPER_MAX_NUM_AERIAL_JUMPS = 1
 PEPPER_MAX_WALLJUMPS = 1
@@ -38,18 +34,214 @@ PEPPER_WALL_JUMP_VELOCITY_VERTICAL = $fb80
 PEPPER_AIR_FRICTION_STRENGTH = 7
 PEPPER_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
 PEPPER_AERIAL_SPEED = $0100
-PEPPER_FASTFALL_SPEED = $05
+PEPPER_FASTFALL_SPEED = $06
 PEPPER_GROUND_FRICTION_STRENGTH = $40
+
+PEPPER_CARROT_NOT_PLACED = $80
 
 pepper_a_num_walljumps = player_a_state_field3
 pepper_b_num_walljumps = player_b_state_field3
 
+; Offset of 12 bytes reserved in player's object data for storing carrot's animation state
+pepper_carrot_anim_per_player:
+.byt (player_a_objects-stage_data)+1, (player_b_objects-stage_data)+1
+pepper_carrot_anim_ptr_lsb_per_player:
+.byt <(player_a_objects+1), <(player_b_objects+1)
+pepper_carrot_anim_ptr_msb_per_player:
+.byt >(player_a_objects+1), >(player_b_objects+1)
+
+; Sprites reserved for carrot's animation
+pepper_first_carrot_sprite_per_player:
+.byt INGAME_PLAYER_A_LAST_SPRITE-1, INGAME_PLAYER_B_LAST_SPRITE-1
+pepper_last_carrot_sprite_per_player:
+.byt INGAME_PLAYER_A_LAST_SPRITE, INGAME_PLAYER_B_LAST_SPRITE
+pepper_last_anim_sprite_per_player:
+.byt INGAME_PLAYER_A_LAST_SPRITE-2, INGAME_PLAYER_B_LAST_SPRITE-2
+
 pepper_init:
+.(
+
+	; Reserve two sprites for carrot
+	.(
+		animation_state_vector = tmpfield2
+
+		; Animation's last sprite num = animation's last sprite num - 2
+		lda anim_last_sprite_num_per_player_lsb, x
+		sta animation_state_vector
+		lda anim_last_sprite_num_per_player_msb, x
+		sta animation_state_vector+1
+
+		ldy #0
+		lda pepper_last_anim_sprite_per_player, x
+		sta (animation_state_vector), y
+
+		; Same for out of screen indicator
+		lda oos_last_sprite_num_per_player_lsb, x
+		sta animation_state_vector
+		lda oos_last_sprite_num_per_player_msb, x
+		sta animation_state_vector+1
+
+		;ldy #0 ; useless, already set above
+		lda pepper_last_anim_sprite_per_player, x
+		sta (animation_state_vector), y
+	.)
+
+	; Initialize carrot's animation state
+	.(
+		lda pepper_carrot_anim_ptr_lsb_per_player, x
+		sta tmpfield11
+		lda pepper_carrot_anim_ptr_msb_per_player, x
+		sta tmpfield12
+		lda #<pepper_anim_carrot
+		sta tmpfield13
+		lda #>pepper_anim_carrot
+		sta tmpfield14
+		jsr animation_init_state
+
+		lda pepper_first_carrot_sprite_per_player, x
+		ldy #ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM
+		sta (tmpfield11), y
+		lda pepper_last_carrot_sprite_per_player, x
+		ldy #ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+		sta (tmpfield11), y
+
+		lda #PEPPER_CARROT_NOT_PLACED
+		ldy #ANIMATION_STATE_OFFSET_X_MSB
+		sta (tmpfield11), y
+
+		; Tick global onground as it reinits walljumps
+		jmp pepper_global_onground
+	.)
+
+	;rts ; useless, jump to subrountine
+
+	anim_last_sprite_num_per_player_msb:
+		.byt >player_a_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+		.byt >player_b_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+	anim_last_sprite_num_per_player_lsb:
+		.byt <player_a_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+		.byt <player_b_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+
+	oos_last_sprite_num_per_player_msb:
+		.byt >player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+		.byt >player_b_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+	oos_last_sprite_num_per_player_lsb:
+		.byt <player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+		.byt <player_b_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+.)
+
 pepper_global_onground:
 .(
 	; Initialize walljump counter
 	lda #PEPPER_MAX_WALLJUMPS
 	sta pepper_a_num_walljumps, x
+	rts
+.)
+
+pepper_global_tick:
+.(
+	; Update carrot's animation
+	lda pepper_carrot_anim_ptr_lsb_per_player, x
+	sta tmpfield11
+	lda pepper_carrot_anim_ptr_msb_per_player, x
+	sta tmpfield12
+	lda #0
+	sta tmpfield13
+	sta tmpfield14
+	sta tmpfield15
+	sta tmpfield16
+	stx player_number
+	jsr animation_draw
+	jsr animation_tick
+
+	; Restore X register
+	ldx player_number
+
+	; Check if carrot has been hit
+	.(
+		; boxes_overlap parameters
+		hitbox_left_pixel = tmpfield1 ; Rectangle 1 left (pixel)
+		hitbox_right_pixel = tmpfield2 ; Rectangle 1 right (pixel)
+		hitbox_top_pixel = tmpfield3 ; Rectangle 1 top (pixel)
+		hitbox_bot_pixel = tmpfield4 ; Rectangle 1 bottom (pixel)
+		hurtbox_left_pixel = tmpfield5 ; Rectangle 2 left (pixel)
+		hurtbox_right_pixel = tmpfield6 ; Rectangle 2 right (pixel)
+		hurtbox_top_pixel = tmpfield7 ; Rectangle 2 top (pixel)
+		hurtbox_bot_pixel = tmpfield8 ; Rectangle 2 bottom (pixel)
+		hitbox_left_screen = tmpfield9 ; Rectangle 1 left (screen)
+		hitbox_right_screen = tmpfield10 ; Rectangle 1 right (screen)
+		hitbox_top_screen = tmpfield11 ; Rectangle 1 top (screen)
+		hitbox_bot_screen = tmpfield12 ; Rectangle 1 bottom (screen)
+		hurtbox_left_screen = tmpfield13 ; Rectangle 2 left (screen)
+		hurtbox_right_screen = tmpfield14 ; Rectangle 2 right (screen)
+		hurtbox_top_screen = tmpfield15 ; Rectangle 2 top (screen)
+		hurtbox_bot_screen = tmpfield16 ; Rectangle 2 bottom (screen)
+
+		; Y = offset to carrot's animation
+		ldy pepper_carrot_anim_per_player, x
+
+		; Check that carrot is placed, else skip doing anything
+		lda stage_data+ANIMATION_STATE_OFFSET_X_MSB, y
+		cmp #PEPPER_CARROT_NOT_PLACED
+		beq end_carrot_hit
+
+		; Check if opponent's hitbox is active
+		jsr switch_selected_player
+		lda player_a_hitbox_enabled, x
+		beq end_carrot_hit
+
+			; Store opponent's hitbox in collision routine parameters
+			lda player_a_hitbox_left, x
+			sta hitbox_left_pixel
+			lda player_a_hitbox_right, x
+			sta hitbox_right_pixel
+			lda player_a_hitbox_top, x
+			sta hitbox_top_pixel
+			lda player_a_hitbox_bottom, x
+			sta hitbox_bot_pixel
+
+			lda player_a_hitbox_left_msb, x
+			sta hitbox_left_screen
+			lda player_a_hitbox_right_msb, x
+			sta hitbox_right_screen
+			lda player_a_hitbox_top_msb, x
+			sta hitbox_top_screen
+			lda player_a_hitbox_bottom_msb, x
+			sta hitbox_bot_screen
+
+			; Store carrot's hurtbox in collision routine parameters
+			lda stage_data+ANIMATION_STATE_OFFSET_X_LSB, y
+			sta hurtbox_left_pixel
+			clc
+			adc #8
+			sta hurtbox_right_pixel
+			lda stage_data+ANIMATION_STATE_OFFSET_X_MSB, y
+			sta hurtbox_left_screen
+			adc #0
+			sta hurtbox_right_screen
+
+			lda stage_data+ANIMATION_STATE_OFFSET_Y_LSB, y
+			sta hurtbox_top_pixel
+			clc
+			adc #16
+			sta hurtbox_bot_pixel
+			lda stage_data+ANIMATION_STATE_OFFSET_Y_MSB, y
+			sta hurtbox_top_screen
+			adc #0
+			sta hurtbox_bot_screen
+
+			; Do the collision check
+			jsr boxes_overlap
+			bne end_carrot_hit
+
+				; Carrot was hit, remove him
+				lda #PEPPER_CARROT_NOT_PLACED
+				sta stage_data+ANIMATION_STATE_OFFSET_X_MSB, y
+
+		end_carrot_hit:
+		ldx player_number
+	.)
+
 	rts
 .)
 
@@ -211,7 +403,7 @@ pepper_check_aerial_inputs:
 		sta tmpfield1
 		lda #>controller_inputs
 		sta tmpfield2
-		lda #14
+		lda #NUM_AERIAL_INPUTS
 		sta tmpfield3
 		jmp controller_callbacks
 
@@ -263,31 +455,44 @@ pepper_check_aerial_inputs:
 		; Note - We have to put subroutines as callbacks since we do not expect a return unless we used the default callback
 		; TODO callbacks set to no_input are to be implemented (except the default callback)
 		controller_inputs:
-		.byt CONTROLLER_INPUT_NONE,         CONTROLLER_INPUT_SPECIAL_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_LEFT, CONTROLLER_INPUT_JUMP
-		.byt CONTROLLER_INPUT_JUMP_RIGHT,   CONTROLLER_INPUT_JUMP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_LEFT,  CONTROLLER_INPUT_ATTACK_RIGHT
-		.byt CONTROLLER_INPUT_DOWN_TILT,    CONTROLLER_INPUT_ATTACK_UP
-		.byt CONTROLLER_INPUT_JAB,          CONTROLLER_INPUT_SPECIAL
-		.byt CONTROLLER_INPUT_SPECIAL_UP,   CONTROLLER_INPUT_SPECIAL_DOWN
+		.byt CONTROLLER_INPUT_NONE,              CONTROLLER_INPUT_SPECIAL_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_LEFT,      CONTROLLER_INPUT_JUMP
+		.byt CONTROLLER_INPUT_JUMP_RIGHT,        CONTROLLER_INPUT_JUMP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_LEFT,       CONTROLLER_INPUT_ATTACK_RIGHT
+		.byt CONTROLLER_INPUT_DOWN_TILT,         CONTROLLER_INPUT_ATTACK_UP
+		.byt CONTROLLER_INPUT_JAB,               CONTROLLER_INPUT_SPECIAL
+		.byt CONTROLLER_INPUT_SPECIAL_UP,        CONTROLLER_INPUT_SPECIAL_DOWN,
+		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,   CONTROLLER_INPUT_ATTACK_UP_LEFT
+        .byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT,  CONTROLLER_INPUT_SPECIAL_UP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,  CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN_LEFT, CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
 		controller_callbacks_lo:
-		.byt <fast_fall, <no_input
-		.byt <no_input,  <jump
-		.byt <jump,      <jump
-		.byt <no_input,  <no_input
-		.byt <no_input,  <no_input
-		.byt <no_input,  <no_input
-		.byt <no_input,  <no_input
+		.byt <fast_fall,                        <pepper_start_send_carrot
+		.byt <pepper_start_send_carrot,	        <jump
+		.byt <jump,                             <jump
+		.byt <pepper_start_aerial_side,         <pepper_start_aerial_side
+		.byt <pepper_start_hyperspeed_landing,  <pepper_start_aerial_firework
+		.byt <pepper_start_potion_smash,        <pepper_start_teleport
+		.byt <pepper_start_witch_fly,           <pepper_start_aerial_wrench_grab
+		.byt <pepper_start_aerial_firework,     <pepper_start_aerial_firework
+		.byt <pepper_start_witch_fly_direction, <pepper_start_witch_fly_direction
+		.byt <pepper_start_hyperspeed_landing,  <pepper_start_hyperspeed_landing
+		.byt <pepper_start_aerial_wrench_grab,  <pepper_start_aerial_wrench_grab
 		controller_callbacks_hi:
-		.byt >fast_fall, >no_input
-		.byt >no_input,  >jump
-		.byt >jump,      >jump
-		.byt >no_input,  >no_input
-		.byt >no_input,  >no_input
-		.byt >no_input,  >no_input
-		.byt >no_input,  >no_input
+		.byt >fast_fall,                        >pepper_start_send_carrot
+		.byt >pepper_start_send_carrot,	        >jump
+		.byt >jump,                             >jump
+		.byt >pepper_start_aerial_side,         >pepper_start_aerial_side
+		.byt >pepper_start_hyperspeed_landing,  >pepper_start_aerial_firework
+		.byt >pepper_start_potion_smash,        >pepper_start_teleport
+		.byt >pepper_start_witch_fly,           >pepper_start_aerial_wrench_grab
+		.byt >pepper_start_aerial_firework,     >pepper_start_aerial_firework
+		.byt >pepper_start_witch_fly_direction, >pepper_start_witch_fly_direction
+		.byt >pepper_start_hyperspeed_landing,  >pepper_start_hyperspeed_landing
+		.byt >pepper_start_aerial_wrench_grab,  >pepper_start_aerial_wrench_grab
 		controller_default_callback:
 		.word no_input
+		NUM_AERIAL_INPUTS = controller_callbacks_lo - controller_inputs
 	.)
 .)
 
@@ -324,6 +529,8 @@ pepper_start_thrown:
 
 pepper_tick_thrown:
 .(
+	jsr pepper_global_tick
+
 	; Update velocity
 	lda player_a_hitstun, x
 	bne gravity
@@ -477,6 +684,8 @@ pepper_start_respawn:
 
 pepper_tick_respawn:
 .(
+	jsr pepper_global_tick
+
 	; Check for timeout
 	dec player_a_state_field1, x
 	bne end
@@ -540,6 +749,8 @@ pepper_start_innexistant:
 
 pepper_tick_innexistant:
 .(
+	jsr pepper_global_tick
+
 	rts
 .)
 
@@ -570,18 +781,34 @@ pepper_start_spawn:
 
 pepper_tick_spawn:
 .(
+	jsr pepper_global_tick
+
 	PEPPER_STATE_SPAWN_DURATION = 50
 
 	inc player_a_state_clock, x
 	lda player_a_state_clock, x
 	cmp #PEPPER_STATE_SPAWN_DURATION
 	bne end
-		jsr pepper_start_idle
+		jmp pepper_start_idle
+		; No return, jump to subroutine
 
 	end:
 	rts
 .)
 
+; Choose between falling or idle depending if grounded
+pepper_start_inactive_state:
+.(
+	lda player_a_grounded, x
+	bne idle
+
+	fall:
+		jmp pepper_start_falling
+		; No return, jump to subroutine
+
+	idle:
+	; Fallthrough to pepper_start_idle
+.)
 
 pepper_start_idle:
 .(
@@ -594,13 +821,15 @@ pepper_start_idle:
 	sta tmpfield13
 	lda #>pepper_anim_idle
 	sta tmpfield14
-	jsr set_player_animation
+	jmp set_player_animation
 
-	rts
+	;rts ; useless, jump to subroutine
 .)
 
 pepper_tick_idle:
 .(
+	jsr pepper_global_tick
+
 	; Do not move, velocity tends toward vector (0,0)
 	lda #$00
 	sta tmpfield4
@@ -616,12 +845,13 @@ pepper_tick_idle:
 	lda controller_a_btns, x
 	cmp #CONTROLLER_INPUT_LEFT
 	bne no_left
-	jsr pepper_input_idle_left
-	jmp end
+		jmp pepper_input_idle_left
+		; No return, jump to subroutine
 	no_left:
-	cmp #CONTROLLER_INPUT_RIGHT
-	bne end
-	jsr pepper_input_idle_right
+		cmp #CONTROLLER_INPUT_RIGHT
+		bne end
+			jmp pepper_input_idle_right
+			; No return, jump to subroutine
 
 	end:
 	rts
@@ -634,11 +864,11 @@ pepper_input_idle:
 	bne end
 
 		; Check state changes
-		lda #<(input_table+1)
+		lda #<input_table
 		sta tmpfield1
-		lda #>(input_table+1)
+		lda #>input_table
 		sta tmpfield2
-		lda input_table
+		lda #INPUT_TABLE_LENGTH
 		sta tmpfield3
 		jmp controller_callbacks
 
@@ -647,25 +877,48 @@ pepper_input_idle:
 
 	input_table:
 	.(
-		table_length:
-		.byt 8
 		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,      CONTROLLER_INPUT_RIGHT
-		.byt CONTROLLER_INPUT_JUMP,      CONTROLLER_INPUT_JUMP_RIGHT
-		.byt CONTROLLER_INPUT_JUMP_LEFT, CONTROLLER_INPUT_TECH
-		.byt CONTROLLER_INPUT_TECH_LEFT,  CONTROLLER_INPUT_TECH_RIGHT
+		.byt CONTROLLER_INPUT_LEFT,               CONTROLLER_INPUT_RIGHT
+		.byt CONTROLLER_INPUT_JUMP,               CONTROLLER_INPUT_JUMP_RIGHT
+		.byt CONTROLLER_INPUT_JUMP_LEFT,          CONTROLLER_INPUT_TECH
+		.byt CONTROLLER_INPUT_TECH_LEFT,          CONTROLLER_INPUT_TECH_RIGHT
+		.byt CONTROLLER_INPUT_DOWN_TILT,          CONTROLLER_INPUT_ATTACK_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_RIGHT,       CONTROLLER_INPUT_SPECIAL_LEFT
+		.byt CONTROLLER_INPUT_SPECIAL_RIGHT,      CONTROLLER_INPUT_SPECIAL
+		.byt CONTROLLER_INPUT_SPECIAL_UP,         CONTROLLER_INPUT_SPECIAL_UP_LEFT
+		.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT,   CONTROLLER_INPUT_ATTACK_UP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,    CONTROLLER_INPUT_ATTACK_UP
+		.byt CONTROLLER_INPUT_JAB,                CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT, CONTROLLER_INPUT_SPECIAL_DOWN
 		controller_callbacks_lsb:
-		.byt <pepper_input_idle_left,      <pepper_input_idle_right
-		.byt <pepper_start_jumping,        <pepper_input_idle_jump_right
-		.byt <pepper_input_idle_jump_left, <pepper_start_shielding
-		.byt <pepper_start_shielding,      <pepper_start_shielding
+		.byt <pepper_input_idle_left,           <pepper_input_idle_right
+		.byt <pepper_start_jumping,             <pepper_input_idle_jump_right
+		.byt <pepper_input_idle_jump_left,      <pepper_start_shielding
+		.byt <pepper_start_shielding,           <pepper_start_shielding
+		.byt <pepper_start_down_tilt,           <input_left_tilt
+		.byt <input_right_tilt,                 <input_left_special
+		.byt <input_right_special,              <pepper_start_teleport
+		.byt <pepper_start_witch_fly,           <pepper_start_witch_fly_direction
+		.byt <pepper_start_witch_fly_direction, <pepper_start_up_tilt
+		.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
+		.byt <pepper_start_flash_potion,        <pepper_start_wrench_grab
+		.byt <pepper_start_wrench_grab,         <pepper_start_wrench_grab
 		controller_callbacks_msb:
-		.byt >pepper_input_idle_left,      >pepper_input_idle_right
-		.byt >pepper_start_jumping,        >pepper_input_idle_jump_right
-		.byt >pepper_input_idle_jump_left, >pepper_start_shielding
-		.byt >pepper_start_shielding,      >pepper_start_shielding
+		.byt >pepper_input_idle_left,           >pepper_input_idle_right
+		.byt >pepper_start_jumping,             >pepper_input_idle_jump_right
+		.byt >pepper_input_idle_jump_left,      >pepper_start_shielding
+		.byt >pepper_start_shielding,           >pepper_start_shielding
+		.byt >pepper_start_down_tilt,           >input_left_tilt
+		.byt >input_right_tilt,                 >input_left_special
+		.byt >input_right_special,              >pepper_start_teleport
+		.byt >pepper_start_witch_fly,           >pepper_start_witch_fly_direction
+		.byt >pepper_start_witch_fly_direction, >pepper_start_up_tilt
+		.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
+		.byt >pepper_start_flash_potion,        >pepper_start_wrench_grab
+		.byt >pepper_start_wrench_grab,         >pepper_start_wrench_grab
 		controller_default_callback:
 		.word end
+		&INPUT_TABLE_LENGTH = controller_callbacks_lsb - controller_inputs
 	.)
 
 	pepper_input_idle_jump_right:
@@ -681,6 +934,38 @@ pepper_input_idle:
 		lda DIRECTION_LEFT
 		sta player_a_direction, x
 		jmp pepper_start_jumping
+		;rts ; useless - pepper_start_jumping is a routine
+	.)
+
+	input_left_tilt:
+	.(
+		lda DIRECTION_LEFT
+		sta player_a_direction, x
+		jmp pepper_start_side_tilt
+		;rts ; useless - pepper_start_jumping is a routine
+	.)
+
+	input_right_tilt:
+	.(
+		lda DIRECTION_RIGHT
+		sta player_a_direction, x
+		jmp pepper_start_side_tilt
+		;rts ; useless - pepper_start_jumping is a routine
+	.)
+
+	input_left_special:
+	.(
+		lda DIRECTION_LEFT
+		sta player_a_direction, x
+		jmp pepper_start_send_carrot
+		;rts ; useless - pepper_start_jumping is a routine
+	.)
+
+	input_right_special:
+	.(
+		lda DIRECTION_RIGHT
+		sta player_a_direction, x
+		jmp pepper_start_send_carrot
 		;rts ; useless - pepper_start_jumping is a routine
 	.)
 .)
@@ -742,6 +1027,8 @@ pepper_set_running_animation:
 
 pepper_tick_running:
 .(
+	jsr pepper_global_tick
+
 	; Update player's velocity dependeing on his direction
 	lda player_a_direction, x
 	beq run_left
@@ -781,11 +1068,11 @@ pepper_input_running:
 	take_input:
 
 		; Check state changes
-		lda #<(input_table+1)
+		lda #<input_table
 		sta tmpfield1
-		lda #>(input_table+1)
+		lda #>input_table
 		sta tmpfield2
-		lda input_table
+		lda #INPUT_TABLE_LENGTH
 		sta tmpfield3
 		jmp controller_callbacks
 
@@ -816,25 +1103,49 @@ pepper_input_running:
 
 	input_table:
 	.(
-		table_length:
-		.byt 8
 		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,      CONTROLLER_INPUT_RIGHT
-		.byt CONTROLLER_INPUT_JUMP,      CONTROLLER_INPUT_JUMP_RIGHT,
-		.byt CONTROLLER_INPUT_JUMP_LEFT, CONTROLLER_INPUT_TECH
-		.byt CONTROLLER_INPUT_TECH_LEFT, CONTROLLER_INPUT_TECH_RIGHT
+		.byt CONTROLLER_INPUT_LEFT,               CONTROLLER_INPUT_RIGHT
+		.byt CONTROLLER_INPUT_JUMP,               CONTROLLER_INPUT_JUMP_RIGHT,
+		.byt CONTROLLER_INPUT_JUMP_LEFT,          CONTROLLER_INPUT_TECH
+		.byt CONTROLLER_INPUT_TECH_LEFT,          CONTROLLER_INPUT_TECH_RIGHT
+		.byt CONTROLLER_INPUT_DOWN_TILT,          CONTROLLER_INPUT_ATTACK_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_RIGHT,       CONTROLLER_INPUT_SPECIAL_LEFT
+		.byt CONTROLLER_INPUT_SPECIAL_RIGHT,      CONTROLLER_INPUT_SPECIAL
+		.byt CONTROLLER_INPUT_SPECIAL_UP,         CONTROLLER_INPUT_SPECIAL_UP_LEFT
+		.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT,   CONTROLLER_INPUT_SPECIAL_UP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,    CONTROLLER_INPUT_ATTACK_UP
+		.byt CONTROLLER_INPUT_JAB,                CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT, CONTROLLER_INPUT_SPECIAL_DOWN
 		controller_callbacks_lsb:
-		.byt <pepper_input_running_left, <pepper_input_running_right
-		.byt <pepper_start_jumping,      <pepper_start_jumping
-		.byt <pepper_start_jumping,      <pepper_start_shielding
-		.byt <pepper_start_shielding,    <pepper_start_shielding
+		.byt <pepper_input_running_left,        <pepper_input_running_right
+		.byt <pepper_start_jumping,             <pepper_start_jumping
+		.byt <pepper_start_jumping,             <pepper_start_shielding
+		.byt <pepper_start_shielding,           <pepper_start_shielding
+		.byt <pepper_start_down_tilt,           <pepper_start_side_tilt
+		.byt <pepper_start_side_tilt,           <pepper_start_send_carrot
+		.byt <pepper_start_send_carrot,         <pepper_start_teleport
+		.byt <pepper_start_witch_fly,           <pepper_start_witch_fly_direction
+		.byt <pepper_start_witch_fly_direction, <pepper_start_up_tilt
+		.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
+		.byt <pepper_start_flash_potion,        <pepper_start_wrench_grab
+		.byt <pepper_start_wrench_grab,         <pepper_start_wrench_grab
 		controller_callbacks_msb:
-		.byt >pepper_input_running_left, >pepper_input_running_right
-		.byt >pepper_start_jumping,      >pepper_start_jumping
-		.byt >pepper_start_jumping,      >pepper_start_shielding
-		.byt >pepper_start_shielding,    >pepper_start_shielding
+		.byt >pepper_input_running_left,        >pepper_input_running_right
+		.byt >pepper_start_jumping,             >pepper_start_jumping
+		.byt >pepper_start_jumping,             >pepper_start_shielding
+		.byt >pepper_start_shielding,           >pepper_start_shielding
+		.byt >pepper_start_down_tilt,           >pepper_start_side_tilt
+		.byt >pepper_start_side_tilt,           >pepper_start_send_carrot
+		.byt >pepper_start_send_carrot,         >pepper_start_teleport
+		.byt >pepper_start_witch_fly,           >pepper_start_witch_fly_direction
+		.byt >pepper_start_witch_fly_direction, >pepper_start_up_tilt
+		.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
+		.byt >pepper_start_flash_potion,        >pepper_start_wrench_grab
+		.byt >pepper_start_wrench_grab,         >pepper_start_wrench_grab
 		controller_default_callback:
 		.word pepper_start_idle
+
+		&INPUT_TABLE_LENGTH = controller_callbacks_lsb - controller_inputs
 	.)
 .)
 
@@ -845,7 +1156,6 @@ pepper_start_jumping:
 	sta player_a_state, x
 
 	lda #0
-	sta player_a_state_field1, x
 	sta player_a_state_clock, x
 
 	; Set the appropriate animation
@@ -861,6 +1171,8 @@ pepper_start_jumping:
 PEPPER_STATE_JUMP_PREPARATION_END = 4
 pepper_tick_jumping:
 .(
+	jsr pepper_global_tick
+
 	PEPPER_STATE_JUMP_SHORT_HOP_TIME = 9
 	PEPPER_STATE_JUMP_INITIAL_VELOCITY = $fac0
 	PEPPER_STATE_JUMP_SHORT_HOP_VELOCITY = $fefe
@@ -937,11 +1249,11 @@ pepper_input_jumping:
 	jmp end
 
 	grounded:
-	lda #<(input_table+1)
+	lda #<input_table
 	sta tmpfield1
-	lda #>(input_table+1)
+	lda #>input_table
 	sta tmpfield2
-	lda input_table
+	lda #INPUT_TABLE_LENGTH
 	sta tmpfield3
 	jmp controller_callbacks
 
@@ -954,16 +1266,21 @@ pepper_input_jumping:
 		; Note - We can put subroutines as callbacks because we have nothing to do after calling it
 		;        (sourboutines return to our caller since "called" with jmp)
 		; TODO callbacks set to "end" are to be implemented (except the default callback)
-		table_length:
-		.byt 2
 		controller_inputs:
-		.byt CONTROLLER_INPUT_ATTACK_UP, CONTROLLER_INPUT_SPECIAL_UP
+		.byt CONTROLLER_INPUT_ATTACK_UP,       CONTROLLER_INPUT_ATTACK_UP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT, CONTROLLER_INPUT_SPECIAL_UP
+		.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT, CONTROLLER_INPUT_SPECIAL_UP_RIGHT
 		controller_callbacks_lo:
-		.byt <end, <end
+		.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
+		.byt <pepper_start_up_tilt,             <pepper_start_witch_fly
+		.byt <pepper_start_witch_fly_direction, <pepper_start_witch_fly_direction
 		controller_callbacks_hi:
-		.byt >end, >end
+		.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
+		.byt >pepper_start_up_tilt,             >pepper_start_witch_fly
+		.byt >pepper_start_witch_fly_direction, >pepper_start_witch_fly_direction
 		controller_default_callback:
 		.word end
+		&INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
 	.)
 .)
 
@@ -1021,9 +1338,11 @@ pepper_start_falling:
 
 pepper_tick_falling:
 .(
+	jsr pepper_global_tick
+
 	jsr pepper_aerial_directional_influence
-	jsr apply_player_gravity
-	rts
+	jmp apply_player_gravity
+	;rts ; useless, jump to subroutine
 .)
 
 
@@ -1082,6 +1401,8 @@ pepper_set_landing_animation:
 
 pepper_tick_landing:
 .(
+	jsr pepper_global_tick
+
 	PEPPER_STATE_LANDING_DURATION = 6
 
 	; Tick clock
@@ -1133,6 +1454,8 @@ pepper_start_crashing:
 
 pepper_tick_crashing:
 .(
+	jsr pepper_global_tick
+
 	PEPPER_STATE_CRASHING_DURATION = 30
 
 	; Tick clock
@@ -1159,6 +1482,104 @@ pepper_tick_crashing:
 .)
 
 
+pepper_start_aerial_wrench_grab:
+.(
+	PEPPER_STATE_AERIAL_WRENCH_GRAB_DURATION = 28
+
+	; Set state
+	lda #PEPPER_STATE_AERIAL_WRENCH_GRAB
+	sta player_a_state, x
+
+	; Reset clock
+	lda #PEPPER_STATE_AERIAL_WRENCH_GRAB_DURATION
+	sta player_a_state_clock, x
+
+	; Cancel momentum
+	lda #0
+	sta player_a_velocity_h_low, x
+	sta player_a_velocity_h, x
+	sta player_a_velocity_v_low
+	sta player_a_velocity_v
+
+	; Set the appropriate animation
+	lda #<pepper_anim_aerial_wrench_grab
+	sta tmpfield13
+	lda #>pepper_anim_aerial_wrench_grab
+	sta tmpfield14
+	jmp set_player_animation
+
+	;rts ; useless, jump to subroutine
+.)
+
+pepper_tick_aerial_wrench_grab:
+.(
+	jsr pepper_global_tick
+
+	; After move's time is out, go to falling state
+	dec player_a_state_clock, x
+	bne do_tick
+		jmp pepper_start_falling
+		; No return, jump to subroutine
+	do_tick:
+
+	rts
+.)
+
+
+pepper_start_potion_smash:
+.(
+	PEPPER_STATE_POTION_SMASH_DURATION = 34
+
+	; Set state
+	lda #PEPPER_STATE_POTION_SMASH
+	sta player_a_state, x
+
+	; Reset clock
+	lda #PEPPER_STATE_POTION_SMASH_DURATION
+	sta player_a_state_clock, x
+
+	; Cancel momentum
+	lda #0
+	sta player_a_velocity_h_low, x
+	sta player_a_velocity_h, x
+	sta player_a_velocity_v_low
+	sta player_a_velocity_v
+
+	; Set the appropriate animation
+	lda #<pepper_anim_potion_smash
+	sta tmpfield13
+	lda #>pepper_anim_potion_smash
+	sta tmpfield14
+	jmp set_player_animation
+
+	;rts ; useless, jump to subroutine
+.)
+
+pepper_tick_potion_smash:
+.(
+	PEPPER_STATE_POTION_SMASH_GRAVITY_TIME = 14
+
+	jsr pepper_global_tick
+
+	; After move's time is out, go to falling state
+	dec player_a_state_clock, x
+	bne do_tick
+		jmp pepper_start_falling
+		; No return, jump to subroutine
+	do_tick:
+
+	; Apply gravity, only after active frames
+	lda #PEPPER_STATE_POTION_SMASH_GRAVITY_TIME
+	cmp player_a_state_clock, x
+	bcc end
+		jmp apply_player_gravity
+		; No return, jump to subroutine
+
+	end:
+	rts
+.)
+
+
 pepper_start_helpless:
 .(
 	; Set state
@@ -1177,6 +1598,8 @@ pepper_start_helpless:
 
 pepper_tick_helpless:
 .(
+	jsr pepper_global_tick
+
 	jmp pepper_tick_falling
 .)
 
@@ -1228,6 +1651,8 @@ pepper_start_shielding:
 
 pepper_tick_shielding:
 .(
+	jsr pepper_global_tick
+
 	; Tick clock
 	lda player_a_state_clock, x
 	cmp #PLAYER_DOWN_TAP_MAX_DURATION
@@ -1374,6 +1799,8 @@ pepper_start_shieldlag:
 
 pepper_tick_shieldlag:
 .(
+	jsr pepper_global_tick
+
 	PEPPER_STATE_SHIELDLAG_DURATION = 8
 
 	; Do not move, velocity tends toward vector (0,0)
@@ -1435,6 +1862,8 @@ pepper_start_walljumping:
 
 pepper_tick_walljumping:
 .(
+	jsr pepper_global_tick
+
 	; Tick clock
 	inc player_a_state_clock, x
 
@@ -1495,4 +1924,675 @@ pepper_input_walljumping:
 			; no return, jump to a subroutine
 	grounded:
 	rts
+.)
+
+
+pepper_start_down_tilt:
+.(
+	PEPPER_STATE_DTILT_DURATION = 20
+
+	; Set state
+	lda #PEPPER_STATE_DTILT
+	sta player_a_state, x
+
+	; Reset clock
+	lda #PEPPER_STATE_DTILT_DURATION
+	sta player_a_state_clock, x
+
+	; Set the appropriate animation
+	lda #<pepper_anim_dtilt
+	sta tmpfield13
+	lda #>pepper_anim_dtilt
+	sta tmpfield14
+	jmp set_player_animation
+
+	;rts ; useless, jump to subroutine
+.)
+
+pepper_tick_down_tilt:
+pepper_tick_side_tilt:
+pepper_tick_up_tilt:
+pepper_tick_flash_potion:
+pepper_tick_hyperspeed_crashing:
+pepper_tick_wrench_grab:
+.(
+	jsr pepper_global_tick
+
+	; After move's time is out, go to standing state
+	dec player_a_state_clock, x
+	bne do_tick
+		jmp pepper_start_idle
+		; No return, jump to subroutine
+	do_tick:
+
+	; Do not move, velocity tends toward vector (0,0)
+	lda #$00
+	sta tmpfield4
+	sta tmpfield3
+	sta tmpfield2
+	sta tmpfield1
+	lda #$80
+	sta tmpfield5
+	jmp merge_to_player_velocity
+
+	;rts ; useless, jump to subroutine
+.)
+
+
+pepper_start_side_tilt:
+.(
+	PEPPER_STATE_STILT_DURATION = 20
+
+	; Set state
+	lda #PEPPER_STATE_STILT
+	sta player_a_state, x
+
+	; Reset clock
+	lda #PEPPER_STATE_STILT_DURATION
+	sta player_a_state_clock, x
+
+	; Set the appropriate animation
+	lda #<pepper_anim_dark_stare
+	sta tmpfield13
+	lda #>pepper_anim_dark_stare
+	sta tmpfield14
+	jmp set_player_animation
+
+	;rts ; useless, jump to subroutine
+.)
+
+
+pepper_start_up_tilt:
+.(
+	PEPPER_STATE_UTILT_DURATION = 16
+
+	; Set state
+	lda #PEPPER_STATE_UTILT
+	sta player_a_state, x
+
+	; Reset clock
+	lda #PEPPER_STATE_UTILT_DURATION
+	sta player_a_state_clock, x
+
+	; Set the appropriate animation
+	lda #<pepper_anim_up_tilt
+	sta tmpfield13
+	lda #>pepper_anim_up_tilt
+	sta tmpfield14
+	jmp set_player_animation
+
+	;rts ; useless, jump to subroutine
+.)
+
+
+pepper_start_flash_potion:
+.(
+	PEPPER_STATE_FLASH_POTION_DURATION = 32
+
+	; Set state
+	lda #PEPPER_STATE_FLASH_POTION
+	sta player_a_state, x
+
+	; Reset clock
+	lda #PEPPER_STATE_FLASH_POTION_DURATION
+	sta player_a_state_clock, x
+
+	; Set the appropriate animation
+	lda #<pepper_anim_flash_potion
+	sta tmpfield13
+	lda #>pepper_anim_flash_potion
+	sta tmpfield14
+	jmp set_player_animation
+
+	;rts ; useless, jump to subroutine
+.)
+
+
+pepper_start_aerial_side:
+.(
+	&PEPPER_STATE_AERIAL_SIDE_DURATION = 18
+
+	; Set state
+	lda #PEPPER_STATE_AERIAL_SIDE
+	sta player_a_state, x
+
+	; Reset clock
+	lda #PEPPER_STATE_AERIAL_SIDE_DURATION
+	sta player_a_state_clock, x
+
+	; Set the appropriate animation
+	lda #<pepper_anim_aerial_wrench
+	sta tmpfield13
+	lda #>pepper_anim_aerial_wrench
+	sta tmpfield14
+	jmp set_player_animation
+
+	;rts ; useless, jump to subroutine
+.)
+
+pepper_tick_aerial_side:
+.(
+	PEPPER_STATE_AERIAL_SIDE_HIT_TIME = 6
+
+	; Set little upward velocity on the strong hit frame, dramatic effect
+	lda player_a_state_clock, x
+	cmp #PEPPER_STATE_AERIAL_SIDE_DURATION-PEPPER_STATE_AERIAL_SIDE_HIT_TIME
+	bne ok
+		lda #$fe
+		sta player_a_velocity_v, x
+		sta player_a_velocity_v_low, x
+	ok:
+
+	;rts ; Fallthrough to generic aerial tick
+.)
+pepper_tick_aerial_firework:
+.(
+	jsr pepper_global_tick
+
+	; After move's time is out, go to falling state
+	dec player_a_state_clock, x
+	bne do_tick
+		jmp pepper_start_falling
+		; No return, jump to subroutine
+	do_tick:
+
+	jsr pepper_aerial_directional_influence
+	jmp apply_player_gravity
+	;rts ; useless, jump to subroutine
+.)
+
+
+pepper_start_aerial_firework:
+.(
+	PEPPER_STATE_AERIAL_FIREWORK_DURATION = 28
+
+	; Set state
+	lda #PEPPER_STATE_AERIAL_FIREWORK
+	sta player_a_state, x
+
+	; Reset clock
+	lda #PEPPER_STATE_AERIAL_FIREWORK_DURATION
+	sta player_a_state_clock, x
+
+	; Set the appropriate animation
+	lda #<pepper_anim_firework
+	sta tmpfield13
+	lda #>pepper_anim_firework
+	sta tmpfield14
+	jmp set_player_animation
+
+	;rts ; useless, jump to subroutine
+.)
+
+
+pepper_start_hyperspeed_landing:
+.(
+	keyframe_index = player_a_state_field1
+
+	; Set state
+	lda #PEPPER_STATE_HYPERSPEED_LANDING
+	sta player_a_state, x
+
+	; Reset clock
+	lda #0
+	sta player_a_state_clock, x
+	sta keyframe_index, x
+
+	; Set the appropriate animation
+	lda #<pepper_anim_hyperspeed_flying
+	sta tmpfield13
+	lda #>pepper_anim_hyperspeed_flying
+	sta tmpfield14
+	jmp set_player_animation
+
+	;rts ; useless, jump to subroutine
+.)
+
+pepper_tick_hyperspeed_landing:
+.(
+	keyframe_index = player_a_state_field1
+
+	; Store next keyframe index in register Y, skip keyframe logic if after the end
+	ldy keyframe_index, x
+	cmp #KEYFRAMES_END
+	beq end
+
+		; Set velocity if on velocity keyframe
+		.(
+			lda velocity_keyframes_clock, y
+			cmp player_a_state_clock, x
+			bne ok
+
+				; Set vertical velocity (direct)
+				lda velocity_keyframes_v_lsb, y
+				sta player_a_velocity_v_low, x
+				lda velocity_keyframes_v_msb, y
+				sta player_a_velocity_v, x
+
+				; Set horizontal velocity (negated if right facing)
+				lda player_a_direction, x
+				bne right
+					left:
+						lda velocity_keyframes_h_lsb, y
+						sta player_a_velocity_h_low, x
+						lda velocity_keyframes_h_msb, y
+						sta player_a_velocity_h, x
+						jmp velocity_ok
+					right:
+						lda velocity_keyframes_h_lsb, y
+						eor #%11111111
+						clc
+						adc #1
+						sta player_a_velocity_h_low, x
+
+						lda velocity_keyframes_h_msb, y
+						eor #%11111111
+						adc #0
+						sta player_a_velocity_h, x
+					velocity_ok:
+
+				; Update next keyframe
+				inc keyframe_index, x
+
+			ok:
+		.)
+
+		; Tick clock
+		inc player_a_state_clock, x
+
+	end:
+	rts
+
+	velocity_keyframes_clock:
+	.byt 0,   12, 20
+	velocity_keyframes_v_lsb:
+	.byt $00, $00, $00
+	velocity_keyframes_v_msb:
+	.byt $00, $01, $04
+	velocity_keyframes_h_lsb:
+	.byt $00, $c0, $00
+	velocity_keyframes_h_msb:
+	.byt $00, $ff, $ff
+	KEYFRAMES_END = velocity_keyframes_v_lsb - velocity_keyframes_clock + 1
+.)
+
+pepper_start_hyperspeed_crashing:
+.(
+	PEPPER_STATE_HYPERSPEED_CRASHING_DURATION = 30
+
+	; Set state
+	lda #PEPPER_STATE_HYPERSPEED_CRASHING
+	sta player_a_state, x
+
+	; Reset clock
+	lda #PEPPER_STATE_HYPERSPEED_CRASHING_DURATION
+	sta player_a_state_clock, x
+
+	; Set the appropriate animation
+	lda #<pepper_anim_hyperspeed_crash
+	sta tmpfield13
+	lda #>pepper_anim_hyperspeed_crash
+	sta tmpfield14
+	jsr set_player_animation
+
+	; Play crash sound
+	jsr audio_play_crash
+
+	rts
+.)
+
+
+pepper_start_send_carrot:
+.(
+	PEPPER_STATE_SEND_CARROT_DURATION = 8
+
+	; Set state
+	lda #PEPPER_STATE_SEND_CARROT
+	sta player_a_state, x
+
+	; Reset clock
+	lda #PEPPER_STATE_SEND_CARROT_DURATION
+	sta player_a_state_clock, x
+
+	; Cancel any momentum
+	lda #0
+	sta player_a_velocity_h, x
+	sta player_a_velocity_h_low, x
+	sta player_a_velocity_v, x
+	sta player_a_velocity_v_low, x
+
+	; Set the appropriate animation
+	;TODO
+	lda #<pepper_anim_send_carrot
+	sta tmpfield13
+	lda #>pepper_anim_send_carrot
+	sta tmpfield14
+	jmp set_player_animation
+
+	;rts ; useless, jump to subroutine
+.)
+
+pepper_tick_send_carrot:
+.(
+	carrot_anim_direction = tmpfield1
+	stage_element_handler_lsb = tmpfield1
+	stage_element_handler_msb = tmpfield2
+	collision_point_x_lsb = tmpfield3
+	collision_point_y_lsb = tmpfield4
+	collision_point_x_msb = tmpfield5
+	collision_point_y_msb = tmpfield6
+	carrot_offset_x_lsb = tmpfield7
+	carrot_offset_x_msb = tmpfield8
+
+	jsr pepper_global_tick
+
+	; After move's time is out, place carrot and return to inactive state
+	dec player_a_state_clock, x
+	bne do_tick
+		; Put carrot offset in fixed location
+		ldy player_a_direction, x
+		sty carrot_anim_direction
+
+		lda carrot_offset_x_lsb_per_direction, y
+		sta carrot_offset_x_lsb
+		lda carrot_offset_x_msb_per_direction, y
+		sta carrot_offset_x_msb
+
+		; Place carrot
+		ldy pepper_carrot_anim_per_player, x
+
+		lda player_a_x, x
+		clc
+		adc carrot_offset_x_lsb
+		sta stage_data+ANIMATION_STATE_OFFSET_X_LSB, y
+		sta collision_point_x_lsb
+		lda player_a_x_screen, x
+		adc carrot_offset_x_msb
+		sta stage_data+ANIMATION_STATE_OFFSET_X_MSB, y
+		sta collision_point_x_msb
+
+		lda player_a_y, x
+		sta stage_data+ANIMATION_STATE_OFFSET_Y_LSB, y
+		sta collision_point_y_lsb
+		lda player_a_y_screen, x
+		sta stage_data+ANIMATION_STATE_OFFSET_Y_MSB, y
+		sta collision_point_y_msb
+
+		lda carrot_anim_direction
+		sta stage_data+ANIMATION_STATE_OFFSET_DIRECTION, y
+
+		; Remove carrot if in a platform
+		.(
+			lda #<check_in_platform
+			sta stage_element_handler_lsb
+			lda #>check_in_platform
+			sta stage_element_handler_msb
+			jsr stage_iterate_all_elements
+			; Note - expects none of stage_iterate_all_elements nor check_in_platform to overwrite register X
+
+			cpy #$ff
+			bne ok
+				lda #PEPPER_CARROT_NOT_PLACED
+				ldy pepper_carrot_anim_per_player, x
+				sta stage_data+ANIMATION_STATE_OFFSET_Y_MSB, y
+			ok:
+		.)
+
+		; Return to inactive state
+		jmp pepper_start_inactive_state
+		; No return, jump to subroutine
+	do_tick:
+
+	rts
+
+	carrot_offset_x_lsb_per_direction:
+	.byt $e8, $18
+	carrot_offset_x_msb_per_direction:
+	.byt $ff, $00
+.)
+
+
+pepper_start_teleport:
+.(
+	&PEPPER_STATE_TELEPORT_DURATION = 16
+	move_step_x = player_a_state_field1
+	move_step_y = player_a_state_field2
+
+	; Set state
+	lda #PEPPER_STATE_TELEPORT
+	sta player_a_state, x
+
+	; Reset clock
+	lda #PEPPER_STATE_TELEPORT_DURATION
+	sta player_a_state_clock, x
+
+	; Reset velocity
+	lda #0
+	sta player_a_velocity_h_low, x
+	sta player_a_velocity_h, x
+	sta player_a_velocity_v_low, x
+	sta player_a_velocity_v, x
+
+	; Compute move step distance
+	.(
+		; Y = offset to carrot's animation
+		ldy pepper_carrot_anim_per_player, x
+
+		; Check that carrot is placed, else don't move
+		lda stage_data+ANIMATION_STATE_OFFSET_X_MSB, y
+		cmp #PEPPER_CARROT_NOT_PLACED
+		bne compute_steps
+
+			no_move:
+				lda #0
+				sta move_step_x, x
+				sta move_step_y, x
+				jmp ok
+
+			compute_steps:
+				; move_step_x = (carrot_x - player_x) / 4
+				lda stage_data+ANIMATION_STATE_OFFSET_X_LSB, y
+				sec
+				sbc player_a_x, x
+				sta move_step_x, x
+				lda stage_data+ANIMATION_STATE_OFFSET_X_MSB, y
+				sbc player_a_x_screen, x
+				lsr
+				ror move_step_x, x
+				lsr
+				ror move_step_x, x
+
+				; move_step_y = (carrot_y - player_y) / 4
+				lda stage_data+ANIMATION_STATE_OFFSET_Y_LSB, y
+				sec
+				sbc player_a_y, x
+				sta move_step_y, x
+				lda stage_data+ANIMATION_STATE_OFFSET_Y_MSB, y
+				sbc player_a_y_screen, x
+				lsr
+				ror move_step_y, x
+				lsr
+				ror move_step_y, x
+		
+		ok:
+	.)
+
+	; Set the appropriate animation
+	lda #<pepper_anim_teleport
+	sta tmpfield13
+	lda #>pepper_anim_teleport
+	sta tmpfield14
+	jmp set_player_animation
+
+	;rts ; useless, jump to subroutine
+.)
+
+pepper_tick_teleport:
+.(
+	PEPPER_STATE_TELEPORT_TP_TIME = 8
+	PEPPER_STATE_TELEPORT_MOVE_TIME = 5
+	move_step_x = player_a_state_field1
+	move_step_y = player_a_state_field2
+
+	jsr pepper_global_tick
+
+	; After move's time is out, go to inactive state
+	dec player_a_state_clock, x
+	bne do_tick
+		jmp pepper_start_inactive_state
+		; No return, jump to subroutine
+	do_tick:
+
+	; Apply logic depending on time
+	;  Disapear animation - Do nothing
+	;  Traveling - Move toward Carrot
+	;  Reapear animation - Place exactly on Carrot and remove Carrot
+	lda player_a_state_clock, x
+	cmp #PEPPER_STATE_TELEPORT_DURATION-PEPPER_STATE_TELEPORT_TP_TIME     ; 8
+	beq final_position ; at teleport time
+	cmp #PEPPER_STATE_TELEPORT_DURATION-PEPPER_STATE_TELEPORT_MOVE_TIME+1 ; 12
+	beq start_move
+	jmp end
+
+	start_move:
+
+		; Set velocity to pre-computed values
+		lda move_step_x, x
+		sta player_a_velocity_h, x
+		lda move_step_y, x
+		sta player_a_velocity_v, x
+		; No need to set low bytes, already at zero
+		jmp end
+
+	final_position:
+
+		; Y = offset to carrot's animation
+		ldy pepper_carrot_anim_per_player, x
+
+		; Check that carrot is placed, else skip doing anything
+		lda stage_data+ANIMATION_STATE_OFFSET_X_MSB, y
+		cmp #PEPPER_CARROT_NOT_PLACED
+		beq end
+
+		; Change Pepper's position
+		lda stage_data+ANIMATION_STATE_OFFSET_X_MSB, y
+		sta player_a_x_screen, x
+		lda stage_data+ANIMATION_STATE_OFFSET_X_LSB, y
+		sta player_a_x, x
+
+		lda stage_data+ANIMATION_STATE_OFFSET_Y_LSB, y
+		sta player_a_y, x
+		lda stage_data+ANIMATION_STATE_OFFSET_Y_MSB, y
+		sta player_a_y_screen, x
+
+		lda #0
+		sta player_a_x_low, x
+		sta player_a_y_low, x
+
+		; Reset velocity
+		sta player_a_velocity_h_low, x
+		sta player_a_velocity_h, x
+		sta player_a_velocity_v_low, x
+		sta player_a_velocity_v, x
+
+		; Remove carrot
+		lda #PEPPER_CARROT_NOT_PLACED
+		sta stage_data+ANIMATION_STATE_OFFSET_X_MSB, y
+
+	end:
+	rts
+.)
+
+
+pepper_start_witch_fly_direction:
+.(
+	lda controller_a_btns, x
+	cmp #CONTROLLER_INPUT_SPECIAL_LEFT
+	beq left
+	cmp #CONTROLLER_INPUT_SPECIAL_RIGHT
+	bne pepper_start_witch_fly
+		right:
+			lda DIRECTION_RIGHT
+			sta player_a_direction, x
+			jmp pepper_start_witch_fly
+		left:
+			lda DIRECTION_LEFT
+			sta player_a_direction, x
+			;jmp pepper_start_witch_fly ; useless, fallthrough
+
+	; Fallthrough to pepper_start_witch_fly
+.)
+pepper_start_witch_fly:
+.(
+	PEPPER_STATE_WITCH_FLY_DURATION = 25
+
+	; Set state
+	lda #PEPPER_STATE_WITCH_FLY
+	sta player_a_state, x
+
+	; Reset clock
+	lda #PEPPER_STATE_WITCH_FLY_DURATION
+	sta player_a_state_clock, x
+
+	; Set momentum
+	ldy player_a_direction, x
+	lda witch_fly_velocity_h_lsb_per_direction, y
+	sta player_a_velocity_h_low, x
+	lda witch_fly_velocity_h_msb_per_direction, y
+	sta player_a_velocity_h, x
+	lda #$ff
+	sta player_a_velocity_v_low,x 
+	lda #$fe
+	sta player_a_velocity_v, x
+
+	; Set the appropriate animation
+	lda #<pepper_anim_witch_fly
+	sta tmpfield13
+	lda #>pepper_anim_witch_fly
+	sta tmpfield14
+	jmp set_player_animation
+
+	;rts ; useless, jump to subroutine
+
+	witch_fly_velocity_h_lsb_per_direction:
+		.byt $ff, $00
+	witch_fly_velocity_h_msb_per_direction:
+		.byt $fd, $02
+.)
+
+pepper_tick_witch_fly:
+.(
+	jsr pepper_global_tick
+
+	; After move's time is out, go helpless
+	dec player_a_state_clock, x
+	bne do_tick
+		jmp pepper_start_helpless
+		; No return, jump to subroutine
+	do_tick:
+
+	rts
+.)
+
+
+pepper_start_wrench_grab:
+.(
+	PEPPER_STATE_WRENCH_GRAB_DURATION = 28
+
+	; Set state
+	lda #PEPPER_STATE_WRENCH_GRAB
+	sta player_a_state, x
+
+	; Reset clock
+	lda #PEPPER_STATE_WRENCH_GRAB_DURATION
+	sta player_a_state_clock, x
+
+	; Set the appropriate animation
+	lda #<pepper_anim_wrench_grab
+	sta tmpfield13
+	lda #>pepper_anim_wrench_grab
+	sta tmpfield14
+	jmp set_player_animation
+
+	;rts ; useless, jump to subroutine
 .)
