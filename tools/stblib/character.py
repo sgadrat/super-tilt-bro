@@ -92,6 +92,8 @@ class AiAttack:
 	class ConstraintFlag:
 		DIRECTION_LEFT  = 0b00000001
 		DIRECTION_RIGHT = 0b00000010
+		AIRBORNE        = 0b00000100
+		GROUNDED        = 0b00001000
 
 	def __init__(self, action='', hitbox=None, constraints=0):
 		self.action = action
@@ -108,8 +110,28 @@ class AiAttack:
 		self.hitbox.check()
 
 		ensure(isinstance(self.constraints, int))
-		ensure(self.constraints <= AiAttack.ConstraintFlag.DIRECTION_LEFT + AiAttack.ConstraintFlag.DIRECTION_RIGHT, "unknown flag set in action's constraints")
-		ensure(not (self.constraint_set(AiAttack.ConstraintFlag.DIRECTION_LEFT) and self.constraint_set(AiAttack.ConstraintFlag.DIRECTION_RIGHT)), "impossible constraints mix: right and left")
+		ensure(
+			self.constraints <=
+				AiAttack.ConstraintFlag.DIRECTION_LEFT +
+				AiAttack.ConstraintFlag.DIRECTION_RIGHT +
+				AiAttack.ConstraintFlag.AIRBORNE +
+				AiAttack.ConstraintFlag.GROUNDED,
+			"unknown flag set in action's constraints"
+		)
+		ensure(
+			not(
+				self.constraint_set(AiAttack.ConstraintFlag.DIRECTION_LEFT) and
+				self.constraint_set(AiAttack.ConstraintFlag.DIRECTION_RIGHT)
+			),
+			"impossible constraints mix: right and left"
+		)
+		ensure(
+			not(
+				self.constraint_set(AiAttack.ConstraintFlag.AIRBORNE) and
+				self.constraint_set(AiAttack.ConstraintFlag.GROUNDED)
+			),
+			"impossible constraints mix: airborne and grounded"
+		)
 
 class AiActionStep:
 	def __init__(self, input=0, duration=0):

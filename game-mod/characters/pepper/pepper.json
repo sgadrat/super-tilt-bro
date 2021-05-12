@@ -1,10 +1,181 @@
 {
 	"ai": {
-		"action_selectors": [],
-		"actions": [],
-		"attacks": [],
-		"sourcecode": "",
-		"sourcecode_file": null,
+		"action_selectors": [
+			"ai_shield_selector",
+			"pepper_ai_attack_selector",
+			"pepper_ai_recover_selector",
+			"ai_space_selector",
+			"ai_chase_selector"
+		],
+		"actions": [
+			{
+				"name": "down_tilt",
+				"steps": [
+					{
+						"duration": 0,
+						"input": "CONTROLLER_INPUT_DOWN_TILT",
+						"type": "character_ai_action_step"
+					},
+					{
+						"duration": 19,
+						"input": 0,
+						"type": "character_ai_action_step"
+					}
+				],
+				"type": "character_ai_action"
+			},
+			{
+				"name": "left_tilt",
+				"steps": [
+					{
+						"duration": 0,
+						"input": "CONTROLLER_INPUT_ATTACK_LEFT",
+						"type": "character_ai_action_step"
+					},
+					{
+						"duration": 19,
+						"input": 0,
+						"type": "character_ai_action_step"
+					}
+				],
+				"type": "character_ai_action"
+			},
+			{
+				"name": "right_tilt",
+				"steps": [
+					{
+						"duration": 0,
+						"input": "CONTROLLER_INPUT_ATTACK_RIGHT",
+						"type": "character_ai_action_step"
+					},
+					{
+						"duration": 19,
+						"input": 0,
+						"type": "character_ai_action_step"
+					}
+				],
+				"type": "character_ai_action"
+			},
+			{
+				"name": "air_neutral",
+				"steps": [
+					{
+						"duration": 0,
+						"input": "CONTROLLER_INPUT_JAB",
+						"type": "character_ai_action_step"
+					},
+					{
+						"duration": 33,
+						"input": 0,
+						"type": "character_ai_action_step"
+					}
+				],
+				"type": "character_ai_action"
+			},
+			{
+				"name": "up_tilt",
+				"steps": [
+					{
+						"duration": 0,
+						"input": "CONTROLLER_INPUT_ATTACK_UP",
+						"type": "character_ai_action_step"
+					},
+					{
+						"duration": 15,
+						"input": 0,
+						"type": "character_ai_action_step"
+					}
+				],
+				"type": "character_ai_action"
+			}
+		],
+		"attacks": [
+			{
+				"action": "pepper_ai_action_down_tilt",
+				"constraints": 9,
+				"hitbox": {
+					"bottom": 16,
+					"left": -7,
+					"right": 4,
+					"top": 10,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			},
+			{
+				"action": "pepper_ai_action_down_tilt",
+				"constraints": 10,
+				"hitbox": {
+					"bottom": 16,
+					"left": 3,
+					"right": 14,
+					"top": 10,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			},
+			{
+				"action": "pepper_ai_action_left_tilt",
+				"constraints": 0,
+				"hitbox": {
+					"bottom": 16,
+					"left": -13,
+					"right": -1,
+					"top": 10,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			},
+			{
+				"action": "pepper_ai_action_right_tilt",
+				"constraints": 0,
+				"hitbox": {
+					"bottom": 16,
+					"left": 8,
+					"right": 20,
+					"top": 10,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			},
+			{
+				"action": "pepper_ai_action_air_neutral",
+				"constraints": 5,
+				"hitbox": {
+					"bottom": 10,
+					"left": -24,
+					"right": 1,
+					"top": 5,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			},
+			{
+				"action": "pepper_ai_action_air_neutral",
+				"constraints": 6,
+				"hitbox": {
+					"bottom": 10,
+					"left": 6,
+					"right": 31,
+					"top": 5,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			},
+			{
+				"action": "pepper_ai_action_up_tilt",
+				"constraints": 0,
+				"hitbox": {
+					"bottom": 1,
+					"left": -9,
+					"right": 18,
+					"top": -12,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			}
+		],
+		"sourcecode_file": "characters/pepper/ai.asm",
 		"type": "character_ai"
 	},
 	"animations": [

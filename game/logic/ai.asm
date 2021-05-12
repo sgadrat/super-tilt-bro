@@ -1,5 +1,7 @@
-AI_ATTACK_CONDITION_DIRECTION_LEFT = %00000001
+AI_ATTACK_CONDITION_DIRECTION_LEFT  = %00000001
 AI_ATTACK_CONDITION_DIRECTION_RIGHT = %00000010
+AI_ATTACK_CONDITION_AIRBORNE        = %00000100
+AI_ATTACK_CONDITION_GROUNDED        = %00001000
 
 ; Readable shorthand to get the negation of a constant 8bit value
 #define NOT(x) <(-x-1)
@@ -262,6 +264,14 @@ ai_attack_selector:
 	right_facing:
 		and #NOT(AI_ATTACK_CONDITION_DIRECTION_RIGHT)
 	end_direction_flag:
+
+	ldx player_b_grounded
+	bne grounded
+		and #NOT(AI_ATTACK_CONDITION_AIRBORNE)
+		jmp end_ground_flag
+	grounded:
+		and #NOT(AI_ATTACK_CONDITION_GROUNDED)
+	end_ground_flag:
 
 	sta condition_mask
 
