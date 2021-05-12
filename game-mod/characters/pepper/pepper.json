@@ -134,6 +134,54 @@
 					32
 				],
 				"type": "palette"
+			},
+			{
+				"colors": [
+					20,
+					16,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					0,
+					16,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					0,
+					16,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					0,
+					16,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					0,
+					16,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					32,
+					0,
+					16
+				],
+				"type": "palette"
 			}
 		],
 		"primary_colors": [
@@ -144,12 +192,82 @@
 					54
 				],
 				"type": "palette"
+			},
+			{
+				"colors": [
+					15,
+					15,
+					54
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					15,
+					40,
+					6
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					15,
+					37,
+					6
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					1,
+					17,
+					54
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					21,
+					37,
+					54
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					0,
+					16,
+					32
+				],
+				"type": "palette"
 			}
 		],
 		"primary_names": [
-			"color a"
+			"red",
+			"black",
+			"yellow",
+			"pink b",
+			"blue",
+			"pink",
+			"grey"
 		],
 		"secondary_colors": [
+			{
+				"colors": [
+					1,
+					17,
+					50
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					40,
+					55
+				],
+				"type": "palette"
+			},
 			{
 				"colors": [
 					7,
@@ -157,10 +275,48 @@
 					39
 				],
 				"type": "palette"
+			},
+			{
+				"colors": [
+					5,
+					21,
+					37
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					7,
+					23,
+					39
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					5,
+					21,
+					37
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					15,
+					16,
+					32
+				],
+				"type": "palette"
 			}
 		],
 		"secondary_names": [
-			"color a"
+			"blue",
+			"gold",
+			"red",
+			"pink",
+			"red",
+			"pink",
+			"grey"
 		],
 		"type": "character_colors"
 	},

@@ -1498,8 +1498,8 @@ pepper_start_aerial_wrench_grab:
 	lda #0
 	sta player_a_velocity_h_low, x
 	sta player_a_velocity_h, x
-	sta player_a_velocity_v_low
-	sta player_a_velocity_v
+	sta player_a_velocity_v_low, x
+	sta player_a_velocity_v, x
 
 	; Set the appropriate animation
 	lda #<pepper_anim_aerial_wrench_grab
@@ -1542,8 +1542,8 @@ pepper_start_potion_smash:
 	lda #0
 	sta player_a_velocity_h_low, x
 	sta player_a_velocity_h, x
-	sta player_a_velocity_v_low
-	sta player_a_velocity_v
+	sta player_a_velocity_v_low, x
+	sta player_a_velocity_v, x
 
 	; Set the appropriate animation
 	lda #<pepper_anim_potion_smash
