@@ -364,11 +364,11 @@ sinbad_input_standing:
 	bne end
 
 	; Check state changes
-	lda #<controller_inputs
+	lda #<input_table
 	sta tmpfield1
-	lda #>controller_inputs
+	lda #>input_table
 	sta tmpfield2
-	lda #22
+	lda #INPUT_TABLE_LENGTH
 	sta tmpfield3
 	jmp controller_callbacks
 
@@ -411,29 +411,54 @@ sinbad_input_standing:
 	end:
 	rts
 
-	; Impactful controller states and associated callbacks
-	; Note - We can put subroutines as callbacks because we have nothing to do after calling it
-	;        (sourboutines return to our caller since "called" with jmp)
-	controller_inputs:
-	.byt CONTROLLER_INPUT_LEFT,           CONTROLLER_INPUT_RIGHT,           CONTROLLER_INPUT_JUMP,         CONTROLLER_INPUT_JUMP_RIGHT,      CONTROLLER_INPUT_JUMP_LEFT
-	.byt CONTROLLER_INPUT_JAB,            CONTROLLER_INPUT_ATTACK_LEFT,     CONTROLLER_INPUT_ATTACK_RIGHT, CONTROLLER_INPUT_SPECIAL,         CONTROLLER_INPUT_SPECIAL_RIGHT
-	.byt CONTROLLER_INPUT_SPECIAL_LEFT,   CONTROLLER_INPUT_DOWN_TILT,       CONTROLLER_INPUT_SPECIAL_UP,   CONTROLLER_INPUT_SPECIAL_DOWN,    CONTROLLER_INPUT_ATTACK_UP
-	.byt CONTROLLER_INPUT_TECH,           CONTROLLER_INPUT_TECH_LEFT,       CONTROLLER_INPUT_TECH_RIGHT,   CONTROLLER_INPUT_SPECIAL_UP_LEFT, CONTROLLER_INPUT_SPECIAL_UP_RIGHT
-	.byt CONTROLLER_INPUT_ATTACK_UP_LEFT, CONTROLLER_INPUT_ATTACK_UP_RIGHT
-	controller_callbacks_lo:
-	.byt <sinbad_input_standing_left,     <sinbad_input_standing_right,  <jump_input,                      <jump_input_right,                <jump_input_left
-	.byt <sinbad_start_jabbing,           <tilt_input_left,              <tilt_input_right,                <sinbad_start_special,            <side_special_input_right
-	.byt <side_special_input_left,        <sinbad_start_down_tilt,       <sinbad_start_spe_up,             <sinbad_start_spe_down,           <sinbad_start_up_tilt
-	.byt <sinbad_start_shielding,         <sinbad_start_shielding,       <sinbad_start_shielding,          <sinbad_start_spe_up,             <sinbad_start_spe_up
-	.byt <sinbad_start_up_tilt,           <sinbad_start_up_tilt
-	controller_callbacks_hi:
-	.byt >sinbad_input_standing_left,     >sinbad_input_standing_right,  >jump_input,                      >jump_input_right,                >jump_input_left
-	.byt >sinbad_start_jabbing,           >tilt_input_left,              >tilt_input_right,                >sinbad_start_special,            >side_special_input_right
-	.byt >side_special_input_left,        >sinbad_start_down_tilt,       >sinbad_start_spe_up,             >sinbad_start_spe_down,           >sinbad_start_up_tilt
-	.byt >sinbad_start_shielding,         >sinbad_start_shielding,       >sinbad_start_shielding,          >sinbad_start_spe_up,             >sinbad_start_spe_up
-	.byt >sinbad_start_up_tilt,           >sinbad_start_up_tilt
-	controller_default_callback:
-	.word end
+	input_table:
+	.(
+		controller_inputs:
+		.byt CONTROLLER_INPUT_LEFT,              CONTROLLER_INPUT_RIGHT
+		.byt CONTROLLER_INPUT_JUMP,              CONTROLLER_INPUT_JUMP_RIGHT
+		.byt CONTROLLER_INPUT_JUMP_LEFT,         CONTROLLER_INPUT_JAB
+		.byt CONTROLLER_INPUT_ATTACK_LEFT,       CONTROLLER_INPUT_ATTACK_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL,           CONTROLLER_INPUT_SPECIAL_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_LEFT,      CONTROLLER_INPUT_DOWN_TILT
+		.byt CONTROLLER_INPUT_SPECIAL_UP,        CONTROLLER_INPUT_SPECIAL_DOWN
+		.byt CONTROLLER_INPUT_ATTACK_UP,         CONTROLLER_INPUT_TECH
+		.byt CONTROLLER_INPUT_TECH_LEFT,         CONTROLLER_INPUT_TECH_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT,   CONTROLLER_INPUT_SPECIAL_UP_RIGHT
+		.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,    CONTROLLER_INPUT_ATTACK_UP_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN_LEFT, CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
+		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,  CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
+		controller_callbacks_lo:
+		.byt <sinbad_input_standing_left, <sinbad_input_standing_right
+		.byt <jump_input,                 <jump_input_right
+		.byt <jump_input_left,            <sinbad_start_jabbing
+		.byt <tilt_input_left,            <tilt_input_right
+		.byt <sinbad_start_special,       <side_special_input_right
+		.byt <side_special_input_left,    <sinbad_start_down_tilt
+		.byt <sinbad_start_spe_up,        <sinbad_start_spe_down
+		.byt <sinbad_start_up_tilt,       <sinbad_start_shielding
+		.byt <sinbad_start_shielding,     <sinbad_start_shielding
+		.byt <sinbad_start_spe_up,        <sinbad_start_spe_up
+		.byt <sinbad_start_up_tilt,       <sinbad_start_up_tilt
+		.byt <sinbad_start_spe_down,      <sinbad_start_spe_down
+		.byt <sinbad_start_down_tilt,     <sinbad_start_down_tilt
+		controller_callbacks_hi:
+		.byt >sinbad_input_standing_left, >sinbad_input_standing_right
+		.byt >jump_input,                 >jump_input_right
+		.byt >jump_input_left,            >sinbad_start_jabbing
+		.byt >tilt_input_left,            >tilt_input_right
+		.byt >sinbad_start_special,       >side_special_input_right
+		.byt >side_special_input_left,    >sinbad_start_down_tilt
+		.byt >sinbad_start_spe_up,        >sinbad_start_spe_down
+		.byt >sinbad_start_up_tilt,       >sinbad_start_shielding
+		.byt >sinbad_start_shielding,     >sinbad_start_shielding
+		.byt >sinbad_start_spe_up,        >sinbad_start_spe_up
+		.byt >sinbad_start_up_tilt,       >sinbad_start_up_tilt
+		.byt >sinbad_start_spe_down,      >sinbad_start_spe_down
+		.byt >sinbad_start_down_tilt,     >sinbad_start_down_tilt
+		controller_default_callback:
+		.word end
+		&INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
+	.)
 .)
 
 sinbad_start_running:
@@ -2007,9 +2032,11 @@ sinbad_tick_shielding:
 sinbad_input_shielding:
 .(
 	; Maintain down to stay on shield
+	; Ignore left/right as they are too susceptible to be pressed unvoluntarily on a lot of gamepads
 	; Down-a and down-b are allowed as out of shield moves
 	; Any other combination ends the shield (with shield lag or falling from smooth platform)
 	lda controller_a_btns, x
+	and #CONTROLLER_BTN_A+CONTROLLER_BTN_B+CONTROLLER_BTN_UP+CONTROLLER_BTN_DOWN
 	cmp #CONTROLLER_INPUT_TECH
 	beq end
 	cmp #CONTROLLER_INPUT_DOWN_TILT

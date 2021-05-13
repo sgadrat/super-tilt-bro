@@ -520,6 +520,10 @@ check_in_platform:
 ;
 ;  Note - The callback is called with jmp, controller_callbacks never
 ;         returns using rts.
+;
+;  TODO could be generalized by not doing "lda controller_a_btns, x"
+;       changing X register parameter (player number) to A register parameter (value to search in the table.)
+;       Note that it would be a modification of the static bank.
 controller_callbacks:
 .(
 	callbacks_table = tmpfield1

@@ -917,11 +917,11 @@ kiki_input_idle:
 	bne end
 
 		; Check state changes
-		lda #<(input_table+1)
+		lda #<input_table
 		sta tmpfield1
-		lda #>(input_table+1)
+		lda #>input_table
 		sta tmpfield2
-		lda input_table
+		lda #INPUT_TABLE_LENGTH
 		sta tmpfield3
 		jmp controller_callbacks
 
@@ -930,20 +930,20 @@ kiki_input_idle:
 
 	input_table:
 	.(
-		table_length:
-		.byt 22
 		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,            CONTROLLER_INPUT_RIGHT
-		.byt CONTROLLER_INPUT_JUMP,            CONTROLLER_INPUT_JUMP_RIGHT
-		.byt CONTROLLER_INPUT_JUMP_LEFT,       CONTROLLER_INPUT_ATTACK_RIGHT
-		.byt CONTROLLER_INPUT_ATTACK_LEFT,     CONTROLLER_INPUT_SPECIAL_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_LEFT,    CONTROLLER_INPUT_TECH
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN,    CONTROLLER_INPUT_SPECIAL_UP
-		.byt CONTROLLER_INPUT_ATTACK_UP,       CONTROLLER_INPUT_DOWN_TILT
-		.byt CONTROLLER_INPUT_JAB,             CONTROLLER_INPUT_SPECIAL
-		.byt CONTROLLER_INPUT_TECH_LEFT,       CONTROLLER_INPUT_TECH_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT, CONTROLLER_INPUT_SPECIAL_UP_RIGHT
-		.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,  CONTROLLER_INPUT_ATTACK_UP_RIGHT
+		.byt CONTROLLER_INPUT_LEFT,              CONTROLLER_INPUT_RIGHT
+		.byt CONTROLLER_INPUT_JUMP,              CONTROLLER_INPUT_JUMP_RIGHT
+		.byt CONTROLLER_INPUT_JUMP_LEFT,         CONTROLLER_INPUT_ATTACK_RIGHT
+		.byt CONTROLLER_INPUT_ATTACK_LEFT,       CONTROLLER_INPUT_SPECIAL_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_LEFT,      CONTROLLER_INPUT_TECH
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN,      CONTROLLER_INPUT_SPECIAL_UP
+		.byt CONTROLLER_INPUT_ATTACK_UP,         CONTROLLER_INPUT_DOWN_TILT
+		.byt CONTROLLER_INPUT_JAB,               CONTROLLER_INPUT_SPECIAL
+		.byt CONTROLLER_INPUT_TECH_LEFT,         CONTROLLER_INPUT_TECH_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT,   CONTROLLER_INPUT_SPECIAL_UP_RIGHT
+		.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,    CONTROLLER_INPUT_ATTACK_UP_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN_LEFT, CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
+		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,  CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
 		controller_callbacks_lsb:
 		.byt <kiki_input_idle_left,      <kiki_input_idle_right
 		.byt <kiki_start_jumping,        <kiki_input_idle_jump_right
@@ -956,6 +956,8 @@ kiki_input_idle:
 		.byt <kiki_start_shielding,      <kiki_start_shielding
 		.byt <kiki_start_down_wall,      <kiki_start_down_wall
 		.byt <kiki_start_up_tilt,        <kiki_start_up_tilt
+		.byt <kiki_start_counter_guard,  <kiki_start_counter_guard
+		.byt <kiki_start_down_tilt,      <kiki_start_down_tilt
 		controller_callbacks_msb:
 		.byt >kiki_input_idle_left,      >kiki_input_idle_right
 		.byt >kiki_start_jumping,        >kiki_input_idle_jump_right
@@ -968,9 +970,11 @@ kiki_input_idle:
 		.byt >kiki_start_shielding,      >kiki_start_shielding
 		.byt >kiki_start_down_wall,      >kiki_start_down_wall
 		.byt >kiki_start_up_tilt,        >kiki_start_up_tilt
-
+		.byt >kiki_start_counter_guard,  >kiki_start_counter_guard
+		.byt >kiki_start_down_tilt,      >kiki_start_down_tilt
 		controller_default_callback:
 		.word end
+		&INPUT_TABLE_LENGTH = controller_callbacks_lsb - controller_inputs
 	.)
 
 	kiki_input_idle_jump_right:
@@ -1562,9 +1566,11 @@ kiki_tick_shielding:
 kiki_input_shielding:
 .(
 	; Maintain down to stay on shield
+	; Ignore left/right as they are too susceptible to be pressed unvoluntarily on a lot of gamepads
 	; Down-a and down-b are allowed as out of shield moves
 	; Any other combination ends the shield (with shield lag or falling from smooth platform)
 	lda controller_a_btns, x
+	and #CONTROLLER_BTN_A+CONTROLLER_BTN_B+CONTROLLER_BTN_UP+CONTROLLER_BTN_DOWN
 	cmp #CONTROLLER_INPUT_TECH
 	beq end
 	cmp #CONTROLLER_INPUT_DOWN_TILT

@@ -928,6 +928,7 @@ pepper_input_idle:
 		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,    CONTROLLER_INPUT_ATTACK_UP
 		.byt CONTROLLER_INPUT_JAB,                CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
 		.byt CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT, CONTROLLER_INPUT_SPECIAL_DOWN
+		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,   CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
 		controller_callbacks_lsb:
 		.byt <pepper_input_idle_left,           <pepper_input_idle_right
 		.byt <pepper_start_jumping,             <pepper_input_idle_jump_right
@@ -941,6 +942,7 @@ pepper_input_idle:
 		.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
 		.byt <pepper_start_flash_potion,        <pepper_start_wrench_grab
 		.byt <pepper_start_wrench_grab,         <pepper_start_wrench_grab
+		.byt <pepper_start_down_tilt,           <pepper_start_down_tilt
 		controller_callbacks_msb:
 		.byt >pepper_input_idle_left,           >pepper_input_idle_right
 		.byt >pepper_start_jumping,             >pepper_input_idle_jump_right
@@ -954,9 +956,16 @@ pepper_input_idle:
 		.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
 		.byt >pepper_start_flash_potion,        >pepper_start_wrench_grab
 		.byt >pepper_start_wrench_grab,         >pepper_start_wrench_grab
+		.byt >pepper_start_down_tilt,           >pepper_start_down_tilt
 		controller_default_callback:
 		.word end
 		&INPUT_TABLE_LENGTH = controller_callbacks_lsb - controller_inputs
+		;HACK - Directional down-tilt don't change character direction
+		;       it forbids to change direction from "shielding" state.
+		;     - Perfect implementation would be to change direction, but ignore direction when comming from
+		;       shielding state. It would allow to "back-down-tilt" without allowing it out of shield.
+		;     - Implementing that would require to fix the TODO in "controller_callbacks" (allowing it to
+		;       take inputs as parameter.)
 	.)
 
 	pepper_input_idle_jump_right:
@@ -1704,9 +1713,11 @@ pepper_tick_shielding:
 pepper_input_shielding:
 .(
 	; Maintain down to stay on shield
+	; Ignore left/right as they are too susceptible to be pressed unvoluntarily on a lot of gamepads
 	; Down-a and down-b are allowed as out of shield moves
 	; Any other combination ends the shield (with shield lag or falling from smooth platform)
 	lda controller_a_btns, x
+	and #CONTROLLER_BTN_A+CONTROLLER_BTN_B+CONTROLLER_BTN_UP+CONTROLLER_BTN_DOWN
 	cmp #CONTROLLER_INPUT_TECH
 	beq end
 	cmp #CONTROLLER_INPUT_DOWN_TILT
