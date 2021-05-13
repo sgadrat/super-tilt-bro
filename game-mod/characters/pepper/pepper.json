@@ -425,9 +425,9 @@
 		"secondary_colors": [
 			{
 				"colors": [
-					1,
-					17,
-					50
+					7,
+					23,
+					39
 				],
 				"type": "palette"
 			},
@@ -457,9 +457,9 @@
 			},
 			{
 				"colors": [
-					7,
-					23,
-					39
+					1,
+					17,
+					50
 				],
 				"type": "palette"
 			},
@@ -481,11 +481,11 @@
 			}
 		],
 		"secondary_names": [
-			"blue",
+			"red",
 			"gold",
 			"red",
 			"pink",
-			"red",
+			"blue",
 			"pink",
 			"grey"
 		],
