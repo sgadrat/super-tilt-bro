@@ -2825,12 +2825,17 @@ kiki_start_counter_guard:
 	lda #0
 	sta player_a_state_clock,x
 
-	; Cancel momentum
+	; Cancel vertical momentum
 	;lda #0 ; useless, done above
-	sta player_a_velocity_h_low, x
-	sta player_a_velocity_h, x
 	sta player_a_velocity_v_low, x
 	sta player_a_velocity_v, x
+
+	; Lower horizontal momentum
+	lda player_a_velocity_h, x ; Set sign bit in carry flag, so the following bitshift is a signed division
+	rol
+
+	ror player_a_velocity_h, x
+	ror player_a_velocity_h_low, x
 
 	; Lower gravity
 	lda #KIKI_COUNTER_GRAVITY
