@@ -574,7 +574,7 @@
 		"type": "import"
 	},
 	"name": "pepper",
-	"netload_routine": "dummy_routine",
+	"netload_routine": "pepper_netload",
 	"sourcecode_file": "characters/pepper/states.asm",
 	"states": [
 		{

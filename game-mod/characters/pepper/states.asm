@@ -58,6 +58,44 @@ pepper_last_carrot_sprite_per_player:
 pepper_last_anim_sprite_per_player:
 .byt INGAME_PLAYER_A_LAST_SPRITE-2, INGAME_PLAYER_B_LAST_SPRITE-2
 
+pepper_netload:
+.(
+	; NOTE performance can be improved by having a branch per player (avoiding "indirect, y" indexing)
+	ldy #0
+	cpx #0
+	beq load_element
+		ldy #player_b_objects-player_a_objects
+	load_element:
+
+	; Carrot's animation
+	lda RAINBOW_DATA
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_X_LSB, y
+	lda RAINBOW_DATA
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_X_MSB, y
+	lda RAINBOW_DATA
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_Y_LSB, y
+	lda RAINBOW_DATA
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_Y_MSB, y
+	lda RAINBOW_DATA
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_DATA_VECTOR_LSB, y
+	lda RAINBOW_DATA
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_DATA_VECTOR_MSB, y
+	lda RAINBOW_DATA
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_DIRECTION, y
+	lda RAINBOW_DATA
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_CLOCK, y
+	;lda RAINBOW_DATA
+	;sta player_a_objects+1+ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM, y ; Never change
+	;lda RAINBOW_DATA
+	;sta player_a_objects+1+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM, y ; Never change
+	lda RAINBOW_DATA
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB, y
+	lda RAINBOW_DATA
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB, y
+
+	rts
+.)
+
 pepper_init:
 .(
 
