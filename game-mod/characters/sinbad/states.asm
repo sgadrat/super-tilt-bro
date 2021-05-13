@@ -136,7 +136,7 @@ check_aerial_inputs:
 		sta tmpfield1
 		lda #>controller_inputs
 		sta tmpfield2
-		lda #18
+		lda #NUM_AERIAL_INPUTS
 		sta tmpfield3
 		jmp controller_callbacks
 		;rts ; useless, jump to subroutine
@@ -183,15 +183,17 @@ check_aerial_inputs:
 		; Impactful controller states and associated callbacks
 		; Note - We have to put subroutines as callbacks since we do not expect a return unless we used the default callback
 		controller_inputs:
-		.byt CONTROLLER_INPUT_NONE,             CONTROLLER_INPUT_SPECIAL_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_LEFT,     CONTROLLER_INPUT_JUMP
-		.byt CONTROLLER_INPUT_JUMP_RIGHT,       CONTROLLER_INPUT_JUMP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_LEFT,      CONTROLLER_INPUT_ATTACK_RIGHT
-		.byt CONTROLLER_INPUT_DOWN_TILT,        CONTROLLER_INPUT_ATTACK_UP
-		.byt CONTROLLER_INPUT_JAB,              CONTROLLER_INPUT_SPECIAL
-		.byt CONTROLLER_INPUT_SPECIAL_UP,       CONTROLLER_INPUT_SPECIAL_DOWN
-		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,  CONTROLLER_INPUT_ATTACK_UP_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT, CONTROLLER_INPUT_SPECIAL_UP_LEFT
+		.byt CONTROLLER_INPUT_NONE,               CONTROLLER_INPUT_SPECIAL_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_LEFT,       CONTROLLER_INPUT_JUMP
+		.byt CONTROLLER_INPUT_JUMP_RIGHT,         CONTROLLER_INPUT_JUMP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_LEFT,        CONTROLLER_INPUT_ATTACK_RIGHT
+		.byt CONTROLLER_INPUT_DOWN_TILT,          CONTROLLER_INPUT_ATTACK_UP
+		.byt CONTROLLER_INPUT_JAB,                CONTROLLER_INPUT_SPECIAL
+		.byt CONTROLLER_INPUT_SPECIAL_UP,         CONTROLLER_INPUT_SPECIAL_DOWN
+		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,    CONTROLLER_INPUT_ATTACK_UP_LEFT
+		.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT,   CONTROLLER_INPUT_SPECIAL_UP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_DOWN_RIGHT,  CONTROLLER_INPUT_ATTACK_DOWN_LEFT
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT, CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
 		controller_callbacks_lo:
 		.byt <fast_fall,                   <sinbad_start_side_special
 		.byt <sinbad_start_side_special,   <jump
@@ -202,6 +204,8 @@ check_aerial_inputs:
 		.byt <sinbad_start_spe_up,         <sinbad_start_spe_down
 		.byt <sinbad_start_aerial_up,      <sinbad_start_aerial_up
 		.byt <sinbad_start_spe_up,         <sinbad_start_spe_up
+		.byt <sinbad_start_aerial_down,    <sinbad_start_aerial_down
+		.byt <sinbad_start_spe_down,       <sinbad_start_spe_down
 		controller_callbacks_hi:
 		.byt >fast_fall,                   >sinbad_start_side_special
 		.byt >sinbad_start_side_special,   >jump
@@ -212,8 +216,11 @@ check_aerial_inputs:
 		.byt >sinbad_start_spe_up,         >sinbad_start_spe_down
 		.byt >sinbad_start_aerial_up,      >sinbad_start_aerial_up
 		.byt >sinbad_start_spe_up,         >sinbad_start_spe_up
+		.byt >sinbad_start_aerial_down,    >sinbad_start_aerial_down
+		.byt >sinbad_start_spe_down,       >sinbad_start_spe_down
 		controller_default_callback:
 		.word no_input
+		NUM_AERIAL_INPUTS = controller_callbacks_lo - controller_inputs
 	.)
 .)
 
@@ -541,7 +548,7 @@ sinbad_input_running:
 		sta tmpfield1
 		lda #>controller_inputs
 		sta tmpfield2
-		lda #18
+		lda #INPUT_TABLE_LENGTH
 		sta tmpfield3
 		jmp controller_callbacks
 
@@ -582,22 +589,47 @@ sinbad_input_running:
 	; Note - We can put subroutines as callbacks because we have nothing to do after calling it
 	;        (sourboutines return to our caller since "called" with jmp)
 	controller_inputs:
-	.byt CONTROLLER_INPUT_LEFT,             CONTROLLER_INPUT_RIGHT,          CONTROLLER_INPUT_JUMP,            CONTROLLER_INPUT_JUMP_RIGHT,    CONTROLLER_INPUT_JUMP_LEFT
-	.byt CONTROLLER_INPUT_ATTACK_LEFT,      CONTROLLER_INPUT_ATTACK_RIGHT,   CONTROLLER_INPUT_SPECIAL,         CONTROLLER_INPUT_SPECIAL_RIGHT, CONTROLLER_INPUT_SPECIAL_LEFT
-	.byt CONTROLLER_INPUT_SPECIAL_UP,       CONTROLLER_INPUT_SPECIAL_DOWN,   CONTROLLER_INPUT_TECH_LEFT,       CONTROLLER_INPUT_TECH_RIGHT,    CONTROLLER_INPUT_SPECIAL_UP_LEFT,
-	.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT, CONTROLLER_INPUT_ATTACK_UP_LEFT, CONTROLLER_INPUT_ATTACK_UP_RIGHT
+	.byt CONTROLLER_INPUT_LEFT,              CONTROLLER_INPUT_RIGHT
+	.byt CONTROLLER_INPUT_JUMP,              CONTROLLER_INPUT_JUMP_RIGHT
+	.byt CONTROLLER_INPUT_JUMP_LEFT,         CONTROLLER_INPUT_ATTACK_LEFT
+	.byt CONTROLLER_INPUT_ATTACK_RIGHT,      CONTROLLER_INPUT_SPECIAL
+	.byt CONTROLLER_INPUT_SPECIAL_RIGHT,     CONTROLLER_INPUT_SPECIAL_LEFT
+	.byt CONTROLLER_INPUT_SPECIAL_UP,        CONTROLLER_INPUT_SPECIAL_DOWN
+	.byt CONTROLLER_INPUT_TECH_LEFT,         CONTROLLER_INPUT_TECH_RIGHT
+	.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT,   CONTROLLER_INPUT_SPECIAL_UP_RIGHT
+	.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,    CONTROLLER_INPUT_ATTACK_UP_RIGHT
+	.byt CONTROLLER_INPUT_SPECIAL_DOWN_LEFT, CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
+	.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,  CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
+	.byt CONTROLLER_INPUT_DOWN_TILT
 	controller_callbacks_lo:
-	.byt <input_left,                       <input_right,                    <sinbad_start_jumping,            <sinbad_start_jumping,          <sinbad_start_jumping
-	.byt <tilt_input_left,                  <tilt_input_right,               <sinbad_start_special,            <sinbad_start_side_special,     <sinbad_start_side_special
-	.byt <sinbad_start_spe_up,              <sinbad_start_spe_down,          <sinbad_start_shielding,          <sinbad_start_shielding,        <sinbad_start_spe_up
-	.byt <sinbad_start_spe_up,              <sinbad_start_up_tilt,           <sinbad_start_up_tilt
+	.byt <input_left,                <input_right
+	.byt <sinbad_start_jumping,      <sinbad_start_jumping
+	.byt <sinbad_start_jumping,      <tilt_input_left
+	.byt <tilt_input_right,          <sinbad_start_special
+	.byt <sinbad_start_side_special, <sinbad_start_side_special
+	.byt <sinbad_start_spe_up,       <sinbad_start_spe_down
+	.byt <sinbad_start_shielding,    <sinbad_start_shielding
+	.byt <sinbad_start_spe_up,       <sinbad_start_spe_up
+	.byt <sinbad_start_up_tilt,      <sinbad_start_up_tilt
+	.byt <sinbad_start_spe_down,     <sinbad_start_spe_down
+	.byt <sinbad_start_down_tilt,    <sinbad_start_down_tilt
+	.byt <sinbad_start_down_tilt
 	controller_callbacks_hi:
-	.byt >input_left,                       >input_right,                    >sinbad_start_jumping,            >sinbad_start_jumping,          >sinbad_start_jumping
-	.byt >tilt_input_left,                  >tilt_input_right,               >sinbad_start_special,            >sinbad_start_side_special,     >sinbad_start_side_special
-	.byt >sinbad_start_spe_up,              >sinbad_start_spe_down,          >sinbad_start_shielding,          >sinbad_start_shielding,        >sinbad_start_spe_up
-	.byt >sinbad_start_spe_up,              >sinbad_start_up_tilt,           >sinbad_start_up_tilt
+	.byt >input_left,                >input_right
+	.byt >sinbad_start_jumping,      >sinbad_start_jumping
+	.byt >sinbad_start_jumping,      >tilt_input_left
+	.byt >tilt_input_right,          >sinbad_start_special
+	.byt >sinbad_start_side_special, >sinbad_start_side_special
+	.byt >sinbad_start_spe_up,       >sinbad_start_spe_down
+	.byt >sinbad_start_shielding,    >sinbad_start_shielding
+	.byt >sinbad_start_spe_up,       >sinbad_start_spe_up
+	.byt >sinbad_start_up_tilt,      >sinbad_start_up_tilt
+	.byt >sinbad_start_spe_down,     >sinbad_start_spe_down
+	.byt >sinbad_start_down_tilt,    >sinbad_start_down_tilt
+	.byt >sinbad_start_down_tilt
 	controller_default_callback:
 	.word sinbad_start_standing
+	INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
 .)
 
 sinbad_start_falling:
@@ -728,7 +760,7 @@ sinbad_input_jumping:
 		sta tmpfield1
 		lda #>controller_inputs
 		sta tmpfield2
-		lda #2
+		lda #INPUT_TABLE_LENGTH
 		sta tmpfield3
 		jmp controller_callbacks
 
@@ -739,13 +771,20 @@ sinbad_input_jumping:
 	; Note - We can put subroutines as callbacks because we have nothing to do after calling it
 	;        (sourboutines return to our caller since "called" with jmp)
 	controller_inputs:
-	.byt CONTROLLER_INPUT_ATTACK_UP, CONTROLLER_INPUT_SPECIAL_UP
+	.byt CONTROLLER_INPUT_ATTACK_UP,       CONTROLLER_INPUT_SPECIAL_UP
+	.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,  CONTROLLER_INPUT_SPECIAL_UP_LEFT
+	.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT, CONTROLLER_INPUT_SPECIAL_UP_RIGHT
 	controller_callbacks_lo:
+	.byt <sinbad_start_up_tilt, <sinbad_start_spe_up
+	.byt <sinbad_start_up_tilt, <sinbad_start_spe_up
 	.byt <sinbad_start_up_tilt, <sinbad_start_spe_up
 	controller_callbacks_hi:
 	.byt >sinbad_start_up_tilt, >sinbad_start_spe_up
+	.byt >sinbad_start_up_tilt, >sinbad_start_spe_up
+	.byt >sinbad_start_up_tilt, >sinbad_start_spe_up
 	controller_default_callback:
 	.word end
+	INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
 .)
 
 #define MAX_NUM_AERIAL_JUMPS 1

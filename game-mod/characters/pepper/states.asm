@@ -1163,6 +1163,7 @@ pepper_input_running:
 		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,    CONTROLLER_INPUT_ATTACK_UP
 		.byt CONTROLLER_INPUT_JAB,                CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
 		.byt CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT, CONTROLLER_INPUT_SPECIAL_DOWN
+		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,   CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
 		controller_callbacks_lsb:
 		.byt <pepper_input_running_left,        <pepper_input_running_right
 		.byt <pepper_start_jumping,             <pepper_start_jumping
@@ -1176,6 +1177,7 @@ pepper_input_running:
 		.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
 		.byt <pepper_start_flash_potion,        <pepper_start_wrench_grab
 		.byt <pepper_start_wrench_grab,         <pepper_start_wrench_grab
+		.byt <pepper_start_down_tilt,           <pepper_start_down_tilt
 		controller_callbacks_msb:
 		.byt >pepper_input_running_left,        >pepper_input_running_right
 		.byt >pepper_start_jumping,             >pepper_start_jumping
@@ -1189,6 +1191,7 @@ pepper_input_running:
 		.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
 		.byt >pepper_start_flash_potion,        >pepper_start_wrench_grab
 		.byt >pepper_start_wrench_grab,         >pepper_start_wrench_grab
+		.byt >pepper_start_down_tilt,           >pepper_start_down_tilt
 		controller_default_callback:
 		.word pepper_start_idle
 
@@ -1312,7 +1315,6 @@ pepper_input_jumping:
 		; Impactful controller states and associated callbacks (when still grounded)
 		; Note - We can put subroutines as callbacks because we have nothing to do after calling it
 		;        (sourboutines return to our caller since "called" with jmp)
-		; TODO callbacks set to "end" are to be implemented (except the default callback)
 		controller_inputs:
 		.byt CONTROLLER_INPUT_ATTACK_UP,       CONTROLLER_INPUT_ATTACK_UP_LEFT
 		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT, CONTROLLER_INPUT_SPECIAL_UP

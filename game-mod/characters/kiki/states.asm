@@ -377,7 +377,7 @@ kiki_check_aerial_inputs:
 		sta tmpfield1
 		lda #>controller_inputs
 		sta tmpfield2
-		lda #18
+		lda #NUM_AERIAL_INPUTS
 		sta tmpfield3
 		jmp controller_callbacks
 
@@ -412,15 +412,17 @@ kiki_check_aerial_inputs:
 		; Impactful controller states and associated callbacks
 		; Note - We have to put subroutines as callbacks since we do not expect a return unless we used the default callback
 		controller_inputs:
-		.byt CONTROLLER_INPUT_NONE,             CONTROLLER_INPUT_SPECIAL_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_LEFT,     CONTROLLER_INPUT_JUMP
-		.byt CONTROLLER_INPUT_JUMP_RIGHT,       CONTROLLER_INPUT_JUMP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_LEFT,      CONTROLLER_INPUT_ATTACK_RIGHT
-		.byt CONTROLLER_INPUT_DOWN_TILT,        CONTROLLER_INPUT_ATTACK_UP
-		.byt CONTROLLER_INPUT_JAB,              CONTROLLER_INPUT_SPECIAL
-		.byt CONTROLLER_INPUT_SPECIAL_UP,       CONTROLLER_INPUT_SPECIAL_DOWN
-		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,  CONTROLLER_INPUT_ATTACK_UP_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT, CONTROLLER_INPUT_SPECIAL_UP_LEFT
+		.byt CONTROLLER_INPUT_NONE,               CONTROLLER_INPUT_SPECIAL_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_LEFT,       CONTROLLER_INPUT_JUMP
+		.byt CONTROLLER_INPUT_JUMP_RIGHT,         CONTROLLER_INPUT_JUMP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_LEFT,        CONTROLLER_INPUT_ATTACK_RIGHT
+		.byt CONTROLLER_INPUT_DOWN_TILT,          CONTROLLER_INPUT_ATTACK_UP
+		.byt CONTROLLER_INPUT_JAB,                CONTROLLER_INPUT_SPECIAL
+		.byt CONTROLLER_INPUT_SPECIAL_UP,         CONTROLLER_INPUT_SPECIAL_DOWN
+		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,    CONTROLLER_INPUT_ATTACK_UP_LEFT
+		.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT,   CONTROLLER_INPUT_SPECIAL_UP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_DOWN_RIGHT,  CONTROLLER_INPUT_ATTACK_DOWN_LEFT
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT, CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
 		controller_callbacks_lo:
 		.byt <fast_fall,                   <kiki_start_side_spe_right
 		.byt <kiki_start_side_spe_left,    <kiki_start_aerial_jumping
@@ -431,6 +433,8 @@ kiki_check_aerial_inputs:
 		.byt <kiki_start_down_wall,        <kiki_start_counter_guard
 		.byt <kiki_start_up_aerial,        <kiki_start_up_aerial
 		.byt <kiki_start_down_wall,        <kiki_start_down_wall
+		.byt <kiki_start_down_aerial,      <kiki_start_down_aerial
+		.byt <kiki_start_counter_guard,    <kiki_start_counter_guard
 		controller_callbacks_hi:
 		.byt >fast_fall,                   >kiki_start_side_spe_right
 		.byt >kiki_start_side_spe_left,    >kiki_start_aerial_jumping
@@ -441,8 +445,11 @@ kiki_check_aerial_inputs:
 		.byt >kiki_start_down_wall,        >kiki_start_counter_guard
 		.byt >kiki_start_up_aerial,        >kiki_start_up_aerial
 		.byt >kiki_start_down_wall,        >kiki_start_down_wall
+		.byt >kiki_start_down_aerial,      >kiki_start_down_aerial
+		.byt >kiki_start_counter_guard,    >kiki_start_counter_guard
 		controller_default_callback:
 		.word no_input
+		NUM_AERIAL_INPUTS = controller_callbacks_lo - controller_inputs
 	.)
 .)
 
@@ -1092,11 +1099,11 @@ kiki_input_running:
 	take_input:
 
 		; Check state changes
-		lda #<(input_table+1)
+		lda #<input_table
 		sta tmpfield1
-		lda #>(input_table+1)
+		lda #>input_table
 		sta tmpfield2
-		lda input_table
+		lda #INPUT_TABLE_LENGTH
 		sta tmpfield3
 		jmp controller_callbacks
 
@@ -1127,20 +1134,20 @@ kiki_input_running:
 
 	input_table:
 	.(
-		table_length:
-		.byt 22
 		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,            CONTROLLER_INPUT_RIGHT
-		.byt CONTROLLER_INPUT_JUMP,            CONTROLLER_INPUT_JUMP_RIGHT
-		.byt CONTROLLER_INPUT_JUMP_LEFT,       CONTROLLER_INPUT_ATTACK_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_RIGHT,    CONTROLLER_INPUT_SPECIAL_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_RIGHT,   CONTROLLER_INPUT_TECH
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN,    CONTROLLER_INPUT_SPECIAL_UP
-		.byt CONTROLLER_INPUT_ATTACK_UP,       CONTROLLER_INPUT_DOWN_TILT
-		.byt CONTROLLER_INPUT_JAB,             CONTROLLER_INPUT_SPECIAL
-		.byt CONTROLLER_INPUT_TECH_LEFT,       CONTROLLER_INPUT_TECH_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT, CONTROLLER_INPUT_SPECIAL_UP_RIGHT
-		.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,  CONTROLLER_INPUT_ATTACK_UP_RIGHT
+		.byt CONTROLLER_INPUT_LEFT,              CONTROLLER_INPUT_RIGHT
+		.byt CONTROLLER_INPUT_JUMP,              CONTROLLER_INPUT_JUMP_RIGHT
+		.byt CONTROLLER_INPUT_JUMP_LEFT,         CONTROLLER_INPUT_ATTACK_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_RIGHT,      CONTROLLER_INPUT_SPECIAL_LEFT
+		.byt CONTROLLER_INPUT_SPECIAL_RIGHT,     CONTROLLER_INPUT_TECH
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN,      CONTROLLER_INPUT_SPECIAL_UP
+		.byt CONTROLLER_INPUT_ATTACK_UP,         CONTROLLER_INPUT_DOWN_TILT
+		.byt CONTROLLER_INPUT_JAB,               CONTROLLER_INPUT_SPECIAL
+		.byt CONTROLLER_INPUT_TECH_LEFT,         CONTROLLER_INPUT_TECH_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT,   CONTROLLER_INPUT_SPECIAL_UP_RIGHT
+		.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,    CONTROLLER_INPUT_ATTACK_UP_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN_LEFT, CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
+		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,  CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
 		controller_callbacks_lsb:
 		.byt <kiki_input_running_left,    <kiki_input_running_right
 		.byt <kiki_start_jumping,         <kiki_start_jumping
@@ -1153,6 +1160,8 @@ kiki_input_running:
 		.byt <kiki_start_shielding,       <kiki_start_shielding
 		.byt <kiki_start_down_wall,       <kiki_start_down_wall
 		.byt <kiki_start_up_tilt,         <kiki_start_up_tilt
+		.byt <kiki_start_counter_guard,   <kiki_start_counter_guard
+		.byt <kiki_start_down_tilt,       <kiki_start_down_tilt
 		controller_callbacks_msb:
 		.byt >kiki_input_running_left,    >kiki_input_running_right
 		.byt >kiki_start_jumping,         >kiki_start_jumping
@@ -1165,8 +1174,11 @@ kiki_input_running:
 		.byt >kiki_start_shielding,       >kiki_start_shielding
 		.byt >kiki_start_down_wall,       >kiki_start_down_wall
 		.byt >kiki_start_up_tilt,         >kiki_start_up_tilt
+		.byt >kiki_start_counter_guard,   >kiki_start_counter_guard
+		.byt >kiki_start_down_tilt,       >kiki_start_down_tilt
 		controller_default_callback:
 		.word kiki_start_idle
+		&INPUT_TABLE_LENGTH = controller_callbacks_lsb - controller_inputs
 	.)
 .)
 
