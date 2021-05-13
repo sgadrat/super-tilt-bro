@@ -8,4 +8,4 @@ These files are not necessary to build the game. Everything should have already 
 File types
 ----------
 
-``.ora`` are characters animation data. It is an OpenRaster file with special meaning carried in layer's name. You should be able to open it in any good image editor (like The Gimp or Krita.) It can be used to update the ``game-mod`` with ``tools/ora-to-char.py``.
+``.ora`` are characters animation data. It is an OpenRaster file with special meaning carried in layer names. You should be able to open it in any good image editor (like The Gimp or Krita.) It can be used to update the ``game-mod`` with ``tools/ora-to-char.py``.
