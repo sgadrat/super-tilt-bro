@@ -798,6 +798,10 @@ sinbad_start_aerial_jumping:
 	jump_ok:
 	inc player_a_num_aerial_jumps, x
 
+	; Reset fall speed
+	lda #DEFAULT_GRAVITY
+	sta player_a_gravity, x
+
 	; Trick - aerial_jumping set the state to jumping. It is the same state with
 	; the starting conditions as the only differences
 	lda #SINBAD_STATE_JUMPING
