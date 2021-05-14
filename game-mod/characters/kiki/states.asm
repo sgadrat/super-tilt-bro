@@ -2571,7 +2571,7 @@ kiki_tick_down_tilt:
 .(
 	jsr kiki_global_tick
 
-	KIKI_STATE_DOWN_TILT_DURATION = 12
+	KIKI_STATE_DOWN_TILT_DURATION = 24
 	KIKI_STATE_DOWN_TILT_FRICTION = $20
 
 	inc player_a_state_clock, x
