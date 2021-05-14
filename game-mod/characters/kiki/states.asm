@@ -1850,15 +1850,23 @@ kiki_start_side_spe:
 	sta player_a_state_clock,x
 
 	; TODO study intersting velocity setups
-	;  Current - rapidly slow down to (0, 0) (was done to copy-paste code from side tilt)
-	;  Idea 1 - directly stop any velocity (should feel like now, without computations per tick)
+	;  Original - rapidly slow down to (0, 0) (was done to copy-paste code from side tilt)
+	;  Current - directly stop any velocity (should feel like original, without computations per tick)
 	;  Idea 2 - stop horizontal velocity, keep vertical velocity, apply gravity on tick (should help to side spe as part of aerial gameplay)
 
 	; Avoid spawning wall when forbiden
 	lda kiki_a_platform_state, x
 	and #%10000000
-	bne spawn_wall
+	bne process
 		jmp spawn_wall_end
+	process:
+
+	; Reset velocity
+	lda #0
+	sta player_a_velocity_h_low, x
+	sta player_a_velocity_h, x
+	sta player_a_velocity_v_low, x
+	sta player_a_velocity_v, x
 
 	; Spawn wall
 	spawn_wall:
@@ -2019,29 +2027,20 @@ kiki_tick_side_spe:
 .(
 	jsr kiki_global_tick
 
-	; TODO study velocity stuff
 	KIKI_STATE_SIDE_SPE_DURATION = 16
-	KIKI_STATE_SIDE_SPE_FRICTION = $ff
 
 	inc player_a_state_clock, x
 
 	lda player_a_state_clock, x
 	cmp #KIKI_STATE_SIDE_SPE_DURATION
-	bne update_velocity
+	bne end
 
-		jsr kiki_start_idle
-		jmp end
-
-	update_velocity:
-		; Do not move, velocity tends toward vector (0,0)
-		lda #$00
-		sta tmpfield4
-		sta tmpfield3
-		sta tmpfield2
-		sta tmpfield1
-		lda #KIKI_STATE_SIDE_SPE_FRICTION
-		sta tmpfield5
-		jsr merge_to_player_velocity
+		lda player_a_grounded
+		bne on_ground
+			jsr kiki_start_falling
+			jmp end
+		on_ground:
+			jsr kiki_start_idle
 
 	end:
 	rts
@@ -2282,19 +2281,19 @@ kiki_start_top_wall:
 	lda #0
 	sta player_a_state_clock,x
 
+	; Avoid spawning wall when forbiden
+	lda kiki_a_platform_state, x
+	and #%10000000
+	bne process
+		jmp spawn_wall_end
+	process:
+
 	; Reset velocity
-	; TODO study intersting velocity setups
-	;lda #0 ; useless, already set to zero
+	lda #0
 	sta player_a_velocity_h_low, x
 	sta player_a_velocity_h, x
 	sta player_a_velocity_v_low, x
 	sta player_a_velocity_v, x
-
-	; Avoid spawning wall when forbiden
-	lda kiki_a_platform_state, x
-	and #%10000000
-	bne spawn_wall
-		jmp spawn_wall_end
 
 	; Spawn wall
 	spawn_wall:
