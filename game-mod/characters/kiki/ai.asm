@@ -1,5 +1,5 @@
-kiki_ai_action_special_neutral:
-AI_ACTION_STEP(CONTROLLER_INPUT_SPECIAL, 0)
+kiki_ai_action_bottom_platform:
+AI_ACTION_STEP(CONTROLLER_INPUT_SPECIAL_UP, 0)
 AI_ACTION_END_STEPS
 
 kiki_ai_attack_selector:
@@ -92,9 +92,9 @@ kiki_ai_recover_selector:
 			set_draw_low_platform_action:
 				lda #$00
 				sta ai_current_action_modifier
-				lda #<kiki_ai_action_special_neutral
+				lda #<kiki_ai_action_bottom_platform
 				sta ai_current_action_lsb
-				lda #>kiki_ai_action_special_neutral
+				lda #>kiki_ai_action_bottom_platform
 				sta ai_current_action_msb
 				;jmp begin_action ; useless, fallthrough
 
