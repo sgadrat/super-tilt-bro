@@ -27,6 +27,8 @@ extern uint8_t const menu_online_mode_anim_satellite;
 extern uint8_t const menu_online_mode_anim_ship;
 extern uint8_t const menu_online_mode_check_update_window;
 extern uint8_t const menu_online_mode_connexion_window;
+extern uint8_t const menu_online_mode_deny_update_game_window;
+extern uint8_t const menu_online_mode_deny_wifi_settings_window;
 extern uint8_t const menu_online_mode_game_password_window;
 extern uint8_t const menu_online_mode_login_window;
 extern uint8_t const menu_online_mode_nametable;
@@ -34,6 +36,8 @@ extern uint8_t const menu_online_mode_palette;
 extern uint8_t const menu_online_mode_setting_select_window;
 extern uint8_t const tileset_menu_online_mode;
 extern uint8_t const tileset_menu_online_mode_sprites;
+
+extern uint8_t volatile RAINBOW_MAPPER_VERSION;
 
 extern uint8_t const MENU_ONLINE_MODE_TILESET_BANK_NUMBER; // Actually a label, use its address or "tileset_bank()"
 extern uint8_t const ONLINE_MODE_SCREEN_EXTRA_BANK_NUMBER; // Actually a label, use its address or "code_bank()"
@@ -414,7 +418,27 @@ static void esp_read_file(uint8_t size) {
 	RAINBOW_DATA; // Read size
 }
 
+static void deny_update_game() {
+	// Draw deny window
+	draw_dialog(0x2146, &menu_online_mode_deny_update_game_window, 3);
+	clear_form_cursor();
+
+	// Wait a press of B to leave
+	while(1) {
+		if (*controller_a_btns == 0 && *controller_a_last_frame_btns == CONTROLLER_BTN_B) {
+			return;
+		}
+		yield();
+	}
+}
+
 static void update_game() {
+	// Deny access on emulator
+	if ((RAINBOW_MAPPER_VERSION & 0xe0) != 0) {
+		deny_update_game();
+		return;
+	}
+
 	// Draw "checking updates"
 	draw_dialog(0x2146, &menu_online_mode_check_update_window, 3);
 	//TODO hide cursor
@@ -1151,6 +1175,20 @@ static uint8_t enter_game_password() {
 	return password_validated;
 }
 
+static void deny_wifi_settings() {
+	// Draw deny window
+	draw_dialog(0x2146, &menu_online_mode_deny_wifi_settings_window, 3);
+	clear_form_cursor();
+
+	// Wait a press of B to leave
+	while(1) {
+		if (*controller_a_btns == 0 && *controller_a_last_frame_btns == CONTROLLER_BTN_B) {
+			return;
+		}
+		yield();
+	}
+}
+
 static void next_screen() {
 	switch (*online_mode_selection_current_option) {
 		case OPTION_CASUAL:
@@ -1188,7 +1226,11 @@ static void next_screen() {
 					create_account();
 					break;
 				case SETTING_CONFIGURE_WIFI:
-					wrap_change_global_game_state(GAME_STATE_WIFI_SETTINGS);
+					if ((RAINBOW_MAPPER_VERSION & 0xe0) != 0) {
+						deny_wifi_settings();
+					}else {
+						wrap_change_global_game_state(GAME_STATE_WIFI_SETTINGS);
+					}
 					break;
 				case SETTING_UPDATE_GAME:
 					update_game();

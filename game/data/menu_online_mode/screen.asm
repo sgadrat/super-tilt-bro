@@ -158,4 +158,30 @@ menu_online_mode_nametable_end:
 	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
 	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
 	.byt TC, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TE
+
+	&menu_online_mode_deny_update_game_window:
+	.byt 20, 10 ; width, height (in tiles)
+	.byt T0, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T2
+	.byt T3, T4, CN, CO, CT, T4, CO, CN, T4, CE, CM, CU, CL, CA, CT, CO, CR, T4, T4, T5
+	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
+	.byt T3, T4, CP, CL, CE, CA, CS, CE, T4, CD, CO, CW, CN, CL, CO, CA, CD, T4, T4, T5
+	.byt T3, T4, CT, CH, CE, T4, CL, CA, CT, CE, CS, CT, T4, T4, T4, T4, T4, T4, T4, T5
+	.byt T3, T4, CV, CE, CR, CS, CI, CO, CN, T4, CM, CA, CN, CU, CA, CL, CL, CY, T4, T5
+	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
+	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
+	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
+	.byt TC, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TE
+
+	&menu_online_mode_deny_wifi_settings_window:
+	.byt 20, 10 ; width, height (in tiles)
+	.byt T0, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T2
+	.byt T3, T4, CN, CO, CT, T4, CO, CN, T4, CE, CM, CU, CL, CA, CT, CO, CR, T4, T4, T5
+	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
+	.byt T3, T4, CT, CH, CE, T4, CE, CM, CU, CL, CA, CT, CO, CR, T4, CU, CS, CE, CS, T5
+	.byt T3, T4, CY, CO, CU, CR, T4, CI, CN, CT, CE, CR, CN, CE, CT, T4, T4, T4, T4, T5
+	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
+	.byt T3, T4, CN, CO, T4, CS, CP, CE, CC, CI, CF, CI, CC, T4, T4, T4, T4, T4, T4, T5
+	.byt T3, T4, CS, CE, CT, CT, CI, CN, CG, T4, CR, CE, CQ, CU, CI, CR, CE, CD, T4, T5
+	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
+	.byt TC, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TE
 .)
