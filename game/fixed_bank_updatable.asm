@@ -37,6 +37,7 @@ credits_begin:
 .asc $0a
 .asc "backgrounds   by m le borgne",$0a
 .asc "kiki            by tyson tan",$0a
+.asc "pepper        by david revoy",$0a
 .asc "sinbad              by zi ye",$0a
 .asc "i like jump rope    by ozzed",$0a
 .asc "perihelium          by ozzed",$0a
