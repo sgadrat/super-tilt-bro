@@ -199,13 +199,13 @@
 		{
 			"duration": 4,
 			"hitbox": {
-				"base_h": -800,
-				"base_v": 2000,
+				"base_h": -400,
+				"base_v": 1000,
 				"bottom": 16,
 				"damages": 5,
 				"enabled": false,
-				"force_h": 0,
-				"force_v": 16,
+				"force_h": -16,
+				"force_v": 40,
 				"left": -16,
 				"right": 0,
 				"top": 0,
