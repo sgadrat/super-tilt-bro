@@ -1086,8 +1086,6 @@ move_player:
 
 		; Restore X register which can be freely used by platform handlers
 		ldx player_number
-
-		horizontal_end:
 	.)
 
 	; Update actual player positon, x has been messed with but player_number is there
@@ -1519,13 +1517,14 @@ move_player_handle_one_platform_down:
 
 ; Check the player's position and modify the current state accordingly
 ;  register X - player number
-;  tmpfield3 - player's current X pixel
-;  tmpfield4 - player's current Y pixel
-;  tmpfield11 - player's current X screen
-;  tmpfield12 - player's current Y screen
+;  tmpfield4 - player's current X pixel
+;  tmpfield7 - player's current Y pixel
+;  tmpfield5 - player's current X screen
+;  tmpfield8 - player's current Y screen
 ;
 ;  The selected bank must be the correct character's bank.
 ;
+;  Call character code, which may overwrite other things - TODO clear guidelines of allowed side effects for character callbacks
 ;  Overwrites tmpfield1 and tmpfield2
 check_player_position:
 .(

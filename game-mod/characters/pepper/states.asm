@@ -1447,9 +1447,9 @@ pepper_set_landing_animation:
 	sta tmpfield13
 	lda #>pepper_anim_landing
 	sta tmpfield14
-	jsr set_player_animation
+	jmp set_player_animation
 
-	rts
+	;rts ; useless, jump to subroutine
 .)
 
 pepper_tick_landing:
@@ -1500,9 +1500,9 @@ pepper_start_crashing:
 	jsr set_player_animation
 
 	; Play crash sound
-	jsr audio_play_crash
+	jmp audio_play_crash
 
-	rts
+	;rts ; useless, jump to subroutine
 .)
 
 pepper_tick_crashing:
@@ -2291,9 +2291,9 @@ pepper_start_hyperspeed_crashing:
 	jsr set_player_animation
 
 	; Play crash sound
-	jsr audio_play_crash
+	jmp audio_play_crash
 
-	rts
+	;rts ; useless, jump to subroutine
 .)
 
 
