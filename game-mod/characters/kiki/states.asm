@@ -100,9 +100,18 @@ kiki_init:
 		sta kiki_a_platform_state, x
 	.)
 
-	; Stop player's elements after the platform
+	; Setup player's elements
+	; - First byte is ELEMENT_END (deactivated platform)
+	; - Stop player's elements after the platform
 	.(
+		ldy #0
+		cpx #0
+		beq load_element
+			ldy #player_b_objects-player_a_objects
+		load_element:
+
 		lda #STAGE_ELEMENT_END
+		sta player_a_objects+0, y
 		sta player_a_objects+STAGE_ELEMENT_SIZE, y
 	.)
 
