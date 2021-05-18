@@ -189,7 +189,11 @@ pepper_global_tick:
 	sta tmpfield15
 	sta tmpfield16
 	stx player_number
-	jsr animation_draw
+
+	lda network_rollback_mode
+	bne drawn
+		jsr animation_draw
+	drawn:
 	jsr animation_tick
 
 	; Restore X register
