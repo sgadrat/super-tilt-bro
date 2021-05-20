@@ -18,6 +18,7 @@ audio_notes_table_high:
 .byt >NOTE_O6_C, >NOTE_O6_Cs, >NOTE_O6_D, >NOTE_O6_Ds, >NOTE_O6_E, >NOTE_O6_F, >NOTE_O6_Fs, >NOTE_O6_G, >NOTE_O6_Gs, >NOTE_O6_A, >NOTE_O6_As, >NOTE_O6_B 
 .byt >NOTE_O7_C, >NOTE_O7_Cs, >NOTE_O7_D, >NOTE_O7_Ds, >NOTE_O7_E, >NOTE_O7_F, >NOTE_O7_Fs, >NOTE_O7_G, >NOTE_O7_Gs, >NOTE_O7_A, >NOTE_O7_As, >NOTE_O7_B 
 
-#include "game/data/music/theme_title.asm"
+;include "game/data/music/theme_title.asm"
+#include "game/data/music/theme_sinbad.asm"
 #include "game/data/music/theme_perihelium.asm"
 #include "game/data/music/theme_jump_rope.asm"

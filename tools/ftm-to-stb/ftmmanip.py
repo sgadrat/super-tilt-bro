@@ -1029,9 +1029,6 @@ def remove_instruments(music):
 					if seq_pit is not None:
 						ensure(len(seq_pit['sequence']) > 0, 'instrument {:X} has an empty pitch sequence')
 
-						# Find reference note
-						ref_note_idx = get_note_table_index(ref_note)
-
 						# Until the next note, the note is adjusted by the envelope
 						sequence_step = 0
 						current_slide = None
