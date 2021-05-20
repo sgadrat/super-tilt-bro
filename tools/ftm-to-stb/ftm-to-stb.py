@@ -23,6 +23,7 @@ def warn(msg):
 	log('WARNING: {}'.format(msg))
 
 ftmmanip.warn = warn
+ftmtxt.warn = warn
 
 # Read original file
 with open(SOURCE_FILE_PATH, 'r') as f:

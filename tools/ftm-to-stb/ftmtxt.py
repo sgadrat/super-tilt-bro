@@ -1,3 +1,8 @@
+import sys
+
+def warn(msg):
+	sys.stderr.write('{}\n'.format(msg))
+
 def tokenize(line):
 	res = []
 	whitespaces = [' ', '\t']
@@ -209,6 +214,6 @@ def to_dict(ftmtxt_file):
 			# Store row
 			ftm['tracks'][-1]['patterns'][-1]['rows'].append(row)
 		else:
-			print('warning: unknown ftm command {}'.format(command))
+			warn('unknown ftm command {}'.format(command))
 
 	return ftm
