@@ -873,7 +873,7 @@ def remove_instruments(music):
 							seq_vol = None
 						elif get_chan_type(modified, chan_idx) in ['2a03-pulse', '2a03-noise']:
 							if seq_vol['loop'] != -1:
-								warn('instrument {:X} has a looping volume enveloppe: TODO handle loops')
+								warn('instrument {:X} has a looping volume enveloppe: TODO handle loops'.format(instrument_idx))
 
 							# Find initial reference volume (even if above the note)
 							ref_volume = None
@@ -979,52 +979,65 @@ def remove_instruments(music):
 						scan_previous_chan_rows(check_row_duty, modified, track_idx, pattern_idx, chan_idx, row_idx)
 
 						if ref_duty is None:
-							warn('unable to find reference duty for instrument enveloppe in {}: ignore duty enveloppe'.format(
+							warn('unable to find reference duty for instrument enveloppe in {}: considere it as V00'.format(
 								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 							))
-						else:
-							# Until the next note, the duty is adjusted by the enveloppe
-							sequence_step = 0
-							current_row_idx = row_idx
-							while current_row_idx < len(pattern['rows']) and (
-								pattern['rows'][current_row_idx]['channels'][chan_idx]['note'] == '...' or
-								current_row_idx == row_idx
-							):
-								current_chan_row = pattern['rows'][current_row_idx]['channels'][chan_idx]
+							ref_duty = 0
 
-								duty_effect_idx = None
-								for current_effect_idx in range(len(current_chan_row['effects'])):
-									current_effect = current_chan_row['effects'][current_effect_idx]
+						# Until the next note, the duty is adjusted by the enveloppe
+						sequence_step = 0
+						stopped_on_track_end = True
+						def scanner_dut(current_pattern_idx, current_row_idx):
+							nonlocal ref_duty, sequence_step
+							current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+
+							# Stop on any row with a note
+							if current_chan_row['note'] != '...' and (current_pattern_idx, current_row_idx) != (pattern_idx, row_idx):
+
+								# On the next note, explicitely reset reference duty
+								has_duty_effect = False
+								for current_effect in current_chan_row['effects']:
 									if current_effect[0] == 'V':
-										ref_duty = int(current_effect[1:], 16)
-										duty_effect_idx = current_effect_idx
+										has_duty_effect = True
+								if not has_duty_effect:
+									current_chan_row['effects'].append('V{:02X}'.format(ref_duty))
 
-								enveloppe_duty = seq_dut['sequence'][sequence_step]
-								if duty_effect_idx is not None:
-									current_chan_row['effects'][duty_effect_idx] = 'V{:02X}'.format(enveloppe_duty)
-								else:
-									current_chan_row['effects'].append('V{:02X}'.format(enveloppe_duty))
+								# Stop iterating
+								stopped_on_track_end = False
+								return False
 
-								sequence_step = min(sequence_step + 1, len(seq_dut['sequence']) - 1) #TODO handle looping
-								current_row_idx += 1
-
-							# On the next note, explicitely reset reference duty
-							if current_row_idx == len(pattern['rows']):
-								#TODO Handle instrument enveloppes effect on multiple patterns
-								warn('instrument with duty enveloppe at the end of pattern in {}: enveloppe cut at end of pattern (TODO handle it)'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-								))
-								continue #TODO make a definitive choice between letting it as it is, or resetting to reference duty, or [insert clever idea]
-
-							has_duty_effect = False
-							for current_effect in pattern['rows'][current_row_idx]['channels'][chan_idx]['effects']:
+							# Check for new reference duty
+							duty_effect_idx = None
+							for current_effect_idx in range(len(current_chan_row['effects'])):
+								current_effect = current_chan_row['effects'][current_effect_idx]
 								if current_effect[0] == 'V':
-									has_duty_effect = True
-							if not has_duty_effect:
-								pattern['rows'][current_row_idx]['channels'][chan_idx]['effects'].append('V{:02X}'.format(ref_duty))
+									ref_duty = int(current_effect[1:], 16)
+									duty_effect_idx = current_effect_idx
 
-							# Mark duty sequence as handled for this row
-							seq_dut = None
+							# Compute value as impacted by the sequence
+							enveloppe_duty = seq_dut['sequence'][sequence_step]
+							if duty_effect_idx is not None:
+								current_chan_row['effects'][duty_effect_idx] = 'V{:02X}'.format(enveloppe_duty)
+							else:
+								current_chan_row['effects'].append('V{:02X}'.format(enveloppe_duty))
+
+							# Advance sequence
+							if seq_dut['loop'] == -1:
+								sequence_step = min(sequence_step + 1, len(seq_dut['sequence']) - 1)
+							else:
+								sequence_step += 1
+								if sequence_step >= len(seq_dut['sequence']):
+									sequence_step = seq_dut['loop']
+						scan_next_chan_rows(scanner_dut, modified, track_idx, pattern_idx, row_idx )
+
+						# Warn if envelop goes past the end of the track, hoping there is an explicit VXX at the begining to reset duty
+						if stopped_on_track_end:
+							warn('duty envelope from {} goes beyond the end of the track'.format(
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							))
+
+						# Mark duty sequence as handled for this row
+						seq_dut = None
 
 					if seq_pit is not None:
 						ensure(len(seq_pit['sequence']) > 0, 'instrument {:X} has an empty pitch sequence')
@@ -1902,7 +1915,7 @@ def remove_superfluous_duty(music):
 						if effect[0] == 'V':
 							if current_duty is not None:
 								warn('after manipulation, multiple duty effects in {}: some ignored'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, channel_idx),
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
 								))
 								chan_row['effects'][effect_idx] = '...'
 							else:
