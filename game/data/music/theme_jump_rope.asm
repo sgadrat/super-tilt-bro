@@ -1,3 +1,5 @@
+music_jump_rope_bank = CURRENT_BANK_NUMBER
+
 music_jump_rope_info:
 .word music_jump_rope_track_pulse1
 .word music_jump_rope_track_pulse2
@@ -1347,7 +1349,3 @@ music_jump_rope_sample_81:
 	PLAY_TIMED_NOTE(4,53)
 	SAMPLE_END
 .)
-
-#echo
-#echo music_jump_rope_size:
-#print *-music_jump_rope_info

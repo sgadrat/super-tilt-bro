@@ -482,9 +482,8 @@ def generate_banks(char_to_bank, tileset_to_bank, game_dir):
 			#define CURRENT_BANK_NUMBER DATA_BANK_NUMBER
 			#include "game/banks/data_bank.asm"
 
-			#define MUSIC_BANK_NUMBER $03
-			#define CURRENT_BANK_NUMBER MUSIC_BANK_NUMBER
-			#include "game/banks/music_bank.asm"
+			#define CURRENT_BANK_NUMBER $03
+			#include "game/banks/data03_bank.asm"
 
 			#define CURRENT_BANK_NUMBER $04
 			#include "game/banks/data02_bank.asm"

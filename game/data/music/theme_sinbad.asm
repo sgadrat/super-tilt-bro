@@ -1,440 +1,442 @@
-music_title_info:
-.word music_title_track_pulse1
-.word music_title_track_pulse2
-.word music_title_track_triangle
-.word music_title_track_noise
+music_sinbad_bank = CURRENT_BANK_NUMBER
+
+music_sinbad_info:
+.word music_sinbad_track_pulse1
+.word music_sinbad_track_pulse2
+.word music_sinbad_track_triangle
+.word music_sinbad_track_noise
 .byt 0
 
-music_title_track_pulse1:
-.word music_title_sample_88
-.word music_title_sample_89
-.word music_title_sample_0
-.word music_title_sample_50
-.word music_title_sample_67
-.word music_title_sample_66
-.word music_title_sample_68
-.word music_title_sample_66
-.word music_title_sample_69
-.word music_title_sample_67
-.word music_title_sample_66
-.word music_title_sample_68
-.word music_title_sample_66
-.word music_title_sample_70
-.word music_title_sample_51
-.word music_title_sample_67
-.word music_title_sample_66
-.word music_title_sample_68
-.word music_title_sample_66
-.word music_title_sample_71
-.word music_title_sample_67
-.word music_title_sample_66
-.word music_title_sample_68
-.word music_title_sample_66
-.word music_title_sample_72
-.word music_title_sample_31
-.word music_title_sample_21
-.word music_title_sample_9
-.word music_title_sample_10
-.word music_title_sample_9
-.word music_title_sample_32
-.word music_title_sample_21
-.word music_title_sample_33
-.word music_title_sample_21
-.word music_title_sample_34
-.word music_title_sample_22
-.word music_title_sample_21
-.word music_title_sample_9
-.word music_title_sample_10
-.word music_title_sample_9
-.word music_title_sample_32
-.word music_title_sample_21
-.word music_title_sample_33
-.word music_title_sample_21
-.word music_title_sample_35
-.word music_title_sample_63
-.word music_title_sample_64
-.word music_title_sample_63
-.word music_title_sample_65
-.word music_title_sample_1
-.word music_title_sample_2
-.word music_title_sample_31
-.word music_title_sample_21
-.word music_title_sample_9
-.word music_title_sample_82
-.word music_title_sample_80
-.word music_title_sample_83
-.word music_title_sample_21
-.word music_title_sample_9
-.word music_title_sample_81
-.word music_title_sample_80
-.word music_title_sample_36
-.word music_title_sample_21
-.word music_title_sample_9
-.word music_title_sample_84
-.word music_title_sample_80
-.word music_title_sample_85
-.word music_title_sample_21
-.word music_title_sample_9
-.word music_title_sample_10
-.word music_title_sample_9
-.word music_title_sample_11
-.word music_title_sample_50
-.word music_title_sample_67
-.word music_title_sample_66
-.word music_title_sample_68
-.word music_title_sample_66
-.word music_title_sample_69
-.word music_title_sample_67
-.word music_title_sample_66
-.word music_title_sample_68
-.word music_title_sample_66
-.word music_title_sample_70
-.word music_title_sample_51
-.word music_title_sample_67
-.word music_title_sample_66
-.word music_title_sample_68
-.word music_title_sample_66
-.word music_title_sample_71
-.word music_title_sample_67
-.word music_title_sample_66
-.word music_title_sample_68
-.word music_title_sample_66
-.word music_title_sample_72
-.word music_title_sample_8
-.word music_title_sample_46
-.word music_title_sample_47
-.word music_title_sample_60
-.word music_title_sample_47
-.word music_title_sample_47
-.word music_title_sample_60
-.word music_title_sample_47
-.word music_title_sample_61
-.word music_title_sample_46
-.word music_title_sample_47
-.word music_title_sample_60
-.word music_title_sample_47
-.word music_title_sample_47
-.word music_title_sample_60
-.word music_title_sample_47
-.word music_title_sample_10
-.word music_title_sample_8
-.word music_title_sample_46
-.word music_title_sample_47
-.word music_title_sample_60
-.word music_title_sample_47
-.word music_title_sample_47
-.word music_title_sample_60
-.word music_title_sample_47
-.word music_title_sample_62
-.word music_title_sample_46
-.word music_title_sample_47
-.word music_title_sample_60
-.word music_title_sample_47
-.word music_title_sample_47
-.word music_title_sample_60
-.word music_title_sample_47
+music_sinbad_track_pulse1:
+.word music_sinbad_sample_88
+.word music_sinbad_sample_89
+.word music_sinbad_sample_0
+.word music_sinbad_sample_50
+.word music_sinbad_sample_67
+.word music_sinbad_sample_66
+.word music_sinbad_sample_68
+.word music_sinbad_sample_66
+.word music_sinbad_sample_69
+.word music_sinbad_sample_67
+.word music_sinbad_sample_66
+.word music_sinbad_sample_68
+.word music_sinbad_sample_66
+.word music_sinbad_sample_70
+.word music_sinbad_sample_51
+.word music_sinbad_sample_67
+.word music_sinbad_sample_66
+.word music_sinbad_sample_68
+.word music_sinbad_sample_66
+.word music_sinbad_sample_71
+.word music_sinbad_sample_67
+.word music_sinbad_sample_66
+.word music_sinbad_sample_68
+.word music_sinbad_sample_66
+.word music_sinbad_sample_72
+.word music_sinbad_sample_31
+.word music_sinbad_sample_21
+.word music_sinbad_sample_9
+.word music_sinbad_sample_10
+.word music_sinbad_sample_9
+.word music_sinbad_sample_32
+.word music_sinbad_sample_21
+.word music_sinbad_sample_33
+.word music_sinbad_sample_21
+.word music_sinbad_sample_34
+.word music_sinbad_sample_22
+.word music_sinbad_sample_21
+.word music_sinbad_sample_9
+.word music_sinbad_sample_10
+.word music_sinbad_sample_9
+.word music_sinbad_sample_32
+.word music_sinbad_sample_21
+.word music_sinbad_sample_33
+.word music_sinbad_sample_21
+.word music_sinbad_sample_35
+.word music_sinbad_sample_63
+.word music_sinbad_sample_64
+.word music_sinbad_sample_63
+.word music_sinbad_sample_65
+.word music_sinbad_sample_1
+.word music_sinbad_sample_2
+.word music_sinbad_sample_31
+.word music_sinbad_sample_21
+.word music_sinbad_sample_9
+.word music_sinbad_sample_82
+.word music_sinbad_sample_80
+.word music_sinbad_sample_83
+.word music_sinbad_sample_21
+.word music_sinbad_sample_9
+.word music_sinbad_sample_81
+.word music_sinbad_sample_80
+.word music_sinbad_sample_36
+.word music_sinbad_sample_21
+.word music_sinbad_sample_9
+.word music_sinbad_sample_84
+.word music_sinbad_sample_80
+.word music_sinbad_sample_85
+.word music_sinbad_sample_21
+.word music_sinbad_sample_9
+.word music_sinbad_sample_10
+.word music_sinbad_sample_9
+.word music_sinbad_sample_11
+.word music_sinbad_sample_50
+.word music_sinbad_sample_67
+.word music_sinbad_sample_66
+.word music_sinbad_sample_68
+.word music_sinbad_sample_66
+.word music_sinbad_sample_69
+.word music_sinbad_sample_67
+.word music_sinbad_sample_66
+.word music_sinbad_sample_68
+.word music_sinbad_sample_66
+.word music_sinbad_sample_70
+.word music_sinbad_sample_51
+.word music_sinbad_sample_67
+.word music_sinbad_sample_66
+.word music_sinbad_sample_68
+.word music_sinbad_sample_66
+.word music_sinbad_sample_71
+.word music_sinbad_sample_67
+.word music_sinbad_sample_66
+.word music_sinbad_sample_68
+.word music_sinbad_sample_66
+.word music_sinbad_sample_72
+.word music_sinbad_sample_8
+.word music_sinbad_sample_46
+.word music_sinbad_sample_47
+.word music_sinbad_sample_60
+.word music_sinbad_sample_47
+.word music_sinbad_sample_47
+.word music_sinbad_sample_60
+.word music_sinbad_sample_47
+.word music_sinbad_sample_61
+.word music_sinbad_sample_46
+.word music_sinbad_sample_47
+.word music_sinbad_sample_60
+.word music_sinbad_sample_47
+.word music_sinbad_sample_47
+.word music_sinbad_sample_60
+.word music_sinbad_sample_47
+.word music_sinbad_sample_10
+.word music_sinbad_sample_8
+.word music_sinbad_sample_46
+.word music_sinbad_sample_47
+.word music_sinbad_sample_60
+.word music_sinbad_sample_47
+.word music_sinbad_sample_47
+.word music_sinbad_sample_60
+.word music_sinbad_sample_47
+.word music_sinbad_sample_62
+.word music_sinbad_sample_46
+.word music_sinbad_sample_47
+.word music_sinbad_sample_60
+.word music_sinbad_sample_47
+.word music_sinbad_sample_47
+.word music_sinbad_sample_60
+.word music_sinbad_sample_47
 MUSIC_END
 
-music_title_track_pulse2:
-.word music_title_sample_22
-.word music_title_sample_21
-.word music_title_sample_23
-.word music_title_sample_21
-.word music_title_sample_24
-.word music_title_sample_21
-.word music_title_sample_25
-.word music_title_sample_21
-.word music_title_sample_26
-.word music_title_sample_27
-.word music_title_sample_21
-.word music_title_sample_24
-.word music_title_sample_21
-.word music_title_sample_28
-.word music_title_sample_21
-.word music_title_sample_29
-.word music_title_sample_21
-.word music_title_sample_30
-.word music_title_sample_58
-.word music_title_sample_57
-.word music_title_sample_59
-.word music_title_sample_57
-.word music_title_sample_75
-.word music_title_sample_73
-.word music_title_sample_76
-.word music_title_sample_73
-.word music_title_sample_77
-.word music_title_sample_59
-.word music_title_sample_57
-.word music_title_sample_59
-.word music_title_sample_57
-.word music_title_sample_75
-.word music_title_sample_73
-.word music_title_sample_76
-.word music_title_sample_73
-.word music_title_sample_77
-.word music_title_sample_59
-.word music_title_sample_57
-.word music_title_sample_59
-.word music_title_sample_57
-.word music_title_sample_75
-.word music_title_sample_73
-.word music_title_sample_76
-.word music_title_sample_73
-.word music_title_sample_77
-.word music_title_sample_59
-.word music_title_sample_57
-.word music_title_sample_59
-.word music_title_sample_57
-.word music_title_sample_75
-.word music_title_sample_73
-.word music_title_sample_76
-.word music_title_sample_73
-.word music_title_sample_77
-.word music_title_sample_86
-.word music_title_sample_87
-.word music_title_sample_78
-.word music_title_sample_79
-.word music_title_sample_73
-.word music_title_sample_74
-.word music_title_sample_86
-.word music_title_sample_87
-.word music_title_sample_78
-.word music_title_sample_79
-.word music_title_sample_73
-.word music_title_sample_74
-.word music_title_sample_86
-.word music_title_sample_87
-.word music_title_sample_78
-.word music_title_sample_79
-.word music_title_sample_73
-.word music_title_sample_74
-.word music_title_sample_86
-.word music_title_sample_87
-.word music_title_sample_78
-.word music_title_sample_79
-.word music_title_sample_73
-.word music_title_sample_74
-.word music_title_sample_59
-.word music_title_sample_57
-.word music_title_sample_59
-.word music_title_sample_57
-.word music_title_sample_75
-.word music_title_sample_73
-.word music_title_sample_76
-.word music_title_sample_73
-.word music_title_sample_77
-.word music_title_sample_59
-.word music_title_sample_57
-.word music_title_sample_59
-.word music_title_sample_57
-.word music_title_sample_75
-.word music_title_sample_73
-.word music_title_sample_76
-.word music_title_sample_73
-.word music_title_sample_77
-.word music_title_sample_31
-.word music_title_sample_21
-.word music_title_sample_9
-.word music_title_sample_10
-.word music_title_sample_9
-.word music_title_sample_37
-.word music_title_sample_21
-.word music_title_sample_38
-.word music_title_sample_21
-.word music_title_sample_34
-.word music_title_sample_22
-.word music_title_sample_21
-.word music_title_sample_9
-.word music_title_sample_10
-.word music_title_sample_9
-.word music_title_sample_32
-.word music_title_sample_21
-.word music_title_sample_33
-.word music_title_sample_21
-.word music_title_sample_35
-.word music_title_sample_39
-.word music_title_sample_21
-.word music_title_sample_9
-.word music_title_sample_10
-.word music_title_sample_9
-.word music_title_sample_11
-.word music_title_sample_40
-.word music_title_sample_21
-.word music_title_sample_9
-.word music_title_sample_12
+music_sinbad_track_pulse2:
+.word music_sinbad_sample_22
+.word music_sinbad_sample_21
+.word music_sinbad_sample_23
+.word music_sinbad_sample_21
+.word music_sinbad_sample_24
+.word music_sinbad_sample_21
+.word music_sinbad_sample_25
+.word music_sinbad_sample_21
+.word music_sinbad_sample_26
+.word music_sinbad_sample_27
+.word music_sinbad_sample_21
+.word music_sinbad_sample_24
+.word music_sinbad_sample_21
+.word music_sinbad_sample_28
+.word music_sinbad_sample_21
+.word music_sinbad_sample_29
+.word music_sinbad_sample_21
+.word music_sinbad_sample_30
+.word music_sinbad_sample_58
+.word music_sinbad_sample_57
+.word music_sinbad_sample_59
+.word music_sinbad_sample_57
+.word music_sinbad_sample_75
+.word music_sinbad_sample_73
+.word music_sinbad_sample_76
+.word music_sinbad_sample_73
+.word music_sinbad_sample_77
+.word music_sinbad_sample_59
+.word music_sinbad_sample_57
+.word music_sinbad_sample_59
+.word music_sinbad_sample_57
+.word music_sinbad_sample_75
+.word music_sinbad_sample_73
+.word music_sinbad_sample_76
+.word music_sinbad_sample_73
+.word music_sinbad_sample_77
+.word music_sinbad_sample_59
+.word music_sinbad_sample_57
+.word music_sinbad_sample_59
+.word music_sinbad_sample_57
+.word music_sinbad_sample_75
+.word music_sinbad_sample_73
+.word music_sinbad_sample_76
+.word music_sinbad_sample_73
+.word music_sinbad_sample_77
+.word music_sinbad_sample_59
+.word music_sinbad_sample_57
+.word music_sinbad_sample_59
+.word music_sinbad_sample_57
+.word music_sinbad_sample_75
+.word music_sinbad_sample_73
+.word music_sinbad_sample_76
+.word music_sinbad_sample_73
+.word music_sinbad_sample_77
+.word music_sinbad_sample_86
+.word music_sinbad_sample_87
+.word music_sinbad_sample_78
+.word music_sinbad_sample_79
+.word music_sinbad_sample_73
+.word music_sinbad_sample_74
+.word music_sinbad_sample_86
+.word music_sinbad_sample_87
+.word music_sinbad_sample_78
+.word music_sinbad_sample_79
+.word music_sinbad_sample_73
+.word music_sinbad_sample_74
+.word music_sinbad_sample_86
+.word music_sinbad_sample_87
+.word music_sinbad_sample_78
+.word music_sinbad_sample_79
+.word music_sinbad_sample_73
+.word music_sinbad_sample_74
+.word music_sinbad_sample_86
+.word music_sinbad_sample_87
+.word music_sinbad_sample_78
+.word music_sinbad_sample_79
+.word music_sinbad_sample_73
+.word music_sinbad_sample_74
+.word music_sinbad_sample_59
+.word music_sinbad_sample_57
+.word music_sinbad_sample_59
+.word music_sinbad_sample_57
+.word music_sinbad_sample_75
+.word music_sinbad_sample_73
+.word music_sinbad_sample_76
+.word music_sinbad_sample_73
+.word music_sinbad_sample_77
+.word music_sinbad_sample_59
+.word music_sinbad_sample_57
+.word music_sinbad_sample_59
+.word music_sinbad_sample_57
+.word music_sinbad_sample_75
+.word music_sinbad_sample_73
+.word music_sinbad_sample_76
+.word music_sinbad_sample_73
+.word music_sinbad_sample_77
+.word music_sinbad_sample_31
+.word music_sinbad_sample_21
+.word music_sinbad_sample_9
+.word music_sinbad_sample_10
+.word music_sinbad_sample_9
+.word music_sinbad_sample_37
+.word music_sinbad_sample_21
+.word music_sinbad_sample_38
+.word music_sinbad_sample_21
+.word music_sinbad_sample_34
+.word music_sinbad_sample_22
+.word music_sinbad_sample_21
+.word music_sinbad_sample_9
+.word music_sinbad_sample_10
+.word music_sinbad_sample_9
+.word music_sinbad_sample_32
+.word music_sinbad_sample_21
+.word music_sinbad_sample_33
+.word music_sinbad_sample_21
+.word music_sinbad_sample_35
+.word music_sinbad_sample_39
+.word music_sinbad_sample_21
+.word music_sinbad_sample_9
+.word music_sinbad_sample_10
+.word music_sinbad_sample_9
+.word music_sinbad_sample_11
+.word music_sinbad_sample_40
+.word music_sinbad_sample_21
+.word music_sinbad_sample_9
+.word music_sinbad_sample_12
 MUSIC_END
 
-music_title_track_triangle:
-.word music_title_sample_3
-.word music_title_sample_4
-.word music_title_sample_14
-.word music_title_sample_13
-.word music_title_sample_15
-.word music_title_sample_13
-.word music_title_sample_41
-.word music_title_sample_43
-.word music_title_sample_13
-.word music_title_sample_16
-.word music_title_sample_13
-.word music_title_sample_17
-.word music_title_sample_13
-.word music_title_sample_18
-.word music_title_sample_14
-.word music_title_sample_13
-.word music_title_sample_15
-.word music_title_sample_13
-.word music_title_sample_41
-.word music_title_sample_43
-.word music_title_sample_13
-.word music_title_sample_16
-.word music_title_sample_13
-.word music_title_sample_17
-.word music_title_sample_13
-.word music_title_sample_18
-.word music_title_sample_41
-.word music_title_sample_42
-.word music_title_sample_41
-.word music_title_sample_42
-.word music_title_sample_5
-.word music_title_sample_6
-.word music_title_sample_5
-.word music_title_sample_6
-.word music_title_sample_41
-.word music_title_sample_42
-.word music_title_sample_41
-.word music_title_sample_42
-.word music_title_sample_3
-.word music_title_sample_4
-.word music_title_sample_3
-.word music_title_sample_7
+music_sinbad_track_triangle:
+.word music_sinbad_sample_3
+.word music_sinbad_sample_4
+.word music_sinbad_sample_14
+.word music_sinbad_sample_13
+.word music_sinbad_sample_15
+.word music_sinbad_sample_13
+.word music_sinbad_sample_41
+.word music_sinbad_sample_43
+.word music_sinbad_sample_13
+.word music_sinbad_sample_16
+.word music_sinbad_sample_13
+.word music_sinbad_sample_17
+.word music_sinbad_sample_13
+.word music_sinbad_sample_18
+.word music_sinbad_sample_14
+.word music_sinbad_sample_13
+.word music_sinbad_sample_15
+.word music_sinbad_sample_13
+.word music_sinbad_sample_41
+.word music_sinbad_sample_43
+.word music_sinbad_sample_13
+.word music_sinbad_sample_16
+.word music_sinbad_sample_13
+.word music_sinbad_sample_17
+.word music_sinbad_sample_13
+.word music_sinbad_sample_18
+.word music_sinbad_sample_41
+.word music_sinbad_sample_42
+.word music_sinbad_sample_41
+.word music_sinbad_sample_42
+.word music_sinbad_sample_5
+.word music_sinbad_sample_6
+.word music_sinbad_sample_5
+.word music_sinbad_sample_6
+.word music_sinbad_sample_41
+.word music_sinbad_sample_42
+.word music_sinbad_sample_41
+.word music_sinbad_sample_42
+.word music_sinbad_sample_3
+.word music_sinbad_sample_4
+.word music_sinbad_sample_3
+.word music_sinbad_sample_7
 MUSIC_END
 
-music_title_track_noise:
-.word music_title_sample_44
-.word music_title_sample_53
-.word music_title_sample_52
-.word music_title_sample_54
-.word music_title_sample_52
-.word music_title_sample_52
-.word music_title_sample_55
-.word music_title_sample_44
-.word music_title_sample_53
-.word music_title_sample_52
-.word music_title_sample_54
-.word music_title_sample_52
-.word music_title_sample_45
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_20
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_20
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_20
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_20
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_20
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_20
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_20
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_20
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_20
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_19
-.word music_title_sample_48
-.word music_title_sample_49
-.word music_title_sample_20
-.word music_title_sample_44
-.word music_title_sample_53
-.word music_title_sample_52
-.word music_title_sample_54
-.word music_title_sample_52
-.word music_title_sample_52
-.word music_title_sample_55
-.word music_title_sample_44
-.word music_title_sample_53
-.word music_title_sample_52
-.word music_title_sample_54
-.word music_title_sample_52
-.word music_title_sample_52
-.word music_title_sample_55
-.word music_title_sample_44
-.word music_title_sample_53
-.word music_title_sample_52
-.word music_title_sample_54
-.word music_title_sample_52
-.word music_title_sample_52
-.word music_title_sample_55
-.word music_title_sample_44
-.word music_title_sample_53
-.word music_title_sample_52
-.word music_title_sample_54
-.word music_title_sample_52
-.word music_title_sample_52
-.word music_title_sample_56
+music_sinbad_track_noise:
+.word music_sinbad_sample_44
+.word music_sinbad_sample_53
+.word music_sinbad_sample_52
+.word music_sinbad_sample_54
+.word music_sinbad_sample_52
+.word music_sinbad_sample_52
+.word music_sinbad_sample_55
+.word music_sinbad_sample_44
+.word music_sinbad_sample_53
+.word music_sinbad_sample_52
+.word music_sinbad_sample_54
+.word music_sinbad_sample_52
+.word music_sinbad_sample_45
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_20
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_20
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_20
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_20
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_20
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_20
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_20
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_20
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_20
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_19
+.word music_sinbad_sample_48
+.word music_sinbad_sample_49
+.word music_sinbad_sample_20
+.word music_sinbad_sample_44
+.word music_sinbad_sample_53
+.word music_sinbad_sample_52
+.word music_sinbad_sample_54
+.word music_sinbad_sample_52
+.word music_sinbad_sample_52
+.word music_sinbad_sample_55
+.word music_sinbad_sample_44
+.word music_sinbad_sample_53
+.word music_sinbad_sample_52
+.word music_sinbad_sample_54
+.word music_sinbad_sample_52
+.word music_sinbad_sample_52
+.word music_sinbad_sample_55
+.word music_sinbad_sample_44
+.word music_sinbad_sample_53
+.word music_sinbad_sample_52
+.word music_sinbad_sample_54
+.word music_sinbad_sample_52
+.word music_sinbad_sample_52
+.word music_sinbad_sample_55
+.word music_sinbad_sample_44
+.word music_sinbad_sample_53
+.word music_sinbad_sample_52
+.word music_sinbad_sample_54
+.word music_sinbad_sample_52
+.word music_sinbad_sample_52
+.word music_sinbad_sample_56
 MUSIC_END
 
 
-music_title_sample_0:
+music_sinbad_sample_0:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_USLIDE(22,1,2,13,-10)
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(26,1,0,15,0)
@@ -547,7 +549,7 @@ music_title_sample_0:
 	SAMPLE_END
 .)
 
-music_title_sample_1:
+music_sinbad_sample_1:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(47,1,2,9,0)
 	CHAN_VOLUME_HIGH(2)
@@ -714,7 +716,7 @@ music_title_sample_1:
 	SAMPLE_END
 .)
 
-music_title_sample_2:
+music_sinbad_sample_2:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(47,1,2,9,0)
 	CHAN_VOLUME_HIGH(2)
@@ -895,21 +897,21 @@ music_title_sample_2:
 	SAMPLE_END
 .)
 
-music_title_sample_3:
+music_sinbad_sample_3:
 .(
 	PLAY_TIMED_FREQ(209,112)
 	PLAY_TIMED_FREQ(186,112)
 	SAMPLE_END
 .)
 
-music_title_sample_4:
+music_sinbad_sample_4:
 .(
 	PLAY_TIMED_FREQ(176,112)
 	PLAY_TIMED_FREQ(157,112)
 	SAMPLE_END
 .)
 
-music_title_sample_5:
+music_sinbad_sample_5:
 .(
 	PLAY_TIMED_FREQ(104,98)
 	AUDIO_PULSE_META_WAIT_DSLIDE(4,3)
@@ -920,7 +922,7 @@ music_title_sample_5:
 	SAMPLE_END
 .)
 
-music_title_sample_6:
+music_sinbad_sample_6:
 .(
 	PLAY_TIMED_FREQ(209,98)
 	AUDIO_PULSE_META_WAIT_USLIDE(10,-9)
@@ -933,14 +935,14 @@ music_title_sample_6:
 	SAMPLE_END
 .)
 
-music_title_sample_7:
+music_sinbad_sample_7:
 .(
 	PLAY_TIMED_FREQ(176,112)
 	PLAY_TIMED_FREQ(157,111)
 	SAMPLE_END
 .)
 
-music_title_sample_8:
+music_sinbad_sample_8:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(30,1,0,1,0)
 	AUDIO_PULSE_META_WAIT_DUT_VOL(1,1,6)
@@ -951,7 +953,7 @@ music_title_sample_8:
 	SAMPLE_END
 .)
 
-music_title_sample_9:
+music_sinbad_sample_9:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
@@ -979,20 +981,20 @@ music_title_sample_9:
 	SAMPLE_END
 .)
 
-music_title_sample_10:
+music_sinbad_sample_10:
 .(
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
 	SAMPLE_END
 .)
 
-music_title_sample_11:
+music_sinbad_sample_11:
 .(
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
 	SAMPLE_END
 .)
 
-music_title_sample_12:
+music_sinbad_sample_12:
 .(
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
@@ -1050,7 +1052,7 @@ music_title_sample_12:
 	SAMPLE_END
 .)
 
-music_title_sample_13:
+music_sinbad_sample_13:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,1)
 	AUDIO_PULSE_META_WAIT_DSLIDE(19,0)
@@ -1060,31 +1062,31 @@ music_title_sample_13:
 	SAMPLE_END
 .)
 
-music_title_sample_14:
+music_sinbad_sample_14:
 .(
 	AUDIO_PULSE_META_NOTE_USLIDE(59,1,-2)
 	SAMPLE_END
 .)
 
-music_title_sample_15:
+music_sinbad_sample_15:
 .(
 	AUDIO_PULSE_META_NOTE_USLIDE(54,1,-2)
 	SAMPLE_END
 .)
 
-music_title_sample_16:
+music_sinbad_sample_16:
 .(
 	AUDIO_PULSE_META_NOTE_USLIDE(61,1,-2)
 	SAMPLE_END
 .)
 
-music_title_sample_17:
+music_sinbad_sample_17:
 .(
 	AUDIO_PULSE_META_NOTE_USLIDE(52,1,-2)
 	SAMPLE_END
 .)
 
-music_title_sample_18:
+music_sinbad_sample_18:
 .(
 	AUDIO_PULSE_META_NOTE_USLIDE(61,1,-2)
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,1)
@@ -1106,7 +1108,7 @@ music_title_sample_18:
 	SAMPLE_END
 .)
 
-music_title_sample_19:
+music_sinbad_sample_19:
 .(
 	AUDIO_NOISE_HALT(3)
 	AUDIO_NOISE_PITCH_SLIDE_UP(2)
@@ -1119,14 +1121,14 @@ music_title_sample_19:
 	SAMPLE_END
 .)
 
-music_title_sample_20:
+music_sinbad_sample_20:
 .(
 	AUDIO_NOISE_HALT(7)
 	AUDIO_NOISE_WAIT(2)
 	SAMPLE_END
 .)
 
-music_title_sample_21:
+music_sinbad_sample_21:
 .(
 	CHAN_VOLUME_HIGH(2)
 	WAIT(0)
@@ -1151,13 +1153,13 @@ music_title_sample_21:
 	SAMPLE_END
 .)
 
-music_title_sample_22:
+music_sinbad_sample_22:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(35,1,2,9,0)
 	SAMPLE_END
 .)
 
-music_title_sample_23:
+music_sinbad_sample_23:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
@@ -1175,7 +1177,7 @@ music_title_sample_23:
 	SAMPLE_END
 .)
 
-music_title_sample_24:
+music_sinbad_sample_24:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
@@ -1193,7 +1195,7 @@ music_title_sample_24:
 	SAMPLE_END
 .)
 
-music_title_sample_25:
+music_sinbad_sample_25:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
@@ -1216,7 +1218,7 @@ music_title_sample_25:
 	SAMPLE_END
 .)
 
-music_title_sample_26:
+music_sinbad_sample_26:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
@@ -1224,13 +1226,13 @@ music_title_sample_26:
 	SAMPLE_END
 .)
 
-music_title_sample_27:
+music_sinbad_sample_27:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(50,1,2,9,0)
 	SAMPLE_END
 .)
 
-music_title_sample_28:
+music_sinbad_sample_28:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
@@ -1248,7 +1250,7 @@ music_title_sample_28:
 	SAMPLE_END
 .)
 
-music_title_sample_29:
+music_sinbad_sample_29:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
@@ -1258,7 +1260,7 @@ music_title_sample_29:
 	SAMPLE_END
 .)
 
-music_title_sample_30:
+music_sinbad_sample_30:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
@@ -1280,13 +1282,13 @@ music_title_sample_30:
 	SAMPLE_END
 .)
 
-music_title_sample_31:
+music_sinbad_sample_31:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(47,1,2,9,0)
 	SAMPLE_END
 .)
 
-music_title_sample_32:
+music_sinbad_sample_32:
 .(
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
@@ -1295,7 +1297,7 @@ music_title_sample_32:
 	SAMPLE_END
 .)
 
-music_title_sample_33:
+music_sinbad_sample_33:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
@@ -1303,7 +1305,7 @@ music_title_sample_33:
 	SAMPLE_END
 .)
 
-music_title_sample_34:
+music_sinbad_sample_34:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
@@ -1325,7 +1327,7 @@ music_title_sample_34:
 	SAMPLE_END
 .)
 
-music_title_sample_35:
+music_sinbad_sample_35:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
@@ -1347,13 +1349,13 @@ music_title_sample_35:
 	SAMPLE_END
 .)
 
-music_title_sample_36:
+music_sinbad_sample_36:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(38,1,2,9,0)
 	SAMPLE_END
 .)
 
-music_title_sample_37:
+music_sinbad_sample_37:
 .(
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
@@ -1362,7 +1364,7 @@ music_title_sample_37:
 	SAMPLE_END
 .)
 
-music_title_sample_38:
+music_sinbad_sample_38:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
@@ -1372,7 +1374,7 @@ music_title_sample_38:
 	SAMPLE_END
 .)
 
-music_title_sample_39:
+music_sinbad_sample_39:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(47,1,2,9,0)
 	CHAN_VOLUME_HIGH(2)
@@ -1420,7 +1422,7 @@ music_title_sample_39:
 	SAMPLE_END
 .)
 
-music_title_sample_40:
+music_sinbad_sample_40:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(50,1,2,9,0)
 	CHAN_VOLUME_HIGH(2)
@@ -1471,7 +1473,7 @@ music_title_sample_40:
 	SAMPLE_END
 .)
 
-music_title_sample_41:
+music_sinbad_sample_41:
 .(
 	AUDIO_PULSE_META_NOTE_USLIDE(59,1,-2)
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,1)
@@ -1483,7 +1485,7 @@ music_title_sample_41:
 	SAMPLE_END
 .)
 
-music_title_sample_42:
+music_sinbad_sample_42:
 .(
 	AUDIO_PULSE_META_NOTE_USLIDE(61,1,-2)
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,1)
@@ -1523,7 +1525,7 @@ music_title_sample_42:
 	SAMPLE_END
 .)
 
-music_title_sample_43:
+music_sinbad_sample_43:
 .(
 	AUDIO_PULSE_META_NOTE_USLIDE(57,1,-2)
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,1)
@@ -1532,13 +1534,13 @@ music_title_sample_43:
 	SAMPLE_END
 .)
 
-music_title_sample_44:
+music_sinbad_sample_44:
 .(
 	AUDIO_NOISE_LONG_WAIT(28)
 	SAMPLE_END
 .)
 
-music_title_sample_45:
+music_sinbad_sample_45:
 .(
 	AUDIO_NOISE_LONG_WAIT(45)
 	AUDIO_NOISE_PITCH_SLIDE_UP(2)
@@ -1558,7 +1560,7 @@ music_title_sample_45:
 	SAMPLE_END
 .)
 
-music_title_sample_46:
+music_sinbad_sample_46:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,3)
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,1)
@@ -1566,7 +1568,7 @@ music_title_sample_46:
 	SAMPLE_END
 .)
 
-music_title_sample_47:
+music_sinbad_sample_47:
 .(
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
 	AUDIO_PULSE_META_WAIT_USLIDE(2,-3)
@@ -1589,7 +1591,7 @@ music_title_sample_47:
 	SAMPLE_END
 .)
 
-music_title_sample_48:
+music_sinbad_sample_48:
 .(
 	AUDIO_NOISE_PITCH_SLIDE_UP(2)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(11,1)
@@ -1630,7 +1632,7 @@ music_title_sample_48:
 	SAMPLE_END
 .)
 
-music_title_sample_49:
+music_sinbad_sample_49:
 .(
 	AUDIO_NOISE_HALT(3)
 	AUDIO_NOISE_PITCH_SLIDE_UP(2)
@@ -1657,7 +1659,7 @@ music_title_sample_49:
 	SAMPLE_END
 .)
 
-music_title_sample_50:
+music_sinbad_sample_50:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(47,1,0,15,0)
 	AUDIO_PULSE_META_WAIT_DUT_USLIDE(1,2,-1)
@@ -1681,7 +1683,7 @@ music_title_sample_50:
 	SAMPLE_END
 .)
 
-music_title_sample_51:
+music_sinbad_sample_51:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(50,1,0,15,0)
 	AUDIO_PULSE_META_WAIT_DUT_USLIDE(1,2,-1)
@@ -1705,7 +1707,7 @@ music_title_sample_51:
 	SAMPLE_END
 .)
 
-music_title_sample_52:
+music_sinbad_sample_52:
 .(
 	AUDIO_NOISE_LONG_WAIT(45)
 	AUDIO_NOISE_PITCH_SLIDE_UP(2)
@@ -1718,7 +1720,7 @@ music_title_sample_52:
 	SAMPLE_END
 .)
 
-music_title_sample_53:
+music_sinbad_sample_53:
 .(
 	AUDIO_NOISE_PITCH_SLIDE_UP(2)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(3,1)
@@ -1730,24 +1732,24 @@ music_title_sample_53:
 	SAMPLE_END
 .)
 
-music_title_sample_54:
+music_sinbad_sample_54:
 .(
 	SAMPLE_END
 .)
 
-music_title_sample_55:
+music_sinbad_sample_55:
 .(
 	AUDIO_NOISE_LONG_WAIT(17)
 	SAMPLE_END
 .)
 
-music_title_sample_56:
+music_sinbad_sample_56:
 .(
 	AUDIO_NOISE_WAIT(15)
 	SAMPLE_END
 .)
 
-music_title_sample_57:
+music_sinbad_sample_57:
 .(
 	CHAN_DUTY(0)
 	WAIT(2)
@@ -1813,19 +1815,19 @@ music_title_sample_57:
 	SAMPLE_END
 .)
 
-music_title_sample_58:
+music_sinbad_sample_58:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(23,1,2,11,0)
 	SAMPLE_END
 .)
 
-music_title_sample_59:
+music_sinbad_sample_59:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(23,1,2,11)
 	SAMPLE_END
 .)
 
-music_title_sample_60:
+music_sinbad_sample_60:
 .(
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
 	AUDIO_PULSE_META_WAIT_USLIDE(2,-3)
@@ -1839,7 +1841,7 @@ music_title_sample_60:
 	SAMPLE_END
 .)
 
-music_title_sample_61:
+music_sinbad_sample_61:
 .(
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(33,1,0,1,0)
@@ -1851,7 +1853,7 @@ music_title_sample_61:
 	SAMPLE_END
 .)
 
-music_title_sample_62:
+music_sinbad_sample_62:
 .(
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(28,1,0,1,0)
@@ -1863,7 +1865,7 @@ music_title_sample_62:
 	SAMPLE_END
 .)
 
-music_title_sample_63:
+music_sinbad_sample_63:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_USLIDE(31,1,2,13,-10)
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(35,1,0,15,0)
@@ -1973,7 +1975,7 @@ music_title_sample_63:
 	SAMPLE_END
 .)
 
-music_title_sample_64:
+music_sinbad_sample_64:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_USLIDE(36,1,2,13,-10)
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(40,1,0,15,0)
@@ -2083,7 +2085,7 @@ music_title_sample_64:
 	SAMPLE_END
 .)
 
-music_title_sample_65:
+music_sinbad_sample_65:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_USLIDE(41,1,2,13,-10)
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(45,1,0,15,0)
@@ -2183,7 +2185,7 @@ music_title_sample_65:
 	SAMPLE_END
 .)
 
-music_title_sample_66:
+music_sinbad_sample_66:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(2,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(2,-1)
@@ -2196,13 +2198,13 @@ music_title_sample_66:
 	SAMPLE_END
 .)
 
-music_title_sample_67:
+music_sinbad_sample_67:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(2,1)
 	SAMPLE_END
 .)
 
-music_title_sample_68:
+music_sinbad_sample_68:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(2,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(2,-1)
@@ -2211,7 +2213,7 @@ music_title_sample_68:
 	SAMPLE_END
 .)
 
-music_title_sample_69:
+music_sinbad_sample_69:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(2,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(2,-1)
@@ -2289,7 +2291,7 @@ music_title_sample_69:
 	SAMPLE_END
 .)
 
-music_title_sample_70:
+music_sinbad_sample_70:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(2,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(2,-1)
@@ -2309,7 +2311,7 @@ music_title_sample_70:
 	SAMPLE_END
 .)
 
-music_title_sample_71:
+music_sinbad_sample_71:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(2,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(2,-1)
@@ -2388,7 +2390,7 @@ music_title_sample_71:
 	SAMPLE_END
 .)
 
-music_title_sample_72:
+music_sinbad_sample_72:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(2,0)
 	AUDIO_PULSE_META_WAIT_USLIDE(2,-1)
@@ -2408,7 +2410,7 @@ music_title_sample_72:
 	SAMPLE_END
 .)
 
-music_title_sample_73:
+music_sinbad_sample_73:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(21,1,2,11)
 	CHAN_DUTY(0)
@@ -2438,7 +2440,7 @@ music_title_sample_73:
 	SAMPLE_END
 .)
 
-music_title_sample_74:
+music_sinbad_sample_74:
 .(
 	CHAN_VOLUME_HIGH(7)
 	HALT(0)
@@ -2528,7 +2530,7 @@ music_title_sample_74:
 	SAMPLE_END
 .)
 
-music_title_sample_75:
+music_sinbad_sample_75:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(21,1,2,11)
 	CHAN_DUTY(0)
@@ -2546,7 +2548,7 @@ music_title_sample_75:
 	SAMPLE_END
 .)
 
-music_title_sample_76:
+music_sinbad_sample_76:
 .(
 	CHAN_VOLUME_LOW(5)
 	WAIT(0)
@@ -2557,7 +2559,7 @@ music_title_sample_76:
 	SAMPLE_END
 .)
 
-music_title_sample_77:
+music_sinbad_sample_77:
 .(
 	CHAN_VOLUME_LOW(5)
 	WAIT(0)
@@ -2608,7 +2610,7 @@ music_title_sample_77:
 	SAMPLE_END
 .)
 
-music_title_sample_78:
+music_sinbad_sample_78:
 .(
 	CHAN_DUTY(0)
 	WAIT(2)
@@ -2646,7 +2648,7 @@ music_title_sample_78:
 	SAMPLE_END
 .)
 
-music_title_sample_79:
+music_sinbad_sample_79:
 .(
 	CHAN_VOLUME_HIGH(7)
 	HALT(0)
@@ -2681,7 +2683,7 @@ music_title_sample_79:
 	SAMPLE_END
 .)
 
-music_title_sample_80:
+music_sinbad_sample_80:
 .(
 	CHAN_VOLUME_HIGH(2)
 	WAIT(0)
@@ -2702,7 +2704,7 @@ music_title_sample_80:
 	SAMPLE_END
 .)
 
-music_title_sample_81:
+music_sinbad_sample_81:
 .(
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
@@ -2717,7 +2719,7 @@ music_title_sample_81:
 	SAMPLE_END
 .)
 
-music_title_sample_82:
+music_sinbad_sample_82:
 .(
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
@@ -2732,13 +2734,13 @@ music_title_sample_82:
 	SAMPLE_END
 .)
 
-music_title_sample_83:
+music_sinbad_sample_83:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(33,1,2,9)
 	SAMPLE_END
 .)
 
-music_title_sample_84:
+music_sinbad_sample_84:
 .(
 	AUDIO_PULSE_META_WAIT_USLIDE(1,-1)
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,0)
@@ -2753,13 +2755,13 @@ music_title_sample_84:
 	SAMPLE_END
 .)
 
-music_title_sample_85:
+music_sinbad_sample_85:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(37,1,2,9)
 	SAMPLE_END
 .)
 
-music_title_sample_86:
+music_sinbad_sample_86:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(23,1,2,11)
 	CHAN_DUTY(0)
@@ -2798,7 +2800,7 @@ music_title_sample_86:
 	SAMPLE_END
 .)
 
-music_title_sample_87:
+music_sinbad_sample_87:
 .(
 	CHAN_VOLUME_HIGH(7)
 	HALT(0)
@@ -2816,7 +2818,7 @@ music_title_sample_87:
 	SAMPLE_END
 .)
 
-music_title_sample_88:
+music_sinbad_sample_88:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_USLIDE(19,1,2,13,-10)
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(23,1,0,15,0)
@@ -2843,7 +2845,7 @@ music_title_sample_88:
 	SAMPLE_END
 .)
 
-music_title_sample_89:
+music_sinbad_sample_89:
 .(
 	CHAN_VOLUME_HIGH(7)
 	HALT(0)
@@ -2897,4 +2899,3 @@ music_title_sample_89:
 	AUDIO_PULSE_META_WAIT_VOL(92,9)
 	SAMPLE_END
 .)
-

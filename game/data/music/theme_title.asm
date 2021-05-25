@@ -1,3 +1,5 @@
+music_title_bank = CURRENT_BANK_NUMBER
+
 music_title_info:
 .word music_title_track_pulse1
 .word music_title_track_pulse2
@@ -4870,7 +4872,3 @@ music_title_sample_192:
 	PLAY_TIMED_NOTE(2,45)
 	SAMPLE_END
 .)
-
-#echo
-#echo music_title_size:
-#print *-music_title_info

@@ -448,15 +448,16 @@ audio_music_enabled = $c0
 
 audio_current_track_lsb = $c1
 audio_current_track_msb = $c2
+audio_current_track_bank = $c3
 
-audio_square1_sample_num = $c3
-audio_square2_sample_num = $c4
-audio_triangle_sample_num = $c5
-audio_noise_sample_num = $c6
+audio_square1_sample_num = $c4
+audio_square2_sample_num = $c5
+audio_triangle_sample_num = $c6
+audio_noise_sample_num = $c7
 
-audio_skip_noise = $c7 ;HACK Setting this value makes the audio engine not touch the noise channel, allowing old sfx (based on hacking noise channel) to play
-audio_vframe_cnt = $c8 ;TODO merge it with the vframe counter for wait_next_frame
-audio_50hz = $c9 ; 0 - 60 Hz, 1 - 50 Hz
+audio_skip_noise = $c8 ;HACK Setting this value makes the audio engine not touch the noise channel, allowing old sfx (based on hacking noise channel) to play
+audio_vframe_cnt = $c9 ;TODO merge it with the vframe counter for wait_next_frame
+audio_50hz = $ca ; 0 - 60 Hz, 1 - 50 Hz
 
 audio_square1_current_opcode = $0604
 audio_square2_current_opcode = $0605

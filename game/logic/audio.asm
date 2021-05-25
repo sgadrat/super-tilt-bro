@@ -5,8 +5,9 @@ audio_music_power:
 	lda #%00110000
 	sta APU_NOISE_ENVELOPE
 
-	ldy #<music_main_info
-	lda #>music_main_info
+	ldy #<music_perihelium_info
+	ldx #>music_perihelium_info
+	lda #music_perihelium_bank
 	jmp audio_play_music
 
 	rts ; useless, jump to a subroutine
@@ -18,7 +19,8 @@ audio_music_weak:
 	sta audio_skip_noise
 
 	ldy #<music_title_info
-	lda #>music_title_info
+	ldx #>music_title_info
+	lda #music_title_bank
 	jmp audio_play_music
 
 	;rts ; useless, jump to a subroutine
@@ -30,7 +32,8 @@ audio_music_gameover:
 	sta audio_skip_noise
 
 	ldy #<music_jump_rope_info
-	lda #>music_jump_rope_info
+	ldx #>music_jump_rope_info
+	lda #music_jump_rope_bank
 	jmp audio_play_music
 
 	;rts ; useless, jump to a subroutine

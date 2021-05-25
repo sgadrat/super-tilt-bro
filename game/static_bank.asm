@@ -36,6 +36,7 @@
 ;
 
 #include "game/logic/utils_static.asm"
+#include "game/data/music/notes_table.asm"
 
 ;
 ; Filler

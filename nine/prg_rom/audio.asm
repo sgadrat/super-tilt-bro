@@ -7,17 +7,19 @@ audio_init:
 .)
 
 ; Play a track
-;  register A - track info address msb
 ;  register Y - track info address lsb
+;  register X - track info address msb
+;  register A - track bank
 ;
 ;  Overwrites all registers, tmpfield1 to tmpfield4
 audio_play_music:
 .(
 	; Set current track
-	sta audio_current_track_msb
 	sty audio_current_track_lsb
+	stx audio_current_track_msb
+	sta audio_current_track_bank
 
-	SWITCH_BANK(#MUSIC_BANK_NUMBER)
+	jsr switch_bank
 
 	; Store native tempo in zeropage
 	ldy #MUSIC_HEADER_TEMPO
@@ -206,7 +208,7 @@ audio_music_tick:
 	channel_number = extra_tmpfield5
 
 	.(
-		SWITCH_BANK(#MUSIC_BANK_NUMBER)
+		SWITCH_BANK(audio_current_track_bank)
 
 		lda audio_music_enabled
 		beq end
@@ -714,11 +716,11 @@ audio_music_tick:
 	.(
 		tax
 
-		lda audio_notes_table_high, x
-		ora #%11111000 ;TODO this actually hardocode a long value for "length counter load", which should be adequat most times. If we want to play with it, actually use register mirroring, and add opcodes to handle this value
+		lda audio_notes_table_pal_high, x
+		ora #%11111000 ;TODO this actually hardcode a long value for "length counter load", which should be adequat most times. If we want to play with it, actually use register mirroring, and add opcodes to handle this value
 		sta apu_timer_high_byte
 
-		lda audio_notes_table_low, x
+		lda audio_notes_table_pal_low, x
 		sta apu_timer_low_byte
 
 		rts
