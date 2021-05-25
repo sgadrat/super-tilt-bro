@@ -872,9 +872,6 @@ def remove_instruments(music):
 							# Mark sequence as handled for this row
 							seq_vol = None
 						elif get_chan_type(modified, chan_idx) in ['2a03-pulse', '2a03-noise']:
-							if seq_vol['loop'] != -1:
-								warn('instrument {:X} has a looping volume enveloppe: TODO handle loops'.format(instrument_idx))
-
 							# Find initial reference volume (even if above the note)
 							ref_volume = None
 							def check_row_volume(curent_pattern_idx, current_row_idx):
@@ -908,7 +905,13 @@ def remove_instruments(music):
 								enveloppe_volume = min(15, enveloppe_volume)
 								current_chan_row['volume'] = '{:X}'.format(enveloppe_volume)
 
-								sequence_step = min(sequence_step + 1, len(seq_vol['sequence']) - 1) #TODO handle looping
+								# Advance sequence
+								if seq_vol['loop'] == -1:
+									sequence_step = min(sequence_step + 1, len(seq_vol['sequence']) - 1)
+								else:
+									sequence_step += 1
+									if sequence_step >= len(seq_vol['sequence']):
+										sequence_step = seq_vol['loop']
 							scan_next_chan_rows(scanner_apply_volume, modified, track_idx, pattern_idx, row_idx)
 
 							# On the next note, explicitely reset reference volume
@@ -988,7 +991,7 @@ def remove_instruments(music):
 						sequence_step = 0
 						stopped_on_track_end = True
 						def scanner_dut(current_pattern_idx, current_row_idx):
-							nonlocal ref_duty, sequence_step
+							nonlocal ref_duty, sequence_step, stopped_on_track_end
 							current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
 
 							# Stop on any row with a note
