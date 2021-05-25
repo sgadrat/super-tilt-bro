@@ -54,7 +54,7 @@ init_credits_screen:
 		jsr fill_attributes_line
 		lda #%00000000
 		jsr fill_attributes_line
-		lda #%00001010
+		lda #%10100000
 		jsr fill_attributes_line
 		lda #%00000000
 		jsr fill_attributes_line

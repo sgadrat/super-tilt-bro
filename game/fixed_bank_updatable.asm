@@ -42,6 +42,7 @@ credits_begin:
 .asc "i like jump rope    by ozzed",$0a
 .asc "perihelium          by ozzed",$0a
 .asc "super tilt bro        by tui",$0a
+.asc "sinbad theme     by kilirane",$0a
 .asc $0a
 .asc "           thanks",$0a
 .asc $0a

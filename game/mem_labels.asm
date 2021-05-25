@@ -560,6 +560,7 @@ config_requested_player_a_character = $0542
 config_requested_player_b_character = $0543
 config_requested_player_a_palette = $0544
 config_requested_player_b_palette = $0545
+config_ingame_track = $0546
 ;$0580 to $05ff may be used by game states
 
 ;$06xx may be used by audio engine, see "Audio engine labels"

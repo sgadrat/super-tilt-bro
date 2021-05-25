@@ -239,7 +239,7 @@ init_game_state:
 		jsr update_sprites
 
 		; Change for ingame music
-		jsr audio_music_power
+		jsr audio_music_ingame
 
 		; Initialize game mode
 		ldx config_game_mode

@@ -25,6 +25,8 @@ default_config:
 
 	sta config_game_mode
 
+	sta config_ingame_track
+
 	rts
 .)
 
