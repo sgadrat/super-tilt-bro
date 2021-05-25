@@ -3,157 +3,158 @@ music_title_info:
 .word music_title_track_pulse2
 .word music_title_track_triangle
 .word music_title_track_noise
+.byt 0
 
 music_title_track_pulse1:
 .word music_title_sample_0
+.word music_title_sample_159
 .word music_title_sample_158
-.word music_title_sample_157
+.word music_title_sample_170
 .word music_title_sample_169
-.word music_title_sample_168
-.word music_title_sample_174
-.word music_title_sample_171
-.word music_title_sample_85
+.word music_title_sample_175
+.word music_title_sample_172
 .word music_title_sample_86
 .word music_title_sample_87
-.word music_title_sample_85
 .word music_title_sample_88
-.word music_title_sample_1
-.word music_title_sample_159
-.word music_title_sample_157
-.word music_title_sample_170
-.word music_title_sample_168
-.word music_title_sample_172
-.word music_title_sample_171
-.word music_title_sample_173
-.word music_title_sample_2
-.word music_title_sample_184
-.word music_title_sample_183
-.word music_title_sample_185
-.word music_title_sample_183
-.word music_title_sample_186
-.word music_title_sample_181
-.word music_title_sample_180
-.word music_title_sample_188
-.word music_title_sample_187
-.word music_title_sample_189
+.word music_title_sample_86
 .word music_title_sample_89
-.word music_title_sample_85
-.word music_title_sample_90
-.word music_title_sample_91
-.word music_title_sample_85
-.word music_title_sample_92
-.word music_title_sample_93
-.word music_title_sample_85
-.word music_title_sample_94
-.word music_title_sample_182
-.word music_title_sample_180
-.word music_title_sample_190
+.word music_title_sample_1
+.word music_title_sample_160
+.word music_title_sample_158
+.word music_title_sample_171
+.word music_title_sample_169
+.word music_title_sample_173
+.word music_title_sample_172
+.word music_title_sample_174
+.word music_title_sample_2
+.word music_title_sample_185
+.word music_title_sample_184
+.word music_title_sample_186
+.word music_title_sample_184
 .word music_title_sample_187
-.word music_title_sample_191
-.word music_title_sample_85
+.word music_title_sample_182
+.word music_title_sample_181
+.word music_title_sample_189
+.word music_title_sample_188
+.word music_title_sample_190
+.word music_title_sample_90
+.word music_title_sample_86
+.word music_title_sample_91
+.word music_title_sample_92
+.word music_title_sample_86
+.word music_title_sample_93
+.word music_title_sample_94
+.word music_title_sample_86
 .word music_title_sample_95
-.word music_title_sample_85
+.word music_title_sample_183
+.word music_title_sample_181
+.word music_title_sample_191
+.word music_title_sample_188
+.word music_title_sample_192
+.word music_title_sample_86
 .word music_title_sample_96
-.word music_title_sample_3
+.word music_title_sample_86
 .word music_title_sample_97
-.word music_title_sample_85
+.word music_title_sample_3
 .word music_title_sample_98
-.word music_title_sample_85
-.word music_title_sample_142
-.word music_title_sample_139
+.word music_title_sample_86
+.word music_title_sample_99
+.word music_title_sample_86
 .word music_title_sample_143
+.word music_title_sample_140
+.word music_title_sample_144
 .word music_title_sample_4
 MUSIC_END
 
 music_title_track_pulse2:
 .word music_title_sample_5
-.word music_title_sample_123
-.word music_title_sample_122
 .word music_title_sample_124
-.word music_title_sample_50
+.word music_title_sample_123
+.word music_title_sample_125
 .word music_title_sample_51
-.word music_title_sample_50
 .word music_title_sample_52
-.word music_title_sample_50
-.word music_title_sample_53
-.word music_title_sample_50
-.word music_title_sample_52
-.word music_title_sample_50
 .word music_title_sample_51
-.word music_title_sample_50
-.word music_title_sample_52
-.word music_title_sample_50
 .word music_title_sample_53
-.word music_title_sample_50
+.word music_title_sample_51
 .word music_title_sample_54
-.word music_title_sample_55
-.word music_title_sample_50
 .word music_title_sample_51
-.word music_title_sample_50
-.word music_title_sample_52
-.word music_title_sample_50
 .word music_title_sample_53
-.word music_title_sample_50
-.word music_title_sample_56
-.word music_title_sample_50
+.word music_title_sample_51
 .word music_title_sample_52
-.word music_title_sample_50
-.word music_title_sample_56
-.word music_title_sample_50
+.word music_title_sample_51
 .word music_title_sample_53
-.word music_title_sample_50
+.word music_title_sample_51
+.word music_title_sample_54
+.word music_title_sample_51
+.word music_title_sample_55
+.word music_title_sample_56
+.word music_title_sample_51
+.word music_title_sample_52
+.word music_title_sample_51
+.word music_title_sample_53
+.word music_title_sample_51
+.word music_title_sample_54
+.word music_title_sample_51
 .word music_title_sample_57
+.word music_title_sample_51
+.word music_title_sample_53
+.word music_title_sample_51
+.word music_title_sample_57
+.word music_title_sample_51
+.word music_title_sample_54
+.word music_title_sample_51
+.word music_title_sample_58
 .word music_title_sample_6
 .word music_title_sample_7
-.word music_title_sample_125
-.word music_title_sample_122
 .word music_title_sample_126
-.word music_title_sample_64
+.word music_title_sample_123
+.word music_title_sample_127
 .word music_title_sample_65
-.word music_title_sample_64
 .word music_title_sample_66
-.word music_title_sample_64
-.word music_title_sample_67
-.word music_title_sample_64
-.word music_title_sample_66
-.word music_title_sample_64
 .word music_title_sample_65
-.word music_title_sample_64
-.word music_title_sample_66
-.word music_title_sample_64
 .word music_title_sample_67
-.word music_title_sample_64
+.word music_title_sample_65
 .word music_title_sample_68
-.word music_title_sample_178
-.word music_title_sample_175
-.word music_title_sample_179
-.word music_title_sample_64
 .word music_title_sample_65
-.word music_title_sample_64
-.word music_title_sample_66
-.word music_title_sample_64
 .word music_title_sample_67
-.word music_title_sample_64
-.word music_title_sample_69
-.word music_title_sample_64
+.word music_title_sample_65
 .word music_title_sample_66
-.word music_title_sample_64
-.word music_title_sample_69
-.word music_title_sample_64
+.word music_title_sample_65
 .word music_title_sample_67
-.word music_title_sample_64
-.word music_title_sample_70
+.word music_title_sample_65
+.word music_title_sample_68
+.word music_title_sample_65
+.word music_title_sample_69
+.word music_title_sample_179
 .word music_title_sample_176
-.word music_title_sample_175
+.word music_title_sample_180
+.word music_title_sample_65
+.word music_title_sample_66
+.word music_title_sample_65
+.word music_title_sample_67
+.word music_title_sample_65
+.word music_title_sample_68
+.word music_title_sample_65
+.word music_title_sample_70
+.word music_title_sample_65
+.word music_title_sample_67
+.word music_title_sample_65
+.word music_title_sample_70
+.word music_title_sample_65
+.word music_title_sample_68
+.word music_title_sample_65
+.word music_title_sample_71
 .word music_title_sample_177
+.word music_title_sample_176
+.word music_title_sample_178
 .word music_title_sample_14
 .word music_title_sample_13
 .word music_title_sample_15
 .word music_title_sample_13
 .word music_title_sample_15
 .word music_title_sample_13
+.word music_title_sample_153
 .word music_title_sample_152
-.word music_title_sample_151
 .word music_title_sample_24
 .word music_title_sample_23
 .word music_title_sample_25
@@ -161,26 +162,26 @@ music_title_track_pulse2:
 .word music_title_sample_25
 .word music_title_sample_23
 .word music_title_sample_26
-.word music_title_sample_108
-.word music_title_sample_107
 .word music_title_sample_109
+.word music_title_sample_108
 .word music_title_sample_110
-.word music_title_sample_107
 .word music_title_sample_111
-.word music_title_sample_107
-.word music_title_sample_129
-.word music_title_sample_128
-.word music_title_sample_51
-.word music_title_sample_128
+.word music_title_sample_108
+.word music_title_sample_112
+.word music_title_sample_108
 .word music_title_sample_130
+.word music_title_sample_129
+.word music_title_sample_52
+.word music_title_sample_129
+.word music_title_sample_131
 .word music_title_sample_14
 .word music_title_sample_13
 .word music_title_sample_16
 .word music_title_sample_13
 .word music_title_sample_16
 .word music_title_sample_13
-.word music_title_sample_153
-.word music_title_sample_151
+.word music_title_sample_154
+.word music_title_sample_152
 .word music_title_sample_27
 .word music_title_sample_23
 .word music_title_sample_28
@@ -189,134 +190,134 @@ music_title_track_pulse2:
 .word music_title_sample_23
 .word music_title_sample_29
 .word music_title_sample_8
-.word music_title_sample_140
-.word music_title_sample_139
 .word music_title_sample_141
+.word music_title_sample_140
+.word music_title_sample_142
 .word music_title_sample_9
 MUSIC_END
 
 music_title_track_triangle:
 .word music_title_sample_10
-.word music_title_sample_154
 .word music_title_sample_155
-.word music_title_sample_71
-.word music_title_sample_161
-.word music_title_sample_160
-.word music_title_sample_162
-.word music_title_sample_154
 .word music_title_sample_156
-.word music_title_sample_71
-.word music_title_sample_163
-.word music_title_sample_160
-.word music_title_sample_164
-.word music_title_sample_58
 .word music_title_sample_72
-.word music_title_sample_71
-.word music_title_sample_73
-.word music_title_sample_71
-.word music_title_sample_74
-.word music_title_sample_75
-.word music_title_sample_71
-.word music_title_sample_76
-.word music_title_sample_154
-.word music_title_sample_155
-.word music_title_sample_71
-.word music_title_sample_161
-.word music_title_sample_160
 .word music_title_sample_162
-.word music_title_sample_154
-.word music_title_sample_156
-.word music_title_sample_71
+.word music_title_sample_161
 .word music_title_sample_163
-.word music_title_sample_160
+.word music_title_sample_155
+.word music_title_sample_157
+.word music_title_sample_72
 .word music_title_sample_164
+.word music_title_sample_161
+.word music_title_sample_165
 .word music_title_sample_59
-.word music_title_sample_145
-.word music_title_sample_144
+.word music_title_sample_73
+.word music_title_sample_72
+.word music_title_sample_74
+.word music_title_sample_72
+.word music_title_sample_75
+.word music_title_sample_76
+.word music_title_sample_72
+.word music_title_sample_77
+.word music_title_sample_155
+.word music_title_sample_156
+.word music_title_sample_72
+.word music_title_sample_162
+.word music_title_sample_161
+.word music_title_sample_163
+.word music_title_sample_155
+.word music_title_sample_157
+.word music_title_sample_72
+.word music_title_sample_164
+.word music_title_sample_161
+.word music_title_sample_165
+.word music_title_sample_60
 .word music_title_sample_146
-.word music_title_sample_144
+.word music_title_sample_145
 .word music_title_sample_147
-.word music_title_sample_115
-.word music_title_sample_112
-.word music_title_sample_116
-.word music_title_sample_99
-.word music_title_sample_132
-.word music_title_sample_131
-.word music_title_sample_133
-.word music_title_sample_160
-.word music_title_sample_165
-.word music_title_sample_160
-.word music_title_sample_165
-.word music_title_sample_112
-.word music_title_sample_121
-.word music_title_sample_99
-.word music_title_sample_166
-.word music_title_sample_160
-.word music_title_sample_165
-.word music_title_sample_160
-.word music_title_sample_131
-.word music_title_sample_138
-.word music_title_sample_101
-.word music_title_sample_99
-.word music_title_sample_102
-.word music_title_sample_117
-.word music_title_sample_112
-.word music_title_sample_118
-.word music_title_sample_99
-.word music_title_sample_134
-.word music_title_sample_131
-.word music_title_sample_135
-.word music_title_sample_99
-.word music_title_sample_100
-.word music_title_sample_119
-.word music_title_sample_112
-.word music_title_sample_120
-.word music_title_sample_99
-.word music_title_sample_136
-.word music_title_sample_131
-.word music_title_sample_137
-.word music_title_sample_115
-.word music_title_sample_112
-.word music_title_sample_116
-.word music_title_sample_99
-.word music_title_sample_132
-.word music_title_sample_131
-.word music_title_sample_133
-.word music_title_sample_160
-.word music_title_sample_165
-.word music_title_sample_160
-.word music_title_sample_165
-.word music_title_sample_112
-.word music_title_sample_121
-.word music_title_sample_99
-.word music_title_sample_166
-.word music_title_sample_160
-.word music_title_sample_165
-.word music_title_sample_160
-.word music_title_sample_131
-.word music_title_sample_138
-.word music_title_sample_103
-.word music_title_sample_99
-.word music_title_sample_104
-.word music_title_sample_113
-.word music_title_sample_112
-.word music_title_sample_114
+.word music_title_sample_145
 .word music_title_sample_148
-.word music_title_sample_144
+.word music_title_sample_116
+.word music_title_sample_113
+.word music_title_sample_117
+.word music_title_sample_100
+.word music_title_sample_133
+.word music_title_sample_132
+.word music_title_sample_134
+.word music_title_sample_161
+.word music_title_sample_166
+.word music_title_sample_161
+.word music_title_sample_166
+.word music_title_sample_113
+.word music_title_sample_122
+.word music_title_sample_100
 .word music_title_sample_167
-.word music_title_sample_160
-.word music_title_sample_71
-.word music_title_sample_77
-.word music_title_sample_149
-.word music_title_sample_144
-.word music_title_sample_150
+.word music_title_sample_161
+.word music_title_sample_166
+.word music_title_sample_161
+.word music_title_sample_132
+.word music_title_sample_139
+.word music_title_sample_102
+.word music_title_sample_100
+.word music_title_sample_103
+.word music_title_sample_118
+.word music_title_sample_113
+.word music_title_sample_119
+.word music_title_sample_100
+.word music_title_sample_135
+.word music_title_sample_132
+.word music_title_sample_136
+.word music_title_sample_100
 .word music_title_sample_101
-.word music_title_sample_71
-.word music_title_sample_77
+.word music_title_sample_120
+.word music_title_sample_113
+.word music_title_sample_121
+.word music_title_sample_100
+.word music_title_sample_137
+.word music_title_sample_132
+.word music_title_sample_138
+.word music_title_sample_116
+.word music_title_sample_113
+.word music_title_sample_117
+.word music_title_sample_100
+.word music_title_sample_133
+.word music_title_sample_132
+.word music_title_sample_134
+.word music_title_sample_161
+.word music_title_sample_166
+.word music_title_sample_161
+.word music_title_sample_166
+.word music_title_sample_113
+.word music_title_sample_122
+.word music_title_sample_100
+.word music_title_sample_167
+.word music_title_sample_161
+.word music_title_sample_166
+.word music_title_sample_161
+.word music_title_sample_132
+.word music_title_sample_139
+.word music_title_sample_104
+.word music_title_sample_100
+.word music_title_sample_105
+.word music_title_sample_114
+.word music_title_sample_113
+.word music_title_sample_115
 .word music_title_sample_149
-.word music_title_sample_144
+.word music_title_sample_145
+.word music_title_sample_168
+.word music_title_sample_161
+.word music_title_sample_72
+.word music_title_sample_78
 .word music_title_sample_150
-.word music_title_sample_127
+.word music_title_sample_145
+.word music_title_sample_151
+.word music_title_sample_102
+.word music_title_sample_72
+.word music_title_sample_78
+.word music_title_sample_150
+.word music_title_sample_145
+.word music_title_sample_151
+.word music_title_sample_128
 MUSIC_END
 
 music_title_track_noise:
@@ -370,11 +371,11 @@ music_title_track_noise:
 .word music_title_sample_43
 .word music_title_sample_44
 .word music_title_sample_30
-.word music_title_sample_79
-.word music_title_sample_105
-.word music_title_sample_30
-.word music_title_sample_79
+.word music_title_sample_80
 .word music_title_sample_106
+.word music_title_sample_30
+.word music_title_sample_80
+.word music_title_sample_107
 .word music_title_sample_30
 .word music_title_sample_45
 .word music_title_sample_18
@@ -391,13 +392,13 @@ music_title_track_noise:
 .word music_title_sample_17
 .word music_title_sample_20
 .word music_title_sample_17
-.word music_title_sample_79
-.word music_title_sample_78
 .word music_title_sample_80
-.word music_title_sample_17
+.word music_title_sample_79
 .word music_title_sample_81
-.word music_title_sample_78
+.word music_title_sample_17
 .word music_title_sample_82
+.word music_title_sample_79
+.word music_title_sample_83
 .word music_title_sample_17
 .word music_title_sample_21
 .word music_title_sample_17
@@ -420,32 +421,32 @@ music_title_track_noise:
 .word music_title_sample_17
 .word music_title_sample_19
 .word music_title_sample_17
-.word music_title_sample_48
+.word music_title_sample_49
 .word music_title_sample_30
 .word music_title_sample_35
 .word music_title_sample_30
-.word music_title_sample_49
-.word music_title_sample_83
-.word music_title_sample_78
+.word music_title_sample_50
 .word music_title_sample_84
+.word music_title_sample_79
+.word music_title_sample_85
 .word music_title_sample_30
 .word music_title_sample_35
 .word music_title_sample_30
 .word music_title_sample_46
 .word music_title_sample_30
 .word music_title_sample_47
-.word music_title_sample_61
-.word music_title_sample_60
-.word music_title_sample_62
-.word music_title_sample_60
 .word music_title_sample_62
 .word music_title_sample_61
-.word music_title_sample_60
 .word music_title_sample_63
+.word music_title_sample_61
+.word music_title_sample_63
+.word music_title_sample_62
+.word music_title_sample_61
+.word music_title_sample_64
 .word music_title_sample_30
 .word music_title_sample_35
 .word music_title_sample_30
-.word music_title_sample_45
+.word music_title_sample_48
 MUSIC_END
 
 
@@ -612,7 +613,7 @@ music_title_sample_4:
 	HALT(1)
 	PLAY_TIMED_NOTE(4,40)
 	HALT(7)
-	LONG_WAIT(17)
+	LONG_WAIT(15)
 	SAMPLE_END
 .)
 
@@ -1053,7 +1054,7 @@ music_title_sample_9:
 	HALT(1)
 	PLAY_TIMED_NOTE(4,43)
 	HALT(7)
-	LONG_WAIT(17)
+	LONG_WAIT(15)
 	SAMPLE_END
 .)
 
@@ -2378,6 +2379,27 @@ music_title_sample_47:
 
 music_title_sample_48:
 .(
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(12)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(12)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	SAMPLE_END
+.)
+
+music_title_sample_49:
+.(
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(4,8)
 	AUDIO_NOISE_SET_VOLUME(8)
@@ -2389,7 +2411,7 @@ music_title_sample_48:
 	SAMPLE_END
 .)
 
-music_title_sample_49:
+music_title_sample_50:
 .(
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(4,8)
@@ -2399,7 +2421,7 @@ music_title_sample_49:
 	SAMPLE_END
 .)
 
-music_title_sample_50:
+music_title_sample_51:
 .(
 	CHAN_VOLUME_LOW(6)
 	WAIT(0)
@@ -2420,28 +2442,28 @@ music_title_sample_50:
 	SAMPLE_END
 .)
 
-music_title_sample_51:
+music_title_sample_52:
 .(
 	CHAN_VOLUME_HIGH(1)
 	PLAY_TIMED_NOTE(0,55)
 	SAMPLE_END
 .)
 
-music_title_sample_52:
+music_title_sample_53:
 .(
 	CHAN_VOLUME_HIGH(1)
 	PLAY_TIMED_NOTE(0,57)
 	SAMPLE_END
 .)
 
-music_title_sample_53:
+music_title_sample_54:
 .(
 	CHAN_VOLUME_HIGH(1)
 	PLAY_TIMED_NOTE(0,50)
 	SAMPLE_END
 .)
 
-music_title_sample_54:
+music_title_sample_55:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(74,3,1,6)
 	CHAN_VOLUME_LOW(4)
@@ -2477,7 +2499,7 @@ music_title_sample_54:
 	SAMPLE_END
 .)
 
-music_title_sample_55:
+music_title_sample_56:
 .(
 	CHAN_VOLUME_HIGH(4)
 	PLAY_TIMED_NOTE(1,62)
@@ -2507,14 +2529,14 @@ music_title_sample_55:
 	SAMPLE_END
 .)
 
-music_title_sample_56:
+music_title_sample_57:
 .(
 	CHAN_VOLUME_HIGH(1)
 	PLAY_TIMED_NOTE(0,59)
 	SAMPLE_END
 .)
 
-music_title_sample_57:
+music_title_sample_58:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(33,3,0,8)
 	CHAN_VOLUME_LOW(6)
@@ -2550,7 +2572,7 @@ music_title_sample_57:
 	SAMPLE_END
 .)
 
-music_title_sample_58:
+music_title_sample_59:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
 	AUDIO_PULSE_META_NOTE_DSLIDE(19,7,0)
@@ -2563,7 +2585,7 @@ music_title_sample_58:
 	SAMPLE_END
 .)
 
-music_title_sample_59:
+music_title_sample_60:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(46,3,21)
 	AUDIO_PULSE_META_NOTE_DSLIDE(17,7,0)
@@ -2576,110 +2598,110 @@ music_title_sample_59:
 	SAMPLE_END
 .)
 
-music_title_sample_60:
-.(
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
-	AUDIO_NOISE_SET_VOLUME(13)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(12)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(11)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_HALT(2)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(1,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_HALT(2)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_HALT(2)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(9,1)
-	AUDIO_NOISE_SET_VOLUME(12)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_HALT(2)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(1,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_HALT(2)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_HALT(2)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
-	AUDIO_NOISE_SET_VOLUME(13)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(12)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(11)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_HALT(2)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(1,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_HALT(2)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_HALT(2)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(9,1)
-	AUDIO_NOISE_SET_VOLUME(12)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_HALT(2)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(1,1)
-	SAMPLE_END
-.)
-
 music_title_sample_61:
 .(
+	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_SET_VOLUME(13)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(12)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(11)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_HALT(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(1,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_HALT(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_HALT(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(9,1)
+	AUDIO_NOISE_SET_VOLUME(12)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_HALT(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(1,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_HALT(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_HALT(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_SET_VOLUME(13)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(12)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(11)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_HALT(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(1,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_HALT(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_HALT(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(9,1)
+	AUDIO_NOISE_SET_VOLUME(12)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_HALT(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(1,1)
 	SAMPLE_END
 .)
 
 music_title_sample_62:
 .(
+	AUDIO_NOISE_SET_VOLUME(15)
+	SAMPLE_END
+.)
+
+music_title_sample_63:
+.(
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(15)
@@ -2692,7 +2714,7 @@ music_title_sample_62:
 	SAMPLE_END
 .)
 
-music_title_sample_63:
+music_title_sample_64:
 .(
 	AUDIO_NOISE_SET_VOLUME(13)
 	AUDIO_NOISE_WAIT(0)
@@ -2772,7 +2794,7 @@ music_title_sample_63:
 	SAMPLE_END
 .)
 
-music_title_sample_64:
+music_title_sample_65:
 .(
 	CHAN_VOLUME_LOW(7)
 	WAIT(0)
@@ -2791,28 +2813,28 @@ music_title_sample_64:
 	SAMPLE_END
 .)
 
-music_title_sample_65:
+music_title_sample_66:
 .(
 	CHAN_VOLUME_HIGH(2)
 	PLAY_TIMED_NOTE(0,55)
 	SAMPLE_END
 .)
 
-music_title_sample_66:
+music_title_sample_67:
 .(
 	CHAN_VOLUME_HIGH(2)
 	PLAY_TIMED_NOTE(0,57)
 	SAMPLE_END
 .)
 
-music_title_sample_67:
+music_title_sample_68:
 .(
 	CHAN_VOLUME_HIGH(2)
 	PLAY_TIMED_NOTE(0,50)
 	SAMPLE_END
 .)
 
-music_title_sample_68:
+music_title_sample_69:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(74,3,1,7)
 	CHAN_VOLUME_LOW(5)
@@ -2848,14 +2870,14 @@ music_title_sample_68:
 	SAMPLE_END
 .)
 
-music_title_sample_69:
+music_title_sample_70:
 .(
 	CHAN_VOLUME_HIGH(2)
 	PLAY_TIMED_NOTE(0,59)
 	SAMPLE_END
 .)
 
-music_title_sample_70:
+music_title_sample_71:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(36,3,0,9)
 	CHAN_VOLUME_LOW(7)
@@ -2888,7 +2910,7 @@ music_title_sample_70:
 	SAMPLE_END
 .)
 
-music_title_sample_71:
+music_title_sample_72:
 .(
 	HALT(0)
 	AUDIO_PULSE_META_NOTE_DSLIDE(46,3,21)
@@ -2898,7 +2920,7 @@ music_title_sample_71:
 	SAMPLE_END
 .)
 
-music_title_sample_72:
+music_title_sample_73:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
 	AUDIO_PULSE_META_NOTE_DSLIDE(34,7,0)
@@ -2916,7 +2938,7 @@ music_title_sample_72:
 	SAMPLE_END
 .)
 
-music_title_sample_73:
+music_title_sample_74:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(29,7,0)
 	AUDIO_PULSE_META_WAIT_DSLIDE(8,8)
@@ -2937,13 +2959,13 @@ music_title_sample_73:
 	SAMPLE_END
 .)
 
-music_title_sample_74:
+music_title_sample_75:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(36,7,0)
 	SAMPLE_END
 .)
 
-music_title_sample_75:
+music_title_sample_76:
 .(
 	LONG_WAIT(10)
 	AUDIO_PULSE_META_WAIT_DSLIDE(8,8)
@@ -2959,7 +2981,7 @@ music_title_sample_75:
 	SAMPLE_END
 .)
 
-music_title_sample_76:
+music_title_sample_77:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(34,7,0)
 	AUDIO_PULSE_META_WAIT_DSLIDE(8,8)
@@ -2985,13 +3007,13 @@ music_title_sample_76:
 	SAMPLE_END
 .)
 
-music_title_sample_77:
+music_title_sample_78:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(38,7,0)
 	SAMPLE_END
 .)
 
-music_title_sample_78:
+music_title_sample_79:
 .(
 	AUDIO_NOISE_SET_VOLUME(15)
 	AUDIO_NOISE_WAIT(0)
@@ -3042,7 +3064,7 @@ music_title_sample_78:
 	SAMPLE_END
 .)
 
-music_title_sample_79:
+music_title_sample_80:
 .(
 	AUDIO_NOISE_SET_VOLUME(15)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(1,1)
@@ -3069,7 +3091,7 @@ music_title_sample_79:
 	SAMPLE_END
 .)
 
-music_title_sample_80:
+music_title_sample_81:
 .(
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
@@ -3080,7 +3102,7 @@ music_title_sample_80:
 	SAMPLE_END
 .)
 
-music_title_sample_81:
+music_title_sample_82:
 .(
 	AUDIO_NOISE_SET_VOLUME(15)
 	AUDIO_NOISE_WAIT(0)
@@ -3107,7 +3129,7 @@ music_title_sample_81:
 	SAMPLE_END
 .)
 
-music_title_sample_82:
+music_title_sample_83:
 .(
 	AUDIO_NOISE_SET_VOLUME(13)
 	AUDIO_NOISE_WAIT(0)
@@ -3120,7 +3142,7 @@ music_title_sample_82:
 	SAMPLE_END
 .)
 
-music_title_sample_83:
+music_title_sample_84:
 .(
 	AUDIO_NOISE_PLAY_TIMED_FREQ(4,10)
 	AUDIO_NOISE_SET_VOLUME(15)
@@ -3137,7 +3159,7 @@ music_title_sample_83:
 	SAMPLE_END
 .)
 
-music_title_sample_84:
+music_title_sample_85:
 .(
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
@@ -3158,7 +3180,7 @@ music_title_sample_84:
 	SAMPLE_END
 .)
 
-music_title_sample_85:
+music_title_sample_86:
 .(
 	AUDIO_PULSE_META_WAIT_USLIDE(5,-3)
 	AUDIO_PULSE_META_WAIT_DSLIDE(5,3)
@@ -3167,7 +3189,7 @@ music_title_sample_85:
 	SAMPLE_END
 .)
 
-music_title_sample_86:
+music_title_sample_87:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(38,10,0)
 	AUDIO_PULSE_META_NOTE_USLIDE(45,5,-5)
@@ -3179,14 +3201,14 @@ music_title_sample_86:
 	SAMPLE_END
 .)
 
-music_title_sample_87:
+music_title_sample_88:
 .(
 	AUDIO_PULSE_META_WAIT_DUT_VOL(20,1,15)
 	AUDIO_PULSE_META_WAIT_DSLIDE(3,3)
 	SAMPLE_END
 .)
 
-music_title_sample_88:
+music_title_sample_89:
 .(
 	PITCH_SLIDE(0)
 	HALT(7)
@@ -3207,7 +3229,7 @@ music_title_sample_88:
 	SAMPLE_END
 .)
 
-music_title_sample_89:
+music_title_sample_90:
 .(
 	AUDIO_PULSE_META_WAIT_DUT_VOL_USLIDE(5,1,15,-5)
 	AUDIO_PULSE_META_NOTE_DSLIDE(45,14,0)
@@ -3230,7 +3252,7 @@ music_title_sample_89:
 	SAMPLE_END
 .)
 
-music_title_sample_90:
+music_title_sample_91:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(40,10,0)
 	PLAY_TIMED_NOTE(9,38)
@@ -3239,7 +3261,7 @@ music_title_sample_90:
 	SAMPLE_END
 .)
 
-music_title_sample_91:
+music_title_sample_92:
 .(
 	AUDIO_PULSE_META_WAIT_VOL(20,15)
 	AUDIO_PULSE_META_WAIT_DSLIDE(3,3)
@@ -3248,7 +3270,7 @@ music_title_sample_91:
 	SAMPLE_END
 .)
 
-music_title_sample_92:
+music_title_sample_93:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(38,10,0)
 	PLAY_TIMED_NOTE(9,36)
@@ -3267,14 +3289,14 @@ music_title_sample_92:
 	SAMPLE_END
 .)
 
-music_title_sample_93:
+music_title_sample_94:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(50,20,2,15)
 	AUDIO_PULSE_META_WAIT_DSLIDE(3,3)
 	SAMPLE_END
 .)
 
-music_title_sample_94:
+music_title_sample_95:
 .(
 	CHAN_VOLUME_HIGH(0)
 	WAIT(2)
@@ -3299,14 +3321,14 @@ music_title_sample_94:
 	SAMPLE_END
 .)
 
-music_title_sample_95:
+music_title_sample_96:
 .(
 	CHAN_VOLUME_LOW(1)
 	PLAY_TIMED_NOTE(2,45)
 	SAMPLE_END
 .)
 
-music_title_sample_96:
+music_title_sample_97:
 .(
 	CHAN_VOLUME_LOW(0)
 	WAIT(2)
@@ -3321,7 +3343,7 @@ music_title_sample_96:
 	SAMPLE_END
 .)
 
-music_title_sample_97:
+music_title_sample_98:
 .(
 	CHAN_VOLUME_HIGH(7)
 	PLAY_TIMED_FREQ(314,27)
@@ -3332,14 +3354,14 @@ music_title_sample_97:
 	SAMPLE_END
 .)
 
-music_title_sample_98:
+music_title_sample_99:
 .(
 	CHAN_VOLUME_LOW(4)
 	PLAY_TIMED_NOTE(2,38)
 	SAMPLE_END
 .)
 
-music_title_sample_99:
+music_title_sample_100:
 .(
 	HALT(0)
 	AUDIO_PULSE_META_NOTE_DSLIDE(46,9,21)
@@ -3349,37 +3371,37 @@ music_title_sample_99:
 	SAMPLE_END
 .)
 
-music_title_sample_100:
+music_title_sample_101:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(31,7,0)
 	SAMPLE_END
 .)
 
-music_title_sample_101:
+music_title_sample_102:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(38,6,0)
 	SAMPLE_END
 .)
 
-music_title_sample_102:
+music_title_sample_103:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(41,7,0)
 	SAMPLE_END
 .)
 
-music_title_sample_103:
+music_title_sample_104:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(40,6,0)
 	SAMPLE_END
 .)
 
-music_title_sample_104:
+music_title_sample_105:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(34,7,0)
 	SAMPLE_END
 .)
 
-music_title_sample_105:
+music_title_sample_106:
 .(
 	AUDIO_NOISE_SET_VOLUME(3)
 	AUDIO_NOISE_WAIT(1)
@@ -3394,7 +3416,7 @@ music_title_sample_105:
 	SAMPLE_END
 .)
 
-music_title_sample_106:
+music_title_sample_107:
 .(
 	AUDIO_NOISE_SET_VOLUME(3)
 	AUDIO_NOISE_WAIT(1)
@@ -3469,7 +3491,7 @@ music_title_sample_106:
 	SAMPLE_END
 .)
 
-music_title_sample_107:
+music_title_sample_108:
 .(
 	CHAN_VOLUME_LOW(6)
 	WAIT(0)
@@ -3502,7 +3524,7 @@ music_title_sample_107:
 	SAMPLE_END
 .)
 
-music_title_sample_108:
+music_title_sample_109:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(65,2,1,4)
 	CHAN_VOLUME_LOW(5)
@@ -3651,7 +3673,7 @@ music_title_sample_108:
 	SAMPLE_END
 .)
 
-music_title_sample_109:
+music_title_sample_110:
 .(
 	CHAN_VOLUME_HIGH(1)
 	PLAY_TIMED_NOTE(1,43)
@@ -3680,13 +3702,13 @@ music_title_sample_109:
 	SAMPLE_END
 .)
 
-music_title_sample_110:
+music_title_sample_111:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(55,1,2,9)
 	SAMPLE_END
 .)
 
-music_title_sample_111:
+music_title_sample_112:
 .(
 	CHAN_VOLUME_HIGH(1)
 	PLAY_TIMED_NOTE(0,50)
@@ -3703,7 +3725,7 @@ music_title_sample_111:
 	SAMPLE_END
 .)
 
-music_title_sample_112:
+music_title_sample_113:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(46,9,21)
 	PITCH_SLIDE(0)
@@ -3713,7 +3735,7 @@ music_title_sample_112:
 	SAMPLE_END
 .)
 
-music_title_sample_113:
+music_title_sample_114:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(10,4)
 	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
@@ -3721,7 +3743,7 @@ music_title_sample_113:
 	SAMPLE_END
 .)
 
-music_title_sample_114:
+music_title_sample_115:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(29,6,0)
 	HALT(0)
@@ -3751,7 +3773,7 @@ music_title_sample_114:
 	SAMPLE_END
 .)
 
-music_title_sample_115:
+music_title_sample_116:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
 	AUDIO_PULSE_META_NOTE_DSLIDE(39,6,0)
@@ -3762,13 +3784,13 @@ music_title_sample_115:
 	SAMPLE_END
 .)
 
-music_title_sample_116:
+music_title_sample_117:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(34,6,0)
 	SAMPLE_END
 .)
 
-music_title_sample_117:
+music_title_sample_118:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(10,6)
 	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
@@ -3777,13 +3799,13 @@ music_title_sample_117:
 	SAMPLE_END
 .)
 
-music_title_sample_118:
+music_title_sample_119:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(41,6,0)
 	SAMPLE_END
 .)
 
-music_title_sample_119:
+music_title_sample_120:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(10,4)
 	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
@@ -3792,19 +3814,19 @@ music_title_sample_119:
 	SAMPLE_END
 .)
 
-music_title_sample_120:
+music_title_sample_121:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(31,6,0)
 	SAMPLE_END
 .)
 
-music_title_sample_121:
+music_title_sample_122:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(33,6,0)
 	SAMPLE_END
 .)
 
-music_title_sample_122:
+music_title_sample_123:
 .(
 	PLAY_TIMED_NOTE(1,54)
 	PLAY_TIMED_NOTE(1,52)
@@ -3831,32 +3853,32 @@ music_title_sample_122:
 	SAMPLE_END
 .)
 
-music_title_sample_123:
+music_title_sample_124:
 .(
 	AUDIO_PULSE_META_NOTE_VOL_DSLIDE(57,2,12,0)
 	SAMPLE_END
 .)
 
-music_title_sample_124:
+music_title_sample_125:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(57,1,2,9)
 	SAMPLE_END
 .)
 
-music_title_sample_125:
+music_title_sample_126:
 .(
 	CHAN_VOLUME_HIGH(7)
 	PLAY_TIMED_NOTE(1,57)
 	SAMPLE_END
 .)
 
-music_title_sample_126:
+music_title_sample_127:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(57,1,2,10,0)
 	SAMPLE_END
 .)
 
-music_title_sample_127:
+music_title_sample_128:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(29,7,0)
 	AUDIO_PULSE_META_NOTE_DSLIDE(46,3,21)
@@ -3879,11 +3901,11 @@ music_title_sample_127:
 	AUDIO_PULSE_META_NOTE_DSLIDE(46,3,21)
 	PITCH_SLIDE(0)
 	HALT(7)
-	LONG_WAIT(9)
+	WAIT(6)
 	SAMPLE_END
 .)
 
-music_title_sample_128:
+music_title_sample_129:
 .(
 	CHAN_VOLUME_LOW(6)
 	WAIT(0)
@@ -3926,7 +3948,7 @@ music_title_sample_128:
 	SAMPLE_END
 .)
 
-music_title_sample_129:
+music_title_sample_130:
 .(
 	CHAN_VOLUME_HIGH(1)
 	PLAY_TIMED_NOTE(0,50)
@@ -3972,7 +3994,7 @@ music_title_sample_129:
 	SAMPLE_END
 .)
 
-music_title_sample_130:
+music_title_sample_131:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(43,3,0,9)
 	CHAN_VOLUME_LOW(7)
@@ -4005,7 +4027,7 @@ music_title_sample_130:
 	SAMPLE_END
 .)
 
-music_title_sample_131:
+music_title_sample_132:
 .(
 	HALT(0)
 	AUDIO_PULSE_META_NOTE_DSLIDE(46,9,21)
@@ -4013,22 +4035,22 @@ music_title_sample_131:
 	HALT(7)
 	WAIT(2)
 	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
-	SAMPLE_END
-.)
-
-music_title_sample_132:
-.(
-	AUDIO_PULSE_META_NOTE_DSLIDE(39,6,0)
-	HALT(7)
-	WAIT(2)
-	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
-	AUDIO_PULSE_META_NOTE_DSLIDE(39,6,0)
 	SAMPLE_END
 .)
 
 music_title_sample_133:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(39,6,0)
+	HALT(7)
+	WAIT(2)
+	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
+	AUDIO_PULSE_META_NOTE_DSLIDE(39,6,0)
+	SAMPLE_END
+.)
+
+music_title_sample_134:
+.(
+	AUDIO_PULSE_META_NOTE_DSLIDE(39,6,0)
 	HALT(0)
 	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
 	AUDIO_PULSE_META_NOTE_DSLIDE(39,6,0)
@@ -4040,7 +4062,7 @@ music_title_sample_133:
 	SAMPLE_END
 .)
 
-music_title_sample_134:
+music_title_sample_135:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(36,7,0)
 	AUDIO_PULSE_META_WAIT_DSLIDE(10,4)
@@ -4049,7 +4071,7 @@ music_title_sample_134:
 	SAMPLE_END
 .)
 
-music_title_sample_135:
+music_title_sample_136:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(36,6,0)
 	HALT(0)
@@ -4058,7 +4080,7 @@ music_title_sample_135:
 	SAMPLE_END
 .)
 
-music_title_sample_136:
+music_title_sample_137:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(31,7,0)
 	AUDIO_PULSE_META_WAIT_DSLIDE(10,6)
@@ -4067,7 +4089,7 @@ music_title_sample_136:
 	SAMPLE_END
 .)
 
-music_title_sample_137:
+music_title_sample_138:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(29,7,0)
 	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
@@ -4080,7 +4102,7 @@ music_title_sample_137:
 	SAMPLE_END
 .)
 
-music_title_sample_138:
+music_title_sample_139:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(38,6,0)
 	HALT(0)
@@ -4088,7 +4110,7 @@ music_title_sample_138:
 	SAMPLE_END
 .)
 
-music_title_sample_139:
+music_title_sample_140:
 .(
 	CHAN_VOLUME_HIGH(1)
 	PLAY_TIMED_NOTE(2,40)
@@ -4125,7 +4147,7 @@ music_title_sample_139:
 	SAMPLE_END
 .)
 
-music_title_sample_140:
+music_title_sample_141:
 .(
 	CHAN_VOLUME_HIGH(2)
 	PLAY_TIMED_NOTE(2,62)
@@ -4180,7 +4202,7 @@ music_title_sample_140:
 	SAMPLE_END
 .)
 
-music_title_sample_141:
+music_title_sample_142:
 .(
 	CHAN_VOLUME_HIGH(1)
 	PLAY_TIMED_NOTE(2,64)
@@ -4198,7 +4220,7 @@ music_title_sample_141:
 	SAMPLE_END
 .)
 
-music_title_sample_142:
+music_title_sample_143:
 .(
 	AUDIO_PULSE_META_NOTE_VOL_DSLIDE(32,3,9,0)
 	CHAN_VOLUME_LOW(7)
@@ -4210,14 +4232,14 @@ music_title_sample_142:
 	SAMPLE_END
 .)
 
-music_title_sample_143:
+music_title_sample_144:
 .(
 	CHAN_VOLUME_HIGH(1)
 	PLAY_TIMED_NOTE(9,62)
 	SAMPLE_END
 .)
 
-music_title_sample_144:
+music_title_sample_145:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
 	AUDIO_PULSE_META_NOTE_DSLIDE(26,7,0)
@@ -4225,7 +4247,7 @@ music_title_sample_144:
 	SAMPLE_END
 .)
 
-music_title_sample_145:
+music_title_sample_146:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(8,6)
 	AUDIO_PULSE_META_WAIT_DSLIDE(2,0)
@@ -4250,13 +4272,13 @@ music_title_sample_145:
 	SAMPLE_END
 .)
 
-music_title_sample_146:
+music_title_sample_147:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(19,7,0)
 	SAMPLE_END
 .)
 
-music_title_sample_147:
+music_title_sample_148:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(31,7,0)
 	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
@@ -4268,20 +4290,20 @@ music_title_sample_147:
 	SAMPLE_END
 .)
 
-music_title_sample_148:
+music_title_sample_149:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
 	AUDIO_PULSE_META_NOTE_DSLIDE(38,7,0)
 	SAMPLE_END
 .)
 
-music_title_sample_149:
+music_title_sample_150:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(10,6)
 	SAMPLE_END
 .)
 
-music_title_sample_150:
+music_title_sample_151:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(26,7,0)
 	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
@@ -4292,7 +4314,7 @@ music_title_sample_150:
 	SAMPLE_END
 .)
 
-music_title_sample_151:
+music_title_sample_152:
 .(
 	CHAN_VOLUME_LOW(7)
 	WAIT(1)
@@ -4327,19 +4349,19 @@ music_title_sample_151:
 	SAMPLE_END
 .)
 
-music_title_sample_152:
+music_title_sample_153:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(31,3,0,9)
 	SAMPLE_END
 .)
 
-music_title_sample_153:
+music_title_sample_154:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(31,3,1,9)
 	SAMPLE_END
 .)
 
-music_title_sample_154:
+music_title_sample_155:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
 	AUDIO_PULSE_META_NOTE_DSLIDE(38,7,0)
@@ -4352,7 +4374,7 @@ music_title_sample_154:
 	SAMPLE_END
 .)
 
-music_title_sample_155:
+music_title_sample_156:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
 	AUDIO_PULSE_META_NOTE_DSLIDE(33,6,0)
@@ -4362,7 +4384,7 @@ music_title_sample_155:
 	SAMPLE_END
 .)
 
-music_title_sample_156:
+music_title_sample_157:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(38,3,89)
 	AUDIO_PULSE_META_NOTE_DSLIDE(33,6,0)
@@ -4372,7 +4394,7 @@ music_title_sample_156:
 	SAMPLE_END
 .)
 
-music_title_sample_157:
+music_title_sample_158:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(10,6)
 	AUDIO_PULSE_META_NOTE_VOL_DSLIDE(45,10,4,0)
@@ -4390,26 +4412,26 @@ music_title_sample_157:
 	SAMPLE_END
 .)
 
-music_title_sample_158:
+music_title_sample_159:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(45,10,1,15,0)
 	SAMPLE_END
 .)
 
-music_title_sample_159:
+music_title_sample_160:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(45,10,1,15)
 	SAMPLE_END
 .)
 
-music_title_sample_160:
+music_title_sample_161:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(42,3,89)
 	AUDIO_PULSE_META_NOTE_DSLIDE(38,6,0)
 	SAMPLE_END
 .)
 
-music_title_sample_161:
+music_title_sample_162:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(38,7,0)
 	AUDIO_PULSE_META_WAIT_DSLIDE(8,8)
@@ -4417,7 +4439,7 @@ music_title_sample_161:
 	SAMPLE_END
 .)
 
-music_title_sample_162:
+music_title_sample_163:
 .(
 	HALT(0)
 	AUDIO_PULSE_META_NOTE_DSLIDE(46,3,21)
@@ -4437,14 +4459,14 @@ music_title_sample_162:
 	SAMPLE_END
 .)
 
-music_title_sample_163:
+music_title_sample_164:
 .(
 	PITCH_SLIDE(0)
 	PLAY_TIMED_FREQ(353,17)
 	SAMPLE_END
 .)
 
-music_title_sample_164:
+music_title_sample_165:
 .(
 	HALT(0)
 	AUDIO_PULSE_META_NOTE_DSLIDE(46,3,21)
@@ -4455,20 +4477,20 @@ music_title_sample_164:
 	SAMPLE_END
 .)
 
-music_title_sample_165:
+music_title_sample_166:
 .(
 	HALT(0)
 	SAMPLE_END
 .)
 
-music_title_sample_166:
+music_title_sample_167:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(33,6,0)
 	HALT(0)
 	SAMPLE_END
 .)
 
-music_title_sample_167:
+music_title_sample_168:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(26,6,0)
 	HALT(0)
@@ -4479,7 +4501,7 @@ music_title_sample_167:
 	SAMPLE_END
 .)
 
-music_title_sample_168:
+music_title_sample_169:
 .(
 	CHAN_VOLUME_LOW(3)
 	WAIT(7)
@@ -4496,19 +4518,19 @@ music_title_sample_168:
 	SAMPLE_END
 .)
 
-music_title_sample_169:
+music_title_sample_170:
 .(
 	AUDIO_PULSE_META_WAIT_VOL_DSLIDE(5,5,0)
 	SAMPLE_END
 .)
 
-music_title_sample_170:
+music_title_sample_171:
 .(
 	AUDIO_PULSE_META_WAIT_VOL_DSLIDE(5,8,0)
 	SAMPLE_END
 .)
 
-music_title_sample_171:
+music_title_sample_172:
 .(
 	AUDIO_PULSE_META_WAIT_VOL_DSLIDE(8,15,18)
 	AUDIO_PULSE_META_NOTE_DSLIDE(38,2,0)
@@ -4519,7 +4541,7 @@ music_title_sample_171:
 	SAMPLE_END
 .)
 
-music_title_sample_172:
+music_title_sample_173:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(48,10,1,15,0)
 	AUDIO_PULSE_META_WAIT_DSLIDE(10,6)
@@ -4529,7 +4551,7 @@ music_title_sample_172:
 	SAMPLE_END
 .)
 
-music_title_sample_173:
+music_title_sample_174:
 .(
 	AUDIO_PULSE_META_WAIT_USLIDE(5,-3)
 	AUDIO_PULSE_META_WAIT_DSLIDE(2,3)
@@ -4547,7 +4569,7 @@ music_title_sample_173:
 	SAMPLE_END
 .)
 
-music_title_sample_174:
+music_title_sample_175:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(48,10,1,15,0)
 	AUDIO_PULSE_META_WAIT_DSLIDE(10,6)
@@ -4557,7 +4579,7 @@ music_title_sample_174:
 	SAMPLE_END
 .)
 
-music_title_sample_175:
+music_title_sample_176:
 .(
 	PLAY_TIMED_NOTE(1,45)
 	PLAY_TIMED_NOTE(1,43)
@@ -4573,7 +4595,7 @@ music_title_sample_175:
 	SAMPLE_END
 .)
 
-music_title_sample_176:
+music_title_sample_177:
 .(
 	CHAN_VOLUME_HIGH(0)
 	PLAY_TIMED_NOTE(1,60)
@@ -4639,7 +4661,7 @@ music_title_sample_176:
 	SAMPLE_END
 .)
 
-music_title_sample_177:
+music_title_sample_178:
 .(
 	CHAN_VOLUME_HIGH(1)
 	PLAY_TIMED_NOTE(2,41)
@@ -4660,7 +4682,7 @@ music_title_sample_177:
 	SAMPLE_END
 .)
 
-music_title_sample_178:
+music_title_sample_179:
 .(
 	CHAN_VOLUME_HIGH(1)
 	PLAY_TIMED_NOTE(1,62)
@@ -4672,7 +4694,7 @@ music_title_sample_178:
 	SAMPLE_END
 .)
 
-music_title_sample_179:
+music_title_sample_180:
 .(
 	CHAN_VOLUME_LOW(2)
 	PLAY_TIMED_NOTE(1,41)
@@ -4684,7 +4706,7 @@ music_title_sample_179:
 	SAMPLE_END
 .)
 
-music_title_sample_180:
+music_title_sample_181:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(3,3)
 	AUDIO_PULSE_META_WAIT_USLIDE(5,-3)
@@ -4698,7 +4720,7 @@ music_title_sample_180:
 	SAMPLE_END
 .)
 
-music_title_sample_181:
+music_title_sample_182:
 .(
 	AUDIO_PULSE_META_WAIT_DUT_VOL(10,2,15)
 	AUDIO_PULSE_META_NOTE_DSLIDE(45,20,0)
@@ -4711,13 +4733,13 @@ music_title_sample_181:
 	SAMPLE_END
 .)
 
-music_title_sample_182:
+music_title_sample_183:
 .(
 	LONG_WAIT(20)
 	SAMPLE_END
 .)
 
-music_title_sample_183:
+music_title_sample_184:
 .(
 	CHAN_VOLUME_LOW(4)
 	WAIT(0)
@@ -4740,7 +4762,7 @@ music_title_sample_183:
 	SAMPLE_END
 .)
 
-music_title_sample_184:
+music_title_sample_185:
 .(
 	AUDIO_PULSE_META_WAIT_VOL(20,15)
 	AUDIO_PULSE_META_WAIT_DSLIDE(2,4)
@@ -4759,14 +4781,14 @@ music_title_sample_184:
 	SAMPLE_END
 .)
 
-music_title_sample_185:
+music_title_sample_186:
 .(
 	CHAN_VOLUME_LOW(6)
 	PLAY_TIMED_NOTE(0,65)
 	SAMPLE_END
 .)
 
-music_title_sample_186:
+music_title_sample_187:
 .(
 	CHAN_VOLUME_LOW(6)
 	PLAY_TIMED_NOTE(0,63)
@@ -4802,7 +4824,7 @@ music_title_sample_186:
 	SAMPLE_END
 .)
 
-music_title_sample_187:
+music_title_sample_188:
 .(
 	AUDIO_PULSE_META_WAIT_USLIDE(5,-3)
 	AUDIO_PULSE_META_WAIT_DSLIDE(5,3)
@@ -4813,14 +4835,14 @@ music_title_sample_187:
 	SAMPLE_END
 .)
 
-music_title_sample_188:
+music_title_sample_189:
 .(
 	CHAN_VOLUME_LOW(4)
 	PLAY_TIMED_NOTE(2,41)
 	SAMPLE_END
 .)
 
-music_title_sample_189:
+music_title_sample_190:
 .(
 	CHAN_VOLUME_LOW(2)
 	PLAY_TIMED_NOTE(2,41)
@@ -4835,14 +4857,14 @@ music_title_sample_189:
 	SAMPLE_END
 .)
 
-music_title_sample_190:
+music_title_sample_191:
 .(
 	CHAN_VOLUME_LOW(4)
 	PLAY_TIMED_NOTE(2,45)
 	SAMPLE_END
 .)
 
-music_title_sample_191:
+music_title_sample_192:
 .(
 	CHAN_VOLUME_LOW(2)
 	PLAY_TIMED_NOTE(2,45)

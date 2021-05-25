@@ -17,6 +17,13 @@ audio_play_music:
 	sta audio_current_track_msb
 	sty audio_current_track_lsb
 
+	SWITCH_BANK(#MUSIC_BANK_NUMBER)
+
+	; Store native tempo in zeropage
+	ldy #MUSIC_HEADER_TEMPO
+	lda (audio_current_track_lsb), y
+	sta audio_50hz
+
 	; Init pulse channels
 	ldx #0
 	jsr init_channel
@@ -62,8 +69,6 @@ audio_play_music:
 		; Remove any wait
 		;lda #0 ; useless, done above
 		sta audio_square1_wait_cnt, x
-
-		SWITCH_BANK(#MUSIC_BANK_NUMBER)
 
 		; Set default pulse parameters
 		cpx #2

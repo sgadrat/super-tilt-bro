@@ -3,6 +3,7 @@ music_jump_rope_info:
 .word music_jump_rope_track_pulse2
 .word music_jump_rope_track_triangle
 .word music_jump_rope_track_noise
+.byt 0
 
 music_jump_rope_track_pulse1:
 .word music_jump_rope_sample_64

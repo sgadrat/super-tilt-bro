@@ -20,6 +20,5 @@ audio_notes_table_high:
 
 ;include "game/data/music/theme_title.asm"
 #include "game/data/music/theme_sinbad.asm"
-;include "game/data/music/theme_perihelium.asm"
-music_main_info:
+#include "game/data/music/theme_perihelium.asm"
 #include "game/data/music/theme_jump_rope.asm"

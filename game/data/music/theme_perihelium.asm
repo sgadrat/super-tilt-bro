@@ -5,6 +5,7 @@ music_main_info:
 .word music_main_track_pulse2
 .word music_main_track_triangle
 .word music_main_track_noise
+.byt 0
 
 #if MUSIC_PERIHELIUM_WITH_NOISE
 #else

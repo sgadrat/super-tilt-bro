@@ -103,6 +103,8 @@ reset:
 	.)
 
 	; Prepare to start the game
+	lda #0
+	sta audio_vframe_cnt
 	jsr audio_init
 	jsr global_init
 
@@ -127,6 +129,22 @@ forever:
 	lda game_states_tick+1, x
 	sta tmpfield2
 	jsr call_pointed_subroutine
+
+	; Call audio a second time if necessary to emulate 60Hz system
+	.(
+		lda skip_frames_to_50hz
+		bne ok ; skip if running on NTSC
+		lda audio_50hz
+		bne ok ; skip if music is PAL native
+		dec audio_vframe_cnt
+		bpl ok ; skip if it is not time to do an extra tick
+
+			lda #4
+			sta audio_vframe_cnt
+			jsr audio_music_tick
+
+		ok:
+	.)
 
 	jmp forever
 .)

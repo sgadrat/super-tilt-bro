@@ -24,10 +24,12 @@
 ;   2 bytes - vector to 2a03 pulse channel 1's track
 ;   2 bytes - vector to 2a03 triangle channel's track
 ;   2 bytes - vector to 2a03 noise channel's track
+;   1 byte - Music tempo (0 - 60 Hz, 1 - 50 Hz)
 MUSIC_HEADER_PULSE1_TRACK_OFFSET = 0
 MUSIC_HEADER_PULSE2_TRACK_OFFSET = 2
 MUSIC_HEADER_TRIANGLE_TRACK_OFFSET = 4
 MUSIC_HEADER_NOISE_TRACK_OFFSET = 6
+MUSIC_HEADER_TEMPO = 8
 
 ; Commons
 

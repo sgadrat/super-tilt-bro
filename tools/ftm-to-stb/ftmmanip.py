@@ -2799,6 +2799,19 @@ def samples_to_source(music):
 	for track_name in track_names:
 		music_header += '.word music_{music_name}_track_{track_name}\n'.format(**locals())
 
+	original_tempo = music['tracks'][0]['tempo']
+	for original_track_idx in range(len(music['tracks'])):
+		if music['tracks'][original_track_idx]['tempo'] != original_tempo:
+			warn('unhandled various tempo between tracks, using first one ({})'.format(original_tempo))
+
+	if original_tempo == 150:
+		tempo = 0
+	elif original_tempo == 125:
+		tempo = 1
+	else:
+		warn('unknown tempo {}, defaulting to PAL (125)'.format(original_tempo))
+	music_header += '.byt {}\n'.format(tempo)
+
 	# Tracks
 	tracks_source = ''
 	for track_idx in range(len(track_names)):
