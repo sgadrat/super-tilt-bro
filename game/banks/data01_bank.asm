@@ -32,6 +32,13 @@ bank_data01_char_select_screen_extra_code_end:
 bank_data01_gameover_data_begin:
 #include "game/data/menu_gameover/tilesets.asm"
 bank_data01_gameover_data_end:
+
+bank_data_sfx:
+#include "game/data/sfx.asm"
+#echo
+#echo Sound effects size:
+#print *-bank_data_sfx
+
 bank_data01_end:
 
 #echo

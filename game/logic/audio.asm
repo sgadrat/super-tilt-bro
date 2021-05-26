@@ -1,11 +1,5 @@
 audio_music_ingame:
 .(
-	; Disable noise channel for ingame music (reserved for FXs)
-	lda #1
-	sta audio_skip_noise
-	lda #%00110000
-	sta APU_NOISE_ENVELOPE
-
 	; Change selected track, so it varies from game to game
 	dec config_ingame_track
 	bpl ok
@@ -36,9 +30,6 @@ audio_music_ingame:
 
 audio_music_weak:
 .(
-	lda #0
-	sta audio_skip_noise
-
 	ldy #<music_title_info
 	ldx #>music_title_info
 	lda #music_title_bank
@@ -49,9 +40,6 @@ audio_music_weak:
 
 audio_music_gameover:
 .(
-	lda #0
-	sta audio_skip_noise
-
 	ldy #<music_jump_rope_info
 	ldx #>music_jump_rope_info
 	lda #music_jump_rope_bank
@@ -84,13 +72,11 @@ rts
 
 audio_play_hit:
 .(
-lda #%00000100         ; --LCVVVV
-sta APU_NOISE_ENVELOPE ;
-lda #%00000111       ; L---PPPP
-sta APU_NOISE_PERIOD ;
-lda #%10110000           ; LLLLL---
-sta APU_NOISE_LENGTH_CNT
-rts
+	ldy #<sfx_test
+	ldx #>sfx_test
+	lda #SFX_BANK
+	jmp audio_play_sfx
+	;rts ; useless, jump to subroutine
 .)
 
 audio_play_parry:

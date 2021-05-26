@@ -3,6 +3,39 @@ audio_init:
 	jsr audio_mute_music
 	lda #%00001111 ; ---DNT21
 	STA APU_STATUS
+
+	; Fallthrough to audio_cut_sfx
+.)
+
+audio_cut_sfx:
+.(
+	lda #$ff
+	sta audio_fx_noise_current_opcode_bank
+
+	rts
+.)
+
+; Play a sound effect
+;  register Y - first opcode address lsb
+;  register X - first opcode address msb
+;  register A - effect bank
+;
+;  Overwrites register A
+audio_play_sfx:
+.(
+	sty audio_fx_noise_current_opcode
+	stx audio_fx_noise_current_opcode_msb
+	sta audio_fx_noise_current_opcode_bank
+
+	lda #0
+	sta audio_fx_noise_wait_cnt
+	sta audio_fx_noise_pitch_slide
+
+	lda #%01000000
+	sta audio_fx_noise_apu_period_byte
+	lda #%00111111
+	sta audio_fx_noise_apu_envelope_byte
+
 	rts
 .)
 
@@ -210,9 +243,9 @@ audio_music_tick:
 	.(
 		SWITCH_BANK(audio_current_track_bank)
 
+		; Play music
 		lda audio_music_enabled
-		beq end
-
+		beq music_ok
 			ldx #0
 			jsr pulse_tick
 			ldx #1
@@ -220,8 +253,66 @@ audio_music_tick:
 			ldx #2
 			jsr pulse_tick ; Triangle opcodes are compatible with pulse opcodes, just use pulse_tick
 			jsr noise_tick
+		music_ok:
 
-		end:
+		; Play sfx
+		lda audio_fx_noise_current_opcode_bank
+		bmi apply_music
+			play_sfx:
+				; SFX is active, play it to overwrite music
+				jsr switch_bank
+				jsr noise_fx_tick
+				rts
+			apply_music:
+				; SFX is not active, apply register modifications made by the music
+				lda audio_music_enabled
+				beq sfx_ok
+					jmp noise_apply_mirrored_apu
+					; no return, jump to subroutine
+		sfx_ok:
+		; NOTE some branches don't reach the end
+
+		rts
+	.)
+
+	noise_fx_tick:
+	.(
+		; Save music state
+		lda audio_noise_pitch_slide : pha
+		lda audio_noise_wait_cnt : pha
+		lda audio_noise_current_opcode : pha
+		lda audio_noise_current_opcode_msb : pha
+		lda audio_noise_apu_envelope_byte : pha
+		lda audio_noise_apu_period_byte : pha
+
+		; Place sound effect state
+		lda audio_fx_noise_pitch_slide : sta audio_noise_pitch_slide
+		lda audio_fx_noise_wait_cnt : sta audio_noise_wait_cnt
+		lda audio_fx_noise_current_opcode : sta audio_noise_current_opcode
+		lda audio_fx_noise_current_opcode_msb : sta audio_noise_current_opcode_msb
+		lda audio_fx_noise_apu_envelope_byte : sta audio_noise_apu_envelope_byte
+		lda audio_fx_noise_apu_period_byte : sta audio_noise_apu_period_byte
+
+		; Tick channel
+		jsr noise_tick
+		jsr noise_apply_mirrored_apu
+
+		; Save new sound effect state
+		lda audio_noise_pitch_slide : sta audio_fx_noise_pitch_slide
+		lda audio_noise_wait_cnt : sta audio_fx_noise_wait_cnt
+		lda audio_noise_current_opcode : sta audio_fx_noise_current_opcode
+		lda audio_noise_current_opcode_msb : sta audio_fx_noise_current_opcode_msb
+		lda audio_noise_apu_envelope_byte : sta audio_fx_noise_apu_envelope_byte
+		lda audio_noise_apu_period_byte : sta audio_fx_noise_apu_period_byte
+
+		; Restore music state
+		pla : sta audio_noise_apu_period_byte
+		pla : sta audio_noise_apu_envelope_byte
+		pla : sta audio_noise_current_opcode_msb
+		pla : sta audio_noise_current_opcode
+		pla : sta audio_noise_wait_cnt
+		pla : sta audio_noise_pitch_slide
+
 		rts
 	.)
 
@@ -229,14 +320,6 @@ audio_music_tick:
 	.(
 		tmp_addr = tmpfield1
 		tmp_addr_msb = tmpfield2
-
-		;HACK do nothing if noise is disabled (for compatibility with old sfx)
-		.(
-			lda audio_skip_noise
-			beq ok
-			jmp end_write_apu
-			ok:
-		.)
 
 		; Pitch slide (add pitch slide value to frequency)
 		lda audio_noise_apu_period_byte
@@ -323,6 +406,11 @@ audio_music_tick:
 		; Tick wait counter
 		dec audio_noise_wait_cnt
 
+		rts
+	.)
+
+	noise_apply_mirrored_apu:
+	.(
 		; Write mirrored APU registers, or silence the channel if silence flag is set
 		bit audio_noise_apu_period_byte
 		bvc regular_write
@@ -1110,6 +1198,25 @@ audio_music_tick:
 		rts
 	.)
 
+	opcode_noise_end_sfx:
+	.(
+		; Don't tick this effect anymore
+		jsr audio_cut_sfx
+
+		; Silence the channel
+		lda audio_noise_apu_period_byte
+		ora #%01000000
+		sta audio_noise_apu_period_byte
+
+		; Set wait cnt to non-zero to exit the opcode loop
+		lda #1
+		sta audio_noise_wait_cnt
+
+		; Return opcode size
+		;lda #1 ; useless, done above
+		rts
+	.)
+
 	pulse1_opcode_routines_lsb:
 	.byt <opcode_sample_end, <opcode_chan_params, <opcode_chan_volume_low, <opcode_chan_volume_high, <opcode_play_timed_freq
 	.byt <opcode_play_note, <opcode_wait, <opcode_long_wait, <opcode_halt, <opcode_pitch_slide
@@ -1123,8 +1230,8 @@ audio_music_tick:
 
 	noise_opcode_routines_lsb:
 	.byt <opcode_noise_sample_end, <opcode_noise_set_volume, <opcode_noise_set_periodic, <opcode_noise_play_timed_freq, <opcode_noise_wait
-	.byt <opcode_noise_long_wait, <opcode_noise_halt, <opcode_noise_pitch_slide_up, <opcode_noise_pitch_slide_down
+	.byt <opcode_noise_long_wait, <opcode_noise_halt, <opcode_noise_pitch_slide_up, <opcode_noise_pitch_slide_down, <opcode_noise_end_sfx
 	noise_opcode_routines_msb:
 	.byt >opcode_noise_sample_end, >opcode_noise_set_volume, >opcode_noise_set_periodic, >opcode_noise_play_timed_freq, >opcode_noise_wait
-	.byt >opcode_noise_long_wait, >opcode_noise_halt, >opcode_noise_pitch_slide_up, >opcode_noise_pitch_slide_down
+	.byt >opcode_noise_long_wait, >opcode_noise_halt, >opcode_noise_pitch_slide_up, >opcode_noise_pitch_slide_down, >opcode_noise_end_sfx
 .)

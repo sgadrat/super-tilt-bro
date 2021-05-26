@@ -455,9 +455,8 @@ audio_square2_sample_num = $c5
 audio_triangle_sample_num = $c6
 audio_noise_sample_num = $c7
 
-audio_skip_noise = $c8 ;HACK Setting this value makes the audio engine not touch the noise channel, allowing old sfx (based on hacking noise channel) to play
-audio_vframe_cnt = $c9 ;TODO merge it with the vframe counter for wait_next_frame
-audio_50hz = $ca ; 0 - 60 Hz, 1 - 50 Hz
+audio_vframe_cnt = $c8 ;TODO merge it with the vframe counter for wait_next_frame
+audio_50hz = $c9 ; 0 - 60 Hz, 1 - 50 Hz
 
 audio_square1_current_opcode = $0604
 audio_square2_current_opcode = $0605
@@ -495,6 +494,14 @@ audio_triangle_pitch_slide_msb = $0623
 audio_noise_apu_envelope_byte = $0624
 audio_noise_apu_period_byte = $0625 ; bit 4 used to silence the channel, so it is Ls.. PPPP with s handled by the engine
 audio_noise_pitch_slide = $0626
+
+audio_fx_noise_pitch_slide = $0627
+audio_fx_noise_wait_cnt = $0628
+audio_fx_noise_current_opcode = $0629
+audio_fx_noise_current_opcode_msb = $062a
+audio_fx_noise_current_opcode_bank = $062b
+audio_fx_noise_apu_envelope_byte = $062c
+audio_fx_noise_apu_period_byte = $062d
 
 ;
 ; Global labels

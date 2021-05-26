@@ -23,6 +23,12 @@ bank_data_online_mode_extra_code_begin:
 #include "game/logic/game_states/online_mode_screen/online_mode_screen_extra_code.asm"
 bank_data_online_mode_extra_code_end:
 
+bank_data_credits_begin:
+#include "game/data/credits.asm"
+#echo
+#echo FIXED-bank (updatable) credits size:
+#print *-bank_data_credits_begin
+
 bank_data_end:
 
 #echo

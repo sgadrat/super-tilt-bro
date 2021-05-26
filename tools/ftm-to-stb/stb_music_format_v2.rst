@@ -3,6 +3,11 @@ Music's format
 
 A music is a list of samples for each channel. Samples are played in order from the begining to the end.
 
+Sound effect format
+===================
+
+A sound effect is a special kind of noise sample, ending with EFFECT_END opcode instead of regular SAMPLE_END.
+
 Sample's format
 ===============
 
@@ -287,6 +292,14 @@ PITCH_SLIDE_DOWN::
 	OOOO TTTT
 
 	TTTT: Value added to frequency register each display frame
+
+EFFECT_END::
+
+	Indicate the end of a specialf effect. (Not to be used for music tracks.)
+
+	OOOO zzzz
+
+	zzzz: reserved zero bits
 
 RAINBOW Pulse channel's opcodes
 -------------------------------

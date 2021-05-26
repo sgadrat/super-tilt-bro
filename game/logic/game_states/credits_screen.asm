@@ -65,6 +65,7 @@ init_credits_screen:
 		sta PPUADDR
 
 		; Write credits
+		SWITCH_BANK(#CREDITS_BANK)
 		lda #1
 		sta line_num
 		lda #<credits_begin
