@@ -10,12 +10,17 @@ force_network="${FORCE_NETWORK:-0}"
 root_dir=`readlink -m $(dirname "$0")`
 log_file="${root_dir}/build.log"
 
+no_network_flag='-DNO_NETWORK'
+if [ $force_network -ne 0 ]; then
+	no_network_flag='-DFORCE_NETWORK'
+fi
+
 c_optim="-Os"
 c_warnings="-Wall -Wextra -Werror"
 c_compat="-fdelete-null-pointer-checks -fno-isolate-erroneous-paths-dereference" # We may want to dereference address zero at times
-c_defines=""
+c_defines="$no_network_flag"
 if [ ! -z "$LOCAL_LOGIN" ]; then
-	c_defines+="-DLOCAL_LOGIN_SERVER"
+	c_defines+=" -DLOCAL_LOGIN_SERVER"
 fi
 c_flags="$c_optim $c_warnings $c_compat $c_defines"
 
@@ -107,10 +112,6 @@ fi
 log
 say "Assemble the game ..."
 log "====================="
-no_network_flag='-DNO_NETWORK'
-if [ $force_network -ne 0 ]; then
-	no_network_flag=''
-fi
 asm cmd 'Super_Tilt_Bro_(E)'           ""
 asm exe 'server_bytecode'              "-DSERVER_BYTECODE -DNO_INES_HEADER"
 asm exe 'tilt_ai_(E)'                  "-DNETWORK_AI"

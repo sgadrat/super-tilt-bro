@@ -47,6 +47,8 @@ static uint8_t const TILE_CHAR_D = TILE_CHAR_A + ('d' - 'a');
 static uint8_t const TILE_CHAR_O = TILE_CHAR_A + ('o' - 'a');
 static uint8_t const TILE_CHAR_M = TILE_CHAR_A + ('m' - 'a');
 
+void audio_play_interface_click();
+
 ///////////////////////////////////////
 // Character selection's ASM functions
 ///////////////////////////////////////
@@ -213,11 +215,6 @@ static void construct_sprite_palette_buffer(uint8_t player, uint8_t palette_num,
 ///////////////////////////////////////
 
 static void tick_bg_tasks();
-
-void audio_play_parry();
-static void sound_effect_click() {
-	audio_play_parry();
-}
 
 static void change_screen_cleaning() {
 	// Copy selected values in actual values
@@ -595,7 +592,7 @@ static void take_input(uint8_t player_num, uint8_t controller_btns, uint8_t last
 		switch (controller_btns) {
 			case CONTROLLER_BTN_DOWN:
 				if (!character_selection_player_a_ready[player_num]) {
-					sound_effect_click();
+					audio_play_interface_click();
 					++config_requested_player_a_character[player_num];
 					if (config_requested_player_a_character[player_num] > (uint16_t)(&CHARACTERS_NUMBER)) {
 						config_requested_player_a_character[player_num] = 0;
@@ -605,7 +602,7 @@ static void take_input(uint8_t player_num, uint8_t controller_btns, uint8_t last
 				break;
 			case CONTROLLER_BTN_UP:
 				if (!character_selection_player_a_ready[player_num]) {
-					sound_effect_click();
+					audio_play_interface_click();
 					if (config_requested_player_a_character[player_num] > 0) {
 						--config_requested_player_a_character[player_num];
 					}else {
@@ -615,7 +612,7 @@ static void take_input(uint8_t player_num, uint8_t controller_btns, uint8_t last
 				}
 				break;
 			case CONTROLLER_BTN_SELECT:
-				sound_effect_click();
+				audio_play_interface_click();
 				if (config_requested_player_a_palette[player_num] < NB_CHARACTER_PALETTES - 1) {
 					++config_requested_player_a_palette[player_num];
 				}else {
@@ -629,7 +626,7 @@ static void take_input(uint8_t player_num, uint8_t controller_btns, uint8_t last
 				switch (last_fame_btns) {
 					case CONTROLLER_BTN_A:
 					case CONTROLLER_BTN_START:
-						sound_effect_click();
+						audio_play_interface_click();
 						character_selection_player_a_ready[player_num] = 1;
 						if (*character_selection_player_a_ready && *character_selection_player_b_ready) {
 							next_screen();
@@ -638,7 +635,7 @@ static void take_input(uint8_t player_num, uint8_t controller_btns, uint8_t last
 						}
 						break;
 					case CONTROLLER_BTN_B:
-						sound_effect_click();
+						audio_play_interface_click();
 						if (character_selection_player_a_ready[player_num]) {
 							character_selection_player_a_ready[player_num] = 0;
 							refresh_ready_effects(player_num);

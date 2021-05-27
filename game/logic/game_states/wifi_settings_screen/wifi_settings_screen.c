@@ -74,6 +74,8 @@ extern uint8_t const TILE_MENU_WIFI_SETTINGS_DIALOGS_CHAR_EMPTY; // Actually a l
 
 extern uint8_t const tileset_ascii;
 
+void audio_play_interface_click();
+
 ///////////////////////////////////////
 // Screen specific ASM functions
 ///////////////////////////////////////
@@ -158,11 +160,6 @@ static void draw_window_line(uint8_t const* window, uint8_t line, uint16_t posit
 ///////////////////////////////////////
 // State implementation
 ///////////////////////////////////////
-
-void audio_play_parry();
-static void sound_effect_click() {
-	audio_play_parry();
-}
 
 static void init_cursor_line_anim() {
 	Animation* anim = &mem()->cursor_anim;
@@ -294,7 +291,7 @@ static uint8_t password_window() {
 
 			if (*controller_a_btns != *controller_a_last_frame_btns || ctx->cursor_state == AUTOFIRE_TICK) {
 				if (*controller_a_btns == CONTROLLER_BTN_UP) {
-					sound_effect_click();
+					audio_play_interface_click();
 					char* c = &mem()->password[vars()->password_cursor];
 					if (*c == 0) {
 						*c = ' ';
@@ -304,7 +301,7 @@ static uint8_t password_window() {
 						++*c;
 					}
 				}else if (*controller_a_btns == CONTROLLER_BTN_DOWN) {
-					sound_effect_click();
+					audio_play_interface_click();
 					char* c = &mem()->password[vars()->password_cursor];
 					if (*c == 0) {
 						*c = 0x7e;
@@ -314,13 +311,13 @@ static uint8_t password_window() {
 						--*c;
 					}
 				}else if (*controller_a_btns == CONTROLLER_BTN_LEFT) {
-					sound_effect_click();
+					audio_play_interface_click();
 					if (vars()->password_cursor > 0) {
 						mem()->password[vars()->password_cursor] = 0;
 						--vars()->password_cursor;
 					}
 				}else if (*controller_a_btns == CONTROLLER_BTN_RIGHT) {
-					sound_effect_click();
+					audio_play_interface_click();
 					if (vars()->password_cursor < sizeof(mem()->password) - 2 && mem()->password[vars()->password_cursor] != 0) {
 						++vars()->password_cursor;
 						mem()->password[vars()->password_cursor] = mem()->password[vars()->password_cursor - 1];
@@ -331,14 +328,14 @@ static uint8_t password_window() {
 						*controller_a_last_frame_btns == CONTROLLER_BTN_START
 					)
 					{
-						sound_effect_click();
+						audio_play_interface_click();
 						vars()->password_cursor = NO_PASSWORD_CURSOR;
 						init_cursor_line_anim();
 						ctx->step = 0;
 						return 0;
 					}else if (*controller_a_last_frame_btns == CONTROLLER_BTN_B) {
 						mem()->password[0] = 255;
-						sound_effect_click();
+						audio_play_interface_click();
 						vars()->password_cursor = NO_PASSWORD_CURSOR;
 						init_cursor_line_anim();
 						ctx->step = 0;
@@ -456,13 +453,13 @@ static void update_net_list() {
 		while (1) {
 			if (vars()->current_network < MAX_NETWORKS && *controller_a_btns != *controller_a_last_frame_btns) {
 				if (*controller_a_btns == CONTROLLER_BTN_DOWN) {
-					sound_effect_click();
+					audio_play_interface_click();
 					++vars()->current_network;
 					if (vars()->current_network >= ctx->net_count) {
 						vars()->current_network = 0;
 					}
 				}else if (*controller_a_btns == CONTROLLER_BTN_UP) {
-					sound_effect_click();
+					audio_play_interface_click();
 					if (vars()->current_network == 0) {
 						vars()->current_network = ctx->net_count - 1;
 					}else {
@@ -475,7 +472,7 @@ static void update_net_list() {
 						*controller_a_last_frame_btns == CONTROLLER_BTN_START
 					)
 					{
-						sound_effect_click();
+						audio_play_interface_click();
 
 						// Ask password to the user
 						while (password_window()) {
@@ -542,7 +539,7 @@ void wifi_settings_screen_tick_extra() {
 
 	// Handle global inputs
 	if (vars()->global_input != 0 && *controller_a_btns == 0 && *controller_a_last_frame_btns == CONTROLLER_BTN_B) {
-		sound_effect_click();
+		audio_play_interface_click();
 		wrap_change_global_game_state(GAME_STATE_ONLINE_MODE_SELECTION);
 	}
 }

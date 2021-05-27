@@ -131,3 +131,12 @@ audio_play_title_screen_text:
 	jmp audio_play_sfx_from_common_bank
 	;rts ; useless, jump to subroutine
 .)
+
+audio_play_interface_click:
+.(
+	audio_preserve_x_y
+	ldy #<sfx_interface_click
+	ldx #>sfx_interface_click
+	jmp audio_play_sfx_from_common_bank
+	;rts ; useless, jump to subroutine
+.)

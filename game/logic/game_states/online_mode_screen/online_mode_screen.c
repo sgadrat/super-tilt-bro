@@ -80,6 +80,8 @@ static uint8_t const TILE_CHAR_X = TILE_CHAR_A + ('X' - 'A');
 static uint8_t const TILE_CHAR_Y = TILE_CHAR_A + ('Y' - 'A');
 static uint8_t const TILE_CHAR_Z = TILE_CHAR_A + ('Z' - 'A');
 
+void audio_play_interface_click();
+
 ///////////////////////////////////////
 // Screen specific ASM functions
 ///////////////////////////////////////
@@ -344,11 +346,6 @@ static void hide_dialog(uint16_t position, uint8_t const* window, uint8_t lines_
 // State implementation
 ///////////////////////////////////////
 
-void audio_play_parry();
-static void sound_effect_click() {
-	audio_play_parry();
-}
-
 static void draw_logged_name() {
 	// nt buffer header: 16 characters in the tittle bar
 	static uint8_t const buffer_header[] = {0x20, 0x6d, 16};
@@ -418,6 +415,7 @@ static void esp_read_file(uint8_t size) {
 	RAINBOW_DATA; // Read size
 }
 
+__attribute__((unused))
 static void deny_update_game() {
 	// Draw deny window
 	draw_dialog(0x2146, &menu_online_mode_deny_update_game_window, 3);
@@ -433,11 +431,13 @@ static void deny_update_game() {
 }
 
 static void update_game() {
+#ifndef FORCE_NETWORK
 	// Deny access on emulator
 	if ((RAINBOW_MAPPER_VERSION & 0xe0) != 0) {
 		deny_update_game();
 		return;
 	}
+#endif
 
 	// Draw "checking updates"
 	draw_dialog(0x2146, &menu_online_mode_check_update_window, 3);
@@ -514,7 +514,7 @@ static uint8_t select_setting_input(uint8_t* current_setting, uint8_t controller
 	if (controller_btns != last_frame_btns) {
 		switch (controller_btns) {
 			case CONTROLLER_BTN_DOWN:
-				sound_effect_click();
+				audio_play_interface_click();
 				if (*current_setting == NB_SETTINGS - 1) {
 					*current_setting = 0;
 				}else {
@@ -522,7 +522,7 @@ static uint8_t select_setting_input(uint8_t* current_setting, uint8_t controller
 				}
 				break;
 			case CONTROLLER_BTN_UP:
-				sound_effect_click();
+				audio_play_interface_click();
 				if (*current_setting == 0) {
 					*current_setting = NB_SETTINGS - 1;
 				}else {
@@ -535,10 +535,10 @@ static uint8_t select_setting_input(uint8_t* current_setting, uint8_t controller
 				switch (last_frame_btns) {
 					case CONTROLLER_BTN_A:
 					case CONTROLLER_BTN_START:
-						sound_effect_click();
+						audio_play_interface_click();
 						return 1;
 					case CONTROLLER_BTN_B:
-						sound_effect_click();
+						audio_play_interface_click();
 						return 2;
 				};
 				break;
@@ -881,7 +881,7 @@ static void password_login_input(uint8_t controller_btns, uint8_t last_frame_btn
 		uint8_t* field_value = (*current_field == 0 ? network_login : network_password);
 		switch (controller_btns) {
 			case CONTROLLER_BTN_DOWN:
-				sound_effect_click();
+				audio_play_interface_click();
 				if (field_value[*char_cursor] == 0) {
 					field_value[*char_cursor] = STNP_LOGIN_CHARSET_SIZE - 1;
 				}else {
@@ -889,7 +889,7 @@ static void password_login_input(uint8_t controller_btns, uint8_t last_frame_btn
 				}
 				break;
 			case CONTROLLER_BTN_UP:
-				sound_effect_click();
+				audio_play_interface_click();
 				if (field_value[*char_cursor] == STNP_LOGIN_CHARSET_SIZE - 1) {
 					field_value[*char_cursor] = 0;
 				}else {
@@ -897,14 +897,14 @@ static void password_login_input(uint8_t controller_btns, uint8_t last_frame_btn
 				}
 				break;
 			case CONTROLLER_BTN_LEFT:
-				sound_effect_click();
+				audio_play_interface_click();
 				if (*char_cursor > 0) {
 					field_value[*char_cursor] = 0;
 					--*char_cursor;
 				}
 				break;
 			case CONTROLLER_BTN_RIGHT:
-				sound_effect_click();
+				audio_play_interface_click();
 				if (field_value[*char_cursor] != 0 && *char_cursor != 15) {
 					++*char_cursor;
 				}
@@ -915,7 +915,7 @@ static void password_login_input(uint8_t controller_btns, uint8_t last_frame_btn
 				switch (last_frame_btns) {
 					case CONTROLLER_BTN_A:
 					case CONTROLLER_BTN_START:
-						sound_effect_click();
+						audio_play_interface_click();
 						if (*current_field == 0) {
 							uint8_t last_char = 0;
 							while (network_password[last_char] != 0 && last_char != 15) {
@@ -929,7 +929,7 @@ static void password_login_input(uint8_t controller_btns, uint8_t last_frame_btn
 						}
 						break;
 					case CONTROLLER_BTN_B:
-						sound_effect_click();
+						audio_play_interface_click();
 						if (*current_field == 1) {
 							uint8_t last_char = 0;
 							while (network_login[last_char] != 0 && last_char != 15) {
@@ -1061,7 +1061,7 @@ static void game_password_input(uint8_t controller_btns, uint8_t last_frame_btns
 		uint8_t* field_value = network_game_password;
 		switch (controller_btns) {
 			case CONTROLLER_BTN_DOWN:
-				sound_effect_click();
+				audio_play_interface_click();
 				if (field_value[*char_cursor] == 0) {
 					field_value[*char_cursor] = STNP_LOGIN_CHARSET_SIZE - 1;
 				}else {
@@ -1069,7 +1069,7 @@ static void game_password_input(uint8_t controller_btns, uint8_t last_frame_btns
 				}
 				break;
 			case CONTROLLER_BTN_UP:
-				sound_effect_click();
+				audio_play_interface_click();
 				if (field_value[*char_cursor] == STNP_LOGIN_CHARSET_SIZE - 1) {
 					field_value[*char_cursor] = 0;
 				}else {
@@ -1077,14 +1077,14 @@ static void game_password_input(uint8_t controller_btns, uint8_t last_frame_btns
 				}
 				break;
 			case CONTROLLER_BTN_LEFT:
-				sound_effect_click();
+				audio_play_interface_click();
 				if (*char_cursor > 0) {
 					field_value[*char_cursor] = 0;
 					--*char_cursor;
 				}
 				break;
 			case CONTROLLER_BTN_RIGHT:
-				sound_effect_click();
+				audio_play_interface_click();
 				if (field_value[*char_cursor] != 0 && *char_cursor != 15) {
 					++*char_cursor;
 				}
@@ -1095,11 +1095,11 @@ static void game_password_input(uint8_t controller_btns, uint8_t last_frame_btns
 				switch (last_frame_btns) {
 					case CONTROLLER_BTN_A:
 					case CONTROLLER_BTN_START:
-						sound_effect_click();
+						audio_play_interface_click();
 						*stay_in_window = 1;
 						break;
 					case CONTROLLER_BTN_B:
-						sound_effect_click();
+						audio_play_interface_click();
 						*stay_in_window = 2;
 						break;
 					default:
@@ -1175,6 +1175,7 @@ static uint8_t enter_game_password() {
 	return password_validated;
 }
 
+__attribute__((unused))
 static void deny_wifi_settings() {
 	// Draw deny window
 	draw_dialog(0x2146, &menu_online_mode_deny_wifi_settings_window, 3);
@@ -1226,11 +1227,15 @@ static void next_screen() {
 					create_account();
 					break;
 				case SETTING_CONFIGURE_WIFI:
+#ifndef FORCE_NETWORK
 					if ((RAINBOW_MAPPER_VERSION & 0xe0) != 0) {
 						deny_wifi_settings();
 					}else {
 						wrap_change_global_game_state(GAME_STATE_WIFI_SETTINGS);
 					}
+#else
+					wrap_change_global_game_state(GAME_STATE_WIFI_SETTINGS);
+#endif
 					break;
 				case SETTING_UPDATE_GAME:
 					update_game();
@@ -1250,7 +1255,7 @@ static void take_input(uint8_t controller_btns, uint8_t last_fame_btns) {
 		switch (controller_btns) {
 			case CONTROLLER_BTN_DOWN:
 			case CONTROLLER_BTN_UP:
-				sound_effect_click();
+				audio_play_interface_click();
 				if (*online_mode_selection_current_option < 2) {
 					*online_mode_selection_current_option += 2;
 				}else {
@@ -1258,7 +1263,7 @@ static void take_input(uint8_t controller_btns, uint8_t last_fame_btns) {
 				}
 				break;
 			case CONTROLLER_BTN_LEFT:
-				sound_effect_click();
+				audio_play_interface_click();
 				if (*online_mode_selection_current_option > 0) {
 					--*online_mode_selection_current_option;
 				}else {
@@ -1266,7 +1271,7 @@ static void take_input(uint8_t controller_btns, uint8_t last_fame_btns) {
 				}
 				break;
 			case CONTROLLER_BTN_RIGHT:
-				sound_effect_click();
+				audio_play_interface_click();
 				*online_mode_selection_current_option = (*online_mode_selection_current_option + 1) % NB_OPTIONS;
 				break;
 
@@ -1275,11 +1280,11 @@ static void take_input(uint8_t controller_btns, uint8_t last_fame_btns) {
 				switch (last_fame_btns) {
 					case CONTROLLER_BTN_A:
 					case CONTROLLER_BTN_START:
-						sound_effect_click();
+						audio_play_interface_click();
 						next_screen();
 						break;
 					case CONTROLLER_BTN_B:
-						sound_effect_click();
+						audio_play_interface_click();
 						previous_screen();
 						break;
 					default:

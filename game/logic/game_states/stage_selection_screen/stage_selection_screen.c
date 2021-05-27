@@ -18,6 +18,8 @@ extern uint8_t const stage_selection_palette;
 extern uint8_t const stages_bank;
 extern uint8_t const stages_illustration;
 
+void audio_play_interface_click();
+
 ///////////////////////////////////////
 // Stage selection's ASM functions
 ///////////////////////////////////////
@@ -75,11 +77,6 @@ static void nt_buffers_vertical() {
 ///////////////////////////////////////
 // State implementation
 ///////////////////////////////////////
-
-void audio_play_parry();
-static void sound_effect_click() {
-	audio_play_parry();
-}
 
 static void change_screen_cleaning() {
 	// Copy selected values in actual values
@@ -237,7 +234,7 @@ void stage_selection_screen_tick_extra() {
 		if (controller_btns != last_fame_btns) {
 			switch (controller_btns) {
 				case CONTROLLER_BTN_RIGHT:
-					sound_effect_click();
+					audio_play_interface_click();
 					if (*config_requested_stage < 3) {
 						++*config_requested_stage;
 					}else {
@@ -250,7 +247,7 @@ void stage_selection_screen_tick_extra() {
 					break;
 
 				case CONTROLLER_BTN_LEFT:
-					sound_effect_click();
+					audio_play_interface_click();
 					if (*config_requested_stage > 0) {
 						--*config_requested_stage;
 					}else {
@@ -267,14 +264,14 @@ void stage_selection_screen_tick_extra() {
 					switch (last_fame_btns){
 						case CONTROLLER_BTN_A:
 						case CONTROLLER_BTN_START:
-							sound_effect_click();
+							audio_play_interface_click();
 							change_screen_cleaning();
 							fade_out();
 							wrap_change_global_game_state(*config_game_mode == GAME_MODE_ONLINE ? GAME_STATE_NETPLAY_LAUNCH : GAME_STATE_INGAME);
 							break;
 
 						case CONTROLLER_BTN_B:
-							sound_effect_click();
+							audio_play_interface_click();
 							change_screen_cleaning();
 							nt_buffers_horizontal();
 							skip_frame();
