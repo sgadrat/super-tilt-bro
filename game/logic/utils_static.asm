@@ -607,3 +607,15 @@ switch_linear:
 	sta callback_addr+1      ;
 	jmp (callback_addr) ; Jump to stored address
 .)
+
+; Clear the virtual stack used by C code
+;
+; Overwrite register A
+reinit_c_stack:
+.(
+	lda #<c_stack_end
+	sta _sp0
+	lda #>c_stack_end
+	sta _sp1
+	rts
+.)

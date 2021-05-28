@@ -1,10 +1,7 @@
 init_wifi_settings_screen:
 .(
 	; Initialize C stack
-	lda #<c_stack_end
-	sta _sp0
-	lda #>c_stack_end
-	sta _sp1
+	jsr reinit_c_stack
 
 	; Call C init routine
 	SWITCH_BANK(#WIFI_SETTINGS_SCREEN_EXTRA_BANK_NUMBER)

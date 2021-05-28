@@ -45,10 +45,7 @@ init_config_screen:
 		jsr draw_zipped_nametable
 
 		; Initialize C stack
-		lda #<c_stack_end
-		sta _sp0
-		lda #>c_stack_end
-		sta _sp1
+		jsr reinit_c_stack
 
 		; Call code exported to extra bank
 		SWITCH_BANK(#CONFIG_SCREEN_EXTRA_BANK_NUMBER)
