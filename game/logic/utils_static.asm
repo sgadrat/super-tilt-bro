@@ -520,11 +520,23 @@ check_in_platform:
 ;
 ;  Note - The callback is called with jmp, controller_callbacks never
 ;         returns using rts.
-;
-;  TODO could be generalized by not doing "lda controller_a_btns, x"
-;       changing X register parameter (player number) to A register parameter (value to search in the table.)
-;       Note that it would be a modification of the static bank.
 controller_callbacks:
+.(
+	lda controller_a_btns, x
+	; Fallthrough to switch_linear
+.)
+
+; Jump to a callback according to value in register A (linear complexity)
+;  A - Value to check
+;  tmpfield1 - Callbacks table (high byte)
+;  tmpfield2 - Callbacks table (low byte)
+;  tmpfield3 - number of states in the callbacks table
+;
+;  Overwrites register Y, tmpfield4, tmpfield5 and tmpfield6
+;
+;  Note - The callback is called with jmp, controller_callbacks never
+;         returns using rts.
+switch_linear:
 .(
 	callbacks_table = tmpfield1
 	num_states = tmpfield3
@@ -533,7 +545,6 @@ controller_callbacks:
 
 	; Initialize loop, Y on first element and A on controller's state
 	ldy #$00
-	lda controller_a_btns, x
 
 	check_controller_state:
 		; Compare controller state to the current table element

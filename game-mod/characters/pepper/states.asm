@@ -495,7 +495,6 @@ pepper_check_aerial_inputs:
 
 		; Impactful controller states and associated callbacks
 		; Note - We have to put subroutines as callbacks since we do not expect a return unless we used the default callback
-		; TODO callbacks set to no_input are to be implemented (except the default callback)
 		controller_inputs:
 		.byt CONTROLLER_INPUT_NONE,              CONTROLLER_INPUT_SPECIAL_RIGHT
 		.byt CONTROLLER_INPUT_SPECIAL_LEFT,      CONTROLLER_INPUT_JUMP
@@ -964,12 +963,6 @@ pepper_input_idle:
 		controller_default_callback:
 		.word end
 		&INPUT_TABLE_LENGTH = controller_callbacks_lsb - controller_inputs
-		;HACK - Directional down-tilt don't change character direction
-		;       it forbids to change direction from "shielding" state.
-		;     - Perfect implementation would be to change direction, but ignore direction when comming from
-		;       shielding state. It would allow to "back-down-tilt" without allowing it out of shield.
-		;     - Implementing that would require to fix the TODO in "controller_callbacks" (allowing it to
-		;       take inputs as parameter.)
 	.)
 
 	pepper_input_idle_jump_right:
@@ -2321,7 +2314,6 @@ pepper_start_send_carrot:
 	sta player_a_velocity_v_low, x
 
 	; Set the appropriate animation
-	;TODO
 	lda #<pepper_anim_send_carrot
 	sta tmpfield13
 	lda #>pepper_anim_send_carrot
