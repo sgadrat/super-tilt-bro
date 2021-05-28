@@ -17,12 +17,12 @@ init_game_state:
 
 		; Ensure game state is zero
 		ldx #$00
-		lda #$00
+		txa
 		zero_game_state:
-		sta $00, x
-		inx
-		cpx #ZERO_PAGE_GLOBAL_FIELDS_BEGIN
-		bne zero_game_state
+			sta $00, x
+			inx
+			cpx #ZERO_PAGE_GLOBAL_FIELDS_BEGIN
+			bne zero_game_state
 
 		; Copy stage's tileset
 		.(
@@ -144,7 +144,7 @@ init_game_state:
 		sta player_b_objects
 
 		; Initialize players' state
-		ldx #$00
+		ldx #1
 		initialize_one_player:
 			; Select character's bank
 			ldy config_player_a_character, x
@@ -160,9 +160,8 @@ init_game_state:
 			jsr player_state_action
 
 			; Next player
-			inx
-			cpx #2
-			bne initialize_one_player
+			dex
+			bpl initialize_one_player
 
 		; Construct players palette swap buffers
 		ldx #0 ; X points on players_palettes's next byte
@@ -286,7 +285,7 @@ init_game_state:
 		tax
 
 		jmp place_character_palette
-		;rts ; useless, use place_character_palette's rts
+		;rts ; useless, jump to subroutine
 	.)
 
 	place_character_alternate_palette:
@@ -303,8 +302,7 @@ init_game_state:
 		pla
 		tax
 
-		jmp place_character_palette
-		;rts ; useless, use place_character_palette's rts
+		; Fallthrough to place_character_palette
 	.)
 
 	; Copy pointed palette in players_palettes
