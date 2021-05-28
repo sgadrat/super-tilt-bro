@@ -53,17 +53,14 @@ stage_gem_init:
 
 	; Copy stage's tiles in VRAM
 	.(
-		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tiles
-		;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tiles
-		tiles_count = tmpfield3 ; Not movable, used by cpu_to_ppu_copy_tiles
+		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tileset
+		;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tileset
+		tiles_count = tmpfield3 ; Not movable, used by cpu_to_ppu_copy_tileset
 
-		lda #<(tileset_stage_thehunt_sprites+1)
+		lda #<tileset_stage_thehunt_sprites
 		sta tileset_addr
-		lda #>(tileset_stage_thehunt_sprites+1)
+		lda #>tileset_stage_thehunt_sprites
 		sta tileset_addr+1
-
-		lda tileset_stage_thehunt_sprites
-		sta tiles_count
 
 		lda PPUSTATUS
 		lda #>CHARACTERS_END_TILES_OFFSET
@@ -71,7 +68,7 @@ stage_gem_init:
 		lda #<CHARACTERS_END_TILES_OFFSET
 		sta PPUADDR
 
-		jsr cpu_to_ppu_copy_tiles
+		jsr cpu_to_ppu_copy_tileset
 	.)
 
 	; Put the gem in its initial state

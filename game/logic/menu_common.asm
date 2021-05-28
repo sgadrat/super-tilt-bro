@@ -56,25 +56,15 @@ set_menu_chr:
 .(
 	tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tiles
 	;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tiles
-	tiles_count = tmpfield3 ; Not movable, used by cpu_to_ppu_copy_tiles
 
-	lda #<(tileset_menus+1)
+	lda #<tileset_menus
 	sta tileset_addr
-	lda #>(tileset_menus+1)
+	lda #>tileset_menus
 	sta tileset_addr+1
 
 	SWITCH_BANK(#TILESET_MENUS_BANK_NUMBER)
 
-	lda tileset_menus
-	sta tiles_count
-
-	lda PPUSTATUS
-	lda #$10
-	sta PPUADDR
-	lda #$00
-	sta PPUADDR
-
-	jsr cpu_to_ppu_copy_tiles
+	jsr cpu_to_ppu_copy_tileset_background
 
 	rts
 .)

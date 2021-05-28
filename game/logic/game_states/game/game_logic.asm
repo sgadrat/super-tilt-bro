@@ -41,22 +41,7 @@ init_game_state:
 			SWITCH_BANK(stages_tileset_bank COMMA x)
 
 			; Copy tileset
-			ldy #0
-			lda (tileset_addr), y
-			sta tiles_count
-
-			inc tileset_addr
-			bne update_addr_end
-				inc tileset_addr+1
-			update_addr_end:
-
-			lda PPUSTATUS
-			lda #$10
-			sta PPUADDR
-			lda #$00
-			sta PPUADDR
-
-			jsr cpu_to_ppu_copy_tiles
+			jsr cpu_to_ppu_copy_tileset_background
 		.)
 
 		; Call stage initialization routine

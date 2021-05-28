@@ -190,6 +190,23 @@ trampoline:
 ; Copy a tileset from CPU memory to PPU memory
 ;  tmpfield1, tmpfield2 - Address of the tileset in CPU memory
 ;
+; PPUCTRL's I bit should not be set (if set, writes every 32 bytes)
+;
+; Overwrites register A, register Y, tmpfield1, tmpfield2 and tmpfield3
+cpu_to_ppu_copy_tileset_background:
+.(
+	lda PPUSTATUS
+	lda #$10
+	sta PPUADDR
+	lda #$00
+	sta PPUADDR
+
+	; Fallthrough to cpu_to_ppu_copy_tileset
+.)
+
+; Copy a tileset from CPU memory to PPU memory
+;  tmpfield1, tmpfield2 - Address of the tileset in CPU memory
+;
 ; PPUADDR must be set to the destination address
 ; PPUCTRL's I bit should not be set (if set, writes every 32 bytes)
 ;

@@ -87,27 +87,16 @@ init_title_screen:
 	; Shall only be called while PPU rendering is turned off
 	set_title_chr:
 	.(
-		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tiles
-		;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tiles
-		tiles_count = tmpfield3 ; Not movable, used by cpu_to_ppu_copy_tiles
-
-		lda #<(tileset_logo+1)
-		sta tileset_addr
-		lda #>(tileset_logo+1)
-		sta tileset_addr+1
+		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tileset_background
+		;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tileset_background
 
 		SWITCH_BANK(#TILESET_LOGO_BANK_NUMBER)
 
-		lda tileset_logo
-		sta tiles_count
-
-		lda PPUSTATUS
-		lda #$10
-		sta PPUADDR
-		lda #$00
-		sta PPUADDR
-
-		jsr cpu_to_ppu_copy_tiles
+		lda #<tileset_logo
+		sta tileset_addr
+		lda #>tileset_logo
+		sta tileset_addr+1
+		jsr cpu_to_ppu_copy_tileset_background
 
 		rts
 	.)

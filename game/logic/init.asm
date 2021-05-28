@@ -32,19 +32,15 @@ global_init:
 
 	; Copy common tiles in CHR-RAM
 	.(
-		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tiles
-		;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tiles
-		tiles_count = tmpfield3 ; Not movable, used by cpu_to_ppu_copy_tiles
-
-		lda #<(tileset_common+1)
-		sta tileset_addr
-		lda #>(tileset_common+1)
-		sta tileset_addr+1
+		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tileset
+		;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tileset
 
 		SWITCH_BANK(#TILESET_COMMON_BANK_NUMBER)
 
-		lda tileset_common
-		sta tiles_count
+		lda #<tileset_common
+		sta tileset_addr
+		lda #>tileset_common
+		sta tileset_addr+1
 
 		PPU_COMMON_TILES_ADDR = ($2000-(tileset_common_end-tileset_common_tiles))
 		lda PPUSTATUS
@@ -53,7 +49,7 @@ global_init:
 		lda #<PPU_COMMON_TILES_ADDR
 		sta PPUADDR
 
-		jsr cpu_to_ppu_copy_tiles
+		jsr cpu_to_ppu_copy_tileset
 	.)
 
 	; Set data bank

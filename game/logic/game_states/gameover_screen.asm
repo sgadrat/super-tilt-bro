@@ -4,44 +4,30 @@ init_gameover_screen:
 .(
 	; Set background tileset
 	.(
-		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tiles
-		;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tiles
-		tiles_count = tmpfield3 ; Not movable, used by cpu_to_ppu_copy_tiles
-
-		lda #<(tileset_green_grass+1)
-		sta tileset_addr
-		lda #>(tileset_green_grass+1)
-		sta tileset_addr+1
+		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tileset_background
+		;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tileset_background
 
 		SWITCH_BANK(#TILESET_GREEN_GRASS_BANK_NUMBER)
 
-		lda tileset_green_grass
-		sta tiles_count
+		lda #<tileset_green_grass
+		sta tileset_addr
+		lda #>tileset_green_grass
+		sta tileset_addr+1
 
-		lda PPUSTATUS
-		lda #$10
-		sta PPUADDR
-		lda #$00
-		sta PPUADDR
-
-		jsr cpu_to_ppu_copy_tiles
+		jsr cpu_to_ppu_copy_tileset_background
 	.)
 
 	; Set sprites tileset
 	.(
-		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tiles
-		;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tiles
-		tiles_count = tmpfield3 ; Not movable, used by cpu_to_ppu_copy_tiles
-
-		lda #<(tileset_gameover_sprites+1)
-		sta tileset_addr
-		lda #>(tileset_gameover_sprites+1)
-		sta tileset_addr+1
+		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tileset
+		;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tileset
 
 		SWITCH_BANK(#TILESET_GAMEOVER_BANK_NUMBER)
 
-		lda tileset_gameover_sprites
-		sta tiles_count
+		lda #<tileset_gameover_sprites
+		sta tileset_addr
+		lda #>tileset_gameover_sprites
+		sta tileset_addr+1
 
 		lda PPUSTATUS
 		lda #>CHARACTERS_END_TILES_OFFSET
@@ -49,7 +35,7 @@ init_gameover_screen:
 		lda #<CHARACTERS_END_TILES_OFFSET
 		sta PPUADDR
 
-		jsr cpu_to_ppu_copy_tiles
+		jsr cpu_to_ppu_copy_tileset
 	.)
 
 	SWITCH_BANK(#DATA_BANK_NUMBER)

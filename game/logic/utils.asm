@@ -30,9 +30,9 @@ place_character_ppu_tiles:
 	sta tmpfield2
 	lda characters_tiles_number, y
 	sta tmpfield3
-	jsr cpu_to_ppu_copy_tiles
+	jmp cpu_to_ppu_copy_tiles
 
-	rts
+	;rts ; useless, jump to subroutine
 .)
 
 ; wait_next_frame while still ticking music
