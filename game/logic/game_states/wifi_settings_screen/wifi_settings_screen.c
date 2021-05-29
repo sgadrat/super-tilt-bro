@@ -67,7 +67,6 @@ static StateMem* mem() {
 // Global labels from the ASM codebase
 ///////////////////////////////////////
 
-extern uint8_t const CURRENT_BANK_NUMBER; // Actually an ASM macro, use its address or "code_bank()"
 extern uint8_t const TILESET_ASCII_BANK_NUMBER; // Actually a label, use its address or "tileset_ascii_bank()"
 extern uint8_t const TILE_MENU_WIFI_SETTINGS_DIALOGS_CHAR_HIDDEN; // Actually a label, use its address or "hidden_char()"
 extern uint8_t const TILE_MENU_WIFI_SETTINGS_DIALOGS_CHAR_EMPTY; // Actually a label, use its address or "empty_char()"
@@ -115,10 +114,6 @@ static uint8_t const NO_PASSWORD_CURSOR = 255;
 
 static uint8_t tileset_ascii_bank() {
 	return ptr_lsb(&TILESET_ASCII_BANK_NUMBER);
-}
-
-static uint8_t code_bank() {
-	return ptr_lsb(&CURRENT_BANK_NUMBER);
 }
 
 static uint8_t hidden_char() {

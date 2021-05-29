@@ -25,8 +25,11 @@ struct FixScreenTaskState {
 extern uint8_t const anim_empty;
 extern uint8_t const char_selection_nametable;
 extern uint8_t const char_selection_palette;
+extern uint8_t const characters_bank_number;
 extern uint8_t const characters_palettes_lsb;
 extern uint8_t const characters_palettes_msb;
+extern uint8_t const characters_properties_lsb;
+extern uint8_t const characters_properties_msb;
 extern uint8_t const characters_weapon_palettes_lsb;
 extern uint8_t const characters_weapon_palettes_msb;
 extern uint8_t const characters_tiles_data_lsb;
@@ -54,7 +57,6 @@ void audio_play_interface_click();
 ///////////////////////////////////////
 
 void character_selection_screen_copy_portrait();
-void character_selection_screen_copy_property();
 void character_selection_tick_char_anims();
 void character_selection_copy_to_nt_buffer();
 void character_selection_get_char_property();
@@ -62,16 +64,6 @@ void character_selection_construct_char_nt_buffer();
 void character_selection_change_global_game_state_lite();
 void character_selection_get_unzipped_bytes();
 void character_selection_reset_music();
-
-static void wrap_character_selection_copy_to_nt_buffer(uint8_t character, uint16_t ppu_addr, uint8_t n_bytes, uint8_t const* prg_addr) {
-	*tmpfield1 = character;
-	*tmpfield2 = u16_lsb(ppu_addr);
-	*tmpfield3 = u16_msb(ppu_addr);
-	*tmpfield4 = n_bytes;
-	*tmpfield5 = ptr_lsb(prg_addr);
-	*tmpfield6 = ptr_msb(prg_addr);
-	character_selection_copy_to_nt_buffer();
-}
 
 static uint16_t wrap_character_selection_get_char_property(uint8_t character, uint8_t property_offset) {
 	*tmpfield1 = character;
@@ -87,13 +79,6 @@ static void wrap_character_selection_construct_char_nt_buffer(uint8_t character,
 	*tmpfield4 = ptr_msb(data);
 	*tmpfield5 = character;
 	character_selection_construct_char_nt_buffer();
-}
-
-static void wrap_character_selection_screen_copy_property(uint8_t character, uint8_t property_offset, uint8_t size) {
-	*tmpfield1 = character;
-	*tmpfield2 = property_offset;
-	*tmpfield3 = size;
-	character_selection_screen_copy_property();
 }
 
 //TODO Check if reasonable to remove this implementation, and call "get_unzipped_bytes" instead
@@ -208,6 +193,46 @@ static void construct_sprite_palette_buffer(uint8_t player, uint8_t palette_num,
 
 	uint8_t const character = config_requested_player_a_character[player];
 	wrap_character_selection_construct_char_nt_buffer(character, character_selection_mem_buffer, data);
+}
+
+static void copy_character_property(uint8_t character, uint8_t property_offset, uint8_t size) {
+	uint8_t const* property_table = ptr((&characters_properties_lsb)[character], (&characters_properties_msb)[character]);
+	long_memcpy(
+		character_selection_mem_buffer,
+		(&characters_bank_number)[character],
+		property_table + property_offset,
+		size
+	);
+}
+
+static void copy_character_portrait(uint8_t character) {
+	uint8_t const* portrait = (uint8_t const*)wrap_character_selection_get_char_property(character, CHARACTERS_PROPERTIES_ILLUSTRATIONS_ADDR_OFFSET);
+	long_memcpy(
+		character_selection_mem_buffer,
+		(&characters_bank_number)[character],
+		portrait + 16,
+		4 * 16
+	);
+}
+
+static void copy_to_nt_buffer(uint16_t ppu_addr, uint8_t n_bytes, uint8_t bank, uint8_t const* prg_addr) {
+	uint8_t ntbuf_index = wrap_last_nt_buffer();
+	nametable_buffers[ntbuf_index] = 1;
+	nametable_buffers[ntbuf_index+1] = u16_msb(ppu_addr);
+	nametable_buffers[ntbuf_index+2] = u16_lsb(ppu_addr);
+	nametable_buffers[ntbuf_index+3] = n_bytes;
+	long_memcpy(
+		nametable_buffers + ntbuf_index + 4,
+		bank,
+		prg_addr,
+		n_bytes
+	);
+	nametable_buffers[ntbuf_index+4+n_bytes] = 0;
+}
+
+static void copy_to_nt_buffer_from_char(uint8_t character, uint16_t ppu_addr, uint8_t n_bytes, uint8_t const* prg_addr) {
+	uint8_t bank = (character >= (uint16_t)(&CHARACTERS_NUMBER) ? code_bank() : (&characters_bank_number)[character]);
+	copy_to_nt_buffer(ppu_addr, n_bytes, bank, prg_addr);
 }
 
 ///////////////////////////////////////
@@ -396,7 +421,7 @@ static void tick_bg_task(struct BgTaskState* task) {
 		case BG_STEP_CHAR_NAME: {
 			uint8_t const character = config_requested_player_a_character[task->player];
 			if (character < (uint16_t)&CHARACTERS_NUMBER) {
-				wrap_character_selection_screen_copy_property(
+				copy_character_property(
 					character,
 					CHARACTERS_PROPERTIES_CHAR_NAME_OFFSET,
 					10
@@ -448,7 +473,7 @@ static void tick_bg_task(struct BgTaskState* task) {
 			__attribute__((fallthrough));
 		}
 		case BG_STEP_STATUE_2:
-			wrap_character_selection_copy_to_nt_buffer(config_requested_player_a_character[task->player], task->ppu_addr, STATUE_BYTES_PER_TICK, task->prg_addr);
+			copy_to_nt_buffer_from_char(config_requested_player_a_character[task->player], task->ppu_addr, STATUE_BYTES_PER_TICK, task->prg_addr);
 			++task->count;
 			if (task->count < STATUE_NB_TICKS) {
 				Anim(character_selection_player_a_builder_anim + (task->player * ANIMATION_STATE_LENGTH))->y -= 4;
@@ -481,7 +506,7 @@ static void tick_bg_task(struct BgTaskState* task) {
 			__attribute__((fallthrough));
 		}
 		case BG_STEP_CHAR_TILESET_2:
-			wrap_character_selection_copy_to_nt_buffer(config_requested_player_a_character[task->player], task->ppu_addr, CHAR_BYTES_PER_TICK, task->prg_addr);
+			copy_to_nt_buffer_from_char(config_requested_player_a_character[task->player], task->ppu_addr, CHAR_BYTES_PER_TICK, task->prg_addr);
 			++task->count;
 			if (task->count < CHAR_NB_TICKS) {
 				task->ppu_addr += CHAR_BYTES_PER_TICK;
@@ -733,9 +758,8 @@ void init_character_selection_screen_extra() {
 	// Draw character portraits
 	uint8_t character_idx;
 	for (character_idx = 0; character_idx < (uint16_t)(&CHARACTERS_NUMBER); ++character_idx) {
-		// Call fixed bank code to copy portrait in RAM
-		*tmpfield1 = character_idx;
-		character_selection_screen_copy_portrait();
+		// Copy portrait in RAM
+		copy_character_portrait(character_idx);
 
 		// Fix portrait color indexes
 		for (uint8_t tile_idx = 0; tile_idx < 5; ++tile_idx) {

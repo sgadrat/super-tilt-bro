@@ -140,6 +140,20 @@ static void wrap_draw_zipped_nametable(uint8_t const* nametable) {
 	draw_zipped_nametable();
 }
 
+// NOTE not a simple wrapper, glue code reflects the fact that fixed_memcpy is primarily made for copying data from another bank
+void fixed_memcpy();
+static void long_memcpy(uint8_t* dest, uint8_t src_bank, uint8_t const* src, uint8_t size) {
+	// Prepare fixed_memcpy parameters
+	*tmpfield1 = ptr_lsb(dest);
+	*tmpfield2 = ptr_msb(dest);
+	*tmpfield3 = ptr_lsb(src);
+	*tmpfield4 = ptr_msb(src);
+	*tmpfield5 = size;
+
+	// Call fixed_memcpy via trampoline
+	wrap_trampoline(src_bank, code_bank(), &fixed_memcpy);
+}
+
 void get_unzipped_bytes();
 static void wrap_get_unzipped_bytes(uint8_t* dest, uint8_t const* zipped, uint16_t offset, uint8_t count) {
 	*tmpfield1 = ptr_lsb(zipped);
@@ -150,6 +164,19 @@ static void wrap_get_unzipped_bytes(uint8_t* dest, uint8_t const* zipped, uint16
 	*tmpfield6 = ptr_lsb(dest);
 	*tmpfield7 = ptr_msb(dest);
 	get_unzipped_bytes();
+}
+
+void last_nt_buffer();
+static uint8_t wrap_last_nt_buffer() {
+	uint8_t index;
+	asm(
+		"jsr last_nt_buffer\n\t"
+		"stx %0"
+		: "=r"(index)
+		:
+		: "a", "x"
+	);
+	return index;
 }
 
 void push_nt_buffer();

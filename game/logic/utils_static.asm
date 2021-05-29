@@ -268,6 +268,33 @@ cpu_to_ppu_copy_tiles:
 	rts
 .)
 
+; Copy bytes in memory, ensured to be in fixed bank
+;  tmpfield1,tmpfield2 - Destination
+;  tmpfield3,tmpfield4 - Source
+;  tmpfield5 - Number of bytes to copy
+;
+; Overwrites TODO
+fixed_memcpy:
+.(
+	dest = tmpfield1
+	src = tmpfield3
+	count = tmpfield5
+
+	ldy tmpfield5
+	copy_one_byte:
+		cpy #0
+		beq end
+		dey
+
+		lda (src), y
+		sta (dest), y
+
+		jmp copy_one_byte
+
+	end:
+	rts
+.)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Super Tilt Bro. specific
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

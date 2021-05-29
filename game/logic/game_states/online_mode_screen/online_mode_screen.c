@@ -40,7 +40,6 @@ extern uint8_t const tileset_menu_online_mode_sprites;
 extern uint8_t volatile RAINBOW_MAPPER_VERSION;
 
 extern uint8_t const MENU_ONLINE_MODE_TILESET_BANK_NUMBER; // Actually a label, use its address or "tileset_bank()"
-extern uint8_t const ONLINE_MODE_SCREEN_EXTRA_BANK_NUMBER; // Actually a label, use its address or "code_bank()"
 
 static uint8_t const TILE_CHAR_0 = 219;
 static uint8_t const TILE_CHAR_1 = TILE_CHAR_0 + ('1' - '0');
@@ -257,10 +256,6 @@ static void highlight_option();
 
 static uint8_t tileset_bank() {
 	return ptr_lsb(&MENU_ONLINE_MODE_TILESET_BANK_NUMBER);
-}
-
-static uint8_t code_bank() {
-	return ptr_lsb(&ONLINE_MODE_SCREEN_EXTRA_BANK_NUMBER);
 }
 
 static void long_cpu_to_ppu_copy_tileset(uint8_t bank, uint8_t const* tileset, uint16_t ppu_addr) {

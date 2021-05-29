@@ -57,6 +57,12 @@ static uint8_t strnlen8(char const* s, uint8_t maxlen) {
 	return len;
 }
 
+extern uint8_t const CURRENT_BANK_NUMBER; // Actually an ASM macro, use its address or "code_bank()"
+/** Return the bank in which the calling code is stored */
+static uint8_t code_bank() {
+	return ptr_lsb(&CURRENT_BANK_NUMBER);
+}
+
 #define CONST_HUNDREDS(val) ((((val) % 1000) / 100))
 #define CONST_TENS(val) ((((val) % 100) / 10))
 #define CONST_UNITS(val) ((val) % 10)
