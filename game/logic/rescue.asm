@@ -12,6 +12,25 @@ current_write_addr_msb = $03
 .(
 	;TODO check ROM file existence
 
+#ifdef RESCUE_AUDIO_DEBUG
+	; Enable noise channel to be able to output debug sounds
+	lda #%00001000 ; ---DNT21
+	sta APU_STATUS
+
+	; Blip
+	lda #%00000010         ; --LCVVVV
+	sta APU_NOISE_ENVELOPE ;
+	lda #%00000111       ; L---PPPP
+	sta APU_NOISE_PERIOD ;
+	lda #%10110000           ; LLLLL---
+	sta APU_NOISE_LENGTH_CNT
+#endif
+
+	; Enable debug output
+	lda #<cmd_set_debug
+	ldx #>cmd_set_debug
+	jsr esp_send_cmd_short
+
 	; Open factory ROM file
 	lda #<cmd_open_file
 	ldx #>cmd_open_file
@@ -26,6 +45,9 @@ current_write_addr_msb = $03
 
 	cmd_open_file:
 		.byt 3, TOESP_MSG_FILE_OPEN, ESP_FILE_PATH_ROMS, 0
+
+	cmd_set_debug:
+		.byt 2, TOESP_MSG_DEBUG_SET_LEVEL, 3
 .)
 
 
