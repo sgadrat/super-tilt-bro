@@ -6,6 +6,8 @@ xa_bin="${XA_BIN:-xa}"
 cc_bin="${CC_BIN:-6502-gcc}"
 perf_listings="${XA_LST:-0}"
 force_network="${FORCE_NETWORK:-0}"
+local_login="${LOCAL_LOGIN:-0}"
+skip_c="${SKIP_C:-0}"
 
 root_dir=`readlink -m $(dirname "$0")`
 log_file="${root_dir}/build.log"
@@ -19,7 +21,7 @@ c_optim="-Os"
 c_warnings="-Wall -Wextra -Werror"
 c_compat="-fdelete-null-pointer-checks -fno-isolate-erroneous-paths-dereference" # We may want to dereference address zero at times
 c_defines="$no_network_flag"
-if [ ! -z "$LOCAL_LOGIN" ]; then
+if [ $local_login -ne 0 ]; then
 	c_defines+=" -DLOCAL_LOGIN_SERVER"
 fi
 c_flags="$c_optim $c_warnings $c_compat $c_defines"
@@ -94,7 +96,7 @@ log "===================="
 PYTHONPATH="${root_dir}/tools:$PYTHONPATH" cmd "${root_dir}/tools/compile-mod.py" "${root_dir}/game-mod/mod.json" "${root_dir}"
 
 # Compile C files
-if [ -z $SKIP_C ]; then
+if [ $skip_c -eq 0 ]; then
 log
 say "Compile C files ..."
 log "==================="
