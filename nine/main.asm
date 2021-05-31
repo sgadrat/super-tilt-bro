@@ -72,7 +72,7 @@ reset:
 		sta $0500, x
 		sta $0600, x
 		sta $0700, x
-		lda #$FE
+		lda #$fe
 		sta oam_mirror, x    ;move all sprites off screen
 		inx
 		bne clrmem
@@ -92,14 +92,22 @@ reset:
 			bpl vblankwait2
 
 		; Y*256+X known values:
-		;  $05b1 - FCEUX on NTSC mode
-		;  $06d2 - FCEUX on PAL mode
-		;  $078b - FCEUX on Dendy mode
+		;  $05ba - FCEUX on NTSC mode
+		;  $05b2 - Mesen on NTSC mode
+		;  $05ba - NTSC NES
+		;
+		;  $06d1 - FCEUX on PAL mode
+		;  $06d2 - Mesen on PAL mode
+		;  $06da - PAL NES
+		;
+		;  $078a - FCEUX on Dendy mode
+		;  $078b - Mesen on Dendy mode
+		lda #0
 		cpy #$06
 		bcs pal
 			lda #1
-			sta skip_frames_to_50hz
 		pal:
+		sta skip_frames_to_50hz
 	.)
 
 	; Prepare to start the game
