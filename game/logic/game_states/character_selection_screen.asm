@@ -135,6 +135,6 @@ character_selection_reset_music:
 .(
 	SWITCH_BANK(#DATA_BANK_NUMBER)
 	jsr audio_music_weak
-	SWITCH_BANK(#CONFIG_SCREEN_EXTRA_BANK_NUMBER)
+	SWITCH_BANK(#CHAR_SELECT_SCREEN_EXTRA_BANK_NUMBER)
 	rts
 .)
