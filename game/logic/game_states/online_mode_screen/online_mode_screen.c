@@ -390,7 +390,7 @@ static void clear_form_cursor() {
 	}
 }
 
-static void esp_read_file(uint8_t size) {
+static uint8_t esp_read_file(uint8_t size) {
 	// Send read command to ESP
 	RAINBOW_DATA = 2;
 	RAINBOW_DATA = TOESP_MSG_FILE_READ;
@@ -402,12 +402,12 @@ static void esp_read_file(uint8_t size) {
 	}while ((RAINBOW_FLAGS & 0x80) == 0);
 
 	// Burn response header
-	//TODO check that response type is the good one
-	//TODO check that read size match requested size
 	RAINBOW_DATA; // Garbage byte
 	RAINBOW_DATA; // Message size
-	RAINBOW_DATA; // Message type
-	RAINBOW_DATA; // Read size
+	if (RAINBOW_DATA != FROMESP_MSG_FILE_DATA) { // Message type
+		return 0;
+	}
+	return RAINBOW_DATA; // Read size
 }
 
 __attribute__((unused))
@@ -477,14 +477,22 @@ static void update_game() {
 	static uint8_t const cmd_open_file[] = {3, TOESP_MSG_FILE_OPEN, ESP_FILE_PATH_ROMS, UPDATE_ROM_FILE};
 	wrap_esp_send_cmd(cmd_open_file);
 
-	esp_read_file(1);
+	uint8_t n_read = esp_read_file(1);
+	if (n_read != 1) {
+		//TODO error message
+		return;
+	}
 	uint8_t header_len = RAINBOW_DATA;
 	if (header_len < 1) {
 		//TODO error message
 		return;
 	}
 
-	esp_read_file(header_len);
+	n_read = esp_read_file(header_len);
+	if (n_read != header_len) {
+		//TODO error message
+		return;
+	}
 	uint8_t const safe = RAINBOW_DATA; --header_len;
 
 	// Burn unknown header bytes
