@@ -63,6 +63,7 @@ reset:
 		bpl vblankwait1
 
 	; Ensure memory is zero-ed, we have to burn cycles anyway, waiting for the PPU
+	ldx #0
 	clrmem:
 		lda #$00
 		sta $0000, x
@@ -92,22 +93,21 @@ reset:
 			bpl vblankwait2
 
 		; Y*256+X known values:
-		;  $05ba - FCEUX on NTSC mode
-		;  $05b2 - Mesen on NTSC mode
-		;  $05ba - NTSC NES
+		;  $05b1 - FCEUX on NTSC mode
+		;  $05b1 - Mesen on NTSC mode
+		;  $05b1 - NTSC NES
 		;
-		;  $06d1 - FCEUX on PAL mode
+		;  $06d2 - FCEUX on PAL mode (bug? $06c9 when running on RAINBOW mapper)
 		;  $06d2 - Mesen on PAL mode
-		;  $06da - PAL NES
+		;  $06d2 - PAL NES
 		;
-		;  $078a - FCEUX on Dendy mode
+		;  $078b - FCEUX on Dendy mode
 		;  $078b - Mesen on Dendy mode
-		lda #0
 		cpy #$06
 		bcs pal
 			lda #1
+			sta skip_frames_to_50hz
 		pal:
-		sta skip_frames_to_50hz
 	.)
 
 	; Prepare to start the game
