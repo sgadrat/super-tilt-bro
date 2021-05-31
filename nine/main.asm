@@ -140,8 +140,8 @@ forever:
 
 	; Call audio a second time if necessary to emulate 60Hz system
 	.(
-		lda skip_frames_to_50hz
-		bne ok ; skip if running on NTSC
+		;lda skip_frames_to_50hz
+		;bne ok ; skip if running on NTSC ;TODO check to be reactivated when wait_next_frame will not
 		lda audio_50hz
 		bne ok ; skip if music is PAL native
 		dec audio_vframe_cnt
