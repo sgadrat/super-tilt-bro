@@ -229,6 +229,26 @@ audio_unmute_music:
 	rts
 .)
 
+; Play a tick when two ticks are needed in one frame to play at normal speed
+;
+; Overwrites all registers, and tmpfield1 to tmpfield4
+audio_music_extra_tick:
+.(
+	;lda skip_frames_to_50hz
+	;bne ok ; skip if running on NTSC ;TODO check to be reactivated when wait_next_frame will not
+	lda audio_50hz
+	bne ok ; skip if music is PAL native
+	dec audio_vframe_cnt
+	bpl ok ; skip if it is not time to do an extra tick
+
+		lda #4
+		sta audio_vframe_cnt
+		jmp audio_music_tick
+
+	ok:
+	rts
+.)
+
 ; Play one tick of the audio engine
 ;
 ; Overwrites all registers, and tmpfield1 to tmpfield4

@@ -26,7 +26,6 @@ void audio_play_interface_click();
 
 void stage_selection_back_to_char_select();
 void stage_selection_screen_long_memcopy();
-void stage_selection_tick_music();
 
 void wrap_stage_selection_screen_long_memcopy(uint8_t* dest, uint8_t src_bank, uint8_t const* src) {
 	*tmpfield1 = ptr_lsb(dest);
@@ -84,8 +83,7 @@ static void change_screen_cleaning() {
 }
 
 static void skip_frame() {
-	wait_next_frame();
-	stage_selection_tick_music();
+	wrap_trampoline(code_bank(), code_bank(), &sleep_frame);
 	reset_nt_buffers();
 }
 

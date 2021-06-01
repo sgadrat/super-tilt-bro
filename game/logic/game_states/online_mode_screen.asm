@@ -18,10 +18,3 @@ online_mode_screen_tick:
 
 	;rts ; useless, jump to subroutine
 .)
-
-online_mode_screen_tick_music:
-.(
-	jsr audio_music_tick
-	SWITCH_BANK(#ONLINE_MODE_SCREEN_EXTRA_BANK_NUMBER)
-	rts
-.)

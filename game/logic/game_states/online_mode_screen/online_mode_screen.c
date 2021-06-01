@@ -85,8 +85,6 @@ void audio_play_interface_click();
 // Screen specific ASM functions
 ///////////////////////////////////////
 
-void online_mode_screen_tick_music();
-
 ///////////////////////////////////////
 // Screen specific ASM labels
 ///////////////////////////////////////
@@ -274,8 +272,7 @@ static void long_cpu_to_ppu_copy_tileset(uint8_t bank, uint8_t const* tileset, u
 
 /** Not a real yield, pass a frame "as if" it gone through main loop */
 static void yield() {
-	wait_next_frame();
-	online_mode_screen_tick_music();
+	wrap_trampoline(code_bank(), code_bank(), &sleep_frame);
 	fetch_controllers();
 	reset_nt_buffers();
 }

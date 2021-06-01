@@ -41,13 +41,6 @@ stage_selection_screen_long_memcopy:
 	rts
 .)
 
-stage_selection_tick_music:
-.(
-	jsr audio_music_tick
-	SWITCH_BANK(#STAGE_SELECT_SCREEN_EXTRA_BANK_NUMBER)
-	rts
-.)
-
 stage_selection_back_to_char_select:
 .(
 	SWITCH_BANK(#CHAR_SELECT_SCREEN_EXTRA_BANK_NUMBER)

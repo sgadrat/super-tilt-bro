@@ -40,6 +40,7 @@ place_character_ppu_tiles:
 ; Overwrites all registers, and some tmpfields and extra_tmpfields (see audio_music_tick)
 sleep_frame:
 .(
+	jsr audio_music_extra_tick
 	jsr wait_next_frame
 	jmp audio_music_tick
 	; rts ; useless, jump to a subroutine

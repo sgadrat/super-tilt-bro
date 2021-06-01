@@ -11,6 +11,7 @@
 //  simply declare it as extern
 ////////////////////////////////////
 
+void audio_music_extra_tick();
 void audio_music_tick();
 void audio_mute_music();
 void audio_unmute_music();
@@ -22,6 +23,7 @@ void init_menu();
 void process_nt_buffers();
 void reset_nt_buffers();
 void re_init_menu();
+void sleep_frame();
 void tick_menu();
 void wait_next_frame();
 

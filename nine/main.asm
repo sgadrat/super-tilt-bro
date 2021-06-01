@@ -139,20 +139,7 @@ forever:
 	jsr call_pointed_subroutine
 
 	; Call audio a second time if necessary to emulate 60Hz system
-	.(
-		;lda skip_frames_to_50hz
-		;bne ok ; skip if running on NTSC ;TODO check to be reactivated when wait_next_frame will not
-		lda audio_50hz
-		bne ok ; skip if music is PAL native
-		dec audio_vframe_cnt
-		bpl ok ; skip if it is not time to do an extra tick
-
-			lda #4
-			sta audio_vframe_cnt
-			jsr audio_music_tick
-
-		ok:
-	.)
+	jsr audio_music_extra_tick
 
 	jmp forever
 .)
