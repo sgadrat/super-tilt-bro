@@ -388,6 +388,11 @@ static void clear_form_cursor() {
 }
 
 static uint8_t esp_read_file(uint8_t size) {
+	// Wait for the ESP to be ready
+	do{
+		yield();
+	}while ((RAINBOW_FLAGS & 0x80) != 0);
+
 	// Send read command to ESP
 	RAINBOW_DATA = 2;
 	RAINBOW_DATA = TOESP_MSG_FILE_READ;
