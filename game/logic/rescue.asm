@@ -16,7 +16,48 @@ flash_sectors_ram = $300
 ;  - Expects NMI to be disabled
 &rescue:
 .(
-	;TODO check ROM file existence
+	; ESP enable, the full ultra safe sequence
+	lda #%00000001    ; Enable communication with the ESP
+	sta RAINBOW_FLAGS
+
+	lda #<esp_cmd_clear_buffers ; Clear RX/TX buffers
+	ldx #>esp_cmd_clear_buffers
+	jsr esp_send_cmd_short
+
+	ldx #2              ; Wait two frames for the clear to happen
+	bit PPUSTATUS
+	vblank_wait:
+		bit PPUSTATUS
+		bpl vblank_wait
+	dex
+	bne vblank_wait
+
+	wait_empty_buffer:        ; Be really sure that the clear happened
+		bit RAINBOW_FLAGS
+		bmi wait_empty_buffer
+
+	lda #<esp_cmd_get_esp_status ; Wait for ESP to be ready
+	ldx #>esp_cmd_get_esp_status
+	jsr esp_send_cmd_short
+	jsr esp_wait_answer
+
+	lda RAINBOW_DATA ; Burn garbage byte
+
+	.( ; Message length, must be 1
+		ldx RAINBOW_DATA
+		cpx #1
+		beq ok
+			jsr fatal_failure
+		ok:
+	.)
+
+	.( ; Message type, must be READY
+		lda RAINBOW_DATA
+		cmp #FROMESP_MSG_READY
+		beq ok
+			jsr fatal_failure
+		ok:
+	.)
 
 	; Enable noise channel to be able to output debug sounds
 	lda #%00001000 ; ---DNT21
@@ -29,6 +70,8 @@ flash_sectors_ram = $300
 	ldx #>cmd_set_debug
 	jsr esp_send_cmd_short
 #endif
+
+	;TODO check ROM file existence
 
 	; Open factory ROM file
 	lda #<cmd_open_file
@@ -141,6 +184,24 @@ flash_safe_sectors_and_return:
 
 	cmd_read_block:
 		.byt 2, TOESP_MSG_FILE_READ, 128
+.)
+
+fatal_failure:
+.(
+	lda PPUSTATUS
+	lda #$3f
+	sta PPUADDR
+	lda #$00
+	sta PPUADDR
+	lda #$16
+	ldx #32
+	testdll:
+	sta PPUDATA
+	dex
+	bne testdll
+
+	infinite_loop:
+		bne infinite_loop
 .)
 
 ; Flash each sector

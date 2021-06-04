@@ -150,6 +150,16 @@ RAINBOW_IRQ_DISABLE = $5c06
 RAINBOW_IRQ_ENABLE = $5c07
 
 ;-------------------------------------------------------------------------------
+; Invariable messages
+;-------------------------------------------------------------------------------
+
+esp_cmd_clear_buffers:
+	.byt 1, TOESP_MSG_CLEAR_BUFFERS
+
+esp_cmd_get_esp_status:
+	.byt 1, TOESP_MSG_GET_ESP_STATUS
+
+;-------------------------------------------------------------------------------
 ; Utility routines
 ;-------------------------------------------------------------------------------
 
@@ -243,5 +253,14 @@ esp_get_msg:
 			jmp copy_one_byte
 
 	end:
+	rts
+.)
+
+; Wait for ESP data to be ready to read
+esp_wait_answer:
+.(
+	wait_ready_bit:
+		bit RAINBOW_FLAGS
+		bpl wait_ready_bit
 	rts
 .)
