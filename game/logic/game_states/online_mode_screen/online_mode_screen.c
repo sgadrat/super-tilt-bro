@@ -438,7 +438,7 @@ static void update_game() {
 
 	// Draw "checking updates"
 	draw_dialog(0x2146, &menu_online_mode_check_update_window, 3);
-	//TODO hide cursor
+	clear_form_cursor();
 	// Note: no attribute update / earth hide, only path to this window already sets it correctly
 
 	// Download update file
