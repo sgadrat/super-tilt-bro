@@ -48,11 +48,7 @@ init_gameover_screen:
 	jsr draw_zipped_nametable
 
 	; Wait the begining of a VBI before writing data to PPU's palettes
-	bit PPUSTATUS
-	lda #$80
-	wait_vbi:
-		bit PPUSTATUS
-		beq wait_vbi
+	jsr wait_vbi
 
 	; Write screen's palettes in PPU
 	lda PPUSTATUS ;

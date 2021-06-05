@@ -268,6 +268,21 @@ cpu_to_ppu_copy_tiles:
 	rts
 .)
 
+; Fill PPU memory with a single value
+;  A - Value to fill with
+;  X - Number of bytes to fill
+;
+; PPUADDR must be set to the destination address
+; PPUCTRL's I bit should not be set (if set, writes every 32 bytes)
+ppu_fill:
+.(
+	fill_loop:
+		sta PPUDATA
+		dex
+		bne fill_loop
+	rts
+.)
+
 ; Copy bytes in memory, ensured to be in fixed bank
 ;  tmpfield1,tmpfield2 - Destination
 ;  tmpfield3,tmpfield4 - Source
@@ -644,5 +659,15 @@ reinit_c_stack:
 	sta _sp0
 	lda #>c_stack_end
 	sta _sp1
+	rts
+.)
+
+; Wait for the begining of VBI (skipping the one in progress if any)
+wait_vbi:
+.(
+	bit PPUSTATUS
+	vblankwait:
+		bit PPUSTATUS
+		bpl vblankwait
 	rts
 .)

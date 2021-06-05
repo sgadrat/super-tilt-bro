@@ -187,11 +187,7 @@ init_game_state:
 		jsr place_character_alternate_palette
 
 		; Initialize weapons palettes
-		bit PPUSTATUS     ;
-		lda #$80          ; Wait the begining of a VBI before
-		wait_vbi:         ; writing data to PPU's palettes
-			bit PPUSTATUS ;
-			beq wait_vbi  ;
+		jsr wait_vbi ; Wait the begining of a VBI before writing data to PPU's palettes
 
 		ldx config_player_a_character
 		SWITCH_BANK(characters_bank_number COMMA x)

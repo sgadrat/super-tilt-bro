@@ -12,11 +12,7 @@ stage_generic_init:
 	sta stage_table_index
 
 	; Write palette_data in actual ppu palettes
-	bit PPUSTATUS     ;
-	lda #$80          ; Wait the begining of a VBI before
-	wait_vbi:         ; writing data to PPU's palettes
-		bit PPUSTATUS ;
-		beq wait_vbi  ;
+	jsr wait_vbi ; Wait the begining of a VBI before writing data to PPU's palettes
 
 	lda PPUSTATUS ;
 	lda #$3f      ; Point PPU to Background palette 0

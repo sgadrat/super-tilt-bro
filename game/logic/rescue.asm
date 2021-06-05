@@ -5,6 +5,7 @@ num_blocks = $01
 current_write_addr = $02
 current_write_addr_msb = $03
 
+rescue_oam_mirror = $200
 flash_sectors_ram = $300
 
 ; About read sequences, pin names, etc in comments, read the doc
@@ -133,8 +134,9 @@ flash_static_sector:
 flash_safe_sectors_and_return:
 .(
 	; Set banking to 8+8+8+8 mode
-	lda #1
+	lda #%00011111 ; ssmm.rccp
 	sta RAINBOW_CONFIGURATION ; change PRG mode to mode 1
+	lda #1
 	sta RAINBOW_PRG_BANKING_2 ; select 8K bank @ $A000
 	lda #2
 	sta RAINBOW_PRG_BANKING_3 ; select 8K bank @ $C000
@@ -177,6 +179,7 @@ flash_safe_sectors_and_return:
 	.)
 
 	; Call flash_sectors
+	jsr prepare_display
 	jsr flash_sectors_ram
 
 	; Return
@@ -184,6 +187,103 @@ flash_safe_sectors_and_return:
 
 	cmd_read_block:
 		.byt 2, TOESP_MSG_FILE_READ, 128
+.)
+
+&prepare_display:
+.(
+	; Copy chr tiles
+	bit PPUSTATUS
+	lda #$00
+	sta PPUADDR
+	sta PPUADDR
+	lda #%00000000
+	ldx #16
+	jsr ppu_fill
+	lda #%11111111
+	ldx #16
+	jsr ppu_fill
+	lda #%00000011
+	ldx #16
+	jsr ppu_fill
+	lda #%11000000
+	ldx #16
+	jsr ppu_fill
+
+	; Init palettes
+	lda #$3f
+	sta PPUADDR
+	lda #$00
+	sta PPUADDR
+	lda #$21
+	sta PPUDATA
+	lda #$0f
+	sta PPUDATA
+	sta PPUDATA
+	sta PPUDATA
+
+	; Init OAM mirror
+	ldy #0
+	ldx #0
+	oam_mirror_loop:
+		lda #$fe ; Y - hidden
+		sta rescue_oam_mirror, x
+
+		lda #$01 ; Tile
+		sta rescue_oam_mirror+1, x
+
+		lda #$00 ; Attributes
+		sta rescue_oam_mirror+2, x
+
+		; X - "sprite num * 8 + 88" , all sprites side by side
+		tya
+		asl
+		asl
+		asl
+		clc
+		adc #88
+		sta rescue_oam_mirror+3, x
+
+		iny
+		inx
+		inx
+		inx
+		inx
+		bne oam_mirror_loop
+
+	; Draw nametable
+	jsr clear_bg_bot_left
+
+	bit PPUSTATUS
+	lda #$29
+	sta PPUADDR
+	lda #$eb
+	sta PPUADDR
+	lda #2
+	sta PPUDATA
+	lda #$29
+	sta PPUADDR
+	lda #$f4
+	sta PPUADDR
+	lda #3
+	sta PPUDATA
+
+	; Activate rendering
+	jsr wait_vbi
+	lda #%00000010 ; VPHB.SINN - don't enable NMI (not supported in rescue), sprites and BG both use pattern table 0, bot-left nametable
+	sta PPUCTRL
+	lda #%00011110 ; BGRs.bMmG
+	sta PPUMASK
+	lda #0
+	sta PPUSCROLL
+	sta PPUSCROLL
+
+	; OAM DMA
+	lda #$00
+	sta OAMADDR
+	lda #>rescue_oam_mirror
+	sta OAMDMA
+
+	rts
 .)
 
 fatal_failure:
@@ -328,13 +428,61 @@ flash_sectors_rom:
 
 		; Loop
 		inc current_sector
+		jsr flash_sectors_ram+(show_progress-flash_sectors_rom)
 		lda current_sector
 		cmp #127 ; Notice, 127 sectors, do not override the last (128th) sector
-		bne flash_one_sector
+		beq end
+		jmp flash_sectors_ram+(flash_one_sector-flash_sectors_rom)
+		end:
 	.)
 
 	; Return
 	rts
+
+	show_progress:
+	.(
+		lda current_sector
+		and #%00001111
+		bne end
+
+			; X = number of sprites to show
+			lda current_sector
+			lsr
+			lsr
+			lsr
+			lsr
+			tax
+
+			; Show sprites
+			show_sprite:
+				; Y = sprite offset in OAM
+				txa
+				asl
+				asl
+				tay
+
+				; Place sprite on screen
+				lda #119
+				sta rescue_oam_mirror, y
+
+				; Loop
+				dex
+				bne show_sprite
+
+			; Refresh PPU's OAM
+			bit PPUSTATUS
+			vblankwait:
+				bit PPUSTATUS
+				bpl vblankwait
+
+			lda #$00
+			sta OAMADDR
+			lda #$02
+			sta OAMDMA
+
+		end:
+		rts
+	.)
 
 	erase_sector_sequence:
 	.(

@@ -58,9 +58,7 @@ nmi:
 reset:
 .(
 	; First wait for vblank to make sure PPU is ready
-	vblankwait1:
-		bit PPUSTATUS
-		bpl vblankwait1
+	jsr wait_vbi
 
 	; Ensure memory is zero-ed, we have to burn cycles anyway, waiting for the PPU
 	ldx #0
@@ -103,6 +101,8 @@ reset:
 		;
 		;  $078b - FCEUX on Dendy mode
 		;  $078b - Mesen on Dendy mode
+		;
+		;TODO re-do measures, they predate the use of a subroutine to wait for first vblank
 		cpy #$06
 		bcs pal
 			lda #1

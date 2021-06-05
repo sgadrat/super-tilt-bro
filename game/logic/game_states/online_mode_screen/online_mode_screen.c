@@ -508,6 +508,8 @@ static void update_game() {
 
 	// Call flash routine
 	*PPUCTRL = ((*ppuctrl_val) & 0x7f); // Disable NMI
+	*PPUMASK = 0; // Disable rendering
+	*APU_STATUS = 0x08; // Enable only noise channel
 	if (safe) {
 		flash_safe_sectors();
 	}else {
