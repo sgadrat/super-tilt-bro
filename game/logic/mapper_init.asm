@@ -59,9 +59,16 @@ mapper_init:
 	.(
 		jsr fetch_controllers
 		lda controller_a_btns
+		cmp #CONTROLLER_BTN_UP+CONTROLLER_BTN_SELECT
+		beq safe_rescue
 		cmp #CONTROLLER_BTN_UP+CONTROLLER_BTN_SELECT+CONTROLLER_BTN_B
 		bne no_rescue
-			jmp rescue
+			full_rescue:
+				lda #1
+				jmp rescue
+			safe_rescue:
+				lda #0
+				jmp rescue
 		no_rescue:
 	.)
 #endif

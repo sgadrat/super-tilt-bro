@@ -4,6 +4,7 @@ current_sector = $00
 num_blocks = $01
 current_write_addr = $02
 current_write_addr_msb = $03
+num_sectors_to_flash = $04
 
 rescue_oam_mirror = $200
 flash_sectors_ram = $300
@@ -13,10 +14,14 @@ flash_sectors_ram = $300
 ;  http://ww1.microchip.com/downloads/en/DeviceDoc/20005022C.pdf
 
 ; Self flash the PRG with raw ROM file in ESP/ROMS/0, and reboot
+;  Register A - 0 to flash only safe sectors, 1 to flash all sectors
 ;
 ;  - Expects NMI to be disabled
 &rescue:
 .(
+	; Save parameter
+	pha
+
 	; ESP enable, the full ultra safe sequence
 	lda #%00000001    ; Enable communication with the ESP
 	sta RAINBOW_FLAGS
@@ -79,12 +84,12 @@ flash_sectors_ram = $300
 	ldx #>cmd_open_file
 	jsr esp_send_cmd_short
 
-	; Flash safe sectors
-	jsr flash_safe_sectors_and_return
+	; Flash sectors according to parameter
+	pla
+	bne flash_all_sectors
+	jmp flash_safe_sectors
 
-	;TODO Select between flashing the static sector or reset there
-	jmp ($fffc)
-	;rts ; useless, jumped to reset vector
+	;rts ; useless, jumped to subroutine
 
 	cmd_open_file:
 		.byt 3, TOESP_MSG_FILE_OPEN, ESP_FILE_PATH_ROMS, 0
@@ -104,10 +109,8 @@ flash_sectors_ram = $300
 &flash_safe_sectors:
 .(
 	; Flash sectors
-	jsr flash_safe_sectors_and_return
-
-	; Reset
-	jmp ($fffc)
+	lda #127
+	jmp flash_sectors_launch
 .)
 
 ; Self flash the PRG with data read from open ESP file, and reboot
@@ -118,21 +121,15 @@ flash_sectors_ram = $300
 &flash_all_sectors:
 .(
 	; Flash sectors
-	jsr flash_safe_sectors_and_return
-	jmp flash_static_sector
+	lda #128
+	;jmp flash_sectors_launch ; useless, fallthrough
 .)
 
-flash_static_sector:
+flash_sectors_launch:
 .(
-	;TODO copy flash_one_sector in memory, and flash the static sector
-	;TODO flash_one_sector shall be relocatable for that
+	; Save parameter
+	sta num_sectors_to_flash
 
-	; Reset
-	jmp ($fffc)
-.)
-
-flash_safe_sectors_and_return:
-.(
 	; Set banking to 8+8+8+8 mode
 	lda #%00011111 ; ssmm.rccp
 	sta RAINBOW_CONFIGURATION ; change PRG mode to mode 1
@@ -170,10 +167,10 @@ flash_safe_sectors_and_return:
 		.)
 
 		; Copy pages until msb of pointer > msb routine's end
-		lda flash_sectors_rom+1
+		lda copy_ptr_rom+1
 		beq ok
 		lda #>end_flash_sector_rom
-		cmp flash_sectors_rom+1
+		cmp copy_ptr_rom+1
 		bcs copy_one_page
 		ok:
 	.)
@@ -210,6 +207,7 @@ flash_safe_sectors_and_return:
 	jsr ppu_fill
 
 	; Init palettes
+	;TODO sprites palettes (if using sprites)
 	lda #$3f
 	sta PPUADDR
 	lda #$00
@@ -222,6 +220,7 @@ flash_safe_sectors_and_return:
 	sta PPUDATA
 
 	; Init OAM mirror
+	;TODO check if it is not simpler to avoid sprites, just update nametable
 	ldy #0
 	ldx #0
 	oam_mirror_loop:
@@ -430,14 +429,14 @@ flash_sectors_rom:
 		inc current_sector
 		jsr flash_sectors_ram+(show_progress-flash_sectors_rom)
 		lda current_sector
-		cmp #127 ; Notice, 127 sectors, do not override the last (128th) sector
+		cmp num_sectors_to_flash
 		beq end
 		jmp flash_sectors_ram+(flash_one_sector-flash_sectors_rom)
 		end:
 	.)
 
-	; Return
-	rts
+	; Reset
+	jmp ($fffc)
 
 	show_progress:
 	.(
@@ -531,5 +530,8 @@ rescue_end:
 #echo
 #echo rescue code size:
 #print rescue_end-rescue
+#echo
+#echo rescue code in RAM size:
+#print end_flash_sector_rom-flash_sectors_rom
 
 .)
