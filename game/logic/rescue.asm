@@ -9,8 +9,8 @@ num_sectors_to_flash = $04
 rescue_oam_mirror = $200
 flash_sectors_ram = $300
 
-PROGRESS_BAR_POS = $29ec
-PROGRESS_BAR_LEN = 8
+PROGRESS_BAR_POS = $29e8
+PROGRESS_BAR_LEN = 16
 
 ; About read sequences, pin names, etc in comments, read the doc
 ;  https://github.com/BrokeStudio/rainbow-lib/blob/master/rainbow-prg-rom-self-flashing.md
@@ -451,16 +451,14 @@ flash_sectors_rom:
 
 	show_progress:
 	.(
-		;TODO bigger bar
 		;TODO RED square if an erase or write failed
 
 		lda current_sector
-		and #%00001111
+		and #%00000111
 		bne end
 
 			; A = index of the tile to show
 			lda current_sector
-			lsr
 			lsr
 			lsr
 			lsr
