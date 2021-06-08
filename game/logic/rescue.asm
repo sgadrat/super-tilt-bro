@@ -9,6 +9,9 @@ num_sectors_to_flash = $04
 rescue_oam_mirror = $200
 flash_sectors_ram = $300
 
+PROGRESS_BAR_POS = $29ec
+PROGRESS_BAR_LEN = 8
+
 ; About read sequences, pin names, etc in comments, read the doc
 ;  https://github.com/BrokeStudio/rainbow-lib/blob/master/rainbow-prg-rom-self-flashing.md
 ;  http://ww1.microchip.com/downloads/en/DeviceDoc/20005022C.pdf
@@ -53,7 +56,7 @@ flash_sectors_ram = $300
 		ldx RAINBOW_DATA
 		cpx #1
 		beq ok
-			jsr fatal_failure
+			jmp fatal_failure
 		ok:
 	.)
 
@@ -61,7 +64,7 @@ flash_sectors_ram = $300
 		lda RAINBOW_DATA
 		cmp #FROMESP_MSG_READY
 		beq ok
-			jsr fatal_failure
+			jmp fatal_failure
 		ok:
 	.)
 
@@ -77,7 +80,33 @@ flash_sectors_ram = $300
 	jsr esp_send_cmd_short
 #endif
 
-	;TODO check ROM file existence
+	; Check ROM file existence
+	.(
+		lda #<esp_cmd_rom_file_exists
+		ldx #>esp_cmd_rom_file_exists
+		jsr esp_send_cmd_short
+		jsr esp_wait_answer
+
+		lda RAINBOW_DATA ; Garbage byte
+		nop
+
+		lda RAINBOW_DATA
+		cmp #2
+		beq expected_length
+			jmp fatal_failure
+		expected_length:
+
+		lda RAINBOW_DATA ; Message type
+		cmp #FROMESP_MSG_FILE_EXISTS
+		beq expected_type
+			jmp fatal_failure
+		expected_type:
+
+		lda RAINBOW_DATA ; Result - 0, file not found - 1, file exists
+		bne file_exists ; loosy condition, accept any other value than 0 - better allow flashing if ESP_FILE_EXISTS api was extended
+			jmp fatal_failure
+		file_exists:
+	.)
 
 	; Open factory ROM file
 	lda #<cmd_open_file
@@ -93,6 +122,9 @@ flash_sectors_ram = $300
 
 	cmd_open_file:
 		.byt 3, TOESP_MSG_FILE_OPEN, ESP_FILE_PATH_ROMS, 0
+
+	esp_cmd_rom_file_exists:
+		.byt 3, TOESP_MSG_FILE_EXISTS, ESP_FILE_PATH_ROMS, 0
 
 #if 0
 	cmd_set_debug:
@@ -207,7 +239,6 @@ flash_sectors_launch:
 	jsr ppu_fill
 
 	; Init palettes
-	;TODO sprites palettes (if using sprites)
 	lda #$3f
 	sta PPUADDR
 	lda #$00
@@ -220,32 +251,10 @@ flash_sectors_launch:
 	sta PPUDATA
 
 	; Init OAM mirror
-	;TODO check if it is not simpler to avoid sprites, just update nametable
-	ldy #0
 	ldx #0
+	lda #$fe
 	oam_mirror_loop:
-		lda #$fe ; Y - hidden
 		sta rescue_oam_mirror, x
-
-		lda #$01 ; Tile
-		sta rescue_oam_mirror+1, x
-
-		lda #$00 ; Attributes
-		sta rescue_oam_mirror+2, x
-
-		; X - "sprite num * 8 + 88" , all sprites side by side
-		tya
-		asl
-		asl
-		asl
-		clc
-		adc #88
-		sta rescue_oam_mirror+3, x
-
-		iny
-		inx
-		inx
-		inx
 		inx
 		bne oam_mirror_loop
 
@@ -253,15 +262,15 @@ flash_sectors_launch:
 	jsr clear_bg_bot_left
 
 	bit PPUSTATUS
-	lda #$29
+	lda #>(PROGRESS_BAR_POS-1)
 	sta PPUADDR
-	lda #$eb
+	lda #<(PROGRESS_BAR_POS-1)
 	sta PPUADDR
 	lda #2
 	sta PPUDATA
-	lda #$29
+	lda #>(PROGRESS_BAR_POS+PROGRESS_BAR_LEN)
 	sta PPUADDR
-	lda #$f4
+	lda #<(PROGRESS_BAR_POS+PROGRESS_BAR_LEN)
 	sta PPUADDR
 	lda #3
 	sta PPUDATA
@@ -287,6 +296,8 @@ flash_sectors_launch:
 
 fatal_failure:
 .(
+	jsr wait_vbi
+
 	lda PPUSTATUS
 	lda #$3f
 	sta PPUADDR
@@ -440,44 +451,45 @@ flash_sectors_rom:
 
 	show_progress:
 	.(
+		;TODO bigger bar
+		;TODO RED square if an erase or write failed
+
 		lda current_sector
 		and #%00001111
 		bne end
 
-			; X = number of sprites to show
+			; A = index of the tile to show
 			lda current_sector
 			lsr
 			lsr
 			lsr
 			lsr
-			tax
 
-			; Show sprites
-			show_sprite:
-				; Y = sprite offset in OAM
-				txa
-				asl
-				asl
-				tay
-
-				; Place sprite on screen
-				lda #119
-				sta rescue_oam_mirror, y
-
-				; Loop
-				dex
-				bne show_sprite
-
-			; Refresh PPU's OAM
+			; Wait a vblank
 			bit PPUSTATUS
 			vblankwait:
 				bit PPUSTATUS
 				bpl vblankwait
 
-			lda #$00
-			sta OAMADDR
-			lda #$02
-			sta OAMDMA
+			; Set PPU address to tile in the nametable
+			;bit PPUSTATUS ; useless, done at least two times above
+			clc
+			adc #<(PROGRESS_BAR_POS-1)
+			pha
+			lda #0
+			adc #>(PROGRESS_BAR_POS-1)
+			sta PPUADDR
+			pla
+			sta PPUADDR
+
+			; Write new tile value
+			lda #1
+			sta PPUDATA
+
+			; Reset scrolling (may be modified by writes to PPUADDR)
+			lda #0
+			sta PPUSCROLL
+			sta PPUSCROLL
 
 		end:
 		rts
