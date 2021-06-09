@@ -5,6 +5,11 @@ num_blocks = $01
 current_write_addr = $02
 current_write_addr_msb = $03
 num_sectors_to_flash = $04
+num_failed_erase = $05
+num_failed_write = $06
+last_num_failed_erase = $07
+last_num_failed_write = $08
+timeout_count_msb = $09
 
 rescue_oam_mirror = $200
 flash_sectors_ram = $300
@@ -209,10 +214,9 @@ flash_sectors_launch:
 
 	; Call flash_sectors
 	jsr prepare_display
-	jsr flash_sectors_ram
+	jmp flash_sectors_ram
 
-	; Return
-	rts
+	;rts ; useless, jump to a subroutine that never returns anyway
 
 	cmd_read_block:
 		.byt 2, TOESP_MSG_FILE_READ, 128
@@ -220,22 +224,41 @@ flash_sectors_launch:
 
 &prepare_display:
 .(
+	&RESCUE_TILE_FILL_0 = 0
+	&RESCUE_TILE_FILL_1 = 3
+	&RESCUE_TILE_FILL_2 = 1
+	&RESCUE_TILE_FILL_3 = 2
+	RESCUE_TILE_DELIM_LEFT = 4
+	RESCUE_TILE_DELIM_RIGHT = 5
+
 	; Copy chr tiles
 	bit PPUSTATUS
 	lda #$00
 	sta PPUADDR
 	sta PPUADDR
-	lda #%00000000
-	ldx #16
+
+	lda #%00000000 ; Filled tiles, in order "0, 2, 3, 1"
+	ldx #16+8
 	jsr ppu_fill
 	lda #%11111111
-	ldx #16
+	ldx #8+16+8
 	jsr ppu_fill
-	lda #%00000011
-	ldx #16
+	lda #%00000000
+	ldx #8
 	jsr ppu_fill
-	lda #%11000000
-	ldx #16
+
+	lda #%00000011 ; Vertical bar on the right of the tile
+	ldx #8
+	jsr ppu_fill
+	lda #%00000000
+	ldx #8
+	jsr ppu_fill
+
+	lda #%11000000 ; Vertical bar on the left of the tile
+	ldx #8
+	jsr ppu_fill
+	lda #%00000000
+	ldx #8
 	jsr ppu_fill
 
 	; Init palettes
@@ -247,7 +270,9 @@ flash_sectors_launch:
 	sta PPUDATA
 	lda #$0f
 	sta PPUDATA
+	lda #$18
 	sta PPUDATA
+	lda #$16
 	sta PPUDATA
 
 	; Init OAM mirror
@@ -266,13 +291,13 @@ flash_sectors_launch:
 	sta PPUADDR
 	lda #<(PROGRESS_BAR_POS-1)
 	sta PPUADDR
-	lda #2
+	lda #RESCUE_TILE_DELIM_LEFT
 	sta PPUDATA
 	lda #>(PROGRESS_BAR_POS+PROGRESS_BAR_LEN)
 	sta PPUADDR
 	lda #<(PROGRESS_BAR_POS+PROGRESS_BAR_LEN)
 	sta PPUADDR
-	lda #3
+	lda #RESCUE_TILE_DELIM_RIGHT
 	sta PPUDATA
 
 	; Activate rendering
@@ -318,6 +343,10 @@ fatal_failure:
 flash_sectors_rom:
 .(
 	lda #0
+	sta num_failed_erase
+	sta num_failed_write
+	sta last_num_failed_erase
+	sta last_num_failed_write
 	sta current_sector
 	flash_one_sector:
 	.(
@@ -397,13 +426,32 @@ flash_sectors_rom:
 
 				; Wait programation execution
 				;  Must read the expected value twice in a row, ensuring DQ6 oscilating behaviour ended
-				wait_write_complete:
-					lda (current_write_addr), y
-					cmp tmpfield1
-					bne wait_write_complete
-					lda (current_write_addr), y
-					cmp tmpfield1
-					bne wait_write_complete
+				;
+				;  Max time to write is 20 microseconds
+				;   Considering 0.5 microseconds per cycle, we can timeout after 40 cycles
+				.(
+					LOOP_BEST_TIME_IN_CYCLES = 2+2+1+5+3+2+1
+					SECURITY_MARGIN = 4
+					NUM_ITERATIONS_BEFORE_TIMEOUT = (SECURITY_MARGIN * 20) / LOOP_BEST_TIME_IN_CYCLES
+#if NUM_ITERATIONS_BEFORE_TIMEOUT <> 5
+#error resulting timeout is not the expected one
+#endif
+					ldx #NUM_ITERATIONS_BEFORE_TIMEOUT+1
+					wait_write_complete:
+						dex ; 2 cycles
+						bne continue ; 2+1 cycles
+							inc num_failed_write
+							jmp end_wait_write_complete
+						continue:
+
+						lda (current_write_addr), y ; 5 cycles
+						cmp tmpfield1               ; 3 cycles
+						bne wait_write_complete     ; 2+1 cycles
+						lda (current_write_addr), y
+						cmp tmpfield1
+						bne wait_write_complete
+					end_wait_write_complete:
+				.)
 
 				iny
 				cpy #BLOCK_SIZE
@@ -446,13 +494,24 @@ flash_sectors_rom:
 		end:
 	.)
 
+	; Block if there was error to let time to see it
+	.(
+		lda num_failed_erase
+		bne block
+		lda num_failed_write
+		beq ok
+			block:
+				;TODO Show a "there was errors" message
+				bne block ; not a conditional jump, Z flag ensured to be clear
+
+		ok:
+	.)
+
 	; Reset
 	jmp ($fffc)
 
 	show_progress:
 	.(
-		;TODO RED square if an erase or write failed
-
 		lda current_sector
 		and #%00000111
 		bne end
@@ -480,8 +539,39 @@ flash_sectors_rom:
 			pla
 			sta PPUADDR
 
+			; Compute next tile value
+			;  FILL_1 - OK
+			;  FILL_2 - Write failed
+			;  FILL_3 - Sector erase failed
+			.(
+				lda num_failed_erase
+				cmp last_num_failed_erase
+				bne erase_failure
+				lda num_failed_write
+				cmp last_num_failed_write
+				bne write_failure
+
+					no_failure:
+						lda #RESCUE_TILE_FILL_1
+						jmp ok
+					erase_failure:
+						lda #RESCUE_TILE_FILL_3
+						jmp ok
+					write_failure:
+						lda #RESCUE_TILE_FILL_2
+
+				ok:
+
+				pha
+
+				lda num_failed_write
+				sta last_num_failed_write
+				lda num_failed_erase
+				sta last_num_failed_erase
+			.)
+
 			; Write new tile value
-			lda #1
+			pla
 			sta PPUDATA
 
 			; Reset scrolling (may be modified by writes to PPUADDR)
@@ -516,6 +606,7 @@ flash_sectors_rom:
 		.)
 
 		; Blip
+		;TODO nicer sound
 		lda #%00000010         ; --LCVVVV
 		sta APU_NOISE_ENVELOPE ;
 		lda #%00000111       ; L---PPPP
@@ -525,10 +616,34 @@ flash_sectors_rom:
 
 		; Wait erase execution
 		;  Wait for the value to be the erased byte, reading it once while erasing, DQ7 is forced to zero
+		;
+		;  Max time to erase is 25 milliseconds
+		;   Considering 0.0005 miliseconds per cycle, we can timeout after 50,000 cycles
+		LOOP_BEST_TIME_IN_CYCLES = 2+2+1+5+2+2+1
+		NUM_ITERATIONS_BEFORE_MAX_TIME = 50000 / LOOP_BEST_TIME_IN_CYCLES
+		NUM_ITERATIONS_BEFORE_TIMEOUT = NUM_ITERATIONS_BEFORE_MAX_TIME * 2
+#if NUM_ITERATIONS_BEFORE_TIMEOUT <> $1a0a
+#error resulting timeout is not the expected one
+#endif
+		lda #0
+		sta timeout_count_msb
+		tax
 		wait_completion:
-			lda (current_write_addr), y
-			cmp #$ff
-			bne wait_completion
+			inx          ; 2 cycles
+			bne continue ; 2+1 cycles
+				inc timeout_count_msb
+				lda timeout_count_msb
+				cmp #>(NUM_ITERATIONS_BEFORE_TIMEOUT)
+				bne continue
+
+					inc num_failed_erase
+					jmp end_wait_completion
+			continue:
+
+			lda (current_write_addr), y ; 5 cycles
+			cmp #$ff                    ; 2 cycles
+			bne wait_completion         ; 2+1 cycles
+		end_wait_completion:
 
 		rts
 	.)
