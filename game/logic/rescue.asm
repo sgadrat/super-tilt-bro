@@ -514,7 +514,6 @@ flash_sectors_rom:
 		lda num_failed_write
 		beq ok
 			block:
-				;TODO Show a "there was errors" message
 				bne block ; not a conditional jump, Z flag ensured to be clear
 
 		ok:
@@ -624,8 +623,7 @@ flash_sectors_rom:
 			sta (current_write_addr), y
 		.)
 
-		; Blip
-		;TODO nicer sound
+		; Tchack!
 		lda #%00000010         ; --LCVVVV
 		sta APU_NOISE_ENVELOPE ;
 		lda #%00000111       ; L---PPPP
