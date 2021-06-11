@@ -440,8 +440,11 @@ flash_sectors_rom:
 					wait_write_complete:
 						dex ; 2 cycles
 						bne continue ; 2+1 cycles
+							; Timeout, increment num_failed_write (avoiding to loop to zero) and quit the loop
 							inc num_failed_write
-							jmp end_wait_write_complete
+							bne end_wait_write_complete
+							inc num_failed_write
+							bne end_wait_write_complete
 						continue:
 
 						lda (current_write_addr), y ; 5 cycles
@@ -553,12 +556,18 @@ flash_sectors_rom:
 
 					no_failure:
 						lda #RESCUE_TILE_FILL_1
-						jmp ok
+						bne ok
 					erase_failure:
 						lda #RESCUE_TILE_FILL_3
-						jmp ok
+						bne ok
 					write_failure:
 						lda #RESCUE_TILE_FILL_2
+#if RESCUE_TILE_FILL_1 = 0
+#error above code expect RESCUE_TILE_FILL_1 not to be zero
+#endif
+#if RESCUE_TILE_FILL_3 = 0
+#error above code expect RESCUE_TILE_FILL_3 not to be zero
+#endif
 
 				ok:
 
@@ -636,8 +645,11 @@ flash_sectors_rom:
 				cmp #>(NUM_ITERATIONS_BEFORE_TIMEOUT)
 				bne continue
 
+					; Timeout, increment num_failed_erase (without looping to zero), and stop the loop
 					inc num_failed_erase
-					jmp end_wait_completion
+					bne end_wait_completion
+					inc num_failed_erase
+					bne end_wait_completion
 			continue:
 
 			lda (current_write_addr), y ; 5 cycles
