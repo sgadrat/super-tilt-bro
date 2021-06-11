@@ -497,6 +497,16 @@ flash_sectors_rom:
 		end:
 	.)
 
+	; Last progress tick if num_sectors_to_flash is lower than 128
+	;  Only known case is 127 (all but the last sector), we want to fill the bar to show if there was errors
+	lda #128
+	cmp num_sectors_to_flash
+	beq end_last_progress_tick
+		; lda #128 ; useless, done above
+		sta current_sector
+		jsr flash_sectors_ram+(show_progress-flash_sectors_rom)
+	end_last_progress_tick:
+
 	; Block if there was error to let time to see it
 	.(
 		lda num_failed_erase
