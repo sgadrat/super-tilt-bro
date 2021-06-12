@@ -131,7 +131,7 @@ say "======================="
 #  Static bank cannot be safely upgraded, so avoid modifying it
 #  Only a warning for ease of development, should be an error when carts are distributed to non-technical players.
 static_bank_hash=`tail -c 4096 'Super_Tilt_Bro_(E).nes' | md5sum - | grep -Eo '^[0-9a-f]+'`
-if [ "$static_bank_hash" != '0cbcaec90f6dff24708226126feaf005' ]; then
+if [ "$static_bank_hash" != '4a759281c969915bb13f36a70e6d7716' ]; then
 	say "WARNING: static bank changed"
 	say "======================="
 fi
