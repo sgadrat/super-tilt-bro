@@ -120,19 +120,6 @@ menu_online_mode_nametable_end:
 	.byt T3, T4, T7, T8, T9, TA, T4, CO, CK, T4, T4, T4, TB, T4, CB, CA, CC, CK, T4, T5
 	.byt TC, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TE
 
-	&menu_online_mode_connexion_window:
-	.byt 20, 10 ; width, height (in tiles)
-	.byt T0, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T2
-	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
-	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
-	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
-	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
-	.byt T3, T4, T4, T4, CC, CO, CN, CN, CE, CC, CT, CI, CO, CN, T6, T6, T6, T4, T4, T5
-	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
-	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
-	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
-	.byt TC, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TE
-
 	&menu_online_mode_setting_select_window:
 	.byt 20, 10 ; width, height (in tiles)
 	.byt T0, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T2
@@ -144,19 +131,6 @@ menu_online_mode_nametable_end:
 	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
 	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
 	.byt T3, T4, T7, T8, T9, TA, T4, CO, CK, T4, T4, T4, TB, T4, CB, CA, CC, CK, T4, T5
-	.byt TC, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TE
-
-	&menu_online_mode_check_update_window:
-	.byt 20, 10 ; width, height (in tiles)
-	.byt T0, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T1, T2
-	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
-	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
-	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
-	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
-	.byt T3, T4, T4, CD, CO, CW, CN, CL, CO, CA, CD, CI, CN, CG, T6, T6, T6, T4, T4, T5
-	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
-	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
-	.byt T3, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T4, T5
 	.byt TC, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TD, TE
 
 	&menu_online_mode_deny_update_game_window:

@@ -22,6 +22,19 @@ bank_data_theme_sinbad_begin:
 #echo theme sinbad size:
 #print *-bank_data_theme_sinbad_begin
 
+bank_data_stage_selection_extra_code_begin:
+#include "game/logic/game_states/stage_selection_screen/stage_selection_extra_code.asm"
+#echo
+#echo Stage selection extra code size:
+#print *-bank_data_stage_selection_extra_code_begin
+
+bank_data_stage_selection_extra_data_begin:
+#include "game/data/menu_stage_select/anims.asm"
+#include "game/data/menu_stage_select/screen.asm"
+#echo
+#echo Stage selection extra data size:
+#print *-bank_data_stage_selection_extra_data_begin
+
 bank_data05_end:
 
 #echo

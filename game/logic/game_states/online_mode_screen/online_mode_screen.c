@@ -25,8 +25,6 @@ extern uint8_t const menu_online_mode_anim_line_cursor;
 extern uint8_t const menu_online_mode_anim_monster;
 extern uint8_t const menu_online_mode_anim_satellite;
 extern uint8_t const menu_online_mode_anim_ship;
-extern uint8_t const menu_online_mode_check_update_window;
-extern uint8_t const menu_online_mode_connexion_window;
 extern uint8_t const menu_online_mode_deny_update_game_window;
 extern uint8_t const menu_online_mode_deny_wifi_settings_window;
 extern uint8_t const menu_online_mode_game_password_window;
@@ -90,6 +88,16 @@ void audio_play_interface_click();
 ///////////////////////////////////////
 
 uint32_t* const rnd = (uint32_t*) online_mode_rnd;
+
+extern uint8_t const TILE_MENU_ONLINE_MODE_DIALOGS_00;
+extern uint8_t const TILE_MENU_ONLINE_MODE_DIALOGS_01;
+extern uint8_t const TILE_MENU_ONLINE_MODE_DIALOGS_02;
+extern uint8_t const TILE_MENU_ONLINE_MODE_DIALOGS_03;
+extern uint8_t const TILE_MENU_ONLINE_MODE_DIALOGS_04;
+extern uint8_t const TILE_MENU_ONLINE_MODE_DIALOGS_05;
+extern uint8_t const TILE_MENU_ONLINE_MODE_DIALOGS_0C;
+extern uint8_t const TILE_MENU_ONLINE_MODE_DIALOGS_0D;
+extern uint8_t const TILE_MENU_ONLINE_MODE_DIALOGS_0E;
 
 ///////////////////////////////////////
 // Constants specific to this file
@@ -301,15 +309,91 @@ static void draw_dialog(uint16_t position, uint8_t const* window, uint8_t lines_
 	}
 }
 
+static void draw_dialog_fill_line(uint8_t start, uint8_t fill, uint8_t end) {
+	online_mode_selection_mem_buffer[2+1] = start;
+	uint8_t char_index = 0;
+	for (; char_index < 18; ++char_index) {
+		online_mode_selection_mem_buffer[2+2+char_index] = fill;
+	}
+	online_mode_selection_mem_buffer[2+20] = end;
+	wrap_push_nt_buffer(online_mode_selection_mem_buffer);
+}
+
+static uint8_t ascii_to_tile(char c) {
+	if ((c >= 'a' && c <= 'z')) {
+		return TILE_CHAR_A + (uint8_t)(c - 'a');
+	}else if (c >= 'A' && c <= 'Z') {
+		return TILE_CHAR_A + (uint8_t)(c - 'A');
+	}else if (c >= '0' && c <= '9') {
+		return TILE_CHAR_0 + (uint8_t)(c - '0');
+	}else if (c == ' ') {
+		return TILE_SPACE;
+	}
+	return TILE_EMPTY_TEXT;
+}
+
+static void draw_dialog_string(uint16_t position, uint8_t lines_per_frame, char* message) {
+	uint8_t const width = 20;
+	uint8_t const n_lines = 10;
+
+	uint8_t current_line = 0;
+	while (current_line < n_lines) {
+		for (uint8_t i = 0; current_line < n_lines && i < lines_per_frame; ++i) {
+			// Construct nt buffer's header
+			online_mode_selection_mem_buffer[0] = u16_msb(position);
+			online_mode_selection_mem_buffer[1] = u16_lsb(position);
+			online_mode_selection_mem_buffer[2] = width;
+
+			// Draw one line
+			uint8_t const T0 = ptr_lsb(&TILE_MENU_ONLINE_MODE_DIALOGS_00);
+			uint8_t const T1 = ptr_lsb(&TILE_MENU_ONLINE_MODE_DIALOGS_01);
+			uint8_t const T2 = ptr_lsb(&TILE_MENU_ONLINE_MODE_DIALOGS_02);
+			uint8_t const T3 = ptr_lsb(&TILE_MENU_ONLINE_MODE_DIALOGS_03);
+			uint8_t const T4 = ptr_lsb(&TILE_MENU_ONLINE_MODE_DIALOGS_04);
+			uint8_t const T5 = ptr_lsb(&TILE_MENU_ONLINE_MODE_DIALOGS_05);
+			uint8_t const TC = ptr_lsb(&TILE_MENU_ONLINE_MODE_DIALOGS_0C);
+			uint8_t const TD = ptr_lsb(&TILE_MENU_ONLINE_MODE_DIALOGS_0D);
+			uint8_t const TE = ptr_lsb(&TILE_MENU_ONLINE_MODE_DIALOGS_0E);
+			if (current_line == 0) {
+				// Top line
+				draw_dialog_fill_line(T0, T1, T2);
+			}else if (current_line == n_lines / 2) {
+				// Text line
+				online_mode_selection_mem_buffer[2+1] = T3;
+				uint8_t char_index = 0;
+				for (; char_index < 18 && message[char_index] != 0; ++char_index) {
+					online_mode_selection_mem_buffer[2+2+char_index] = ascii_to_tile(message[char_index]);
+				}
+				for (; char_index < 18; ++char_index) {
+					online_mode_selection_mem_buffer[2+2+char_index] = T4;
+				}
+				online_mode_selection_mem_buffer[2+20] = T5;
+				wrap_push_nt_buffer(online_mode_selection_mem_buffer);
+			}else if (current_line == n_lines - 1) {
+				// Bottom line
+				draw_dialog_fill_line(TC, TD, TE);
+			}else {
+				// Empty line
+				draw_dialog_fill_line(T3, T4, T5);
+			}
+
+			// Prepare next line
+			++current_line;
+			position += 32;
+		}
+		yield();
+	}
+}
+
 static void hide_earth_sprites() {
 	for (uint8_t sprite_num = 0; sprite_num < NB_OPTIONS * NB_SPRITE_PER_OPTION; ++sprite_num) {
 		oam_mirror[sprite_num * 4] = 0xfe;
 	}
 }
 
-static void hide_dialog(uint16_t position, uint8_t const* window, uint8_t lines_per_frame) {
-	uint8_t const width = window[0];
-	uint8_t n_lines = window[1];
+static void hide_dialog(uint16_t position, uint8_t lines_per_frame) {
+	uint8_t const width = 20;
+	uint8_t n_lines = 10;
 
 	// Reconstruct nametable line by line
 	while (n_lines > 0) {
@@ -427,6 +511,22 @@ static void deny_update_game() {
 	}
 }
 
+static void wait_confirm_input() {
+	while (1) {
+		if (
+			*controller_a_btns == 0 && (
+				*controller_a_last_frame_btns == CONTROLLER_BTN_B ||
+				*controller_a_last_frame_btns == CONTROLLER_BTN_A ||
+				*controller_a_last_frame_btns == CONTROLLER_BTN_START
+			)
+		)
+		{
+			return;
+		}
+		yield();
+	}
+}
+
 static void update_game() {
 #ifndef FORCE_NETWORK
 	// Deny access on emulator
@@ -437,7 +537,7 @@ static void update_game() {
 #endif
 
 	// Draw "checking updates"
-	draw_dialog(0x2146, &menu_online_mode_check_update_window, 3);
+	draw_dialog_string(0x2146, 3, "  downloading...");
 	clear_form_cursor();
 	// Note: no attribute update / earth hide, only path to this window already sets it correctly
 
@@ -471,7 +571,9 @@ static void update_game() {
 
 	uint8_t const success = (online_mode_selection_mem_buffer[2] == 0);
 	if (!success) {
-		//TODO Draw "no update available" message and wait for input before returning
+		// Draw "no update available" message and wait for input before returning
+		draw_dialog_string(0x2146, 3, "already up to date");
+		wait_confirm_input();
 		return;
 	}
 
@@ -481,18 +583,21 @@ static void update_game() {
 
 	uint8_t n_read = esp_read_file(1);
 	if (n_read != 1) {
-		//TODO error message
+		draw_dialog_string(0x2146, 3, "error  empty file");
+		wait_confirm_input();
 		return;
 	}
 	uint8_t header_len = RAINBOW_DATA;
 	if (header_len < 1) {
-		//TODO error message
+		draw_dialog_string(0x2146, 3, "error  invalid hdr");
+		wait_confirm_input();
 		return;
 	}
 
 	n_read = esp_read_file(header_len);
 	if (n_read != header_len) {
-		//TODO error message
+		draw_dialog_string(0x2146, 3, "error  truncated");
+		wait_confirm_input();
 		return;
 	}
 	uint8_t const safe = RAINBOW_DATA; --header_len;
@@ -603,7 +708,7 @@ static uint8_t select_setting() {
 }
 
 static void anonymous_login_draw_connexion_window() {
-	draw_dialog(0x2146, &menu_online_mode_connexion_window, 3);
+	draw_dialog_string(0x2146, 3, "   connection...");
 
 	switch (*online_mode_selection_current_option) {
 		case 0: {
@@ -665,7 +770,7 @@ static uint8_t anonymous_login() {
 	{
 		// Cancel everything if B is pressed
 		if (*controller_a_last_frame_btns == CONTROLLER_BTN_B && *controller_a_btns == 0) {
-			hide_dialog(0x2146, &menu_online_mode_connexion_window, 2);
+			hide_dialog(0x2146, 2);
 			return 0;
 		}
 
@@ -743,7 +848,7 @@ static void password_login_send_request(uint8_t create) {
 static void password_login_process(uint8_t create) {
 	// Clear login fields
 	clear_form_cursor();
-	draw_dialog(0x2146, &menu_online_mode_connexion_window, 3);
+	draw_dialog_string(0x2146, 3, "   connection...");
 
 	// Clear ESP messages queue (avoid the mem_buffer being overflowed by a big remaining message)
 	wrap_esp_send_cmd(esp_clear_cmd);
@@ -1039,7 +1144,7 @@ static void password_login(uint8_t create) {
 
 	// Repair damages caused to the screen
 	clear_form_cursor();
-	hide_dialog(0x2146, &menu_online_mode_login_window, 2);
+	hide_dialog(0x2146, 2);
 }
 
 static void create_account() {
@@ -1175,7 +1280,7 @@ static uint8_t enter_game_password() {
 	//  Only when cancelled, to avoid useless screen-redraw glitch before changing screen
 	if (!password_validated) {
 		clear_form_cursor();
-		hide_dialog(0x2146, &menu_online_mode_login_window, 2);
+		hide_dialog(0x2146, 2);
 	}
 
 	// Return OK if passowrd is validated
@@ -1248,7 +1353,7 @@ static void next_screen() {
 					update_game();
 					break;
 			}
-			hide_dialog(0x2146, &menu_online_mode_setting_select_window, 2);
+			hide_dialog(0x2146, 2);
 			break;
 	}
 }
