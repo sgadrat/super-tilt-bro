@@ -35,6 +35,12 @@ bank_data_stage_selection_extra_data_begin:
 #echo Stage selection extra data size:
 #print *-bank_data_stage_selection_extra_data_begin
 
+bank_data_theme_adventure_begin:
+#include "game/data/music/theme_adventure.asm"
+#echo
+#echo Theme adventure size:
+#print *-bank_data_theme_adventure_begin
+
 bank_data05_end:
 
 #echo

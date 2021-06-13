@@ -20,11 +20,11 @@ audio_music_ingame:
 	;rts ; useless, jump to a subroutine
 
 	ingame_themes_lsb:
-		.byt <music_perihelium_info, <music_sinbad_info
+		.byt <music_perihelium_info, <music_sinbad_info, <music_adventure_info
 	ingame_themes_msb:
-		.byt >music_perihelium_info, >music_sinbad_info
+		.byt >music_perihelium_info, >music_sinbad_info, >music_adventure_info
 	ingame_themes_bank:
-		.byt music_perihelium_bank, music_sinbad_bank
+		.byt music_perihelium_bank, music_sinbad_bank, music_adventure_bank
 	LAST_INGAME_TRACK = ingame_themes_msb - ingame_themes_lsb - 1
 .)
 
