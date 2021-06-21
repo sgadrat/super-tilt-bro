@@ -115,7 +115,7 @@ audio_play_music:
 			lda #%00111111 ; DDLC VVVV - APU mirror
 			sta audio_square1_apu_envelope_byte, x
 
-			lda #%00000000 ; EPPP NSSS - direct write to APU
+			lda #%00001000 ; EPPP NSSS - direct write to APU
 			.(
 				cpx #0
 				bne pulse_2
@@ -127,7 +127,7 @@ audio_play_music:
 			.)
 
 			; Remove any slide
-			;lda #0 ; useless, done above
+			lda #0
 			sta audio_square1_pitch_slide_lsb, x
 			sta audio_square1_pitch_slide_msb, x
 

@@ -11,6 +11,13 @@ import json
 import sys
 
 # Parameters
+if len(sys.argv) < 2 or sys.argv[1].lower in ['-h', '--help']:
+	print('usage: {} source_file [max_optim]'.format(sys.argv[0]))
+	print()
+	print('\tsource_file\tFamitracker module text export')
+	print('\tmax_optim\tMeximal number of optimization pass')
+	sys.exit(1)
+
 SOURCE_FILE_PATH = sys.argv[1]
 MAX_OPTIM_PASSES = 0 if len(sys.argv) < 3 else int(sys.argv[2])
 
