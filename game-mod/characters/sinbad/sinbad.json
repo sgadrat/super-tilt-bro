@@ -1,7 +1,6 @@
 {
 	"type": "character",
 	"name": "sinbad",
-	"weapon_name": "scimitar",
 	"sourcecode_file": "characters/sinbad/states.asm",
 	"netload_routine": "dummy_routine",
 	"ai": {
@@ -310,24 +309,6 @@
 	],
 	"color_swaps": {
 		"type": "character_colors",
-		"primary_names": [
-			"the true",
-			"hellborn",
-			"frozen",
-			"elven",
-			"dark",
-			"super",
-			"sakura"
-		],
-		"secondary_names": [
-			"awesome",
-			"golden",
-			"ice",
-			"wooden",
-			"unholy",
-			"sweet",
-			"bloody"
-		],
 		"primary_colors": [
 			{
 				"type": "palette",

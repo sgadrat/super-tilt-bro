@@ -349,15 +349,6 @@
 				"type": "palette"
 			}
 		],
-		"primary_names": [
-			"original",
-			"pastel",
-			"pop art",
-			"ink",
-			"primary",
-			"minimal",
-			"negative"
-		],
 		"secondary_colors": [
 			{
 				"colors": [
@@ -415,15 +406,6 @@
 				],
 				"type": "palette"
 			}
-		],
-		"secondary_names": [
-			"yellow",
-			"cyan",
-			"red",
-			"green",
-			"blue",
-			"gumball",
-			"colorful"
 		],
 		"type": "character_colors"
 	},
@@ -859,6 +841,5 @@
 	"victory_animation": {
 		"src": "characters/kiki/animations/kiki_anim_victory.json",
 		"type": "import"
-	},
-	"weapon_name": "brush"
+	}
 }

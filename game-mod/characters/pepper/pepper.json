@@ -413,15 +413,6 @@
 				"type": "palette"
 			}
 		],
-		"primary_names": [
-			"red",
-			"black",
-			"yellow",
-			"pink b",
-			"blue",
-			"pink",
-			"grey"
-		],
 		"secondary_colors": [
 			{
 				"colors": [
@@ -479,15 +470,6 @@
 				],
 				"type": "palette"
 			}
-		],
-		"secondary_names": [
-			"red",
-			"gold",
-			"red",
-			"pink",
-			"blue",
-			"pink",
-			"grey"
 		],
 		"type": "character_colors"
 	},
@@ -934,6 +916,5 @@
 	"victory_animation": {
 		"src": "characters/pepper/animations/pepper_anim_victory.json",
 		"type": "import"
-	},
-	"weapon_name": "weapon"
+	}
 }

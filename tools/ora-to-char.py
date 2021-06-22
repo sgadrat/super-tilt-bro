@@ -436,10 +436,7 @@ if creation_mode:
 	orig_character = stblib.character.Character(name = character_name)
 
 	# Set dummy values on mandatory attributes that are not in the ORA format
-	orig_character.weapon_name = 'weapon'
 	orig_character.color_swaps = stblib.character.Colorswaps(
-		primary_names = ['color a'],
-		secondary_names = ['color a'],
 		primary_colors = [stblib.character.Palette(colors=[0x0f, 0x00, 0x10])],
 		alternate_colors = [stblib.character.Palette(colors=[0x00, 0x10, 0x20])],
 		secondary_colors = [stblib.character.Palette(colors=[0x0f, 0x00, 0x10])],

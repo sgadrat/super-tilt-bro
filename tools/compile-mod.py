@@ -45,8 +45,6 @@ def generate_character(char, game_dir):
 	primary_palettes_label_name = '{}_character_palettes'.format(char.name)
 	alternate_palettes_label_name = '{}_character_alternate_palettes'.format(char.name)
 	weapon_palettes_label_name = '{}_weapon_palettes'.format(char.name)
-	character_names_label_name = '{}_character_names'.format(char.name)
-	weapon_names_label_name = '{}_weapon_names'.format(char.name)
 	properties_table_label_name = '{}_properties'.format(char.name)
 	ai_attacks_table_label_name = '{}_ai_attacks'.format(char.name)
 	ai_selectors_table_label_name = '{}_ai_selectors'.format(char.name)
@@ -145,13 +143,6 @@ def generate_character(char, game_dir):
 				character_colors_file.write('.byt {}, {}, {}\n'.format(_c(0), _c(1), _c(2)))
 			character_colors_file.write('\n')
 
-		def write_palette_names_table(names, label_name, description):
-			character_colors_file.write('; {}\n'.format(description))
-			character_colors_file.write('{}:\n'.format(label_name))
-			for name in names:
-				character_colors_file.write('.byt {} ; {}\n'.format(text_asm(name, 8, 2), name))
-			character_colors_file.write('\n')
-
 		# Primary palettes
 		write_palettes_table(
 			char.color_swaps.primary_colors,
@@ -166,25 +157,11 @@ def generate_character(char, game_dir):
 			'Alternate palette to use to reflect special state'
 		)
 
-		# Primary palettes names
-		write_palette_names_table(
-			char.color_swaps.primary_names,
-			character_names_label_name,
-			'Character palette name'
-		)
-
 		# Secondary palettes
 		write_palettes_table(
 			char.color_swaps.secondary_colors,
 			weapon_palettes_label_name,
 			'Secondary palette for character'
-		)
-
-		# Secondary palettes names
-		write_palette_names_table(
-			char.color_swaps.secondary_names,
-			weapon_names_label_name,
-			'Weapon palette name'
 		)
 
 	# Character properties
@@ -200,7 +177,6 @@ def generate_character(char, game_dir):
 
 		# Character name
 		properties_file.write('.byt {} ; {}\n'.format(text_asm(char.name, 10, 2), char.name))
-		properties_file.write('.byt {} ; {}\n'.format(text_asm(char.weapon_name, 10, 2), char.weapon_name))
 
 		# Illustrations
 		properties_file.write('VECTOR({}) ; Illustrations begining\n'.format(illustrations_label_name))
@@ -357,16 +333,6 @@ def generate_characters_index(characters, game_dir):
 			lambda c: '>{}_properties'.format(c.name)
 		)
 		_w_table(
-			'Colorswap information',
-			'characters_palettes_names_lsb',
-			lambda c: '<{}_character_names'.format(c.name)
-		)
-		_w_table(
-			'',
-			'characters_palettes_names_msb',
-			lambda c: '>{}_character_names'.format(c.name)
-		)
-		_w_table(
 			'',
 			'characters_palettes_lsb',
 			lambda c: '<{}_character_palettes'.format(c.name)
@@ -385,16 +351,6 @@ def generate_characters_index(characters, game_dir):
 			'',
 			'characters_alternate_palettes_msb',
 			lambda c: '>{}_character_alternate_palettes'.format(c.name)
-		)
-		_w_table(
-			'',
-			'characters_weapon_names_lsb',
-			lambda c: '<{}_weapon_names'.format(c.name)
-		)
-		_w_table(
-			'',
-			'characters_weapon_names_msb',
-			lambda c: '>{}_weapon_names'.format(c.name)
 		)
 		_w_table(
 			'',

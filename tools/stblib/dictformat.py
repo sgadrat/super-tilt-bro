@@ -90,7 +90,6 @@ def parse_bg_metatile(source):
 def parse_character(source):
 	return stblib.character.Character(
 		name = mandatory_get(source, 'name'),
-		weapon_name = mandatory_get(source, 'weapon_name'),
 		sourcecode = mandatory_get(source, 'sourcecode'),
 		tileset = import_from_dict(mandatory_get(source, 'tileset')),
 		victory_animation = import_from_dict(mandatory_get(source, 'victory_animation')),
@@ -143,8 +142,6 @@ def parse_character_ai_hitbox(source):
 
 def parse_character_colors(source):
 	return stblib.character.Colorswaps(
-		primary_names = mandatory_get(source, 'primary_names'),
-		secondary_names = mandatory_get(source, 'secondary_names'),
 		primary_colors = _import_list(mandatory_get(source, 'primary_colors')),
 		alternate_colors = _import_list(mandatory_get(source, 'alternate_colors')),
 		secondary_colors = _import_list(mandatory_get(source, 'secondary_colors'))

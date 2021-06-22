@@ -33,26 +33,12 @@ class Palette:
 			ensure(color <= 255)
 
 class Colorswaps:
-	def __init__(self, primary_names=None, secondary_names=None, primary_colors=None, alternate_colors=None, secondary_colors=None):
-		self.primary_names = primary_names if primary_names is not None else []
-		self.secondary_names = secondary_names if secondary_names is not None else []
+	def __init__(self, primary_colors=None, alternate_colors=None, secondary_colors=None):
 		self.primary_colors = primary_colors if primary_colors is not None else []
 		self.alternate_colors = alternate_colors if alternate_colors is not None else []
 		self.secondary_colors = secondary_colors if secondary_colors is not None else []
 
 	def check(self):
-		ensure(isinstance(self.primary_names, list))
-		for name in self.primary_names:
-			ensure(isinstance(name, str))
-			ensure(len(name) >= 1)
-			ensure(len(name) <= 8)
-
-		ensure(isinstance(self.secondary_names, list))
-		for name in self.secondary_names:
-			ensure(isinstance(name, str))
-			ensure(len(name) >= 1)
-			ensure(len(name) <= 8)
-
 		ensure(isinstance(self.primary_colors, list))
 		for colors in self.primary_colors:
 			ensure(isinstance(colors, Palette))
@@ -68,9 +54,8 @@ class Colorswaps:
 			ensure(isinstance(colors, Palette))
 			colors.check()
 
-		ensure(len(self.primary_names) == len(self.primary_colors))
 		ensure(len(self.alternate_colors) == len(self.primary_colors))
-		ensure(len(self.secondary_names) == len(self.secondary_colors))
+		ensure(len(self.secondary_colors) == len(self.primary_colors))
 
 class AiHitbox:
 	def __init__(self, left=0, right=0, top=0, bottom=0):
@@ -187,9 +172,8 @@ class Ai:
 		ensure(isinstance(self.sourcecode, str))
 
 class Character:
-	def __init__(self, name='', weapon_name='', sourcecode='', tileset=None, victory_animation=None, defeat_animation=None, menu_select_animation=None, animations=None, color_swaps=None, states=None, illustration_large=None, illustration_small=None, illustration_token=None, ai=None, netload_routine=None):
+	def __init__(self, name='', sourcecode='', tileset=None, victory_animation=None, defeat_animation=None, menu_select_animation=None, animations=None, color_swaps=None, states=None, illustration_large=None, illustration_small=None, illustration_token=None, ai=None, netload_routine=None):
 		self.name = name
-		self.weapon_name = weapon_name
 		self.sourcecode = sourcecode
 		self.tileset = tileset if tileset is not None else stblib.tiles.Tileset()
 		self.victory_animation = victory_animation if victory_animation is not None else stblib.animations.Animation()
@@ -208,10 +192,6 @@ class Character:
 		ensure(isinstance(self.name, str))
 		ensure(len(self.name) >= 1)
 		ensure(len(self.name) <= 10)
-
-		ensure(isinstance(self.weapon_name, str))
-		ensure(len(self.weapon_name) >= 1)
-		ensure(len(self.weapon_name) <= 10)
 
 		ensure(isinstance(self.sourcecode, str))
 
