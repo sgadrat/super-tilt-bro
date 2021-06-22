@@ -1060,7 +1060,12 @@ def remove_instruments(music):
 
 							# Compute a pitch slide effect according to envelope
 							#FIXME is is one tick late as instrument envelope is immediate while pitch slide begins its effect on the next tick
-							#      (ideal whould be to change UCTF to hold frequencies instead of notes, so we can flatten pitch envelopes)
+							#      - An idea whould be to change UCTF to hold frequencies instead of notes
+							#        so we can flatten pitch envelopes
+							#      - Another could be to add an opcode "instant pitch modify",
+							#        that would affect pitch immediately, without long term effect (unlike 1xx/2xx),
+							#        this is easy to mix with actual pitch-slide, and actually what instrument pitch envelope do
+							#        (bonus: it avoids to use frequencies directly, so more PAL+NTSC friendly)
 							envelope_pitch = seq_pit['sequence'][sequence_step]
 							envelope_effect = '{}{:02X}'.format(
 								'1' if envelope_pitch <= 0 else '2',
