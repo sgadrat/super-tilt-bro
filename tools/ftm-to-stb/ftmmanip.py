@@ -921,50 +921,6 @@ def remove_instruments(music):
 							# Mark volume sequence as handled for this row
 							seq_vol = None
 
-					if seq_arp is not None:
-						ensure(len(seq_arp['sequence']) > 0, 'instrument {:X} has an empty arpeggio sequence')
-
-						# Find reference note
-						ref_note_idx = get_note_table_index(ref_note)
-
-						# Until the next note, the note is adjusted by the enveloppe
-						sequence_step = 0
-						def scanner_arp(current_pattern_idx, current_row_idx):
-							nonlocal sequence_step
-							current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
-
-							# Stop on any row with a note
-							if current_chan_row['note'] != '...' and (current_pattern_idx, current_row_idx) != (pattern_idx, row_idx):
-								return False
-
-							# Compute value as impacted by the sequence
-							enveloppe_note_idx = ref_note_idx + seq_arp['sequence'][sequence_step]
-							if enveloppe_note_idx >= len(note_table_names):
-								warn('arpegio enveloppe goes over the notes table in {}: last note of the table used'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-								))
-								enveloppe_note_idx = len(note_table_names) - 1
-							elif enveloppe_note_idx < 0:
-								warn('arpegio enveloppe goes under the notes table in {}: first note of the table used'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-								))
-								enveloppe_note_idx = 0
-
-							# Place computed value
-							current_chan_row['note'] = note_table_names[enveloppe_note_idx]
-
-							# Advance sequence
-							if seq_arp['loop'] == -1:
-								sequence_step = min(sequence_step + 1, len(seq_arp['sequence']) - 1)
-							else:
-								sequence_step += 1
-								if sequence_step >= len(seq_arp['sequence']):
-									sequence_step = seq_arp['loop']
-						scan_next_chan_rows(scanner_arp, modified, track_idx, pattern_idx, row_idx )
-
-						# Mark sequence as handled for this row
-						seq_arp = None
-
 					if seq_dut is not None:
 						ensure(len(seq_dut['sequence']) > 0)
 						if seq_dut['loop'] != -1:
@@ -1042,6 +998,50 @@ def remove_instruments(music):
 						# Mark duty sequence as handled for this row
 						seq_dut = None
 
+					if seq_arp is not None:
+						ensure(len(seq_arp['sequence']) > 0, 'instrument {:X} has an empty arpeggio sequence')
+
+						# Find reference note
+						ref_note_idx = get_note_table_index(ref_note)
+
+						# Until the next note, the note is adjusted by the enveloppe
+						sequence_step = 0
+						def scanner_arp(current_pattern_idx, current_row_idx):
+							nonlocal sequence_step
+							current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+
+							# Stop on any row with a note
+							if current_chan_row['note'] != '...' and (current_pattern_idx, current_row_idx) != (pattern_idx, row_idx):
+								return False
+
+							# Compute value as impacted by the sequence
+							enveloppe_note_idx = ref_note_idx + seq_arp['sequence'][sequence_step]
+							if enveloppe_note_idx >= len(note_table_names):
+								warn('arpegio enveloppe goes over the notes table in {}: last note of the table used'.format(
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+								))
+								enveloppe_note_idx = len(note_table_names) - 1
+							elif enveloppe_note_idx < 0:
+								warn('arpegio enveloppe goes under the notes table in {}: first note of the table used'.format(
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+								))
+								enveloppe_note_idx = 0
+
+							# Place computed value
+							current_chan_row['note'] = note_table_names[enveloppe_note_idx]
+
+							# Advance sequence
+							if seq_arp['loop'] == -1:
+								sequence_step = min(sequence_step + 1, len(seq_arp['sequence']) - 1)
+							else:
+								sequence_step += 1
+								if sequence_step >= len(seq_arp['sequence']):
+									sequence_step = seq_arp['loop']
+						scan_next_chan_rows(scanner_arp, modified, track_idx, pattern_idx, row_idx )
+
+						# Mark sequence as handled for this row
+						seq_arp = None
+
 					if seq_pit is not None:
 						ensure(len(seq_pit['sequence']) > 0, 'instrument {:X} has an empty pitch sequence')
 
@@ -1058,7 +1058,7 @@ def remove_instruments(music):
 							if current_chan_row['note'] != '...' and (current_pattern_idx, current_row_idx) != (pattern_idx, row_idx):
 								return False
 
-							# Place a pitch slide effect according to envelope
+							# Compute a pitch slide effect according to envelope
 							#FIXME is is one tick late as instrument envelope is immediate while pitch slide begins its effect on the next tick
 							#      (ideal whould be to change UCTF to hold frequencies instead of notes, so we can flatten pitch envelopes)
 							envelope_pitch = seq_pit['sequence'][sequence_step]

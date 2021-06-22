@@ -12,14 +12,16 @@ import sys
 
 # Parameters
 if len(sys.argv) < 2 or sys.argv[1].lower in ['-h', '--help']:
-	print('usage: {} source_file [max_optim]'.format(sys.argv[0]))
+	print('usage: {} source_file [max_optim] [out_file]'.format(sys.argv[0]))
 	print()
 	print('\tsource_file\tFamitracker module text export')
-	print('\tmax_optim\tMeximal number of optimization pass')
+	print('\tmax_optim\tMaximal number of optimization pass')
+	print('\tout_file\tOutput file, stdout by default')
 	sys.exit(1)
 
 SOURCE_FILE_PATH = sys.argv[1]
 MAX_OPTIM_PASSES = 0 if len(sys.argv) < 3 else int(sys.argv[2])
+OUT_FILE_PATH = None if len(sys.argv) < 4 else sys.argv[3]
 
 # Logging
 def log(msg):
@@ -86,6 +88,13 @@ while not optimal and pass_num < MAX_OPTIM_PASSES:
 	music = ftmmanip.reuse_samples(music)
 	music = ftmmanip.remove_unused_samples(music)
 
+	if OUT_FILE_PATH is not None:
+		saved = copy.deepcopy(music)
+		saved = ftmmanip.samples_to_source(saved)
+		saved = ftmmanip.compute_stats(saved)
+		with open(OUT_FILE_PATH, 'w') as out_file:
+			json.dump(saved, out_file)
+
 	if music['mod'] == original_music_mod:
 		optimal = True
 
@@ -96,4 +105,5 @@ music = ftmmanip.samples_to_source(music)
 music = ftmmanip.compute_stats(music)
 
 # Show result
-print(json.dumps(music))
+if OUT_FILE_PATH is None:
+	print(json.dumps(music))
