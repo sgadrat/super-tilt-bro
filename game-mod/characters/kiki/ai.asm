@@ -85,8 +85,13 @@ kiki_ai_recover_selector:
 			cmp #KIKI_MAX_NUM_AERIAL_JUMPS
 			bne set_jump_action
 
-			; Create some floor since no other action was found
-			jmp set_draw_low_platform_action
+			; Create some floor if it is possible
+			bit kiki_b_platform_state
+			bpl no_platform_allowed
+				jmp set_draw_low_platform_action
+			no_platform_allowed:
+
+			; No action found, fallthrough to set_idle_action
 
 			; Set an action
 			set_idle_action:

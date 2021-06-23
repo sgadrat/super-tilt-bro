@@ -59,6 +59,7 @@ kiki_first_tile_index_per_player:
 .byt CHARACTERS_CHARACTER_A_FIRST_TILE, CHARACTERS_CHARACTER_B_FIRST_TILE
 
 kiki_a_platform_state = player_a_state_field3 ; aTTT TTTT - a, allowed to create a new platform - T, platform timer
+kiki_b_platform_state = player_b_state_field3
 
 kiki_init:
 .(

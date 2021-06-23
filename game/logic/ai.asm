@@ -489,6 +489,8 @@ ai_chase_selector:
 	;  Handling two bytes signed position would have the effect of making the bot go
 	;  to the edge of the platform. Problem, the bot is really bad on platforms edges,
 	;  oscilating between chasing and recovering until the indecision kills him.
+	;
+	;  Exception, if the bot is out of screen, it comes back to the screen.
 
 	stage_element_handler_lsb = tmpfield1
 	stage_element_handler_msb = tmpfield2
@@ -512,15 +514,24 @@ ai_chase_selector:
 				jmp tap_down
 	no_tap_down:
 
-	; Set the modifier to opponent's direction
-	lda #CONTROLLER_BTN_LEFT
-	sta ai_current_action_modifier
+	; Set the modifier to opponent's direction (or to comeback on screen if needed)
+	lda player_b_x_screen
+	bmi go_right
+	bne go_left
+
 	lda player_a_x
 	cmp player_b_x
-	bcc direction_set
-	lda #CONTROLLER_BTN_RIGHT
-	sta ai_current_action_modifier
+	bcc go_left
+
+		go_right:
+			lda #CONTROLLER_BTN_RIGHT
+			jmp direction_set
+
+		go_left:
+			lda #CONTROLLER_BTN_LEFT
+
 	direction_set:
+	sta ai_current_action_modifier
 
 	; Choose between jumping or not
 	lda player_b_state
