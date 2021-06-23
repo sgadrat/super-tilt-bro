@@ -11,21 +11,26 @@ KIKI_STATE_HELPLESS = CUSTOM_PLAYER_STATES_BEGIN + 3
 KIKI_STATE_JUMPING = CUSTOM_PLAYER_STATES_BEGIN + 4
 KIKI_STATE_SHIELDING = CUSTOM_PLAYER_STATES_BEGIN + 5
 KIKI_STATE_SHIELDLAG = CUSTOM_PLAYER_STATES_BEGIN + 6
-KIKI_STATE_SIDE_TILT = CUSTOM_PLAYER_STATES_BEGIN + 7
-KIKI_STATE_SIDE_SPE = CUSTOM_PLAYER_STATES_BEGIN + 8
-KIKI_STATE_DOWN_WALL = CUSTOM_PLAYER_STATES_BEGIN + 9
-KIKI_STATE_TOP_WALL = CUSTOM_PLAYER_STATES_BEGIN + 10
-KIKI_STATE_UP_TILT = CUSTOM_PLAYER_STATES_BEGIN + 11
-KIKI_STATE_UP_AERIAL = CUSTOM_PLAYER_STATES_BEGIN + 12
-KIKI_STATE_DOWN_TILT = CUSTOM_PLAYER_STATES_BEGIN + 13
-KIKI_STATE_DOWN_AERIAL = CUSTOM_PLAYER_STATES_BEGIN + 14
-KIKI_STATE_SIDE_AERIAL = CUSTOM_PLAYER_STATES_BEGIN + 15
-KIKI_STATE_JABBING = CUSTOM_PLAYER_STATES_BEGIN + 16
-KIKI_STATE_NEUTRAL_AERIAL = CUSTOM_PLAYER_STATES_BEGIN + 17
-KIKI_STATE_COUNTER_GUARD = CUSTOM_PLAYER_STATES_BEGIN + 18
-KIKI_STATE_COUNTER_STRIKE = CUSTOM_PLAYER_STATES_BEGIN + 19
+KIKI_STATE_WALLJUMPING = CUSTOM_PLAYER_STATES_BEGIN + 7
+KIKI_STATE_SIDE_TILT = CUSTOM_PLAYER_STATES_BEGIN + 8
+KIKI_STATE_SIDE_SPE = CUSTOM_PLAYER_STATES_BEGIN + 9
+KIKI_STATE_DOWN_WALL = CUSTOM_PLAYER_STATES_BEGIN + 10
+KIKI_STATE_TOP_WALL = CUSTOM_PLAYER_STATES_BEGIN + 11
+KIKI_STATE_UP_TILT = CUSTOM_PLAYER_STATES_BEGIN + 12
+KIKI_STATE_UP_AERIAL = CUSTOM_PLAYER_STATES_BEGIN + 13
+KIKI_STATE_DOWN_TILT = CUSTOM_PLAYER_STATES_BEGIN + 14
+KIKI_STATE_DOWN_AERIAL = CUSTOM_PLAYER_STATES_BEGIN + 15
+KIKI_STATE_SIDE_AERIAL = CUSTOM_PLAYER_STATES_BEGIN + 16
+KIKI_STATE_JABBING = CUSTOM_PLAYER_STATES_BEGIN + 17
+KIKI_STATE_NEUTRAL_AERIAL = CUSTOM_PLAYER_STATES_BEGIN + 18
+KIKI_STATE_COUNTER_GUARD = CUSTOM_PLAYER_STATES_BEGIN + 19
+KIKI_STATE_COUNTER_STRIKE = CUSTOM_PLAYER_STATES_BEGIN + 20
 
 KIKI_MAX_NUM_AERIAL_JUMPS = 1
+KIKI_MAX_WALLJUMPS = 1
+KIKI_WALL_JUMP_SQUAT_END = 4
+KIKI_WALL_JUMP_VELOCITY_VERTICAL = $fc40
+KIKI_WALL_JUMP_VELOCITY_HORIZONTAL = $0080
 KIKI_AIR_FRICTION_STRENGTH = 7
 KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
 KIKI_AERIAL_SPEED = $0100
@@ -114,6 +119,10 @@ kiki_init:
 		sta player_a_objects+0, y
 		sta player_a_objects+STAGE_ELEMENT_SIZE, y
 	.)
+
+	; Initialize walljump counter
+	lda #KIKI_MAX_WALLJUMPS
+	sta player_a_walljump, x
 
 	rts
 
@@ -407,6 +416,22 @@ kiki_check_aerial_inputs:
 			rts
 		.)
 
+		; Jump, choose between aerial jump or wall jump
+		jump:
+		.(
+			lda player_a_walled, x
+			beq aerial_jump
+			lda player_a_walljump, x
+			beq aerial_jump
+				wall_jump:
+					lda player_a_walled_direction, x
+					sta player_a_direction, x
+					jmp kiki_start_walljumping
+				aerial_jump:
+					jmp kiki_start_aerial_jumping
+					;rts ; useless, both branches jump to subroutine
+		.)
+
 		; If no input, unmark the input flag and return
 		no_input:
 		.(
@@ -434,8 +459,8 @@ kiki_check_aerial_inputs:
 		.byt CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT, CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
 		controller_callbacks_lo:
 		.byt <fast_fall,                   <kiki_start_side_spe_right
-		.byt <kiki_start_side_spe_left,    <kiki_start_aerial_jumping
-		.byt <kiki_start_aerial_jumping,   <kiki_start_aerial_jumping
+		.byt <kiki_start_side_spe_left,    <jump
+		.byt <jump,                        <jump
 		.byt <kiki_start_side_aerial_left, <kiki_start_side_aerial_right
 		.byt <kiki_start_down_aerial,      <kiki_start_up_aerial
 		.byt <kiki_start_neutral_aerial,   <kiki_start_top_wall
@@ -446,8 +471,8 @@ kiki_check_aerial_inputs:
 		.byt <kiki_start_counter_guard,    <kiki_start_counter_guard
 		controller_callbacks_hi:
 		.byt >fast_fall,                   >kiki_start_side_spe_right
-		.byt >kiki_start_side_spe_left,    >kiki_start_aerial_jumping
-		.byt >kiki_start_aerial_jumping,   >kiki_start_aerial_jumping
+		.byt >kiki_start_side_spe_left,    >jump
+		.byt >jump,                        >jump
 		.byt >kiki_start_side_aerial_left, >kiki_start_side_aerial_right
 		.byt >kiki_start_down_aerial,      >kiki_start_up_aerial
 		.byt >kiki_start_neutral_aerial,   >kiki_start_top_wall
@@ -568,11 +593,27 @@ kiki_global_tick:
 		end_blinking:
 	.)
 
-	; Reset allowed flag on ground
+	; Call global on-ground
 	.(
 		; Do not reset if not on a legit stage platform
 		lda player_a_grounded, x
 		beq end_ground_reset ; Not on ground
+			jsr kiki_global_onground
+		end_ground_reset:
+	.)
+
+	rts
+.)
+
+kiki_global_onground:
+.(
+	; Reinitialize walljump counter
+	lda #KIKI_MAX_WALLJUMPS
+	sta player_a_walljump, x
+
+	; Reset allowed flag on stage's ground (not on player-made platforms)
+	.(
+		lda player_a_grounded, x
 		cmp #player_a_objects-stage_data
 		bcs end_ground_reset ; Grounded on any player platform
 
@@ -754,6 +795,10 @@ kiki_start_respawn:
 	; Initialise state's timer
 	lda #PLAYER_RESPAWN_MAX_DURATION
 	sta player_a_state_field1, x
+
+	; Reinitialize walljump counter
+	lda #KIKI_MAX_WALLJUMPS
+	sta player_a_walljump, x
 
 	; Set the appropriate animation
 	lda #<kiki_anim_respawn
@@ -1540,8 +1585,23 @@ kiki_start_helpless:
 kiki_tick_helpless:
 .(
 	jsr kiki_global_tick
-
 	jmp kiki_tick_falling
+.)
+
+kiki_input_helpless:
+.(
+	; Allow to escape helpless mode with a walljump, else keep input dirty
+	lda player_a_walled, x
+	beq no_jump
+	lda player_a_walljump, x
+	beq no_jump
+		jump:
+			lda player_a_walled_direction, x
+			sta player_a_direction, x
+			jmp kiki_start_walljumping
+		no_jump:
+			jmp keep_input_dirty
+	;rts ; useless, both branches jump to a subroutine
 .)
 
 
@@ -1748,6 +1808,113 @@ kiki_tick_shieldlag:
 		jsr kiki_start_idle
 
 	end:
+	rts
+.)
+
+
+kiki_start_walljumping:
+.(
+	; Deny to start jump state if the player used all it's jumps
+	;lda player_a_walljump, x ; useless, all calls to kiki_start_walljumping actually do this check
+	;beq end
+
+	; Update wall jump counter
+	dec player_a_walljump, x
+
+	; Set player's state
+	lda #KIKI_STATE_WALLJUMPING
+	sta player_a_state, x
+
+	; Reset clock
+	lda #0
+	sta player_a_state_clock, x
+
+	; Stop any momentum, kiki does not fall during jumpsquat
+	sta player_a_velocity_h, x
+	sta player_a_velocity_h_low, x
+	sta player_a_velocity_v, x
+	sta player_a_velocity_v_low, x
+
+	; Set the appropriate animation
+	;TODO specific animation
+	lda #<kiki_anim_jump
+	sta tmpfield13
+	lda #>kiki_anim_jump
+	sta tmpfield14
+	jsr set_player_animation
+
+	end:
+	rts
+.)
+
+kiki_tick_walljumping:
+.(
+	jsr kiki_global_tick
+
+	; Tick clock
+	inc player_a_state_clock, x
+
+	; Wait for the preparation to end to begin to jump
+	lda player_a_state_clock, x
+	cmp #KIKI_WALL_JUMP_SQUAT_END
+	bcc end
+	beq begin_to_jump
+
+	; Check if the top of the jump is reached
+	lda player_a_velocity_v, x
+	beq top_reached
+	bpl top_reached
+
+		; The top is not reached, stay in walljumping state but apply gravity, without directional influence
+		jmp apply_player_gravity
+		;jmp end ; useless, jump to a subroutine
+
+	; The top is reached, return to falling
+	top_reached:
+		jmp kiki_start_falling
+		;jmp end ; useless, jump to a subroutine
+
+	; Put initial jumping velocity
+	begin_to_jump:
+		; Vertical velocity
+		lda #>KIKI_WALL_JUMP_VELOCITY_VERTICAL
+		sta player_a_velocity_v, x
+		lda #<KIKI_WALL_JUMP_VELOCITY_VERTICAL
+		sta player_a_velocity_v_low, x
+
+
+		; Horizontal velocity
+		lda player_a_direction, x
+		;cmp DIRECTION_LEFT ; useless while DIRECTION_LEFT is $00
+		bne jump_right
+			jump_left:
+				lda #<(-KIKI_WALL_JUMP_VELOCITY_HORIZONTAL)
+				sta player_a_velocity_h_low, x
+				lda #>(-KIKI_WALL_JUMP_VELOCITY_HORIZONTAL)
+				jmp end_jump_direction
+			jump_right:
+				lda #<KIKI_WALL_JUMP_VELOCITY_HORIZONTAL
+				sta player_a_velocity_h_low, x
+				lda #>KIKI_WALL_JUMP_VELOCITY_HORIZONTAL
+		end_jump_direction:
+		sta player_a_velocity_h, x
+
+		;jmp end ; useless, fallthrough
+
+	end:
+	rts
+.)
+
+kiki_input_walljumping:
+.(
+	; The jump is cancellable by aerial movements, but only after preparation
+	lda #KIKI_WALL_JUMP_SQUAT_END
+	cmp player_a_state_clock, x
+	bcs grounded
+		not_grounded:
+			jmp kiki_check_aerial_inputs
+			; no return, jump to a subroutine
+	grounded:
 	rts
 .)
 

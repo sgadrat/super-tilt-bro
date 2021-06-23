@@ -63,8 +63,22 @@ kiki_ai_recover_selector:
 			cmp #KIKI_STATE_FALLING
 			beq dont_set_idle_action
 			cmp #KIKI_STATE_THROWN
+			beq dont_set_idle_action
+			cmp #KIKI_STATE_HELPLESS
 			bne set_idle_action
 			dont_set_idle_action:
+
+			; Wall jump if it is possible
+			lda player_b_walled
+			beq skip_walljump
+			lda player_b_walljump
+			bne set_jump_action
+			skip_walljump:
+
+			; In helpless mode, do not try anything else
+			lda player_b_state
+			cmp #SINBAD_STATE_HELPLESS
+			beq set_idle_action
 
 			; Air jump if it is possible
 			lda player_b_num_aerial_jumps
