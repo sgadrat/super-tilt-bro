@@ -154,9 +154,17 @@ ai_tick:
 
 ai_continue_action:
 .(
+	zp_current_action_lsb = tmpfield1
+	zp_current_action_msb = tmpfield2
+
+	lda ai_current_action_lsb
+	sta zp_current_action_lsb
+	lda ai_current_action_msb
+	sta zp_current_action_msb
+
 	ldy ai_current_action_step
 	iny
-	lda (ai_current_action_lsb), y
+	lda (zp_current_action_lsb), y
 	cmp ai_current_action_counter
 	bcc next_step
 
@@ -168,7 +176,7 @@ ai_continue_action:
 		sty ai_current_action_step
 		lda #0
 		sta ai_current_action_counter
-		lda (ai_current_action_lsb), y
+		lda (zp_current_action_lsb), y
 		cmp #AI_STEP_FINAL
 		bne set_controller
 
@@ -177,7 +185,7 @@ ai_continue_action:
 		jmp end
 
 	set_controller:
-		lda (ai_current_action_lsb), y
+		lda (zp_current_action_lsb), y
 		ora ai_current_action_modifier
 		sta controller_b_btns
 		inc ai_current_action_counter
@@ -496,9 +504,12 @@ ai_chase_selector:
 		beq no_tap_down
 			lda stage_data, x
 			cmp #STAGE_ELEMENT_SMOOTH_PLATFORM
-			beq tap_down
+			bne check_oos_platform
+				jmp tap_down
+			check_oos_platform:
 			cmp #STAGE_ELEMENT_OOS_SMOOTH_PLATFORM
-			beq tap_down
+			bne no_tap_down
+				jmp tap_down
 	no_tap_down:
 
 	; Set the modifier to opponent's direction

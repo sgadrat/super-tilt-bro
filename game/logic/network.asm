@@ -162,7 +162,7 @@ network_tick_ingame:
 		; Overwrite players input with delayed input
 		ldx network_local_player_number ; X = local player number
 
-		lda network_current_frame_byte0 ; Y = input offset in history ;FIXME if just got a message in the futur, it may be in garbage part of the input history (should rewrite next four inputs when receiving a message in the futur)
+		lda network_current_frame_byte0 ; Y = input offset in history
 		and #%00011111
 		tay
 
@@ -281,7 +281,7 @@ network_tick_ingame:
 					sta $00, x        ; 4 cycles
 
 				inx ; 2 cycles
-				cpx #$4f ; 3 cycles
+				cpx #$50 ; 3 cycles
 				bne copy_one_byte ; 3 cycles
 			.)
 

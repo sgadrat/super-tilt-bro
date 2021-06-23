@@ -71,94 +71,86 @@ last_c_label = _sy
 player_a_state = $00
 player_b_state = $01
 
-; $02 - used by gameover_winner
-player_a_hitstun = $03
-player_b_hitstun = $04
-player_a_x = $05
-player_b_x = $06
-player_a_y = $07
-player_b_y = $08
-player_a_direction = $09 ; 0 - watching left
-player_b_direction = $0a ; 1 - watching right
-player_a_velocity_v = $0b
-player_b_velocity_v = $0c
-player_a_velocity_h = $0d
-player_b_velocity_h = $0e
-player_a_state_field1 = $0f
-player_b_state_field1 = $10
-player_a_state_field2 = $11
-player_b_state_field2 = $12
-player_a_x_screen = $13
-player_b_x_screen = $14
-player_a_y_screen = $15
-player_b_y_screen = $16
-player_a_state_clock = $17
-player_b_state_clock = $18
-player_a_hurtbox_left = $19
-player_b_hurtbox_left = $1a
-player_a_hurtbox_right = $1b
-player_b_hurtbox_right = $1c
-player_a_hurtbox_top = $1d
-player_b_hurtbox_top = $1e
-player_a_hurtbox_bottom = $1f
-player_b_hurtbox_bottom = $20
-player_a_hitbox_left = $21
-player_b_hitbox_left = $22
-player_a_hitbox_right = $23
-player_b_hitbox_right = $24
-player_a_hitbox_top = $25
-player_b_hitbox_top = $26
-player_a_hitbox_bottom = $27
-player_b_hitbox_bottom = $28
-player_a_hitbox_enabled = $0029 ; 0 - hitbox disabled
-player_b_hitbox_enabled = $002a ; 1 - hitbox enabled
-player_a_hitbox_force_v = $2b
-player_b_hitbox_force_v = $2c
-player_a_hitbox_force_h = $2d
-player_b_hitbox_force_h = $2e
-player_a_hitbox_damages = $2f
-player_b_hitbox_damages = $30
-player_a_damages = $31
-player_b_damages = $32
-player_a_x_low = $33
-player_b_x_low = $34
-player_a_y_low = $35
-player_b_y_low = $36
-player_a_velocity_v_low = $37
-player_b_velocity_v_low = $38
-player_a_velocity_h_low = $39
-player_b_velocity_h_low = $3a
-player_a_hitbox_force_v_low = $3b
-player_b_hitbox_force_v_low = $3c
-player_a_hitbox_force_h_low = $3d
-player_b_hitbox_force_h_low = $3e
-player_a_hitbox_base_knock_up_v_high = $3f
-player_b_hitbox_base_knock_up_v_high = $40
-player_a_hitbox_base_knock_up_h_high = $41
-player_b_hitbox_base_knock_up_h_high = $42
-player_a_hitbox_base_knock_up_v_low = $43
-player_b_hitbox_base_knock_up_v_low = $44
-player_a_hitbox_base_knock_up_h_low = $45
-player_b_hitbox_base_knock_up_h_low = $46
-player_a_state_field3 = $47
-player_b_state_field3 = $48
-player_a_num_aerial_jumps = $49
-player_b_num_aerial_jumps = $4a
-player_a_stocks = $4b
-player_b_stocks = $4c
-player_a_gravity = $4d
-player_b_gravity = $4e
+player_a_hitstun = $02
+player_b_hitstun = $03
+player_a_x = $04
+player_b_x = $05
+player_a_y = $06
+player_b_y = $07
+player_a_direction = $08 ; 0 - watching left
+player_b_direction = $09 ; 1 - watching right
+player_a_velocity_v = $0a
+player_b_velocity_v = $0b
+player_a_velocity_h = $0c
+player_b_velocity_h = $0d
+player_a_x_screen = $0e
+player_b_x_screen = $0f
+player_a_y_screen = $10
+player_b_y_screen = $11
+player_a_state_clock = $12
+player_b_state_clock = $13
+player_a_hurtbox_left = $14
+player_b_hurtbox_left = $15
+player_a_hurtbox_right = $16
+player_b_hurtbox_right = $17
+player_a_hurtbox_top = $18
+player_b_hurtbox_top = $19
+player_a_hurtbox_bottom = $1a
+player_b_hurtbox_bottom = $1b
+player_a_hitbox_left = $1c
+player_b_hitbox_left = $1d
+player_a_hitbox_right = $1e
+player_b_hitbox_right = $1f
+player_a_hitbox_top = $20
+player_b_hitbox_top = $21
+player_a_hitbox_bottom = $22
+player_b_hitbox_bottom = $23
+player_a_hitbox_enabled = $24 ; 0 - hitbox disabled
+player_b_hitbox_enabled = $25 ; 1 - hitbox enabled
+player_a_hitbox_force_v = $26
+player_b_hitbox_force_v = $27
+player_a_hitbox_force_h = $28
+player_b_hitbox_force_h = $29
+player_a_hitbox_damages = $2a
+player_b_hitbox_damages = $2b
+player_a_damages = $2c
+player_b_damages = $2d
+player_a_x_low = $2e
+player_b_x_low = $2f
+player_a_y_low = $30
+player_b_y_low = $31
+player_a_velocity_v_low = $32
+player_b_velocity_v_low = $33
+player_a_velocity_h_low = $34
+player_b_velocity_h_low = $35
+player_a_hitbox_force_v_low = $36
+player_b_hitbox_force_v_low = $37
+player_a_hitbox_force_h_low = $38
+player_b_hitbox_force_h_low = $39
+player_a_hitbox_base_knock_up_v_high = $3a
+player_b_hitbox_base_knock_up_v_high = $3b
+player_a_hitbox_base_knock_up_h_high = $3c
+player_b_hitbox_base_knock_up_h_high = $3d
+player_a_hitbox_base_knock_up_v_low = $3e
+player_b_hitbox_base_knock_up_v_low = $3f
+player_a_hitbox_base_knock_up_h_low = $40
+player_b_hitbox_base_knock_up_h_low = $41
+player_a_num_aerial_jumps = $42
+player_b_num_aerial_jumps = $43
+player_a_stocks = $44
+player_b_stocks = $45
+player_a_gravity = $46
+player_b_gravity = $47
+player_a_walljump = $48
+player_b_walljump = $49
+player_a_state_field1 = $4a
+player_b_state_field1 = $4b
+player_a_state_field2 = $4c
+player_b_state_field2 = $4d
+player_a_state_field3 = $4e
+player_b_state_field3 = $4f
 
-;TODO put is with other registers, it is used by multiple states (and animation code)
-player_number = $4f ; Extra register to hold a player number, used when register X is inconvenient
-
-ai_current_action_lsb = $50
-ai_current_action_msb = $51
-ai_current_action_counter = $52
-ai_current_action_step = $53
-ai_current_action_modifier = $54
-ai_delay = $55
-ai_max_delay = $56
+; $50 to $56 - unused
 
 player_a_hurtbox_left_msb = $57
 player_b_hurtbox_left_msb = $58
@@ -215,6 +207,14 @@ player_b_animation = $05ac ; $05ac to $05b7 - player b's animation state
 player_a_out_of_screen_indicator = $05b8 ; $05b8 to $05c3 - player a's out of screen animation state
 player_b_out_of_screen_indicator = $05c4 ; $05c4 to $05cf - player b's out of screen animation state
 
+ai_current_action_lsb = $05d0
+ai_current_action_msb = $05d1
+ai_current_action_counter = $05d2
+ai_current_action_step = $05d3
+ai_current_action_modifier = $05d4
+ai_delay = $05d5
+ai_max_delay = $05d6
+
 ;
 ; Stage specific labels
 ;
@@ -243,17 +243,15 @@ stage_gem_frame_cnt = $8d
 
 ;Note - $90 to $af are used by DI particles
 
-; Extra zero-page registers
-extra_tmpfield1 = $b0
-extra_tmpfield2 = $b1
-extra_tmpfield3 = $b2
-extra_tmpfield4 = $b3
-extra_tmpfield5 = $b4
-extra_tmpfield6 = $b5
-
 ;
 ; Network engine labels
 ;
+
+server_current_frame_byte0 = $b1
+server_current_frame_byte1 = $b2
+server_current_frame_byte2 = $b3
+server_current_frame_byte3 = $b4
+network_rollback_mode = $b5 ; 0 - normal, 1 - rolling ; Note - also used by game tick to know if a frame will be drawn, may be renamed something more generic like "dummy_frame"
 
 network_current_frame_byte0 = $b6
 network_current_frame_byte1 = $b7
@@ -267,12 +265,6 @@ network_client_id_byte3 = $bd
 
 network_last_sent_btns = $be
 network_local_player_number = $bf
-
-server_current_frame_byte0 = $eb
-server_current_frame_byte1 = $ec
-server_current_frame_byte2 = $ed
-server_current_frame_byte3 = $ee
-network_rollback_mode = $ef ; 0 - normal, 1 - rolling ; Note - also used by game tick to know if a frame will be drawn, may be renamed something more generic like "dummy_frame"
 
 ;
 ; Network login labels
@@ -405,7 +397,6 @@ screen_sprites_y_msb = $0440 ; $0440 to $047f
 ; GAMEOVER labels
 ;
 
-gameover_winner = $02
 gameover_balloon0_x = $50
 gameover_balloon1_x = $51
 gameover_balloon2_x = $52
@@ -439,6 +430,8 @@ gameover_balloon4_velocity_h = $6c
 gameover_balloon5_velocity_h = $6d
 
 gameover_random = $4e
+
+gameover_winner = $0580
 
 ;
 ; Audio engine labels
@@ -529,8 +522,23 @@ config_player_b_weapon_palette = $df
 config_player_a_character = $e0
 config_player_b_character = $e1
 config_game_mode = $e2
-; Note other $ex may be used by network engine
 
+;
+; Zero-page registers
+;
+
+; Extra register to hold a player number, used when register X is inconvenient
+player_number = $e9
+
+; Uncomonly used register, for when we really want to avoid possible conflicts with tmpfields
+extra_tmpfield1 = $ea
+extra_tmpfield2 = $eb
+extra_tmpfield3 = $ec
+extra_tmpfield4 = $ed
+extra_tmpfield5 = $ee
+extra_tmpfield6 = $ef
+
+; Standard zeropage registers
 tmpfield1 = $f0
 tmpfield2 = $f1
 tmpfield3 = $f2
@@ -548,6 +556,9 @@ tmpfield14 = $fd
 tmpfield15 = $fe
 tmpfield16 = $ff
 
+;
+; Non-zeropage memory
+;
 
 stack = $0100
 oam_mirror = $0200

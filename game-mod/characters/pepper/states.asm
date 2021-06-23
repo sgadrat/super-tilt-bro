@@ -39,9 +39,6 @@ PEPPER_GROUND_FRICTION_STRENGTH = $40
 
 PEPPER_CARROT_NOT_PLACED = $80
 
-pepper_a_num_walljumps = player_a_state_field3
-pepper_b_num_walljumps = player_b_state_field3
-
 ; Offset of 12 bytes reserved in player's object data for storing carrot's animation state
 pepper_carrot_anim_per_player:
 .byt (player_a_objects-stage_data)+1, (player_b_objects-stage_data)+1
@@ -172,7 +169,7 @@ pepper_global_onground:
 .(
 	; Initialize walljump counter
 	lda #PEPPER_MAX_WALLJUMPS
-	sta pepper_a_num_walljumps, x
+	sta player_a_walljump, x
 	rts
 .)
 
@@ -471,7 +468,7 @@ pepper_check_aerial_inputs:
         .(
 			lda player_a_walled, x
 			beq aerial_jump
-			lda pepper_a_num_walljumps, x
+			lda player_a_walljump, x
 			beq aerial_jump
 				wall_jump:
 					lda player_a_walled_direction, x
@@ -710,7 +707,7 @@ pepper_start_respawn:
 
 	; Reinitialize walljump counter
 	lda #PEPPER_MAX_WALLJUMPS
-	sta pepper_a_num_walljumps, x
+	sta player_a_walljump, x
 
 	; Set the appropriate animation
 	lda #<pepper_anim_respawn
@@ -1658,7 +1655,7 @@ pepper_input_helpless:
 	; Allow to escape helpless mode with a walljump, else keep input dirty
 	lda player_a_walled, x
 	beq no_jump
-	lda pepper_a_num_walljumps, x
+	lda player_a_walljump, x
 	beq no_jump
 		jump:
 			lda player_a_walled_direction, x
@@ -1880,11 +1877,11 @@ pepper_tick_shieldlag:
 pepper_start_walljumping:
 .(
 	; Deny to start jump state if the player used all it's jumps
-	;lda pepper_a_num_walljumps, x ; useless, all calls to pepper_start_walljumping actually do this check
+	;lda player_a_walljump, x ; useless, all calls to pepper_start_walljumping actually do this check
 	;beq end
 
 	; Update wall jump counter
-	dec pepper_a_num_walljumps, x
+	dec player_a_walljump, x
 
 	; Set player's state
 	lda #PEPPER_STATE_WALLJUMPING

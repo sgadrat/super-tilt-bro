@@ -74,7 +74,7 @@ sinbad_ai_recover_selector:
 			; Wall jump if it is possible
 			lda player_b_walled
 			beq skip_walljump
-			lda sinbad_b_num_walljumps
+			lda player_b_walljump
 			bne set_jump_action
 			skip_walljump:
 

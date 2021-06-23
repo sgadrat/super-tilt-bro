@@ -32,15 +32,12 @@ SINBAD_FASTFALL_GRAVITY = $05
 SINBAD_GROUND_FRICTION_STRENGTH = $40
 SINBAD_MAX_WALLJUMPS = 1
 
-sinbad_a_num_walljumps = player_a_state_field3
-sinbad_b_num_walljumps = player_b_state_field3
-
 sinbad_init:
 sinbad_global_onground:
 .(
 	; Initialize walljump counter
 	lda #SINBAD_MAX_WALLJUMPS
-	sta sinbad_a_num_walljumps, x
+	sta player_a_walljump, x
 	rts
 .)
 
@@ -161,7 +158,7 @@ check_aerial_inputs:
 		.(
 			lda player_a_walled, x
 			beq aerial_jump
-			lda sinbad_a_num_walljumps, x
+			lda player_a_walljump, x
 			beq aerial_jump
 				wall_jump:
 					lda player_a_walled_direction, x
@@ -1058,7 +1055,7 @@ sinbad_start_respawn:
 
 	; Reinitialize walljump counter
 	lda #SINBAD_MAX_WALLJUMPS
-	sta sinbad_a_num_walljumps, x
+	sta player_a_walljump, x
 
 	; Set the appropriate animation
 	lda #<anim_sinbad_respawn
@@ -1387,7 +1384,7 @@ sinbad_input_helpless:
 	; Allow to escape helpless mode with a walljump, else keep input dirty
 	lda player_a_walled, x
 	beq no_jump
-	lda sinbad_a_num_walljumps, x
+	lda player_a_walljump, x
 	beq no_jump
 		jump:
 			lda player_a_walled_direction, x
@@ -2317,11 +2314,11 @@ sinbad_tick_spawn:
 sinbad_start_walljumping:
 .(
 	; Deny to start jump state if the player used all it's jumps
-	;lda sinbad_a_num_walljumps, x ; useless, all calls to sinbad_start_walljumping actually do this check
+	;lda player_a_walljump, x ; useless, all calls to sinbad_start_walljumping actually do this check
 	;beq end
 
 	; Update wall jump counter
-	dec sinbad_a_num_walljumps, x
+	dec player_a_walljump, x
 
 	; Set player's state
 	lda #SINBAD_STATE_WALLJUMPING
