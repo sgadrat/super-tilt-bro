@@ -226,6 +226,30 @@ kiki_netload:
 	rts
 .)
 
+; Apply air or ground friction, depending on character being grounded
+; Ground friction is less than normal, to allow some sliding
+kiki_apply_friction_lite:
+.(
+	lda player_a_grounded, x
+	beq air_friction
+		ground_friction:
+			lda #$00
+			sta tmpfield4
+			sta tmpfield3
+			sta tmpfield2
+			sta tmpfield1
+			lda #KIKI_GROUND_FRICTION_STRENGTH/3
+			sta tmpfield5
+			jmp merge_to_player_velocity
+			; No return, jump to subroutine
+		air_friction:
+			jsr kiki_apply_air_friction
+			jmp apply_player_gravity
+			; No return, jump to subroutine
+
+	;rts ; useless, no branch returns
+.)
+
 kiki_apply_air_friction:
 .(
 	; merge_to_player_velocity parameter names
@@ -2004,7 +2028,12 @@ kiki_tick_side_tilt:
 .)
 
 
-kiki_start_side_spe_right:
+.(
+KIKI_WALL_WHIFF = 0
+KIKI_WALL_DRAWN = 1
+kiki_a_wall_drawn = player_a_state_field1
+
+&kiki_start_side_spe_right:
 .(
 	lda DIRECTION_RIGHT
 	sta player_a_direction, x
@@ -2012,7 +2041,7 @@ kiki_start_side_spe_right:
 	; rts ; useless - kiki_start_side_spe is a routine
 .)
 
-kiki_start_side_spe_left:
+&kiki_start_side_spe_left:
 .(
 	lda DIRECTION_LEFT
 	sta player_a_direction, x
@@ -2020,7 +2049,7 @@ kiki_start_side_spe_left:
 	; rts ; useless - kiki_start_side_spe is a routine
 .)
 
-kiki_start_side_spe:
+&kiki_start_side_spe:
 .(
 	sprite_x_lsb = tmpfield1
 	sprite_x_msb = tmpfield2
@@ -2051,8 +2080,13 @@ kiki_start_side_spe:
 	lda kiki_a_platform_state, x
 	and #%10000000
 	bne process
+		lda #KIKI_WALL_WHIFF
+		sta kiki_a_wall_drawn, x
 		jmp spawn_wall_end
 	process:
+
+	lda #KIKI_WALL_DRAWN
+	sta kiki_a_wall_drawn, x
 
 	; Reset velocity
 	lda #0
@@ -2216,14 +2250,20 @@ kiki_start_side_spe:
 	rts
 .)
 
-kiki_tick_side_spe:
+&kiki_tick_side_spe:
 .(
 	jsr kiki_global_tick
 
 	KIKI_STATE_SIDE_SPE_DURATION = 16
 
-	;TODO gravity if failed to paint
+	; Apply gravity if failed to paint
+	lda kiki_a_wall_drawn, x
+	bne skip_gravity
+		jsr kiki_apply_friction_lite
+		jsr apply_player_gravity
+	skip_gravity:
 
+	; Return to inactive state after animation's duration
 	inc player_a_state_clock, x
 
 	lda player_a_state_clock, x
@@ -2235,6 +2275,8 @@ kiki_tick_side_spe:
 
 	end:
 	rts
+.)
+
 .)
 
 
@@ -2263,11 +2305,12 @@ kiki_start_down_wall:
 	; Avoid spawning wall when forbiden
 	lda kiki_a_platform_state, x
 	and #%10000000
-	bne spawn_wall
+	bne process
 		jmp spawn_wall_end
+	process:
 
 	; Reset velocity
-	;lda #0 ; useless, already set to zero
+	lda #0
 	sta player_a_velocity_h_low, x
 	sta player_a_velocity_h, x
 	sta player_a_velocity_v_low, x
@@ -2449,7 +2492,12 @@ kiki_tick_down_wall:
 .)
 
 
-kiki_start_top_wall:
+.(
+KIKI_WALL_WHIFF = 0
+KIKI_WALL_DRAWN = 1
+kiki_a_wall_drawn = player_a_state_field1
+
+&kiki_start_top_wall:
 .(
 	sprite_x_lsb = tmpfield1
 	sprite_x_msb = tmpfield2
@@ -2476,8 +2524,13 @@ kiki_start_top_wall:
 	lda kiki_a_platform_state, x
 	and #%10000000
 	bne process
+		lda #KIKI_WALL_WHIFF
+		sta kiki_a_wall_drawn, x
 		jmp spawn_wall_end
 	process:
+
+	lda #KIKI_WALL_DRAWN
+	sta kiki_a_wall_drawn, x
 
 	; Reset velocity
 	lda #0
@@ -2623,12 +2676,20 @@ kiki_start_top_wall:
 	rts
 .)
 
-kiki_tick_top_wall:
+&kiki_tick_top_wall:
 .(
 	jsr kiki_global_tick
 
 	KIKI_STATE_TOP_WALL_DURATION = 16
 
+	; Apply gravity if failed to paint
+	lda kiki_a_wall_drawn, x
+	bne skip_gravity
+		jsr kiki_apply_friction_lite
+		jsr apply_player_gravity
+	skip_gravity:
+
+	; Return to inactive state after animation's duration
 	inc player_a_state_clock, x
 
 	lda player_a_state_clock, x
@@ -2639,6 +2700,8 @@ kiki_tick_top_wall:
 
 	end:
 	rts
+.)
+
 .)
 
 
@@ -3040,23 +3103,7 @@ kiki_tick_counter_guard:
 
 	KIKI_STATE_COUNTER_GUARD_TOTAL_DURATION = 43
 
-	lda player_a_grounded, x
-	beq air_friction
-		ground_friction:
-			lda #$00
-			sta tmpfield4
-			sta tmpfield3
-			sta tmpfield2
-			sta tmpfield1
-			lda #KIKI_GROUND_FRICTION_STRENGTH/3
-			sta tmpfield5
-			jsr merge_to_player_velocity
-			jmp end_friction
-		air_friction:
-			jsr kiki_apply_air_friction
-			jsr apply_player_gravity
-			; Fallthrough
-	end_friction:
+	jsr kiki_apply_friction_lite
 
 	inc player_a_state_clock, x
 
