@@ -2498,7 +2498,7 @@ pepper_tick_teleport:
 	lda player_a_state_clock, x
 	cmp #PEPPER_STATE_TELEPORT_DURATION-PEPPER_STATE_TELEPORT_TP_TIME     ; 8
 	beq final_position ; at teleport time
-	cmp #PEPPER_STATE_TELEPORT_DURATION-PEPPER_STATE_TELEPORT_MOVE_TIME+1 ; 12
+	cmp #PEPPER_STATE_TELEPORT_DURATION-PEPPER_STATE_TELEPORT_MOVE_TIME+1 ; 11
 	beq start_move
 	jmp end
 
