@@ -2382,7 +2382,7 @@ pepper_tick_send_carrot:
 			bne ok
 				lda #PEPPER_CARROT_NOT_PLACED
 				ldy pepper_carrot_anim_per_player, x
-				sta stage_data+ANIMATION_STATE_OFFSET_Y_MSB, y
+				sta stage_data+ANIMATION_STATE_OFFSET_X_MSB, y
 			ok:
 		.)
 
@@ -2517,6 +2517,13 @@ pepper_tick_teleport:
 		; Y = offset to carrot's animation
 		ldy pepper_carrot_anim_per_player, x
 
+		; Reset velocity
+		lda #0
+		sta player_a_velocity_h_low, x
+		sta player_a_velocity_h, x
+		sta player_a_velocity_v_low, x
+		sta player_a_velocity_v, x
+
 		; Check that carrot is placed, else skip doing anything
 		lda stage_data+ANIMATION_STATE_OFFSET_X_MSB, y
 		cmp #PEPPER_CARROT_NOT_PLACED
@@ -2536,12 +2543,6 @@ pepper_tick_teleport:
 		lda #0
 		sta player_a_x_low, x
 		sta player_a_y_low, x
-
-		; Reset velocity
-		sta player_a_velocity_h_low, x
-		sta player_a_velocity_h, x
-		sta player_a_velocity_v_low, x
-		sta player_a_velocity_v, x
 
 		; Remove carrot
 		lda #PEPPER_CARROT_NOT_PLACED
