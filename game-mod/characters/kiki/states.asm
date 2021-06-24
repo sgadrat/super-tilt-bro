@@ -926,6 +926,20 @@ kiki_tick_spawn:
 .)
 
 
+; Choose between falling or idle depending if grounded
+kiki_start_inactive_state:
+.(
+    lda player_a_grounded, x
+    bne idle
+
+    fall:
+        jmp kiki_start_falling
+        ; No return, jump to subroutine
+
+    idle:
+    ; Fallthrough to pepper_start_idle
+.)
+
 kiki_start_idle:
 .(
 	; Set the player's state
@@ -1507,7 +1521,8 @@ kiki_tick_landing:
 	lda player_a_state_clock, x
 	cmp #KIKI_STATE_LANDING_DURATION
 	bne end
-	jsr kiki_start_idle
+		jmp kiki_start_inactive_state
+		; No return, jump to subroutine
 
 	end:
 	rts
@@ -1560,7 +1575,8 @@ kiki_tick_crashing:
 	lda player_a_state_clock, x
 	cmp #KIKI_STATE_CRASHING_DURATION
 	bne end
-	jsr kiki_start_idle
+		jmp kiki_start_inactive_state
+		; No return, jump to subroutine
 
 	end:
 	rts
@@ -2206,18 +2222,16 @@ kiki_tick_side_spe:
 
 	KIKI_STATE_SIDE_SPE_DURATION = 16
 
+	;TODO gravity if failed to paint
+
 	inc player_a_state_clock, x
 
 	lda player_a_state_clock, x
 	cmp #KIKI_STATE_SIDE_SPE_DURATION
 	bne end
 
-		lda player_a_grounded
-		bne on_ground
-			jsr kiki_start_falling
-			jmp end
-		on_ground:
-			jsr kiki_start_idle
+		jmp kiki_start_inactive_state
+		; No return, jump to subroutine
 
 	end:
 	rts
@@ -2246,18 +2260,18 @@ kiki_start_down_wall:
 	lda #0
 	sta player_a_state_clock,x
 
+	; Avoid spawning wall when forbiden
+	lda kiki_a_platform_state, x
+	and #%10000000
+	bne spawn_wall
+		jmp spawn_wall_end
+
 	; Reset velocity
 	;lda #0 ; useless, already set to zero
 	sta player_a_velocity_h_low, x
 	sta player_a_velocity_h, x
 	sta player_a_velocity_v_low, x
 	sta player_a_velocity_v, x
-
-	; Avoid spawning wall when forbiden
-	lda kiki_a_platform_state, x
-	and #%10000000
-	bne spawn_wall
-		jmp spawn_wall_end
 
 	; Spawn wall
 	spawn_wall:
@@ -2428,7 +2442,7 @@ kiki_tick_down_wall:
 	lda player_a_state_clock, x
 	cmp #KIKI_STATE_DOWN_WALL_DURATION
 	bne end
-		jsr kiki_start_idle
+		jmp kiki_start_inactive_state
 
 	end:
 	rts
@@ -2621,12 +2635,7 @@ kiki_tick_top_wall:
 	cmp #KIKI_STATE_TOP_WALL_DURATION
 	bne end
 
-		lda player_a_grounded
-		bne on_ground
-			jsr kiki_start_falling
-			jmp end
-		on_ground:
-			jsr kiki_start_idle
+		jmp kiki_start_inactive_state
 
 	end:
 	rts
@@ -2666,8 +2675,8 @@ kiki_tick_up_tilt:
 	cmp #KIKI_STATE_UP_TILT_DURATION
 	bne update_velocity
 
-		jsr kiki_start_idle
-		jmp end
+		jmp kiki_start_inactive_state
+		; No return, jump to subroutine
 
 	update_velocity:
 		; Do not move, velocity tends toward vector (0,0)
@@ -2757,8 +2766,8 @@ kiki_tick_down_tilt:
 	cmp #KIKI_STATE_DOWN_TILT_DURATION
 	bne update_velocity
 
-		jsr kiki_start_idle
-		jmp end
+		jmp kiki_start_inactive_state
+		; No return, jump to subroutine
 
 	update_velocity:
 		; Do not move, velocity tends toward vector (0,0)
