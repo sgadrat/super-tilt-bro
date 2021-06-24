@@ -961,7 +961,7 @@ kiki_start_inactive_state:
         ; No return, jump to subroutine
 
     idle:
-    ; Fallthrough to pepper_start_idle
+    ; Fallthrough to kiki_start_idle
 .)
 
 kiki_start_idle:

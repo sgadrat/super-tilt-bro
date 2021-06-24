@@ -299,6 +299,20 @@ aerial_directional_influence:
 	rts
 .)
 
+; Choose between falling or idle depending if grounded
+sinbad_start_inactive_state:
+.(
+    lda player_a_grounded, x
+    bne stand
+
+    fall:
+        jmp sinbad_start_falling
+        ; No return, jump to subroutine
+
+    stand:
+    ; Fallthrough to sinbad_start_standing
+.)
+
 sinbad_start_standing:
 .(
 	; Set the appropriate animation
@@ -537,8 +551,9 @@ sinbad_input_running:
 	; If in hitstun, stop running
 	lda player_a_hitstun, x
 	beq take_input
-	jsr sinbad_start_standing
-	jmp end
+		jmp sinbad_start_standing
+		; No return, jump to subroutine
+
 	take_input:
 
 		lda #<controller_inputs
@@ -867,7 +882,8 @@ sinbad_tick_jabbing:
 	lda player_a_state_clock, x
 	cmp STATE_SINBAD_JAB_DURATION
 	bne end
-	jsr sinbad_start_standing
+	jmp sinbad_start_inactive_state
+	; No return, jump to subroutine
 
 	end:
 	rts
@@ -1147,8 +1163,8 @@ sinbad_tick_side_tilt:
 	lda player_a_state_clock, x
 	cmp STATE_SINBAD_SIDE_TILT_DURATION
 	bne update_velocity
-	jsr sinbad_start_standing
-	jmp end
+		jmp sinbad_start_inactive_state
+		; No return, jump to subroutine
 
 	update_velocity:
 		lda #$01
@@ -1461,7 +1477,7 @@ sinbad_tick_landing:
 	lda player_a_state_clock, x
 	cmp STATE_SINBAD_LANDING_DURATION
 	bne end
-	jsr sinbad_start_standing
+		jmp sinbad_start_inactive_state
 
 	end:
 	rts
@@ -1516,7 +1532,7 @@ sinbad_tick_crashing:
 	lda player_a_state_clock, x
 	cmp STATE_SINBAD_CRASHING_DURATION
 	bne end
-	jsr sinbad_start_standing
+		jmp sinbad_start_inactive_state
 
 	end:
 	rts
@@ -1566,7 +1582,7 @@ sinbad_tick_down_tilt:
 	lda player_a_state_clock, x
 	cmp STATE_SINBAD_DOWNTILT_DURATION
 	bne end
-	jsr sinbad_start_standing
+		jmp sinbad_start_inactive_state
 
 	end:
 	rts
@@ -1965,12 +1981,8 @@ sinbad_tick_spe_down:
 	bne end
 
 	; Return to falling or standing
-	lda player_a_grounded, x
-	bne on_ground
-	jsr sinbad_start_falling
-	jmp end
-	on_ground
-	jsr sinbad_start_standing
+	jmp sinbad_start_inactive_state
+	; No return, jump to subroutine
 
 	end:
 	rts
@@ -2018,7 +2030,7 @@ sinbad_tick_up_tilt:
 	lda player_a_state_clock, x
 	cmp STATE_SINBAD_UPTILT_DURATION
 	bne end
-	jsr sinbad_start_standing
+		jmp sinbad_start_inactive_state
 
 	end:
 	rts
@@ -2226,7 +2238,7 @@ sinbad_tick_shieldlag:
 	lda player_a_state_clock, x
 	cmp STATE_SINBAD_SHIELDLAG_DURATION
 	bne end
-	jsr sinbad_start_standing
+		jmp sinbad_start_inactive_state
 
 	end:
 	rts
@@ -2305,7 +2317,8 @@ sinbad_tick_spawn:
 	lda player_a_state_clock, x
 	cmp STATE_SINBAD_SPAWN_DURATION
 	bne end
-	jsr sinbad_start_standing
+		jmp sinbad_start_standing
+		; No return, jump to subroutine
 
 	end:
 	rts
