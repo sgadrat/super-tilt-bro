@@ -2478,7 +2478,7 @@ pepper_start_teleport:
 pepper_tick_teleport:
 .(
 	PEPPER_STATE_TELEPORT_TP_TIME = 8
-	PEPPER_STATE_TELEPORT_MOVE_TIME = 5
+	PEPPER_STATE_TELEPORT_MOVE_TIME = 6
 	move_step_x = player_a_state_field1
 	move_step_y = player_a_state_field2
 
