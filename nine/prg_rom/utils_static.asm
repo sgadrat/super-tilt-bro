@@ -37,6 +37,7 @@ fetch_controllers:
 	rts
 .)
 
+#ifdef PAL
 ; Wait the next 50Hz frame, returns once NMI is complete
 ;  May skip frames to ensure a 50Hz average
 wait_next_frame:
@@ -52,11 +53,16 @@ wait_next_frame:
 		lda #5
 		sta virtual_frame_cnt
 
-		jsr wait_next_real_frame
+		jmp wait_next_real_frame
+		; No return, jump to subroutine
 
 	end:
 	rts
 .)
+#else
+; On NTSC, always run at 60Hz
+wait_next_frame:
+#endif
 
 ; Wait the next frame, returns once NMI is complete
 wait_next_real_frame:
