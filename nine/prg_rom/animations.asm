@@ -80,6 +80,8 @@ animation_init_state:
 	ldy #ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB
 	sta (anim_state), y
 
+	;TODO init virtual frame counter
+
 	rts
 .)
 
@@ -190,6 +192,23 @@ animation_tick:
 	;tmpfield12 is anim_state MSB
 	frame_vector = tmpfield3
 	;tmpfield4 is frame_vector MSB
+
+#ifndef PAL
+	; Do nothing every 6th frame to simulate PAL's pace
+	;  Note this must be deterministic, so NTSC frame data is still stable
+	;TODO clean implementation, with a byte (or 3 bits) for that in animation state
+	.(
+		dbg_clock_ticker = $0704
+
+		ldx player_number
+		dec dbg_clock_ticker, x
+		bpl ok
+			lda #5
+			sta dbg_clock_ticker, x
+			jmp end
+		ok:
+	.)
+#endif
 
 	; Store current frame vector at a fixed location
 	ldy #ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB
