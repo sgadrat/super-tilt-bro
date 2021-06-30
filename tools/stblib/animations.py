@@ -80,6 +80,9 @@ class Frame:
 			sprite.attr ^= 0x40
 		self.sprites.reverse()
 
+	def check(self):
+		ensure(self.duration > 0 and self.duration < 256)
+
 class Animation:
 	def __init__(self, name='', frames=None):
 		self.name = name
@@ -87,6 +90,10 @@ class Animation:
 			self.frames = frames
 		else:
 			self.frames = []
+
+	def check(self):
+		for frame in self.frames:
+			frame.check()
 
 	#TODO deprecated, use stblib.asmformat.animations.animation_to_asm()
 	def serialize(self):

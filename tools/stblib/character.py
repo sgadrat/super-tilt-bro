@@ -199,16 +199,19 @@ class Character:
 		ensure(len(self.tileset.tiles) <= 96)
 
 		ensure(isinstance(self.victory_animation, stblib.animations.Animation))
+		self.victory_animation.check()
 		for frame in self.victory_animation.frames:
 			ensure(frame.hitbox is None)
 			ensure(frame.hurtbox is None)
 
 		ensure(isinstance(self.defeat_animation, stblib.animations.Animation))
+		self.defeat_animation.check()
 		for frame in self.defeat_animation.frames:
 			ensure(frame.hitbox is None)
 			ensure(frame.hurtbox is None)
 
 		ensure(isinstance(self.menu_select_animation, stblib.animations.Animation))
+		self.menu_select_animation.check()
 		for frame in self.menu_select_animation.frames:
 			ensure(frame.hitbox is None)
 			ensure(frame.hurtbox is None)
@@ -216,6 +219,7 @@ class Character:
 		ensure(isinstance(self.animations, list))
 		for animation in self.animations:
 			ensure(isinstance(animation, stblib.animations.Animation))
+			animation.check()
 
 		ensure(isinstance(self.color_swaps, Colorswaps))
 		self.color_swaps.check()

@@ -1181,81 +1181,90 @@ sinbad_tick_side_tilt:
 	rts
 .)
 
-sinbad_start_special:
 .(
 	SINBAD_GROUNDED_SPECIAL_CHARGE_DURATION = 20
+	duration_table(SINBAD_GROUNDED_SPECIAL_CHARGE_DURATION)
 
-	; Set the appropriate animation
-	lda #<anim_sinbad_special_charge
-	sta tmpfield13
-	lda #>anim_sinbad_special_charge
-	sta tmpfield14
-	jsr set_player_animation
+	&sinbad_start_special:
+	.(
+		; Set the appropriate animation
+		lda #<anim_sinbad_special_charge
+		sta tmpfield13
+		lda #>anim_sinbad_special_charge
+		sta tmpfield14
+		jsr set_player_animation
 
-	; Set the player's state
-	lda #SINBAD_STATE_SPECIAL_CHARGE
-	sta player_a_state, x
+		; Set the player's state
+		lda #SINBAD_STATE_SPECIAL_CHARGE
+		sta player_a_state, x
 
-	; Stop any momentum
-	lda #$00
-	sta player_a_velocity_h_low, x
-	sta player_a_velocity_h, x
-	sta player_a_velocity_v_low, x
-	sta player_a_velocity_v, x
+		; Stop any momentum
+		lda #$00
+		sta player_a_velocity_h_low, x
+		sta player_a_velocity_h, x
+		sta player_a_velocity_v_low, x
+		sta player_a_velocity_v, x
 
-	; Initialize the clock
-	lda #SINBAD_GROUNDED_SPECIAL_CHARGE_DURATION
-	sta player_a_state_clock, x
+		; Initialize the clock
+		ldy #SYSTEM_INDEX
+		lda duration_per_system, y
+		sta player_a_state_clock, x
 
-	rts
+		rts
+	.)
+
+	&sinbad_tick_special_charge:
+	.(
+		dec player_a_state_clock, x
+		bne end
+			jmp sinbad_start_special_strike
+			; No return, jump to a subroutine
+		end:
+		rts
+	.)
 .)
 
-sinbad_tick_special_charge:
 .(
-	dec player_a_state_clock, x
-	bne end
-		jmp sinbad_start_special_strike
-		; No return, jump to a subroutine
-	end:
-	rts
-.)
+	duration_per_system:
+		.byt 2*anim_sinbad_special_dur_pal, 2*anim_sinbad_special_dur_ntsc
 
-sinbad_start_special_strike:
-.(
-	SINBAD_GROUNDED_SPECIAL_STRIKE_DURATION = 32
+	&sinbad_start_special_strike:
+	.(
 
-	; Set the appropriate animation
-	lda #<anim_sinbad_special
-	sta tmpfield13
-	lda #>anim_sinbad_special
-	sta tmpfield14
-	jsr set_player_animation
+		; Set the appropriate animation
+		lda #<anim_sinbad_special
+		sta tmpfield13
+		lda #>anim_sinbad_special
+		sta tmpfield14
+		jsr set_player_animation
 
-	; Set the player's state
-	lda #SINBAD_STATE_SPECIAL_STRIKE
-	sta player_a_state, x
+		; Set the player's state
+		lda #SINBAD_STATE_SPECIAL_STRIKE
+		sta player_a_state, x
 
-	; Place the player above ground
-	lda player_a_y, x
-	sec
-	sbc #$10
-	sta player_a_y, x
+		; Place the player above ground
+		lda player_a_y, x
+		sec
+		sbc #$10
+		sta player_a_y, x
 
-	; Initialize the clock
-	lda #SINBAD_GROUNDED_SPECIAL_STRIKE_DURATION
-	sta player_a_state_clock, x
+		; Initialize the clock
+		ldy #SYSTEM_INDEX
+		lda duration_per_system, y
+		sta player_a_state_clock, x
 
-	rts
-.)
+		rts
+	.)
 
-sinbad_tick_special_strike:
-.(
-	dec player_a_state_clock, x
-	bne end
-		jmp sinbad_start_helpless
-		; No return, jump to a subroutine
-	end:
-	rts
+	&sinbad_tick_special_strike:
+	.(
+		dec player_a_state_clock, x
+		bne end
+			jmp sinbad_start_helpless
+			; No return, jump to a subroutine
+		end:
+		rts
+	.)
 .)
 
 sinbad_start_side_special:

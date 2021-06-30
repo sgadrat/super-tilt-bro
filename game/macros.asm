@@ -26,3 +26,21 @@
 ;
 
 #include "game/data/stages/stages-macros.asm"
+
+;
+; PAL to NTSC
+;
+
+; Create a table with pal and ntsc equivalent durations
+;  Note value is rounded, which does not match animation engine behavior (ceiling), do not use for frame-perfect durations
+#define duration_table(pal_dur) \
+duration_per_system:\
+	.byt pal_dur, pal_dur+(((pal_dur*10)/6)+5)/10
+
+; Actually not macros, but temporary anyway
+;TODO remove it with the end of pal vs ntsc roms, or if it never happen, put is in constants file
+#ifdef PAL
+SYSTEM_INDEX = 0
+#else
+SYSTEM_INDEX = 1
+#endif

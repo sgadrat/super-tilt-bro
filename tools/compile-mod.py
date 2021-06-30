@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from stblib import ensure
 import json
+import math
 import os
 import stblib.asmformat.tiles
 import stblib.asmformat.animations
@@ -27,6 +28,20 @@ def text_asm(text, size, space_tile):
 			res += ', '
 
 	return res
+
+def compute_anim_duration_raw(anim):
+	total_dur = 0
+	for frame in anim.frames:
+		total_dur += frame.duration
+	return total_dur
+
+def compute_anim_duration_pal(anim):
+	return compute_anim_duration_raw(anim)
+
+def compute_anim_duration_ntsc(anim):
+	# In NTSC the animation engine double one out of six frames, begining with the first frame
+	raw_dur = compute_anim_duration_raw(anim)
+	return raw_dur + math.ceil(raw_dur / 6)
 
 def generate_character(char, game_dir):
 	name_upper = char.name.upper()
@@ -215,6 +230,8 @@ def generate_character(char, game_dir):
 		anim_file_path = '{}/{}'.format(game_dir, rel_anim_file_path)
 
 		with open(anim_file_path, 'w') as anim_file:
+			anim_file.write('{}_dur_pal = {}\n'.format(anim.name, compute_anim_duration_pal(anim)))
+			anim_file.write('{}_dur_ntsc = {}\n'.format(anim.name, compute_anim_duration_ntsc(anim)))
 			anim_file.write(stblib.asmformat.animations.animation_to_asm(anim))
 		rel_animations_path.append(rel_anim_file_path)
 
