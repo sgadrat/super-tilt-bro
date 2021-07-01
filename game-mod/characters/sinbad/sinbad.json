@@ -425,7 +425,7 @@
 			"type": "character_state",
 			"name": "SINBAD_STATE_INNEXISTANT",
 			"start_routine": "sinbad_start_innexistant",
-			"update_routine": "sinbad_tick_innexistant",
+			"update_routine": "dummy_routine",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_global_onground",
 			"input_routine": "dummy_routine",

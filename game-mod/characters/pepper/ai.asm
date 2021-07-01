@@ -87,7 +87,7 @@ pepper_ai_recover_selector:
 
 			; Air jump if it is possible
 			lda player_b_num_aerial_jumps
-			cmp #MAX_NUM_AERIAL_JUMPS
+			cmp #PEPPER_MAX_NUM_AERIAL_JUMPS
 			bne set_jump_action
 
 			; Special-up since no other action was found

@@ -85,7 +85,7 @@ sinbad_ai_recover_selector:
 
 			; Air jump if it is possible
 			lda player_b_num_aerial_jumps
-			cmp #MAX_NUM_AERIAL_JUMPS
+			cmp #SINBAD_MAX_AERIAL_JUMPS
 			bne set_jump_action
 
 			; Special-side if the platform is far away

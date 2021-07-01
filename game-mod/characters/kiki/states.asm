@@ -730,7 +730,8 @@ kiki_input_thrown:
 		sta player_a_state_field2, x
 		lda player_a_state_field1, x
 		bne end
-		lda #TECH_MAX_FRAMES_BEFORE_COLLISION+TECH_NB_FORBIDDEN_FRAMES
+		ldy #SYSTEM_INDEX
+		lda tech_window, y
 		sta player_a_state_field1, x
 
 	no_tech:
@@ -760,7 +761,8 @@ kiki_onground_thrown:
 	KIKI_TECH_SPEED = $0400
 
 	; If the tech counter is bellow the threshold, just crash
-	lda #TECH_NB_FORBIDDEN_FRAMES
+	ldy #SYSTEM_INDEX
+	lda tech_nb_forbidden_frames, y
 	cmp player_a_state_field1, x
 	bcs crash
 

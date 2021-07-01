@@ -33,8 +33,8 @@
 
 ; Create a table with pal and ntsc equivalent durations
 ;  Note value is rounded, which does not match animation engine behavior (ceiling), do not use for frame-perfect durations
-#define duration_table(pal_dur) \
-duration_per_system:\
+#define duration_table(pal_dur, lbl) \
+lbl:\
 	.byt (pal_dur), (pal_dur)+((((pal_dur)*10)/6)+5)/10
 
 ; Create a table with pal an ntsc equivalent 2-bytes velocity

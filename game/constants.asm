@@ -38,7 +38,7 @@ PLAYER_STATE_RUNNING = $05
 ; End of standard player states, from this index characters are free to define custom states
 CUSTOM_PLAYER_STATES_BEGIN = $06
 
-PLAYER_RESPAWN_MAX_DURATION = 250
+PLAYER_RESPAWN_MAX_DURATION = 200 ; Beware max is 219 (ntsc counterpart would overflow above that)
 PLAYER_DOWN_TAP_MAX_DURATION = 9
 
 CHARACTERS_NUM_TILES_PER_CHAR = 96
@@ -61,8 +61,10 @@ CHARACTERS_ILLUSTRATION_TOKEN_OFFSET = 0
 CHARACTERS_ILLUSTRATION_SMALL_OFFSET = 1
 CHARACTERS_ILLUSTRATION_LARGE_OFFSET = 5
 
-TECH_MAX_FRAMES_BEFORE_COLLISION = 15 ; To tech successfully the tech must be input at maximum TECH_MAX_FRAMES_BEFORE_COLLISION frames before hitting the ground
-TECH_NB_FORBIDDEN_FRAMES = 60 ; After expiration of a tech input, it is not possible to input another tech for TECH_NB_FORBIDDEN_FRAMES frames
+TECH_MAX_FRAMES_BEFORE_COLLISION_PAL = 15 ; To tech successfully the tech must be input at maximum TECH_MAX_FRAMES_BEFORE_COLLISION frames before hitting the ground
+TECH_NB_FORBIDDEN_FRAMES_PAL = 50 ; After expiration of a tech input, it is not possible to input another tech for TECH_NB_FORBIDDEN_FRAMES frames
+TECH_MAX_FRAMES_BEFORE_COLLISION_NTSC = 18
+TECH_NB_FORBIDDEN_FRAMES_NTSC = 60
 
 NETWORK_INPUT_LAG = 4
 
