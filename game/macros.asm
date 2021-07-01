@@ -35,7 +35,19 @@
 ;  Note value is rounded, which does not match animation engine behavior (ceiling), do not use for frame-perfect durations
 #define duration_table(pal_dur) \
 duration_per_system:\
-	.byt pal_dur, pal_dur+(((pal_dur*10)/6)+5)/10
+	.byt (pal_dur), (pal_dur)+((((pal_dur)*10)/6)+5)/10
+
+; Create a table with pal an ntsc equivalent 2-bytes velocity
+#define velocity_table(pal_vel, lbl_msb, lbl_lsb) \
+lbl_msb:\
+	.byt >(pal_vel), >(((pal_vel)*5)/6) :\
+lbl_lsb:\
+	.byt <(pal_vel), <(((pal_vel)*5)/6) :\
+
+; Create a table with pal an ntsc equivalent 1-byte velocity
+#define velocity_table_u8(pal_vel, lbl) \
+lbl: \
+	.byt (pal_vel), ((pal_vel)*5)/6
 
 ; Actually not macros, but temporary anyway
 ;TODO remove it with the end of pal vs ntsc roms, or if it never happen, put is in constants file

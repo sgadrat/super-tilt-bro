@@ -31,6 +31,9 @@ SINBAD_AIR_FRICTION_STRENGTH = 7
 SINBAD_FASTFALL_GRAVITY = $05
 SINBAD_GROUND_FRICTION_STRENGTH = $40
 SINBAD_MAX_WALLJUMPS = 1
+SINBAD_RUNNING_SPEED_MAX = $0200
+SINBAD_RUNNING_SPEED_INIT = $0100
+SINBAD_RUNNING_SPEED_ACCELERATION = $40
 
 sinbad_init:
 sinbad_global_onground:
@@ -479,169 +482,192 @@ sinbad_input_standing:
 	.)
 .)
 
-sinbad_start_running:
 .(
-	lda #SINBAD_STATE_RUNNING
-	sta player_a_state, x
-	; Fallthrough
-.)
-set_running_animation:
-.(
-	; Set the appropriate animation
-	lda #<anim_sinbad_run
-	sta tmpfield13
-	lda #>anim_sinbad_run
-	sta tmpfield14
-	jsr set_player_animation
+	velocity_table(SINBAD_RUNNING_SPEED_INIT, run_init_velocity_msb, run_init_velocity_lsb)
+	velocity_table(-SINBAD_RUNNING_SPEED_INIT, run_init_neg_velocity_msb, run_init_neg_velocity_lsb)
 
-	; Set initial velocity
-	lda #$00
-	sta player_a_velocity_h_low, x
-	lda player_a_direction, x
-	cmp DIRECTION_LEFT
-	bne direction_right
-	lda #$ff
-	jmp set_high_byte
-	direction_right
-	lda #$01
-	set_high_byte:
-	sta player_a_velocity_h, x
+	velocity_table(SINBAD_RUNNING_SPEED_MAX, run_max_velocity_msb, run_max_velocity_lsb)
+	velocity_table(-SINBAD_RUNNING_SPEED_MAX, run_max_neg_velocity_msb, run_max_neg_velocity_lsb)
 
-	rts
-.)
+	velocity_table_u8(SINBAD_RUNNING_SPEED_ACCELERATION, run_acceleration)
 
-; Update a player that is running
-;  register X must contain the player number
-sinbad_tick_running:
-.(
-	; Move the player to the direction he is watching
-	lda player_a_direction, x
-	beq run_left
+	&sinbad_start_running:
+	.(
+		lda #SINBAD_STATE_RUNNING
+		sta player_a_state, x
+		; Fallthrough
+	.)
+	set_running_animation:
+	.(
+		; Set the appropriate animation
+		lda #<anim_sinbad_run
+		sta tmpfield13
+		lda #>anim_sinbad_run
+		sta tmpfield14
+		jsr set_player_animation
 
-		; Running right, velocity tends toward vector (2,0)
-		lda #$02
-		sta tmpfield4
-		lda #$00
-		sta tmpfield3
-		sta tmpfield2
-		sta tmpfield1
-		lda #$40
-		sta tmpfield5
-		jsr merge_to_player_velocity
-		jmp end
+		; Set initial velocity
+		ldy #SYSTEM_INDEX
+		lda player_a_direction, x
+		cmp DIRECTION_LEFT
+		bne direction_right
+			direction_left:
+				lda run_init_neg_velocity_lsb, y
+				sta player_a_velocity_h_low, x
+				lda run_init_neg_velocity_msb, y
+				jmp set_high_byte
+			direction_right:
+				lda run_init_velocity_lsb, y
+				sta player_a_velocity_h_low, x
+				lda run_init_velocity_msb, y
+		set_high_byte:
+		sta player_a_velocity_h, x
 
-	; Running left, velocity tends toward vector (-2,0)
-	run_left:
-		lda #$fe
-		sta tmpfield4
-		lda #$00
-		sta tmpfield3
-		sta tmpfield2
-		sta tmpfield1
-		lda #$40
-		sta tmpfield5
-		jsr merge_to_player_velocity
+		rts
+	.)
 
-	end:
-	rts
-.)
+	; Update a player that is running
+	;  register X must contain the player number
+	&sinbad_tick_running:
+	.(
+		merge_velocity_y_lsb = tmpfield1
+		merge_velocity_x_lsb = tmpfield2
+		merge_velocity_y_msb = tmpfield3
+		merge_velocity_x_msb = tmpfield4
+		merge_velocity_step = tmpfield5
 
-sinbad_input_running:
-.(
-	; If in hitstun, stop running
-	lda player_a_hitstun, x
-	beq take_input
-		jmp sinbad_start_standing
-		; No return, jump to subroutine
+		; Move the player to the direction he is watching
+		ldy #SYSTEM_INDEX
+		lda player_a_direction, x
+		beq run_left
 
-	take_input:
+			; Running right, velocity tends toward vector (2,0)
+			lda run_max_velocity_msb, y
+			sta merge_velocity_x_msb
+			lda run_max_velocity_lsb, y
+			sta merge_velocity_x_lsb
+			lda #0
+			sta merge_velocity_y_msb
+			sta merge_velocity_y_lsb
+			lda run_acceleration, y
+			sta merge_velocity_step
+			jmp merge_to_player_velocity
+			; No return, jump to subroutine
 
-		lda #<controller_inputs
-		sta tmpfield1
-		lda #>controller_inputs
-		sta tmpfield2
-		lda #INPUT_TABLE_LENGTH
-		sta tmpfield3
-		jmp controller_callbacks
+		; Running left, velocity tends toward vector (-2,0)
+		run_left:
+			lda run_max_neg_velocity_msb, y
+			sta merge_velocity_x_msb
+			lda run_max_neg_velocity_lsb, y
+			sta merge_velocity_x_lsb
+			lda #0
+			sta merge_velocity_y_msb
+			sta merge_velocity_y_lsb
+			lda run_acceleration, y
+			sta merge_velocity_step
+			jmp merge_to_player_velocity
+			; No return, jump to subroutine
 
-		; Player is now watching left
-		input_left:
-			lda DIRECTION_LEFT
-			cmp player_a_direction, x
-			beq end
+		;rts ; Useless, no branch return
+	.)
+
+	&sinbad_input_running:
+	.(
+		; If in hitstun, stop running
+		lda player_a_hitstun, x
+		beq take_input
+			jmp sinbad_start_standing
+			; No return, jump to subroutine
+
+		take_input:
+
+			lda #<controller_inputs
+			sta tmpfield1
+			lda #>controller_inputs
+			sta tmpfield2
+			lda #INPUT_TABLE_LENGTH
+			sta tmpfield3
+			jmp controller_callbacks
+
+			; Player is now watching left
+			input_left:
+				lda DIRECTION_LEFT
+				cmp player_a_direction, x
+				beq end
+					sta player_a_direction, x
+					jsr set_running_animation
+					jmp end
+
+			; Player is now watching right
+			input_right:
+				lda DIRECTION_RIGHT
+				cmp player_a_direction, x
+				beq end
+					sta player_a_direction, x
+					jsr set_running_animation
+					jmp end
+
+			; Player is now tilting
+			tilt_input_left:
+				lda DIRECTION_LEFT
 				sta player_a_direction, x
-				jsr set_running_animation
+				jmp tilt_input
+			tilt_input_right:
+				lda DIRECTION_RIGHT
+				sta player_a_direction, x
+			tilt_input:
+				jsr sinbad_start_side_tilt
 				jmp end
 
-		; Player is now watching right
-		input_right:
-			lda DIRECTION_RIGHT
-			cmp player_a_direction, x
-			beq end
-				sta player_a_direction, x
-				jsr set_running_animation
-				jmp end
+		end:
+		rts
 
-		; Player is now tilting
-		tilt_input_left:
-			lda DIRECTION_LEFT
-			sta player_a_direction, x
-			jmp tilt_input
-		tilt_input_right:
-			lda DIRECTION_RIGHT
-			sta player_a_direction, x
-		tilt_input:
-			jsr sinbad_start_side_tilt
-			jmp end
-
-	end:
-	rts
-
-	; Impactful controller states and associated callbacks
-	; Note - We can put subroutines as callbacks because we have nothing to do after calling it
-	;        (sourboutines return to our caller since "called" with jmp)
-	controller_inputs:
-	.byt CONTROLLER_INPUT_LEFT,              CONTROLLER_INPUT_RIGHT
-	.byt CONTROLLER_INPUT_JUMP,              CONTROLLER_INPUT_JUMP_RIGHT
-	.byt CONTROLLER_INPUT_JUMP_LEFT,         CONTROLLER_INPUT_ATTACK_LEFT
-	.byt CONTROLLER_INPUT_ATTACK_RIGHT,      CONTROLLER_INPUT_SPECIAL
-	.byt CONTROLLER_INPUT_SPECIAL_RIGHT,     CONTROLLER_INPUT_SPECIAL_LEFT
-	.byt CONTROLLER_INPUT_SPECIAL_UP,        CONTROLLER_INPUT_SPECIAL_DOWN
-	.byt CONTROLLER_INPUT_TECH_LEFT,         CONTROLLER_INPUT_TECH_RIGHT
-	.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT,   CONTROLLER_INPUT_SPECIAL_UP_RIGHT
-	.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,    CONTROLLER_INPUT_ATTACK_UP_RIGHT
-	.byt CONTROLLER_INPUT_SPECIAL_DOWN_LEFT, CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
-	.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,  CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
-	.byt CONTROLLER_INPUT_DOWN_TILT
-	controller_callbacks_lo:
-	.byt <input_left,                <input_right
-	.byt <sinbad_start_jumping,      <sinbad_start_jumping
-	.byt <sinbad_start_jumping,      <tilt_input_left
-	.byt <tilt_input_right,          <sinbad_start_special
-	.byt <sinbad_start_side_special, <sinbad_start_side_special
-	.byt <sinbad_start_spe_up,       <sinbad_start_spe_down
-	.byt <sinbad_start_shielding,    <sinbad_start_shielding
-	.byt <sinbad_start_spe_up,       <sinbad_start_spe_up
-	.byt <sinbad_start_up_tilt,      <sinbad_start_up_tilt
-	.byt <sinbad_start_spe_down,     <sinbad_start_spe_down
-	.byt <sinbad_start_down_tilt,    <sinbad_start_down_tilt
-	.byt <sinbad_start_down_tilt
-	controller_callbacks_hi:
-	.byt >input_left,                >input_right
-	.byt >sinbad_start_jumping,      >sinbad_start_jumping
-	.byt >sinbad_start_jumping,      >tilt_input_left
-	.byt >tilt_input_right,          >sinbad_start_special
-	.byt >sinbad_start_side_special, >sinbad_start_side_special
-	.byt >sinbad_start_spe_up,       >sinbad_start_spe_down
-	.byt >sinbad_start_shielding,    >sinbad_start_shielding
-	.byt >sinbad_start_spe_up,       >sinbad_start_spe_up
-	.byt >sinbad_start_up_tilt,      >sinbad_start_up_tilt
-	.byt >sinbad_start_spe_down,     >sinbad_start_spe_down
-	.byt >sinbad_start_down_tilt,    >sinbad_start_down_tilt
-	.byt >sinbad_start_down_tilt
-	controller_default_callback:
-	.word sinbad_start_standing
-	INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
+		; Impactful controller states and associated callbacks
+		; Note - We can put subroutines as callbacks because we have nothing to do after calling it
+		;        (sourboutines return to our caller since "called" with jmp)
+		controller_inputs:
+		.byt CONTROLLER_INPUT_LEFT,              CONTROLLER_INPUT_RIGHT
+		.byt CONTROLLER_INPUT_JUMP,              CONTROLLER_INPUT_JUMP_RIGHT
+		.byt CONTROLLER_INPUT_JUMP_LEFT,         CONTROLLER_INPUT_ATTACK_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_RIGHT,      CONTROLLER_INPUT_SPECIAL
+		.byt CONTROLLER_INPUT_SPECIAL_RIGHT,     CONTROLLER_INPUT_SPECIAL_LEFT
+		.byt CONTROLLER_INPUT_SPECIAL_UP,        CONTROLLER_INPUT_SPECIAL_DOWN
+		.byt CONTROLLER_INPUT_TECH_LEFT,         CONTROLLER_INPUT_TECH_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT,   CONTROLLER_INPUT_SPECIAL_UP_RIGHT
+		.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,    CONTROLLER_INPUT_ATTACK_UP_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN_LEFT, CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
+		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,  CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
+		.byt CONTROLLER_INPUT_DOWN_TILT
+		controller_callbacks_lo:
+		.byt <input_left,                <input_right
+		.byt <sinbad_start_jumping,      <sinbad_start_jumping
+		.byt <sinbad_start_jumping,      <tilt_input_left
+		.byt <tilt_input_right,          <sinbad_start_special
+		.byt <sinbad_start_side_special, <sinbad_start_side_special
+		.byt <sinbad_start_spe_up,       <sinbad_start_spe_down
+		.byt <sinbad_start_shielding,    <sinbad_start_shielding
+		.byt <sinbad_start_spe_up,       <sinbad_start_spe_up
+		.byt <sinbad_start_up_tilt,      <sinbad_start_up_tilt
+		.byt <sinbad_start_spe_down,     <sinbad_start_spe_down
+		.byt <sinbad_start_down_tilt,    <sinbad_start_down_tilt
+		.byt <sinbad_start_down_tilt
+		controller_callbacks_hi:
+		.byt >input_left,                >input_right
+		.byt >sinbad_start_jumping,      >sinbad_start_jumping
+		.byt >sinbad_start_jumping,      >tilt_input_left
+		.byt >tilt_input_right,          >sinbad_start_special
+		.byt >sinbad_start_side_special, >sinbad_start_side_special
+		.byt >sinbad_start_spe_up,       >sinbad_start_spe_down
+		.byt >sinbad_start_shielding,    >sinbad_start_shielding
+		.byt >sinbad_start_spe_up,       >sinbad_start_spe_up
+		.byt >sinbad_start_up_tilt,      >sinbad_start_up_tilt
+		.byt >sinbad_start_spe_down,     >sinbad_start_spe_down
+		.byt >sinbad_start_down_tilt,    >sinbad_start_down_tilt
+		.byt >sinbad_start_down_tilt
+		controller_default_callback:
+		.word sinbad_start_standing
+		INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
+	.)
 .)
 
 sinbad_start_falling:
