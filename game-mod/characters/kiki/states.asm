@@ -34,8 +34,8 @@ KIKI_WALL_JUMP_VELOCITY_HORIZONTAL = $0080
 KIKI_AIR_FRICTION_STRENGTH = 7
 KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
 KIKI_AERIAL_SPEED = $0100
-KIKI_FASTFALL_SPEED = $04
-KIKI_COUNTER_GRAVITY = $01
+KIKI_FASTFALL_SPEED = $0400
+KIKI_COUNTER_GRAVITY = $0100
 KIKI_PLATFORM_DURATION = 120
 KIKI_PLATFORM_BLINK_THRESHOLD_MASK = %01100000 ; Platform is blinking if "timer > 0 && (MASK & timer == 0)"
 KIKI_PLATFORM_BLINK_MASK = %00000100 ; Blinking platform is shown on frames where "MASK & timer == 1"
@@ -432,10 +432,11 @@ kiki_check_aerial_inputs:
 			lda controller_a_last_frame_btns, x
 			cmp #CONTROLLER_INPUT_TECH
 			bne no_fast_fall
-				lda #KIKI_FASTFALL_SPEED
-				sta player_a_gravity, x
+				lda #>KIKI_FASTFALL_SPEED
+				sta player_a_gravity_msb, x
 				sta player_a_velocity_v, x
-				lda #$00
+				lda #<KIKI_FASTFALL_SPEED
+				sta player_a_gravity_lsb, x
 				sta player_a_velocity_v_low, x
 			no_fast_fall:
 			rts
@@ -1417,8 +1418,7 @@ kiki_start_aerial_jumping:
 	inc player_a_num_aerial_jumps, x
 
 	; Reset fall speed
-	lda #DEFAULT_GRAVITY
-	sta player_a_gravity, x
+	jsr reset_default_gravity
 
 	; Trick - aerial_jumping set the state to jumping. It is the same state with
 	; the starting conditions as the only differences
@@ -2865,21 +2865,6 @@ kiki_start_down_aerial:
 	lda #0
 	sta player_a_state_clock,x
 
-	; Cancel fastfall
-	lda #DEFAULT_GRAVITY     ; Do nothing if not in fast fall
-	cmp player_a_gravity, x  ;
-	beq end_cancel_fast_fall ;
-
-		; Reset gravity
-		sta player_a_gravity, x
-
-		; Reset fall speed
-		sta player_a_velocity_v, x
-		lda #0
-		sta player_a_velocity_v_low, x
-
-	end_cancel_fast_fall:
-
 	rts
 .)
 
@@ -3090,8 +3075,10 @@ kiki_start_counter_guard:
 	ror player_a_velocity_h_low, x
 
 	; Lower gravity
-	lda #KIKI_COUNTER_GRAVITY
-	sta player_a_gravity, x
+	lda #<KIKI_COUNTER_GRAVITY
+	sta player_a_gravity_lsb, x
+	lda #>KIKI_COUNTER_GRAVITY
+	sta player_a_gravity_msb, x
 
 	rts
 .)
@@ -3119,17 +3106,16 @@ kiki_tick_counter_guard:
 		jsr set_player_animation
 
 		; Reset fall speed
-		lda #DEFAULT_GRAVITY
-		sta player_a_gravity, x
+		jsr reset_default_gravity
 
 	check_total_duration:
 	cmp #KIKI_STATE_COUNTER_GUARD_TOTAL_DURATION
 	bne end
 
 		; Total duration is over, return to a neutral state
-		lda #DEFAULT_GRAVITY
-		sta player_a_gravity, x
-		jsr kiki_start_falling
+		jsr reset_default_gravity
+		jmp kiki_start_inactive_state
+		; No return, jump to subroutine
 
 	end:
 	rts
@@ -3154,8 +3140,7 @@ kiki_hurt_counter_guard:
 		lda HITBOX_DISABLED
 		sta player_a_hitbox_enabled, y
 
-		lda #DEFAULT_GRAVITY
-		sta player_a_gravity, x
+		jsr reset_default_gravity
 
 		jsr kiki_start_counter_strike
 		jmp end

@@ -5,4 +5,5 @@
 
 #include "game/data/stages/stages-index.asm"
 
+#include "game/data/rom_constants.asm"
 #include "game/data/anim_empty.asm"

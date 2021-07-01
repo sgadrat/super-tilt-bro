@@ -28,7 +28,7 @@ SINBAD_STATE_SHIELDLAG = CUSTOM_PLAYER_STATES_BEGIN + 20
 SINBAD_STATE_WALLJUMPING = CUSTOM_PLAYER_STATES_BEGIN + 21
 
 SINBAD_AIR_FRICTION_STRENGTH = 7
-SINBAD_FASTFALL_GRAVITY = $05
+SINBAD_FASTFALL_GRAVITY = $0500
 SINBAD_GROUND_FRICTION_STRENGTH = $40
 SINBAD_MAX_WALLJUMPS = 1
 SINBAD_RUNNING_SPEED_MAX = $0200
@@ -147,10 +147,11 @@ check_aerial_inputs:
 			lda controller_a_last_frame_btns, x
 			cmp #CONTROLLER_INPUT_TECH
 			bne no_fast_fall
-				lda #SINBAD_FASTFALL_GRAVITY
-				sta player_a_gravity, x
+				lda #>SINBAD_FASTFALL_GRAVITY
+				sta player_a_gravity_msb, x
 				sta player_a_velocity_v, x
-				lda #$00
+				lda #<SINBAD_FASTFALL_GRAVITY
+				sta player_a_gravity_lsb, x
 				sta player_a_velocity_v_low, x
 			no_fast_fall:
 			rts
@@ -837,8 +838,7 @@ sinbad_start_aerial_jumping:
 	inc player_a_num_aerial_jumps, x
 
 	; Reset fall speed
-	lda #DEFAULT_GRAVITY
-	sta player_a_gravity, x
+	jsr reset_default_gravity
 
 	; Trick - aerial_jumping set the state to jumping. It is the same state with
 	; the starting conditions as the only differences
@@ -1672,20 +1672,6 @@ sinbad_start_aerial_down:
 	; Reset clock
 	lda #0
 	sta player_a_state_clock, x
-
-	; Cancel fastfall
-	lda #DEFAULT_GRAVITY     ; Do nothing if not in fast fall
-	cmp player_a_gravity, x  ;
-	beq end_cancel_fast_fall ;
-
-	sta player_a_gravity, x ; Reset gravity
-
-	lda #DEFAULT_GRAVITY           ;
-	sta player_a_velocity_v, x     ; Reset fall speed
-	lda #0                         ;
-	sta player_a_velocity_v_low, x ;
-
-	end_cancel_fast_fall:
 
 	; Fallthrough to set the animation
 .)

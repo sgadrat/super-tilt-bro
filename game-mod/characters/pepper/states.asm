@@ -454,10 +454,11 @@ pepper_check_aerial_inputs:
 			lda controller_a_last_frame_btns, x
 			cmp #CONTROLLER_INPUT_TECH
 			bne no_fast_fall
-				lda #PEPPER_FASTFALL_SPEED
-				sta player_a_gravity, x
+				lda #>PEPPER_FASTFALL_SPEED
+				sta player_a_gravity_msb, x
 				sta player_a_velocity_v, x
-				lda #$00
+				lda #<PEPPER_FASTFALL_SPEED
+				sta player_a_gravity_lsb, x
 				sta player_a_velocity_v_low, x
 			no_fast_fall:
 			rts
@@ -1339,8 +1340,7 @@ pepper_start_aerial_jumping:
 	inc player_a_num_aerial_jumps, x
 
 	; Reset fall speed
-	lda #DEFAULT_GRAVITY
-	sta player_a_gravity, x
+	jsr reset_default_gravity
 
 	; Trick - aerial_jumping set the state to jumping. It is the same state with
 	; the starting conditions as the only differences

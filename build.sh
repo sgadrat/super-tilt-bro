@@ -132,12 +132,12 @@ say "======================="
 #  Static bank cannot be safely upgraded, so avoid modifying it
 #  Only a warning for ease of development, should be an error when carts are distributed to non-technical players.
 static_bank_hash=`tail -c 4096 'Super_Tilt_Bro_(E).nes' | md5sum - | grep -Eo '^[0-9a-f]+'`
-if [ "$static_bank_hash" != '8c1d681fe517469f738e18ac8a0224ed' ]; then
+if [ "$static_bank_hash" != 'b65a82a634a8beec0ac5fac032c03f2c' ]; then
 	say "WARNING: PAL static bank changed"
 	say "======================="
 fi
 static_bank_hash=`tail -c 4096 'Super_Tilt_Bro_(U).nes' | md5sum - | grep -Eo '^[0-9a-f]+'`
-if [ "$static_bank_hash" != '733605469fc7d547ba286bbdb8d8ec9e' ]; then
+if [ "$static_bank_hash" != '70445f2d4f0b8cf44f6a47a66a8287ec' ]; then
 	say "WARNING: NTSC static bank changed"
 	say "======================="
 fi

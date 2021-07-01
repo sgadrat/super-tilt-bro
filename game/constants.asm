@@ -21,7 +21,7 @@ GAME_STATE_ONLINE_MODE_SELECTION = $0c
 GAME_STATE_WIFI_SETTINGS = $0d
 ;NOTE maximum supported value is $0f, because get_transition_id returns an ID on one byte. To handle more than 16 states, it should be changed.
 
-DEFAULT_GRAVITY = $02 ;TODO adapt to ntsc
+DEFAULT_GRAVITY = $0200
 
 ; Variants of ingame state
 GAME_MODE_LOCAL = $00

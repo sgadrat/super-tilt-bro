@@ -437,20 +437,36 @@ merge_to_player_velocity:
 
 ; Apply the standard gravity effect to a player
 ;  register X - player number
+;
+; Overwrites register Y, tmpfield6, tmpfield7, tmpfield8 and tmpfield9
 apply_player_gravity:
 .(
 	lda player_a_velocity_h_low, x
 	sta tmpfield2
 	lda player_a_velocity_h, x
 	sta tmpfield4
-	lda #$00
+	lda player_a_gravity_lsb, x
 	sta tmpfield1
-	lda player_a_gravity, x
+	lda player_a_gravity_msb, x
 	sta tmpfield3
 	lda #$60
 	sta tmpfield5
 	jsr merge_to_player_velocity
 
+	rts
+.)
+
+; Reset one player's gravity to the default
+;  register X - player number
+;
+; Overwrites register Y
+reset_default_gravity:
+.(
+	ldy #SYSTEM_INDEX
+	lda default_gravity_per_system_lsb, y
+	sta player_a_gravity_lsb, x
+	lda default_gravity_per_system_msb, y
+	sta player_a_gravity_msb, x
 	rts
 .)
 

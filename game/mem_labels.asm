@@ -139,18 +139,20 @@ player_a_num_aerial_jumps = $42
 player_b_num_aerial_jumps = $43
 player_a_stocks = $44
 player_b_stocks = $45
-player_a_gravity = $46
-player_b_gravity = $47
-player_a_walljump = $48
-player_b_walljump = $49
-player_a_state_field1 = $4a
-player_b_state_field1 = $4b
-player_a_state_field2 = $4c
-player_b_state_field2 = $4d
-player_a_state_field3 = $4e
-player_b_state_field3 = $4f
+player_a_walljump = $46
+player_b_walljump = $47
+player_a_state_field1 = $48
+player_b_state_field1 = $49
+player_a_state_field2 = $4a
+player_b_state_field2 = $4b
+player_a_state_field3 = $4c
+player_b_state_field3 = $4d
+player_a_gravity_lsb = $4e
+player_b_gravity_lsb = $4f
+player_a_gravity_msb = $50
+player_b_gravity_msb = $51
 
-; $50 to $56 - unused
+; $52 to $56 - unused
 
 player_a_hurtbox_left_msb = $57
 player_b_hurtbox_left_msb = $58

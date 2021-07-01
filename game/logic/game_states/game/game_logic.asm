@@ -88,9 +88,11 @@ init_game_state:
 			cpx #2
 			bne position_player_loop
 
-		lda #DEFAULT_GRAVITY
-		sta player_a_gravity
-		sta player_b_gravity
+		ldx #0
+		jsr reset_default_gravity
+		ldx #1
+		jsr reset_default_gravity
+
 		lda config_initial_stocks
 		sta player_a_stocks
 		sta player_b_stocks
@@ -1546,8 +1548,7 @@ check_player_position:
 		sta player_a_num_aerial_jumps, x
 
 		; Reset gravity modifications
-		lda #DEFAULT_GRAVITY
-		sta player_a_gravity, x
+		jsr reset_default_gravity
 
 		; Fire on-ground event
 		ldy config_player_a_character, x
@@ -1580,8 +1581,7 @@ check_player_position:
 		sta player_a_hitstun, x
 
 		; Reset gravity
-		lda #DEFAULT_GRAVITY
-		sta player_a_gravity, x
+		jsr reset_default_gravity
 
 		; Death particles animation
 		;  It takes on-screen unsigned coordinates,
