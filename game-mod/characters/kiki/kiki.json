@@ -523,7 +523,7 @@
 			"onhurt_routine": "dummy_routine",
 			"start_routine": "kiki_start_innexistant",
 			"type": "character_state",
-			"update_routine": "kiki_tick_innexistant"
+			"update_routine": "kiki_global_tick"
 		},
 		{
 			"input_routine": "dummy_routine",

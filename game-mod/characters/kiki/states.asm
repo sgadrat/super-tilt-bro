@@ -1,3 +1,7 @@
+;
+; States index
+;
+
 KIKI_STATE_THROWN = PLAYER_STATE_THROWN
 KIKI_STATE_RESPAWN = PLAYER_STATE_RESPAWN
 KIKI_STATE_INNEXISTANT = PLAYER_STATE_INNEXISTANT
@@ -26,21 +30,54 @@ KIKI_STATE_NEUTRAL_AERIAL = CUSTOM_PLAYER_STATES_BEGIN + 18
 KIKI_STATE_COUNTER_GUARD = CUSTOM_PLAYER_STATES_BEGIN + 19
 KIKI_STATE_COUNTER_STRIKE = CUSTOM_PLAYER_STATES_BEGIN + 20
 
-KIKI_MAX_NUM_AERIAL_JUMPS = 1
-KIKI_MAX_WALLJUMPS = 1
-KIKI_WALL_JUMP_SQUAT_END = 4
-KIKI_WALL_JUMP_VELOCITY_VERTICAL = $fc40
-KIKI_WALL_JUMP_VELOCITY_HORIZONTAL = $0080
-KIKI_AIR_FRICTION_STRENGTH = 7
+;
+; Gameplay constants
+;
+
 KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
 KIKI_AERIAL_SPEED = $0100
-KIKI_FASTFALL_SPEED = $0400
+KIKI_AIR_FRICTION_STRENGTH = 7
 KIKI_COUNTER_GRAVITY = $0100
+KIKI_FASTFALL_SPEED = $0400
+KIKI_GROUND_FRICTION_STRENGTH = $40
+KIKI_JUMP_SQUAT_DURATION_PAL = 4
+KIKI_JUMP_SQUAT_DURATION_NTSC = 5
+KIKI_JUMP_SHORT_HOP_EXTRA_TIME = 4
+KIKI_JUMP_POWER = $0480
+KIKI_JUMP_SHORT_HOP_POWER = $0102
+KIKI_LANDING_MAX_VELOCITY = $0200
+KIKI_MAX_NUM_AERIAL_JUMPS = 1
+KIKI_MAX_WALLJUMPS = 1
 KIKI_PLATFORM_DURATION = 120
 KIKI_PLATFORM_BLINK_THRESHOLD_MASK = %01100000 ; Platform is blinking if "timer > 0 && (MASK & timer == 0)"
 KIKI_PLATFORM_BLINK_MASK = %00000100 ; Blinking platform is shown on frames where "MASK & timer == 1"
+KIKI_RUNNING_INITIAL_VELOCITY = $0100
+KIKI_RUNNING_MAX_VELOCITY = $0180
+KIKI_RUNNING_ACCELERATION = $40
+KIKI_TECH_SPEED = $0400
+KIKI_WALL_JUMP_SQUAT_END = 4
+KIKI_WALL_JUMP_VELOCITY_V = $fc40
+KIKI_WALL_JUMP_VELOCITY_H = $0080
 
-KIKI_GROUND_FRICTION_STRENGTH = $40
+;
+; Constants data
+;
+
+velocity_table(KIKI_AERIAL_SPEED, kiki_aerial_speed_msb, kiki_aerial_speed_lsb)
+velocity_table(-KIKI_AERIAL_SPEED, kiki_aerial_neg_speed_msb, kiki_aerial_neg_speed_lsb)
+velocity_table_u8(KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH, kiki_aerial_directional_influence_strength)
+velocity_table_u8(KIKI_AIR_FRICTION_STRENGTH, kiki_air_friction_strength)
+velocity_table(KIKI_FASTFALL_SPEED, kiki_fastfall_speed_msb, kiki_fastfall_speed_lsb)
+velocity_table_u8(KIKI_GROUND_FRICTION_STRENGTH, kiki_ground_friction_strength)
+velocity_table_u8(KIKI_GROUND_FRICTION_STRENGTH/3, kiki_ground_friction_strength_weak)
+velocity_table(KIKI_TECH_SPEED, kiki_tech_speed_msb, kiki_tech_speed_lsb)
+velocity_table(-KIKI_TECH_SPEED, kiki_tech_speed_neg_msb, kiki_tech_speed_neg_lsb)
+
+kiki_jumpsquat_duration:
+	.byt KIKI_JUMP_SQUAT_DURATION_PAL, KIKI_JUMP_SQUAT_DURATION_NTSC
+
+kiki_short_hop_time:
+	.byt KIKI_JUMP_SQUAT_DURATION_PAL + KIKI_JUMP_SHORT_HOP_EXTRA_TIME, KIKI_JUMP_SQUAT_DURATION_NTSC + KIKI_JUMP_SHORT_HOP_EXTRA_TIME
 
 kiki_wall_attributes_per_player:
 .byt 1, 3
@@ -60,6 +97,10 @@ kiki_first_tile_index_per_player:
 
 kiki_a_platform_state = player_a_state_field3 ; aTTT TTTT - a, allowed to create a new platform - T, platform timer
 kiki_b_platform_state = player_b_state_field3
+
+;
+; Implementation
+;
 
 kiki_init:
 .(
@@ -238,7 +279,8 @@ kiki_apply_friction_lite:
 			sta tmpfield3
 			sta tmpfield2
 			sta tmpfield1
-			lda #KIKI_GROUND_FRICTION_STRENGTH/3
+			ldy #SYSTEM_INDEX
+			lda kiki_ground_friction_strength_weak, y
 			sta tmpfield5
 			jmp merge_to_player_velocity
 			; No return, jump to subroutine
@@ -267,10 +309,33 @@ kiki_apply_air_friction:
 	lda #$00
 	sta merged_h_low
 	sta merged_h_high
-	lda #KIKI_AIR_FRICTION_STRENGTH
+	ldy #SYSTEM_INDEX
+	lda kiki_air_friction_strength, y
 	sta merge_step
 	jmp merge_to_player_velocity
 	;rts; useless, jump to a subroutine
+.)
+
+kiki_apply_ground_friction:
+.(
+	; merge_to_player_velocity parameter names
+	merged_v_low = tmpfield1
+	merged_v_high = tmpfield3
+	merged_h_low = tmpfield2
+	merged_h_high = tmpfield4
+	merge_step = tmpfield5
+
+	; Apply ground friction
+	lda #$00
+	sta merged_h_high
+	sta merged_v_high
+	sta merged_h_low
+	sta merged_v_low
+	ldy #SYSTEM_INDEX
+	lda kiki_ground_friction_strength, y
+	sta tmpfield5
+	jmp merge_to_player_velocity
+	;rts ; useless, jump to subroutine
 .)
 
 kiki_aerial_directional_influence:
@@ -297,9 +362,11 @@ kiki_aerial_directional_influence:
 
 	go_left:
 		; Go to the left
-		lda #<-KIKI_AERIAL_SPEED
+		ldy #SYSTEM_INDEX
+
+		lda kiki_aerial_neg_speed_lsb, y
 		sta tmpfield6
-		lda #>-KIKI_AERIAL_SPEED
+		lda kiki_aerial_neg_speed_msb, y
 		sta tmpfield7
 		lda player_a_velocity_h_low, x
 		sta tmpfield8
@@ -312,24 +379,26 @@ kiki_aerial_directional_influence:
 			sta merged_v_low
 			lda player_a_velocity_v, x
 			sta merged_v_high
-			lda #<-KIKI_AERIAL_SPEED
+			lda kiki_aerial_neg_speed_lsb, y
 			sta merged_h_low
-			lda #>-KIKI_AERIAL_SPEED
+			lda kiki_aerial_neg_speed_msb, y
 			sta merged_h_high
-			lda #KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH
+			lda kiki_aerial_directional_influence_strength, y
 			sta merge_step
 			jmp merge_to_player_velocity
 			; No return, jump to a subroutine
 
 	go_right:
 		; Go to the right
+		ldy #SYSTEM_INDEX
+
 		lda player_a_velocity_h_low, x
 		sta tmpfield6
 		lda player_a_velocity_h, x
 		sta tmpfield7
-		lda #<KIKI_AERIAL_SPEED
+		lda kiki_aerial_speed_lsb, y
 		sta tmpfield8
-		lda #>KIKI_AERIAL_SPEED
+		lda kiki_aerial_speed_msb, y
 		sta tmpfield9
 		jsr signed_cmp
 		bpl end
@@ -338,11 +407,11 @@ kiki_aerial_directional_influence:
 			sta merged_v_low
 			lda player_a_velocity_v, x
 			sta merged_v_high
-			lda #<KIKI_AERIAL_SPEED
+			lda kiki_aerial_speed_lsb, y
 			sta merged_h_low
-			lda #>KIKI_AERIAL_SPEED
+			lda kiki_aerial_speed_msb, y
 			sta merged_h_high
-			lda #KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH
+			lda kiki_aerial_directional_influence_strength, y
 			sta merge_step
 			jmp merge_to_player_velocity
 			; No return, jump to a subroutine
@@ -432,10 +501,11 @@ kiki_check_aerial_inputs:
 			lda controller_a_last_frame_btns, x
 			cmp #CONTROLLER_INPUT_TECH
 			bne no_fast_fall
-				lda #>KIKI_FASTFALL_SPEED
+				ldy #SYSTEM_INDEX
+				lda kiki_fastfall_speed_msb, y
 				sta player_a_gravity_msb, x
 				sta player_a_velocity_v, x
-				lda #<KIKI_FASTFALL_SPEED
+				lda kiki_fastfall_speed_lsb, y
 				sta player_a_gravity_lsb, x
 				sta player_a_velocity_v_low, x
 			no_fast_fall:
@@ -599,6 +669,7 @@ kiki_global_tick:
 
 	; Make platform blink on end of life
 	.(
+		;TODO ntsc timing
 		; Do not blink until the platform is about to disapear
 		lda kiki_a_platform_state, x
 		tay
@@ -654,304 +725,332 @@ kiki_global_onground:
 	rts
 .)
 
-kiki_start_thrown:
+;
+; Thrown
+;
+
 .(
-	; Set the player's state
-	lda #KIKI_STATE_THROWN
-	sta player_a_state, x
+	&kiki_start_thrown:
+	.(
+		; Set the player's state
+		lda #KIKI_STATE_THROWN
+		sta player_a_state, x
 
-	; Initialize tech counter
-	lda #0
-	sta player_a_state_field1, x
-
-	; Set the appropriate animation
-	lda #<kiki_anim_thrown
-	sta tmpfield13
-	lda #>kiki_anim_thrown
-	sta tmpfield14
-	jsr set_player_animation
-
-	; Set the appropriate animation direction (depending on player's velocity)
-	lda player_a_velocity_h, x
-	bmi set_anim_left
-		lda DIRECTION_RIGHT
-		jmp set_anim_dir
-	set_anim_left:
-		lda DIRECTION_LEFT
-	set_anim_dir:
-		ldy #ANIMATION_STATE_OFFSET_DIRECTION
-		sta (tmpfield11), y
-
-	rts
-.)
-
-kiki_tick_thrown:
-.(
-	jsr kiki_global_tick
-
-	; Update velocity
-	lda player_a_hitstun, x
-	bne gravity
-		jsr kiki_aerial_directional_influence
-	gravity:
-	jsr apply_player_gravity
-
-	; Decrement tech counter (to zero minimum)
-	lda player_a_state_field1, x
-	beq end_dec_tech_cnt
-		dec player_a_state_field1, x
-	end_dec_tech_cnt:
-
-	rts
-.)
-
-kiki_input_thrown:
-.(
-	; Handle controller inputs
-	lda #<(input_table+1)
-	sta tmpfield1
-	lda #>(input_table+1)
-	sta tmpfield2
-	lda input_table
-	sta tmpfield3
-	jmp controller_callbacks
-
-	; If a tech is entered, store it's direction in state_field2
-	; and if the counter is at 0, reset it to it's max value.
-	tech_neutral:
-		lda #$00
-		jmp tech_common
-	tech_right:
-		lda #$01
-		jmp tech_common
-	tech_left:
-		lda #$02
-	tech_common:
-		sta player_a_state_field2, x
-		lda player_a_state_field1, x
-		bne end
-		ldy #SYSTEM_INDEX
-		lda tech_window, y
+		; Initialize tech counter
+		lda #0
 		sta player_a_state_field1, x
 
-	no_tech:
-		jsr kiki_check_aerial_inputs
+		; Set the appropriate animation
+		lda #<kiki_anim_thrown
+		sta tmpfield13
+		lda #>kiki_anim_thrown
+		sta tmpfield14
+		jsr set_player_animation
 
-	end:
-	rts
+		; Set the appropriate animation direction (depending on player's velocity)
+		lda player_a_velocity_h, x
+		bmi set_anim_left
+			lda DIRECTION_RIGHT
+			jmp set_anim_dir
+		set_anim_left:
+			lda DIRECTION_LEFT
+		set_anim_dir:
+			ldy #ANIMATION_STATE_OFFSET_DIRECTION
+			sta (tmpfield11), y
 
-	; Impactful controller states and associated callbacks
-	input_table:
+		rts
+	.)
+
+	&kiki_tick_thrown:
 	.(
-		table_length:
-		.byt 3
-		controller_inputs:
-		.byt CONTROLLER_INPUT_TECH,        CONTROLLER_INPUT_TECH_RIGHT,   CONTROLLER_INPUT_TECH_LEFT
-		controller_callbacks_lo:
-		.byt <tech_neutral,                <tech_right,                   <tech_left
-		controller_callbacks_hi:
-		.byt >tech_neutral,                >tech_right,                   >tech_left
-		controller_default_callback:
-		.word no_tech
+		jsr kiki_global_tick
+
+		; Decrement tech counter (to zero minimum)
+		lda player_a_state_field1, x
+		beq end_dec_tech_cnt
+			dec player_a_state_field1, x
+		end_dec_tech_cnt:
+
+		; Update velocity
+		lda player_a_hitstun, x
+		bne gravity
+			jsr kiki_aerial_directional_influence
+		gravity:
+		jmp apply_player_gravity
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	&kiki_input_thrown:
+	.(
+		; Handle controller inputs
+		lda #<(input_table+1)
+		sta tmpfield1
+		lda #>(input_table+1)
+		sta tmpfield2
+		lda input_table
+		sta tmpfield3
+		jmp controller_callbacks
+
+		; If a tech is entered, store it's direction in state_field2
+		; and if the counter is at 0, reset it to it's max value.
+		tech_neutral:
+			lda #$00
+			jmp tech_common
+		tech_right:
+			lda #$01
+			jmp tech_common
+		tech_left:
+			lda #$02
+		tech_common:
+			sta player_a_state_field2, x
+			lda player_a_state_field1, x
+			bne end
+				ldy #SYSTEM_INDEX
+				lda tech_window, y
+				sta player_a_state_field1, x
+
+		no_tech:
+			jmp kiki_check_aerial_inputs
+			; No return, jump to subroutine
+
+		end:
+		rts
+
+		; Impactful controller states and associated callbacks
+		input_table:
+		.(
+			table_length:
+			.byt 3
+			controller_inputs:
+			.byt CONTROLLER_INPUT_TECH,        CONTROLLER_INPUT_TECH_RIGHT,   CONTROLLER_INPUT_TECH_LEFT
+			controller_callbacks_lo:
+			.byt <tech_neutral,                <tech_right,                   <tech_left
+			controller_callbacks_hi:
+			.byt >tech_neutral,                >tech_right,                   >tech_left
+			controller_default_callback:
+			.word no_tech
+		.)
+	.)
+
+	&kiki_onground_thrown:
+	.(
+		; If the tech counter is bellow the threshold, just crash
+		ldy #SYSTEM_INDEX
+		lda tech_nb_forbidden_frames, y
+		cmp player_a_state_field1, x
+		bcs crash
+
+		; A valid tech was entered, land with momentum depending on tech's direction
+		jsr kiki_start_landing
+		lda player_a_state_field2, x
+		beq no_momentum
+		cmp #$01
+		beq momentum_right
+			ldy #SYSTEM_INDEX
+			lda kiki_tech_speed_neg_msb, y
+			sta player_a_velocity_h, x
+			lda kiki_tech_speed_neg_lsb, y
+			sta player_a_velocity_h_low, x
+			jmp end
+		no_momentum:
+			lda #$00
+			sta player_a_velocity_h, x
+			sta player_a_velocity_h_low, x
+			jmp end
+		momentum_right:
+			ldy #SYSTEM_INDEX
+			lda kiki_tech_speed_msb, y
+			sta player_a_velocity_h, x
+			lda kiki_tech_speed_lsb, y
+			sta player_a_velocity_h_low, x
+			jmp end
+
+		crash:
+		jsr kiki_start_crashing
+
+		end:
+		rts
 	.)
 .)
 
-kiki_onground_thrown:
+;
+; Respawn
+;
+
 .(
-	KIKI_TECH_SPEED = $0400
+	&kiki_start_respawn:
+	.(
+		; Set the player's state
+		lda #KIKI_STATE_RESPAWN
+		sta player_a_state, x
 
-	; If the tech counter is bellow the threshold, just crash
-	ldy #SYSTEM_INDEX
-	lda tech_nb_forbidden_frames, y
-	cmp player_a_state_field1, x
-	bcs crash
-
-	; A valid tech was entered, land with momentum depending on tech's direction
-	jsr kiki_start_landing
-	lda player_a_state_field2, x
-	beq no_momentum
-	cmp #$01
-	beq momentum_right
-		lda #>(-KIKI_TECH_SPEED)
-		sta player_a_velocity_h, x
-		lda #>(-KIKI_TECH_SPEED)
-		sta player_a_velocity_h_low, x
-		jmp end
-	no_momentum:
+		; Place player to the respawn spot
+		lda stage_data+STAGE_HEADER_OFFSET_RESPAWNX_HIGH
+		sta player_a_x, x
+		lda stage_data+STAGE_HEADER_OFFSET_RESPAWNX_LOW
+		sta player_a_x_low, x
+		lda stage_data+STAGE_HEADER_OFFSET_RESPAWNY_HIGH
+		sta player_a_y, x
+		lda stage_data+STAGE_HEADER_OFFSET_RESPAWNY_LOW
+		sta player_a_y_low, x
 		lda #$00
+		sta player_a_x_screen, x
+		sta player_a_y_screen, x
 		sta player_a_velocity_h, x
 		sta player_a_velocity_h_low, x
-		jmp end
-	momentum_right:
-		lda #>KIKI_TECH_SPEED
-		sta player_a_velocity_h, x
-		lda #<KIKI_TECH_SPEED
-		sta player_a_velocity_h_low, x
-		jmp end
+		sta player_a_velocity_v, x
+		sta player_a_velocity_v_low, x
+		sta player_a_damages, x
 
-	crash:
-	jsr kiki_start_crashing
+		; Initialise state's timer
+		ldy #SYSTEM_INDEX
+		lda player_respawn_max_duration, y
+		sta player_a_state_field1, x
 
-	end:
-	rts
-.)
+		; Reinitialize walljump counter
+		lda #KIKI_MAX_WALLJUMPS
+		sta player_a_walljump, x
 
-kiki_start_respawn:
-.(
-	; Set the player's state
-	lda #KIKI_STATE_RESPAWN
-	sta player_a_state, x
+		; Set the appropriate animation
+		lda #<kiki_anim_respawn
+		sta tmpfield13
+		lda #>kiki_anim_respawn
+		sta tmpfield14
+		jsr set_player_animation
 
-	; Place player to the respawn spot
-	lda stage_data+STAGE_HEADER_OFFSET_RESPAWNX_HIGH
-	sta player_a_x, x
-	lda stage_data+STAGE_HEADER_OFFSET_RESPAWNX_LOW
-	sta player_a_x_low, x
-	lda stage_data+STAGE_HEADER_OFFSET_RESPAWNY_HIGH
-	sta player_a_y, x
-	lda stage_data+STAGE_HEADER_OFFSET_RESPAWNY_LOW
-	sta player_a_y_low, x
-	lda #$00
-	sta player_a_x_screen, x
-	sta player_a_y_screen, x
-	sta player_a_velocity_h, x
-	sta player_a_velocity_h_low, x
-	sta player_a_velocity_v, x
-	sta player_a_velocity_v_low, x
-	sta player_a_damages, x
-
-	; Initialise state's timer
-	lda #PLAYER_RESPAWN_MAX_DURATION
-	sta player_a_state_field1, x
-
-	; Reinitialize walljump counter
-	lda #KIKI_MAX_WALLJUMPS
-	sta player_a_walljump, x
-
-	; Set the appropriate animation
-	lda #<kiki_anim_respawn
-	sta tmpfield13
-	lda #>kiki_anim_respawn
-	sta tmpfield14
-	jsr set_player_animation
-
-	rts
-.)
+		rts
+	.)
 
 
-kiki_tick_respawn:
-.(
-	jsr kiki_global_tick
+	&kiki_tick_respawn:
+	.(
+		jsr kiki_global_tick
 
-	; Check for timeout
-	dec player_a_state_field1, x
-	bne end
-	jsr kiki_start_falling
+		; Check for timeout
+		dec player_a_state_field1, x
+		bne end
+			jmp kiki_start_falling
+			; No return, jump to subroutine
 
-	end:
-	rts
-.)
+		end:
+		rts
+	.)
 
-kiki_input_respawn:
-.(
-	; Avoid doing anything until controller has returned to neutral since after
-	; death the player can release buttons without expecting to take action
-	lda controller_a_last_frame_btns, x
-	bne end
-
-		; Call kiki_check_aerial_inputs
-		;  If it does not change the player state, go to falling state
-		;  so that any button press makes the player falls from revival
-		;  platform
-		jsr kiki_check_aerial_inputs
-		lda player_a_state, x
-		cmp #KIKI_STATE_RESPAWN
+	&kiki_input_respawn:
+	.(
+		; Avoid doing anything until controller has returned to neutral since after
+		; death the player can release buttons without expecting to take action
+		lda controller_a_last_frame_btns, x
 		bne end
 
-			jsr kiki_start_falling
+			; Call kiki_check_aerial_inputs
+			;  If it does not change the player state, go to falling state
+			;  so that any button press makes the player falls from revival
+			;  platform
+			jsr kiki_check_aerial_inputs
+			lda player_a_state, x
+			cmp #KIKI_STATE_RESPAWN
+			bne end
+				jmp kiki_start_falling
+				; No return, jump to subroutine
 
-	end:
-	rts
+		end:
+		rts
+	.)
 .)
 
+;
+; Innexistant
+;
 
-kiki_start_innexistant:
 .(
-	; Set the player's state
-	lda #KIKI_STATE_INNEXISTANT
-	sta player_a_state, x
+	&kiki_start_innexistant:
+	.(
+		; Set the player's state
+		lda #KIKI_STATE_INNEXISTANT
+		sta player_a_state, x
 
-	; Set to a fixed place
-	lda #0
-	sta player_a_x_screen, x
-	sta player_a_x, x
-	sta player_a_x_low, x
-	sta player_a_y_screen, x
-	sta player_a_y, x
-	sta player_a_y_low, x
-	sta player_a_velocity_h, x
-	sta player_a_velocity_h_low, x
-	sta player_a_velocity_v, x
-	sta player_a_velocity_v_low, x
+		; Set to a fixed place
+		lda #0
+		sta player_a_x_screen, x
+		sta player_a_x, x
+		sta player_a_x_low, x
+		sta player_a_y_screen, x
+		sta player_a_y, x
+		sta player_a_y_low, x
+		sta player_a_velocity_h, x
+		sta player_a_velocity_h_low, x
+		sta player_a_velocity_v, x
+		sta player_a_velocity_v_low, x
 
-	; Set the appropriate animation
-	lda #<anim_invisible
-	sta tmpfield13
-	lda #>anim_invisible
-	sta tmpfield14
-	jsr set_player_animation
+		; Set the appropriate animation
+		lda #<anim_invisible
+		sta tmpfield13
+		lda #>anim_invisible
+		sta tmpfield14
+		jmp set_player_animation
+		; No return, jump to subroutine
 
-	rts
+		rts
+	.)
 .)
 
-kiki_tick_innexistant:
+;
+; Spawn
+;
+
 .(
-	jsr kiki_global_tick
+	spawn_duration:
+		.byt kiki_anim_spawn_dur_pal, kiki_anim_spawn_dur_ntsc
+#if kiki_anim_spawn_dur_pal <> 50
+#error incorrect spawn duration
+#endif
+#if kiki_anim_spawn_dur_ntsc <> 59
+#error incorrect spawn duration (ntsc only)
+#endif
 
-	rts
+	&kiki_start_spawn:
+	.(
+		; Hack - there is no ensured call to a character init function
+		;        expect start_spawn to be called once at the begining of a game
+		jsr kiki_init
+
+		; Set the player's state
+		lda #KIKI_STATE_SPAWN
+		sta player_a_state, x
+
+		; Reset clock
+		ldy #SYSTEM_INDEX
+		lda spawn_duration, y
+		sta player_a_state_clock, x
+
+		; Set the appropriate animation
+		lda #<kiki_anim_spawn
+		sta tmpfield13
+		lda #>kiki_anim_spawn
+		sta tmpfield14
+		jmp set_player_animation
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	&kiki_tick_spawn:
+	.(
+		jsr kiki_global_tick
+
+		dec player_a_state_clock, x
+        bne tick
+            jmp kiki_start_idle
+            ; No return, jump to subroutine
+        tick:
+        rts
+	.)
 .)
 
-
-kiki_start_spawn:
-.(
-	; Hack - there is no ensured call to a character init function
-	;        expect start_spawn to be called once at the begining of a game
-	jsr kiki_init
-
-	; Set the player's state
-	lda #KIKI_STATE_SPAWN
-	sta player_a_state, x
-
-	; Reset clock
-	lda #0
-	sta player_a_state_clock, x
-
-	; Set the appropriate animation
-	lda #<kiki_anim_spawn
-	sta tmpfield13
-	lda #>kiki_anim_spawn
-	sta tmpfield14
-	jsr set_player_animation
-
-	rts
-.)
-
-kiki_tick_spawn:
-.(
-	jsr kiki_global_tick
-
-	KIKI_STATE_SPAWN_DURATION = 50
-
-	inc player_a_state_clock, x
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_SPAWN_DURATION
-	bne end
-		jsr kiki_start_idle
-
-	end:
-	rts
-.)
-
+;
+; Idle
+;
 
 ; Choose between falling or idle depending if grounded
 kiki_start_inactive_state:
@@ -967,444 +1066,463 @@ kiki_start_inactive_state:
     ; Fallthrough to kiki_start_idle
 .)
 
-kiki_start_idle:
 .(
-	; Set the player's state
-	lda #KIKI_STATE_IDLE
-	sta player_a_state, x
-
-	; Set the appropriate animation
-	lda #<kiki_anim_idle
-	sta tmpfield13
-	lda #>kiki_anim_idle
-	sta tmpfield14
-	jsr set_player_animation
-
-	rts
-.)
-
-kiki_tick_idle:
-.(
-	jsr kiki_global_tick
-
-	; Do not move, velocity tends toward vector (0,0)
-	lda #$00
-	sta tmpfield4
-	sta tmpfield3
-	sta tmpfield2
-	sta tmpfield1
-	lda #$ff
-	sta tmpfield5
-	jsr merge_to_player_velocity
-
-	; Force handling directional controls
-	;   we want to start running even if button presses where maintained from previous state)
-	lda controller_a_btns, x
-	cmp #CONTROLLER_INPUT_LEFT
-	bne no_left
-	jsr kiki_input_idle_left
-	jmp end
-	no_left:
-	cmp #CONTROLLER_INPUT_RIGHT
-	bne end
-	jsr kiki_input_idle_right
-
-	end:
-	rts
-.)
-
-kiki_input_idle:
-.(
-	; Do not handle any input if under hitstun
-	lda player_a_hitstun, x
-	bne end
-
-		; Check state changes
-		lda #<input_table
-		sta tmpfield1
-		lda #>input_table
-		sta tmpfield2
-		lda #INPUT_TABLE_LENGTH
-		sta tmpfield3
-		jmp controller_callbacks
-
-	end:
-	rts
-
-	input_table:
+	&kiki_start_idle:
 	.(
-		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,              CONTROLLER_INPUT_RIGHT
-		.byt CONTROLLER_INPUT_JUMP,              CONTROLLER_INPUT_JUMP_RIGHT
-		.byt CONTROLLER_INPUT_JUMP_LEFT,         CONTROLLER_INPUT_ATTACK_RIGHT
-		.byt CONTROLLER_INPUT_ATTACK_LEFT,       CONTROLLER_INPUT_SPECIAL_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_LEFT,      CONTROLLER_INPUT_TECH
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN,      CONTROLLER_INPUT_SPECIAL_UP
-		.byt CONTROLLER_INPUT_ATTACK_UP,         CONTROLLER_INPUT_DOWN_TILT
-		.byt CONTROLLER_INPUT_JAB,               CONTROLLER_INPUT_SPECIAL
-		.byt CONTROLLER_INPUT_TECH_LEFT,         CONTROLLER_INPUT_TECH_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT,   CONTROLLER_INPUT_SPECIAL_UP_RIGHT
-		.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,    CONTROLLER_INPUT_ATTACK_UP_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN_LEFT, CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
-		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,  CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
-		controller_callbacks_lsb:
-		.byt <kiki_input_idle_left,      <kiki_input_idle_right
-		.byt <kiki_start_jumping,        <kiki_input_idle_jump_right
-		.byt <kiki_input_idle_jump_left, <kiki_start_side_tilt_right
-		.byt <kiki_start_side_tilt_left, <kiki_start_side_spe_right
-		.byt <kiki_start_side_spe_left,  <kiki_start_shielding
-		.byt <kiki_start_counter_guard,  <kiki_start_down_wall
-		.byt <kiki_start_up_tilt,        <kiki_start_down_tilt
-		.byt <kiki_start_jabbing,        <kiki_start_top_wall
-		.byt <kiki_start_shielding,      <kiki_start_shielding
-		.byt <kiki_start_down_wall,      <kiki_start_down_wall
-		.byt <kiki_start_up_tilt,        <kiki_start_up_tilt
-		.byt <kiki_start_counter_guard,  <kiki_start_counter_guard
-		.byt <kiki_start_down_tilt,      <kiki_start_down_tilt
-		controller_callbacks_msb:
-		.byt >kiki_input_idle_left,      >kiki_input_idle_right
-		.byt >kiki_start_jumping,        >kiki_input_idle_jump_right
-		.byt >kiki_input_idle_jump_left, >kiki_start_side_tilt_right
-		.byt >kiki_start_side_tilt_left, >kiki_start_side_spe_right
-		.byt >kiki_start_side_spe_left,  >kiki_start_shielding
-		.byt >kiki_start_counter_guard,  >kiki_start_down_wall
-		.byt >kiki_start_up_tilt,        >kiki_start_down_tilt
-		.byt >kiki_start_jabbing,        >kiki_start_top_wall
-		.byt >kiki_start_shielding,      >kiki_start_shielding
-		.byt >kiki_start_down_wall,      >kiki_start_down_wall
-		.byt >kiki_start_up_tilt,        >kiki_start_up_tilt
-		.byt >kiki_start_counter_guard,  >kiki_start_counter_guard
-		.byt >kiki_start_down_tilt,      >kiki_start_down_tilt
-		controller_default_callback:
-		.word end
-		&INPUT_TABLE_LENGTH = controller_callbacks_lsb - controller_inputs
+		; Set the player's state
+		lda #KIKI_STATE_IDLE
+		sta player_a_state, x
+
+		; Set the appropriate animation
+		lda #<kiki_anim_idle
+		sta tmpfield13
+		lda #>kiki_anim_idle
+		sta tmpfield14
+		jsr set_player_animation
+
+		rts
 	.)
 
-	kiki_input_idle_jump_right:
+	&kiki_tick_idle:
 	.(
-		lda DIRECTION_RIGHT
-		sta player_a_direction, x
-		jmp kiki_start_jumping
-		;rts ; useless - kiki_start_jumping is a routine
-	.)
+		jsr kiki_global_tick
 
-	kiki_input_idle_jump_left:
-	.(
-		lda DIRECTION_LEFT
-		sta player_a_direction, x
-		jmp kiki_start_jumping
-		;rts ; useless - kiki_start_jumping is a routine
-	.)
-.)
-
-kiki_input_idle_left:
-.(
-	lda DIRECTION_LEFT
-	sta player_a_direction, x
-	jsr kiki_start_running
-	rts
-.)
-
-kiki_input_idle_right:
-.(
-	lda DIRECTION_RIGHT
-	sta player_a_direction, x
-	jsr kiki_start_running
-	rts
-.)
-
-
-KIKI_RUNNING_INITIAL_VELOCITY = $0100
-KIKI_RUNNING_MAX_VELOCITY = $0180
-KIKI_RUNNING_ACCELERATION = $40
-kiki_start_running:
-.(
-	; Set the player's state
-	lda #KIKI_STATE_RUNNING
-	sta player_a_state, x
-
-	; Set initial velocity
-	lda player_a_direction, x
-	cmp DIRECTION_LEFT
-	bne direction_right
-		lda #<-KIKI_RUNNING_INITIAL_VELOCITY
-		sta player_a_velocity_h_low, x
-		lda #>-KIKI_RUNNING_INITIAL_VELOCITY
-		jmp set_high_byte
-	direction_right:
-		lda #<KIKI_RUNNING_INITIAL_VELOCITY
-		sta player_a_velocity_h_low, x
-		lda #>KIKI_RUNNING_INITIAL_VELOCITY
-	set_high_byte:
-	sta player_a_velocity_h, x
-
-	; Fallthrough to set animation
-.)
-kiki_set_running_animation:
-.(
-	; Set the appropriate animation
-	lda #<kiki_anim_run
-	sta tmpfield13
-	lda #>kiki_anim_run
-	sta tmpfield14
-	jsr set_player_animation
-
-	rts
-.)
-
-kiki_tick_running:
-.(
-	jsr kiki_global_tick
-
-	; Update player's velocity dependeing on his direction
-	lda player_a_direction, x
-	beq run_left
-
-		; Running right, velocity tends toward vector max velocity
-		lda #>KIKI_RUNNING_MAX_VELOCITY
+		; Do not move, velocity tends toward vector (0,0)
+		lda #$00
 		sta tmpfield4
-		lda #<KIKI_RUNNING_MAX_VELOCITY
-		jmp update_velocity
-
-	run_left:
-		; Running left, velocity tends toward vector "-1 * max volcity"
-		lda #>-KIKI_RUNNING_MAX_VELOCITY
-		sta tmpfield4
-		lda #<-KIKI_RUNNING_MAX_VELOCITY
-
-	update_velocity:
-		sta tmpfield2
-		lda #0
 		sta tmpfield3
+		sta tmpfield2
 		sta tmpfield1
-		lda #KIKI_RUNNING_ACCELERATION
+		lda #$ff
 		sta tmpfield5
 		jsr merge_to_player_velocity
 
-	end:
-	rts
+		; Force handling directional controls
+		;   we want to start running even if button presses where maintained from previous state
+		lda controller_a_btns, x
+		cmp #CONTROLLER_INPUT_LEFT
+		bne no_left
+		jsr kiki_input_idle_left
+		jmp end
+		no_left:
+		cmp #CONTROLLER_INPUT_RIGHT
+		bne end
+		jsr kiki_input_idle_right
+
+		end:
+		rts
+	.)
+
+	&kiki_input_idle:
+	.(
+		; Do not handle any input if under hitstun
+		lda player_a_hitstun, x
+		bne end
+
+			; Check state changes
+			lda #<input_table
+			sta tmpfield1
+			lda #>input_table
+			sta tmpfield2
+			lda #INPUT_TABLE_LENGTH
+			sta tmpfield3
+			jmp controller_callbacks
+
+		end:
+		rts
+
+		input_table:
+		.(
+			controller_inputs:
+			.byt CONTROLLER_INPUT_LEFT,              CONTROLLER_INPUT_RIGHT
+			.byt CONTROLLER_INPUT_JUMP,              CONTROLLER_INPUT_JUMP_RIGHT
+			.byt CONTROLLER_INPUT_JUMP_LEFT,         CONTROLLER_INPUT_ATTACK_RIGHT
+			.byt CONTROLLER_INPUT_ATTACK_LEFT,       CONTROLLER_INPUT_SPECIAL_RIGHT
+			.byt CONTROLLER_INPUT_SPECIAL_LEFT,      CONTROLLER_INPUT_TECH
+			.byt CONTROLLER_INPUT_SPECIAL_DOWN,      CONTROLLER_INPUT_SPECIAL_UP
+			.byt CONTROLLER_INPUT_ATTACK_UP,         CONTROLLER_INPUT_DOWN_TILT
+			.byt CONTROLLER_INPUT_JAB,               CONTROLLER_INPUT_SPECIAL
+			.byt CONTROLLER_INPUT_TECH_LEFT,         CONTROLLER_INPUT_TECH_RIGHT
+			.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT,   CONTROLLER_INPUT_SPECIAL_UP_RIGHT
+			.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,    CONTROLLER_INPUT_ATTACK_UP_RIGHT
+			.byt CONTROLLER_INPUT_SPECIAL_DOWN_LEFT, CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
+			.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,  CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
+			controller_callbacks_lsb:
+			.byt <kiki_input_idle_left,      <kiki_input_idle_right
+			.byt <kiki_start_jumping,        <kiki_input_idle_jump_right
+			.byt <kiki_input_idle_jump_left, <kiki_start_side_tilt_right
+			.byt <kiki_start_side_tilt_left, <kiki_start_side_spe_right
+			.byt <kiki_start_side_spe_left,  <kiki_start_shielding
+			.byt <kiki_start_counter_guard,  <kiki_start_down_wall
+			.byt <kiki_start_up_tilt,        <kiki_start_down_tilt
+			.byt <kiki_start_jabbing,        <kiki_start_top_wall
+			.byt <kiki_start_shielding,      <kiki_start_shielding
+			.byt <kiki_start_down_wall,      <kiki_start_down_wall
+			.byt <kiki_start_up_tilt,        <kiki_start_up_tilt
+			.byt <kiki_start_counter_guard,  <kiki_start_counter_guard
+			.byt <kiki_start_down_tilt,      <kiki_start_down_tilt
+			controller_callbacks_msb:
+			.byt >kiki_input_idle_left,      >kiki_input_idle_right
+			.byt >kiki_start_jumping,        >kiki_input_idle_jump_right
+			.byt >kiki_input_idle_jump_left, >kiki_start_side_tilt_right
+			.byt >kiki_start_side_tilt_left, >kiki_start_side_spe_right
+			.byt >kiki_start_side_spe_left,  >kiki_start_shielding
+			.byt >kiki_start_counter_guard,  >kiki_start_down_wall
+			.byt >kiki_start_up_tilt,        >kiki_start_down_tilt
+			.byt >kiki_start_jabbing,        >kiki_start_top_wall
+			.byt >kiki_start_shielding,      >kiki_start_shielding
+			.byt >kiki_start_down_wall,      >kiki_start_down_wall
+			.byt >kiki_start_up_tilt,        >kiki_start_up_tilt
+			.byt >kiki_start_counter_guard,  >kiki_start_counter_guard
+			.byt >kiki_start_down_tilt,      >kiki_start_down_tilt
+			controller_default_callback:
+			.word end
+			&INPUT_TABLE_LENGTH = controller_callbacks_lsb - controller_inputs
+		.)
+
+		kiki_input_idle_jump_right:
+		.(
+			lda DIRECTION_RIGHT
+			sta player_a_direction, x
+			jmp kiki_start_jumping
+			;rts ; useless - kiki_start_jumping is a routine
+		.)
+
+		kiki_input_idle_jump_left:
+		.(
+			lda DIRECTION_LEFT
+			sta player_a_direction, x
+			jmp kiki_start_jumping
+			;rts ; useless - kiki_start_jumping is a routine
+		.)
+	.)
+
+	kiki_input_idle_left:
+	.(
+		lda DIRECTION_LEFT
+		sta player_a_direction, x
+		jmp kiki_start_running
+		;rts ; useless, jump to subroutine
+	.)
+
+	kiki_input_idle_right:
+	.(
+		lda DIRECTION_RIGHT
+		sta player_a_direction, x
+		jmp kiki_start_running
+		;rts ; useless, jump to subroutine
+	.)
 .)
 
-kiki_input_running:
-.(
-	; If in hitstun, stop running
-	lda player_a_hitstun, x
-	beq take_input
-		jsr kiki_start_idle
-		jmp end
-	take_input:
+;
+; Running
+;
 
-		; Check state changes
-		lda #<input_table
+.(
+	velocity_table(KIKI_RUNNING_INITIAL_VELOCITY, run_init_velocity_msb, run_init_velocity_lsb)
+	velocity_table(-KIKI_RUNNING_INITIAL_VELOCITY, run_init_neg_velocity_msb, run_init_neg_velocity_lsb)
+
+	velocity_table(KIKI_RUNNING_MAX_VELOCITY, run_max_velocity_msb, run_max_velocity_lsb)
+	velocity_table(-KIKI_RUNNING_MAX_VELOCITY, run_max_neg_velocity_msb, run_max_neg_velocity_lsb)
+
+	velocity_table_u8(KIKI_RUNNING_ACCELERATION, run_acceleration)
+
+	&kiki_start_running:
+	.(
+		; Set the player's state
+		lda #KIKI_STATE_RUNNING
+		sta player_a_state, x
+
+		; Set initial velocity
+		ldy #SYSTEM_INDEX
+		lda player_a_direction, x
+		cmp DIRECTION_LEFT
+		bne direction_right
+			direction_left:
+				lda run_init_neg_velocity_lsb, y
+				sta player_a_velocity_h_low, x
+				lda run_init_neg_velocity_msb, y
+				jmp set_high_byte
+			direction_right:
+				lda run_init_velocity_lsb, y
+				sta player_a_velocity_h_low, x
+				lda run_init_velocity_msb, y
+		set_high_byte:
+		sta player_a_velocity_h, x
+
+		; Fallthrough to set animation
+	.)
+	kiki_set_running_animation:
+	.(
+		; Set the appropriate animation
+		lda #<kiki_anim_run
+		sta tmpfield13
+		lda #>kiki_anim_run
+		sta tmpfield14
+		jmp set_player_animation
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	&kiki_tick_running:
+	.(
+		jsr kiki_global_tick
+
+		; Update player's velocity dependeing on his direction
+		ldy #SYSTEM_INDEX
+		lda player_a_direction, x
+		beq run_left
+
+			; Running right, velocity tends toward vector max velocity
+			lda run_max_velocity_msb, y
+			sta tmpfield4
+			lda run_max_velocity_lsb, y
+			jmp update_velocity
+
+		run_left:
+			; Running left, velocity tends toward vector "-1 * max volcity"
+			lda run_max_neg_velocity_msb, y
+			sta tmpfield4
+			lda run_max_neg_velocity_lsb, y
+
+		update_velocity:
+			sta tmpfield2
+			lda #0
+			sta tmpfield3
+			sta tmpfield1
+			lda run_acceleration, y
+			sta tmpfield5
+			jsr merge_to_player_velocity
+
+		end:
+		rts
+	.)
+
+	&kiki_input_running:
+	.(
+		; If in hitstun, stop running
+		lda player_a_hitstun, x
+		beq take_input
+			jsr kiki_start_idle
+			jmp end
+		take_input:
+
+			; Check state changes
+			lda #<input_table
+			sta tmpfield1
+			lda #>input_table
+			sta tmpfield2
+			lda #INPUT_TABLE_LENGTH
+			sta tmpfield3
+			jmp controller_callbacks
+
+		end:
+		rts
+
+		kiki_input_running_left:
+		.(
+			lda DIRECTION_LEFT
+			cmp player_a_direction, x
+			beq end_changing_direction
+				sta player_a_direction, x
+				jsr kiki_set_running_animation
+			end_changing_direction:
+			rts
+		.)
+
+		kiki_input_running_right:
+		.(
+			lda DIRECTION_RIGHT
+			cmp player_a_direction, x
+			beq end_changing_direction
+				sta player_a_direction, x
+				jsr kiki_set_running_animation
+			end_changing_direction:
+			rts
+		.)
+
+		input_table:
+		.(
+			controller_inputs:
+			.byt CONTROLLER_INPUT_LEFT,              CONTROLLER_INPUT_RIGHT
+			.byt CONTROLLER_INPUT_JUMP,              CONTROLLER_INPUT_JUMP_RIGHT
+			.byt CONTROLLER_INPUT_JUMP_LEFT,         CONTROLLER_INPUT_ATTACK_LEFT
+			.byt CONTROLLER_INPUT_ATTACK_RIGHT,      CONTROLLER_INPUT_SPECIAL_LEFT
+			.byt CONTROLLER_INPUT_SPECIAL_RIGHT,     CONTROLLER_INPUT_TECH
+			.byt CONTROLLER_INPUT_SPECIAL_DOWN,      CONTROLLER_INPUT_SPECIAL_UP
+			.byt CONTROLLER_INPUT_ATTACK_UP,         CONTROLLER_INPUT_DOWN_TILT
+			.byt CONTROLLER_INPUT_JAB,               CONTROLLER_INPUT_SPECIAL
+			.byt CONTROLLER_INPUT_TECH_LEFT,         CONTROLLER_INPUT_TECH_RIGHT
+			.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT,   CONTROLLER_INPUT_SPECIAL_UP_RIGHT
+			.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,    CONTROLLER_INPUT_ATTACK_UP_RIGHT
+			.byt CONTROLLER_INPUT_SPECIAL_DOWN_LEFT, CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
+			.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,  CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
+			controller_callbacks_lsb:
+			.byt <kiki_input_running_left,    <kiki_input_running_right
+			.byt <kiki_start_jumping,         <kiki_start_jumping
+			.byt <kiki_start_jumping,         <kiki_start_side_tilt_left
+			.byt <kiki_start_side_tilt_right, <kiki_start_side_spe_left
+			.byt <kiki_start_side_spe_right,  <kiki_start_shielding
+			.byt <kiki_start_counter_guard,   <kiki_start_down_wall
+			.byt <kiki_start_up_tilt,         <kiki_start_down_tilt
+			.byt <kiki_start_jabbing,         <kiki_start_top_wall
+			.byt <kiki_start_shielding,       <kiki_start_shielding
+			.byt <kiki_start_down_wall,       <kiki_start_down_wall
+			.byt <kiki_start_up_tilt,         <kiki_start_up_tilt
+			.byt <kiki_start_counter_guard,   <kiki_start_counter_guard
+			.byt <kiki_start_down_tilt,       <kiki_start_down_tilt
+			controller_callbacks_msb:
+			.byt >kiki_input_running_left,    >kiki_input_running_right
+			.byt >kiki_start_jumping,         >kiki_start_jumping
+			.byt >kiki_start_jumping,         >kiki_start_side_tilt_left
+			.byt >kiki_start_side_tilt_right, >kiki_start_side_spe_left
+			.byt >kiki_start_side_spe_right,  >kiki_start_shielding
+			.byt >kiki_start_counter_guard,   >kiki_start_down_wall
+			.byt >kiki_start_up_tilt,         >kiki_start_down_tilt
+			.byt >kiki_start_jabbing,         >kiki_start_top_wall
+			.byt >kiki_start_shielding,       >kiki_start_shielding
+			.byt >kiki_start_down_wall,       >kiki_start_down_wall
+			.byt >kiki_start_up_tilt,         >kiki_start_up_tilt
+			.byt >kiki_start_counter_guard,   >kiki_start_counter_guard
+			.byt >kiki_start_down_tilt,       >kiki_start_down_tilt
+			controller_default_callback:
+			.word kiki_start_idle
+			&INPUT_TABLE_LENGTH = controller_callbacks_lsb - controller_inputs
+		.)
+	.)
+.)
+
+;
+; Jumping
+;
+
+.(
+	&kiki_start_jumping:
+	.(
+		lda #KIKI_STATE_JUMPING
+		sta player_a_state, x
+
+		lda #0
+		sta player_a_state_field1, x
+		sta player_a_state_clock, x
+
+		; Set the appropriate animation
+		lda #<kiki_anim_jump
+		sta tmpfield13
+		lda #>kiki_anim_jump
+		sta tmpfield14
+		jmp set_player_animation
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	&kiki_tick_jumping:
+	.(
+		jsr kiki_global_tick
+
+		; Tick clock
+		inc player_a_state_clock, x
+
+		; Wait for the preparation to end to begin to jump
+		ldy #SYSTEM_INDEX
+		lda player_a_state_clock, x
+		cmp kiki_jumpsquat_duration, y
+		bcc end
+		beq begin_to_jump
+
+		; Handle short-hop input
+		cmp kiki_short_hop_time, y
+		beq stop_short_hop
+
+		; Check if the top of the jump is reached
+		lda player_a_velocity_v, x
+		beq top_reached
+		bpl top_reached
+
+		; The top is not reached, stay in jumping state but apply gravity and directional influence
+		moving_upward:
+			jmp kiki_tick_falling ; Hack - We just use kiki_tick_falling which do exactly what we want
+			; No return, jump to subroutine
+
+		; The top is reached, return to falling
+		top_reached:
+			jmp kiki_start_falling
+			; No return, jump to subroutine
+
+		; If the jump button is no more pressed mid jump, convert the jump to a short-hop
+		stop_short_hop:
+			; Handle this tick as any other
+			jsr kiki_tick_falling
+
+			; If the jump button is still pressed, this is not a short-hop
+			lda controller_a_btns, x
+			and #CONTROLLER_INPUT_JUMP
+			bne end
+
+				; Reduce upward momentum to end the jump earlier
+				lda #>-KIKI_JUMP_SHORT_HOP_POWER
+				sta player_a_velocity_v, x
+				lda #<-KIKI_JUMP_SHORT_HOP_POWER
+				sta player_a_velocity_v_low, x
+				rts
+				; No return
+
+		; Put initial jumping velocity
+		begin_to_jump:
+			lda #>-KIKI_JUMP_POWER
+			sta player_a_velocity_v, x
+			lda #<-KIKI_JUMP_POWER
+			sta player_a_velocity_v_low, x
+			;jmp end ; Useless, fallthrough
+
+		end:
+		rts
+	.)
+
+	&kiki_input_jumping:
+	.(
+		; The jump is cancellable by grounded movements during preparation
+		; and by aerial movements after that
+		lda player_a_num_aerial_jumps, x ; performing aerial jump, not
+		bne not_grounded                 ; grounded
+
+		ldy #SYSTEM_INDEX
+		lda player_a_state_clock, x    ;
+		cmp kiki_jumpsquat_duration, y ; Still preparing the jump
+		bcc grounded                   ;
+
+		not_grounded:
+		jsr kiki_check_aerial_inputs
+		jmp end
+
+		grounded:
+		lda #<(input_table+1)
 		sta tmpfield1
-		lda #>input_table
+		lda #>(input_table+1)
 		sta tmpfield2
-		lda #INPUT_TABLE_LENGTH
+		lda input_table
 		sta tmpfield3
 		jmp controller_callbacks
 
-	end:
-	rts
-
-	kiki_input_running_left:
-	.(
-		lda DIRECTION_LEFT
-		cmp player_a_direction, x
-		beq end_changing_direction
-			sta player_a_direction, x
-			jsr kiki_set_running_animation
-		end_changing_direction:
+		end:
 		rts
-	.)
 
-	kiki_input_running_right:
-	.(
-		lda DIRECTION_RIGHT
-		cmp player_a_direction, x
-		beq end_changing_direction
-			sta player_a_direction, x
-			jsr kiki_set_running_animation
-		end_changing_direction:
-		rts
-	.)
-
-	input_table:
-	.(
-		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,              CONTROLLER_INPUT_RIGHT
-		.byt CONTROLLER_INPUT_JUMP,              CONTROLLER_INPUT_JUMP_RIGHT
-		.byt CONTROLLER_INPUT_JUMP_LEFT,         CONTROLLER_INPUT_ATTACK_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_RIGHT,      CONTROLLER_INPUT_SPECIAL_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_RIGHT,     CONTROLLER_INPUT_TECH
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN,      CONTROLLER_INPUT_SPECIAL_UP
-		.byt CONTROLLER_INPUT_ATTACK_UP,         CONTROLLER_INPUT_DOWN_TILT
-		.byt CONTROLLER_INPUT_JAB,               CONTROLLER_INPUT_SPECIAL
-		.byt CONTROLLER_INPUT_TECH_LEFT,         CONTROLLER_INPUT_TECH_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT,   CONTROLLER_INPUT_SPECIAL_UP_RIGHT
-		.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,    CONTROLLER_INPUT_ATTACK_UP_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN_LEFT, CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
-		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,  CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
-		controller_callbacks_lsb:
-		.byt <kiki_input_running_left,    <kiki_input_running_right
-		.byt <kiki_start_jumping,         <kiki_start_jumping
-		.byt <kiki_start_jumping,         <kiki_start_side_tilt_left
-		.byt <kiki_start_side_tilt_right, <kiki_start_side_spe_left
-		.byt <kiki_start_side_spe_right,  <kiki_start_shielding
-		.byt <kiki_start_counter_guard,   <kiki_start_down_wall
-		.byt <kiki_start_up_tilt,         <kiki_start_down_tilt
-		.byt <kiki_start_jabbing,         <kiki_start_top_wall
-		.byt <kiki_start_shielding,       <kiki_start_shielding
-		.byt <kiki_start_down_wall,       <kiki_start_down_wall
-		.byt <kiki_start_up_tilt,         <kiki_start_up_tilt
-		.byt <kiki_start_counter_guard,   <kiki_start_counter_guard
-		.byt <kiki_start_down_tilt,       <kiki_start_down_tilt
-		controller_callbacks_msb:
-		.byt >kiki_input_running_left,    >kiki_input_running_right
-		.byt >kiki_start_jumping,         >kiki_start_jumping
-		.byt >kiki_start_jumping,         >kiki_start_side_tilt_left
-		.byt >kiki_start_side_tilt_right, >kiki_start_side_spe_left
-		.byt >kiki_start_side_spe_right,  >kiki_start_shielding
-		.byt >kiki_start_counter_guard,   >kiki_start_down_wall
-		.byt >kiki_start_up_tilt,         >kiki_start_down_tilt
-		.byt >kiki_start_jabbing,         >kiki_start_top_wall
-		.byt >kiki_start_shielding,       >kiki_start_shielding
-		.byt >kiki_start_down_wall,       >kiki_start_down_wall
-		.byt >kiki_start_up_tilt,         >kiki_start_up_tilt
-		.byt >kiki_start_counter_guard,   >kiki_start_counter_guard
-		.byt >kiki_start_down_tilt,       >kiki_start_down_tilt
-		controller_default_callback:
-		.word kiki_start_idle
-		&INPUT_TABLE_LENGTH = controller_callbacks_lsb - controller_inputs
-	.)
-.)
-
-
-kiki_start_jumping:
-.(
-	lda #KIKI_STATE_JUMPING
-	sta player_a_state, x
-
-	lda #0
-	sta player_a_state_field1, x
-	sta player_a_state_clock, x
-
-	; Set the appropriate animation
-	lda #<kiki_anim_jump
-	sta tmpfield13
-	lda #>kiki_anim_jump
-	sta tmpfield14
-	jsr set_player_animation
-
-	rts
-.)
-
-KIKI_STATE_JUMP_PREPARATION_END = 4
-kiki_tick_jumping:
-.(
-	jsr kiki_global_tick
-
-	KIKI_STATE_JUMP_SHORT_HOP_TIME = 9
-	KIKI_STATE_JUMP_INITIAL_VELOCITY = $fb80
-	KIKI_STATE_JUMP_SHORT_HOP_VELOCITY = $fefe
-
-	; Tick clock
-	inc player_a_state_clock, x
-
-	; Wait for the preparation to end to begin to jump
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_JUMP_PREPARATION_END
-	bcc end
-	beq begin_to_jump
-
-	; Handle short-hop input
-	cmp #KIKI_STATE_JUMP_SHORT_HOP_TIME
-	beq stop_short_hop
-
-	; Check if the top of the jump is reached
-	lda player_a_velocity_v, x
-	beq top_reached
-	bpl top_reached
-
-	; The top is not reached, stay in jumping state but apply gravity and directional influence
-	moving_upward:
-		jsr kiki_tick_falling ; Hack - We just use kiki_tick_falling which do exactly what we want
-		jmp end
-
-	; The top is reached, return to falling
-	top_reached:
-		jsr kiki_start_falling
-		jmp end
-
-	; If the jump button is no more pressed mid jump, convert the jump to a short-hop
-	stop_short_hop:
-		; Handle this tick as any other
-		jsr kiki_tick_falling
-
-		; If the jump button is still pressed, this is not a short-hop
-		lda controller_a_btns, x
-		and #CONTROLLER_INPUT_JUMP
-		bne end
-
-		; Reduce upward momentum to end the jump earlier
-		lda #>KIKI_STATE_JUMP_SHORT_HOP_VELOCITY
-		sta player_a_velocity_v, x
-		lda #<KIKI_STATE_JUMP_SHORT_HOP_VELOCITY
-		sta player_a_velocity_v_low, x
-		jmp end
-
-	; Put initial jumping velocity
-	begin_to_jump:
-		lda #>KIKI_STATE_JUMP_INITIAL_VELOCITY
-		sta player_a_velocity_v, x
-		lda #<KIKI_STATE_JUMP_INITIAL_VELOCITY
-		sta player_a_velocity_v_low, x
-		;jmp end ; Useless, fallthrough
-
-	end:
-	rts
-.)
-
-kiki_input_jumping:
-.(
-	; The jump is cancellable by grounded movements during preparation
-	; and by aerial movements after that
-	lda player_a_num_aerial_jumps, x ; performing aerial jump, not
-	bne not_grounded                 ; grounded
-	lda player_a_state_clock, x          ;
-	cmp #KIKI_STATE_JUMP_PREPARATION_END ; Still preparing the jump
-	bcc grounded                         ;
-
-	not_grounded:
-	jsr kiki_check_aerial_inputs
-	jmp end
-
-	grounded:
-	lda #<(input_table+1)
-	sta tmpfield1
-	lda #>(input_table+1)
-	sta tmpfield2
-	lda input_table
-	sta tmpfield3
-	jmp controller_callbacks
-
-	end:
-	rts
-
-	input_table:
-	.(
-		; Impactful controller states and associated callbacks (when still grounded)
-		; Note - We can put subroutines as callbacks because we have nothing to do after calling it
-		;        (sourboutines return to our caller since "called" with jmp)
-		table_length:
-		.byt 2
-		controller_inputs:
-		.byt CONTROLLER_INPUT_ATTACK_UP, CONTROLLER_INPUT_SPECIAL_UP
-		controller_callbacks_lo:
-		.byt <kiki_start_up_tilt, <kiki_start_down_wall
-		controller_callbacks_hi:
-		.byt >kiki_start_up_tilt, >kiki_start_down_wall
-		controller_default_callback:
-		.word end
+		input_table:
+		.(
+			; Impactful controller states and associated callbacks (when still grounded)
+			; Note - We can put subroutines as callbacks because we have nothing to do after calling it
+			;        (sourboutines return to our caller since "called" with jmp)
+			table_length:
+			.byt 2
+			controller_inputs:
+			.byt CONTROLLER_INPUT_ATTACK_UP, CONTROLLER_INPUT_SPECIAL_UP
+			controller_callbacks_lo:
+			.byt <kiki_start_up_tilt, <kiki_start_down_wall
+			controller_callbacks_hi:
+			.byt >kiki_start_up_tilt, >kiki_start_down_wall
+			controller_default_callback:
+			.word end
+		.)
 	.)
 .)
 
@@ -1415,7 +1533,7 @@ kiki_start_aerial_jumping:
 	lda #KIKI_MAX_NUM_AERIAL_JUMPS
 	cmp player_a_num_aerial_jumps, x
 	bne jump_ok
-	rts
+		rts
 	jump_ok:
 	inc player_a_num_aerial_jumps, x
 
@@ -1442,9 +1560,9 @@ kiki_start_aerial_jumping:
 	sta tmpfield13
 	lda #>kiki_anim_jump
 	sta tmpfield14
-	jsr set_player_animation
+	jmp set_player_animation
 
-	rts
+	;rts ; useless, jump to subroutine
 .)
 
 
@@ -1468,146 +1586,175 @@ kiki_tick_falling:
 	jsr kiki_global_tick
 
 	jsr kiki_aerial_directional_influence
-	jsr apply_player_gravity
-	rts
+	jmp apply_player_gravity
+	;rts ; useless, jump to subroutine
 .)
 
+;
+; Landing
+;
 
-kiki_start_landing:
 .(
-	KIKI_LANDING_SPEED_CAP = $0200
+	landing_duration:
+		.byt kiki_anim_landing_dur_pal, kiki_anim_landing_dur_ntsc
 
-	; Set state
-	lda #KIKI_STATE_LANDING
-	sta player_a_state, x
+	velocity_table(KIKI_LANDING_MAX_VELOCITY, land_max_velocity_msb, land_max_velocity_lsb)
+	velocity_table(-KIKI_LANDING_MAX_VELOCITY, land_max_neg_velocity_msb, land_max_neg_velocity_lsb)
 
-	; Reset clock
-	lda #0
-	sta player_a_state_clock, x
+	&kiki_start_landing:
+	.(
+		; Set state
+		lda #KIKI_STATE_LANDING
+		sta player_a_state, x
 
-	; Cap initial velocity
-#if (KIKI_LANDING_SPEED_CAP & $00ff) <> 0
-#error following condition expects round number for kiki landing speed cap
-#endif
-	lda player_a_velocity_h, x
-	jsr absolute_a
-	cmp #>(KIKI_LANDING_SPEED_CAP+$0100)
-	bcs set_cap
+		; Reset clock
+		lda #0
+		sta player_a_state_clock, x
 
-		jmp kiki_set_landing_animation
-
-	set_cap:
+		; Cap initial velocity
+		ldy #SYSTEM_INDEX
 		lda player_a_velocity_h, x
 		bmi negative_cap
-			lda #>KIKI_LANDING_SPEED_CAP
-			sta player_a_velocity_h, x
-			lda #<KIKI_LANDING_SPEED_CAP
-			sta player_a_velocity_h_low, x
-			jmp kiki_set_landing_animation
-		negative_cap:
-			lda #>(-KIKI_LANDING_SPEED_CAP)
-			sta player_a_velocity_h, x
-			lda #<(-KIKI_LANDING_SPEED_CAP)
-			sta player_a_velocity_h_low, x
+			positive_cap:
+			.(
+				; Check wether to cap or not
+				lda land_max_velocity_msb, y
+				cmp player_a_velocity_h, x
+				bcc do_cap ; msb(max) < msb(velocity)
+				bne ok ; msb(max) > msb(velocity)
+					lda player_a_velocity_h_low, x
+					cmp land_max_velocity_lsb, y
+					bcc ok ; lsb(velocity) < lsb(max)
 
-	; Fallthrough to set the animation
+				do_cap:
+					lda land_max_velocity_msb, y
+					sta player_a_velocity_h, x
+					lda land_max_velocity_lsb, y
+					sta player_a_velocity_h_low, x
+				ok:
+				jmp kiki_set_landing_animation
+			.)
+			negative_cap:
+			.(
+				; Check wether to cap or not - negative, we have to cap if unsigned CMP is lower than "max"
+				lda player_a_velocity_h, x
+				cmp land_max_velocity_msb, y
+				bcc do_cap ; msb(velocity) < msb(max)
+				bne ok ; msb(velocity) > msb(max)
+					lda land_max_velocity_lsb, y
+					cmp player_a_velocity_h_low, x
+					bcc ok ; lsb(max) < lsb(velocity)
+
+				do_cap:
+					lda land_max_neg_velocity_msb, y
+					sta player_a_velocity_h, x
+					lda land_max_neg_velocity_lsb, y
+					sta player_a_velocity_h_low, x
+				ok:
+			.)
+
+		; Fallthrough to set the animation
+	.)
+	kiki_set_landing_animation:
+	.(
+		; Set the appropriate animation
+		lda #<kiki_anim_landing
+		sta tmpfield13
+		lda #>kiki_anim_landing
+		sta tmpfield14
+		jmp set_player_animation
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	&kiki_tick_landing:
+	.(
+		jsr kiki_global_tick
+
+		KIKI_STATE_LANDING_DURATION = 6
+
+		; Tick clock
+		inc player_a_state_clock, x
+
+		; Do not move, velocity tends toward vector (0,0)
+		jsr kiki_apply_ground_friction
+
+		; After move's time is out, go to standing state
+		ldy #SYSTEM_INDEX
+		lda player_a_state_clock, x
+		cmp landing_duration, y
+		bne end
+			jmp kiki_start_inactive_state
+			; No return, jump to subroutine
+
+		end:
+		rts
+	.)
 .)
-kiki_set_landing_animation:
+
+;
+; Crashing
+;
+
 .(
-	; Set the appropriate animation
-	lda #<kiki_anim_landing
-	sta tmpfield13
-	lda #>kiki_anim_landing
-	sta tmpfield14
-	jsr set_player_animation
+	crashing_duration:
+		.byt kiki_anim_crash_dur_pal, kiki_anim_crash_dur_ntsc
 
-	rts
+	velocity_table_u8(KIKI_GROUND_FRICTION_STRENGTH*3, kiki_ground_friction_strength_strong)
+
+	&kiki_start_crashing:
+	.(
+		; Set state
+		lda #KIKI_STATE_CRASHING
+		sta player_a_state, x
+
+		; Reset clock
+		lda #0
+		sta player_a_state_clock, x
+
+		; Set the appropriate animation
+		lda #<kiki_anim_crash
+		sta tmpfield13
+		lda #>kiki_anim_crash
+		sta tmpfield14
+		jsr set_player_animation
+
+		; Play crash sound
+		jmp audio_play_crash
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	&kiki_tick_crashing:
+	.(
+		jsr kiki_global_tick
+
+		; Tick clock
+		inc player_a_state_clock, x
+
+		; Do not move, velocity tends toward vector (0,0)
+		lda #$00
+		sta tmpfield4
+		sta tmpfield3
+		sta tmpfield2
+		sta tmpfield1
+		ldy #SYSTEM_INDEX
+		lda kiki_ground_friction_strength_strong, y
+		sta tmpfield5
+		jsr merge_to_player_velocity
+
+		; After move's time is out, go to standing state
+		lda player_a_state_clock, x
+		ldy #SYSTEM_INDEX
+		cmp crashing_duration, y
+		bne end
+			jmp kiki_start_inactive_state
+			; No return, jump to subroutine
+
+		end:
+		rts
+	.)
 .)
-
-kiki_tick_landing:
-.(
-	jsr kiki_global_tick
-
-	KIKI_STATE_LANDING_DURATION = 6
-
-	; Tick clock
-	inc player_a_state_clock, x
-
-	; Do not move, velocity tends toward vector (0,0)
-	lda #$00
-	sta tmpfield4
-	sta tmpfield3
-	sta tmpfield2
-	sta tmpfield1
-	lda #KIKI_GROUND_FRICTION_STRENGTH
-	sta tmpfield5
-	jsr merge_to_player_velocity
-
-	; After move's time is out, go to standing state
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_LANDING_DURATION
-	bne end
-		jmp kiki_start_inactive_state
-		; No return, jump to subroutine
-
-	end:
-	rts
-.)
-
-
-kiki_start_crashing:
-.(
-	; Set state
-	lda #KIKI_STATE_CRASHING
-	sta player_a_state, x
-
-	; Reset clock
-	lda #0
-	sta player_a_state_clock, x
-
-	; Set the appropriate animation
-	lda #<kiki_anim_crash
-	sta tmpfield13
-	lda #>kiki_anim_crash
-	sta tmpfield14
-	jsr set_player_animation
-
-	; Play crash sound
-	jsr audio_play_crash
-
-	rts
-.)
-
-kiki_tick_crashing:
-.(
-	jsr kiki_global_tick
-
-	KIKI_STATE_CRASHING_DURATION = 30
-
-	; Tick clock
-	inc player_a_state_clock, x
-
-	; Do not move, velocity tends toward vector (0,0)
-	lda #$00
-	sta tmpfield4
-	sta tmpfield3
-	sta tmpfield2
-	sta tmpfield1
-	lda #KIKI_GROUND_FRICTION_STRENGTH*2
-	sta tmpfield5
-	jsr merge_to_player_velocity
-
-	; After move's time is out, go to standing state
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_CRASHING_DURATION
-	bne end
-		jmp kiki_start_inactive_state
-		; No return, jump to subroutine
-
-	end:
-	rts
-.)
-
 
 kiki_start_helpless:
 .(
@@ -1807,160 +1954,156 @@ kiki_hurt_shielding:
 	rts
 .)
 
-kiki_start_shieldlag:
 .(
-	; Set state
-	lda #KIKI_STATE_SHIELDLAG
-	sta player_a_state, x
+	shieldlag_duration:
+		.byt kiki_anim_shield_remove_dur_pal, kiki_anim_shield_remove_dur_ntsc
 
-	; Reset clock
-	lda #0
-	sta player_a_state_clock, x
+	&kiki_start_shieldlag:
+	.(
+		; Set state
+		lda #KIKI_STATE_SHIELDLAG
+		sta player_a_state, x
 
-	; Set the appropriate animation
-	lda #<kiki_anim_shield_remove
-	sta tmpfield13
-	lda #>kiki_anim_shield_remove
-	sta tmpfield14
-	jsr set_player_animation
+		; Reset clock
+		ldy #SYSTEM_INDEX
+		lda shieldlag_duration, y
+		sta player_a_state_clock, x
 
-	rts
+		; Set the appropriate animation
+		lda #<kiki_anim_shield_remove
+		sta tmpfield13
+		lda #>kiki_anim_shield_remove
+		sta tmpfield14
+		jsr set_player_animation
+
+		rts
+	.)
+
+	&kiki_tick_shieldlag:
+	.(
+		jsr kiki_global_tick
+
+		dec player_a_state_clock, x
+		bne tick
+			jmp kiki_start_inactive_state
+			; No return, jump to subroutine
+		tick:
+		jmp kiki_apply_ground_friction
+		;rts ; useless, jump to subroutine
+	.)
 .)
 
-kiki_tick_shieldlag:
 .(
-	jsr kiki_global_tick
+	velocity_table(KIKI_WALL_JUMP_VELOCITY_H, kiki_wall_jump_velocity_h_msb, kiki_wall_jump_velocity_h_lsb)
+	velocity_table(-KIKI_WALL_JUMP_VELOCITY_H, kiki_wall_jump_velocity_h_neg_msb, kiki_wall_jump_velocity_h_neg_lsb)
 
-	KIKI_STATE_SHIELDLAG_DURATION = 8
+	&kiki_start_walljumping:
+	.(
+		; Deny to start jump state if the player used all it's jumps
+		;lda player_a_walljump, x ; useless, all calls to kiki_start_walljumping actually do this check
+		;beq end
 
-	; Do not move, velocity tends toward vector (0,0)
-	lda #$00
-	sta tmpfield4
-	sta tmpfield3
-	sta tmpfield2
-	sta tmpfield1
-	lda #$80
-	sta tmpfield5
-	jsr merge_to_player_velocity
+		; Update wall jump counter
+		dec player_a_walljump, x
 
-	; After move's time is out, go to standing state
-	inc player_a_state_clock, x
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_SHIELDLAG_DURATION
-	bne end
-		jsr kiki_start_idle
+		; Set player's state
+		lda #KIKI_STATE_WALLJUMPING
+		sta player_a_state, x
 
-	end:
-	rts
-.)
+		; Reset clock
+		lda #0
+		sta player_a_state_clock, x
 
-
-kiki_start_walljumping:
-.(
-	; Deny to start jump state if the player used all it's jumps
-	;lda player_a_walljump, x ; useless, all calls to kiki_start_walljumping actually do this check
-	;beq end
-
-	; Update wall jump counter
-	dec player_a_walljump, x
-
-	; Set player's state
-	lda #KIKI_STATE_WALLJUMPING
-	sta player_a_state, x
-
-	; Reset clock
-	lda #0
-	sta player_a_state_clock, x
-
-	; Stop any momentum, kiki does not fall during jumpsquat
-	sta player_a_velocity_h, x
-	sta player_a_velocity_h_low, x
-	sta player_a_velocity_v, x
-	sta player_a_velocity_v_low, x
-
-	; Set the appropriate animation
-	;TODO specific animation
-	lda #<kiki_anim_jump
-	sta tmpfield13
-	lda #>kiki_anim_jump
-	sta tmpfield14
-	jsr set_player_animation
-
-	end:
-	rts
-.)
-
-kiki_tick_walljumping:
-.(
-	jsr kiki_global_tick
-
-	; Tick clock
-	inc player_a_state_clock, x
-
-	; Wait for the preparation to end to begin to jump
-	lda player_a_state_clock, x
-	cmp #KIKI_WALL_JUMP_SQUAT_END
-	bcc end
-	beq begin_to_jump
-
-	; Check if the top of the jump is reached
-	lda player_a_velocity_v, x
-	beq top_reached
-	bpl top_reached
-
-		; The top is not reached, stay in walljumping state but apply gravity, without directional influence
-		jmp apply_player_gravity
-		;jmp end ; useless, jump to a subroutine
-
-	; The top is reached, return to falling
-	top_reached:
-		jmp kiki_start_falling
-		;jmp end ; useless, jump to a subroutine
-
-	; Put initial jumping velocity
-	begin_to_jump:
-		; Vertical velocity
-		lda #>KIKI_WALL_JUMP_VELOCITY_VERTICAL
+		; Stop any momentum, kiki does not fall during jumpsquat
+		sta player_a_velocity_h, x
+		sta player_a_velocity_h_low, x
 		sta player_a_velocity_v, x
-		lda #<KIKI_WALL_JUMP_VELOCITY_VERTICAL
 		sta player_a_velocity_v_low, x
 
+		; Set the appropriate animation
+		;TODO specific animation
+		lda #<kiki_anim_jump
+		sta tmpfield13
+		lda #>kiki_anim_jump
+		sta tmpfield14
+		jsr set_player_animation
 
-		; Horizontal velocity
-		lda player_a_direction, x
-		;cmp DIRECTION_LEFT ; useless while DIRECTION_LEFT is $00
-		bne jump_right
-			jump_left:
-				lda #<(-KIKI_WALL_JUMP_VELOCITY_HORIZONTAL)
-				sta player_a_velocity_h_low, x
-				lda #>(-KIKI_WALL_JUMP_VELOCITY_HORIZONTAL)
-				jmp end_jump_direction
-			jump_right:
-				lda #<KIKI_WALL_JUMP_VELOCITY_HORIZONTAL
-				sta player_a_velocity_h_low, x
-				lda #>KIKI_WALL_JUMP_VELOCITY_HORIZONTAL
-		end_jump_direction:
-		sta player_a_velocity_h, x
+		end:
+		rts
+	.)
 
-		;jmp end ; useless, fallthrough
+	&kiki_tick_walljumping:
+	.(
+		jsr kiki_global_tick
 
-	end:
-	rts
+		; Tick clock
+		inc player_a_state_clock, x
+
+		; Wait for the preparation to end to begin to jump
+		lda player_a_state_clock, x
+		cmp #KIKI_WALL_JUMP_SQUAT_END
+		bcc end
+		beq begin_to_jump
+
+		; Check if the top of the jump is reached
+		lda player_a_velocity_v, x
+		beq top_reached
+		bpl top_reached
+
+			; The top is not reached, stay in walljumping state but apply gravity, without directional influence
+			jmp apply_player_gravity
+			;jmp end ; useless, jump to a subroutine
+
+		; The top is reached, return to falling
+		top_reached:
+			jmp kiki_start_falling
+			;jmp end ; useless, jump to a subroutine
+
+		; Put initial jumping velocity
+		begin_to_jump:
+			; Vertical velocity
+			lda #>KIKI_WALL_JUMP_VELOCITY_V
+			sta player_a_velocity_v, x
+			lda #<KIKI_WALL_JUMP_VELOCITY_V
+			sta player_a_velocity_v_low, x
+
+
+			; Horizontal velocity
+			ldy #SYSTEM_INDEX
+			lda player_a_direction, x
+			;cmp DIRECTION_LEFT ; useless while DIRECTION_LEFT is $00
+			bne jump_right
+				jump_left:
+					lda kiki_wall_jump_velocity_h_neg_lsb, y
+					sta player_a_velocity_h_low, x
+					lda kiki_wall_jump_velocity_h_neg_msb, y
+					jmp end_jump_direction
+				jump_right:
+					lda kiki_wall_jump_velocity_h_lsb, y
+					sta player_a_velocity_h_low, x
+					lda kiki_wall_jump_velocity_h_msb, y
+			end_jump_direction:
+			sta player_a_velocity_h, x
+
+			;jmp end ; useless, fallthrough
+
+		end:
+		rts
+	.)
+
+	&kiki_input_walljumping:
+	.(
+		; The jump is cancellable by aerial movements, but only after preparation
+		lda #KIKI_WALL_JUMP_SQUAT_END
+		cmp player_a_state_clock, x
+		bcs grounded
+			not_grounded:
+				jmp kiki_check_aerial_inputs
+				; no return, jump to a subroutine
+		grounded:
+		rts
+	.)
 .)
-
-kiki_input_walljumping:
-.(
-	; The jump is cancellable by aerial movements, but only after preparation
-	lda #KIKI_WALL_JUMP_SQUAT_END
-	cmp player_a_state_clock, x
-	bcs grounded
-		not_grounded:
-			jmp kiki_check_aerial_inputs
-			; no return, jump to a subroutine
-	grounded:
-	rts
-.)
-
 
 kiki_start_side_tilt_right:
 .(

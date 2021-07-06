@@ -109,7 +109,7 @@ sinbad_apply_air_friction:
 	;rts ; useless, jump to a subroutine
 .)
 
-sinbad_appy_ground_friction:
+sinbad_apply_ground_friction:
 .(
 	; merge_to_player_velocity parameter names
 	merged_v_low = tmpfield1
@@ -1116,12 +1116,13 @@ sinbad_start_inactive_state:
 			sta player_a_state_field2, x
 			lda player_a_state_field1, x
 			bne end
-			ldy #SYSTEM_INDEX
-			lda tech_window, y
-			sta player_a_state_field1, x
+				ldy #SYSTEM_INDEX
+				lda tech_window, y
+				sta player_a_state_field1, x
 
 		no_tech:
-			jsr check_aerial_inputs
+			jmp check_aerial_inputs
+			; No return, jump to subroutine
 
 		end:
 		rts
@@ -1695,7 +1696,7 @@ sinbad_start_inactive_state:
 		inc player_a_state_clock, x
 
 		; Do not move, velocity tends toward vector (0,0)
-		jsr sinbad_appy_ground_friction
+		jsr sinbad_apply_ground_friction
 
 		; After move's time is out, go to standing state
 		ldy #SYSTEM_INDEX
@@ -1819,7 +1820,7 @@ sinbad_start_inactive_state:
 		tick:
 
 		; Do not move, velocity tends toward vector (0,0)
-		jmp sinbad_appy_ground_friction
+		jmp sinbad_apply_ground_friction
 
 		;rts ; useless, jump to subroutine
 	.)
@@ -2290,7 +2291,7 @@ sinbad_start_inactive_state:
 		tick:
 
 		; Do not move, velocity tends toward vector (0,0)
-		jmp sinbad_appy_ground_friction
+		jmp sinbad_apply_ground_friction
 		;rts ; useless, jump to subroutine
 	.)
 .)
@@ -2495,7 +2496,7 @@ sinbad_start_inactive_state:
 			jmp sinbad_start_inactive_state
 			; No return, jump to subroutine
 		tick:
-		jmp sinbad_appy_ground_friction
+		jmp sinbad_apply_ground_friction
 		;rts ; useless, jump to subroutine
 	.)
 .)

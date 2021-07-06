@@ -1,3 +1,7 @@
+;
+; States index
+;
+
 PEPPER_STATE_THROWN = 0
 PEPPER_STATE_RESPAWN = 1
 PEPPER_STATE_INNEXISTANT = 2
@@ -27,17 +31,52 @@ PEPPER_STATE_WITCH_FLY = CUSTOM_PLAYER_STATES_BEGIN + 19
 PEPPER_STATE_TELEPORT = CUSTOM_PLAYER_STATES_BEGIN + 20
 PEPPER_STATE_WRENCH_GRAB = CUSTOM_PLAYER_STATES_BEGIN + 21
 
+;
+; Gameplay constants
+;
+
 PEPPER_MAX_NUM_AERIAL_JUMPS = 1
 PEPPER_MAX_WALLJUMPS = 1
+PEPPER_WALL_JUMP_VELOCITY_H = $0100
+PEPPER_WALL_JUMP_VELOCITY_V = $fb80
 PEPPER_WALL_JUMP_SQUAT_END = 4
-PEPPER_WALL_JUMP_VELOCITY_VERTICAL = $fb80
 PEPPER_AIR_FRICTION_STRENGTH = 7
 PEPPER_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
 PEPPER_AERIAL_SPEED = $0100
-PEPPER_FASTFALL_SPEED = $06
+PEPPER_FASTFALL_SPEED = $0600
 PEPPER_GROUND_FRICTION_STRENGTH = $40
+PEPPER_JUMP_SQUAT_DURATION_PAL = 4
+PEPPER_JUMP_SQUAT_DURATION_NTSC = 5
+PEPPER_JUMP_SHORT_HOP_EXTRA_TIME = 4
+PEPPER_JUMP_POWER = $0540
+PEPPER_JUMP_SHORT_HOP_POWER = $0102
+PEPPER_LANDING_MAX_VELOCITY = $0200
+PEPPER_RUNNING_INITIAL_VELOCITY = $0100
+PEPPER_RUNNING_MAX_VELOCITY = $0180
+PEPPER_RUNNING_ACCELERATION = $40
+PEPPER_TECH_SPEED = $0400
 
 PEPPER_CARROT_NOT_PLACED = $80
+
+;
+; Constants data
+;
+
+velocity_table(PEPPER_AERIAL_SPEED, pepper_aerial_speed_msb, pepper_aerial_speed_lsb)
+velocity_table(-PEPPER_AERIAL_SPEED, pepper_aerial_neg_speed_msb, pepper_aerial_neg_speed_lsb)
+velocity_table_u8(PEPPER_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH, pepper_aerial_directional_influence_strength)
+velocity_table_u8(PEPPER_AIR_FRICTION_STRENGTH, pepper_air_friction_strength)
+velocity_table(PEPPER_FASTFALL_SPEED, pepper_fastfall_speed_msb, pepper_fastfall_speed_lsb)
+velocity_table_u8(PEPPER_GROUND_FRICTION_STRENGTH, pepper_ground_friction_strength)
+velocity_table_u8(PEPPER_GROUND_FRICTION_STRENGTH/3, pepper_ground_friction_strength_weak)
+velocity_table(PEPPER_TECH_SPEED, pepper_tech_speed_msb, pepper_tech_speed_lsb)
+velocity_table(-PEPPER_TECH_SPEED, pepper_tech_speed_neg_msb, pepper_tech_speed_neg_lsb)
+
+pepper_jumpsquat_duration:
+	.byt PEPPER_JUMP_SQUAT_DURATION_PAL, PEPPER_JUMP_SQUAT_DURATION_NTSC
+
+pepper_short_hop_time:
+	.byt PEPPER_JUMP_SQUAT_DURATION_PAL + PEPPER_JUMP_SHORT_HOP_EXTRA_TIME, PEPPER_JUMP_SQUAT_DURATION_NTSC + PEPPER_JUMP_SHORT_HOP_EXTRA_TIME
 
 ; Offset of 12 bytes reserved in player's object data for storing carrot's animation state
 pepper_carrot_anim_per_player:
@@ -163,6 +202,52 @@ pepper_init:
 	oos_last_sprite_num_per_player_lsb:
 		.byt <player_a_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
 		.byt <player_b_out_of_screen_indicator+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+.)
+
+pepper_apply_air_friction:
+.(
+	; merge_to_player_velocity parameter names
+	merged_v_low = tmpfield1
+	merged_v_high = tmpfield3
+	merged_h_low = tmpfield2
+	merged_h_high = tmpfield4
+	merge_step = tmpfield5
+
+	; Apply air friction
+	lda player_a_velocity_v_low, x
+	sta merged_v_low
+	lda player_a_velocity_v, x
+	sta merged_v_high
+	lda #$00
+	sta merged_h_low
+	sta merged_h_high
+	ldy #SYSTEM_INDEX
+	lda pepper_air_friction_strength, y
+	sta merge_step
+	jmp merge_to_player_velocity
+	;rts; useless, jump to a subroutine
+.)
+
+pepper_apply_ground_friction:
+.(
+	; merge_to_player_velocity parameter names
+	merged_v_low = tmpfield1
+	merged_v_high = tmpfield3
+	merged_h_low = tmpfield2
+	merged_h_high = tmpfield4
+	merge_step = tmpfield5
+
+	; Apply ground friction
+	lda #$00
+	sta merged_h_high
+	sta merged_v_high
+	sta merged_h_low
+	sta merged_v_low
+	ldy #SYSTEM_INDEX
+	lda pepper_ground_friction_strength, y
+	sta tmpfield5
+	jmp merge_to_player_velocity
+	;rts ; useless, jump to subroutine
 .)
 
 pepper_global_onground:
@@ -302,13 +387,17 @@ pepper_aerial_directional_influence:
 	and #CONTROLLER_INPUT_RIGHT
 	bne go_right
 
-	jmp air_friction
+	air_friction:
+		jmp pepper_apply_air_friction
+		; No return, jump to a subroutine
 
 	go_left:
 		; Go to the left
-		lda #<-PEPPER_AERIAL_SPEED
+		ldy #SYSTEM_INDEX
+
+		lda pepper_aerial_neg_speed_lsb, y
 		sta tmpfield6
-		lda #>-PEPPER_AERIAL_SPEED
+		lda pepper_aerial_neg_speed_msb, y
 		sta tmpfield7
 		lda player_a_velocity_h_low, x
 		sta tmpfield8
@@ -317,57 +406,46 @@ pepper_aerial_directional_influence:
 		jsr signed_cmp
 		bpl end
 
-		lda player_a_velocity_v_low, x
-		sta merged_v_low
-		lda player_a_velocity_v, x
-		sta merged_v_high
-		lda #<-PEPPER_AERIAL_SPEED
-		sta merged_h_low
-		lda #>-PEPPER_AERIAL_SPEED
-		sta merged_h_high
-		lda #PEPPER_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH
-		sta merge_step
-		jsr merge_to_player_velocity
-		jmp end
+			lda player_a_velocity_v_low, x
+			sta merged_v_low
+			lda player_a_velocity_v, x
+			sta merged_v_high
+			lda pepper_aerial_neg_speed_lsb, y
+			sta merged_h_low
+			lda pepper_aerial_neg_speed_msb, y
+			sta merged_h_high
+			lda pepper_aerial_directional_influence_strength, y
+			sta merge_step
+			jsr merge_to_player_velocity
+			jmp end
 
 	go_right:
 		; Go to the right
+		ldy #SYSTEM_INDEX
+
 		lda player_a_velocity_h_low, x
 		sta tmpfield6
 		lda player_a_velocity_h, x
 		sta tmpfield7
-		lda #<PEPPER_AERIAL_SPEED
+		lda pepper_aerial_speed_lsb, y
 		sta tmpfield8
-		lda #>PEPPER_AERIAL_SPEED
+		lda pepper_aerial_speed_msb, y
 		sta tmpfield9
 		jsr signed_cmp
 		bpl end
 
-		lda player_a_velocity_v_low, x
-		sta merged_v_low
-		lda player_a_velocity_v, x
-		sta merged_v_high
-		lda #<PEPPER_AERIAL_SPEED
-		sta merged_h_low
-		lda #>PEPPER_AERIAL_SPEED
-		sta merged_h_high
-		lda #PEPPER_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH
-		sta merge_step
-		jsr merge_to_player_velocity
-		jmp end
-
-	air_friction:
-		; Apply air friction
-		lda player_a_velocity_v_low, x
-		sta merged_v_low
-		lda player_a_velocity_v, x
-		sta merged_v_high
-		lda #$00
-		sta merged_h_low
-		sta merged_h_high
-		lda #PEPPER_AIR_FRICTION_STRENGTH
-		sta merge_step
-		jsr merge_to_player_velocity
+			lda player_a_velocity_v_low, x
+			sta merged_v_low
+			lda player_a_velocity_v, x
+			sta merged_v_high
+			lda pepper_aerial_speed_lsb, y
+			sta merged_h_low
+			lda pepper_aerial_speed_msb, y
+			sta merged_h_high
+			lda pepper_aerial_directional_influence_strength, y
+			sta merge_step
+			jsr merge_to_player_velocity
+			jmp end
 
 	end:
 	rts
@@ -454,10 +532,11 @@ pepper_check_aerial_inputs:
 			lda controller_a_last_frame_btns, x
 			cmp #CONTROLLER_INPUT_TECH
 			bne no_fast_fall
-				lda #>PEPPER_FASTFALL_SPEED
+				ldy #SYSTEM_INDEX
+				lda pepper_fastfall_speed_msb, y
 				sta player_a_gravity_msb, x
 				sta player_a_velocity_v, x
-				lda #<PEPPER_FASTFALL_SPEED
+				lda pepper_fastfall_speed_lsb, y
 				sta player_a_gravity_lsb, x
 				sta player_a_velocity_v_low, x
 			no_fast_fall:
@@ -535,307 +614,328 @@ pepper_check_aerial_inputs:
 	.)
 .)
 
-pepper_start_thrown:
+;
+; Thrown
+;
+
 .(
-	; Set the player's state
-	lda #PEPPER_STATE_THROWN
-	sta player_a_state, x
+	&pepper_start_thrown:
+	.(
+		; Set the player's state
+		lda #PEPPER_STATE_THROWN
+		sta player_a_state, x
 
-	; Initialize tech counter
-	lda #0
-	sta player_a_state_field1, x
-
-	; Set the appropriate animation
-	lda #<pepper_anim_thrown
-	sta tmpfield13
-	lda #>pepper_anim_thrown
-	sta tmpfield14
-	jsr set_player_animation
-
-	; Set the appropriate animation direction (depending on player's velocity)
-	lda player_a_velocity_h, x
-	bmi set_anim_left
-		lda DIRECTION_RIGHT
-		jmp set_anim_dir
-	set_anim_left:
-		lda DIRECTION_LEFT
-	set_anim_dir:
-		ldy #ANIMATION_STATE_OFFSET_DIRECTION
-		sta (tmpfield11), y
-
-	rts
-.)
-
-pepper_tick_thrown:
-.(
-	jsr pepper_global_tick
-
-	; Update velocity
-	lda player_a_hitstun, x
-	bne gravity
-		jsr pepper_aerial_directional_influence
-	gravity:
-	jsr apply_player_gravity
-
-	; Decrement tech counter (to zero minimum)
-	lda player_a_state_field1, x
-	beq end_dec_tech_cnt
-		dec player_a_state_field1, x
-	end_dec_tech_cnt:
-
-	rts
-.)
-
-pepper_input_thrown:
-.(
-	; Handle controller inputs
-	lda #<(input_table+1)
-	sta tmpfield1
-	lda #>(input_table+1)
-	sta tmpfield2
-	lda input_table
-	sta tmpfield3
-	jmp controller_callbacks
-
-	; If a tech is entered, store it's direction in state_field2
-	; and if the counter is at 0, reset it to it's max value.
-	tech_neutral:
-		lda #$00
-		jmp tech_common
-	tech_right:
-		lda #$01
-		jmp tech_common
-	tech_left:
-		lda #$02
-	tech_common:
-		sta player_a_state_field2, x
-		lda player_a_state_field1, x
-		bne end
-		ldy #SYSTEM_INDEX
-		lda tech_window, y
+		; Initialize tech counter
+		lda #0
 		sta player_a_state_field1, x
 
-	no_tech:
-		jsr pepper_check_aerial_inputs
+		; Set the appropriate animation
+		lda #<pepper_anim_thrown
+		sta tmpfield13
+		lda #>pepper_anim_thrown
+		sta tmpfield14
+		jsr set_player_animation
 
-	end:
-	rts
+		; Set the appropriate animation direction (depending on player's velocity)
+		lda player_a_velocity_h, x
+		bmi set_anim_left
+			lda DIRECTION_RIGHT
+			jmp set_anim_dir
+		set_anim_left:
+			lda DIRECTION_LEFT
+		set_anim_dir:
+			ldy #ANIMATION_STATE_OFFSET_DIRECTION
+			sta (tmpfield11), y
 
-	; Impactful controller states and associated callbacks
-	input_table:
+		rts
+	.)
+
+	&pepper_tick_thrown:
 	.(
-		table_length:
-		.byt 3
-		controller_inputs:
-		.byt CONTROLLER_INPUT_TECH,        CONTROLLER_INPUT_TECH_RIGHT,   CONTROLLER_INPUT_TECH_LEFT
-		controller_callbacks_lo:
-		.byt <tech_neutral,                <tech_right,                   <tech_left
-		controller_callbacks_hi:
-		.byt >tech_neutral,                >tech_right,                   >tech_left
-		controller_default_callback:
-		.word no_tech
+		jsr pepper_global_tick
+
+		; Decrement tech counter (to zero minimum)
+		lda player_a_state_field1, x
+		beq end_dec_tech_cnt
+			dec player_a_state_field1, x
+		end_dec_tech_cnt:
+
+		; Update velocity
+		lda player_a_hitstun, x
+		bne gravity
+			jsr pepper_aerial_directional_influence
+		gravity:
+		jmp apply_player_gravity
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	&pepper_input_thrown:
+	.(
+		; Handle controller inputs
+		lda #<(input_table+1)
+		sta tmpfield1
+		lda #>(input_table+1)
+		sta tmpfield2
+		lda input_table
+		sta tmpfield3
+		jmp controller_callbacks
+
+		; If a tech is entered, store it's direction in state_field2
+		; and if the counter is at 0, reset it to it's max value.
+		tech_neutral:
+			lda #$00
+			jmp tech_common
+		tech_right:
+			lda #$01
+			jmp tech_common
+		tech_left:
+			lda #$02
+		tech_common:
+			sta player_a_state_field2, x
+			lda player_a_state_field1, x
+			bne end
+				ldy #SYSTEM_INDEX
+				lda tech_window, y
+				sta player_a_state_field1, x
+
+		no_tech:
+			jmp pepper_check_aerial_inputs
+			; No return, jump to subroutine
+
+		end:
+		rts
+
+		; Impactful controller states and associated callbacks
+		input_table:
+		.(
+			table_length:
+			.byt 3
+			controller_inputs:
+			.byt CONTROLLER_INPUT_TECH,        CONTROLLER_INPUT_TECH_RIGHT,   CONTROLLER_INPUT_TECH_LEFT
+			controller_callbacks_lo:
+			.byt <tech_neutral,                <tech_right,                   <tech_left
+			controller_callbacks_hi:
+			.byt >tech_neutral,                >tech_right,                   >tech_left
+			controller_default_callback:
+			.word no_tech
+		.)
+	.)
+
+	&pepper_onground_thrown:
+	.(
+		;jsr pepper_global_onground ; useless, will be done by start_landing or start_crashing
+
+		; If the tech counter is bellow the threshold, just crash
+		ldy #SYSTEM_INDEX
+		lda tech_nb_forbidden_frames, y
+		cmp player_a_state_field1, x
+		bcs crash
+
+		; A valid tech was entered, land with momentum depending on tech's direction
+		jsr pepper_start_landing
+		lda player_a_state_field2, x
+		beq no_momentum
+		cmp #$01
+		beq momentum_right
+			ldy #SYSTEM_INDEX
+			lda pepper_tech_speed_neg_msb, y
+			sta player_a_velocity_h, x
+			lda pepper_tech_speed_neg_lsb, y
+			sta player_a_velocity_h_low, x
+			jmp end
+		no_momentum:
+			lda #$00
+			sta player_a_velocity_h, x
+			sta player_a_velocity_h_low, x
+			jmp end
+		momentum_right:
+			ldy #SYSTEM_INDEX
+			lda pepper_tech_speed_msb, y
+			sta player_a_velocity_h, x
+			lda pepper_tech_speed_lsb, y
+			sta player_a_velocity_h_low, x
+			jmp end
+
+		crash:
+		jmp pepper_start_crashing
+		;Note - no return, jump to a subroutine
+
+		end:
+		rts
 	.)
 .)
 
-pepper_onground_thrown:
+;
+; Respawn
+;
+
 .(
-	;jsr pepper_global_onground ; useless, will be done by start_landing or start_crashing
+	&pepper_start_respawn:
+	.(
+		; Set the player's state
+		lda #PEPPER_STATE_RESPAWN
+		sta player_a_state, x
 
-	PEPPER_TECH_SPEED = $0400
-
-	; If the tech counter is bellow the threshold, just crash
-	ldy #SYSTEM_INDEX
-	lda tech_nb_forbidden_frames, y
-	cmp player_a_state_field1, x
-	bcs crash
-
-	; A valid tech was entered, land with momentum depending on tech's direction
-	jsr pepper_start_landing
-	lda player_a_state_field2, x
-	beq no_momentum
-	cmp #$01
-	beq momentum_right
-		lda #>(-PEPPER_TECH_SPEED)
-		sta player_a_velocity_h, x
-		lda #>(-PEPPER_TECH_SPEED)
-		sta player_a_velocity_h_low, x
-		jmp end
-	no_momentum:
+		; Place player to the respawn spot
+		lda stage_data+STAGE_HEADER_OFFSET_RESPAWNX_HIGH
+		sta player_a_x, x
+		lda stage_data+STAGE_HEADER_OFFSET_RESPAWNX_LOW
+		sta player_a_x_low, x
+		lda stage_data+STAGE_HEADER_OFFSET_RESPAWNY_HIGH
+		sta player_a_y, x
+		lda stage_data+STAGE_HEADER_OFFSET_RESPAWNY_LOW
+		sta player_a_y_low, x
 		lda #$00
+		sta player_a_x_screen, x
+		sta player_a_y_screen, x
 		sta player_a_velocity_h, x
 		sta player_a_velocity_h_low, x
-		jmp end
-	momentum_right:
-		lda #>PEPPER_TECH_SPEED
-		sta player_a_velocity_h, x
-		lda #<PEPPER_TECH_SPEED
-		sta player_a_velocity_h_low, x
-		jmp end
+		sta player_a_velocity_v, x
+		sta player_a_velocity_v_low, x
+		sta player_a_damages, x
 
-	crash:
-	jmp pepper_start_crashing
-	;Note - no return, jump to a subroutine
+		; Initialise state's timer
+		ldy #SYSTEM_INDEX
+		lda player_respawn_max_duration, y
+		sta player_a_state_field1, x
 
-	end:
-	rts
-.)
+		; Reinitialize walljump counter
+		lda #PEPPER_MAX_WALLJUMPS
+		sta player_a_walljump, x
 
-pepper_start_respawn:
-.(
-	; Set the player's state
-	lda #PEPPER_STATE_RESPAWN
-	sta player_a_state, x
+		; Set the appropriate animation
+		lda #<pepper_anim_respawn
+		sta tmpfield13
+		lda #>pepper_anim_respawn
+		sta tmpfield14
+		jsr set_player_animation
 
-	; Place player to the respawn spot
-	lda stage_data+STAGE_HEADER_OFFSET_RESPAWNX_HIGH
-	sta player_a_x, x
-	lda stage_data+STAGE_HEADER_OFFSET_RESPAWNX_LOW
-	sta player_a_x_low, x
-	lda stage_data+STAGE_HEADER_OFFSET_RESPAWNY_HIGH
-	sta player_a_y, x
-	lda stage_data+STAGE_HEADER_OFFSET_RESPAWNY_LOW
-	sta player_a_y_low, x
-	lda #$00
-	sta player_a_x_screen, x
-	sta player_a_y_screen, x
-	sta player_a_velocity_h, x
-	sta player_a_velocity_h_low, x
-	sta player_a_velocity_v, x
-	sta player_a_velocity_v_low, x
-	sta player_a_damages, x
+		rts
+	.)
 
-	; Initialise state's timer
-	lda #PLAYER_RESPAWN_MAX_DURATION
-	sta player_a_state_field1, x
+	&pepper_tick_respawn:
+	.(
+		jsr pepper_global_tick
 
-	; Reinitialize walljump counter
-	lda #PEPPER_MAX_WALLJUMPS
-	sta player_a_walljump, x
+		; Check for timeout
+		dec player_a_state_field1, x
+		bne end
+			jmp pepper_start_falling
+			; No return, jump to subroutine
 
-	; Set the appropriate animation
-	lda #<pepper_anim_respawn
-	sta tmpfield13
-	lda #>pepper_anim_respawn
-	sta tmpfield14
-	jsr set_player_animation
+		end:
+		rts
+	.)
 
-	rts
-.)
-
-
-pepper_tick_respawn:
-.(
-	jsr pepper_global_tick
-
-	; Check for timeout
-	dec player_a_state_field1, x
-	bne end
-	jsr pepper_start_falling
-
-	end:
-	rts
-.)
-
-pepper_input_respawn:
-.(
-	; Avoid doing anything until controller has returned to neutral since after
-	; death the player can release buttons without expecting to take action
-	lda controller_a_last_frame_btns, x
-	bne end
-
-		; Call pepper_check_aerial_inputs
-		;  If it does not change the player state, go to falling state
-		;  so that any button press makes the player falls from revival
-		;  platform
-		jsr pepper_check_aerial_inputs
-		lda player_a_state, x
-		cmp #PEPPER_STATE_RESPAWN
+	&pepper_input_respawn:
+	.(
+		; Avoid doing anything until controller has returned to neutral since after
+		; death the player can release buttons without expecting to take action
+		lda controller_a_last_frame_btns, x
 		bne end
 
-			jsr pepper_start_falling
+			; Call pepper_check_aerial_inputs
+			;  If it does not change the player state, go to falling state
+			;  so that any button press makes the player falls from revival
+			;  platform
+			jsr pepper_check_aerial_inputs
+			lda player_a_state, x
+			cmp #PEPPER_STATE_RESPAWN
+			bne end
+				jmp pepper_start_falling
+				; No return, jump to subroutine
 
-	end:
-	rts
+		end:
+		rts
+	.)
 .)
 
+;
+; Innexistant
+;
 
-pepper_start_innexistant:
 .(
-	; Set the player's state
-	lda #PEPPER_STATE_INNEXISTANT
-	sta player_a_state, x
+	&pepper_start_innexistant:
+	.(
+		; Set the player's state
+		lda #PEPPER_STATE_INNEXISTANT
+		sta player_a_state, x
 
-	; Set to a fixed place
-	lda #0
-	sta player_a_x_screen, x
-	sta player_a_x, x
-	sta player_a_x_low, x
-	sta player_a_y_screen, x
-	sta player_a_y, x
-	sta player_a_y_low, x
-	sta player_a_velocity_h, x
-	sta player_a_velocity_h_low, x
-	sta player_a_velocity_v, x
-	sta player_a_velocity_v_low, x
+		; Set to a fixed place
+		lda #0
+		sta player_a_x_screen, x
+		sta player_a_x, x
+		sta player_a_x_low, x
+		sta player_a_y_screen, x
+		sta player_a_y, x
+		sta player_a_y_low, x
+		sta player_a_velocity_h, x
+		sta player_a_velocity_h_low, x
+		sta player_a_velocity_v, x
+		sta player_a_velocity_v_low, x
 
-	; Set the appropriate animation
-	lda #<anim_invisible
-	sta tmpfield13
-	lda #>anim_invisible
-	sta tmpfield14
-	jsr set_player_animation
+		; Set the appropriate animation
+		lda #<anim_invisible
+		sta tmpfield13
+		lda #>anim_invisible
+		sta tmpfield14
+		jmp set_player_animation
 
-	rts
+		;rts ; useless, jump to subroutine
+	.)
 .)
 
-pepper_tick_innexistant:
+;
+; Spawn
+;
+
 .(
-	jsr pepper_global_tick
+	&pepper_start_spawn:
+	.(
+		; Hack - there is no ensured call to a character init function
+		;        expect start_spawn to be called once at the begining of a game
+		jsr pepper_init
 
-	rts
+		; Set the player's state
+		lda #PEPPER_STATE_SPAWN
+		sta player_a_state, x
+
+		; Reset clock
+		lda #0
+		sta player_a_state_clock, x
+
+		; Set the appropriate animation
+		lda #<pepper_anim_spawn
+		sta tmpfield13
+		lda #>pepper_anim_spawn
+		sta tmpfield14
+		jsr set_player_animation
+
+		rts
+	.)
+
+	&pepper_tick_spawn:
+	.(
+		jsr pepper_global_tick
+
+		PEPPER_STATE_SPAWN_DURATION = 50
+
+		inc player_a_state_clock, x
+		lda player_a_state_clock, x
+		cmp #PEPPER_STATE_SPAWN_DURATION
+		bne end
+			jmp pepper_start_idle
+			; No return, jump to subroutine
+
+		end:
+		rts
+	.)
 .)
 
-
-pepper_start_spawn:
-.(
-	; Hack - there is no ensured call to a character init function
-	;        expect start_spawn to be called once at the begining of a game
-	jsr pepper_init
-
-	; Set the player's state
-	lda #PEPPER_STATE_SPAWN
-	sta player_a_state, x
-
-	; Reset clock
-	lda #0
-	sta player_a_state_clock, x
-
-	; Set the appropriate animation
-	lda #<pepper_anim_spawn
-	sta tmpfield13
-	lda #>pepper_anim_spawn
-	sta tmpfield14
-	jsr set_player_animation
-
-	rts
-.)
-
-pepper_tick_spawn:
-.(
-	jsr pepper_global_tick
-
-	PEPPER_STATE_SPAWN_DURATION = 50
-
-	inc player_a_state_clock, x
-	lda player_a_state_clock, x
-	cmp #PEPPER_STATE_SPAWN_DURATION
-	bne end
-		jmp pepper_start_idle
-		; No return, jump to subroutine
-
-	end:
-	rts
-.)
+;
+; Idle
+;
 
 ; Choose between falling or idle depending if grounded
 pepper_start_inactive_state:
@@ -851,166 +951,168 @@ pepper_start_inactive_state:
 	; Fallthrough to pepper_start_idle
 .)
 
-pepper_start_idle:
 .(
-	; Set the player's state
-	lda #PEPPER_STATE_IDLE
-	sta player_a_state, x
+	&pepper_start_idle:
+	.(
+		; Set the player's state
+		lda #PEPPER_STATE_IDLE
+		sta player_a_state, x
 
-	; Set the appropriate animation
-	lda #<pepper_anim_idle
-	sta tmpfield13
-	lda #>pepper_anim_idle
-	sta tmpfield14
-	jmp set_player_animation
+		; Set the appropriate animation
+		lda #<pepper_anim_idle
+		sta tmpfield13
+		lda #>pepper_anim_idle
+		sta tmpfield14
+		jmp set_player_animation
 
-	;rts ; useless, jump to subroutine
-.)
+		;rts ; useless, jump to subroutine
+	.)
 
-pepper_tick_idle:
-.(
-	jsr pepper_global_tick
+	&pepper_tick_idle:
+	.(
+		jsr pepper_global_tick
 
-	; Do not move, velocity tends toward vector (0,0)
-	lda #$00
-	sta tmpfield4
-	sta tmpfield3
-	sta tmpfield2
-	sta tmpfield1
-	lda #$ff
-	sta tmpfield5
-	jsr merge_to_player_velocity
-
-	; Force handling directional controls
-	;   we want to start running even if button presses where maintained from previous state)
-	lda controller_a_btns, x
-	cmp #CONTROLLER_INPUT_LEFT
-	bne no_left
-		jmp pepper_input_idle_left
-		; No return, jump to subroutine
-	no_left:
-		cmp #CONTROLLER_INPUT_RIGHT
-		bne end
-			jmp pepper_input_idle_right
-			; No return, jump to subroutine
-
-	end:
-	rts
-.)
-
-pepper_input_idle:
-.(
-	; Do not handle any input if under hitstun
-	lda player_a_hitstun, x
-	bne end
-
-		; Check state changes
-		lda #<input_table
-		sta tmpfield1
-		lda #>input_table
-		sta tmpfield2
-		lda #INPUT_TABLE_LENGTH
+		; Do not move, velocity tends toward vector (0,0)
+		lda #$00
+		sta tmpfield4
 		sta tmpfield3
-		jmp controller_callbacks
+		sta tmpfield2
+		sta tmpfield1
+		lda #$ff
+		sta tmpfield5
+		jsr merge_to_player_velocity
 
-	end:
-	rts
+		; Force handling directional controls
+		;   we want to start running even if button presses where maintained from previous state
+		lda controller_a_btns, x
+		cmp #CONTROLLER_INPUT_LEFT
+		bne no_left
+			jmp pepper_input_idle_left
+			; No return, jump to subroutine
+		no_left:
+			cmp #CONTROLLER_INPUT_RIGHT
+			bne end
+				jmp pepper_input_idle_right
+				; No return, jump to subroutine
 
-	input_table:
-	.(
-		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,               CONTROLLER_INPUT_RIGHT
-		.byt CONTROLLER_INPUT_JUMP,               CONTROLLER_INPUT_JUMP_RIGHT
-		.byt CONTROLLER_INPUT_JUMP_LEFT,          CONTROLLER_INPUT_TECH
-		.byt CONTROLLER_INPUT_TECH_LEFT,          CONTROLLER_INPUT_TECH_RIGHT
-		.byt CONTROLLER_INPUT_DOWN_TILT,          CONTROLLER_INPUT_ATTACK_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_RIGHT,       CONTROLLER_INPUT_SPECIAL_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_RIGHT,      CONTROLLER_INPUT_SPECIAL
-		.byt CONTROLLER_INPUT_SPECIAL_UP,         CONTROLLER_INPUT_SPECIAL_UP_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT,   CONTROLLER_INPUT_ATTACK_UP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,    CONTROLLER_INPUT_ATTACK_UP
-		.byt CONTROLLER_INPUT_JAB,                CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT, CONTROLLER_INPUT_SPECIAL_DOWN
-		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,   CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
-		controller_callbacks_lsb:
-		.byt <pepper_input_idle_left,           <pepper_input_idle_right
-		.byt <pepper_start_jumping,             <pepper_input_idle_jump_right
-		.byt <pepper_input_idle_jump_left,      <pepper_start_shielding
-		.byt <pepper_start_shielding,           <pepper_start_shielding
-		.byt <pepper_start_down_tilt,           <input_left_tilt
-		.byt <input_right_tilt,                 <input_left_special
-		.byt <input_right_special,              <pepper_start_teleport
-		.byt <pepper_start_witch_fly,           <pepper_start_witch_fly_direction
-		.byt <pepper_start_witch_fly_direction, <pepper_start_up_tilt
-		.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
-		.byt <pepper_start_flash_potion,        <pepper_start_wrench_grab
-		.byt <pepper_start_wrench_grab,         <pepper_start_wrench_grab
-		.byt <pepper_start_down_tilt,           <pepper_start_down_tilt
-		controller_callbacks_msb:
-		.byt >pepper_input_idle_left,           >pepper_input_idle_right
-		.byt >pepper_start_jumping,             >pepper_input_idle_jump_right
-		.byt >pepper_input_idle_jump_left,      >pepper_start_shielding
-		.byt >pepper_start_shielding,           >pepper_start_shielding
-		.byt >pepper_start_down_tilt,           >input_left_tilt
-		.byt >input_right_tilt,                 >input_left_special
-		.byt >input_right_special,              >pepper_start_teleport
-		.byt >pepper_start_witch_fly,           >pepper_start_witch_fly_direction
-		.byt >pepper_start_witch_fly_direction, >pepper_start_up_tilt
-		.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
-		.byt >pepper_start_flash_potion,        >pepper_start_wrench_grab
-		.byt >pepper_start_wrench_grab,         >pepper_start_wrench_grab
-		.byt >pepper_start_down_tilt,           >pepper_start_down_tilt
-		controller_default_callback:
-		.word end
-		&INPUT_TABLE_LENGTH = controller_callbacks_lsb - controller_inputs
+		end:
+		rts
 	.)
 
-	pepper_input_idle_jump_right:
+	&pepper_input_idle:
 	.(
-		lda DIRECTION_RIGHT
-		sta player_a_direction, x
-		jmp pepper_start_jumping
-		;rts ; useless - pepper_start_jumping is a routine
-	.)
+		; Do not handle any input if under hitstun
+		lda player_a_hitstun, x
+		bne end
 
-	pepper_input_idle_jump_left:
-	.(
-		lda DIRECTION_LEFT
-		sta player_a_direction, x
-		jmp pepper_start_jumping
-		;rts ; useless - pepper_start_jumping is a routine
-	.)
+			; Check state changes
+			lda #<input_table
+			sta tmpfield1
+			lda #>input_table
+			sta tmpfield2
+			lda #INPUT_TABLE_LENGTH
+			sta tmpfield3
+			jmp controller_callbacks
 
-	input_left_tilt:
-	.(
-		lda DIRECTION_LEFT
-		sta player_a_direction, x
-		jmp pepper_start_side_tilt
-		;rts ; useless - pepper_start_jumping is a routine
-	.)
+		end:
+		rts
 
-	input_right_tilt:
-	.(
-		lda DIRECTION_RIGHT
-		sta player_a_direction, x
-		jmp pepper_start_side_tilt
-		;rts ; useless - pepper_start_jumping is a routine
-	.)
+		input_table:
+		.(
+			controller_inputs:
+			.byt CONTROLLER_INPUT_LEFT,               CONTROLLER_INPUT_RIGHT
+			.byt CONTROLLER_INPUT_JUMP,               CONTROLLER_INPUT_JUMP_RIGHT
+			.byt CONTROLLER_INPUT_JUMP_LEFT,          CONTROLLER_INPUT_TECH
+			.byt CONTROLLER_INPUT_TECH_LEFT,          CONTROLLER_INPUT_TECH_RIGHT
+			.byt CONTROLLER_INPUT_DOWN_TILT,          CONTROLLER_INPUT_ATTACK_LEFT
+			.byt CONTROLLER_INPUT_ATTACK_RIGHT,       CONTROLLER_INPUT_SPECIAL_LEFT
+			.byt CONTROLLER_INPUT_SPECIAL_RIGHT,      CONTROLLER_INPUT_SPECIAL
+			.byt CONTROLLER_INPUT_SPECIAL_UP,         CONTROLLER_INPUT_SPECIAL_UP_LEFT
+			.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT,   CONTROLLER_INPUT_ATTACK_UP_LEFT
+			.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,    CONTROLLER_INPUT_ATTACK_UP
+			.byt CONTROLLER_INPUT_JAB,                CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
+			.byt CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT, CONTROLLER_INPUT_SPECIAL_DOWN
+			.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,   CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
+			controller_callbacks_lsb:
+			.byt <pepper_input_idle_left,           <pepper_input_idle_right
+			.byt <pepper_start_jumping,             <pepper_input_idle_jump_right
+			.byt <pepper_input_idle_jump_left,      <pepper_start_shielding
+			.byt <pepper_start_shielding,           <pepper_start_shielding
+			.byt <pepper_start_down_tilt,           <input_left_tilt
+			.byt <input_right_tilt,                 <input_left_special
+			.byt <input_right_special,              <pepper_start_teleport
+			.byt <pepper_start_witch_fly,           <pepper_start_witch_fly_direction
+			.byt <pepper_start_witch_fly_direction, <pepper_start_up_tilt
+			.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
+			.byt <pepper_start_flash_potion,        <pepper_start_wrench_grab
+			.byt <pepper_start_wrench_grab,         <pepper_start_wrench_grab
+			.byt <pepper_start_down_tilt,           <pepper_start_down_tilt
+			controller_callbacks_msb:
+			.byt >pepper_input_idle_left,           >pepper_input_idle_right
+			.byt >pepper_start_jumping,             >pepper_input_idle_jump_right
+			.byt >pepper_input_idle_jump_left,      >pepper_start_shielding
+			.byt >pepper_start_shielding,           >pepper_start_shielding
+			.byt >pepper_start_down_tilt,           >input_left_tilt
+			.byt >input_right_tilt,                 >input_left_special
+			.byt >input_right_special,              >pepper_start_teleport
+			.byt >pepper_start_witch_fly,           >pepper_start_witch_fly_direction
+			.byt >pepper_start_witch_fly_direction, >pepper_start_up_tilt
+			.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
+			.byt >pepper_start_flash_potion,        >pepper_start_wrench_grab
+			.byt >pepper_start_wrench_grab,         >pepper_start_wrench_grab
+			.byt >pepper_start_down_tilt,           >pepper_start_down_tilt
+			controller_default_callback:
+			.word end
+			&INPUT_TABLE_LENGTH = controller_callbacks_lsb - controller_inputs
+		.)
 
-	input_left_special:
-	.(
-		lda DIRECTION_LEFT
-		sta player_a_direction, x
-		jmp pepper_start_send_carrot
-		;rts ; useless - pepper_start_jumping is a routine
-	.)
+		pepper_input_idle_jump_right:
+		.(
+			lda DIRECTION_RIGHT
+			sta player_a_direction, x
+			jmp pepper_start_jumping
+			;rts ; useless - pepper_start_jumping is a routine
+		.)
 
-	input_right_special:
-	.(
-		lda DIRECTION_RIGHT
-		sta player_a_direction, x
-		jmp pepper_start_send_carrot
-		;rts ; useless - pepper_start_jumping is a routine
+		pepper_input_idle_jump_left:
+		.(
+			lda DIRECTION_LEFT
+			sta player_a_direction, x
+			jmp pepper_start_jumping
+			;rts ; useless - pepper_start_jumping is a routine
+		.)
+
+		input_left_tilt:
+		.(
+			lda DIRECTION_LEFT
+			sta player_a_direction, x
+			jmp pepper_start_side_tilt
+			;rts ; useless - pepper_start_jumping is a routine
+		.)
+
+		input_right_tilt:
+		.(
+			lda DIRECTION_RIGHT
+			sta player_a_direction, x
+			jmp pepper_start_side_tilt
+			;rts ; useless - pepper_start_jumping is a routine
+		.)
+
+		input_left_special:
+		.(
+			lda DIRECTION_LEFT
+			sta player_a_direction, x
+			jmp pepper_start_send_carrot
+			;rts ; useless - pepper_start_jumping is a routine
+		.)
+
+		input_right_special:
+		.(
+			lda DIRECTION_RIGHT
+			sta player_a_direction, x
+			jmp pepper_start_send_carrot
+			;rts ; useless - pepper_start_jumping is a routine
+		.)
 	.)
 .)
 
@@ -1030,88 +1132,288 @@ pepper_input_idle_right:
 	rts
 .)
 
+;
+; Running
+;
 
-PEPPER_RUNNING_INITIAL_VELOCITY = $0100
-PEPPER_RUNNING_MAX_VELOCITY = $0180
-PEPPER_RUNNING_ACCELERATION = $40
-pepper_start_running:
 .(
-	; Set the player's state
-	lda #PEPPER_STATE_RUNNING
-	sta player_a_state, x
+	velocity_table(PEPPER_RUNNING_INITIAL_VELOCITY, run_init_velocity_msb, run_init_velocity_lsb)
+	velocity_table(-PEPPER_RUNNING_INITIAL_VELOCITY, run_init_neg_velocity_msb, run_init_neg_velocity_lsb)
 
-	; Set initial velocity
-	lda player_a_direction, x
-	cmp DIRECTION_LEFT
-	bne direction_right
-		lda #<-PEPPER_RUNNING_INITIAL_VELOCITY
-		sta player_a_velocity_h_low, x
-		lda #>-PEPPER_RUNNING_INITIAL_VELOCITY
-		jmp set_high_byte
-	direction_right:
-		lda #<PEPPER_RUNNING_INITIAL_VELOCITY
-		sta player_a_velocity_h_low, x
-		lda #>PEPPER_RUNNING_INITIAL_VELOCITY
-	set_high_byte:
-	sta player_a_velocity_h, x
+	velocity_table(PEPPER_RUNNING_MAX_VELOCITY, run_max_velocity_msb, run_max_velocity_lsb)
+	velocity_table(-PEPPER_RUNNING_MAX_VELOCITY, run_max_neg_velocity_msb, run_max_neg_velocity_lsb)
 
-	; Fallthrough to set animation
+	velocity_table_u8(PEPPER_RUNNING_ACCELERATION, run_acceleration)
+
+	&pepper_start_running:
+	.(
+		; Set the player's state
+		lda #PEPPER_STATE_RUNNING
+		sta player_a_state, x
+
+		; Set initial velocity
+		ldy #SYSTEM_INDEX
+		lda player_a_direction, x
+		cmp DIRECTION_LEFT
+		bne direction_right
+			lda run_init_neg_velocity_lsb, y
+			sta player_a_velocity_h_low, x
+			lda run_init_neg_velocity_msb, y
+			jmp set_high_byte
+		direction_right:
+			lda run_init_velocity_lsb, y
+			sta player_a_velocity_h_low, x
+			lda run_init_velocity_msb, y
+		set_high_byte:
+		sta player_a_velocity_h, x
+
+		; Fallthrough to set animation
+	.)
+	pepper_set_running_animation:
+	.(
+		; Set the appropriate animation
+		lda #<pepper_anim_run
+		sta tmpfield13
+		lda #>pepper_anim_run
+		sta tmpfield14
+		jmp set_player_animation
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	&pepper_tick_running:
+	.(
+		jsr pepper_global_tick
+
+		; Update player's velocity dependeing on his direction
+		ldy #SYSTEM_INDEX
+		lda player_a_direction, x
+		beq run_left
+
+			; Running right, velocity tends toward vector max velocity
+			lda run_max_velocity_msb, y
+			sta tmpfield4
+			lda run_max_velocity_lsb, y
+			jmp update_velocity
+
+		run_left:
+			; Running left, velocity tends toward vector "-1 * max volcity"
+			lda run_max_neg_velocity_msb, y
+			sta tmpfield4
+			lda run_max_neg_velocity_lsb, y
+
+		update_velocity:
+			sta tmpfield2
+			lda #0
+			sta tmpfield3
+			sta tmpfield1
+			lda run_acceleration, y
+			sta tmpfield5
+			jmp merge_to_player_velocity
+			; No return, jump to subroutine
+
+		end:
+		rts
+	.)
+
+	&pepper_input_running:
+	.(
+		; If in hitstun, stop running
+		lda player_a_hitstun, x
+		beq take_input
+			jsr pepper_start_idle
+			jmp end
+		take_input:
+
+			; Check state changes
+			lda #<input_table
+			sta tmpfield1
+			lda #>input_table
+			sta tmpfield2
+			lda #INPUT_TABLE_LENGTH
+			sta tmpfield3
+			jmp controller_callbacks
+
+		end:
+		rts
+
+		pepper_input_running_left:
+		.(
+			lda DIRECTION_LEFT
+			cmp player_a_direction, x
+			beq end_changing_direction
+				sta player_a_direction, x
+				jsr pepper_set_running_animation
+			end_changing_direction:
+			rts
+		.)
+
+		pepper_input_running_right:
+		.(
+			lda DIRECTION_RIGHT
+			cmp player_a_direction, x
+			beq end_changing_direction
+				sta player_a_direction, x
+				jsr pepper_set_running_animation
+			end_changing_direction:
+			rts
+		.)
+
+		input_table:
+		.(
+			controller_inputs:
+			.byt CONTROLLER_INPUT_LEFT,               CONTROLLER_INPUT_RIGHT
+			.byt CONTROLLER_INPUT_JUMP,               CONTROLLER_INPUT_JUMP_RIGHT,
+			.byt CONTROLLER_INPUT_JUMP_LEFT,          CONTROLLER_INPUT_TECH
+			.byt CONTROLLER_INPUT_TECH_LEFT,          CONTROLLER_INPUT_TECH_RIGHT
+			.byt CONTROLLER_INPUT_DOWN_TILT,          CONTROLLER_INPUT_ATTACK_LEFT
+			.byt CONTROLLER_INPUT_ATTACK_RIGHT,       CONTROLLER_INPUT_SPECIAL_LEFT
+			.byt CONTROLLER_INPUT_SPECIAL_RIGHT,      CONTROLLER_INPUT_SPECIAL
+			.byt CONTROLLER_INPUT_SPECIAL_UP,         CONTROLLER_INPUT_SPECIAL_UP_LEFT
+			.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT,   CONTROLLER_INPUT_SPECIAL_UP_LEFT
+			.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,    CONTROLLER_INPUT_ATTACK_UP
+			.byt CONTROLLER_INPUT_JAB,                CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
+			.byt CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT, CONTROLLER_INPUT_SPECIAL_DOWN
+			.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,   CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
+			controller_callbacks_lsb:
+			.byt <pepper_input_running_left,        <pepper_input_running_right
+			.byt <pepper_start_jumping,             <pepper_start_jumping
+			.byt <pepper_start_jumping,             <pepper_start_shielding
+			.byt <pepper_start_shielding,           <pepper_start_shielding
+			.byt <pepper_start_down_tilt,           <pepper_start_side_tilt
+			.byt <pepper_start_side_tilt,           <pepper_start_send_carrot
+			.byt <pepper_start_send_carrot,         <pepper_start_teleport
+			.byt <pepper_start_witch_fly,           <pepper_start_witch_fly_direction
+			.byt <pepper_start_witch_fly_direction, <pepper_start_up_tilt
+			.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
+			.byt <pepper_start_flash_potion,        <pepper_start_wrench_grab
+			.byt <pepper_start_wrench_grab,         <pepper_start_wrench_grab
+			.byt <pepper_start_down_tilt,           <pepper_start_down_tilt
+			controller_callbacks_msb:
+			.byt >pepper_input_running_left,        >pepper_input_running_right
+			.byt >pepper_start_jumping,             >pepper_start_jumping
+			.byt >pepper_start_jumping,             >pepper_start_shielding
+			.byt >pepper_start_shielding,           >pepper_start_shielding
+			.byt >pepper_start_down_tilt,           >pepper_start_side_tilt
+			.byt >pepper_start_side_tilt,           >pepper_start_send_carrot
+			.byt >pepper_start_send_carrot,         >pepper_start_teleport
+			.byt >pepper_start_witch_fly,           >pepper_start_witch_fly_direction
+			.byt >pepper_start_witch_fly_direction, >pepper_start_up_tilt
+			.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
+			.byt >pepper_start_flash_potion,        >pepper_start_wrench_grab
+			.byt >pepper_start_wrench_grab,         >pepper_start_wrench_grab
+			.byt >pepper_start_down_tilt,           >pepper_start_down_tilt
+			controller_default_callback:
+			.word pepper_start_idle
+
+			&INPUT_TABLE_LENGTH = controller_callbacks_lsb - controller_inputs
+		.)
+	.)
 .)
-pepper_set_running_animation:
+
+;
+; Jumping
+;
+
 .(
-	; Set the appropriate animation
-	lda #<pepper_anim_run
-	sta tmpfield13
-	lda #>pepper_anim_run
-	sta tmpfield14
-	jsr set_player_animation
+	&pepper_start_jumping:
+	.(
+		lda #PEPPER_STATE_JUMPING
+		sta player_a_state, x
 
-	rts
-.)
-
-pepper_tick_running:
-.(
-	jsr pepper_global_tick
-
-	; Update player's velocity dependeing on his direction
-	lda player_a_direction, x
-	beq run_left
-
-		; Running right, velocity tends toward vector max velocity
-		lda #>PEPPER_RUNNING_MAX_VELOCITY
-		sta tmpfield4
-		lda #<PEPPER_RUNNING_MAX_VELOCITY
-		jmp update_velocity
-
-	run_left:
-		; Running left, velocity tends toward vector "-1 * max volcity"
-		lda #>-PEPPER_RUNNING_MAX_VELOCITY
-		sta tmpfield4
-		lda #<-PEPPER_RUNNING_MAX_VELOCITY
-
-	update_velocity:
-		sta tmpfield2
 		lda #0
-		sta tmpfield3
-		sta tmpfield1
-		lda #PEPPER_RUNNING_ACCELERATION
-		sta tmpfield5
-		jsr merge_to_player_velocity
+		sta player_a_state_clock, x
 
-	end:
-	rts
-.)
+		; Set the appropriate animation
+		lda #<pepper_anim_jump
+		sta tmpfield13
+		lda #>pepper_anim_jump
+		sta tmpfield14
+		jsr set_player_animation
 
-pepper_input_running:
-.(
-	; If in hitstun, stop running
-	lda player_a_hitstun, x
-	beq take_input
-		jsr pepper_start_idle
+		rts
+	.)
+
+	&pepper_tick_jumping:
+	.(
+		jsr pepper_global_tick
+
+		; Tick clock
+		inc player_a_state_clock, x
+
+		; Wait for the preparation to end to begin to jump
+		ldy #SYSTEM_INDEX
+		lda player_a_state_clock, x
+		cmp pepper_jumpsquat_duration, y
+		bcc end
+		beq begin_to_jump
+
+		; Handle short-hop input
+		cmp pepper_short_hop_time
+		beq stop_short_hop
+
+		; Check if the top of the jump is reached
+		lda player_a_velocity_v, x
+		beq top_reached
+		bpl top_reached
+
+		; The top is not reached, stay in jumping state but apply gravity and directional influence
+		moving_upward:
+			jsr pepper_tick_falling ; Hack - We just use pepper_tick_falling which do exactly what we want
+			jmp end
+
+		; The top is reached, return to falling
+		top_reached:
+			jsr pepper_start_falling
+			jmp end
+
+		; If the jump button is no more pressed mid jump, convert the jump to a short-hop
+		stop_short_hop:
+			; Handle this tick as any other
+			jsr pepper_tick_falling
+
+			; If the jump button is still pressed, this is not a short-hop
+			lda controller_a_btns, x
+			and #CONTROLLER_INPUT_JUMP
+			bne end
+
+			; Reduce upward momentum to end the jump earlier
+			lda #>-PEPPER_JUMP_SHORT_HOP_POWER
+			sta player_a_velocity_v, x
+			lda #<-PEPPER_JUMP_SHORT_HOP_POWER
+			sta player_a_velocity_v_low, x
+			rts
+			; No return
+
+		; Put initial jumping velocity
+		begin_to_jump:
+			lda #>-PEPPER_JUMP_POWER
+			sta player_a_velocity_v, x
+			lda #<-PEPPER_JUMP_POWER
+			sta player_a_velocity_v_low, x
+			;jmp end ; Useless, fallthrough
+
+		end:
+		rts
+	.)
+
+	&pepper_input_jumping:
+	.(
+		; The jump is cancellable by grounded movements during preparation
+		; and by aerial movements after that
+		lda player_a_num_aerial_jumps, x ; performing aerial jump, not
+		bne not_grounded                 ; grounded
+
+		ldy #SYSTEM_INDEX
+		lda player_a_state_clock, x   ;
+		cmp pepper_jumpsquat_duration ; Still preparing the jump
+		bcc grounded                  ;
+
+		not_grounded:
+		jsr pepper_check_aerial_inputs
 		jmp end
-	take_input:
 
-		; Check state changes
+		grounded:
 		lda #<input_table
 		sta tmpfield1
 		lda #>input_table
@@ -1120,213 +1422,30 @@ pepper_input_running:
 		sta tmpfield3
 		jmp controller_callbacks
 
-	end:
-	rts
-
-	pepper_input_running_left:
-	.(
-		lda DIRECTION_LEFT
-		cmp player_a_direction, x
-		beq end_changing_direction
-			sta player_a_direction, x
-			jsr pepper_set_running_animation
-		end_changing_direction:
+		end:
 		rts
-	.)
 
-	pepper_input_running_right:
-	.(
-		lda DIRECTION_RIGHT
-		cmp player_a_direction, x
-		beq end_changing_direction
-			sta player_a_direction, x
-			jsr pepper_set_running_animation
-		end_changing_direction:
-		rts
-	.)
-
-	input_table:
-	.(
-		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,               CONTROLLER_INPUT_RIGHT
-		.byt CONTROLLER_INPUT_JUMP,               CONTROLLER_INPUT_JUMP_RIGHT,
-		.byt CONTROLLER_INPUT_JUMP_LEFT,          CONTROLLER_INPUT_TECH
-		.byt CONTROLLER_INPUT_TECH_LEFT,          CONTROLLER_INPUT_TECH_RIGHT
-		.byt CONTROLLER_INPUT_DOWN_TILT,          CONTROLLER_INPUT_ATTACK_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_RIGHT,       CONTROLLER_INPUT_SPECIAL_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_RIGHT,      CONTROLLER_INPUT_SPECIAL
-		.byt CONTROLLER_INPUT_SPECIAL_UP,         CONTROLLER_INPUT_SPECIAL_UP_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT,   CONTROLLER_INPUT_SPECIAL_UP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,    CONTROLLER_INPUT_ATTACK_UP
-		.byt CONTROLLER_INPUT_JAB,                CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT, CONTROLLER_INPUT_SPECIAL_DOWN
-		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,   CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
-		controller_callbacks_lsb:
-		.byt <pepper_input_running_left,        <pepper_input_running_right
-		.byt <pepper_start_jumping,             <pepper_start_jumping
-		.byt <pepper_start_jumping,             <pepper_start_shielding
-		.byt <pepper_start_shielding,           <pepper_start_shielding
-		.byt <pepper_start_down_tilt,           <pepper_start_side_tilt
-		.byt <pepper_start_side_tilt,           <pepper_start_send_carrot
-		.byt <pepper_start_send_carrot,         <pepper_start_teleport
-		.byt <pepper_start_witch_fly,           <pepper_start_witch_fly_direction
-		.byt <pepper_start_witch_fly_direction, <pepper_start_up_tilt
-		.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
-		.byt <pepper_start_flash_potion,        <pepper_start_wrench_grab
-		.byt <pepper_start_wrench_grab,         <pepper_start_wrench_grab
-		.byt <pepper_start_down_tilt,           <pepper_start_down_tilt
-		controller_callbacks_msb:
-		.byt >pepper_input_running_left,        >pepper_input_running_right
-		.byt >pepper_start_jumping,             >pepper_start_jumping
-		.byt >pepper_start_jumping,             >pepper_start_shielding
-		.byt >pepper_start_shielding,           >pepper_start_shielding
-		.byt >pepper_start_down_tilt,           >pepper_start_side_tilt
-		.byt >pepper_start_side_tilt,           >pepper_start_send_carrot
-		.byt >pepper_start_send_carrot,         >pepper_start_teleport
-		.byt >pepper_start_witch_fly,           >pepper_start_witch_fly_direction
-		.byt >pepper_start_witch_fly_direction, >pepper_start_up_tilt
-		.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
-		.byt >pepper_start_flash_potion,        >pepper_start_wrench_grab
-		.byt >pepper_start_wrench_grab,         >pepper_start_wrench_grab
-		.byt >pepper_start_down_tilt,           >pepper_start_down_tilt
-		controller_default_callback:
-		.word pepper_start_idle
-
-		&INPUT_TABLE_LENGTH = controller_callbacks_lsb - controller_inputs
-	.)
-.)
-
-
-pepper_start_jumping:
-.(
-	lda #PEPPER_STATE_JUMPING
-	sta player_a_state, x
-
-	lda #0
-	sta player_a_state_clock, x
-
-	; Set the appropriate animation
-	lda #<pepper_anim_jump
-	sta tmpfield13
-	lda #>pepper_anim_jump
-	sta tmpfield14
-	jsr set_player_animation
-
-	rts
-.)
-
-PEPPER_STATE_JUMP_PREPARATION_END = 4
-pepper_tick_jumping:
-.(
-	jsr pepper_global_tick
-
-	PEPPER_STATE_JUMP_SHORT_HOP_TIME = 9
-	PEPPER_STATE_JUMP_INITIAL_VELOCITY = $fac0
-	PEPPER_STATE_JUMP_SHORT_HOP_VELOCITY = $fefe
-
-	; Tick clock
-	inc player_a_state_clock, x
-
-	; Wait for the preparation to end to begin to jump
-	lda player_a_state_clock, x
-	cmp #PEPPER_STATE_JUMP_PREPARATION_END
-	bcc end
-	beq begin_to_jump
-
-	; Handle short-hop input
-	cmp #PEPPER_STATE_JUMP_SHORT_HOP_TIME
-	beq stop_short_hop
-
-	; Check if the top of the jump is reached
-	lda player_a_velocity_v, x
-	beq top_reached
-	bpl top_reached
-
-	; The top is not reached, stay in jumping state but apply gravity and directional influence
-	moving_upward:
-		jsr pepper_tick_falling ; Hack - We just use pepper_tick_falling which do exactly what we want
-		jmp end
-
-	; The top is reached, return to falling
-	top_reached:
-		jsr pepper_start_falling
-		jmp end
-
-	; If the jump button is no more pressed mid jump, convert the jump to a short-hop
-	stop_short_hop:
-		; Handle this tick as any other
-		jsr pepper_tick_falling
-
-		; If the jump button is still pressed, this is not a short-hop
-		lda controller_a_btns, x
-		and #CONTROLLER_INPUT_JUMP
-		bne end
-
-		; Reduce upward momentum to end the jump earlier
-		lda #>PEPPER_STATE_JUMP_SHORT_HOP_VELOCITY
-		sta player_a_velocity_v, x
-		lda #<PEPPER_STATE_JUMP_SHORT_HOP_VELOCITY
-		sta player_a_velocity_v_low, x
-		jmp end
-
-	; Put initial jumping velocity
-	begin_to_jump:
-		lda #>PEPPER_STATE_JUMP_INITIAL_VELOCITY
-		sta player_a_velocity_v, x
-		lda #<PEPPER_STATE_JUMP_INITIAL_VELOCITY
-		sta player_a_velocity_v_low, x
-		;jmp end ; Useless, fallthrough
-
-	end:
-	rts
-.)
-
-pepper_input_jumping:
-.(
-	; The jump is cancellable by grounded movements during preparation
-	; and by aerial movements after that
-	lda player_a_num_aerial_jumps, x ; performing aerial jump, not
-	bne not_grounded                 ; grounded
-	lda player_a_state_clock, x          ;
-	cmp #PEPPER_STATE_JUMP_PREPARATION_END ; Still preparing the jump
-	bcc grounded                         ;
-
-	not_grounded:
-	jsr pepper_check_aerial_inputs
-	jmp end
-
-	grounded:
-	lda #<input_table
-	sta tmpfield1
-	lda #>input_table
-	sta tmpfield2
-	lda #INPUT_TABLE_LENGTH
-	sta tmpfield3
-	jmp controller_callbacks
-
-	end:
-	rts
-
-	input_table:
-	.(
-		; Impactful controller states and associated callbacks (when still grounded)
-		; Note - We can put subroutines as callbacks because we have nothing to do after calling it
-		;        (sourboutines return to our caller since "called" with jmp)
-		controller_inputs:
-		.byt CONTROLLER_INPUT_ATTACK_UP,       CONTROLLER_INPUT_ATTACK_UP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT, CONTROLLER_INPUT_SPECIAL_UP
-		.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT, CONTROLLER_INPUT_SPECIAL_UP_RIGHT
-		controller_callbacks_lo:
-		.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
-		.byt <pepper_start_up_tilt,             <pepper_start_witch_fly
-		.byt <pepper_start_witch_fly_direction, <pepper_start_witch_fly_direction
-		controller_callbacks_hi:
-		.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
-		.byt >pepper_start_up_tilt,             >pepper_start_witch_fly
-		.byt >pepper_start_witch_fly_direction, >pepper_start_witch_fly_direction
-		controller_default_callback:
-		.word end
-		&INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
+		input_table:
+		.(
+			; Impactful controller states and associated callbacks (when still grounded)
+			; Note - We can put subroutines as callbacks because we have nothing to do after calling it
+			;        (sourboutines return to our caller since "called" with jmp)
+			controller_inputs:
+			.byt CONTROLLER_INPUT_ATTACK_UP,       CONTROLLER_INPUT_ATTACK_UP_LEFT
+			.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT, CONTROLLER_INPUT_SPECIAL_UP
+			.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT, CONTROLLER_INPUT_SPECIAL_UP_RIGHT
+			controller_callbacks_lo:
+			.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
+			.byt <pepper_start_up_tilt,             <pepper_start_witch_fly
+			.byt <pepper_start_witch_fly_direction, <pepper_start_witch_fly_direction
+			controller_callbacks_hi:
+			.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
+			.byt >pepper_start_up_tilt,             >pepper_start_witch_fly
+			.byt >pepper_start_witch_fly_direction, >pepper_start_witch_fly_direction
+			controller_default_callback:
+			.word end
+			&INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
+		.)
 	.)
 .)
 
@@ -1394,142 +1513,172 @@ pepper_tick_falling:
 	;rts ; useless, jump to subroutine
 .)
 
+;
+; Landing
+;
 
-pepper_start_landing:
 .(
-	jsr pepper_global_onground
+	landing_duration:
+		.byt pepper_anim_landing_dur_pal, pepper_anim_landing_dur_ntsc
 
-	PEPPER_LANDING_SPEED_CAP = $0200
+	velocity_table(PEPPER_LANDING_MAX_VELOCITY, land_max_velocity_msb, land_max_velocity_lsb)
+	velocity_table(-PEPPER_LANDING_MAX_VELOCITY, land_max_neg_velocity_msb, land_max_neg_velocity_lsb)
 
-	; Set state
-	lda #PEPPER_STATE_LANDING
-	sta player_a_state, x
+	&pepper_start_landing:
+	.(
+		jsr pepper_global_onground
 
-	; Reset clock
-	lda #0
-	sta player_a_state_clock, x
+		; Set state
+		lda #PEPPER_STATE_LANDING
+		sta player_a_state, x
 
-	; Cap initial velocity
-#if (PEPPER_LANDING_SPEED_CAP & $00ff) <> 0
-#error following condition expects round number for pepper landing speed cap
-#endif
-	lda player_a_velocity_h, x
-	jsr absolute_a
-	cmp #>(PEPPER_LANDING_SPEED_CAP+$0100)
-	bcs set_cap
+		; Reset clock
+		lda #0
+		sta player_a_state_clock, x
 
-		jmp pepper_set_landing_animation
-
-	set_cap:
+		; Cap initial velocity
+		ldy #SYSTEM_INDEX
 		lda player_a_velocity_h, x
 		bmi negative_cap
-			lda #>PEPPER_LANDING_SPEED_CAP
-			sta player_a_velocity_h, x
-			lda #<PEPPER_LANDING_SPEED_CAP
-			sta player_a_velocity_h_low, x
-			jmp pepper_set_landing_animation
-		negative_cap:
-			lda #>(-PEPPER_LANDING_SPEED_CAP)
-			sta player_a_velocity_h, x
-			lda #<(-PEPPER_LANDING_SPEED_CAP)
-			sta player_a_velocity_h_low, x
+			positive_cap:
+			.(
+				; Check wether to cap or not
+				lda land_max_velocity_msb, y
+				cmp player_a_velocity_h, x
+				bcc do_cap ; msb(max) < msb(velocity)
+				bne ok ; msb(max) > msb(velocity)
+					lda player_a_velocity_h_low, x
+					cmp land_max_velocity_lsb, y
+					bcc ok ; lsb(velocity) < lsb(max)
 
-	; Fallthrough to set the animation
+				do_cap:
+					lda land_max_velocity_msb, y
+					sta player_a_velocity_h, x
+					lda land_max_velocity_lsb, y
+					sta player_a_velocity_h_low, x
+				ok:
+				jmp pepper_set_landing_animation
+			.)
+			negative_cap:
+			.(
+				; Check wether to cap or not - negative, we have to cap if unsigned CMP is lower than "max"
+				lda player_a_velocity_h, x
+				cmp land_max_velocity_msb, y
+				bcc do_cap ; msb(velocity) < msb(max)
+				bne ok ; msb(velocity) > msb(max)
+					lda land_max_velocity_lsb, y
+					cmp player_a_velocity_h_low, x
+					bcc ok ; lsb(max) < lsb(velocity)
+
+				do_cap:
+					lda land_max_neg_velocity_msb, y
+					sta player_a_velocity_h, x
+					lda land_max_neg_velocity_lsb, y
+					sta player_a_velocity_h_low, x
+				ok:
+			.)
+
+		; Fallthrough to set the animation
+	.)
+	pepper_set_landing_animation:
+	.(
+		; Set the appropriate animation
+		lda #<pepper_anim_landing
+		sta tmpfield13
+		lda #>pepper_anim_landing
+		sta tmpfield14
+		jmp set_player_animation
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	&pepper_tick_landing:
+	.(
+		jsr pepper_global_tick
+
+		PEPPER_STATE_LANDING_DURATION = 6
+
+		; Tick clock
+		inc player_a_state_clock, x
+
+		; Do not move, velocity tends toward vector (0,0)
+		jsr pepper_apply_ground_friction
+
+		; After move's time is out, go to standing state
+		lda player_a_state_clock, x
+		cmp #PEPPER_STATE_LANDING_DURATION
+		bne end
+			jmp pepper_start_inactive_state
+			; No return, jump to subroutine
+
+		end:
+		rts
+	.)
 .)
-pepper_set_landing_animation:
+
+;
+; Crashing
+;
+
 .(
-	; Set the appropriate animation
-	lda #<pepper_anim_landing
-	sta tmpfield13
-	lda #>pepper_anim_landing
-	sta tmpfield14
-	jmp set_player_animation
+	crashing_duration:
+		.byt pepper_anim_crash_dur_pal, pepper_anim_crash_dur_ntsc
 
-	;rts ; useless, jump to subroutine
+	velocity_table_u8(PEPPER_GROUND_FRICTION_STRENGTH*3, pepper_ground_friction_strength_strong)
+
+	&pepper_start_crashing:
+	.(
+		; Set state
+		lda #PEPPER_STATE_CRASHING
+		sta player_a_state, x
+
+		; Reset clock
+		lda #0
+		sta player_a_state_clock, x
+
+		; Set the appropriate animation
+		lda #<pepper_anim_crash
+		sta tmpfield13
+		lda #>pepper_anim_crash
+		sta tmpfield14
+		jsr set_player_animation
+
+		; Play crash sound
+		jmp audio_play_crash
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	&pepper_tick_crashing:
+	.(
+		jsr pepper_global_tick
+
+		PEPPER_STATE_CRASHING_DURATION = 30
+
+		; Tick clock
+		inc player_a_state_clock, x
+
+		; Do not move, velocity tends toward vector (0,0)
+		lda #$00
+		sta tmpfield4
+		sta tmpfield3
+		sta tmpfield2
+		sta tmpfield1
+		lda pepper_ground_friction_strength_strong, y
+		sta tmpfield5
+		jsr merge_to_player_velocity
+
+		; After move's time is out, go to standing state
+		lda player_a_state_clock, x
+		ldy #SYSTEM_INDEX
+		cmp crashing_duration, y
+		bne end
+		jsr pepper_start_idle
+
+		end:
+		rts
+	.)
 .)
-
-pepper_tick_landing:
-.(
-	jsr pepper_global_tick
-
-	PEPPER_STATE_LANDING_DURATION = 6
-
-	; Tick clock
-	inc player_a_state_clock, x
-
-	; Do not move, velocity tends toward vector (0,0)
-	lda #$00
-	sta tmpfield4
-	sta tmpfield3
-	sta tmpfield2
-	sta tmpfield1
-	lda #PEPPER_GROUND_FRICTION_STRENGTH
-	sta tmpfield5
-	jsr merge_to_player_velocity
-
-	; After move's time is out, go to standing state
-	lda player_a_state_clock, x
-	cmp #PEPPER_STATE_LANDING_DURATION
-	bne end
-	jsr pepper_start_idle
-
-	end:
-	rts
-.)
-
-
-pepper_start_crashing:
-.(
-	; Set state
-	lda #PEPPER_STATE_CRASHING
-	sta player_a_state, x
-
-	; Reset clock
-	lda #0
-	sta player_a_state_clock, x
-
-	; Set the appropriate animation
-	lda #<pepper_anim_crash
-	sta tmpfield13
-	lda #>pepper_anim_crash
-	sta tmpfield14
-	jsr set_player_animation
-
-	; Play crash sound
-	jmp audio_play_crash
-
-	;rts ; useless, jump to subroutine
-.)
-
-pepper_tick_crashing:
-.(
-	jsr pepper_global_tick
-
-	PEPPER_STATE_CRASHING_DURATION = 30
-
-	; Tick clock
-	inc player_a_state_clock, x
-
-	; Do not move, velocity tends toward vector (0,0)
-	lda #$00
-	sta tmpfield4
-	sta tmpfield3
-	sta tmpfield2
-	sta tmpfield1
-	lda #PEPPER_GROUND_FRICTION_STRENGTH*2
-	sta tmpfield5
-	jsr merge_to_player_velocity
-
-	; After move's time is out, go to standing state
-	lda player_a_state_clock, x
-	cmp #PEPPER_STATE_CRASHING_DURATION
-	bne end
-	jsr pepper_start_idle
-
-	end:
-	rts
-.)
-
 
 pepper_start_aerial_wrench_grab:
 .(
@@ -1828,155 +1977,155 @@ pepper_hurt_shielding:
 	rts
 .)
 
-pepper_start_shieldlag:
 .(
-	; Set state
-	lda #PEPPER_STATE_SHIELDLAG
-	sta player_a_state, x
+	shieldlag_duration:
+		.byt pepper_anim_shield_remove_dur_pal, pepper_anim_shield_remove_dur_ntsc
 
-	; Reset clock
-	lda #0
-	sta player_a_state_clock, x
+	&pepper_start_shieldlag:
+	.(
+		; Set state
+		lda #PEPPER_STATE_SHIELDLAG
+		sta player_a_state, x
 
-	; Set the appropriate animation
-	lda #<pepper_anim_shield_remove
-	sta tmpfield13
-	lda #>pepper_anim_shield_remove
-	sta tmpfield14
-	jsr set_player_animation
+		; Reset clock
+		ldy #SYSTEM_INDEX
+		lda shieldlag_duration, y
+		sta player_a_state_clock, x
 
-	rts
+		; Set the appropriate animation
+		lda #<pepper_anim_shield_remove
+		sta tmpfield13
+		lda #>pepper_anim_shield_remove
+		sta tmpfield14
+		jsr set_player_animation
+
+		rts
+	.)
+
+	&pepper_tick_shieldlag:
+	.(
+		jsr pepper_global_tick
+
+		dec player_a_state_clock, x
+		bne tick
+			jmp pepper_start_inactive_state
+			; No return, jump to subroutine
+		tick:
+		jmp pepper_apply_ground_friction
+		;rts ; useless, jump to subroutine
+	.)
 .)
 
-pepper_tick_shieldlag:
 .(
-	jsr pepper_global_tick
+	velocity_table(PEPPER_WALL_JUMP_VELOCITY_H, pepper_wall_jump_velocity_h_msb, pepper_wall_jump_velocity_h_lsb)
+	velocity_table(-PEPPER_WALL_JUMP_VELOCITY_H, pepper_wall_jump_velocity_h_neg_msb, pepper_wall_jump_velocity_h_neg_lsb)
 
-	PEPPER_STATE_SHIELDLAG_DURATION = 8
+	&pepper_start_walljumping:
+	.(
+		; Deny to start jump state if the player used all it's jumps
+		;lda player_a_walljump, x ; useless, all calls to pepper_start_walljumping actually do this check
+		;beq end
 
-	; Do not move, velocity tends toward vector (0,0)
-	lda #$00
-	sta tmpfield4
-	sta tmpfield3
-	sta tmpfield2
-	sta tmpfield1
-	lda #$80
-	sta tmpfield5
-	jsr merge_to_player_velocity
+		; Update wall jump counter
+		dec player_a_walljump, x
 
-	; After move's time is out, go to standing state
-	inc player_a_state_clock, x
-	lda player_a_state_clock, x
-	cmp #PEPPER_STATE_SHIELDLAG_DURATION
-	bne end
-		jsr pepper_start_idle
+		; Set player's state
+		lda #PEPPER_STATE_WALLJUMPING
+		sta player_a_state, x
 
-	end:
-	rts
-.)
+		; Reset clock
+		lda #0
+		sta player_a_state_clock, x
 
-
-pepper_start_walljumping:
-.(
-	; Deny to start jump state if the player used all it's jumps
-	;lda player_a_walljump, x ; useless, all calls to pepper_start_walljumping actually do this check
-	;beq end
-
-	; Update wall jump counter
-	dec player_a_walljump, x
-
-	; Set player's state
-	lda #PEPPER_STATE_WALLJUMPING
-	sta player_a_state, x
-
-	; Reset clock
-	lda #0
-	sta player_a_state_clock, x
-
-	; Stop any momentum, pepper does not fall during jumpsquat
-	sta player_a_velocity_h, x
-	sta player_a_velocity_h_low, x
-	sta player_a_velocity_v, x
-	sta player_a_velocity_v_low, x
-
-	; Set the appropriate animation
-	;TODO specific animation
-	lda #<pepper_anim_jump
-	sta tmpfield13
-	lda #>pepper_anim_jump
-	sta tmpfield14
-	jsr set_player_animation
-
-	end:
-	rts
-.)
-
-pepper_tick_walljumping:
-.(
-	jsr pepper_global_tick
-
-	; Tick clock
-	inc player_a_state_clock, x
-
-	; Wait for the preparation to end to begin to jump
-	lda player_a_state_clock, x
-	cmp #PEPPER_WALL_JUMP_SQUAT_END
-	bcc end
-	beq begin_to_jump
-
-	; Check if the top of the jump is reached
-	lda player_a_velocity_v, x
-	beq top_reached
-	bpl top_reached
-
-		; The top is not reached, stay in walljumping state but apply gravity, without directional influence
-		jmp apply_player_gravity
-		;jmp end ; useless, jump to a subroutine
-
-	; The top is reached, return to falling
-	top_reached:
-		jmp pepper_start_falling
-		;jmp end ; useless, jump to a subroutine
-
-	; Put initial jumping velocity
-	begin_to_jump:
-		; Vertical velocity
-		lda #>PEPPER_WALL_JUMP_VELOCITY_VERTICAL
+		; Stop any momentum, pepper does not fall during jumpsquat
+		sta player_a_velocity_h, x
+		sta player_a_velocity_h_low, x
 		sta player_a_velocity_v, x
-		lda #<PEPPER_WALL_JUMP_VELOCITY_VERTICAL
 		sta player_a_velocity_v_low, x
 
-		; Horizontal velocity
-		lda player_a_direction, x
-		;cmp DIRECTION_LEFT ; useless while DIRECTION_LEFT is $00
-		bne jump_right
-			jump_left:
-				lda #$ff
-				jmp end_jump_direction
-			jump_right:
-				lda #1
-		end_jump_direction:
-		sta player_a_velocity_h, x
+		; Set the appropriate animation
+		;TODO specific animation
+		lda #<pepper_anim_jump
+		sta tmpfield13
+		lda #>pepper_anim_jump
+		sta tmpfield14
+		jsr set_player_animation
 
-		;jmp end ; useless, fallthrough
+		end:
+		rts
+	.)
 
-	end:
-	rts
+	&pepper_tick_walljumping:
+	.(
+		jsr pepper_global_tick
+
+		; Tick clock
+		inc player_a_state_clock, x
+
+		; Wait for the preparation to end to begin to jump
+		lda player_a_state_clock, x
+		cmp #PEPPER_WALL_JUMP_SQUAT_END
+		bcc end
+		beq begin_to_jump
+
+		; Check if the top of the jump is reached
+		lda player_a_velocity_v, x
+		beq top_reached
+		bpl top_reached
+
+			; The top is not reached, stay in walljumping state but apply gravity, without directional influence
+			jmp apply_player_gravity
+			;jmp end ; useless, jump to a subroutine
+
+		; The top is reached, return to falling
+		top_reached:
+			jmp pepper_start_falling
+			;jmp end ; useless, jump to a subroutine
+
+		; Put initial jumping velocity
+		begin_to_jump:
+			; Vertical velocity
+			lda #>PEPPER_WALL_JUMP_VELOCITY_V
+			sta player_a_velocity_v, x
+			lda #<PEPPER_WALL_JUMP_VELOCITY_V
+			sta player_a_velocity_v_low, x
+
+			; Horizontal velocity
+			ldy #SYSTEM_INDEX
+			lda player_a_direction, x
+			;cmp DIRECTION_LEFT ; useless while DIRECTION_LEFT is $00
+			bne jump_right
+				jump_left:
+					lda pepper_wall_jump_velocity_h_neg_lsb, y
+					sta player_a_velocity_h_low, x
+					lda pepper_wall_jump_velocity_h_neg_msb, y
+					jmp end_jump_direction
+				jump_right:
+					lda pepper_wall_jump_velocity_h_lsb, y
+					sta player_a_velocity_h_low, x
+					lda pepper_wall_jump_velocity_h_msb, y
+			end_jump_direction:
+			sta player_a_velocity_h, x
+
+			;jmp end ; useless, fallthrough
+
+		end:
+		rts
+	.)
+
+	&pepper_input_walljumping:
+	.(
+		; The jump is cancellable by aerial movements, but only after preparation
+		lda #PEPPER_WALL_JUMP_SQUAT_END
+		cmp player_a_state_clock, x
+		bcs grounded
+			not_grounded:
+				jmp pepper_check_aerial_inputs
+				; no return, jump to a subroutine
+		grounded:
+		rts
+	.)
 .)
-
-pepper_input_walljumping:
-.(
-	; The jump is cancellable by aerial movements, but only after preparation
-	lda #PEPPER_WALL_JUMP_SQUAT_END
-	cmp player_a_state_clock, x
-	bcs grounded
-		not_grounded:
-			jmp pepper_check_aerial_inputs
-			; no return, jump to a subroutine
-	grounded:
-	rts
-.)
-
 
 pepper_start_down_tilt:
 .(
