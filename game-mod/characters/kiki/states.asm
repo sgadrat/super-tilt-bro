@@ -48,7 +48,7 @@ KIKI_JUMP_SHORT_HOP_POWER = $0102
 KIKI_LANDING_MAX_VELOCITY = $0200
 KIKI_MAX_NUM_AERIAL_JUMPS = 1
 KIKI_MAX_WALLJUMPS = 1
-KIKI_PLATFORM_DURATION = 120
+KIKI_PLATFORM_DURATION = 100 ; Note, 106 (ntsc->127) is the max, we have only 7 bits to store the value
 KIKI_PLATFORM_BLINK_THRESHOLD_MASK = %01100000 ; Platform is blinking if "timer > 0 && (MASK & timer == 0)"
 KIKI_PLATFORM_BLINK_MASK = %00000100 ; Blinking platform is shown on frames where "MASK & timer == 1"
 KIKI_RUNNING_INITIAL_VELOCITY = $0100
@@ -72,6 +72,8 @@ velocity_table_u8(KIKI_GROUND_FRICTION_STRENGTH, kiki_ground_friction_strength)
 velocity_table_u8(KIKI_GROUND_FRICTION_STRENGTH/3, kiki_ground_friction_strength_weak)
 velocity_table(KIKI_TECH_SPEED, kiki_tech_speed_msb, kiki_tech_speed_lsb)
 velocity_table(-KIKI_TECH_SPEED, kiki_tech_speed_neg_msb, kiki_tech_speed_neg_lsb)
+
+duration_table(KIKI_PLATFORM_DURATION, kiki_platform_duration)
 
 kiki_jumpsquat_duration:
 	.byt KIKI_JUMP_SQUAT_DURATION_PAL, KIKI_JUMP_SQUAT_DURATION_NTSC
@@ -669,7 +671,7 @@ kiki_global_tick:
 
 	; Make platform blink on end of life
 	.(
-		;TODO ntsc timing
+		;TODO ntsc timing, if it feels wrong with shared timing
 		; Do not blink until the platform is about to disapear
 		lda kiki_a_platform_state, x
 		tay
@@ -1526,68 +1528,69 @@ kiki_start_inactive_state:
 	.)
 .)
 
-
-kiki_start_aerial_jumping:
 .(
-	; Deny to start jump state if the player used all it's jumps
-	lda #KIKI_MAX_NUM_AERIAL_JUMPS
-	cmp player_a_num_aerial_jumps, x
-	bne jump_ok
-		rts
-	jump_ok:
-	inc player_a_num_aerial_jumps, x
+	&kiki_start_aerial_jumping:
+	.(
+		; Deny to start jump state if the player used all it's jumps
+		lda #KIKI_MAX_NUM_AERIAL_JUMPS
+		cmp player_a_num_aerial_jumps, x
+		bne jump_ok
+			rts
+		jump_ok:
+		inc player_a_num_aerial_jumps, x
 
-	; Reset fall speed
-	jsr reset_default_gravity
+		; Reset fall speed
+		jsr reset_default_gravity
 
-	; Trick - aerial_jumping set the state to jumping. It is the same state with
-	; the starting conditions as the only differences
-	lda #KIKI_STATE_JUMPING
-	sta player_a_state, x
+		; Trick - aerial_jumping set the state to jumping. It is the same state with
+		; the starting conditions as the only differences
+		lda #KIKI_STATE_JUMPING
+		sta player_a_state, x
 
-	; Reset clock
-	lda #0
-	sta player_a_state_clock, x
+		; Reset clock
+		lda #0
+		sta player_a_state_clock, x
 
-	lda #$00
-	sta player_a_velocity_v, x
-	lda #$00
-	sta player_a_velocity_v_low, x
+		;lda #0
+		sta player_a_velocity_v, x
+		sta player_a_velocity_v_low, x
 
-	; Set the appropriate animation
-	;TODO use aerial_jump animation
-	lda #<kiki_anim_jump
-	sta tmpfield13
-	lda #>kiki_anim_jump
-	sta tmpfield14
-	jmp set_player_animation
+		; Set the appropriate animation
+		;TODO use aerial_jump animation
+		lda #<kiki_anim_jump
+		sta tmpfield13
+		lda #>kiki_anim_jump
+		sta tmpfield14
+		jmp set_player_animation
 
-	;rts ; useless, jump to subroutine
+		;rts ; useless, jump to subroutine
+	.)
 .)
 
-
-kiki_start_falling:
 .(
-	lda #KIKI_STATE_FALLING
-	sta player_a_state, x
+	&kiki_start_falling:
+	.(
+		lda #KIKI_STATE_FALLING
+		sta player_a_state, x
 
-	; Set the appropriate animation
-	lda #<kiki_anim_falling
-	sta tmpfield13
-	lda #>kiki_anim_falling
-	sta tmpfield14
-	jsr set_player_animation
+		; Set the appropriate animation
+		lda #<kiki_anim_falling
+		sta tmpfield13
+		lda #>kiki_anim_falling
+		sta tmpfield14
+		jmp set_player_animation
 
-	rts
-.)
+		;rts ; useless, jump to subroutine
+	.)
 
-kiki_tick_falling:
-.(
-	jsr kiki_global_tick
+	&kiki_tick_falling:
+	.(
+		jsr kiki_global_tick
 
-	jsr kiki_aerial_directional_influence
-	jmp apply_player_gravity
-	;rts ; useless, jump to subroutine
+		jsr kiki_aerial_directional_influence
+		jmp apply_player_gravity
+		;rts ; useless, jump to subroutine
+	.)
 .)
 
 ;
@@ -1756,202 +1759,209 @@ kiki_tick_falling:
 	.)
 .)
 
-kiki_start_helpless:
 .(
-	; Set state
-	lda #KIKI_STATE_HELPLESS
-	sta player_a_state, x
+	&kiki_start_helpless:
+	.(
+		; Set state
+		lda #KIKI_STATE_HELPLESS
+		sta player_a_state, x
 
-	; Set the appropriate animation
-	lda #<kiki_anim_helpless
-	sta tmpfield13
-	lda #>kiki_anim_helpless
-	sta tmpfield14
-	jsr set_player_animation
-
-	rts
-.)
-
-kiki_tick_helpless:
-.(
-	jsr kiki_global_tick
-	jmp kiki_tick_falling
-.)
-
-kiki_input_helpless:
-.(
-	; Allow to escape helpless mode with a walljump, else keep input dirty
-	lda player_a_walled, x
-	beq no_jump
-	lda player_a_walljump, x
-	beq no_jump
-		jump:
-			lda player_a_walled_direction, x
-			sta player_a_direction, x
-			jmp kiki_start_walljumping
-		no_jump:
-			jmp keep_input_dirty
-	;rts ; useless, both branches jump to a subroutine
-.)
-
-
-kiki_start_shielding:
-.(
-	; Set state
-	lda #KIKI_STATE_SHIELDING
-	sta player_a_state, x
-
-	; Reset clock
-	lda #0
-	sta player_a_state_clock, x
-
-	; Set the appropriate animation
-	lda #<kiki_anim_shield_full
-	sta tmpfield13
-	lda #>kiki_anim_shield_full
-	sta tmpfield14
-	jsr set_player_animation
-
-	; Cancel momentum
-	lda #$00
-	sta player_a_velocity_h_low, x
-	sta player_a_velocity_h, x
-
-	; Set shield as full life
-	lda #2
-	sta player_a_state_field1, x
-
-	rts
-.)
-
-kiki_tick_shielding:
-.(
-	jsr kiki_global_tick
-
-	; Tick clock
-	lda player_a_state_clock, x
-	cmp #PLAYER_DOWN_TAP_MAX_DURATION
-	bcs end_tick
-		inc player_a_state_clock, x
-	end_tick:
-
-	rts
-.)
-
-kiki_input_shielding:
-.(
-	; Maintain down to stay on shield
-	; Ignore left/right as they are too susceptible to be pressed unvoluntarily on a lot of gamepads
-	; Down-a and down-b are allowed as out of shield moves
-	; Any other combination ends the shield (with shield lag or falling from smooth platform)
-	lda controller_a_btns, x
-	and #CONTROLLER_BTN_A+CONTROLLER_BTN_B+CONTROLLER_BTN_UP+CONTROLLER_BTN_DOWN
-	cmp #CONTROLLER_INPUT_TECH
-	beq end
-	cmp #CONTROLLER_INPUT_DOWN_TILT
-	beq handle_input
-	cmp #CONTROLLER_INPUT_SPECIAL_DOWN
-	beq handle_input
-
-	end_shield:
-
-		lda #PLAYER_DOWN_TAP_MAX_DURATION
-		cmp player_a_state_clock, x
-		beq shieldlag
-		bcc shieldlag
-			ldy player_a_grounded, x
-			beq shieldlag
-				lda stage_data, y
-				cmp #STAGE_ELEMENT_PLATFORM
-				beq shieldlag
-				cmp #STAGE_ELEMENT_OOS_PLATFORM
-				beq shieldlag
-
-		fall_from_smooth:
-			; HACK - "position = position + 2" to compensate collision system not handling subpixels and "position + 1" being the collision line
-			;        actually, "position = position + 3" to compensate for moving platforms that move down
-			;        Better solution would be to have an intermediary player state with a specific animation
-			clc
-			lda player_a_y, x
-			adc #3
-			sta player_a_y, x
-			lda player_a_y_screen, x
-			adc #0
-			sta player_a_y_screen, x
-
-			jmp kiki_start_falling
-			; No return, jump to subroutine
-
-		shieldlag:
-			jmp kiki_start_shieldlag
-			; No return, jump to subroutine
-
-	handle_input:
-
-		jmp kiki_input_idle
-		; No return, jump to subroutine
-
-	end:
-	rts
-.)
-
-kiki_hurt_shielding:
-.(
-	stroke_player = tmpfield11
-
-	; Reduce shield's life
-	dec player_a_state_field1, x
-
-	; Select what to do according to shield's life
-	lda player_a_state_field1, x
-	beq limit_shield
-	cmp #1
-	beq partial_shield
-
-		; Break the shield, derived from normal hurt with:
-		;  Knockback * 2
-		;  Screen shaking * 4
-		;  Special sound
-		jsr hurt_player
-		ldx stroke_player
-		asl player_a_velocity_h_low, x
-		rol player_a_velocity_h, x
-		asl player_a_velocity_v_low, x
-		rol player_a_velocity_v, x
-		asl player_a_hitstun, x
-		asl screen_shake_counter
-		asl screen_shake_counter
-		jsr audio_play_shield_break
-		jmp end
-
-	partial_shield:
-		; Get the animation corresponding to the shield's life
-		lda #<kiki_anim_shield_partial
+		; Set the appropriate animation
+		lda #<kiki_anim_helpless
 		sta tmpfield13
-		lda #>kiki_anim_shield_partial
-		jmp still_shield
-
-	limit_shield:
-		; Get the animation corresponding to the shield's life
-		lda #<kiki_anim_shield_limit
-		sta tmpfield13
-		lda #>kiki_anim_shield_limit
-
-	still_shield:
-		; Set the new shield animation
+		lda #>kiki_anim_helpless
 		sta tmpfield14
 		jsr set_player_animation
 
-		; Play sound
-		jsr audio_play_shield_hit
+		rts
+	.)
 
-	end:
-	; Disable the hitbox to avoid multi-hits
-	jsr switch_selected_player
-	lda HITBOX_DISABLED
-	sta player_a_hitbox_enabled, x
+	&kiki_tick_helpless:
+	.(
+		jsr kiki_global_tick
+		jmp kiki_tick_falling
+	.)
 
-	rts
+	&kiki_input_helpless:
+	.(
+		; Allow to escape helpless mode with a walljump, else keep input dirty
+		lda player_a_walled, x
+		beq no_jump
+		lda player_a_walljump, x
+		beq no_jump
+			jump:
+				lda player_a_walled_direction, x
+				sta player_a_direction, x
+				jmp kiki_start_walljumping
+			no_jump:
+				jmp keep_input_dirty
+		;rts ; useless, both branches jump to a subroutine
+	.)
+.)
+
+;
+; Shielding
+;
+
+.(
+	&kiki_start_shielding:
+	.(
+		; Set state
+		lda #KIKI_STATE_SHIELDING
+		sta player_a_state, x
+
+		; Reset clock
+		lda #0
+		sta player_a_state_clock, x
+
+		; Set the appropriate animation
+		lda #<kiki_anim_shield_full
+		sta tmpfield13
+		lda #>kiki_anim_shield_full
+		sta tmpfield14
+		jsr set_player_animation
+
+		; Cancel momentum
+		lda #$00
+		sta player_a_velocity_h_low, x
+		sta player_a_velocity_h, x
+
+		; Set shield as full life
+		lda #2
+		sta player_a_state_field1, x
+
+		rts
+	.)
+
+	&kiki_tick_shielding:
+	.(
+		jsr kiki_global_tick
+
+		; Tick clock
+		lda player_a_state_clock, x
+		cmp #PLAYER_DOWN_TAP_MAX_DURATION
+		bcs end_tick
+			inc player_a_state_clock, x
+		end_tick:
+
+		rts
+	.)
+
+	&kiki_input_shielding:
+	.(
+		; Maintain down to stay on shield
+		; Ignore left/right as they are too susceptible to be pressed unvoluntarily on a lot of gamepads
+		; Down-a and down-b are allowed as out of shield moves
+		; Any other combination ends the shield (with shield lag or falling from smooth platform)
+		lda controller_a_btns, x
+		and #CONTROLLER_BTN_A+CONTROLLER_BTN_B+CONTROLLER_BTN_UP+CONTROLLER_BTN_DOWN
+		cmp #CONTROLLER_INPUT_TECH
+		beq end
+		cmp #CONTROLLER_INPUT_DOWN_TILT
+		beq handle_input
+		cmp #CONTROLLER_INPUT_SPECIAL_DOWN
+		beq handle_input
+
+		end_shield:
+
+			lda #PLAYER_DOWN_TAP_MAX_DURATION
+			cmp player_a_state_clock, x
+			beq shieldlag
+			bcc shieldlag
+				ldy player_a_grounded, x
+				beq shieldlag
+					lda stage_data, y
+					cmp #STAGE_ELEMENT_PLATFORM
+					beq shieldlag
+					cmp #STAGE_ELEMENT_OOS_PLATFORM
+					beq shieldlag
+
+			fall_from_smooth:
+				; HACK - "position = position + 2" to compensate collision system not handling subpixels and "position + 1" being the collision line
+				;        actually, "position = position + 3" to compensate for moving platforms that move down
+				;        Better solution would be to have an intermediary player state with a specific animation
+				clc
+				lda player_a_y, x
+				adc #3
+				sta player_a_y, x
+				lda player_a_y_screen, x
+				adc #0
+				sta player_a_y_screen, x
+
+				jmp kiki_start_falling
+				; No return, jump to subroutine
+
+			shieldlag:
+				jmp kiki_start_shieldlag
+				; No return, jump to subroutine
+
+		handle_input:
+
+			jmp kiki_input_idle
+			; No return, jump to subroutine
+
+		end:
+		rts
+	.)
+
+	&kiki_hurt_shielding:
+	.(
+		stroke_player = tmpfield11
+
+		; Reduce shield's life
+		dec player_a_state_field1, x
+
+		; Select what to do according to shield's life
+		lda player_a_state_field1, x
+		beq limit_shield
+		cmp #1
+		beq partial_shield
+
+			; Break the shield, derived from normal hurt with:
+			;  Knockback * 2
+			;  Screen shaking * 4
+			;  Special sound
+			jsr hurt_player
+			ldx stroke_player
+			asl player_a_velocity_h_low, x
+			rol player_a_velocity_h, x
+			asl player_a_velocity_v_low, x
+			rol player_a_velocity_v, x
+			asl player_a_hitstun, x
+			asl screen_shake_counter
+			asl screen_shake_counter
+			jsr audio_play_shield_break
+			jmp end
+
+		partial_shield:
+			; Get the animation corresponding to the shield's life
+			lda #<kiki_anim_shield_partial
+			sta tmpfield13
+			lda #>kiki_anim_shield_partial
+			jmp still_shield
+
+		limit_shield:
+			; Get the animation corresponding to the shield's life
+			lda #<kiki_anim_shield_limit
+			sta tmpfield13
+			lda #>kiki_anim_shield_limit
+
+		still_shield:
+			; Set the new shield animation
+			sta tmpfield14
+			jsr set_player_animation
+
+			; Play sound
+			jsr audio_play_shield_hit
+
+		end:
+		; Disable the hitbox to avoid multi-hits
+		jsr switch_selected_player
+		lda HITBOX_DISABLED
+		sta player_a_hitbox_enabled, x
+
+		rts
+	.)
 .)
 
 .(
@@ -2105,1236 +2115,1251 @@ kiki_hurt_shielding:
 	.)
 .)
 
-kiki_start_side_tilt_right:
 .(
-	lda DIRECTION_RIGHT
-	sta player_a_direction, x
-	jmp kiki_start_side_tilt
-	; rts ; useless - kiki_start_side_tilt is a routine
-.)
+	kiki_anim_strike_duration:
+		.byt kiki_anim_strike_dur_pal, kiki_anim_strike_dur_ntsc
 
-kiki_start_side_tilt_left:
-.(
-	lda DIRECTION_LEFT
-	sta player_a_direction, x
-	; jmp kiki_start_side_tilt ; useless - fallthrough
-	; rts ; useless - kiki_start_side_tilt is a routine
-.)
-
-kiki_start_side_tilt:
-.(
-	; Set the appropriate animation
-	lda #<kiki_anim_strike
-	sta tmpfield13
-	lda #>kiki_anim_strike
-	sta tmpfield14
-	jsr set_player_animation
-
-	; Set the player's state
-	lda #KIKI_STATE_SIDE_TILT
-	sta player_a_state, x
-
-	; Initialize the clock
-	lda #0
-	sta player_a_state_clock,x
-
-	rts
-.)
-
-kiki_tick_side_tilt:
-.(
-	jsr kiki_global_tick
-
-	KIKI_STATE_SIDE_TILT_DURATION = 16
-	KIKI_STATE_SIDE_TILT_FRICTION = $20
-
-	inc player_a_state_clock, x
-
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_SIDE_TILT_DURATION
-	bne update_velocity
-
-		jsr kiki_start_idle
-		jmp end
-
-	update_velocity:
-		; Do not move, velocity tends toward vector (0,0)
-		lda #$00
-		sta tmpfield4
-		sta tmpfield3
-		sta tmpfield2
-		sta tmpfield1
-		lda #KIKI_STATE_SIDE_TILT_FRICTION
-		sta tmpfield5
-		jsr merge_to_player_velocity
-
-	end:
-	rts
-.)
-
-
-.(
-KIKI_WALL_WHIFF = 0
-KIKI_WALL_DRAWN = 1
-kiki_a_wall_drawn = player_a_state_field1
-
-&kiki_start_side_spe_right:
-.(
-	lda DIRECTION_RIGHT
-	sta player_a_direction, x
-	jmp kiki_start_side_spe
-	; rts ; useless - kiki_start_side_spe is a routine
-.)
-
-&kiki_start_side_spe_left:
-.(
-	lda DIRECTION_LEFT
-	sta player_a_direction, x
-	; jmp kiki_start_side_spe ; useless - fallthrough
-	; rts ; useless - kiki_start_side_spe is a routine
-.)
-
-&kiki_start_side_spe:
-.(
-	sprite_x_lsb = tmpfield1
-	sprite_x_msb = tmpfield2
-	sprite_y_lsb = tmpfield3
-	sprite_y_msb = tmpfield4
-
-	; Set the appropriate animation
-	lda #<kiki_anim_paint_side
-	sta tmpfield13
-	lda #>kiki_anim_paint_side
-	sta tmpfield14
-	jsr set_player_animation
-
-	; Set the player's state
-	lda #KIKI_STATE_SIDE_SPE
-	sta player_a_state, x
-
-	; Initialize the clock
-	lda #0
-	sta player_a_state_clock,x
-
-	; TODO study intersting velocity setups
-	;  Original - rapidly slow down to (0, 0) (was done to copy-paste code from side tilt)
-	;  Current - directly stop any velocity (should feel like original, without computations per tick)
-	;  Idea 2 - stop horizontal velocity, keep vertical velocity, apply gravity on tick (should help to side spe as part of aerial gameplay)
-
-	; Avoid spawning wall when forbiden
-	lda kiki_a_platform_state, x
-	and #%10000000
-	bne process
-		lda #KIKI_WALL_WHIFF
-		sta kiki_a_wall_drawn, x
-		jmp spawn_wall_end
-	process:
-
-	lda #KIKI_WALL_DRAWN
-	sta kiki_a_wall_drawn, x
-
-	; Reset velocity
-	lda #0
-	sta player_a_velocity_h_low, x
-	sta player_a_velocity_h, x
-	sta player_a_velocity_v_low, x
-	sta player_a_velocity_v, x
-
-	; Spawn wall
-	spawn_wall:
+	&kiki_start_side_tilt_right:
 	.(
-		; Reset wall state
-		lda #KIKI_PLATFORM_DURATION
-		sta kiki_a_platform_state, x
-
-		; Place wall
-		ldy #0
-		cpx #0
-		beq place_wall
-			ldy #player_b_objects-player_a_objects
-		place_wall:
-
-		lda #STAGE_ELEMENT_OOS_PLATFORM
-		sta player_a_objects, y ; type
-
-		lda player_a_direction, x
-		cmp DIRECTION_LEFT
-		bne platform_on_right
-			lda player_a_x, x
-			clc
-			adc #$ef
-			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-			lda player_a_x_screen, x
-			adc #$ff
-			jmp end_platform_left_positioning
-		platform_on_right:
-			lda player_a_x, x
-			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-			lda player_a_x_screen, x
-		end_platform_left_positioning:
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-		clc
-		adc #16
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-		adc #0
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
-
-		lda player_a_y, x
-		clc
-		adc #16
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
-		lda player_a_y_screen, x
-		adc #0
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
-
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
-		sec
-		sbc #32
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
-		sbc #0
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
-
-		;lda #STAGE_ELEMENT_END
-		;sta player_a_objects+STAGE_ELEMENT_SIZE, y ; next's type, useless, set at init time
-
-		; Compute wall's sprites position
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
-		clc
-		adc #15
-		sta sprite_y_lsb
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
-		adc #0
-		sta sprite_y_msb
-
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-		clc
-		adc #8
-		sta sprite_x_lsb
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-		adc #0
-		sta sprite_x_msb
-
-		; Y = first wall sprite offset
-		lda kiki_first_wall_sprite_per_player, x
-		asl
-		asl
-		tay
-
-		; Place upper sprite
-		lda sprite_x_msb
-		cmp #0
-		bne hide_upper_sprite
-		lda sprite_y_msb
-		bne hide_upper_sprite
-
-			lda #KIKI_TILE_WALL_BLOCK_V_UP
-			clc
-			adc kiki_first_tile_index_per_player, x
-			sta oam_mirror+1, y ; First sprite tile
-			lda sprite_y_lsb
-			sta oam_mirror, y ; First sprite Y
-			lda sprite_x_lsb
-			sta oam_mirror+3, y ; First sprite X
-			jmp end_upper_sprite
-
-		hide_upper_sprite:
-			lda #$fe
-			sta oam_mirror, y ; First sprite Y
-
-		end_upper_sprite:
-
-		; Place lower sprite
-		lda sprite_x_msb
-		cmp #0
-		bne hide_lower_sprite
-
-		lda sprite_y_lsb
-		clc
-		adc #8
-		sta sprite_y_lsb
-		lda sprite_y_msb
-		adc #0
-		bne hide_lower_sprite
-
-
-			lda #KIKI_TILE_WALL_BLOCK_V_DOWN
-			clc
-			adc kiki_first_tile_index_per_player, x
-			sta oam_mirror+5, y ; Second sprite tile
-			lda sprite_y_lsb
-			sta oam_mirror+4, y ; Second sprite Y
-			lda sprite_x_lsb
-			sta oam_mirror+7, y ; Second sprite X
-			jmp end_lower_sprite
-
-		hide_lower_sprite:
-			lda #$fe
-			sta oam_mirror+4, y ; Second sprite Y
-
-		end_lower_sprite:
-
-		; Mirror sprites screen position in unused object memory
-		lda oam_mirror+4, y
-		pha
-		lda oam_mirror, y
-		pha
-
-		ldy kiki_first_wall_sprite_y_per_player, x
-		pla
-		sta stage_data, y
-		iny
-		pla
-		sta stage_data, y
+		lda DIRECTION_RIGHT
+		sta player_a_direction, x
+		jmp kiki_start_side_tilt
+		; rts ; useless - kiki_start_side_tilt is a routine
 	.)
-	spawn_wall_end:
 
-	rts
-.)
-
-&kiki_tick_side_spe:
-.(
-	jsr kiki_global_tick
-
-	KIKI_STATE_SIDE_SPE_DURATION = 16
-
-	; Apply gravity if failed to paint
-	lda kiki_a_wall_drawn, x
-	bne skip_gravity
-		jsr kiki_apply_friction_lite
-		jsr apply_player_gravity
-	skip_gravity:
-
-	; Return to inactive state after animation's duration
-	inc player_a_state_clock, x
-
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_SIDE_SPE_DURATION
-	bne end
-
-		jmp kiki_start_inactive_state
-		; No return, jump to subroutine
-
-	end:
-	rts
-.)
-
-.)
-
-
-kiki_start_down_wall:
-.(
-	sprite_x_lsb = tmpfield1
-	sprite_x_msb = tmpfield2
-	sprite_y_lsb = tmpfield3
-	sprite_y_msb = tmpfield4
-
-	; Set the appropriate animation
-	lda #<kiki_anim_paint_down
-	sta tmpfield13
-	lda #>kiki_anim_paint_down
-	sta tmpfield14
-	jsr set_player_animation
-
-	; Set the player's state
-	lda #KIKI_STATE_DOWN_WALL
-	sta player_a_state, x
-
-	; Initialize the clock
-	lda #0
-	sta player_a_state_clock,x
-
-	; Avoid spawning wall when forbiden
-	lda kiki_a_platform_state, x
-	and #%10000000
-	bne process
-		jmp spawn_wall_end
-	process:
-
-	; Reset velocity
-	lda #0
-	sta player_a_velocity_h_low, x
-	sta player_a_velocity_h, x
-	sta player_a_velocity_v_low, x
-	sta player_a_velocity_v, x
-
-	; Spawn wall
-	spawn_wall:
+	&kiki_start_side_tilt_left:
 	.(
-		; Move player upward (to create wall on ground)
-		lda player_a_y, x
-		sec
-		sbc #8
-		sta player_a_y, x
-		lda player_a_y_screen, x
-		sbc #0
-		sta player_a_y_screen, x
-		lda #$ff
-		sta player_a_y_low, x
-
-		; Reset wall state
-		lda #KIKI_PLATFORM_DURATION
-		sta kiki_a_platform_state, x
-
-		; Place wall
-		;TODO factorize code with other specials
-		ldy #0
-		cpx #0
-		beq place_wall
-			ldy #player_b_objects-player_a_objects
-		place_wall:
-
-		lda #STAGE_ELEMENT_OOS_PLATFORM
-		sta player_a_objects, y ; type
-
-		lda player_a_x, x
-		clc
-		adc #$f3
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-		lda player_a_x_screen, x
-		adc #$ff
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-		clc
-		adc #24
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-		adc #0
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
-
-		lda player_a_y, x
-		clc
-		adc #24
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
-		lda player_a_y_screen, x
-		adc #0
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
-
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
-		sec
-		sbc #24
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
-		sbc #0
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
-
-		;lda #STAGE_ELEMENT_END
-		;sta player_a_objects+STAGE_ELEMENT_SIZE, y ; next's type, useless, set at init time
-
-		; Compute wall's sprites position
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
-		clc
-		adc #15
-		sta sprite_y_lsb
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
-		adc #0
-		sta sprite_y_msb
-
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-		clc
-		adc #8
-		sta sprite_x_lsb
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-		adc #0
-		sta sprite_x_msb
-
-		; Y = first wall sprite offset
-		lda kiki_first_wall_sprite_per_player, x
-		asl
-		asl
-		tay
-
-		; Place left sprite
-		lda sprite_x_msb
-		cmp #0
-		bne hide_left_sprite
-		lda sprite_y_msb
-		bne hide_left_sprite
-
-			lda #KIKI_TILE_WALL_BLOCK_H_LEFT
-			clc
-			adc kiki_first_tile_index_per_player, x
-			sta oam_mirror+1, y ; First sprite tile
-			lda sprite_y_lsb
-			sta oam_mirror, y ; First sprite Y
-			lda sprite_x_lsb
-			sta oam_mirror+3, y ; First sprite X
-			jmp end_left_sprite
-
-		hide_left_sprite:
-			lda #$fe
-			sta oam_mirror, y ; First sprite Y
-
-		end_left_sprite:
-
-		; Place right sprite
-		lda sprite_x_lsb
-		clc
-		adc #8
-		sta sprite_x_lsb
-		lda sprite_x_msb
-		adc #0
-		bne hide_right_sprite
-
-		lda sprite_y_msb
-		bne hide_right_sprite
-
-			lda #KIKI_TILE_WALL_BLOCK_H_RIGHT
-			clc
-			adc kiki_first_tile_index_per_player, x
-			sta oam_mirror+5, y ; Second sprite tile
-			lda sprite_y_lsb
-			sta oam_mirror+4, y ; Second sprite Y
-			lda sprite_x_lsb
-			sta oam_mirror+7, y ; Second sprite X
-			jmp end_right_sprite
-
-		hide_right_sprite:
-			lda #$fe
-			sta oam_mirror+4, y ; Second sprite Y
-
-		end_right_sprite:
-
-		; Mirror sprites screen position in unused object memory
-		lda oam_mirror+4, y
-		pha
-		lda oam_mirror, y
-		pha
-
-		ldy kiki_first_wall_sprite_y_per_player, x
-		pla
-		sta stage_data, y
-		iny
-		pla
-		sta stage_data, y
+		lda DIRECTION_LEFT
+		sta player_a_direction, x
+		; jmp kiki_start_side_tilt ; useless - fallthrough
+		; rts ; useless - kiki_start_side_tilt is a routine
 	.)
-	spawn_wall_end:
 
-	rts
-.)
-
-kiki_tick_down_wall:
-.(
-	jsr kiki_global_tick
-
-	KIKI_STATE_DOWN_WALL_DURATION = 16
-
-	jsr apply_player_gravity
-
-	inc player_a_state_clock, x
-
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_DOWN_WALL_DURATION
-	bne end
-		jmp kiki_start_inactive_state
-
-	end:
-	rts
-.)
-
-
-.(
-KIKI_WALL_WHIFF = 0
-KIKI_WALL_DRAWN = 1
-kiki_a_wall_drawn = player_a_state_field1
-
-&kiki_start_top_wall:
-.(
-	sprite_x_lsb = tmpfield1
-	sprite_x_msb = tmpfield2
-	sprite_y_lsb = tmpfield3
-	sprite_y_msb = tmpfield4
-
-	; Set the appropriate animation
-	; TODO draw a specific animation
-	lda #<kiki_anim_paint_side
-	sta tmpfield13
-	lda #>kiki_anim_paint_side
-	sta tmpfield14
-	jsr set_player_animation
-
-	; Set the player's state
-	lda #KIKI_STATE_TOP_WALL
-	sta player_a_state, x
-
-	; Initialize the clock
-	lda #0
-	sta player_a_state_clock,x
-
-	; Avoid spawning wall when forbiden
-	lda kiki_a_platform_state, x
-	and #%10000000
-	bne process
-		lda #KIKI_WALL_WHIFF
-		sta kiki_a_wall_drawn, x
-		jmp spawn_wall_end
-	process:
-
-	lda #KIKI_WALL_DRAWN
-	sta kiki_a_wall_drawn, x
-
-	; Reset velocity
-	lda #0
-	sta player_a_velocity_h_low, x
-	sta player_a_velocity_h, x
-	sta player_a_velocity_v_low, x
-	sta player_a_velocity_v, x
-
-	; Spawn wall
-	spawn_wall:
+	&kiki_start_side_tilt:
 	.(
-		; Reset wall state
-		lda #KIKI_PLATFORM_DURATION
-		sta kiki_a_platform_state, x
-
-		; Place wall
-		;TODO factorize code with other specials
-		ldy #0
-		cpx #0
-		beq place_wall
-			ldy #player_b_objects-player_a_objects
-		place_wall:
-
-		lda #STAGE_ELEMENT_OOS_SMOOTH_PLATFORM
-		sta player_a_objects, y ; type
-
-		lda player_a_x, x
-		clc
-		adc #$f3
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-		lda player_a_x_screen, x
-		adc #$ff
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-		clc
-		adc #24
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-		adc #0
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
-
-		lda player_a_y, x
-		sec
-		sbc #24
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
-		lda player_a_y_screen, x
-		sbc #0
-		sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
-
-		;lda #STAGE_ELEMENT_END
-		;sta player_a_objects+STAGE_ELEMENT_SIZE, y ; next's type, useless, set at init time
-
-		; Compute wall's sprites position
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
-		clc
-		adc #15
-		sta sprite_y_lsb
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
-		adc #0
-		sta sprite_y_msb
-
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
-		clc
-		adc #8
-		sta sprite_x_lsb
-		lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
-		adc #0
-		sta sprite_x_msb
-
-		; Y = first wall sprite offset
-		lda kiki_first_wall_sprite_per_player, x
-		asl
-		asl
-		tay
-
-		; Place left sprite
-		lda sprite_x_msb
-		cmp #0
-		bne hide_left_sprite
-		lda sprite_y_msb
-		bne hide_left_sprite
-
-			lda #KIKI_TILE_SMOOTH_WALL_BLOCK_LEFT
-			clc
-			adc kiki_first_tile_index_per_player, x
-			sta oam_mirror+1, y ; First sprite tile
-			lda sprite_y_lsb
-			sta oam_mirror, y ; First sprite Y
-			lda sprite_x_lsb
-			sta oam_mirror+3, y ; First sprite X
-			jmp end_left_sprite
-
-		hide_left_sprite:
-			lda #$fe
-			sta oam_mirror, y ; First sprite Y
-
-		end_left_sprite:
-
-		; Place right sprite
-		lda sprite_x_lsb
-		clc
-		adc #8
-		sta sprite_x_lsb
-		lda sprite_x_msb
-		adc #0
-		bne hide_right_sprite
-
-		lda sprite_y_msb
-		bne hide_right_sprite
-
-			lda #KIKI_TILE_SMOOTH_WALL_BLOCK_RIGHT
-			clc
-			adc kiki_first_tile_index_per_player, x
-			sta oam_mirror+5, y ; Second sprite tile
-			lda sprite_y_lsb
-			sta oam_mirror+4, y ; Second sprite Y
-			lda sprite_x_lsb
-			sta oam_mirror+7, y ; Second sprite X
-			jmp end_right_sprite
-
-		hide_right_sprite:
-			lda #$fe
-			sta oam_mirror+4, y ; Second sprite Y
-
-		end_right_sprite:
-
-		; Mirror sprites screen position in unused object memory
-		lda oam_mirror+4, y
-		pha
-		lda oam_mirror, y
-		pha
-
-		ldy kiki_first_wall_sprite_y_per_player, x
-		pla
-		sta stage_data, y
-		iny
-		pla
-		sta stage_data, y
-	.)
-	spawn_wall_end:
-
-	rts
-.)
-
-&kiki_tick_top_wall:
-.(
-	jsr kiki_global_tick
-
-	KIKI_STATE_TOP_WALL_DURATION = 16
-
-	; Apply gravity if failed to paint
-	lda kiki_a_wall_drawn, x
-	bne skip_gravity
-		jsr kiki_apply_friction_lite
-		jsr apply_player_gravity
-	skip_gravity:
-
-	; Return to inactive state after animation's duration
-	inc player_a_state_clock, x
-
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_TOP_WALL_DURATION
-	bne end
-
-		jmp kiki_start_inactive_state
-
-	end:
-	rts
-.)
-
-.)
-
-
-kiki_start_up_tilt:
-.(
-	; Set the appropriate animation
-	lda #<kiki_anim_strike_up
-	sta tmpfield13
-	lda #>kiki_anim_strike_up
-	sta tmpfield14
-	jsr set_player_animation
-
-	; Set the player's state
-	lda #KIKI_STATE_UP_TILT
-	sta player_a_state, x
-
-	; Initialize the clock
-	lda #0
-	sta player_a_state_clock,x
-
-	rts
-.)
-
-kiki_tick_up_tilt:
-.(
-	jsr kiki_global_tick
-
-	KIKI_STATE_UP_TILT_DURATION = 16
-	KIKI_STATE_UP_TILT_FRICTION = $20
-
-	inc player_a_state_clock, x
-
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_UP_TILT_DURATION
-	bne update_velocity
-
-		jmp kiki_start_inactive_state
-		; No return, jump to subroutine
-
-	update_velocity:
-		; Do not move, velocity tends toward vector (0,0)
-		lda #$00
-		sta tmpfield4
-		sta tmpfield3
-		sta tmpfield2
-		sta tmpfield1
-		lda #KIKI_STATE_UP_TILT_FRICTION
-		sta tmpfield5
-		jsr merge_to_player_velocity
-
-	end:
-	rts
-.)
-
-
-kiki_start_up_aerial:
-.(
-	; Set the appropriate animation
-	lda #<kiki_anim_strike_up
-	sta tmpfield13
-	lda #>kiki_anim_strike_up
-	sta tmpfield14
-	jsr set_player_animation
-
-	; Set the player's state
-	lda #KIKI_STATE_UP_AERIAL
-	sta player_a_state, x
-
-	; Initialize the clock
-	lda #0
-	sta player_a_state_clock,x
-
-	rts
-.)
-
-kiki_tick_up_aerial:
-.(
-	jsr kiki_global_tick
-
-	KIKI_STATE_UP_AERIAL_DURATION = 16
-
-	jsr apply_player_gravity
-
-	inc player_a_state_clock, x
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_UP_AERIAL_DURATION
-	bne end
-		jsr kiki_start_falling
-
-	end:
-	rts
-.)
-
-
-kiki_start_down_tilt:
-.(
-	; Set the appropriate animation
-	lda #<kiki_anim_strike_down
-	sta tmpfield13
-	lda #>kiki_anim_strike_down
-	sta tmpfield14
-	jsr set_player_animation
-
-	; Set the player's state
-	lda #KIKI_STATE_DOWN_TILT
-	sta player_a_state, x
-
-	; Initialize the clock
-	lda #0
-	sta player_a_state_clock,x
-
-	rts
-.)
-
-kiki_tick_down_tilt:
-.(
-	jsr kiki_global_tick
-
-	KIKI_STATE_DOWN_TILT_DURATION = 24
-	KIKI_STATE_DOWN_TILT_FRICTION = $20
-
-	inc player_a_state_clock, x
-
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_DOWN_TILT_DURATION
-	bne update_velocity
-
-		jmp kiki_start_inactive_state
-		; No return, jump to subroutine
-
-	update_velocity:
-		; Do not move, velocity tends toward vector (0,0)
-		lda #$00
-		sta tmpfield4
-		sta tmpfield3
-		sta tmpfield2
-		sta tmpfield1
-		lda #KIKI_STATE_DOWN_TILT_FRICTION
-		sta tmpfield5
-		jsr merge_to_player_velocity
-
-	end:
-	rts
-.)
-
-
-kiki_start_down_aerial:
-.(
-	; Set the appropriate animation
-	lda #<kiki_anim_strike_down
-	sta tmpfield13
-	lda #>kiki_anim_strike_down
-	sta tmpfield14
-	jsr set_player_animation
-
-	; Set the player's state
-	lda #KIKI_STATE_DOWN_AERIAL
-	sta player_a_state, x
-
-	; Initialize the clock
-	lda #0
-	sta player_a_state_clock,x
-
-	rts
-.)
-
-kiki_tick_down_aerial:
-.(
-	jsr kiki_global_tick
-
-	KIKI_STATE_DOWN_AERIAL_DURATION = 12
-
-	jsr apply_player_gravity
-
-	inc player_a_state_clock, x
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_DOWN_AERIAL_DURATION
-	bne end
-		jsr kiki_start_falling
-
-	end:
-	rts
-.)
-
-
-kiki_start_side_aerial_right:
-.(
-	lda DIRECTION_RIGHT
-	sta player_a_direction, x
-	jmp kiki_start_side_aerial
-	; rts ; useless - kiki_start_side_aerial is a routine
-.)
-
-kiki_start_side_aerial_left:
-.(
-	lda DIRECTION_LEFT
-	sta player_a_direction, x
-	; jmp kiki_start_side_aerial ; useless - fallthrough
-	; rts ; useless - kiki_start_side_aerial is a routine
-.)
-
-kiki_start_side_aerial:
-.(
-	; Set the appropriate animation
-	lda #<kiki_anim_strike
-	sta tmpfield13
-	lda #>kiki_anim_strike
-	sta tmpfield14
-	jsr set_player_animation
-
-	; Set the player's state
-	lda #KIKI_STATE_SIDE_AERIAL
-	sta player_a_state, x
-
-	; Initialize the clock
-	lda #0
-	sta player_a_state_clock,x
-
-	rts
-.)
-
-kiki_tick_side_aerial:
-.(
-	jsr kiki_global_tick
-
-	KIKI_STATE_SIDE_AERIAL_DURATION = 16
-
-	jsr apply_player_gravity
-
-	inc player_a_state_clock, x
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_SIDE_AERIAL_DURATION
-	bne end
-		jsr kiki_start_falling
-
-	end:
-	rts
-.)
-
-
-kiki_start_jabbing:
-.(
-	; Set the appropriate animation
-	lda #<kiki_anim_jab
-	sta tmpfield13
-	lda #>kiki_anim_jab
-	sta tmpfield14
-	jsr set_player_animation
-
-	; Set the player's state
-	lda #KIKI_STATE_JABBING
-	sta player_a_state, x
-
-	; Initialize the clock
-	lda #0
-	sta player_a_state_clock,x
-
-	rts
-.)
-
-kiki_tick_jabbing:
-.(
-	jsr kiki_global_tick
-
-	KIKI_STATE_JAB_DURATION = 12
-	KIKI_STATE_JAB_FRICTION = $20
-
-	inc player_a_state_clock, x
-
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_JAB_DURATION
-	bne update_velocity
-
-		jsr kiki_start_idle
-		jmp end
-
-	update_velocity:
-		; Do not move, velocity tends toward vector (0,0)
-		lda #$00
-		sta tmpfield4
-		sta tmpfield3
-		sta tmpfield2
-		sta tmpfield1
-		lda #KIKI_STATE_JAB_FRICTION
-		sta tmpfield5
-		jsr merge_to_player_velocity
-
-	end:
-	rts
-.)
-
-kiki_input_jabbing:
-.(
-	; Allow to cut the animation for another jab
-	lda controller_a_btns, x
-	cmp #CONTROLLER_INPUT_JAB
-	bne end
-		jsr kiki_start_jabbing
-
-	end:
-	rts
-.)
-
-
-kiki_start_neutral_aerial:
-.(
-	; Set the appropriate animation
-	lda #<kiki_anim_aerial_neutral
-	sta tmpfield13
-	lda #>kiki_anim_aerial_neutral
-	sta tmpfield14
-	jsr set_player_animation
-
-	; Set the player's state
-	lda #KIKI_STATE_NEUTRAL_AERIAL
-	sta player_a_state, x
-
-	; Initialize the clock
-	lda #0
-	sta player_a_state_clock,x
-
-	rts
-.)
-
-kiki_tick_neutral_aerial:
-.(
-	jsr kiki_global_tick
-
-	KIKI_STATE_NEUTRAL_AERIAL_DURATION = 12
-
-	jsr apply_player_gravity
-
-	inc player_a_state_clock, x
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_NEUTRAL_AERIAL_DURATION
-	bne end
-		jsr kiki_start_falling
-
-	end:
-	rts
-.)
-
-
-kiki_start_counter_guard:
-.(
-	; Set the appropriate animation
-	lda #<kiki_anim_counter_guard
-	sta tmpfield13
-	lda #>kiki_anim_counter_guard
-	sta tmpfield14
-	jsr set_player_animation
-
-	; Set the player's state
-	lda #KIKI_STATE_COUNTER_GUARD
-	sta player_a_state, x
-
-	; Initialize the clock
-	lda #0
-	sta player_a_state_clock,x
-
-	; Cancel vertical momentum
-	;lda #0 ; useless, done above
-	sta player_a_velocity_v_low, x
-	sta player_a_velocity_v, x
-
-	; Lower horizontal momentum
-	lda player_a_velocity_h, x ; Set sign bit in carry flag, so the following bitshift is a signed division
-	rol
-
-	ror player_a_velocity_h, x
-	ror player_a_velocity_h_low, x
-
-	; Lower gravity
-	lda #<KIKI_COUNTER_GRAVITY
-	sta player_a_gravity_lsb, x
-	lda #>KIKI_COUNTER_GRAVITY
-	sta player_a_gravity_msb, x
-
-	rts
-.)
-
-KIKI_STATE_COUNTER_GUARD_ACTIVE_DURATION = 18
-kiki_tick_counter_guard:
-.(
-	jsr kiki_global_tick
-
-	KIKI_STATE_COUNTER_GUARD_TOTAL_DURATION = 43
-
-	jsr kiki_apply_friction_lite
-
-	inc player_a_state_clock, x
-
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_COUNTER_GUARD_ACTIVE_DURATION
-	bne check_total_duration
-
-		; Active duration is over, display it by switching to weak animation
-		lda #<kiki_anim_counter_weak
+		; Set the appropriate animation
+		lda #<kiki_anim_strike
 		sta tmpfield13
-		lda #>kiki_anim_counter_weak
+		lda #>kiki_anim_strike
 		sta tmpfield14
 		jsr set_player_animation
 
-		; Reset fall speed
-		jsr reset_default_gravity
+		; Set the player's state
+		lda #KIKI_STATE_SIDE_TILT
+		sta player_a_state, x
 
-	check_total_duration:
-	cmp #KIKI_STATE_COUNTER_GUARD_TOTAL_DURATION
-	bne end
+		; Initialize the clock
+		lda #0
+		sta player_a_state_clock,x
 
-		; Total duration is over, return to a neutral state
-		jsr reset_default_gravity
-		jmp kiki_start_inactive_state
-		; No return, jump to subroutine
+		rts
+	.)
 
-	end:
-	rts
+	&kiki_tick_side_tilt:
+	.(
+		jsr kiki_global_tick
+
+		inc player_a_state_clock, x
+
+		ldy #SYSTEM_INDEX
+		lda player_a_state_clock, x
+		cmp kiki_anim_strike_duration, y
+		bne update_velocity
+
+			jmp kiki_start_idle
+			; No return, jump to subroutine
+
+		update_velocity:
+			jmp kiki_apply_ground_friction
+			; No return, jump to subroutine
+
+		;rts ; useless, no branch return
+	.)
 .)
 
-kiki_hurt_counter_guard:
 .(
-	striker_player = tmpfield10
-	stroke_player = tmpfield11
+	KIKI_WALL_WHIFF = 0
+	KIKI_WALL_DRAWN = 1
+	kiki_a_wall_drawn = player_a_state_field1
 
-	lda stroke_player
-	pha
-	lda striker_player
-	pha
+	kiki_anim_paint_side_dur:
+		.byt kiki_anim_paint_side_dur_pal, kiki_anim_paint_side_dur_ntsc
 
-	; Strike if still active, else get hurt
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_COUNTER_GUARD_ACTIVE_DURATION+1
-	bcs hurt
+	&kiki_start_side_spe_right:
+	.(
+		lda DIRECTION_RIGHT
+		sta player_a_direction, x
+		jmp kiki_start_side_spe
+		; rts ; useless - kiki_start_side_spe is a routine
+	.)
 
-		ldy striker_player
-		lda HITBOX_DISABLED
-		sta player_a_hitbox_enabled, y
+	&kiki_start_side_spe_left:
+	.(
+		lda DIRECTION_LEFT
+		sta player_a_direction, x
+		; jmp kiki_start_side_spe ; useless - fallthrough
+		; rts ; useless - kiki_start_side_spe is a routine
+	.)
 
-		jsr reset_default_gravity
+	&kiki_start_side_spe:
+	.(
+		sprite_x_lsb = tmpfield1
+		sprite_x_msb = tmpfield2
+		sprite_y_lsb = tmpfield3
+		sprite_y_msb = tmpfield4
 
-		jsr kiki_start_counter_strike
-		jmp end
-	hurt:
-		jsr hurt_player
+		; Set the appropriate animation
+		lda #<kiki_anim_paint_side
+		sta tmpfield13
+		lda #>kiki_anim_paint_side
+		sta tmpfield14
+		jsr set_player_animation
 
-	end:
-	pla
-	sta striker_player
-	pla
-	sta stroke_player
-	rts
+		; Set the player's state
+		lda #KIKI_STATE_SIDE_SPE
+		sta player_a_state, x
+
+		; Initialize the clock
+		lda #0
+		sta player_a_state_clock,x
+
+		; TODO study intersting velocity setups
+		;  Original - rapidly slow down to (0, 0) (was done to copy-paste code from side tilt)
+		;  Current - directly stop any velocity (should feel like original, without computations per tick)
+		;  Idea 2 - stop horizontal velocity, keep vertical velocity, apply gravity on tick (should help to side spe as part of aerial gameplay)
+
+		; Avoid spawning wall when forbiden
+		lda kiki_a_platform_state, x
+		and #%10000000
+		bne process
+			lda #KIKI_WALL_WHIFF
+			sta kiki_a_wall_drawn, x
+			jmp spawn_wall_end
+		process:
+
+		lda #KIKI_WALL_DRAWN
+		sta kiki_a_wall_drawn, x
+
+		; Reset velocity
+		lda #0
+		sta player_a_velocity_h_low, x
+		sta player_a_velocity_h, x
+		sta player_a_velocity_v_low, x
+		sta player_a_velocity_v, x
+
+		; Spawn wall
+		spawn_wall:
+		.(
+			; Reset wall state
+			ldy #SYSTEM_INDEX
+			lda kiki_platform_duration, y
+			sta kiki_a_platform_state, x
+
+			; Place wall
+			ldy #0
+			cpx #0
+			beq place_wall
+				ldy #player_b_objects-player_a_objects
+			place_wall:
+
+			lda #STAGE_ELEMENT_OOS_PLATFORM
+			sta player_a_objects, y ; type
+
+			lda player_a_direction, x
+			cmp DIRECTION_LEFT
+			bne platform_on_right
+				lda player_a_x, x
+				clc
+				adc #$ef
+				sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+				lda player_a_x_screen, x
+				adc #$ff
+				jmp end_platform_left_positioning
+			platform_on_right:
+				lda player_a_x, x
+				sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+				lda player_a_x_screen, x
+			end_platform_left_positioning:
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+			clc
+			adc #16
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+			adc #0
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
+
+			lda player_a_y, x
+			clc
+			adc #16
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
+			lda player_a_y_screen, x
+			adc #0
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
+
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
+			sec
+			sbc #32
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
+			sbc #0
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+
+			;lda #STAGE_ELEMENT_END
+			;sta player_a_objects+STAGE_ELEMENT_SIZE, y ; next's type, useless, set at init time
+
+			; Compute wall's sprites position
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+			clc
+			adc #15
+			sta sprite_y_lsb
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+			adc #0
+			sta sprite_y_msb
+
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+			clc
+			adc #8
+			sta sprite_x_lsb
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+			adc #0
+			sta sprite_x_msb
+
+			; Y = first wall sprite offset
+			lda kiki_first_wall_sprite_per_player, x
+			asl
+			asl
+			tay
+
+			; Place upper sprite
+			lda sprite_x_msb
+			cmp #0
+			bne hide_upper_sprite
+			lda sprite_y_msb
+			bne hide_upper_sprite
+
+				lda #KIKI_TILE_WALL_BLOCK_V_UP
+				clc
+				adc kiki_first_tile_index_per_player, x
+				sta oam_mirror+1, y ; First sprite tile
+				lda sprite_y_lsb
+				sta oam_mirror, y ; First sprite Y
+				lda sprite_x_lsb
+				sta oam_mirror+3, y ; First sprite X
+				jmp end_upper_sprite
+
+			hide_upper_sprite:
+				lda #$fe
+				sta oam_mirror, y ; First sprite Y
+
+			end_upper_sprite:
+
+			; Place lower sprite
+			lda sprite_x_msb
+			cmp #0
+			bne hide_lower_sprite
+
+			lda sprite_y_lsb
+			clc
+			adc #8
+			sta sprite_y_lsb
+			lda sprite_y_msb
+			adc #0
+			bne hide_lower_sprite
+
+
+				lda #KIKI_TILE_WALL_BLOCK_V_DOWN
+				clc
+				adc kiki_first_tile_index_per_player, x
+				sta oam_mirror+5, y ; Second sprite tile
+				lda sprite_y_lsb
+				sta oam_mirror+4, y ; Second sprite Y
+				lda sprite_x_lsb
+				sta oam_mirror+7, y ; Second sprite X
+				jmp end_lower_sprite
+
+			hide_lower_sprite:
+				lda #$fe
+				sta oam_mirror+4, y ; Second sprite Y
+
+			end_lower_sprite:
+
+			; Mirror sprites screen position in unused object memory
+			lda oam_mirror+4, y
+			pha
+			lda oam_mirror, y
+			pha
+
+			ldy kiki_first_wall_sprite_y_per_player, x
+			pla
+			sta stage_data, y
+			iny
+			pla
+			sta stage_data, y
+		.)
+		spawn_wall_end:
+
+		rts
+	.)
+
+	&kiki_tick_side_spe:
+	.(
+		jsr kiki_global_tick
+
+		; Apply gravity if failed to paint
+		lda kiki_a_wall_drawn, x
+		bne skip_gravity
+			jsr kiki_apply_friction_lite
+			jsr apply_player_gravity
+		skip_gravity:
+
+		; Return to inactive state after animation's duration
+		inc player_a_state_clock, x
+
+		ldy #SYSTEM_INDEX
+		lda player_a_state_clock, x
+		cmp kiki_anim_paint_side_dur, y
+		bne end
+
+			jmp kiki_start_inactive_state
+			; No return, jump to subroutine
+
+		end:
+		rts
+	.)
 .)
 
-
-kiki_start_counter_strike:
 .(
-	; Set the appropriate animation
-	lda #<kiki_anim_counter_strike
-	sta tmpfield13
-	lda #>kiki_anim_counter_strike
-	sta tmpfield14
-	jsr set_player_animation
+	kiki_anim_paint_down_dur:
+		.byt kiki_anim_paint_down_dur_pal, kiki_anim_paint_down_dur_ntsc
 
-	; Set the player's state
-	lda #KIKI_STATE_COUNTER_STRIKE
-	sta player_a_state, x
+	&kiki_start_down_wall:
+	.(
+		sprite_x_lsb = tmpfield1
+		sprite_x_msb = tmpfield2
+		sprite_y_lsb = tmpfield3
+		sprite_y_msb = tmpfield4
 
-	; Initialize the clock
-	lda #0
-	sta player_a_state_clock,x
+		; Set the appropriate animation
+		lda #<kiki_anim_paint_down
+		sta tmpfield13
+		lda #>kiki_anim_paint_down
+		sta tmpfield14
+		jsr set_player_animation
 
-	rts
+		; Set the player's state
+		lda #KIKI_STATE_DOWN_WALL
+		sta player_a_state, x
+
+		; Initialize the clock
+		lda #0
+		sta player_a_state_clock,x
+
+		; Avoid spawning wall when forbiden
+		lda kiki_a_platform_state, x
+		and #%10000000
+		bne process
+			jmp spawn_wall_end
+		process:
+
+		; Reset velocity
+		lda #0
+		sta player_a_velocity_h_low, x
+		sta player_a_velocity_h, x
+		sta player_a_velocity_v_low, x
+		sta player_a_velocity_v, x
+
+		; Spawn wall
+		spawn_wall:
+		.(
+			; Move player upward (to create wall on ground)
+			lda player_a_y, x
+			sec
+			sbc #8
+			sta player_a_y, x
+			lda player_a_y_screen, x
+			sbc #0
+			sta player_a_y_screen, x
+			lda #$ff
+			sta player_a_y_low, x
+
+			; Reset wall state
+			ldy #SYSTEM_INDEX
+			lda kiki_platform_duration, y
+			sta kiki_a_platform_state, x
+
+			; Place wall
+			;TODO factorize code with other specials
+			ldy #0
+			cpx #0
+			beq place_wall
+				ldy #player_b_objects-player_a_objects
+			place_wall:
+
+			lda #STAGE_ELEMENT_OOS_PLATFORM
+			sta player_a_objects, y ; type
+
+			lda player_a_x, x
+			clc
+			adc #$f3
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+			lda player_a_x_screen, x
+			adc #$ff
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+			clc
+			adc #24
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+			adc #0
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
+
+			lda player_a_y, x
+			clc
+			adc #24
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
+			lda player_a_y_screen, x
+			adc #0
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
+
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_LSB, y
+			sec
+			sbc #24
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
+			sbc #0
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+
+			;lda #STAGE_ELEMENT_END
+			;sta player_a_objects+STAGE_ELEMENT_SIZE, y ; next's type, useless, set at init time
+
+			; Compute wall's sprites position
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+			clc
+			adc #15
+			sta sprite_y_lsb
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+			adc #0
+			sta sprite_y_msb
+
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+			clc
+			adc #8
+			sta sprite_x_lsb
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+			adc #0
+			sta sprite_x_msb
+
+			; Y = first wall sprite offset
+			lda kiki_first_wall_sprite_per_player, x
+			asl
+			asl
+			tay
+
+			; Place left sprite
+			lda sprite_x_msb
+			cmp #0
+			bne hide_left_sprite
+			lda sprite_y_msb
+			bne hide_left_sprite
+
+				lda #KIKI_TILE_WALL_BLOCK_H_LEFT
+				clc
+				adc kiki_first_tile_index_per_player, x
+				sta oam_mirror+1, y ; First sprite tile
+				lda sprite_y_lsb
+				sta oam_mirror, y ; First sprite Y
+				lda sprite_x_lsb
+				sta oam_mirror+3, y ; First sprite X
+				jmp end_left_sprite
+
+			hide_left_sprite:
+				lda #$fe
+				sta oam_mirror, y ; First sprite Y
+
+			end_left_sprite:
+
+			; Place right sprite
+			lda sprite_x_lsb
+			clc
+			adc #8
+			sta sprite_x_lsb
+			lda sprite_x_msb
+			adc #0
+			bne hide_right_sprite
+
+			lda sprite_y_msb
+			bne hide_right_sprite
+
+				lda #KIKI_TILE_WALL_BLOCK_H_RIGHT
+				clc
+				adc kiki_first_tile_index_per_player, x
+				sta oam_mirror+5, y ; Second sprite tile
+				lda sprite_y_lsb
+				sta oam_mirror+4, y ; Second sprite Y
+				lda sprite_x_lsb
+				sta oam_mirror+7, y ; Second sprite X
+				jmp end_right_sprite
+
+			hide_right_sprite:
+				lda #$fe
+				sta oam_mirror+4, y ; Second sprite Y
+
+			end_right_sprite:
+
+			; Mirror sprites screen position in unused object memory
+			lda oam_mirror+4, y
+			pha
+			lda oam_mirror, y
+			pha
+
+			ldy kiki_first_wall_sprite_y_per_player, x
+			pla
+			sta stage_data, y
+			iny
+			pla
+			sta stage_data, y
+		.)
+		spawn_wall_end:
+
+		rts
+	.)
+
+	&kiki_tick_down_wall:
+	.(
+		jsr kiki_global_tick
+
+		jsr apply_player_gravity
+
+		inc player_a_state_clock, x
+
+		ldy #SYSTEM_INDEX
+		lda player_a_state_clock, x
+		cmp kiki_anim_paint_down_dur, y
+		bne end
+			jmp kiki_start_inactive_state
+
+		end:
+		rts
+	.)
 .)
 
-kiki_tick_counter_strike:
 .(
-	jsr kiki_global_tick
+	KIKI_WALL_WHIFF = 0
+	KIKI_WALL_DRAWN = 1
+	kiki_a_wall_drawn = player_a_state_field1
 
-	KIKI_STATE_COUNTER_STRIKE_DURATION = 12
+	kiki_anim_paint_up_dur:
+		.byt kiki_anim_paint_side_dur_pal, kiki_anim_paint_side_dur_ntsc
 
-	jsr apply_player_gravity
+	&kiki_start_top_wall:
+	.(
+		sprite_x_lsb = tmpfield1
+		sprite_x_msb = tmpfield2
+		sprite_y_lsb = tmpfield3
+		sprite_y_msb = tmpfield4
 
-	inc player_a_state_clock, x
-	lda player_a_state_clock, x
-	cmp #KIKI_STATE_COUNTER_STRIKE_DURATION
-	bne end
-		jsr kiki_start_falling
+		; Set the appropriate animation
+		; TODO draw a specific animation
+		lda #<kiki_anim_paint_side
+		sta tmpfield13
+		lda #>kiki_anim_paint_side
+		sta tmpfield14
+		jsr set_player_animation
 
-	end:
-	rts
+		; Set the player's state
+		lda #KIKI_STATE_TOP_WALL
+		sta player_a_state, x
+
+		; Initialize the clock
+		lda #0
+		sta player_a_state_clock,x
+
+		; Avoid spawning wall when forbiden
+		lda kiki_a_platform_state, x
+		and #%10000000
+		bne process
+			lda #KIKI_WALL_WHIFF
+			sta kiki_a_wall_drawn, x
+			jmp spawn_wall_end
+		process:
+
+		lda #KIKI_WALL_DRAWN
+		sta kiki_a_wall_drawn, x
+
+		; Reset velocity
+		lda #0
+		sta player_a_velocity_h_low, x
+		sta player_a_velocity_h, x
+		sta player_a_velocity_v_low, x
+		sta player_a_velocity_v, x
+
+		; Spawn wall
+		spawn_wall:
+		.(
+			; Reset wall state
+			ldy #SYSTEM_INDEX
+			lda kiki_platform_duration, y
+			sta kiki_a_platform_state, x
+
+			; Place wall
+			;TODO factorize code with other specials
+			ldy #0
+			cpx #0
+			beq place_wall
+				ldy #player_b_objects-player_a_objects
+			place_wall:
+
+			lda #STAGE_ELEMENT_OOS_SMOOTH_PLATFORM
+			sta player_a_objects, y ; type
+
+			lda player_a_x, x
+			clc
+			adc #$f3
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+			lda player_a_x_screen, x
+			adc #$ff
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+			clc
+			adc #24
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB, y
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+			adc #0
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB, y
+
+			lda player_a_y, x
+			sec
+			sbc #24
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+			lda player_a_y_screen, x
+			sbc #0
+			sta player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+
+			;lda #STAGE_ELEMENT_END
+			;sta player_a_objects+STAGE_ELEMENT_SIZE, y ; next's type, useless, set at init time
+
+			; Compute wall's sprites position
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB, y
+			clc
+			adc #15
+			sta sprite_y_lsb
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB, y
+			adc #0
+			sta sprite_y_msb
+
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB, y
+			clc
+			adc #8
+			sta sprite_x_lsb
+			lda player_a_objects+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB, y
+			adc #0
+			sta sprite_x_msb
+
+			; Y = first wall sprite offset
+			lda kiki_first_wall_sprite_per_player, x
+			asl
+			asl
+			tay
+
+			; Place left sprite
+			lda sprite_x_msb
+			cmp #0
+			bne hide_left_sprite
+			lda sprite_y_msb
+			bne hide_left_sprite
+
+				lda #KIKI_TILE_SMOOTH_WALL_BLOCK_LEFT
+				clc
+				adc kiki_first_tile_index_per_player, x
+				sta oam_mirror+1, y ; First sprite tile
+				lda sprite_y_lsb
+				sta oam_mirror, y ; First sprite Y
+				lda sprite_x_lsb
+				sta oam_mirror+3, y ; First sprite X
+				jmp end_left_sprite
+
+			hide_left_sprite:
+				lda #$fe
+				sta oam_mirror, y ; First sprite Y
+
+			end_left_sprite:
+
+			; Place right sprite
+			lda sprite_x_lsb
+			clc
+			adc #8
+			sta sprite_x_lsb
+			lda sprite_x_msb
+			adc #0
+			bne hide_right_sprite
+
+			lda sprite_y_msb
+			bne hide_right_sprite
+
+				lda #KIKI_TILE_SMOOTH_WALL_BLOCK_RIGHT
+				clc
+				adc kiki_first_tile_index_per_player, x
+				sta oam_mirror+5, y ; Second sprite tile
+				lda sprite_y_lsb
+				sta oam_mirror+4, y ; Second sprite Y
+				lda sprite_x_lsb
+				sta oam_mirror+7, y ; Second sprite X
+				jmp end_right_sprite
+
+			hide_right_sprite:
+				lda #$fe
+				sta oam_mirror+4, y ; Second sprite Y
+
+			end_right_sprite:
+
+			; Mirror sprites screen position in unused object memory
+			lda oam_mirror+4, y
+			pha
+			lda oam_mirror, y
+			pha
+
+			ldy kiki_first_wall_sprite_y_per_player, x
+			pla
+			sta stage_data, y
+			iny
+			pla
+			sta stage_data, y
+		.)
+		spawn_wall_end:
+
+		rts
+	.)
+
+	&kiki_tick_top_wall:
+	.(
+		jsr kiki_global_tick
+
+		; Apply gravity if failed to paint
+		lda kiki_a_wall_drawn, x
+		bne skip_gravity
+			jsr kiki_apply_friction_lite
+			jsr apply_player_gravity
+		skip_gravity:
+
+		; Return to inactive state after animation's duration
+		inc player_a_state_clock, x
+
+		ldy #SYSTEM_INDEX
+		lda player_a_state_clock, x
+		cmp kiki_anim_paint_up_dur, y
+		bne end
+
+			jmp kiki_start_inactive_state
+
+		end:
+		rts
+	.)
+.)
+
+.(
+	kiki_anim_strike_up_dur:
+		.byt kiki_anim_strike_up_dur_pal, kiki_anim_strike_up_dur_ntsc
+
+	&kiki_start_up_tilt:
+	.(
+		; Set the appropriate animation
+		lda #<kiki_anim_strike_up
+		sta tmpfield13
+		lda #>kiki_anim_strike_up
+		sta tmpfield14
+		jsr set_player_animation
+
+		; Set the player's state
+		lda #KIKI_STATE_UP_TILT
+		sta player_a_state, x
+
+		; Initialize the clock
+		lda #0
+		sta player_a_state_clock,x
+
+		rts
+	.)
+
+	&kiki_tick_up_tilt:
+	.(
+		jsr kiki_global_tick
+
+		inc player_a_state_clock, x
+
+		ldy #SYSTEM_INDEX
+		lda player_a_state_clock, x
+		cmp kiki_anim_strike_up_dur, y
+		bne update_velocity
+
+			jmp kiki_start_inactive_state
+			; No return, jump to subroutine
+
+		update_velocity:
+			; Do not move, velocity tends toward vector (0,0)
+			jmp kiki_apply_ground_friction
+			; No return, jump to subroutine
+
+		end:
+		rts
+	.)
+.)
+
+.(
+	kiki_anim_aerial_up_dur:
+		.byt kiki_anim_strike_up_dur_pal, kiki_anim_strike_up_dur_ntsc
+
+	&kiki_start_up_aerial:
+	.(
+		; Set the appropriate animation
+		lda #<kiki_anim_strike_up
+		sta tmpfield13
+		lda #>kiki_anim_strike_up
+		sta tmpfield14
+		jsr set_player_animation
+
+		; Set the player's state
+		lda #KIKI_STATE_UP_AERIAL
+		sta player_a_state, x
+
+		; Initialize the clock
+		lda #0
+		sta player_a_state_clock,x
+
+		rts
+	.)
+
+	&kiki_tick_up_aerial:
+	.(
+		jsr kiki_global_tick
+
+		KIKI_STATE_UP_AERIAL_DURATION = 16
+
+		jsr apply_player_gravity
+
+		ldy #SYSTEM_INDEX
+		inc player_a_state_clock, x
+		lda player_a_state_clock, x
+		cmp kiki_anim_aerial_up_dur, y
+		bne end
+			jsr kiki_start_falling
+
+		end:
+		rts
+	.)
+.)
+
+.(
+	kiki_anim_strike_down_dur:
+		.byt kiki_anim_strike_down_dur_pal, kiki_anim_strike_down_dur_ntsc
+
+	&kiki_start_down_tilt:
+	.(
+		; Set the appropriate animation
+		lda #<kiki_anim_strike_down
+		sta tmpfield13
+		lda #>kiki_anim_strike_down
+		sta tmpfield14
+		jsr set_player_animation
+
+		; Set the player's state
+		lda #KIKI_STATE_DOWN_TILT
+		sta player_a_state, x
+
+		; Initialize the clock
+		lda #0
+		sta player_a_state_clock,x
+
+		rts
+	.)
+
+	&kiki_tick_down_tilt:
+	.(
+		jsr kiki_global_tick
+
+		inc player_a_state_clock, x
+
+		ldy #SYSTEM_INDEX
+		lda player_a_state_clock, x
+		cmp kiki_anim_strike_down_dur, y
+		bne update_velocity
+
+			jmp kiki_start_inactive_state
+			; No return, jump to subroutine
+
+		update_velocity:
+			; Do not move, velocity tends toward vector (0,0)
+			jmp kiki_apply_ground_friction
+			; No return, jump to subroutine
+
+		;rts ; useless, unreachable
+	.)
+.)
+
+.(
+	kiki_anim_aerial_down_dur:
+		.byt kiki_anim_strike_down_dur_pal, kiki_anim_strike_down_dur_ntsc
+
+	&kiki_start_down_aerial:
+	.(
+		; Set the appropriate animation
+		lda #<kiki_anim_strike_down
+		sta tmpfield13
+		lda #>kiki_anim_strike_down
+		sta tmpfield14
+		jsr set_player_animation
+
+		; Set the player's state
+		lda #KIKI_STATE_DOWN_AERIAL
+		sta player_a_state, x
+
+		; Initialize the clock
+		lda #0
+		sta player_a_state_clock,x
+
+		rts
+	.)
+
+	&kiki_tick_down_aerial:
+	.(
+		jsr kiki_global_tick
+
+		jsr apply_player_gravity
+
+		ldy #SYSTEM_INDEX
+		inc player_a_state_clock, x
+		lda player_a_state_clock, x
+		cmp kiki_anim_aerial_down_dur, y
+		bne end
+			jmp kiki_start_falling
+			; No return, jump to subroutine
+
+		end:
+		rts
+	.)
+.)
+
+.(
+	kiki_anim_aerial_strike_dur:
+		.byt kiki_anim_strike_dur_pal, kiki_anim_strike_dur_ntsc
+
+	&kiki_start_side_aerial_right:
+	.(
+		lda DIRECTION_RIGHT
+		sta player_a_direction, x
+		jmp kiki_start_side_aerial
+		; rts ; useless - kiki_start_side_aerial is a routine
+	.)
+
+	&kiki_start_side_aerial_left:
+	.(
+		lda DIRECTION_LEFT
+		sta player_a_direction, x
+		; jmp kiki_start_side_aerial ; useless - fallthrough
+		; rts ; useless - kiki_start_side_aerial is a routine
+	.)
+
+	&kiki_start_side_aerial:
+	.(
+		; Set the appropriate animation
+		lda #<kiki_anim_strike
+		sta tmpfield13
+		lda #>kiki_anim_strike
+		sta tmpfield14
+		jsr set_player_animation
+
+		; Set the player's state
+		lda #KIKI_STATE_SIDE_AERIAL
+		sta player_a_state, x
+
+		; Initialize the clock
+		lda #0
+		sta player_a_state_clock,x
+
+		rts
+	.)
+
+	&kiki_tick_side_aerial:
+	.(
+		jsr kiki_global_tick
+
+		KIKI_STATE_SIDE_AERIAL_DURATION = 16
+
+		jsr apply_player_gravity
+
+		ldy #SYSTEM_INDEX
+		inc player_a_state_clock, x
+		lda player_a_state_clock, x
+		cmp kiki_anim_aerial_strike_dur, y
+		bne end
+			jmp kiki_start_falling
+			; No return, jump to subroutine
+
+		end:
+		rts
+	.)
+.)
+
+.(
+	kiki_anim_jab_dur:
+		.byt kiki_anim_jab_dur_pal, kiki_anim_jab_dur_ntsc
+
+	&kiki_start_jabbing:
+	.(
+		; Set the appropriate animation
+		lda #<kiki_anim_jab
+		sta tmpfield13
+		lda #>kiki_anim_jab
+		sta tmpfield14
+		jsr set_player_animation
+
+		; Set the player's state
+		lda #KIKI_STATE_JABBING
+		sta player_a_state, x
+
+		; Initialize the clock
+		lda #0
+		sta player_a_state_clock,x
+
+		rts
+	.)
+
+	&kiki_tick_jabbing:
+	.(
+		jsr kiki_global_tick
+
+		inc player_a_state_clock, x
+
+		ldy #SYSTEM_INDEX
+		lda player_a_state_clock, x
+		cmp kiki_anim_jab_dur, y
+		bne update_velocity
+
+			jsr kiki_start_idle
+			jmp end
+
+		update_velocity:
+			; Do not move, velocity tends toward vector (0,0)
+			jmp kiki_apply_ground_friction
+			; No return, jump to subroutine
+
+		end:
+		rts
+	.)
+
+	&kiki_input_jabbing:
+	.(
+		; Allow to cut the animation for another jab
+		lda controller_a_btns, x
+		cmp #CONTROLLER_INPUT_JAB
+		bne end
+			jsr kiki_start_jabbing
+
+		end:
+		rts
+	.)
+.)
+
+.(
+	kiki_anim_aerial_neutral_dur:
+		.byt kiki_anim_aerial_neutral_dur_pal, kiki_anim_aerial_neutral_dur_ntsc
+
+	&kiki_start_neutral_aerial:
+	.(
+		; Set the appropriate animation
+		lda #<kiki_anim_aerial_neutral
+		sta tmpfield13
+		lda #>kiki_anim_aerial_neutral
+		sta tmpfield14
+		jsr set_player_animation
+
+		; Set the player's state
+		lda #KIKI_STATE_NEUTRAL_AERIAL
+		sta player_a_state, x
+
+		; Initialize the clock
+		lda #0
+		sta player_a_state_clock,x
+
+		rts
+	.)
+
+	&kiki_tick_neutral_aerial:
+	.(
+		jsr kiki_global_tick
+
+		jsr apply_player_gravity
+
+		ldy #SYSTEM_INDEX
+		inc player_a_state_clock, x
+		lda player_a_state_clock, x
+		cmp kiki_anim_aerial_neutral_dur, y
+		bne end
+			jsr kiki_start_falling
+
+		end:
+		rts
+	.)
+.)
+
+.(
+	COUNTER_GUARD_ACTIVE_DURATION = 18
+	COUNTER_GUARD_TOTAL_DURATION = 43
+
+	duration_table(COUNTER_GUARD_ACTIVE_DURATION, counter_guard_active_duration)
+	duration_table(COUNTER_GUARD_TOTAL_DURATION, counter_guard_total_duration)
+
+	&kiki_start_counter_guard:
+	.(
+		; Set the appropriate animation
+		lda #<kiki_anim_counter_guard
+		sta tmpfield13
+		lda #>kiki_anim_counter_guard
+		sta tmpfield14
+		jsr set_player_animation
+
+		; Set the player's state
+		lda #KIKI_STATE_COUNTER_GUARD
+		sta player_a_state, x
+
+		; Initialize the clock
+		lda #0
+		sta player_a_state_clock,x
+
+		; Cancel vertical momentum
+		;lda #0 ; useless, done above
+		sta player_a_velocity_v_low, x
+		sta player_a_velocity_v, x
+
+		; Lower horizontal momentum
+		lda player_a_velocity_h, x ; Set sign bit in carry flag, so the following bitshift is a signed division
+		rol
+
+		ror player_a_velocity_h, x
+		ror player_a_velocity_h_low, x
+
+		; Lower gravity
+		lda #<KIKI_COUNTER_GRAVITY
+		sta player_a_gravity_lsb, x
+		lda #>KIKI_COUNTER_GRAVITY
+		sta player_a_gravity_msb, x
+
+		rts
+	.)
+
+	&kiki_tick_counter_guard:
+	.(
+		jsr kiki_global_tick
+
+		jsr kiki_apply_friction_lite
+
+		inc player_a_state_clock, x
+
+		ldy #SYSTEM_INDEX
+		lda player_a_state_clock, x
+		cmp counter_guard_active_duration, y
+		bne check_total_duration
+
+			; Active duration is over, display it by switching to weak animation
+			lda #<kiki_anim_counter_weak
+			sta tmpfield13
+			lda #>kiki_anim_counter_weak
+			sta tmpfield14
+			jsr set_player_animation
+
+			; Reset fall speed
+			jsr reset_default_gravity
+
+		check_total_duration:
+		cmp counter_guard_total_duration, y
+		bne end
+
+			; Total duration is over, return to a neutral state
+			jsr reset_default_gravity
+			jmp kiki_start_inactive_state
+			; No return, jump to subroutine
+
+		end:
+		rts
+	.)
+
+	&kiki_hurt_counter_guard:
+	.(
+		striker_player = tmpfield10
+		stroke_player = tmpfield11
+
+		lda stroke_player
+		pha
+		lda striker_player
+		pha
+
+		; Strike if still active, else get hurt
+		ldy #SYSTEM_INDEX
+		lda counter_guard_active_duration, y
+		cmp player_a_state_clock, x
+		bcc hurt
+
+			ldy striker_player
+			lda HITBOX_DISABLED
+			sta player_a_hitbox_enabled, y
+
+			jsr reset_default_gravity
+
+			jsr kiki_start_counter_strike
+			jmp end
+		hurt:
+			jsr hurt_player
+
+		end:
+		pla
+		sta striker_player
+		pla
+		sta stroke_player
+		rts
+	.)
+.)
+
+.(
+	COUNTER_STRIKE_DURATION = 12
+	duration_table(COUNTER_STRIKE_DURATION, counter_strike_duration)
+
+	&kiki_start_counter_strike:
+	.(
+		; Set the appropriate animation
+		lda #<kiki_anim_counter_strike
+		sta tmpfield13
+		lda #>kiki_anim_counter_strike
+		sta tmpfield14
+		jsr set_player_animation
+
+		; Set the player's state
+		lda #KIKI_STATE_COUNTER_STRIKE
+		sta player_a_state, x
+
+		; Initialize the clock
+		lda #0
+		sta player_a_state_clock,x
+
+		rts
+	.)
+
+	&kiki_tick_counter_strike:
+	.(
+		jsr kiki_global_tick
+
+		jsr apply_player_gravity
+
+		ldy #SYSTEM_INDEX
+		inc player_a_state_clock, x
+		lda player_a_state_clock, x
+		cmp counter_strike_duration, y
+		bne end
+			jsr kiki_start_falling
+
+		end:
+		rts
+	.)
 .)
