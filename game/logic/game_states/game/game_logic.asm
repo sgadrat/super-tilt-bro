@@ -939,10 +939,41 @@ apply_force_vector:
 	lda player_a_velocity_v, x
 	sta screen_shake_nextval_y
 
+	; Adapt screenshake and hitstun duration in ntsc
+	lda #SYSTEM_INDEX
+	beq ntsc_ok
+		lda screen_shake_counter
+		lsr
+		lsr
+		tay
+		lda plus_20_percent, y
+		sta screen_shake_counter
+
+		lda player_a_hitstun, x
+		lsr
+		lsr
+		tay
+		lda plus_20_percent, y
+		sta player_a_hitstun, x
+	ntsc_ok:
+
 	; Start directional indicator particles
 	jsr particle_directional_indicator_start
 
 	rts
+
+;TODO comment usage and put in static bank
+#define TWT(x) (x*4*12)/10
+	plus_20_percent:
+		.byt TWT(0), TWT(1), TWT(2), TWT(3), TWT(4), TWT(5), TWT(6), TWT(7)
+		.byt TWT(8), TWT(9), TWT(10), TWT(11), TWT(12), TWT(13), TWT(14), TWT(15)
+		.byt TWT(16), TWT(17), TWT(18), TWT(19), TWT(20), TWT(21), TWT(22), TWT(23)
+		.byt TWT(24), TWT(25), TWT(26), TWT(27), TWT(28), TWT(29), TWT(30), TWT(31)
+		.byt TWT(32), TWT(33), TWT(34), TWT(35), TWT(36), TWT(37), TWT(38), TWT(39)
+		.byt TWT(40), TWT(41), TWT(42), TWT(43), TWT(44), TWT(45), TWT(46), TWT(47)
+		.byt TWT(48), TWT(49), TWT(50), TWT(51), TWT(52), TWT(53), 255, 255
+		.byt 255, 255, 255, 255, 255, 255, 255, 255
+#undef TWT
 .)
 
 ; Move the player according to it's velocity and collisions with obstacles
