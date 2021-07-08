@@ -27,6 +27,9 @@ Registers
  * ``X``: output: Can be modified, input: player number
  * ``Y``: output: Can be modified, input: garbage
  * ``player_number``: output: to be checked if can be modified, input: to be checked if ensured to be good
+ * ``tmpfield10``: output: cannot be modified, input: Player number of the striker
+ * ``tmpfield11``: output: cannot be modified, input: Player number of the stroke (equal to register X)
+ * ``other tmpfields``: output: can be modified, input garbage
 
 
 Constraints on onground routines
