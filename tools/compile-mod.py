@@ -40,6 +40,7 @@ def compute_anim_duration_pal(anim):
 
 def compute_anim_duration_ntsc(anim):
 	# In NTSC the animation engine double one out of six frames, begining with the first frame
+	#FIXME it should double one out of five frames (grep anim_engine_ntsc)
 	raw_dur = compute_anim_duration_raw(anim)
 	return raw_dur + math.ceil(raw_dur / 6)
 
