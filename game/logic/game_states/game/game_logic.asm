@@ -801,6 +801,11 @@ hurt_player:
 ; Overwrites registers A and  X (set to the opponent player's number).
 apply_force_vector:
 .(
+	multiplicand_low = tmpfield1
+	multiplicand_high = tmpfield2
+	multiplier = tmpfield3
+	multiply_result_low = tmpfield4
+	multiply_result_high = tmpfield5
 	base_h_low = tmpfield6
 	base_h_high = tmpfield7
 	base_v_low = tmpfield8
@@ -834,37 +839,41 @@ apply_force_vector:
 	sta base_v_high                             ;
 	lda player_a_hitbox_base_knock_up_v_low, x  ;
 	sta base_v_low                              ;
+
 	ldx opponent_player
 	lda player_a_damages, x ;
 	lsr                     ; Get force multiplier
 	lsr                     ; "damages / 4"
-	sta tmpfield3           ;
-	lda force_h     ;
-	sta tmpfield2   ;
-	lda force_h_low ;
-	sta tmpfield1   ;
-	jsr multiply    ; Compute horizontal knockback
-	lda base_h_low  ; "force_h * multiplier + base_h"
-	clc             ;
-	adc tmpfield4   ;
-	sta tmpfield4   ;
-	lda base_h_high ;
-	adc tmpfield5   ;
+	sta multiplier          ;
+
+	lda force_h              ;
+	sta multiplicand_high    ;
+	lda force_h_low          ;
+	sta multiplicand_low     ;
+	jsr multiply             ; Compute horizontal knockback
+	lda base_h_low           ; "force_h * multiplier + base_h"
+	clc                      ;
+	adc multiply_result_low  ;
+	sta multiply_result_low  ;
+	lda base_h_high          ;
+	adc multiply_result_high ;
 	sta player_a_velocity_h, x     ;
-	lda tmpfield4                  ; Apply horizontal knockback
+	lda multiply_result_low        ; Apply horizontal knockback
 	sta player_a_velocity_h_low, x ;
-	lda force_v      ;
-	sta tmpfield2    ;
-	lda force_v_low  ;
-	sta tmpfield1    ;
-	jsr multiply     ; Compute vertical knockback
-	lda base_v_low   ; "force_v * multiplier + base_v"
-	clc              ;
-	adc tmpfield4    ;
-	lda base_v_high  ;
-	adc tmpfield5    ;
+
+	lda force_v              ;
+	sta multiplicand_high    ;
+	lda force_v_low          ;
+	sta multiplicand_low     ;
+	jsr multiply             ; Compute vertical knockback
+	lda base_v_low           ; "force_v * multiplier + base_v"
+	clc                      ;
+	adc multiply_result_low  ;
+	sta multiply_result_low  ;
+	lda base_v_high          ;
+	adc multiply_result_high ;
 	sta player_a_velocity_v, x     ;
-	lda tmpfield4                  ; Apply vertical knockback
+	lda multiply_result_low        ; Apply vertical knockback
 	sta player_a_velocity_v_low, x ;
 
 	; Apply hitstun to the opponent
