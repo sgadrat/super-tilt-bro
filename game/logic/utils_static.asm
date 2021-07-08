@@ -454,6 +454,13 @@ apply_player_gravity:
 	jsr merge_to_player_velocity
 
 	rts
+
+#if 0
+	; Ideally we should use this table for gravity step, but
+	; - vertical forces would have to be adapted with a formula I still did not found
+	; - result with shared step for pal/ntsc is (almost) good enough (more baloon effect, but same height)
+	velocity_table_u8($60, gravity_step)
+#endif
 .)
 
 ; Reset one player's gravity to the default
