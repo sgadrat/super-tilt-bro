@@ -48,11 +48,3 @@ lbl_lsb:\
 #define velocity_table_u8(pal_vel, lbl) \
 lbl: \
 	.byt (pal_vel), ((pal_vel)*5)/6
-
-; Actually not macros, but temporary anyway
-;TODO remove it with the end of pal vs ntsc roms, or if it never happen, put is in constants file
-#ifdef PAL
-SYSTEM_INDEX = 0
-#else
-SYSTEM_INDEX = 1
-#endif

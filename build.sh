@@ -114,14 +114,13 @@ fi
 log
 say "Assemble the game ..."
 log "====================="
-asm cmd 'Super_Tilt_Bro_(E)'           "-DPAL"
-asm exe 'Super_Tilt_Bro_(U)'           "-DNTSC"
-asm exe 'server_bytecode'              "-DPAL -DSERVER_BYTECODE -DNO_INES_HEADER"
-asm exe 'tilt_ai_(E)'                  "-DPAL -DNETWORK_AI"
-asm exe 'tilt_no_network_(E)'          "-DPAL $no_network_flag"
-asm exe 'tilt_rainbow512_(E)'          "-DPAL -DMAPPER_RAINBOW512"
-asm exe 'tilt_no_network_unrom512_(E)' "-DPAL $no_network_flag -DMAPPER_UNROM512"
-asm exe 'tilt_no_network_unrom_(E)'    "-DPAL $no_network_flag -DMAPPER_UNROM"
+asm cmd 'Super_Tilt_Bro_(E)'           ""
+asm exe 'server_bytecode'              "-DSERVER_BYTECODE -DNO_INES_HEADER"
+asm exe 'tilt_ai_(E)'                  "-DNETWORK_AI"
+asm exe 'tilt_no_network_(E)'          "$no_network_flag"
+asm exe 'tilt_rainbow512_(E)'          "-DMAPPER_RAINBOW512"
+asm exe 'tilt_no_network_unrom512_(E)' "$no_network_flag -DMAPPER_UNROM512"
+asm exe 'tilt_no_network_unrom_(E)'    "$no_network_flag -DMAPPER_UNROM"
 
 say
 say "======================="
@@ -132,12 +131,7 @@ say "======================="
 #  Static bank cannot be safely upgraded, so avoid modifying it
 #  Only a warning for ease of development, should be an error when carts are distributed to non-technical players.
 static_bank_hash=`tail -c 4096 'Super_Tilt_Bro_(E).nes' | md5sum - | grep -Eo '^[0-9a-f]+'`
-if [ "$static_bank_hash" != 'a8bba5823e9ea9c55ffb951902137eac' ]; then
+if [ "$static_bank_hash" != '2b6b5fa1491dfed0e234e058b9b194db' ]; then
 	say "WARNING: PAL static bank changed"
-	say "======================="
-fi
-static_bank_hash=`tail -c 4096 'Super_Tilt_Bro_(U).nes' | md5sum - | grep -Eo '^[0-9a-f]+'`
-if [ "$static_bank_hash" != '663623a34159f1ef417a14dc1456d977' ]; then
-	say "WARNING: NTSC static bank changed"
 	say "======================="
 fi

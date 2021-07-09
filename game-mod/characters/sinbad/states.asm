@@ -102,7 +102,7 @@ sinbad_apply_air_friction:
 	lda #$00
 	sta merged_h_low
 	sta merged_h_high
-	ldy #SYSTEM_INDEX
+	ldy system_index
 	lda sinbad_air_friction_strength, y
 	sta merge_step
 	jmp merge_to_player_velocity
@@ -124,7 +124,7 @@ sinbad_apply_ground_friction:
 	sta merged_v_high
 	sta merged_h_low
 	sta merged_v_low
-	ldy #SYSTEM_INDEX
+	ldy system_index
 	lda sinbad_ground_friction_strength, y
 	sta tmpfield5
 	jmp merge_to_player_velocity
@@ -211,7 +211,7 @@ check_aerial_inputs:
 			lda controller_a_last_frame_btns, x
 			cmp #CONTROLLER_INPUT_TECH
 			bne no_fast_fall
-				ldy #SYSTEM_INDEX
+				ldy system_index
 				lda sinbad_fastfall_gravity_msb, y
 				sta player_a_gravity_msb, x
 				sta player_a_velocity_v, x
@@ -313,7 +313,7 @@ aerial_directional_influence:
 
 	go_left:
 		; Go to the left
-		ldy #SYSTEM_INDEX
+		ldy system_index
 
 		lda sinbad_aerial_neg_speed_lsb, y
 		sta tmpfield6
@@ -341,7 +341,7 @@ aerial_directional_influence:
 
 	go_right:
 		; Go to the right
-		ldy #SYSTEM_INDEX
+		ldy system_index
 
 		lda player_a_velocity_h_low, x
 		sta tmpfield6
@@ -586,7 +586,7 @@ sinbad_start_inactive_state:
 		jsr set_player_animation
 
 		; Set initial velocity
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_direction, x
 		cmp DIRECTION_LEFT
 		bne direction_right
@@ -616,7 +616,7 @@ sinbad_start_inactive_state:
 		merge_velocity_step = tmpfield5
 
 		; Move the player to the direction he is watching
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_direction, x
 		beq run_left
 
@@ -816,7 +816,7 @@ sinbad_start_inactive_state:
 		inc player_a_state_clock, x
 
 		; Wait for the preparation to end to begin to jump
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp sinbad_jumpsquat_duration, y
 		bcc end
@@ -831,7 +831,7 @@ sinbad_start_inactive_state:
 			jsr sinbad_tick_falling ; Hack - We just use sinbad_tick_falling which does exactly what we want
 
 			; Check if it is time to stop a short-hop
-			ldy #SYSTEM_INDEX
+			ldy system_index
 			lda sinbad_short_hop_time, y
 			cmp player_a_state_clock, x
 			beq stop_short_hop
@@ -876,7 +876,7 @@ sinbad_start_inactive_state:
 		lda player_a_num_aerial_jumps, x ; performing aerial jump, not
 		bne not_grounded                 ; grounded
 
-		ldy #SYSTEM_INDEX                ;
+		ldy system_index                ;
 		lda player_a_state_clock, x      ; Still preparing the jump
 		cmp sinbad_jumpsquat_duration, y ;
 		bcc grounded                     ;
@@ -1008,7 +1008,7 @@ sinbad_start_inactive_state:
 		jsr merge_to_player_velocity
 
 		; At the end of the move, return to standing state
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp jab_duration, y
 		bne end
@@ -1116,7 +1116,7 @@ sinbad_start_inactive_state:
 			sta player_a_state_field2, x
 			lda player_a_state_field1, x
 			bne end
-				ldy #SYSTEM_INDEX
+				ldy system_index
 				lda tech_window, y
 				sta player_a_state_field1, x
 
@@ -1144,7 +1144,7 @@ sinbad_start_inactive_state:
 		;jsr sinbad_global_onground ; useless, will be done by start_landing or start_crashing
 
 		; If the tech counter is bellow the threshold, just crash
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda tech_nb_forbidden_frames, y
 		cmp player_a_state_field1, x
 		bcs crash
@@ -1155,7 +1155,7 @@ sinbad_start_inactive_state:
 			beq no_momentum
 			cmp #$01
 			beq momentum_right
-				ldy #SYSTEM_INDEX
+				ldy system_index
 				lda sinbad_tech_speed_neg_msb, y
 				sta player_a_velocity_h, x
 				lda sinbad_tech_speed_neg_lsb, y
@@ -1167,7 +1167,7 @@ sinbad_start_inactive_state:
 				sta player_a_velocity_h_low, x
 				rts
 			momentum_right:
-				ldy #SYSTEM_INDEX
+				ldy system_index
 				lda sinbad_tech_speed_msb, y
 				sta player_a_velocity_h, x
 				lda sinbad_tech_speed_lsb, y
@@ -1212,7 +1212,7 @@ sinbad_start_inactive_state:
 		sta player_a_damages, x
 
 		; Initialize state's timer
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_respawn_max_duration, y
 		sta player_a_state_field1, x
 
@@ -1295,7 +1295,7 @@ sinbad_start_inactive_state:
 		sta player_a_state, x
 
 		; Initialize the clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda side_tilt_duration, y
 		sta player_a_state_clock,x
 
@@ -1373,7 +1373,7 @@ sinbad_start_inactive_state:
 		sta player_a_velocity_v, x
 
 		; Initialize the clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda duration_per_system, y
 		sta player_a_state_clock, x
 
@@ -1418,7 +1418,7 @@ sinbad_start_inactive_state:
 		sta player_a_y, x
 
 		; Initialize the clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda duration_per_system, y
 		sta player_a_state_clock, x
 
@@ -1492,7 +1492,7 @@ sinbad_start_inactive_state:
 		bne moving
 
 		; Check if there is reason to begin to move
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp charge_duration, y
 		bcs start_moving
@@ -1539,7 +1539,7 @@ sinbad_start_inactive_state:
 			sta player_a_velocity_v_low, x
 
 			; Set horizontal velocity (depending on direction)
-			ldy #SYSTEM_INDEX
+			ldy system_index
 			lda player_a_direction, x
 			cmp DIRECTION_LEFT
 			bne right_velocity
@@ -1635,7 +1635,7 @@ sinbad_start_inactive_state:
 		sta player_a_state_clock, x
 
 		; Cap initial velocity
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_velocity_h, x
 		bmi negative_cap
 			positive_cap:
@@ -1699,7 +1699,7 @@ sinbad_start_inactive_state:
 		jsr sinbad_apply_ground_friction
 
 		; After move's time is out, go to standing state
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp landing_duration, y
 		bne end
@@ -1760,14 +1760,14 @@ sinbad_start_inactive_state:
 		sta tmpfield3
 		sta tmpfield2
 		sta tmpfield1
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda sinbad_ground_friction_strength_strong, y
 		sta tmpfield5
 		jsr merge_to_player_velocity
 
 		; After move's time is out, go to standing state
 		lda player_a_state_clock, x
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		cmp crashing_duration, y
 		bne end
 			jmp sinbad_start_inactive_state
@@ -1792,7 +1792,7 @@ sinbad_start_inactive_state:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda down_tilt_duration, y
 		sta player_a_state_clock, x
 
@@ -1841,7 +1841,7 @@ sinbad_start_inactive_state:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda aerial_side_duration, y
 		sta player_a_state_clock, x
 
@@ -1886,7 +1886,7 @@ sinbad_start_inactive_state:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda aerial_down_duration, y
 		sta player_a_state_clock, x
 
@@ -1931,7 +1931,7 @@ sinbad_start_inactive_state:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda aerial_up_duration, y
 		sta player_a_state_clock, x
 
@@ -1976,7 +1976,7 @@ sinbad_start_inactive_state:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda aerial_neutral_duration, y
 		sta player_a_state_clock, x
 
@@ -2054,7 +2054,7 @@ sinbad_start_inactive_state:
 		sta tmpfield4
 		lda player_a_velocity_h_low, x
 		sta tmpfield2
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda fall_speed_msb, y
 		sta tmpfield3
 		lda fall_speed_lsb, y
@@ -2226,7 +2226,7 @@ sinbad_start_inactive_state:
 				sta tmpfield3
 				sta tmpfield2
 				sta tmpfield1
-				ldy #SYSTEM_INDEX
+				ldy system_index
 				lda sinbad_ground_friction_strength_weak, y
 				sta tmpfield5
 				jsr merge_to_player_velocity
@@ -2238,7 +2238,7 @@ sinbad_start_inactive_state:
 		end_friction:
 
 		; Wait for move's timeout
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		inc player_a_state_clock, x
 		lda player_a_state_clock, x
 		cmp spe_down_duration, y
@@ -2264,7 +2264,7 @@ sinbad_start_inactive_state:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda uptilt_duration, y
 		sta player_a_state_clock, x
 
@@ -2308,7 +2308,7 @@ sinbad_start_inactive_state:
 		sta player_a_state, x
 
 		; Reset clock, used for down-tap detection
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_down_tap_max_duration, y
 		sta player_a_state_clock, x
 
@@ -2471,7 +2471,7 @@ sinbad_start_inactive_state:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda shieldlag_duration, y
 		sta player_a_state_clock, x
 
@@ -2565,7 +2565,7 @@ sinbad_start_inactive_state:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda spawn_duration, y
 		sta player_a_state_clock, x
 
@@ -2673,7 +2673,7 @@ sinbad_start_inactive_state:
 			sta player_a_velocity_v_low, x
 
 			; Horizontal velocity
-			ldy #SYSTEM_INDEX
+			ldy system_index
 			lda player_a_direction, x
 			;cmp DIRECTION_LEFT ; useless while DIRECTION_LEFT is $00
 			bne jump_right

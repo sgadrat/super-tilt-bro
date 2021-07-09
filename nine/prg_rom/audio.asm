@@ -234,23 +234,19 @@ audio_unmute_music:
 ; Overwrites all registers, and tmpfield1 to tmpfield4
 audio_music_extra_tick:
 .(
-#ifdef PAL
-	lda skip_frames_to_50hz
-	bne ok
+	lda system_index
+	bne ok ; skip if playing on NTSC system
 	lda audio_50hz
 	bne ok ; skip if music is PAL native
 	dec audio_vframe_cnt
 	bpl ok ; skip if it is not time to do an extra tick
 
-		lda #4
-		sta audio_vframe_cnt
-		jmp audio_music_tick
+			lda #4
+			sta audio_vframe_cnt
+			jmp audio_music_tick
 
 	ok:
 	rts
-#else
-	rts
-#endif
 .)
 
 ; Play one tick of the audio engine

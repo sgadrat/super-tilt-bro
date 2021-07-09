@@ -940,7 +940,7 @@ apply_force_vector:
 	sta screen_shake_nextval_y
 
 	; Adapt screenshake and hitstun duration in ntsc
-	lda #SYSTEM_INDEX
+	lda system_index
 	beq ntsc_ok
 		lda screen_shake_counter
 		lsr

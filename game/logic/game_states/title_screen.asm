@@ -32,9 +32,9 @@ init_title_screen:
 	lda #185           ; X
 	sta oam_mirror+3
 
-	; Place 50Hz emulation indicator
-	lda skip_frames_to_50hz
-	beq emu_50hz_done
+	; Place NTSC indicator
+	lda system_index
+	beq ntsc_indicator_done
 		lda #208                 ; Y
 		sta oam_mirror+4
 		lda #TILE_NTSC_INDICATOR ; Tile
@@ -43,7 +43,7 @@ init_title_screen:
 		sta oam_mirror+6
 		lda #100                 ; X
 		sta oam_mirror+7
-	emu_50hz_done:
+	ntsc_indicator_done:
 
 	; Reinit cheat code state
 	lda #0

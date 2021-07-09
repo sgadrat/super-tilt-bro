@@ -281,7 +281,7 @@ kiki_apply_friction_lite:
 			sta tmpfield3
 			sta tmpfield2
 			sta tmpfield1
-			ldy #SYSTEM_INDEX
+			ldy system_index
 			lda kiki_ground_friction_strength_weak, y
 			sta tmpfield5
 			jmp merge_to_player_velocity
@@ -311,7 +311,7 @@ kiki_apply_air_friction:
 	lda #$00
 	sta merged_h_low
 	sta merged_h_high
-	ldy #SYSTEM_INDEX
+	ldy system_index
 	lda kiki_air_friction_strength, y
 	sta merge_step
 	jmp merge_to_player_velocity
@@ -333,7 +333,7 @@ kiki_apply_ground_friction:
 	sta merged_v_high
 	sta merged_h_low
 	sta merged_v_low
-	ldy #SYSTEM_INDEX
+	ldy system_index
 	lda kiki_ground_friction_strength, y
 	sta tmpfield5
 	jmp merge_to_player_velocity
@@ -364,7 +364,7 @@ kiki_aerial_directional_influence:
 
 	go_left:
 		; Go to the left
-		ldy #SYSTEM_INDEX
+		ldy system_index
 
 		lda kiki_aerial_neg_speed_lsb, y
 		sta tmpfield6
@@ -392,7 +392,7 @@ kiki_aerial_directional_influence:
 
 	go_right:
 		; Go to the right
-		ldy #SYSTEM_INDEX
+		ldy system_index
 
 		lda player_a_velocity_h_low, x
 		sta tmpfield6
@@ -503,7 +503,7 @@ kiki_check_aerial_inputs:
 			lda controller_a_last_frame_btns, x
 			cmp #CONTROLLER_INPUT_TECH
 			bne no_fast_fall
-				ldy #SYSTEM_INDEX
+				ldy system_index
 				lda kiki_fastfall_speed_msb, y
 				sta player_a_gravity_msb, x
 				sta player_a_velocity_v, x
@@ -808,7 +808,7 @@ kiki_global_onground:
 			sta player_a_state_field2, x
 			lda player_a_state_field1, x
 			bne end
-				ldy #SYSTEM_INDEX
+				ldy system_index
 				lda tech_window, y
 				sta player_a_state_field1, x
 
@@ -838,7 +838,7 @@ kiki_global_onground:
 	&kiki_onground_thrown:
 	.(
 		; If the tech counter is bellow the threshold, just crash
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda tech_nb_forbidden_frames, y
 		cmp player_a_state_field1, x
 		bcs crash
@@ -849,7 +849,7 @@ kiki_global_onground:
 		beq no_momentum
 		cmp #$01
 		beq momentum_right
-			ldy #SYSTEM_INDEX
+			ldy system_index
 			lda kiki_tech_speed_neg_msb, y
 			sta player_a_velocity_h, x
 			lda kiki_tech_speed_neg_lsb, y
@@ -861,7 +861,7 @@ kiki_global_onground:
 			sta player_a_velocity_h_low, x
 			jmp end
 		momentum_right:
-			ldy #SYSTEM_INDEX
+			ldy system_index
 			lda kiki_tech_speed_msb, y
 			sta player_a_velocity_h, x
 			lda kiki_tech_speed_lsb, y
@@ -906,7 +906,7 @@ kiki_global_onground:
 		sta player_a_damages, x
 
 		; Initialise state's timer
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_respawn_max_duration, y
 		sta player_a_state_field1, x
 
@@ -1023,7 +1023,7 @@ kiki_global_onground:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda spawn_duration, y
 		sta player_a_state_clock, x
 
@@ -1236,7 +1236,7 @@ kiki_start_inactive_state:
 		sta player_a_state, x
 
 		; Set initial velocity
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_direction, x
 		cmp DIRECTION_LEFT
 		bne direction_right
@@ -1271,7 +1271,7 @@ kiki_start_inactive_state:
 		jsr kiki_global_tick
 
 		; Update player's velocity dependeing on his direction
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_direction, x
 		beq run_left
 
@@ -1426,7 +1426,7 @@ kiki_start_inactive_state:
 		inc player_a_state_clock, x
 
 		; Wait for the preparation to end to begin to jump
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp kiki_jumpsquat_duration, y
 		bcc end
@@ -1488,7 +1488,7 @@ kiki_start_inactive_state:
 		lda player_a_num_aerial_jumps, x ; performing aerial jump, not
 		bne not_grounded                 ; grounded
 
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x    ;
 		cmp kiki_jumpsquat_duration, y ; Still preparing the jump
 		bcc grounded                   ;
@@ -1615,7 +1615,7 @@ kiki_start_inactive_state:
 		sta player_a_state_clock, x
 
 		; Cap initial velocity
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_velocity_h, x
 		bmi negative_cap
 			positive_cap:
@@ -1681,7 +1681,7 @@ kiki_start_inactive_state:
 		jsr kiki_apply_ground_friction
 
 		; After move's time is out, go to standing state
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp landing_duration, y
 		bne end
@@ -1739,14 +1739,14 @@ kiki_start_inactive_state:
 		sta tmpfield3
 		sta tmpfield2
 		sta tmpfield1
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda kiki_ground_friction_strength_strong, y
 		sta tmpfield5
 		jsr merge_to_player_velocity
 
 		; After move's time is out, go to standing state
 		lda player_a_state_clock, x
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		cmp crashing_duration, y
 		bne end
 			jmp kiki_start_inactive_state
@@ -1973,7 +1973,7 @@ kiki_start_inactive_state:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda shieldlag_duration, y
 		sta player_a_state_clock, x
 
@@ -2077,7 +2077,7 @@ kiki_start_inactive_state:
 
 
 			; Horizontal velocity
-			ldy #SYSTEM_INDEX
+			ldy system_index
 			lda player_a_direction, x
 			;cmp DIRECTION_LEFT ; useless while DIRECTION_LEFT is $00
 			bne jump_right
@@ -2159,7 +2159,7 @@ kiki_start_inactive_state:
 
 		inc player_a_state_clock, x
 
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp kiki_anim_strike_duration, y
 		bne update_velocity
@@ -2249,7 +2249,7 @@ kiki_start_inactive_state:
 		spawn_wall:
 		.(
 			; Reset wall state
-			ldy #SYSTEM_INDEX
+			ldy system_index
 			lda kiki_platform_duration, y
 			sta kiki_a_platform_state, x
 
@@ -2415,7 +2415,7 @@ kiki_start_inactive_state:
 		; Return to inactive state after animation's duration
 		inc player_a_state_clock, x
 
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp kiki_anim_paint_side_dur, y
 		bne end
@@ -2483,7 +2483,7 @@ kiki_start_inactive_state:
 			sta player_a_y_low, x
 
 			; Reset wall state
-			ldy #SYSTEM_INDEX
+			ldy system_index
 			lda kiki_platform_duration, y
 			sta kiki_a_platform_state, x
 
@@ -2633,7 +2633,7 @@ kiki_start_inactive_state:
 
 		inc player_a_state_clock, x
 
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp kiki_anim_paint_down_dur, y
 		bne end
@@ -2698,7 +2698,7 @@ kiki_start_inactive_state:
 		spawn_wall:
 		.(
 			; Reset wall state
-			ldy #SYSTEM_INDEX
+			ldy system_index
 			lda kiki_platform_duration, y
 			sta kiki_a_platform_state, x
 
@@ -2846,7 +2846,7 @@ kiki_start_inactive_state:
 		; Return to inactive state after animation's duration
 		inc player_a_state_clock, x
 
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp kiki_anim_paint_up_dur, y
 		bne end
@@ -2888,7 +2888,7 @@ kiki_start_inactive_state:
 
 		inc player_a_state_clock, x
 
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp kiki_anim_strike_up_dur, y
 		bne update_velocity
@@ -2938,7 +2938,7 @@ kiki_start_inactive_state:
 
 		jsr apply_player_gravity
 
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		inc player_a_state_clock, x
 		lda player_a_state_clock, x
 		cmp kiki_anim_aerial_up_dur, y
@@ -2980,7 +2980,7 @@ kiki_start_inactive_state:
 
 		inc player_a_state_clock, x
 
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp kiki_anim_strike_down_dur, y
 		bne update_velocity
@@ -3027,7 +3027,7 @@ kiki_start_inactive_state:
 
 		jsr apply_player_gravity
 
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		inc player_a_state_clock, x
 		lda player_a_state_clock, x
 		cmp kiki_anim_aerial_down_dur, y
@@ -3088,7 +3088,7 @@ kiki_start_inactive_state:
 
 		jsr apply_player_gravity
 
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		inc player_a_state_clock, x
 		lda player_a_state_clock, x
 		cmp kiki_anim_aerial_strike_dur, y
@@ -3131,7 +3131,7 @@ kiki_start_inactive_state:
 
 		inc player_a_state_clock, x
 
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp kiki_anim_jab_dur, y
 		bne update_velocity
@@ -3191,7 +3191,7 @@ kiki_start_inactive_state:
 
 		jsr apply_player_gravity
 
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		inc player_a_state_clock, x
 		lda player_a_state_clock, x
 		cmp kiki_anim_aerial_neutral_dur, y
@@ -3256,7 +3256,7 @@ kiki_start_inactive_state:
 
 		inc player_a_state_clock, x
 
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp counter_guard_active_duration, y
 		bne check_total_duration
@@ -3295,7 +3295,7 @@ kiki_start_inactive_state:
 		pha
 
 		; Strike if still active, else get hurt
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda counter_guard_active_duration, y
 		cmp player_a_state_clock, x
 		bcc hurt
@@ -3350,7 +3350,7 @@ kiki_start_inactive_state:
 
 		jsr apply_player_gravity
 
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		inc player_a_state_clock, x
 		lda player_a_state_clock, x
 		cmp counter_strike_duration, y

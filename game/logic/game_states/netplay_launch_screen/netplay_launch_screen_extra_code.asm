@@ -560,7 +560,7 @@ netplay_launch_screen_tick_extra:
 		lda netplay_launch_ping_max ; max ping
 		sta RAINBOW_DATA
 
-		lda skip_frames_to_50hz
+		lda system_index
 		clc
 		ror
 		ror

@@ -5,7 +5,7 @@
 
 #echo
 #echo wait_frame_loop:
-#print wait_next_real_frame+4
+#print wait_next_frame+4
 #echo nmi_begin:
 #print nmi
 #echo vblank_end:

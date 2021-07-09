@@ -106,7 +106,7 @@ reset:
 		cpy #$06
 		bcs pal
 			lda #1
-			sta skip_frames_to_50hz
+			sta system_index
 		pal:
 	.)
 

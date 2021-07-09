@@ -222,7 +222,7 @@ pepper_apply_air_friction:
 	lda #$00
 	sta merged_h_low
 	sta merged_h_high
-	ldy #SYSTEM_INDEX
+	ldy system_index
 	lda pepper_air_friction_strength, y
 	sta merge_step
 	jmp merge_to_player_velocity
@@ -244,7 +244,7 @@ pepper_apply_ground_friction:
 	sta merged_v_high
 	sta merged_h_low
 	sta merged_v_low
-	ldy #SYSTEM_INDEX
+	ldy system_index
 	lda pepper_ground_friction_strength, y
 	sta tmpfield5
 	jmp merge_to_player_velocity
@@ -394,7 +394,7 @@ pepper_aerial_directional_influence:
 
 	go_left:
 		; Go to the left
-		ldy #SYSTEM_INDEX
+		ldy system_index
 
 		lda pepper_aerial_neg_speed_lsb, y
 		sta tmpfield6
@@ -422,7 +422,7 @@ pepper_aerial_directional_influence:
 
 	go_right:
 		; Go to the right
-		ldy #SYSTEM_INDEX
+		ldy system_index
 
 		lda player_a_velocity_h_low, x
 		sta tmpfield6
@@ -533,7 +533,7 @@ pepper_check_aerial_inputs:
 			lda controller_a_last_frame_btns, x
 			cmp #CONTROLLER_INPUT_TECH
 			bne no_fast_fall
-				ldy #SYSTEM_INDEX
+				ldy system_index
 				lda pepper_fastfall_speed_msb, y
 				sta player_a_gravity_msb, x
 				sta player_a_velocity_v, x
@@ -696,7 +696,7 @@ pepper_check_aerial_inputs:
 			sta player_a_state_field2, x
 			lda player_a_state_field1, x
 			bne end
-				ldy #SYSTEM_INDEX
+				ldy system_index
 				lda tech_window, y
 				sta player_a_state_field1, x
 
@@ -728,7 +728,7 @@ pepper_check_aerial_inputs:
 		;jsr pepper_global_onground ; useless, will be done by start_landing or start_crashing
 
 		; If the tech counter is bellow the threshold, just crash
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda tech_nb_forbidden_frames, y
 		cmp player_a_state_field1, x
 		bcs crash
@@ -739,7 +739,7 @@ pepper_check_aerial_inputs:
 		beq no_momentum
 		cmp #$01
 		beq momentum_right
-			ldy #SYSTEM_INDEX
+			ldy system_index
 			lda pepper_tech_speed_neg_msb, y
 			sta player_a_velocity_h, x
 			lda pepper_tech_speed_neg_lsb, y
@@ -751,7 +751,7 @@ pepper_check_aerial_inputs:
 			sta player_a_velocity_h_low, x
 			jmp end
 		momentum_right:
-			ldy #SYSTEM_INDEX
+			ldy system_index
 			lda pepper_tech_speed_msb, y
 			sta player_a_velocity_h, x
 			lda pepper_tech_speed_lsb, y
@@ -797,7 +797,7 @@ pepper_check_aerial_inputs:
 		sta player_a_damages, x
 
 		; Initialise state's timer
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_respawn_max_duration, y
 		sta player_a_state_field1, x
 
@@ -912,7 +912,7 @@ pepper_check_aerial_inputs:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda spawn_duration, y
 		sta player_a_state_clock, x
 
@@ -1158,7 +1158,7 @@ pepper_input_idle_right:
 		sta player_a_state, x
 
 		; Set initial velocity
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_direction, x
 		cmp DIRECTION_LEFT
 		bne direction_right
@@ -1192,7 +1192,7 @@ pepper_input_idle_right:
 		jsr pepper_global_tick
 
 		; Update player's velocity dependeing on his direction
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_direction, x
 		beq run_left
 
@@ -1348,7 +1348,7 @@ pepper_input_idle_right:
 		inc player_a_state_clock, x
 
 		; Wait for the preparation to end to begin to jump
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp pepper_jumpsquat_duration, y
 		bcc end
@@ -1410,7 +1410,7 @@ pepper_input_idle_right:
 		lda player_a_num_aerial_jumps, x ; performing aerial jump, not
 		bne not_grounded                 ; grounded
 
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x   ;
 		cmp pepper_jumpsquat_duration ; Still preparing the jump
 		bcc grounded                  ;
@@ -1545,7 +1545,7 @@ pepper_input_idle_right:
 		sta player_a_state_clock, x
 
 		; Cap initial velocity
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_velocity_h, x
 		bmi negative_cap
 			positive_cap:
@@ -1611,7 +1611,7 @@ pepper_input_idle_right:
 		jsr pepper_apply_ground_friction
 
 		; After move's time is out, go to standing state
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp landing_duration, y
 		bne end
@@ -1675,7 +1675,7 @@ pepper_input_idle_right:
 
 		; After move's time is out, go to standing state
 		lda player_a_state_clock, x
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		cmp crashing_duration, y
 		bne end
 		jsr pepper_start_idle
@@ -1696,7 +1696,7 @@ pepper_input_idle_right:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda pepper_anim_aerial_wrench_grab_dur, y
 		sta player_a_state_clock, x
 
@@ -1748,7 +1748,7 @@ pepper_input_idle_right:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda potion_smash_duration, y
 		sta player_a_state_clock, x
 
@@ -1781,7 +1781,7 @@ pepper_input_idle_right:
 		do_tick:
 
 		; Apply gravity, only after active frames
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda potion_smash_gravity_time, y
 		cmp player_a_state_clock, x
 		bcc end
@@ -2006,7 +2006,7 @@ pepper_input_idle_right:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda shieldlag_duration, y
 		sta player_a_state_clock, x
 
@@ -2109,7 +2109,7 @@ pepper_input_idle_right:
 			sta player_a_velocity_v_low, x
 
 			; Horizontal velocity
-			ldy #SYSTEM_INDEX
+			ldy system_index
 			lda player_a_direction, x
 			;cmp DIRECTION_LEFT ; useless while DIRECTION_LEFT is $00
 			bne jump_right
@@ -2156,7 +2156,7 @@ pepper_input_idle_right:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda pepper_anim_dtilt_dur, y
 		sta player_a_state_clock, x
 
@@ -2204,7 +2204,7 @@ pepper_input_idle_right:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda stilt_duration, y
 		sta player_a_state_clock, x
 
@@ -2230,7 +2230,7 @@ pepper_input_idle_right:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda pepper_anim_up_tilt_dur, y
 		sta player_a_state_clock, x
 
@@ -2256,7 +2256,7 @@ pepper_input_idle_right:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda pepper_anim_flash_potion_dur, y
 		sta player_a_state_clock, x
 
@@ -2287,7 +2287,7 @@ pepper_input_idle_right:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda pepper_anim_aerial_wrench_dur, y
 		sta player_a_state_clock, x
 
@@ -2304,7 +2304,7 @@ pepper_input_idle_right:
 	&pepper_tick_aerial_side:
 	.(
 		; Set little upward velocity on the strong hit frame, dramatic effect
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp hit_time, y
 		bne ok
@@ -2343,7 +2343,7 @@ pepper_input_idle_right:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda pepper_anim_firework_dur, y
 		sta player_a_state_clock, x
 
@@ -2463,7 +2463,7 @@ pepper_input_idle_right:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda pepper_anim_hyperspeed_crash_dur, y
 		sta player_a_state_clock, x
 
@@ -2492,7 +2492,7 @@ pepper_input_idle_right:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda pepper_anim_send_carrot_dur, y
 		sta player_a_state_clock, x
 
@@ -2616,7 +2616,7 @@ pepper_input_idle_right:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda pepper_anim_teleport_dur, y
 		sta player_a_state_clock, x
 
@@ -2700,7 +2700,7 @@ pepper_input_idle_right:
 		;  Disapear animation - Do nothing
 		;  Traveling - Move toward Carrot
 		;  Reapear animation - Place exactly on Carrot and remove Carrot
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda player_a_state_clock, x
 		cmp tp_time, y
 		beq final_position ; at teleport time
@@ -2793,12 +2793,12 @@ pepper_input_idle_right:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda fly_duration, y
 		sta player_a_state_clock, x
 
 		; Set momentum
-		lda #SYSTEM_INDEX
+		lda system_index
 		asl
 		clc
 		adc player_a_direction, x
@@ -2809,7 +2809,7 @@ pepper_input_idle_right:
 		lda witch_fly_velocity_h_msb_per_direction, y
 		sta player_a_velocity_h, x
 
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda velocity_v_lsb, y
 		sta player_a_velocity_v_low,x 
 		lda velocity_v_msb, y
@@ -2858,7 +2858,7 @@ pepper_input_idle_right:
 		sta player_a_state, x
 
 		; Reset clock
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		lda pepper_anim_wrench_grab_dur, y
 		sta player_a_state_clock, x
 

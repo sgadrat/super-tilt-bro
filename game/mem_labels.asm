@@ -526,6 +526,12 @@ config_player_b_character = $e1
 config_game_mode = $e2
 
 ;
+; Zero-page constants
+;
+
+system_index = $e8 ; 0 - PAL, 1 - NTSC
+
+;
 ; Zero-page registers
 ;
 
@@ -586,7 +592,6 @@ config_ingame_track = $0546
 ;$06xx may be used by audio engine, see "Audio engine labels"
 
 virtual_frame_cnt = $0700
-skip_frames_to_50hz = $0701
 network_last_known_remote_input = $07bf
 network_player_local_btns_history = $07c0 ; one byte per frame, circular buffers, 32 entries
 network_player_remote_btns_history = $07e0 ;

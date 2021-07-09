@@ -469,7 +469,7 @@ apply_player_gravity:
 ; Overwrites register Y
 reset_default_gravity:
 .(
-	ldy #SYSTEM_INDEX
+	ldy system_index
 	lda default_gravity_per_system_lsb, y
 	sta player_a_gravity_lsb, x
 	lda default_gravity_per_system_msb, y

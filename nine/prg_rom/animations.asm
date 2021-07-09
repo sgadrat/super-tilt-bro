@@ -202,7 +202,7 @@ animation_tick:
 	; On NTSC, do nothing every 6th frame to simulate PAL's pace by doubling the 5th frame
 	;  Note this must stay deterministic, so NTSC frame data is still stable
 	.(
-		ldy #SYSTEM_INDEX
+		ldy system_index
 		beq skip
 			ldy #ANIMATION_STATE_OFFSET_NTSC_CNT
 			lda (anim_state), y
