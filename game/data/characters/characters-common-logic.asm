@@ -13,13 +13,17 @@ set_player_animation:
 	; Chose animation state
 	txa
 
-#if ANIMATION_STATE_LENGTH <> 12
-#error code expects an animation state's length of 12 bytes
+#if ANIMATION_STATE_LENGTH <> 13
+#error code expects an animation state's length of 13 bytes
 #endif
 	asl            ;
 	asl            ;
 	sta tmpfield16 ;
 	asl            ; A = X * ANIMATION_STATE_LENGTH (== offset of the player's animation state)
+	clc            ;
+	adc tmpfield16 ;
+	sta tmpfield16 ;
+	txa            ;
 	clc            ;
 	adc tmpfield16 ;
 

@@ -10,6 +10,7 @@
 ;   Byte 8 - index of the first OAM sprite to use
 ;   Byte 9 - index of the last OAM sprite to use
 ;   Byte 10-11 - index of the current frame
+;   Byte 12 - virtual frame counter for NTSC systems
 ;
 ; Typical workflow
 ;   Initialization
@@ -38,6 +39,8 @@
 ;     jsr animation_draw
 ;     jsr animation_tick
 ;
+
+ANIMATION_NTSC_CNT_RESET_VALUE = 5 ; double everyt fifth frame
 
 ; Initialize a memory location to be a valid animation state
 ;  tmpfield11, tmpfield12 - vector to the animation state
@@ -80,7 +83,10 @@ animation_init_state:
 	ldy #ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB
 	sta (anim_state), y
 
-	;TODO init virtual frame counter
+	; Initialize virtual frame counter
+	lda #ANIMATION_NTSC_CNT_RESET_VALUE
+	ldy #ANIMATION_STATE_OFFSET_NTSC_CNT
+	sta (anim_state), y
 
 	rts
 .)
@@ -193,22 +199,23 @@ animation_tick:
 	frame_vector = tmpfield3
 	;tmpfield4 is frame_vector MSB
 
-#ifndef PAL
-	; Do nothing every 6th frame to simulate PAL's pace
-	;  Note this must be deterministic, so NTSC frame data is still stable
-	;TODO clean implementation, with a byte (or 3 bits) for that in animation state
+	; On NTSC, do nothing every 6th frame to simulate PAL's pace by doubling the 5th frame
+	;  Note this must stay deterministic, so NTSC frame data is still stable
 	.(
-		dbg_clock_ticker = $0704
-
-		ldx player_number
-		dec dbg_clock_ticker, x
-		bpl ok
-			lda #5
-			sta dbg_clock_ticker, x
-			jmp end
-		ok:
+		ldy #SYSTEM_INDEX
+		beq skip
+			ldy #ANIMATION_STATE_OFFSET_NTSC_CNT
+			lda (anim_state), y
+			sec
+			sbc #1
+			bpl ok
+				lda #ANIMATION_NTSC_CNT_RESET_VALUE
+				sta (anim_state), y
+				jmp end
+			ok:
+			sta (anim_state), y
+		skip:
 	.)
-#endif
 
 	; Store current frame vector at a fixed location
 	ldy #ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB

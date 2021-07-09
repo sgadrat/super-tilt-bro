@@ -1008,7 +1008,7 @@ kiki_global_onground:
 #if kiki_anim_spawn_dur_pal <> 50
 #error incorrect spawn duration
 #endif
-#if kiki_anim_spawn_dur_ntsc <> 59
+#if kiki_anim_spawn_dur_ntsc <> 60
 #error incorrect spawn duration (ntsc only)
 #endif
 
@@ -1042,11 +1042,11 @@ kiki_global_onground:
 		jsr kiki_global_tick
 
 		dec player_a_state_clock, x
-        bne tick
-            jmp kiki_start_idle
-            ; No return, jump to subroutine
-        tick:
-        rts
+		bne tick
+			jmp kiki_start_idle
+			; No return, jump to subroutine
+		tick:
+		rts
 	.)
 .)
 
@@ -1673,8 +1673,6 @@ kiki_start_inactive_state:
 	&kiki_tick_landing:
 	.(
 		jsr kiki_global_tick
-
-		KIKI_STATE_LANDING_DURATION = 6
 
 		; Tick clock
 		inc player_a_state_clock, x

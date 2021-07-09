@@ -892,6 +892,15 @@ pepper_check_aerial_inputs:
 ;
 
 .(
+	spawn_duration:
+		.byt pepper_anim_spawn_dur_pal, pepper_anim_spawn_dur_ntsc
+#if pepper_anim_spawn_dur_pal <> 50
+#error incorrect spawn duration
+#endif
+#if pepper_anim_spawn_dur_ntsc <> 60
+#error incorrect spawn duration (ntsc only)
+#endif
+
 	&pepper_start_spawn:
 	.(
 		; Hack - there is no ensured call to a character init function
@@ -903,7 +912,8 @@ pepper_check_aerial_inputs:
 		sta player_a_state, x
 
 		; Reset clock
-		lda #0
+		ldy #SYSTEM_INDEX
+		lda spawn_duration, y
 		sta player_a_state_clock, x
 
 		; Set the appropriate animation
@@ -920,16 +930,11 @@ pepper_check_aerial_inputs:
 	.(
 		jsr pepper_global_tick
 
-		PEPPER_STATE_SPAWN_DURATION = 50
-
-		inc player_a_state_clock, x
-		lda player_a_state_clock, x
-		cmp #PEPPER_STATE_SPAWN_DURATION
-		bne end
+		dec player_a_state_clock, x
+		bne tick
 			jmp pepper_start_idle
 			; No return, jump to subroutine
-
-		end:
+		tick:
 		rts
 	.)
 .)
@@ -1599,8 +1604,6 @@ pepper_input_idle_right:
 	.(
 		jsr pepper_global_tick
 
-		PEPPER_STATE_LANDING_DURATION = 6
-
 		; Tick clock
 		inc player_a_state_clock, x
 
@@ -1608,8 +1611,9 @@ pepper_input_idle_right:
 		jsr pepper_apply_ground_friction
 
 		; After move's time is out, go to standing state
+		ldy #SYSTEM_INDEX
 		lda player_a_state_clock, x
-		cmp #PEPPER_STATE_LANDING_DURATION
+		cmp landing_duration, y
 		bne end
 			jmp pepper_start_inactive_state
 			; No return, jump to subroutine
@@ -1730,10 +1734,12 @@ pepper_input_idle_right:
 
 .(
 	POTION_SMASH_DURATION = 34
+	POTION_SMASH_DURATION_NTSC = POTION_SMASH_DURATION+(((((POTION_SMASH_DURATION)*10)/5)+5)/10)
 
-	duration_table(POTION_SMASH_DURATION, potion_smash_duration)
+	potion_smash_duration:
+		.byt POTION_SMASH_DURATION, POTION_SMASH_DURATION_NTSC
 	potion_smash_gravity_time:
-		.byt POTION_SMASH_DURATION-14, POTION_SMASH_DURATION+(((((POTION_SMASH_DURATION)*10)/5)+5)/10)-17 ; frame perfect constant, just at the begining on idle pose ;FIXME grep anim_engine_ntsc
+		.byt POTION_SMASH_DURATION-14, POTION_SMASH_DURATION_NTSC-16 ; frame perfect constant, just at the begining on idle pose
 
 	&pepper_start_potion_smash:
 	.(
@@ -2267,7 +2273,7 @@ pepper_input_idle_right:
 
 .(
 	HIT_TIME_PAL = 6
-	HIT_TIME_NTSC = 7 ; FIXME grep anim_engine_ntsc
+	HIT_TIME_NTSC = 7
 
 	pepper_anim_aerial_wrench_dur:
 		.byt pepper_anim_aerial_wrench_dur_pal, pepper_anim_aerial_wrench_dur_ntsc
@@ -2590,8 +2596,8 @@ pepper_input_idle_right:
 .(
 	TELEPORT_TP_TIME_PAL = 8
 	TELEPORT_MOVE_TIME_PAL = 6
-	TELEPORT_TP_TIME_NTSC = 10
-	TELEPORT_MOVE_TIME_NTSC = 7 ; FIXME grep anim_engine_ntsc
+	TELEPORT_TP_TIME_NTSC = 9
+	TELEPORT_MOVE_TIME_NTSC = 7
 
 	pepper_anim_teleport_dur:
 		.byt pepper_anim_teleport_dur_pal, pepper_anim_teleport_dur_ntsc

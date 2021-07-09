@@ -14,6 +14,7 @@ typedef struct Animation {
 	uint8_t first_sprite_num;
 	uint8_t last_sprite_num;
 	uint8_t const* frame_vector;
+	uint8_t ntsc_cnt;
 } __attribute__((__packed__)) Animation;
 
 //

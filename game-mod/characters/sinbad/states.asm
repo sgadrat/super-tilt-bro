@@ -2550,7 +2550,7 @@ sinbad_start_inactive_state:
 #if anim_sinbad_spawn_dur_pal <> 50
 #error incorrect spawn duration
 #endif
-#if anim_sinbad_spawn_dur_ntsc <> 59
+#if anim_sinbad_spawn_dur_ntsc <> 60
 #error incorrect spawn duration (ntsc only)
 #endif
 

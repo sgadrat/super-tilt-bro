@@ -39,10 +39,9 @@ def compute_anim_duration_pal(anim):
 	return compute_anim_duration_raw(anim)
 
 def compute_anim_duration_ntsc(anim):
-	# In NTSC the animation engine double one out of six frames, begining with the first frame
-	#FIXME it should double one out of five frames (grep anim_engine_ntsc)
+	# In NTSC the animation engine double one out of five frames
 	raw_dur = compute_anim_duration_raw(anim)
-	return raw_dur + math.ceil(raw_dur / 6)
+	return raw_dur + int(raw_dur / 5)
 
 def generate_character(char, game_dir):
 	name_upper = char.name.upper()

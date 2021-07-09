@@ -204,18 +204,18 @@ death_particles_player_b_counter = $7e
 slow_down_counter = $7f
 
 players_palettes = $0580 ; $0580 to $059f - 4 nametable buffers (8 bytes each) containing avatars palettes in normal and alternate mode
-player_a_animation = $05a0 ; $05a0 to $05ab - player a's animation state
-player_b_animation = $05ac ; $05ac to $05b7 - player b's animation state
-player_a_out_of_screen_indicator = $05b8 ; $05b8 to $05c3 - player a's out of screen animation state
-player_b_out_of_screen_indicator = $05c4 ; $05c4 to $05cf - player b's out of screen animation state
+player_a_animation = $05a0 ; $05a0 to $05ac - player a's animation state
+player_b_animation = $05ad ; $05ad to $05b9 - player b's animation state
+player_a_out_of_screen_indicator = $05ba ; $05ba to $05c6 - player a's out of screen animation state
+player_b_out_of_screen_indicator = $05c7 ; $05c7 to $05d3 - player b's out of screen animation state
 
-ai_current_action_lsb = $05d0
-ai_current_action_msb = $05d1
-ai_current_action_counter = $05d2
-ai_current_action_step = $05d3
-ai_current_action_modifier = $05d4
-ai_delay = $05d5
-ai_max_delay = $05d6
+ai_current_action_lsb = $05d4
+ai_current_action_msb = $05d5
+ai_current_action_counter = $05d6
+ai_current_action_step = $05d7
+ai_current_action_modifier = $05d8
+ai_delay = $05d9
+ai_max_delay = $05da
 
 ;
 ; Stage specific labels
@@ -308,10 +308,10 @@ online_mode_rnd = online_mode_frame_count+1 ; $3d-$40
 online_mode_satellite_state = online_mode_rnd+4 ; $41-$49
 
 online_mode_selection_mem_buffer = $0580 ; $0580 to $05bf (64 bytes)
-online_mode_selection_cursor_anim = $05c0 ; $05c0 to $05cb
-online_mode_selection_ship_anim = $05cc ; $05cc to $05d7
-online_mode_selection_monster_anim = $05d8 ; $05d8 to $05e3
-online_mode_selection_satellite_anim = $05e4 ; $05e4 to $05ef
+online_mode_selection_cursor_anim = $05c0 ; $05c0 to $05cc
+online_mode_selection_ship_anim = $05cd ; $05cd to $05d9
+online_mode_selection_monster_anim = $05da ; $05da to $05e6
+online_mode_selection_satellite_anim = $05e7 ; $05e7 to $05e3
 
 ;
 ; WIFI_SETTINGS labels
@@ -341,20 +341,20 @@ character_selection_control_scheme = character_selection_player_b_rnd+1 ; $4b
 character_selection_fix_screen_bg_task = character_selection_control_scheme+1 ; $4c
 
 character_selection_mem_buffer = $0580 ; $0580 to $05bf (4 tiles of 16 bytes each)
-character_selection_player_a_cursor_anim = $05c0 ; $05c0 to $05cb
-character_selection_player_b_cursor_anim = $05cc ; $05cc to $05d7
-character_selection_player_a_char_anim = $05d8 ; $05d8 to $05e3
-character_selection_player_b_char_anim = $05e4 ; $05e4 to $05ef
-;$05f0-$05ff unused
-character_selection_player_a_builder_anim = $0680 ; $0680 to $068b
-character_selection_player_b_builder_anim = $068c ; $068c to $0697
+character_selection_player_a_cursor_anim = $05c0 ; $05c0 to $05cc
+character_selection_player_b_cursor_anim = $05cd ; $05cd to $05d9
+character_selection_player_a_char_anim = $05da ; $05da to $05e6
+character_selection_player_b_char_anim = $05e7 ; $05e7 to $05f3
+;$05f4-$05ff unused
+character_selection_player_a_builder_anim = $0680 ; $0680 to $068c
+character_selection_player_b_builder_anim = $068d ; $068d to $0699
 
 ;
 ; STAGE_SELECTION labels
 ;
 
 stage_selection_cursor_anim = last_c_label+1
-stage_selection_bg_task = stage_selection_cursor_anim+12
+stage_selection_bg_task = stage_selection_cursor_anim+13
 
 stage_selection_mem_buffer = $0580 ; $0580 to $05bf (4*16 bytes)
 
