@@ -1,5 +1,4 @@
-;TODO re-check that non of these constants are used directly
-velocity_table(DEFAULT_GRAVITY, default_gravity_per_system_msb, default_gravity_per_system_lsb)
+;TODO re-check that none of these constants are used directly
 duration_table(PLAYER_RESPAWN_MAX_DURATION, player_respawn_max_duration)
 duration_table(PLAYER_DOWN_TAP_MAX_DURATION, player_down_tap_max_duration)
 
