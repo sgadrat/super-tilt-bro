@@ -48,3 +48,8 @@ lbl_lsb:\
 #define velocity_table_u8(pal_vel, lbl) \
 lbl: \
 	.byt (pal_vel), ((pal_vel)*5)/6
+
+; Create a table with pal and ntsc equivalent 1-byte acceleration
+#define acceleration_table(pal_acc, lbl) \
+lbl: \
+	.byt (pal_acc), ((pal_acc)*50)/72

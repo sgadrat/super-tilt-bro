@@ -47,7 +47,8 @@ PEPPER_FASTFALL_SPEED = $0600
 PEPPER_GROUND_FRICTION_STRENGTH = $40
 PEPPER_JUMP_SQUAT_DURATION_PAL = 4
 PEPPER_JUMP_SQUAT_DURATION_NTSC = 5
-PEPPER_JUMP_SHORT_HOP_EXTRA_TIME = 4
+PEPPER_JUMP_SHORT_HOP_EXTRA_TIME_PAL = 4
+PEPPER_JUMP_SHORT_HOP_EXTRA_TIME_NTSC = 5
 PEPPER_JUMP_POWER = $0540
 PEPPER_JUMP_SHORT_HOP_POWER = $0102
 PEPPER_LANDING_MAX_VELOCITY = $0200
@@ -72,12 +73,14 @@ velocity_table_u8(PEPPER_GROUND_FRICTION_STRENGTH/3, pepper_ground_friction_stre
 velocity_table_u8(PEPPER_GROUND_FRICTION_STRENGTH*3, pepper_ground_friction_strength_strong)
 velocity_table(PEPPER_TECH_SPEED, pepper_tech_speed_msb, pepper_tech_speed_lsb)
 velocity_table(-PEPPER_TECH_SPEED, pepper_tech_speed_neg_msb, pepper_tech_speed_neg_lsb)
+velocity_table(-PEPPER_JUMP_POWER, pepper_jump_velocity_msb, pepper_jump_velocity_lsb)
+velocity_table(-PEPPER_JUMP_SHORT_HOP_POWER, pepper_jump_short_hop_velocity_msb, pepper_jump_short_hop_velocity_lsb)
 
 pepper_jumpsquat_duration:
 	.byt PEPPER_JUMP_SQUAT_DURATION_PAL, PEPPER_JUMP_SQUAT_DURATION_NTSC
 
 pepper_short_hop_time:
-	.byt PEPPER_JUMP_SQUAT_DURATION_PAL + PEPPER_JUMP_SHORT_HOP_EXTRA_TIME, PEPPER_JUMP_SQUAT_DURATION_NTSC + PEPPER_JUMP_SHORT_HOP_EXTRA_TIME
+	.byt PEPPER_JUMP_SQUAT_DURATION_PAL + PEPPER_JUMP_SHORT_HOP_EXTRA_TIME_PAL, PEPPER_JUMP_SQUAT_DURATION_NTSC + PEPPER_JUMP_SHORT_HOP_EXTRA_TIME_NTSC
 
 ; Offset of 12 bytes reserved in player's object data for storing carrot's animation state
 pepper_carrot_anim_per_player:
@@ -1355,7 +1358,7 @@ pepper_input_idle_right:
 		beq begin_to_jump
 
 		; Handle short-hop input
-		cmp pepper_short_hop_time
+		cmp pepper_short_hop_time, y
 		beq stop_short_hop
 
 		; Check if the top of the jump is reached
@@ -1384,18 +1387,20 @@ pepper_input_idle_right:
 			bne end
 
 			; Reduce upward momentum to end the jump earlier
-			lda #>-PEPPER_JUMP_SHORT_HOP_POWER
+			ldy system_index
+			lda pepper_jump_short_hop_velocity_msb, y
 			sta player_a_velocity_v, x
-			lda #<-PEPPER_JUMP_SHORT_HOP_POWER
+			lda pepper_jump_short_hop_velocity_lsb, y
 			sta player_a_velocity_v_low, x
 			rts
 			; No return
 
 		; Put initial jumping velocity
 		begin_to_jump:
-			lda #>-PEPPER_JUMP_POWER
+			ldy system_index
+			lda pepper_jump_velocity_msb, y
 			sta player_a_velocity_v, x
-			lda #<-PEPPER_JUMP_POWER
+			lda pepper_jump_velocity_lsb, y
 			sta player_a_velocity_v_low, x
 			;jmp end ; Useless, fallthrough
 
@@ -2811,7 +2816,7 @@ pepper_input_idle_right:
 
 		ldy system_index
 		lda velocity_v_lsb, y
-		sta player_a_velocity_v_low,x 
+		sta player_a_velocity_v_low,x
 		lda velocity_v_msb, y
 		sta player_a_velocity_v, x
 

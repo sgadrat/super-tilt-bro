@@ -42,7 +42,8 @@ KIKI_FASTFALL_SPEED = $0400
 KIKI_GROUND_FRICTION_STRENGTH = $40
 KIKI_JUMP_SQUAT_DURATION_PAL = 4
 KIKI_JUMP_SQUAT_DURATION_NTSC = 5
-KIKI_JUMP_SHORT_HOP_EXTRA_TIME = 4
+KIKI_JUMP_SHORT_HOP_EXTRA_TIME_PAL = 4
+KIKI_JUMP_SHORT_HOP_EXTRA_TIME_NTSC = 5
 KIKI_JUMP_POWER = $0480
 KIKI_JUMP_SHORT_HOP_POWER = $0102
 KIKI_LANDING_MAX_VELOCITY = $0200
@@ -72,6 +73,8 @@ velocity_table_u8(KIKI_GROUND_FRICTION_STRENGTH, kiki_ground_friction_strength)
 velocity_table_u8(KIKI_GROUND_FRICTION_STRENGTH/3, kiki_ground_friction_strength_weak)
 velocity_table(KIKI_TECH_SPEED, kiki_tech_speed_msb, kiki_tech_speed_lsb)
 velocity_table(-KIKI_TECH_SPEED, kiki_tech_speed_neg_msb, kiki_tech_speed_neg_lsb)
+velocity_table(-KIKI_JUMP_POWER, kiki_jump_velocity_msb, kiki_jump_velocity_lsb)
+velocity_table(-KIKI_JUMP_SHORT_HOP_POWER, kiki_jump_short_hop_velocity_msb, kiki_jump_short_hop_velocity_lsb)
 
 duration_table(KIKI_PLATFORM_DURATION, kiki_platform_duration)
 
@@ -79,7 +82,7 @@ kiki_jumpsquat_duration:
 	.byt KIKI_JUMP_SQUAT_DURATION_PAL, KIKI_JUMP_SQUAT_DURATION_NTSC
 
 kiki_short_hop_time:
-	.byt KIKI_JUMP_SQUAT_DURATION_PAL + KIKI_JUMP_SHORT_HOP_EXTRA_TIME, KIKI_JUMP_SQUAT_DURATION_NTSC + KIKI_JUMP_SHORT_HOP_EXTRA_TIME
+	.byt KIKI_JUMP_SQUAT_DURATION_PAL + KIKI_JUMP_SHORT_HOP_EXTRA_TIME_PAL, KIKI_JUMP_SQUAT_DURATION_NTSC + KIKI_JUMP_SHORT_HOP_EXTRA_TIME_NTSC
 
 kiki_wall_attributes_per_player:
 .byt 1, 3
@@ -1462,18 +1465,20 @@ kiki_start_inactive_state:
 			bne end
 
 				; Reduce upward momentum to end the jump earlier
-				lda #>-KIKI_JUMP_SHORT_HOP_POWER
+				ldy system_index
+				lda kiki_jump_short_hop_velocity_msb, y
 				sta player_a_velocity_v, x
-				lda #<-KIKI_JUMP_SHORT_HOP_POWER
+				lda kiki_jump_short_hop_velocity_lsb, y
 				sta player_a_velocity_v_low, x
 				rts
 				; No return
 
 		; Put initial jumping velocity
 		begin_to_jump:
-			lda #>-KIKI_JUMP_POWER
+			ldy system_index
+			lda kiki_jump_velocity_msb, y
 			sta player_a_velocity_v, x
-			lda #<-KIKI_JUMP_POWER
+			lda kiki_jump_velocity_lsb, y
 			sta player_a_velocity_v_low, x
 			;jmp end ; Useless, fallthrough
 

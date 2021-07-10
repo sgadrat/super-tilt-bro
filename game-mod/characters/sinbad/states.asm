@@ -42,7 +42,8 @@ SINBAD_FASTFALL_GRAVITY = $0500
 SINBAD_GROUND_FRICTION_STRENGTH = $40
 SINBAD_JUMP_POWER = $0480
 SINBAD_JUMP_SHORT_HOP_POWER = $0102
-SINBAD_JUMP_SHORT_HOP_EXTRA_TIME = 4 ; Number of frames after jumpsquat at which shorthop is handled
+SINBAD_JUMP_SHORT_HOP_EXTRA_TIME_PAL = 4 ; Number of frames after jumpsquat at which shorthop is handled
+SINBAD_JUMP_SHORT_HOP_EXTRA_TIME_NTSC = 5
 SINBAD_JUMP_SQUAT_DURATION_PAL = 4
 SINBAD_JUMP_SQUAT_DURATION_NTSC = 5
 SINBAD_LANDING_MAX_VELOCITY = $0200
@@ -65,12 +66,14 @@ velocity_table(SINBAD_FASTFALL_GRAVITY, sinbad_fastfall_gravity_msb, sinbad_fast
 velocity_table_u8(SINBAD_GROUND_FRICTION_STRENGTH, sinbad_ground_friction_strength)
 velocity_table(SINBAD_TECH_SPEED, sinbad_tech_speed_msb, sinbad_tech_speed_lsb)
 velocity_table(-SINBAD_TECH_SPEED, sinbad_tech_speed_neg_msb, sinbad_tech_speed_neg_lsb)
+velocity_table(-SINBAD_JUMP_POWER, sinbad_jump_velocity_msb, sinbad_jump_velocity_lsb)
+velocity_table(-SINBAD_JUMP_SHORT_HOP_POWER, sinbad_jump_short_hop_velocity_msb, sinbad_jump_short_hop_velocity_lsb)
 
 sinbad_jumpsquat_duration:
 	.byt SINBAD_JUMP_SQUAT_DURATION_PAL, SINBAD_JUMP_SQUAT_DURATION_NTSC
 
 sinbad_short_hop_time:
-	.byt SINBAD_JUMP_SQUAT_DURATION_PAL + SINBAD_JUMP_SHORT_HOP_EXTRA_TIME, SINBAD_JUMP_SQUAT_DURATION_NTSC + SINBAD_JUMP_SHORT_HOP_EXTRA_TIME
+	.byt SINBAD_JUMP_SQUAT_DURATION_PAL + SINBAD_JUMP_SHORT_HOP_EXTRA_TIME_PAL, SINBAD_JUMP_SQUAT_DURATION_NTSC + SINBAD_JUMP_SHORT_HOP_EXTRA_TIME_NTSC
 
 ;
 ; Implementation
@@ -850,18 +853,20 @@ sinbad_start_inactive_state:
 			bne end
 
 				; Reduce upward momentum to end the jump earlier
-				lda #>-SINBAD_JUMP_SHORT_HOP_POWER
+				ldy system_index
+				lda sinbad_jump_short_hop_velocity_msb, y
 				sta player_a_velocity_v, x
-				lda #<-SINBAD_JUMP_SHORT_HOP_POWER
+				lda sinbad_jump_short_hop_velocity_lsb, y
 				sta player_a_velocity_v_low, x
 
 				rts
 
 		; Put initial jumping velocity
 		begin_to_jump:
-			lda #>-SINBAD_JUMP_POWER
+			ldy system_index
+			lda sinbad_jump_velocity_msb, y
 			sta player_a_velocity_v, x
-			lda #<-SINBAD_JUMP_POWER
+			lda sinbad_jump_velocity_lsb, y
 			sta player_a_velocity_v_low, x
 			;jmp end ; Fallthrough
 
