@@ -57,7 +57,7 @@ KIKI_RUNNING_MAX_VELOCITY = $0180
 KIKI_RUNNING_ACCELERATION = $40
 KIKI_TECH_SPEED = $0400
 KIKI_WALL_JUMP_SQUAT_END = 4
-KIKI_WALL_JUMP_VELOCITY_V = $fc40
+KIKI_WALL_JUMP_VELOCITY_V = $03c0
 KIKI_WALL_JUMP_VELOCITY_H = $0080
 
 ;
@@ -66,11 +66,12 @@ KIKI_WALL_JUMP_VELOCITY_H = $0080
 
 velocity_table(KIKI_AERIAL_SPEED, kiki_aerial_speed_msb, kiki_aerial_speed_lsb)
 velocity_table(-KIKI_AERIAL_SPEED, kiki_aerial_neg_speed_msb, kiki_aerial_neg_speed_lsb)
-velocity_table_u8(KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH, kiki_aerial_directional_influence_strength)
-velocity_table_u8(KIKI_AIR_FRICTION_STRENGTH, kiki_air_friction_strength)
+acceleration_table(KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH, kiki_aerial_directional_influence_strength)
+acceleration_table(KIKI_AIR_FRICTION_STRENGTH, kiki_air_friction_strength)
 velocity_table(KIKI_FASTFALL_SPEED, kiki_fastfall_speed_msb, kiki_fastfall_speed_lsb)
-velocity_table_u8(KIKI_GROUND_FRICTION_STRENGTH, kiki_ground_friction_strength)
-velocity_table_u8(KIKI_GROUND_FRICTION_STRENGTH/3, kiki_ground_friction_strength_weak)
+acceleration_table(KIKI_GROUND_FRICTION_STRENGTH, kiki_ground_friction_strength)
+acceleration_table(KIKI_GROUND_FRICTION_STRENGTH/3, kiki_ground_friction_strength_weak)
+acceleration_table(KIKI_GROUND_FRICTION_STRENGTH*3, kiki_ground_friction_strength_strong)
 velocity_table(KIKI_TECH_SPEED, kiki_tech_speed_msb, kiki_tech_speed_lsb)
 velocity_table(-KIKI_TECH_SPEED, kiki_tech_speed_neg_msb, kiki_tech_speed_neg_lsb)
 velocity_table(-KIKI_JUMP_POWER, kiki_jump_velocity_msb, kiki_jump_velocity_lsb)
@@ -1230,7 +1231,7 @@ kiki_start_inactive_state:
 	velocity_table(KIKI_RUNNING_MAX_VELOCITY, run_max_velocity_msb, run_max_velocity_lsb)
 	velocity_table(-KIKI_RUNNING_MAX_VELOCITY, run_max_neg_velocity_msb, run_max_neg_velocity_lsb)
 
-	velocity_table_u8(KIKI_RUNNING_ACCELERATION, run_acceleration)
+	acceleration_table(KIKI_RUNNING_ACCELERATION, run_acceleration)
 
 	&kiki_start_running:
 	.(
@@ -1706,8 +1707,6 @@ kiki_start_inactive_state:
 	crashing_duration:
 		.byt kiki_anim_crash_dur_pal, kiki_anim_crash_dur_ntsc
 
-	velocity_table_u8(KIKI_GROUND_FRICTION_STRENGTH*3, kiki_ground_friction_strength_strong)
-
 	&kiki_start_crashing:
 	.(
 		; Set state
@@ -2007,6 +2006,7 @@ kiki_start_inactive_state:
 .)
 
 .(
+	velocity_table(-KIKI_WALL_JUMP_VELOCITY_V, kiki_wall_jump_velocity_v_msb, kiki_wall_jump_velocity_v_lsb)
 	velocity_table(KIKI_WALL_JUMP_VELOCITY_H, kiki_wall_jump_velocity_h_msb, kiki_wall_jump_velocity_h_lsb)
 	velocity_table(-KIKI_WALL_JUMP_VELOCITY_H, kiki_wall_jump_velocity_h_neg_msb, kiki_wall_jump_velocity_h_neg_lsb)
 
@@ -2075,14 +2075,13 @@ kiki_start_inactive_state:
 		; Put initial jumping velocity
 		begin_to_jump:
 			; Vertical velocity
-			lda #>KIKI_WALL_JUMP_VELOCITY_V
+			ldy system_index
+			lda kiki_wall_jump_velocity_v_msb, y
 			sta player_a_velocity_v, x
-			lda #<KIKI_WALL_JUMP_VELOCITY_V
+			lda kiki_wall_jump_velocity_v_lsb, y
 			sta player_a_velocity_v_low, x
 
-
 			; Horizontal velocity
-			ldy system_index
 			lda player_a_direction, x
 			;cmp DIRECTION_LEFT ; useless while DIRECTION_LEFT is $00
 			bne jump_right
@@ -3212,6 +3211,7 @@ kiki_start_inactive_state:
 	COUNTER_GUARD_ACTIVE_DURATION = 18
 	COUNTER_GUARD_TOTAL_DURATION = 43
 
+	velocity_table(KIKI_COUNTER_GRAVITY, kiki_counter_gravity_msb, kiki_counter_gravity_lsb)
 	duration_table(COUNTER_GUARD_ACTIVE_DURATION, counter_guard_active_duration)
 	duration_table(COUNTER_GUARD_TOTAL_DURATION, counter_guard_total_duration)
 
@@ -3245,9 +3245,10 @@ kiki_start_inactive_state:
 		ror player_a_velocity_h_low, x
 
 		; Lower gravity
-		lda #<KIKI_COUNTER_GRAVITY
+		ldy system_index
+		lda kiki_counter_gravity_lsb, y
 		sta player_a_gravity_lsb, x
-		lda #>KIKI_COUNTER_GRAVITY
+		lda kiki_counter_gravity_msb, y
 		sta player_a_gravity_msb, x
 
 		rts

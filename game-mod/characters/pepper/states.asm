@@ -38,7 +38,7 @@ PEPPER_STATE_WRENCH_GRAB = CUSTOM_PLAYER_STATES_BEGIN + 21
 PEPPER_MAX_NUM_AERIAL_JUMPS = 1
 PEPPER_MAX_WALLJUMPS = 1
 PEPPER_WALL_JUMP_VELOCITY_H = $0100
-PEPPER_WALL_JUMP_VELOCITY_V = $fb80
+PEPPER_WALL_JUMP_VELOCITY_V = $0480
 PEPPER_WALL_JUMP_SQUAT_END = 4
 PEPPER_AIR_FRICTION_STRENGTH = 7
 PEPPER_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80
@@ -65,12 +65,12 @@ PEPPER_CARROT_NOT_PLACED = $80
 
 velocity_table(PEPPER_AERIAL_SPEED, pepper_aerial_speed_msb, pepper_aerial_speed_lsb)
 velocity_table(-PEPPER_AERIAL_SPEED, pepper_aerial_neg_speed_msb, pepper_aerial_neg_speed_lsb)
-velocity_table_u8(PEPPER_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH, pepper_aerial_directional_influence_strength)
-velocity_table_u8(PEPPER_AIR_FRICTION_STRENGTH, pepper_air_friction_strength)
+acceleration_table(PEPPER_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH, pepper_aerial_directional_influence_strength)
+acceleration_table(PEPPER_AIR_FRICTION_STRENGTH, pepper_air_friction_strength)
 velocity_table(PEPPER_FASTFALL_SPEED, pepper_fastfall_speed_msb, pepper_fastfall_speed_lsb)
-velocity_table_u8(PEPPER_GROUND_FRICTION_STRENGTH, pepper_ground_friction_strength)
-velocity_table_u8(PEPPER_GROUND_FRICTION_STRENGTH/3, pepper_ground_friction_strength_weak)
-velocity_table_u8(PEPPER_GROUND_FRICTION_STRENGTH*3, pepper_ground_friction_strength_strong)
+acceleration_table(PEPPER_GROUND_FRICTION_STRENGTH, pepper_ground_friction_strength)
+acceleration_table(PEPPER_GROUND_FRICTION_STRENGTH/3, pepper_ground_friction_strength_weak)
+acceleration_table(PEPPER_GROUND_FRICTION_STRENGTH*3, pepper_ground_friction_strength_strong)
 velocity_table(PEPPER_TECH_SPEED, pepper_tech_speed_msb, pepper_tech_speed_lsb)
 velocity_table(-PEPPER_TECH_SPEED, pepper_tech_speed_neg_msb, pepper_tech_speed_neg_lsb)
 velocity_table(-PEPPER_JUMP_POWER, pepper_jump_velocity_msb, pepper_jump_velocity_lsb)
@@ -1152,7 +1152,7 @@ pepper_input_idle_right:
 	velocity_table(PEPPER_RUNNING_MAX_VELOCITY, run_max_velocity_msb, run_max_velocity_lsb)
 	velocity_table(-PEPPER_RUNNING_MAX_VELOCITY, run_max_neg_velocity_msb, run_max_neg_velocity_lsb)
 
-	velocity_table_u8(PEPPER_RUNNING_ACCELERATION, run_acceleration)
+	acceleration_table(PEPPER_RUNNING_ACCELERATION, run_acceleration)
 
 	&pepper_start_running:
 	.(
@@ -2040,6 +2040,7 @@ pepper_input_idle_right:
 .)
 
 .(
+	velocity_table(-PEPPER_WALL_JUMP_VELOCITY_V, pepper_wall_jump_velocity_v_msb, pepper_wall_jump_velocity_v_lsb)
 	velocity_table(PEPPER_WALL_JUMP_VELOCITY_H, pepper_wall_jump_velocity_h_msb, pepper_wall_jump_velocity_h_lsb)
 	velocity_table(-PEPPER_WALL_JUMP_VELOCITY_H, pepper_wall_jump_velocity_h_neg_msb, pepper_wall_jump_velocity_h_neg_lsb)
 
@@ -2108,13 +2109,13 @@ pepper_input_idle_right:
 		; Put initial jumping velocity
 		begin_to_jump:
 			; Vertical velocity
-			lda #>PEPPER_WALL_JUMP_VELOCITY_V
+			ldy system_index
+			lda pepper_wall_jump_velocity_v_msb, y
 			sta player_a_velocity_v, x
-			lda #<PEPPER_WALL_JUMP_VELOCITY_V
+			lda pepper_wall_jump_velocity_v_lsb, y
 			sta player_a_velocity_v_low, x
 
 			; Horizontal velocity
-			ldy system_index
 			lda player_a_direction, x
 			;cmp DIRECTION_LEFT ; useless while DIRECTION_LEFT is $00
 			bne jump_right
@@ -2309,6 +2310,7 @@ pepper_input_idle_right:
 	&pepper_tick_aerial_side:
 	.(
 		; Set little upward velocity on the strong hit frame, dramatic effect
+		; Note - no NTSC conversion, it is barely one pixel per frame, would be unoticable if lower
 		ldy system_index
 		lda player_a_state_clock, x
 		cmp hit_time, y

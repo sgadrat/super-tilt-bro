@@ -60,10 +60,12 @@ SINBAD_TECH_SPEED = $0400
 
 velocity_table(SINBAD_AERIAL_SPEED, sinbad_aerial_speed_msb, sinbad_aerial_speed_lsb)
 velocity_table(-SINBAD_AERIAL_SPEED, sinbad_aerial_neg_speed_msb, sinbad_aerial_neg_speed_lsb)
-velocity_table_u8(SINBAD_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH, sinbad_aerial_directional_influence_strength)
-velocity_table_u8(SINBAD_AIR_FRICTION_STRENGTH, sinbad_air_friction_strength)
+acceleration_table(SINBAD_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH, sinbad_aerial_directional_influence_strength)
+acceleration_table(SINBAD_AIR_FRICTION_STRENGTH, sinbad_air_friction_strength)
 velocity_table(SINBAD_FASTFALL_GRAVITY, sinbad_fastfall_gravity_msb, sinbad_fastfall_gravity_lsb)
-velocity_table_u8(SINBAD_GROUND_FRICTION_STRENGTH, sinbad_ground_friction_strength)
+acceleration_table(SINBAD_GROUND_FRICTION_STRENGTH, sinbad_ground_friction_strength)
+acceleration_table(SINBAD_GROUND_FRICTION_STRENGTH/3, sinbad_ground_friction_strength_weak)
+acceleration_table(SINBAD_GROUND_FRICTION_STRENGTH*3, sinbad_ground_friction_strength_strong)
 velocity_table(SINBAD_TECH_SPEED, sinbad_tech_speed_msb, sinbad_tech_speed_lsb)
 velocity_table(-SINBAD_TECH_SPEED, sinbad_tech_speed_neg_msb, sinbad_tech_speed_neg_lsb)
 velocity_table(-SINBAD_JUMP_POWER, sinbad_jump_velocity_msb, sinbad_jump_velocity_lsb)
@@ -571,7 +573,7 @@ sinbad_start_inactive_state:
 	velocity_table(SINBAD_RUNNING_SPEED_MAX, run_max_velocity_msb, run_max_velocity_lsb)
 	velocity_table(-SINBAD_RUNNING_SPEED_MAX, run_max_neg_velocity_msb, run_max_neg_velocity_lsb)
 
-	velocity_table_u8(SINBAD_RUNNING_SPEED_ACCELERATION, run_acceleration)
+	acceleration_table(SINBAD_RUNNING_SPEED_ACCELERATION, run_acceleration)
 
 	&sinbad_start_running:
 	.(
@@ -1447,10 +1449,11 @@ sinbad_start_inactive_state:
 
 .(
 	CHARGE_DURATION = 120
-	MOVING_VELOCITY_V = $ff80
+	MOVING_VELOCITY_V = $0080
 	MOVING_VELOCITY_H = $0400
 
 	duration_table(CHARGE_DURATION, charge_duration)
+	velocity_table(-MOVING_VELOCITY_V, moving_velocity_v_msb, moving_velocity_v_lsb)
 	velocity_table(MOVING_VELOCITY_H, moving_velocity_h_msb, moving_velocity_h_lsb)
 	velocity_table(-MOVING_VELOCITY_H, moving_velocity_h_neg_msb, moving_velocity_h_neg_lsb)
 
@@ -1538,13 +1541,13 @@ sinbad_start_inactive_state:
 
 		moving:
 			; Set vertical velocity (fixed)
-			lda #>MOVING_VELOCITY_V
+			ldy system_index
+			lda moving_velocity_v_msb, y
 			sta player_a_velocity_v, x
-			lda #<MOVING_VELOCITY_V
+			lda moving_velocity_v_lsb, y
 			sta player_a_velocity_v_low, x
 
 			; Set horizontal velocity (depending on direction)
-			ldy system_index
 			lda player_a_direction, x
 			cmp DIRECTION_LEFT
 			bne right_velocity
@@ -1722,8 +1725,6 @@ sinbad_start_inactive_state:
 .(
 	crashing_duration:
 		.byt anim_sinbad_crashing_dur_pal, anim_sinbad_crashing_dur_ntsc
-
-	velocity_table_u8(SINBAD_GROUND_FRICTION_STRENGTH*3, sinbad_ground_friction_strength_strong)
 
 	&sinbad_start_crashing:
 	.(
@@ -2101,7 +2102,9 @@ sinbad_start_inactive_state:
 
 .(
 	SPE_UP_PREPARATION_DURATION = 3
-	SPE_UP_POWER = $fa00
+	SPE_UP_POWER = $0600
+
+	velocity_table(-SPE_UP_POWER, spe_up_power_msb, spe_up_power_lsb)
 
 	&sinbad_start_spe_up:
 	.(
@@ -2159,9 +2162,10 @@ sinbad_start_inactive_state:
 			sta player_a_state_field1, x
 
 			; Set jumping velocity
-			lda #>SPE_UP_POWER
+			ldy system_index
+			lda spe_up_power_msb, y
 			sta player_a_velocity_v, x
-			lda #<SPE_UP_POWER
+			lda spe_up_power_lsb, y
 			sta player_a_velocity_v_low, x
 
 			; Set the movement animation
@@ -2194,8 +2198,6 @@ sinbad_start_inactive_state:
 .(
 	spe_down_duration:
 		.byt anim_sinbad_spe_down_dur_pal, anim_sinbad_spe_down_dur_ntsc
-
-	velocity_table_u8(SINBAD_GROUND_FRICTION_STRENGTH/3, sinbad_ground_friction_strength_weak)
 
 	&sinbad_start_spe_down:
 	.(
@@ -2601,9 +2603,10 @@ sinbad_start_inactive_state:
 
 .(
 	SINBAD_WALL_JUMP_SQUAT_END = 4
-	SINBAD_WALL_JUMP_VELOCITY_V = $fb80
+	SINBAD_WALL_JUMP_VELOCITY_V = $0480
 	SINBAD_WALL_JUMP_VELOCITY_H = $0100
 
+	velocity_table(-SINBAD_WALL_JUMP_VELOCITY_V, sinbad_wall_jump_velocity_v_msb, sinbad_wall_jump_velocity_v_lsb)
 	velocity_table(SINBAD_WALL_JUMP_VELOCITY_H, sinbad_wall_jump_velocity_h_msb, sinbad_wall_jump_velocity_h_lsb)
 	velocity_table(-SINBAD_WALL_JUMP_VELOCITY_H, sinbad_wall_jump_velocity_h_neg_msb, sinbad_wall_jump_velocity_h_neg_lsb)
 
@@ -2672,13 +2675,13 @@ sinbad_start_inactive_state:
 			;TODO set animation
 
 			; Vertical velocity
-			lda #>SINBAD_WALL_JUMP_VELOCITY_V
+			ldy system_index
+			lda sinbad_wall_jump_velocity_v_msb, y
 			sta player_a_velocity_v, x
-			lda #<SINBAD_WALL_JUMP_VELOCITY_V
+			lda sinbad_wall_jump_velocity_v_lsb, y
 			sta player_a_velocity_v_low, x
 
 			; Horizontal velocity
-			ldy system_index
 			lda player_a_direction, x
 			;cmp DIRECTION_LEFT ; useless while DIRECTION_LEFT is $00
 			bne jump_right
