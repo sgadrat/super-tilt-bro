@@ -38,6 +38,7 @@
 #include "game/logic/utils_static.asm"
 #include "game/data/music/notes_table.asm"
 #include "game/data/rom_constants_static.asm"
+#include "game/data/pal_to_ntsc_velocity.asm"
 
 ;
 ; Filler

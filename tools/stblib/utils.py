@@ -14,6 +14,14 @@ def uintasm16(i):
 	s = struct.pack('>H', i)
 	return '$%02x%02x' % (s[0], s[1])
 
+def intasm32(i):
+	s = struct.pack('>i', i)
+	return '$%02x%02x%02x%02x' % (s[0], s[1], s[2], s[3])
+
+def uintasm32(i):
+	s = struct.pack('>I', i)
+	return '$%02x%02x%02x%02x' % (s[0], s[1], s[2], s[3])
+
 def asmint(s):
 	if s[0] == '$':
 		return int(s[1:], 16)

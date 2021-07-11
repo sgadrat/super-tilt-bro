@@ -939,9 +939,34 @@ apply_force_vector:
 	lda player_a_velocity_v, x
 	sta screen_shake_nextval_y
 
-	; Adapt screenshake and hitstun duration in ntsc
+	; Adapt resulting velocity, screenshake and hitstun duration in ntsc
 	lda system_index
 	beq ntsc_ok
+		; Vertical velocity
+		.(
+			lda player_a_velocity_v, x
+			bmi negative
+				positive:
+					PAL_TO_NTSC_VELOCITY_POSITIVE(player_a_velocity_v_low COMMA x, player_a_velocity_v COMMA x, player_a_velocity_v_low COMMA x, player_a_velocity_v COMMA x)
+					jmp ok
+				negative:
+					PAL_TO_NTSC_VELOCITY_NEGATIVE(player_a_velocity_v_low COMMA x, player_a_velocity_v COMMA x, player_a_velocity_v_low COMMA x, player_a_velocity_v COMMA x)
+			ok:
+		.)
+
+		; Horizontal velocity
+		.(
+			lda player_a_velocity_h, x
+			bmi negative
+				positive:
+					PAL_TO_NTSC_VELOCITY_POSITIVE(player_a_velocity_h_low COMMA x, player_a_velocity_h COMMA x, player_a_velocity_h_low COMMA x, player_a_velocity_h COMMA x)
+					jmp ok
+				negative:
+					PAL_TO_NTSC_VELOCITY_NEGATIVE(player_a_velocity_h_low COMMA x, player_a_velocity_h COMMA x, player_a_velocity_h_low COMMA x, player_a_velocity_h COMMA x)
+			ok:
+		.)
+
+		; Screen shake
 		lda screen_shake_counter
 		lsr
 		lsr
@@ -949,6 +974,7 @@ apply_force_vector:
 		lda plus_20_percent, y
 		sta screen_shake_counter
 
+		; Hitstun
 		lda player_a_hitstun, x
 		lsr
 		lsr

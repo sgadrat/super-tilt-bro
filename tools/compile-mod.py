@@ -10,6 +10,8 @@ import stblib.utils
 import sys
 import textwrap
 
+FIRST_AVAILABLE_BANK = 6
+
 def text_asm(text, size, space_tile):
 	"""
 	Convert a string to a fixed-size sequence of tile indexes in assembly
@@ -465,7 +467,7 @@ def generate_banks(char_to_bank, tileset_to_bank, game_dir):
 			#include "game/banks/data05_bank.asm"
 		"""))
 
-		for bank_number in range(6, 31):
+		for bank_number in range(FIRST_AVAILABLE_BANK, 31):
 			bank_index_file.write('\n#define CURRENT_BANK_NUMBER {}\n'.format(stblib.utils.uintasm8(bank_number)))
 			if bank_number in char_to_bank.values() or bank_number in tileset_to_bank.values():
 				bank_index_file.write('#include "game/banks/data{:02d}_bank.asm"\n'.format(bank_number))
@@ -549,8 +551,6 @@ def generate_banks(char_to_bank, tileset_to_bank, game_dir):
 			""".format_map(locals())))
 
 def main():
-	FIRST_AVAILABLE_BANK = 6
-
 	# Parse command line
 	if len(sys.argv) < 3 or sys.argv[1] == '-h' or sys.argv[1] == '--help':
 		print('Compile a game mod stored in JSON format to Super Tilt Bro. source files')

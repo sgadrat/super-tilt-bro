@@ -53,3 +53,35 @@ lbl: \
 #define acceleration_table(pal_acc, lbl) \
 lbl: \
 	.byt (pal_acc), ((pal_acc)*50)/72
+
+; Multiply an unsigned 16 bit integer by 0.8333333333333334
+;  Overwrites register Y, and register A
+#define PAL_TO_NTSC_VELOCITY_POSITIVE(orig_lsb,orig_msb,result_lsb,result_msb) \
+.( :\
+	ldy orig_lsb :\
+	lda pal_to_ntsc_velocity_high_byte, y :\
+	:\
+	ldy orig_msb :\
+	clc :\
+	adc pal_to_ntsc_velocity_low_byte, y :\
+	sta result_lsb :\
+	lda pal_to_ntsc_velocity_high_byte, y :\
+	adc #0 :\
+	sta result_msb :\
+.)
+
+; Multiply a negative 16 bit integer by 0.8333333333333334
+;  Overwrites register Y, and register A
+#define PAL_TO_NTSC_VELOCITY_NEGATIVE(orig_lsb,orig_msb,result_lsb,result_msb) \
+.( :\
+	ldy orig_lsb :\
+	lda pal_to_ntsc_velocity_high_byte, y :\
+	:\
+	ldy orig_msb :\
+	clc :\
+	adc pal_to_ntsc_velocity_neg_low_byte, y :\
+	sta result_lsb :\
+	lda pal_to_ntsc_velocity_neg_high_byte, y :\
+	adc #0 :\
+	sta result_msb :\
+.)
