@@ -40,7 +40,7 @@
 ;     jsr animation_tick
 ;
 
-ANIMATION_NTSC_CNT_RESET_VALUE = 5 ; double everyt fifth frame
+ANIMATION_NTSC_CNT_RESET_VALUE = 5 ; double every fifth frame
 
 ; Initialize a memory location to be a valid animation state
 ;  tmpfield11, tmpfield12 - vector to the animation state
@@ -116,6 +116,11 @@ animation_state_change_animation:
 	ldy #ANIMATION_STATE_OFFSET_DATA_VECTOR_MSB
 	sta (anim_state), y
 	ldy #ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB
+	sta (anim_state), y
+
+	; Reinitialize virtual frame counter
+	lda #ANIMATION_NTSC_CNT_RESET_VALUE
+	ldy #ANIMATION_STATE_OFFSET_NTSC_CNT
 	sta (anim_state), y
 
 	rts
@@ -199,8 +204,9 @@ animation_tick:
 	frame_vector = tmpfield3
 	;tmpfield4 is frame_vector MSB
 
-	; On NTSC, do nothing every 6th frame to simulate PAL's pace by doubling the 5th frame
-	;  Note this must stay deterministic, so NTSC frame data is still stable
+	; On NTSC, do nothing every six frames to simulate PAL's pace
+	;  Note This must stay deterministic, so NTSC frame data is still stable
+	;  Note Beware of the logic for doubling fifth frame, not the sixth. It allows to double the last frame of an animation without looping for one frame.
 	.(
 		ldy system_index
 		beq skip
@@ -208,10 +214,13 @@ animation_tick:
 			lda (anim_state), y
 			sec
 			sbc #1
-			bpl ok
-				lda #ANIMATION_NTSC_CNT_RESET_VALUE
+			bmi reset_cnt
+			bne ok
+			skip_tick:
 				sta (anim_state), y
-				jmp end
+				rts
+			reset_cnt:
+				lda #ANIMATION_NTSC_CNT_RESET_VALUE
 			ok:
 			sta (anim_state), y
 		skip:
