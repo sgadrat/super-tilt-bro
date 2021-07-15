@@ -66,7 +66,7 @@ else:
 			frame_count -= 1
 
 			# Apply gravity (we could also add air friction and directional influence if we wanted to compute without hitstun)
-			velocity = merge_velocity(velocity, {'x': velocity['x'], 'y': gravity << 8}, 0x60)
+			velocity = merge_velocity(velocity, {'x': velocity['x'], 'y': gravity}, 0x60)
 
 			result.append({
 				'x': result[-1]['x'] + velocity['x'],
@@ -78,7 +78,7 @@ else:
 	hitstun_trajectory = simulate_throw_trajectory(
 		origin = start_pos,
 		knockback = {'x': knockback_h, 'y': knockback_v},
-		gravity = 2, # DEFAULT_GRAVITY
+		gravity = 0x0200, # DEFAULT_GRAVITY
 		frame_count = hitstun_duration
 	)
 	hitstun_end_pos = hitstun_trajectory[-1]
