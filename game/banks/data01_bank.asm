@@ -36,6 +36,12 @@ bank_data_sfx:
 #echo Sound effects size:
 #print *-bank_data_sfx
 
+bank_data_charset_alphanum_fg0_bg2_begin:
+#include "game/data/tilesets/charset_alphanum_fg0_bg2.asm"
+#echo
+#echo Charset alphanum (fg=0 bg=2):
+#print *-bank_data_charset_alphanum_fg0_bg2_begin
+
 bank_data01_end:
 
 #echo

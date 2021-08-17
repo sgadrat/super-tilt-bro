@@ -32,14 +32,16 @@ extern uint8_t const menu_online_mode_login_window;
 extern uint8_t const menu_online_mode_nametable;
 extern uint8_t const menu_online_mode_palette;
 extern uint8_t const menu_online_mode_setting_select_window;
+extern uint8_t const tileset_charset_alphanum_fg0_bg2;
 extern uint8_t const tileset_menu_online_mode;
 extern uint8_t const tileset_menu_online_mode_sprites;
 
 extern uint8_t volatile RAINBOW_MAPPER_VERSION;
 
 extern uint8_t const MENU_ONLINE_MODE_TILESET_BANK_NUMBER; // Actually a label, use its address or "tileset_bank()"
+extern uint8_t const TILESET_CHARSET_ALPHANUM_FG0_BG2_BANK_NUMBER; // Actually a label, use its address or "charset_bank()"
 
-static uint8_t const TILE_CHAR_0 = 219;
+static uint8_t const TILE_CHAR_0 = 220;
 static uint8_t const TILE_CHAR_1 = TILE_CHAR_0 + ('1' - '0');
 static uint8_t const TILE_CHAR_2 = TILE_CHAR_0 + ('2' - '0');
 static uint8_t const TILE_CHAR_3 = TILE_CHAR_0 + ('3' - '0');
@@ -103,9 +105,9 @@ extern uint8_t const TILE_MENU_ONLINE_MODE_DIALOGS_0E;
 // Constants specific to this file
 ///////////////////////////////////////
 
-static uint8_t const TILE_EMPTY_TEXT = 85;
-static uint8_t const TILE_SPACE = 3;
-static uint8_t const TILE_CHAR_HIDDEN = 94;
+static uint8_t const TILE_EMPTY_TEXT = 0xd0;
+static uint8_t const TILE_SPACE = 0x2b;
+static uint8_t const TILE_CHAR_HIDDEN = 0xd9;
 
 static uint8_t const NB_OPTIONS = 4;
 static uint8_t const OPTION_CASUAL = 0;
@@ -143,28 +145,28 @@ typedef enum {
 
 static uint8_t const earth_sprite_per_option[][NB_SPRITE_PER_OPTION] = {
 	{
-		255, 255, 0, 1,
-		255, 2, 3, 4,
-		5, 6, 7, 8,
-		9, 10, 11, 12
+		255, 255,   0,   1,
+		255,   2,   3,   4,
+		  5,   6,   7,   8,
+		  9,  10,  11,  12,
 	},
 	{
-		13, 14, 255, 255,
-		15, 16, 17, 255,
-		18, 19, 20, 21,
-		22, 23, 24, 25
+		13,  14, 255, 255,
+		15,  16,  17, 255,
+		18,  19,  20,  21,
+		22,  23,  24,  25,
 	},
 	{
-		26, 27, 28, 29,
-		30, 31, 32, 33,
-		255, 34, 35, 36,
-		255, 255, 37, 38
+		 26,  27,  28,  29,
+		 30,  31,  32,  33,
+		255,  34,  35,  36,
+		255, 255,  37,  38,
 	},
 	{
-		39, 40, 41, 42,
-		43, 44, 45, 46,
-		47, 48, 49, 255,
-		50, 51, 255, 255
+		39,  40,  41,  42,
+		43,  44,  45,  46,
+		47,  48,  49, 255,
+		50,  51, 255, 255,
 	},
 };
 
@@ -257,11 +259,18 @@ static uint8_t const STNP_LOGIN_CHARSET_SIZE = sizeof(STNP_LOGIN_CHARSET);
 // Utility functions
 ///////////////////////////////////////
 
+// Nametable's attribute byte
+#define ATT(br, bl, tr, tl) ((br << 6) + (bl << 4) + (tr << 2) + tl)
+
 static void place_earth_sprites();
 static void highlight_option();
 
 static uint8_t tileset_bank() {
 	return ptr_lsb(&MENU_ONLINE_MODE_TILESET_BANK_NUMBER);
+}
+
+static uint8_t charset_bank() {
+	return ptr_lsb(&TILESET_CHARSET_ALPHANUM_FG0_BG2_BANK_NUMBER);
 }
 
 static void long_cpu_to_ppu_copy_tileset(uint8_t bank, uint8_t const* tileset, uint16_t ppu_addr) {
@@ -285,11 +294,40 @@ static void yield() {
 	reset_nt_buffers();
 }
 
+static void draw_dialog_attributes() {
+	static uint8_t const buffer_header[3] = {0x23, 0xd1, 22};
+	static uint8_t const palette_buffer[][22] = {
+		{
+			/*.*/         ATT(3,1,1,1), ATT(3,3,1,1), ATT(3,3,0,1), ATT(3,3,0,0), ATT(3,3,0,0), ATT(0,3,0,0), ATT(0,0,0,0),
+			ATT(0,0,1,0), ATT(3,1,3,1), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(0,3,0,3), ATT(0,0,0,0),
+			ATT(0,0,1,0), ATT(3,0,3,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(0,3,0,3)
+		},
+		{
+			/*.*/         ATT(3,0,0,0), ATT(3,3,0,0), ATT(3,3,0,0), ATT(3,3,1,0), ATT(3,3,1,1), ATT(1,3,1,1), ATT(0,1,0,1),
+			ATT(0,0,0,0), ATT(3,1,3,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(0,3,1,3), ATT(0,0,0,1),
+			ATT(0,0,1,0), ATT(3,0,3,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(0,3,0,3)
+		},
+		{
+			/*.*/         ATT(3,0,0,0), ATT(3,3,0,0), ATT(3,3,0,0), ATT(3,3,0,0), ATT(3,3,0,0), ATT(0,3,0,0), ATT(0,0,0,0),
+			ATT(0,0,0,0), ATT(3,1,3,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(0,3,0,3), ATT(0,0,0,0),
+			ATT(1,0,1,0), ATT(3,1,3,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(0,3,0,3)
+		},
+		{
+			/*.*/         ATT(3,0,0,0), ATT(3,3,0,0), ATT(3,3,0,0), ATT(3,3,0,0), ATT(3,3,0,0), ATT(0,3,0,0), ATT(0,0,0,0),
+			ATT(0,0,0,0), ATT(3,1,3,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(0,3,0,3), ATT(0,0,0,0),
+			ATT(0,0,1,0), ATT(3,0,3,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(1,3,0,3)
+		},
+	};
+
+	wrap_construct_nt_buffer(buffer_header, palette_buffer[*online_mode_selection_current_option]);
+}
+
 static void draw_dialog(uint16_t position, uint8_t const* window, uint8_t lines_per_frame) {
 	uint8_t const width = window[0];
 	uint8_t n_lines = window[1];
 	uint8_t const* line = window + 2;
 
+	// Construct dialog window
 	while (n_lines > 0) {
 		for (uint8_t i = 0; n_lines > 0 && i < lines_per_frame; ++i) {
 			// Construct nt buffer's header
@@ -307,6 +345,9 @@ static void draw_dialog(uint16_t position, uint8_t const* window, uint8_t lines_
 		}
 		yield();
 	}
+
+	// Update nametable attributes
+	draw_dialog_attributes();
 }
 
 static void draw_dialog_fill_line(uint8_t start, uint8_t fill, uint8_t end) {
@@ -336,6 +377,7 @@ static void draw_dialog_string(uint16_t position, uint8_t lines_per_frame, char*
 	uint8_t const width = 20;
 	uint8_t const n_lines = 10;
 
+	// Construct dialog window
 	uint8_t current_line = 0;
 	while (current_line < n_lines) {
 		for (uint8_t i = 0; current_line < n_lines && i < lines_per_frame; ++i) {
@@ -383,6 +425,9 @@ static void draw_dialog_string(uint16_t position, uint8_t lines_per_frame, char*
 		}
 		yield();
 	}
+
+	// Update nametable attibutes
+	draw_dialog_attributes();
 }
 
 static void hide_earth_sprites() {
@@ -423,17 +468,18 @@ static void hide_dialog(uint16_t position, uint8_t lines_per_frame) {
 ///////////////////////////////////////
 
 static void draw_logged_name() {
-	// nt buffer header: 16 characters in the tittle bar
-	static uint8_t const buffer_header[] = {0x20, 0x6d, 16};
+	// nt buffer header: 16 characters in the status bar
+	uint8_t const name_length = 9; // 16 is actual name length, but screen space is rare 
+	static uint8_t const buffer_header[] = {0x20, 0x77, name_length};
 
 	// Compute nt buffer payload
-	uint8_t const TILE_TITLE_SPACE = 0x03;
+	uint8_t const TILE_TITLE_SPACE = 0x00;
 	if (*network_logged != LOGIN_LOGGED) {
-		for (uint8_t char_num = 0; char_num < 16; ++char_num) {
+		for (uint8_t char_num = 0; char_num < name_length; ++char_num) {
 			online_mode_selection_mem_buffer[char_num] = TILE_TITLE_SPACE;
 		}
 	}else {
-		for (uint8_t char_num = 0; char_num < 16; ++char_num) {
+		for (uint8_t char_num = 0; char_num < name_length; ++char_num) {
 			uint8_t const original_char = network_login[char_num];
 			uint8_t const buffer_char = (original_char == 0 ? TILE_TITLE_SPACE : STNP_LOGIN_CHARSET[original_char]);
 			online_mode_selection_mem_buffer[char_num] = buffer_char;
@@ -663,14 +709,6 @@ static uint8_t select_setting() {
 	// Display selection window
 	draw_dialog(0x2146, &menu_online_mode_setting_select_window, 3);
 	hide_earth_sprites();
-
-	static uint8_t const palette_buffer[] = {
-			0x23, 0xd1, 22,
-			/*.*/ 0xc0, 0xf0, 0xf0, 0xf0, 0xf0, 0x30, 0x00,
-			0x00, 0xcc, 0xaa, 0xaa, 0xaa, 0xaa, 0x33, 0x00,
-			0x00, 0xcc, 0xfa, 0xfa, 0xfa, 0xfa, 0x73
-	};
-	wrap_push_nt_buffer(palette_buffer);
 	yield();
 
 	// Initialize cursor animation
@@ -712,24 +750,10 @@ static void anonymous_login_draw_connexion_window() {
 
 	switch (*online_mode_selection_current_option) {
 		case 0: {
-			static uint8_t const palette_buffer_option0[] = {
-				0x23, 0xd1, 22,
-				/*.*/ 0xd5, 0xf5, 0xf5, 0xf0, 0xf0, 0x30, 0x00,
-				0x55, 0xdd, 0xaa, 0xaa, 0xaa, 0xaa, 0x33, 0x00,
-				0x00, 0xcc, 0xfa, 0xfa, 0xfa, 0xfa, 0x33
-			};
-			wrap_push_nt_buffer(palette_buffer_option0);
 			hide_earth_sprites();
 			break;
 		}
 		case 2: {
-			static uint8_t const palette_buffer_option2[] = {
-				0x23, 0xd1, 22,
-				/*.*/ 0xc0, 0xf0, 0xf0, 0xf0, 0xf0, 0x30, 0x00,
-				0x00, 0xcc, 0xaa, 0xaa, 0xaa, 0xaa, 0x33, 0x00,
-				0x55, 0xdc, 0xfa, 0xfa, 0xfa, 0xfa, 0x33
-			};
-			wrap_push_nt_buffer(palette_buffer_option2);
 			clear_form_cursor();
 			break;
 		}
@@ -1065,22 +1089,6 @@ static void password_login(uint8_t create) {
 	// Display login window
 	draw_dialog(0x2146, &menu_online_mode_login_window, 3);
 	hide_earth_sprites();
-
-	static uint8_t const palette_buffer[][25] = {
-		{
-			0x23, 0xd1, 22,
-			/*.*/ 0xc0, 0xf0, 0xf0, 0xf5, 0xf5, 0x75, 0x55,
-			0x00, 0xcc, 0xaa, 0xaa, 0xaa, 0xaa, 0x37, 0x55,
-			0x00, 0xcc, 0xfa, 0xfa, 0xfa, 0xfa, 0x33
-		},
-		{
-			0x23, 0xd1, 22,
-			/*.*/ 0xc0, 0xf0, 0xf0, 0xf0, 0xf0, 0x30, 0x00,
-			0x00, 0xcc, 0xaa, 0xaa, 0xaa, 0xaa, 0x33, 0x00,
-			0x00, 0xcc, 0xfa, 0xfa, 0xfa, 0xfa, 0x73
-		},
-	};
-	wrap_push_nt_buffer(palette_buffer[create]);
 	yield();
 
 	// Initialize cursor animation
@@ -1226,14 +1234,6 @@ static uint8_t enter_game_password() {
 	// Display password window
 	draw_dialog(0x2146, &menu_online_mode_game_password_window, 3);
 	hide_earth_sprites();
-
-	static uint8_t const palette_buffer[] = {
-		0x23, 0xd1, 22,
-		/*.*/ 0xc0, 0xf0, 0xf0, 0xf0, 0xf0, 0x30, 0x00,
-		0x00, 0xcc, 0xaa, 0xaa, 0xaa, 0xaa, 0x33, 0x00,
-		0x55, 0xdc, 0xfa, 0xfa, 0xfa, 0xfa, 0x33
-	};
-	wrap_push_nt_buffer(palette_buffer);
 	yield();
 
 	// Initialize cursor animation
@@ -1427,41 +1427,48 @@ static void highlight_option() {
 
 	// Set boxes palette
 	static uint8_t const buffers_header[][3+48] = {
+		// Reference, nothing active:
+		//  ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,3,0), ATT(0,0,3,3), ATT(0,0,3,3), ATT(0,0,0,3), ATT(0,0,0,0), ATT(0,0,0,0),
+		//  ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(2,0,0,0), ATT(0,2,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+		//  ATT(0,0,0,0), ATT(1,1,0,0), ATT(2,0,0,0), ATT(2,2,2,0), ATT(2,2,0,2), ATT(0,2,0,0), ATT(0,1,0,0), ATT(0,0,0,0),
+		//  ATT(0,0,1,0), ATT(0,0,1,0), ATT(0,0,2,0), ATT(2,0,2,2), ATT(0,2,2,2), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,1),
+		//  ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,2,0), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+		//  ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 		{
 			0x23, 0xc8, 48,
-			0x5f, 0x50, 0x50, 0x50, 0x00, 0x00, 0x00, 0x00,
-			0x55, 0x55, 0x55, 0x11, 0x00, 0x00, 0x00, 0x00,
-			0x05, 0x05, 0x05, 0x01, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			ATT(1,0,0,0), ATT(1,1,0,0), ATT(1,1,3,0), ATT(0,1,3,3), ATT(0,0,3,3), ATT(0,0,0,3), ATT(0,0,0,0), ATT(0,0,0,0),
+			ATT(1,0,1,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(2,1,0,1), ATT(0,2,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+			ATT(0,0,1,0), ATT(1,1,1,1), ATT(2,0,1,1), ATT(2,2,2,1), ATT(2,2,0,2), ATT(0,2,0,0), ATT(0,1,0,0), ATT(0,0,0,0),
+			ATT(0,0,1,0), ATT(0,0,1,0), ATT(0,0,2,0), ATT(2,0,2,2), ATT(0,2,2,2), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,1),
+			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,2,0), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), 
 		},
 		{
 			0x23, 0xc8, 48,
-			0x0f, 0x00, 0x00, 0x00, 0x50, 0x50, 0x50, 0x50,
-			0x00, 0x00, 0x00, 0x00, 0x44, 0x55, 0x55, 0x55,
-			0x00, 0x00, 0x00, 0x00, 0x04, 0x05, 0x05, 0x05,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,3,0), ATT(0,0,3,3), ATT(1,0,3,3), ATT(1,1,0,3), ATT(1,1,0,0), ATT(0,1,0,0),
+			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(2,0,0,0), ATT(1,2,1,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(0,1,0,1),
+			ATT(0,0,0,0), ATT(1,1,0,0), ATT(2,0,0,0), ATT(2,2,2,0), ATT(2,2,1,2), ATT(0,2,1,1), ATT(0,1,1,1), ATT(0,0,0,1),
+			ATT(0,0,1,0), ATT(0,0,1,0), ATT(0,0,2,0), ATT(2,0,2,2), ATT(0,2,2,2), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,1),
+			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,2,0), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 		},
 		{
 			0x23, 0xc8, 48,
-			0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x50, 0x50, 0x50, 0x10, 0x00, 0x00, 0x00, 0x00,
-			0x55, 0x55, 0x55, 0x11, 0x00, 0x00, 0x00, 0x00,
-			0x05, 0x05, 0x05, 0x05, 0x00, 0x00, 0x00, 0x00,
+			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,3,0), ATT(0,0,3,3), ATT(0,0,3,3), ATT(0,0,0,3), ATT(0,0,0,0), ATT(0,0,0,0),
+			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(2,0,0,0), ATT(0,2,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+			ATT(0,0,0,0), ATT(1,1,0,0), ATT(2,0,0,0), ATT(2,2,2,0), ATT(2,2,0,2), ATT(0,2,0,0), ATT(0,1,0,0), ATT(0,0,0,0),
+			ATT(1,0,1,0), ATT(1,1,1,0), ATT(1,1,2,0), ATT(2,1,2,2), ATT(0,2,2,2), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,1),
+			ATT(1,0,1,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(0,1,2,1), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+			ATT(0,0,1,0), ATT(0,0,1,1), ATT(0,0,1,1), ATT(0,0,0,1), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 		},
 		{
 			0x23, 0xc8, 48,
-			0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x40, 0x50, 0x50, 0x50,
-			0x00, 0x00, 0x00, 0x00, 0x44, 0x55, 0x55, 0x55,
-			0x00, 0x00, 0x00, 0x00, 0x05, 0x05, 0x05, 0x05,
+			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,3,0), ATT(0,0,3,3), ATT(0,0,3,3), ATT(0,0,0,3), ATT(0,0,0,0), ATT(0,0,0,0),
+			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(2,0,0,0), ATT(0,2,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+			ATT(0,0,0,0), ATT(1,1,0,0), ATT(2,0,0,0), ATT(2,2,2,0), ATT(2,2,0,2), ATT(0,2,0,0), ATT(0,1,0,0), ATT(0,0,0,0),
+			ATT(0,0,1,0), ATT(0,0,1,0), ATT(0,0,2,0), ATT(2,0,2,2), ATT(1,2,2,2), ATT(1,1,0,2), ATT(1,1,0,0), ATT(0,1,0,1),
+			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,2,0), ATT(1,0,1,2), ATT(1,1,1,1), ATT(1,1,1,1), ATT(0,1,0,1),
+			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,1,0), ATT(0,0,1,1), ATT(0,0,1,1), ATT(0,0,0,1),
 		},
 	};
 	wrap_push_nt_buffer(buffers_header[*online_mode_selection_current_option]);
@@ -1585,7 +1592,11 @@ static void tick_satellite() {
 
 	// Hack sprite to have it behind background when is should be behind earth
 	if (Anim(online_mode_selection_satellite_anim)->first_sprite_num == SATELLITE_ANIM_SPRITE_BG) {
-		oam_mirror[SATELLITE_ANIM_SPRITE_BG * 4 + 2] = 0x21;
+		if (Anim(online_mode_selection_satellite_anim)->x >= 80 && Anim(online_mode_selection_satellite_anim)->x <= 168) {
+			oam_mirror[SATELLITE_ANIM_SPRITE_BG * 4] = 0xfe;
+		}else {
+			oam_mirror[SATELLITE_ANIM_SPRITE_BG * 4 + 2] = 0x21;
+		}
 	}
 }
 
@@ -1594,6 +1605,7 @@ void init_online_mode_screen_extra() {
 	wrap_construct_palettes_nt_buffer(&menu_online_mode_palette);
 	wrap_draw_zipped_nametable(&menu_online_mode_nametable);
 	long_cpu_to_ppu_copy_tileset(tileset_bank(), &tileset_menu_online_mode, 0x1000);
+	long_cpu_to_ppu_copy_tileset(charset_bank(), &tileset_charset_alphanum_fg0_bg2,0x1dc0);
 	long_cpu_to_ppu_copy_tileset(tileset_bank(), &tileset_menu_online_mode_sprites, 0x0000);
 
 	// Place earth sprites
