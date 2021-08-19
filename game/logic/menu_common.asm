@@ -66,7 +66,8 @@ set_menu_chr:
 
 	jsr cpu_to_ppu_copy_tileset_background
 
-	rts
+	jmp copy_common_tileset
+	;rts ; useless, jump to subroutine
 .)
 
 tick_menu:

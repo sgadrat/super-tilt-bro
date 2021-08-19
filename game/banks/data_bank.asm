@@ -27,6 +27,12 @@ bank_data_credits_begin:
 #echo Credits size:
 #print *-bank_data_credits_begin
 
+bank_data_charset_alphanum_fg1_bg2_begin:
+#include "game/data/tilesets/charset_alphanum_fg1_bg2.asm"
+#echo
+#echo Charset alphanum (fg=1 bg=2):
+#print *-bank_data_charset_alphanum_fg1_bg2_begin
+
 bank_data_end:
 
 #echo

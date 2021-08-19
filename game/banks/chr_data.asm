@@ -250,7 +250,7 @@ TILE_NTSC_INDICATOR = (*-$8000)/16
 .dsb $9000-*, 0
 #endif
 
-; No CHR-TILES in this brank (should always be handled by gamestates logic)
+; No CHR-TILES in this bank (should always be handled by gamestates logic)
 
 #if $a000-* < 0
 #error VRAM pattern2 data occupies too much space

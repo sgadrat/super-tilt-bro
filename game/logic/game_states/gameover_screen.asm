@@ -15,6 +15,8 @@ init_gameover_screen:
 		sta tileset_addr+1
 
 		jsr cpu_to_ppu_copy_tileset_background
+
+		jsr copy_common_tileset
 	.)
 
 	; Set sprites tileset

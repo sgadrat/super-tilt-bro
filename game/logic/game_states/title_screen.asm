@@ -98,7 +98,8 @@ init_title_screen:
 		sta tileset_addr+1
 		jsr cpu_to_ppu_copy_tileset_background
 
-		rts
+		jmp copy_common_tileset
+		;rts ; useless, jump to subroutine
 	.)
 
 	init_title_animation:

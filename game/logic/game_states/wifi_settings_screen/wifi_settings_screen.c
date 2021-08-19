@@ -124,21 +124,6 @@ static uint8_t empty_char() {
 	return ptr_lsb(&TILE_MENU_WIFI_SETTINGS_DIALOGS_CHAR_EMPTY);
 }
 
-//TODO Share code with menu_online_mode
-static void long_cpu_to_ppu_copy_tileset(uint8_t bank, uint8_t const* tileset, uint16_t ppu_addr) {
-	// Set cpu_to_ppu_copy_tileset parameters
-	*tmpfield1 = ptr_lsb(tileset);
-	*tmpfield2 = ptr_msb(tileset);
-
-	// Set PPU ADDR to destination
-	*PPUSTATUS;
-	*PPUADDR = u16_msb(ppu_addr);
-	*PPUADDR = u16_lsb(ppu_addr);
-
-	// Call
-	wrap_trampoline(bank, code_bank(), &cpu_to_ppu_copy_tileset);
-}
-
 static void draw_window_line(uint8_t const* window, uint8_t line, uint16_t position) {
 	uint16_t const line_pos = position + line * 32;
 	uint8_t const width = window[0];

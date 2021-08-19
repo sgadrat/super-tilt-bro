@@ -103,6 +103,20 @@ static void wrap_cpu_to_ppu_copy_tileset(uint8_t const* tileset, uint16_t ppu_ad
 	cpu_to_ppu_copy_tileset();
 }
 
+static void long_cpu_to_ppu_copy_tileset(uint8_t bank, uint8_t const* tileset, uint16_t ppu_addr) {
+	// Set cpu_to_ppu_copy_tileset parameters
+	*tmpfield1 = ptr_lsb(tileset);
+	*tmpfield2 = ptr_msb(tileset);
+
+	// Set PPU ADDR to destination
+	*PPUSTATUS;
+	*PPUADDR = u16_msb(ppu_addr);
+	*PPUADDR = u16_lsb(ppu_addr);
+
+	// Call
+	wrap_trampoline(bank, code_bank(), &cpu_to_ppu_copy_tileset);
+}
+
 void cpu_to_ppu_copy_tiles();
 static void wrap_cpu_to_ppu_copy_tiles(uint8_t const* tileset, uint16_t ppu_addr, uint8_t num_bytes) {
 	// Set cpu_to_ppu_copy_tiles parameters

@@ -273,20 +273,6 @@ static uint8_t charset_bank() {
 	return ptr_lsb(&TILESET_CHARSET_ALPHANUM_FG0_BG2_BANK_NUMBER);
 }
 
-static void long_cpu_to_ppu_copy_tileset(uint8_t bank, uint8_t const* tileset, uint16_t ppu_addr) {
-	// Set cpu_to_ppu_copy_tileset parameters
-	*tmpfield1 = ptr_lsb(tileset);
-	*tmpfield2 = ptr_msb(tileset);
-
-	// Set PPU ADDR to destination
-	*PPUSTATUS;
-	*PPUADDR = u16_msb(ppu_addr);
-	*PPUADDR = u16_lsb(ppu_addr);
-
-	// Call
-	wrap_trampoline(bank, code_bank(), &cpu_to_ppu_copy_tileset);
-}
-
 /** Not a real yield, pass a frame "as if" it gone through main loop */
 static void yield() {
 	wrap_trampoline(code_bank(), code_bank(), &sleep_frame);

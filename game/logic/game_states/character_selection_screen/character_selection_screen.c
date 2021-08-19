@@ -37,11 +37,13 @@ extern uint8_t const characters_tiles_data_msb;
 extern uint8_t const menu_character_selection_anim_builders;
 extern uint8_t const menu_character_selection_anim_p1_token;
 extern uint8_t const menu_character_selection_anim_p2_token;
+extern uint8_t const tileset_charset_alphanum_fg0_bg2;
 extern uint8_t const tileset_menu_char_select;
 extern uint8_t const tileset_menu_char_select_random_statue_tiles;
 extern uint8_t const tileset_menu_char_select_sprites;
 
 extern uint8_t const CHARACTERS_NUMBER; // This is actually a value label, use the address of this variable
+extern uint8_t const TILESET_CHARSET_ALPHANUM_FG0_BG2_BANK_NUMBER; // Actually a label, use its address or "charset_bank()"
 
 static uint8_t const TILE_CHAR_A = 230;
 static uint8_t const TILE_CHAR_R = TILE_CHAR_A + ('r' - 'a');
@@ -136,6 +138,10 @@ static struct Position16 const builder_anims_start_pos[] = {{32,79}, {176,79}};
 ///////////////////////////////////////
 // Utility functions
 ///////////////////////////////////////
+
+static uint8_t charset_bank() {
+	return ptr_lsb(&TILESET_CHARSET_ALPHANUM_FG0_BG2_BANK_NUMBER);
+}
 
 static struct BgTaskState* Task(uint8_t* raw) {
 	return (struct BgTaskState*)raw;
@@ -754,6 +760,7 @@ void init_character_selection_screen_extra() {
 	// Draw static part of the screen
 	wrap_draw_zipped_nametable(&char_selection_nametable);
 	wrap_cpu_to_ppu_copy_tiles((&tileset_menu_char_select)+1, 0x1000, tileset_menu_char_select);
+	long_cpu_to_ppu_copy_tileset(charset_bank(), &tileset_charset_alphanum_fg0_bg2,0x1dc0);
 
 	// Draw character portraits
 	uint8_t character_idx;

@@ -24,6 +24,10 @@ init_game_state:
 			cpx #ZERO_PAGE_GLOBAL_FIELDS_BEGIN
 			bne zero_game_state
 
+		; Copy common tileset
+		;TODO Only copy a numeric font and the "%" symbol
+		jsr copy_common_tileset
+
 		; Copy stage's tileset
 		.(
 			tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tiles
