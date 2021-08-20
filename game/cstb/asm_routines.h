@@ -182,6 +182,17 @@ static void wrap_get_unzipped_bytes(uint8_t* dest, uint8_t const* zipped, uint16
 	get_unzipped_bytes();
 }
 
+static void long_get_unzipped_bytes(uint8_t bank, uint8_t* dest, uint8_t const* zipped, uint16_t offset, uint8_t count) {
+	*tmpfield1 = ptr_lsb(zipped);
+	*tmpfield2 = ptr_msb(zipped);
+	*tmpfield3 = u16_lsb(offset);
+	*tmpfield4 = u16_msb(offset);
+	*tmpfield5 = count;
+	*tmpfield6 = ptr_lsb(dest);
+	*tmpfield7 = ptr_msb(dest);
+	wrap_trampoline(bank, code_bank(), &get_unzipped_bytes);
+}
+
 void last_nt_buffer();
 static uint8_t wrap_last_nt_buffer() {
 	uint8_t index;
@@ -208,6 +219,10 @@ static void wrap_push_nt_buffer(uint8_t const* buffer) {
 		: "r"(msb), "r"(lsb)
 		: "a", "x", "y", "memory"
 	);
+}
+
+static void long_sleep_frame() {
+	wrap_trampoline(code_bank(), code_bank(), &sleep_frame);
 }
 
 #pragma GCC diagnostic pop

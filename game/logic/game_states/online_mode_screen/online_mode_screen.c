@@ -31,6 +31,7 @@ extern uint8_t const menu_online_mode_game_password_window;
 extern uint8_t const menu_online_mode_login_window;
 extern uint8_t const menu_online_mode_nametable;
 extern uint8_t const menu_online_mode_palette;
+extern uint8_t const menu_online_mode_palette_transition;
 extern uint8_t const menu_online_mode_setting_select_window;
 extern uint8_t const tileset_charset_alphanum_fg0_bg2;
 extern uint8_t const tileset_menu_online_mode;
@@ -262,6 +263,7 @@ static uint8_t const STNP_LOGIN_CHARSET_SIZE = sizeof(STNP_LOGIN_CHARSET);
 // Nametable's attribute byte
 #define ATT(br, bl, tr, tl) ((br << 6) + (bl << 4) + (tr << 2) + tl)
 
+void superpose_earth_sprites(); // Exported, used by trasition code
 static void place_earth_sprites();
 static void highlight_option();
 
@@ -1397,19 +1399,7 @@ static void take_input(uint8_t controller_btns, uint8_t last_fame_btns) {
 
 static void highlight_option() {
 	// Place earth sprites behind selected box, and above others
-	for (uint8_t option = 0; option < NB_OPTIONS; ++option) {
-		uint8_t const attributes = (option == *online_mode_selection_current_option ? 0x20 : 0x00);
-		for (uint8_t y = 0; y < 4; ++y) {
-			for (uint8_t x = 0; x < 4; ++x) {
-				uint8_t const tile_index = earth_sprite_per_option[option][y * 4 + x];
-				if (tile_index != 255) {
-					uint8_t const sprite_num = option * NB_SPRITE_PER_OPTION + y * 4 + x;
-					uint8_t const sprite_offset = sprite_num * 4;
-					oam_mirror[sprite_offset + 2] = attributes;
-				}
-			}
-		}
-	}
+	superpose_earth_sprites();
 
 	// Set boxes palette
 	static uint8_t const buffers_header[][3+48] = {
@@ -1586,9 +1576,30 @@ static void tick_satellite() {
 	}
 }
 
+void superpose_earth_sprites() {
+	// Place earth sprites behind selected box, and above others
+	for (uint8_t option = 0; option < NB_OPTIONS; ++option) {
+		uint8_t const attributes = (option == *online_mode_selection_current_option ? 0x20 : 0x00);
+		for (uint8_t y = 0; y < 4; ++y) {
+			for (uint8_t x = 0; x < 4; ++x) {
+				uint8_t const tile_index = earth_sprite_per_option[option][y * 4 + x];
+				if (tile_index != 255) {
+					uint8_t const sprite_num = option * NB_SPRITE_PER_OPTION + y * 4 + x;
+					uint8_t const sprite_offset = sprite_num * 4;
+					oam_mirror[sprite_offset + 2] = attributes;
+				}
+			}
+		}
+	}
+}
+
 void init_online_mode_screen_extra() {
 	// Draw static part of the screen
-	wrap_construct_palettes_nt_buffer(&menu_online_mode_palette);
+	if (*previous_global_game_state == GAME_STATE_MODE_SELECTION) {
+		wrap_construct_palettes_nt_buffer(&menu_online_mode_palette_transition);
+	}else {
+		wrap_construct_palettes_nt_buffer(&menu_online_mode_palette);
+	}
 	wrap_draw_zipped_nametable(&menu_online_mode_nametable);
 	long_cpu_to_ppu_copy_tileset(tileset_bank(), &tileset_menu_online_mode, 0x1000);
 	long_cpu_to_ppu_copy_tileset(charset_bank(), &tileset_charset_alphanum_fg0_bg2,0x1dc0);

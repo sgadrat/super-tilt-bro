@@ -10,7 +10,7 @@ import stblib.utils
 import sys
 import textwrap
 
-FIRST_AVAILABLE_BANK = 6
+FIRST_AVAILABLE_BANK = 7
 
 def text_asm(text, size, space_tile):
 	"""
@@ -456,16 +456,14 @@ def generate_banks(char_to_bank, tileset_to_bank, game_dir):
 			#define DATA_BANK_NUMBER $02
 			#define CURRENT_BANK_NUMBER DATA_BANK_NUMBER
 			#include "game/banks/data_bank.asm"
-
-			#define CURRENT_BANK_NUMBER $03
-			#include "game/banks/data03_bank.asm"
-
-			#define CURRENT_BANK_NUMBER $04
-			#include "game/banks/data02_bank.asm"
-
-			#define CURRENT_BANK_NUMBER $05
-			#include "game/banks/data05_bank.asm"
 		"""))
+
+		for bank_number in range(3, FIRST_AVAILABLE_BANK):
+			bank_index_file.write(textwrap.dedent("""\
+
+				#define CURRENT_BANK_NUMBER ${num:02x}
+				#include "game/banks/data{num:02d}_bank.asm"
+			""".format(num=bank_number)))
 
 		for bank_number in range(FIRST_AVAILABLE_BANK, 31):
 			bank_index_file.write('\n#define CURRENT_BANK_NUMBER {}\n'.format(stblib.utils.uintasm8(bank_number)))

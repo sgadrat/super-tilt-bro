@@ -1,3 +1,10 @@
+online_mode_screen_fadein:
+.(
+	SWITCH_BANK(#ONLINE_MODE_SCREEN_FADEIN_BANK_NUMBER)
+	jmp online_mode_screen_fadein_extra
+	;rts ; useless, jump to subroutine
+.)
+
 init_online_mode_screen:
 .(
 	; Initialize C stack

@@ -50,6 +50,14 @@ TE = TILE_MENU_ONLINE_MODE_DIALOGS_0E
 ;    0-earth,            1-cursor/ship,      2-unused,        3-unused
 .byt $0f,$29,$02,$0f,    $0f,$28,$0f,$20,    $0f,$00,$00,$00, $0f,$00,$00,$00
 
+&menu_online_mode_palette_transition:
+; Background
+;    0-sky/inactive_box, 1-stars/active_box, 2-earth,         3-title
+.byt $21,$02,$11,$21,    $21,$08,$28,$20,    $21,$29,$02,$21, $21,$28,$20,$21
+; Sprites
+;    0-earth,            1-cursor/ship,      2-unused,        3-unused
+.byt $21,$29,$02,$0f,    $21,$28,$0f,$20,    $21,$00,$00,$00, $21,$00,$00,$00
+
 &menu_online_mode_nametable:
 .byt $00,$6b
 .byt
