@@ -265,7 +265,7 @@ static uint8_t const STNP_LOGIN_CHARSET_SIZE = sizeof(STNP_LOGIN_CHARSET);
 
 void superpose_earth_sprites(); // Exported, used by trasition code
 static void place_earth_sprites();
-static void highlight_option();
+static void highlight_option(uint8_t shine);
 
 static uint8_t tileset_bank() {
 	return ptr_lsb(&MENU_ONLINE_MODE_TILESET_BANK_NUMBER);
@@ -447,7 +447,7 @@ static void hide_dialog(uint16_t position, uint8_t lines_per_frame) {
 
 	// Place earth sprites, and fix nametable's attributes
 	place_earth_sprites();
-	highlight_option();
+	highlight_option(0);
 	yield();
 }
 
@@ -1397,21 +1397,12 @@ static void take_input(uint8_t controller_btns, uint8_t last_fame_btns) {
 	}
 }
 
-static void highlight_option() {
+static void highlight_option(uint8_t shine) {
 	// Place earth sprites behind selected box, and above others
 	superpose_earth_sprites();
 
-	// Generic truths
-	static uint8_t const nt_buff_header[] = {0x23, 0xc8, 48};
-	static uint8_t const active_box_attributes[][4] = {
-		{ATT(1,0,0,0), ATT(1,1,0,0), ATT(1,1,0,0), ATT(0,1,0,0)},
-		{ATT(1,0,1,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(0,1,0,1)},
-		{ATT(0,0,1,0), ATT(0,0,1,1), ATT(0,0,1,1), ATT(0,0,0,1)},
-	};
-	static uint8_t const first_attribute_per_option[] = {0, 4, 24, 28};
-
-	// Derivate the "nothing highligthed" attribute table to highlight the good box
-	uint8_t attributes[] = {
+	// Attributes-table related constants
+	static uint8_t const boxes_attributes_no_highlight[] = {
 		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,3,0), ATT(0,0,3,3), ATT(0,0,3,3), ATT(0,0,0,3), ATT(0,0,0,0), ATT(0,0,0,0),
 		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(2,0,0,0), ATT(0,2,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 		ATT(0,0,0,0), ATT(1,1,0,0), ATT(2,0,0,0), ATT(2,2,2,0), ATT(2,2,0,2), ATT(0,2,0,0), ATT(0,1,0,0), ATT(0,0,0,0),
@@ -1419,16 +1410,39 @@ static void highlight_option() {
 		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,2,0), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 	};
-	uint8_t const first_attribute = first_attribute_per_option[*online_mode_selection_current_option];
+	static uint8_t const boxes_attributes_first_attribute_per_option[] = {0, 4, 24, 28};
+	static uint8_t const boxes_attributes_buff_header[] = {0x23, 0xc8, 48};
+
+	static uint8_t const active_box_attributes[][4] = {
+		{ATT(1,0,0,0), ATT(1,1,0,0), ATT(1,1,0,0), ATT(0,1,0,0)},
+		{ATT(1,0,1,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(0,1,0,1)},
+		{ATT(0,0,1,0), ATT(0,0,1,1), ATT(0,0,1,1), ATT(0,0,0,1)},
+	};
+	static uint8_t const shiny_box_attributes[][4] = {
+		{ATT(3,0,0,0), ATT(3,3,0,0), ATT(3,3,0,0), ATT(0,3,0,0)},
+		{ATT(3,0,3,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(0,3,0,3)},
+		{ATT(0,0,3,0), ATT(0,0,3,3), ATT(0,0,3,3), ATT(0,0,0,3)},
+	};
+
+	// Derivate the "nothing highligthed" attribute table to highlight the good box
+	memcpy(online_mode_selection_mem_buffer, boxes_attributes_no_highlight, 48);
+	uint8_t const first_attribute = boxes_attributes_first_attribute_per_option[*online_mode_selection_current_option];
 	for (uint8_t x = 0; x < 4; ++x) {
 		for (uint8_t y = 0; y < 3; ++y) {
 			uint8_t const attribute_index = y * 8 + x + first_attribute;
-			attributes[attribute_index] |= active_box_attributes[y][x];
+			online_mode_selection_mem_buffer[attribute_index] |= active_box_attributes[y][x];
+			if (shine && x < 3) {
+				online_mode_selection_mem_buffer[attribute_index+1] |= shiny_box_attributes[y][x+1];
+			}
+		}
+		if (shine && x < 3) {
+			wrap_construct_nt_buffer(boxes_attributes_buff_header, online_mode_selection_mem_buffer);
+			yield();
 		}
 	}
 
 	// Draw resulting attribute table
-	wrap_construct_nt_buffer(nt_buff_header, attributes);
+	wrap_construct_nt_buffer(boxes_attributes_buff_header, online_mode_selection_mem_buffer);
 }
 
 static void init_ship_anim() {
@@ -1626,9 +1640,10 @@ void online_mode_screen_tick_extra() {
 	tick_monster();
 	tick_satellite();
 
+	uint8_t original_option = *online_mode_selection_current_option;
 	for (uint8_t player = 0; player < 2; ++player) {
 		take_input(controller_a_btns[player], controller_a_last_frame_btns[player]);
 	}
 
-	highlight_option();
+	highlight_option(original_option != *online_mode_selection_current_option);
 }
