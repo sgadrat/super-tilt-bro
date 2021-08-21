@@ -414,7 +414,7 @@ static void draw_dialog_string(uint16_t position, uint8_t lines_per_frame, char*
 		yield();
 	}
 
-	// Update nametable attibutes
+	// Update nametable attributes
 	draw_dialog_attributes();
 }
 
@@ -1401,53 +1401,34 @@ static void highlight_option() {
 	// Place earth sprites behind selected box, and above others
 	superpose_earth_sprites();
 
-	// Set boxes palette
-	static uint8_t const buffers_header[][3+48] = {
-		// Reference, nothing active:
-		//  ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,3,0), ATT(0,0,3,3), ATT(0,0,3,3), ATT(0,0,0,3), ATT(0,0,0,0), ATT(0,0,0,0),
-		//  ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(2,0,0,0), ATT(0,2,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-		//  ATT(0,0,0,0), ATT(1,1,0,0), ATT(2,0,0,0), ATT(2,2,2,0), ATT(2,2,0,2), ATT(0,2,0,0), ATT(0,1,0,0), ATT(0,0,0,0),
-		//  ATT(0,0,1,0), ATT(0,0,1,0), ATT(0,0,2,0), ATT(2,0,2,2), ATT(0,2,2,2), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,1),
-		//  ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,2,0), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-		//  ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-		{
-			0x23, 0xc8, 48,
-			ATT(1,0,0,0), ATT(1,1,0,0), ATT(1,1,3,0), ATT(0,1,3,3), ATT(0,0,3,3), ATT(0,0,0,3), ATT(0,0,0,0), ATT(0,0,0,0),
-			ATT(1,0,1,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(2,1,0,1), ATT(0,2,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-			ATT(0,0,1,0), ATT(1,1,1,1), ATT(2,0,1,1), ATT(2,2,2,1), ATT(2,2,0,2), ATT(0,2,0,0), ATT(0,1,0,0), ATT(0,0,0,0),
-			ATT(0,0,1,0), ATT(0,0,1,0), ATT(0,0,2,0), ATT(2,0,2,2), ATT(0,2,2,2), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,1),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,2,0), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), 
-		},
-		{
-			0x23, 0xc8, 48,
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,3,0), ATT(0,0,3,3), ATT(1,0,3,3), ATT(1,1,0,3), ATT(1,1,0,0), ATT(0,1,0,0),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(2,0,0,0), ATT(1,2,1,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(0,1,0,1),
-			ATT(0,0,0,0), ATT(1,1,0,0), ATT(2,0,0,0), ATT(2,2,2,0), ATT(2,2,1,2), ATT(0,2,1,1), ATT(0,1,1,1), ATT(0,0,0,1),
-			ATT(0,0,1,0), ATT(0,0,1,0), ATT(0,0,2,0), ATT(2,0,2,2), ATT(0,2,2,2), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,1),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,2,0), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-		},
-		{
-			0x23, 0xc8, 48,
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,3,0), ATT(0,0,3,3), ATT(0,0,3,3), ATT(0,0,0,3), ATT(0,0,0,0), ATT(0,0,0,0),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(2,0,0,0), ATT(0,2,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-			ATT(0,0,0,0), ATT(1,1,0,0), ATT(2,0,0,0), ATT(2,2,2,0), ATT(2,2,0,2), ATT(0,2,0,0), ATT(0,1,0,0), ATT(0,0,0,0),
-			ATT(1,0,1,0), ATT(1,1,1,0), ATT(1,1,2,0), ATT(2,1,2,2), ATT(0,2,2,2), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,1),
-			ATT(1,0,1,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(0,1,2,1), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-			ATT(0,0,1,0), ATT(0,0,1,1), ATT(0,0,1,1), ATT(0,0,0,1), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-		},
-		{
-			0x23, 0xc8, 48,
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,3,0), ATT(0,0,3,3), ATT(0,0,3,3), ATT(0,0,0,3), ATT(0,0,0,0), ATT(0,0,0,0),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(2,0,0,0), ATT(0,2,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-			ATT(0,0,0,0), ATT(1,1,0,0), ATT(2,0,0,0), ATT(2,2,2,0), ATT(2,2,0,2), ATT(0,2,0,0), ATT(0,1,0,0), ATT(0,0,0,0),
-			ATT(0,0,1,0), ATT(0,0,1,0), ATT(0,0,2,0), ATT(2,0,2,2), ATT(1,2,2,2), ATT(1,1,0,2), ATT(1,1,0,0), ATT(0,1,0,1),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,2,0), ATT(1,0,1,2), ATT(1,1,1,1), ATT(1,1,1,1), ATT(0,1,0,1),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,1,0), ATT(0,0,1,1), ATT(0,0,1,1), ATT(0,0,0,1),
-		},
+	// Generic truths
+	static uint8_t const nt_buff_header[] = {0x23, 0xc8, 48};
+	static uint8_t const active_box_attributes[][4] = {
+		{ATT(1,0,0,0), ATT(1,1,0,0), ATT(1,1,0,0), ATT(0,1,0,0)},
+		{ATT(1,0,1,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(0,1,0,1)},
+		{ATT(0,0,1,0), ATT(0,0,1,1), ATT(0,0,1,1), ATT(0,0,0,1)},
 	};
-	wrap_push_nt_buffer(buffers_header[*online_mode_selection_current_option]);
+	static uint8_t const first_attribute_per_option[] = {0, 4, 24, 28};
+
+	// Derivate the "nothing highligthed" attribute table to highlight the good box
+	uint8_t attributes[] = {
+		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,3,0), ATT(0,0,3,3), ATT(0,0,3,3), ATT(0,0,0,3), ATT(0,0,0,0), ATT(0,0,0,0),
+		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(2,0,0,0), ATT(0,2,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+		ATT(0,0,0,0), ATT(1,1,0,0), ATT(2,0,0,0), ATT(2,2,2,0), ATT(2,2,0,2), ATT(0,2,0,0), ATT(0,1,0,0), ATT(0,0,0,0),
+		ATT(0,0,1,0), ATT(0,0,1,0), ATT(0,0,2,0), ATT(2,0,2,2), ATT(0,2,2,2), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,1),
+		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,2,0), ATT(0,0,0,2), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+	};
+	uint8_t const first_attribute = first_attribute_per_option[*online_mode_selection_current_option];
+	for (uint8_t x = 0; x < 4; ++x) {
+		for (uint8_t y = 0; y < 3; ++y) {
+			uint8_t const attribute_index = y * 8 + x + first_attribute;
+			attributes[attribute_index] |= active_box_attributes[y][x];
+		}
+	}
+
+	// Draw resulting attribute table
+	wrap_construct_nt_buffer(nt_buff_header, attributes);
 }
 
 static void init_ship_anim() {
