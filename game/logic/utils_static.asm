@@ -272,6 +272,137 @@ cpu_to_ppu_copy_tiles:
 	rts
 .)
 
+; Copy a charset from CPU memory to PPU memory
+;  tmpfield3, tmpfield4 - Address of the charset in CPU memory
+;  register X - Charset colors
+;
+; Charset colors is binary: zzzz ffbb
+;  zzzz - Must be zeros
+;  ff   - Foreground color
+;  bb   - Background color
+;
+; PPUADDR must be set to the destination address
+; PPUCTRL's I bit should not be set (if set, writes every 32 bytes)
+;
+; Overwrites register A, register X, register Y, and tmpfield1 to tmpfield7
+cpu_to_ppu_copy_charset:
+.(
+	jump_addr = tmpfield1     ; Not movable, parameters of call_pointed_subroutine
+	jump_addr_msb = tmpfield2 ;
+	prg_vector = tmpfield3
+	prg_vector_msb = tmpfield4
+	chars_counter = tmpfield5
+	first_line_modifier = tmpfield6
+	second_line_modifier = tmpfield7
+
+	; Compute byte modifiers index
+	;  First line modifier index is low bit of each color
+	;  Second line modifier index is high bit of each color
+	;
+	;  Modifier index are two bits value, indicating if the resulting bit shall be set for foreground or background
+	;  example - fg=1 bg=0 -> %10 -> resulting bit is set if pixel is foreground, but not if background
+	txa
+	and #%00000001
+	sta first_line_modifier
+	txa
+	and #%00000100
+	lsr
+	ora first_line_modifier
+	sta first_line_modifier
+
+	txa
+	and #%00000010
+	lsr
+	sta second_line_modifier
+	txa
+	and #%00001000
+	lsr
+	lsr
+	ora second_line_modifier
+	sta second_line_modifier
+
+	; Fetch charset size
+	ldy #0
+	lda (prg_vector), y
+	sta chars_counter
+
+	; Compute first character's address
+	inc prg_vector
+	bne inc_ok
+		inc prg_vector_msb
+	inc_ok:
+
+	copy_one_char:
+		; First bits line
+		ldx first_line_modifier
+		jsr copy_one_line
+
+		; Second bits line
+		ldx second_line_modifier
+		jsr copy_one_line
+
+
+		; Place data pointer on next character
+		lda prg_vector
+		clc
+		adc #8
+		sta prg_vector
+		bcc ok
+			inc prg_vector_msb
+		ok:
+
+		; Loop
+		dec chars_counter
+		bne copy_one_char
+
+	rts
+
+	copy_one_line:
+	.(
+		; Copy pixels from character data, modifying it to match specified palette indexes
+		ldy #0
+		copy_one_byte:
+			lda bits_modifiers_lsb, x
+			sta jump_addr
+			lda bits_modifiers_msb, x
+			sta jump_addr_msb
+			lda (prg_vector), y
+			jsr call_pointed_subroutine
+			sta PPUDATA
+
+			iny
+			cpy #8
+			bne copy_one_byte
+
+		rts
+	.)
+
+	modifier_force_0:
+	.(
+		lda #%00000000
+		rts
+	.)
+
+	modifier_force_1:
+	.(
+		lda #%11111111
+		rts
+	.)
+
+	modifier_swap:
+	.(
+		eor #%11111111
+		rts
+	.)
+
+	modifier_passthrough = dummy_routine
+
+	bits_modifiers_lsb:
+		.byt <modifier_force_0, <modifier_swap, <modifier_passthrough, <modifier_force_1
+	bits_modifiers_msb:
+		.byt >modifier_force_0, >modifier_swap, >modifier_passthrough, >modifier_force_1
+.)
+
 ; Fill PPU memory with a single value
 ;  A - Value to fill with
 ;  X - Number of bytes to fill

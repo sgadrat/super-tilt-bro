@@ -10,6 +10,13 @@ bank_data_online_mode_screen_fadein_begin:
 #echo Online mode screen fade-in:
 #print *-bank_data_online_mode_screen_fadein_begin
 
+bank_data_menu_mode_select_data_begin:
+#include "game/data/menu_mode_select/screen.asm"
+#include "game/data/menu_mode_select/tileset.asm"
+#echo
+#echo Menu mode selection data:
+#print *-bank_data_menu_mode_select_data_begin
+
 bank_data06_end:
 
 #echo
