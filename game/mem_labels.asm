@@ -324,8 +324,11 @@ wifi_settings_mem = $0580
 ; CONFIG labels
 ;
 
-config_selected_option = last_c_label+1
-config_music_enabled = last_c_label+2
+config_selected_option = last_c_label+1 ; $39
+config_music_enabled = config_selected_option+1 ; $3a
+config_screen_cursor_state = config_music_enabled+1 ; $3b-$3c
+
+config_screen_cursor_anim = $0580
 
 ;
 ; CHARACTER_SELECTION labels

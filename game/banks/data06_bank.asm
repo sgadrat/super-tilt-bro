@@ -17,6 +17,14 @@ bank_data_menu_mode_select_data_begin:
 #echo Menu mode selection data:
 #print *-bank_data_menu_mode_select_data_begin
 
+bank_data_menu_config_data_begin:
+#include "game/data/menu_config/anims.asm"
+#include "game/data/menu_config/screen.asm"
+#include "game/data/menu_config/tileset.asm"
+#echo
+#echo Menu config data:
+#print *-bank_data_menu_config_data_begin
+
 bank_data06_end:
 
 #echo

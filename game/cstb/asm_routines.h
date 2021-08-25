@@ -32,6 +32,8 @@ void wait_next_frame();
 //  implement the glue
 ////////////////////////////////////
 
+static void wrap_trampoline(uint8_t call_bank, uint8_t return_bank, void(*routine)());
+
 void animation_draw();
 static void wrap_animation_draw(uint8_t const* animation_state, uint16_t camera_x, uint16_t camera_y) {
 	*tmpfield11 = ptr_lsb(animation_state);
@@ -42,6 +44,15 @@ static void wrap_animation_draw(uint8_t const* animation_state, uint16_t camera_
 	*tmpfield16 = u16_msb(camera_y);
 	animation_draw();
 }
+static void long_animation_draw(uint8_t bank, uint8_t const* animation_state, uint16_t camera_x, uint16_t camera_y) {
+	*tmpfield11 = ptr_lsb(animation_state);
+	*tmpfield12 = ptr_msb(animation_state);
+	*tmpfield13 = u16_lsb(camera_x);
+	*tmpfield14 = u16_msb(camera_x);
+	*tmpfield15 = u16_lsb(camera_y);
+	*tmpfield16 = u16_msb(camera_y);
+	wrap_trampoline(bank, code_bank(), &animation_draw);
+}
 
 void animation_init_state();
 static void wrap_animation_init_state(uint8_t const* animation_state, uint8_t const* animation_data) {
@@ -51,12 +62,24 @@ static void wrap_animation_init_state(uint8_t const* animation_state, uint8_t co
 	*tmpfield14 = ptr_msb(animation_data);
 	animation_init_state();
 }
+static void long_animation_init_state(uint8_t bank, uint8_t const* animation_state, uint8_t const* animation_data) {
+	*tmpfield11 = ptr_lsb(animation_state);
+	*tmpfield12 = ptr_msb(animation_state);
+	*tmpfield13 = ptr_lsb(animation_data);
+	*tmpfield14 = ptr_msb(animation_data);
+	wrap_trampoline(bank, code_bank(), &animation_init_state);
+}
 
 void animation_tick();
 static void wrap_animation_tick(uint8_t const* animation_state) {
 	*tmpfield11 = ptr_lsb(animation_state);
 	*tmpfield12 = ptr_msb(animation_state);
 	animation_tick();
+}
+static void long_animation_tick(uint8_t bank, uint8_t const* animation_state) {
+	*tmpfield11 = ptr_lsb(animation_state);
+	*tmpfield12 = ptr_msb(animation_state);
+	wrap_trampoline(bank, code_bank(), &animation_tick);
 }
 
 void animation_state_change_animation();
@@ -88,6 +111,34 @@ static void wrap_trampoline(uint8_t call_bank, uint8_t return_bank, void(*routin
 	trampoline();
 }
 
+void cpu_to_ppu_copy_charset();
+static void long_cpu_to_ppu_copy_charset(uint8_t bank, uint8_t const* charset, uint16_t ppu_addr, uint8_t foreground, uint8_t background) {
+	// Set parameters
+	*tmpfield3 = ptr_lsb(charset);
+	*tmpfield4 = ptr_msb(charset);
+	uint8_t const colors = (foreground << 2) | background;
+
+	// Set PPU ADDR to destination
+	*PPUSTATUS;
+	*PPUADDR = u16_msb(ppu_addr);
+	*PPUADDR = u16_lsb(ppu_addr);
+
+	// Set trampoline parameters
+	*extra_tmpfield1 = ptr_lsb(&cpu_to_ppu_copy_charset);
+	*extra_tmpfield2 = ptr_msb(&cpu_to_ppu_copy_charset);
+	*extra_tmpfield3 = bank;
+	*extra_tmpfield4 = code_bank();
+
+	// Call
+	asm(
+		"ldx %0\n\t"
+		"jsr trampoline"
+		:
+		: "r"(colors)
+		: "a", "x", "y", "memory"
+	);
+}
+
 void cpu_to_ppu_copy_tileset();
 static void wrap_cpu_to_ppu_copy_tileset(uint8_t const* tileset, uint16_t ppu_addr) {
 	// Set cpu_to_ppu_copy_tileset parameters
@@ -102,7 +153,6 @@ static void wrap_cpu_to_ppu_copy_tileset(uint8_t const* tileset, uint16_t ppu_ad
 	// Call
 	cpu_to_ppu_copy_tileset();
 }
-
 static void long_cpu_to_ppu_copy_tileset(uint8_t bank, uint8_t const* tileset, uint16_t ppu_addr) {
 	// Set cpu_to_ppu_copy_tileset parameters
 	*tmpfield1 = ptr_lsb(tileset);
@@ -115,6 +165,16 @@ static void long_cpu_to_ppu_copy_tileset(uint8_t bank, uint8_t const* tileset, u
 
 	// Call
 	wrap_trampoline(bank, code_bank(), &cpu_to_ppu_copy_tileset);
+}
+
+void cpu_to_ppu_copy_tileset_background();
+static void long_cpu_to_ppu_copy_tileset_background(uint8_t bank, uint8_t const* tileset) {
+	// Set cpu_to_ppu_copy_tileset parameters
+	*tmpfield1 = ptr_lsb(tileset);
+	*tmpfield2 = ptr_msb(tileset);
+
+	// Call
+	wrap_trampoline(bank, code_bank(), &cpu_to_ppu_copy_tileset_background);
 }
 
 void cpu_to_ppu_copy_tiles();
@@ -148,6 +208,11 @@ static void wrap_construct_palettes_nt_buffer(uint8_t const* palette) {
 	*tmpfield2 = ptr_msb(palette);
 	construct_palettes_nt_buffer();
 }
+static void long_construct_palettes_nt_buffer(uint8_t bank, uint8_t const* palette) {
+	*tmpfield1 = ptr_lsb(palette);
+	*tmpfield2 = ptr_msb(palette);
+	wrap_trampoline(bank, code_bank(), &construct_palettes_nt_buffer);
+}
 
 void draw_zipped_nametable();
 static void wrap_draw_zipped_nametable(uint8_t const* nametable) {
@@ -155,8 +220,12 @@ static void wrap_draw_zipped_nametable(uint8_t const* nametable) {
 	*tmpfield2 = ptr_msb(nametable);
 	draw_zipped_nametable();
 }
+static void long_draw_zipped_nametable(uint8_t bank, uint8_t const* nametable) {
+	*tmpfield1 = ptr_lsb(nametable);
+	*tmpfield2 = ptr_msb(nametable);
+	wrap_trampoline(bank, code_bank(), &draw_zipped_nametable);
+}
 
-// NOTE not a simple wrapper, glue code reflects the fact that fixed_memcpy is primarily made for copying data from another bank
 void fixed_memcpy();
 static void long_memcpy(uint8_t* dest, uint8_t src_bank, uint8_t const* src, uint8_t size) {
 	// Prepare fixed_memcpy parameters

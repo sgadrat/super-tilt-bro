@@ -38,7 +38,7 @@ bank_data04_wifi_settings_extra_code_begin:
 bank_data04_wifi_settings_extra_code_end:
 
 bank_data_config_screen_extra_begin:
-#include "game/logic/game_states/config_screen_extra_bank.asm"
+#include "game/logic/game_states/config_screen/config_screen_extra_bank.asm"
 #echo
 #echo Configuration screen extras:
 #print *-bank_data_config_screen_extra_begin
