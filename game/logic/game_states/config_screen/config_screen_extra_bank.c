@@ -285,11 +285,10 @@ void config_screen_tick_extra() {
 				case CONTROLLER_BTN_UP:
 					previous_option(); break;
 				case CONTROLLER_BTN_START:
+				case CONTROLLER_BTN_A:
 					next_screen(); break;
 				case CONTROLLER_BTN_B:
 					previous_screen(); break;
-				case CONTROLLER_BTN_A:
-					next_value(); break;
 				default:
 					break;
 			}
