@@ -33,6 +33,12 @@ bank_data_charset_alphanum_fg1_bg2_begin:
 #echo Charset alphanum (fg=1 bg=2):
 #print *-bank_data_charset_alphanum_fg1_bg2_begin
 
+bank_data_mode_selection_screen_logic_begin:
+#include "game/logic/game_states/mode_selection_screen/mode_selection_screen_extra_code.asm"
+#echo
+#echo Menu mode selection logic:
+#print *-bank_data_mode_selection_screen_logic_begin
+
 bank_data_end:
 
 #echo
