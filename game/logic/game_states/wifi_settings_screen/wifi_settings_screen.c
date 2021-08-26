@@ -73,8 +73,6 @@ extern uint8_t const TILE_MENU_WIFI_SETTINGS_DIALOGS_CHAR_EMPTY; // Actually a l
 
 extern uint8_t const tileset_ascii;
 
-void audio_play_interface_click();
-
 ///////////////////////////////////////
 // Screen specific ASM functions
 ///////////////////////////////////////

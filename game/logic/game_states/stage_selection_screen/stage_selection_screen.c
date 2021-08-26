@@ -18,8 +18,6 @@ extern uint8_t const stage_selection_palette;
 extern uint8_t const stages_bank;
 extern uint8_t const stages_illustration;
 
-void audio_play_interface_click();
-
 ///////////////////////////////////////
 // Stage selection's ASM functions
 ///////////////////////////////////////

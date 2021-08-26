@@ -52,8 +52,6 @@ static uint8_t const TILE_CHAR_D = TILE_CHAR_A + ('d' - 'a');
 static uint8_t const TILE_CHAR_O = TILE_CHAR_A + ('o' - 'a');
 static uint8_t const TILE_CHAR_M = TILE_CHAR_A + ('m' - 'a');
 
-void audio_play_interface_click();
-
 ///////////////////////////////////////
 // Character selection's ASM functions
 ///////////////////////////////////////

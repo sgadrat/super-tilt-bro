@@ -14,6 +14,7 @@
 void audio_music_extra_tick();
 void audio_music_tick();
 void audio_mute_music();
+void audio_play_interface_click();
 void audio_unmute_music();
 void dummy_routine();
 void flash_all_sectors();

@@ -277,17 +277,23 @@ void config_screen_tick_extra() {
 		if (*(controller_a_btns + controller) == 0) {
 			switch (*(controller_a_last_frame_btns + controller)) {
 				case CONTROLLER_BTN_RIGHT:
+					audio_play_interface_click();
 					next_value(); break;
 				case CONTROLLER_BTN_LEFT:
+					audio_play_interface_click();
 					previous_value(); break;
 				case CONTROLLER_BTN_DOWN:
+					audio_play_interface_click();
 					next_option(); break;
 				case CONTROLLER_BTN_UP:
+					audio_play_interface_click();
 					previous_option(); break;
 				case CONTROLLER_BTN_START:
 				case CONTROLLER_BTN_A:
+					audio_play_interface_click();
 					next_screen(); break;
 				case CONTROLLER_BTN_B:
+					audio_play_interface_click();
 					previous_screen(); break;
 				default:
 					break;

@@ -80,8 +80,6 @@ static uint8_t const TILE_CHAR_X = TILE_CHAR_A + ('X' - 'A');
 static uint8_t const TILE_CHAR_Y = TILE_CHAR_A + ('Y' - 'A');
 static uint8_t const TILE_CHAR_Z = TILE_CHAR_A + ('Z' - 'A');
 
-void audio_play_interface_click();
-
 ///////////////////////////////////////
 // Screen specific ASM functions
 ///////////////////////////////////////
