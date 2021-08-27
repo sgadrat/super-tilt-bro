@@ -19,7 +19,7 @@ extern uint8_t const MENU_MODE_SELECTION_TILESET_BANK;
 // Constants specific to this file
 ///////////////////////////////////////
 
-static uint8_t const NB_OPTIONS = 3;
+//static uint8_t const NB_OPTIONS = 3;
 static uint8_t const OPTION_LOCAL = 0;
 static uint8_t const OPTION_ONLINE = 1;
 static uint8_t const OPTION_SUPPORT = 2;
@@ -61,19 +61,14 @@ static void go_down() {
 
 static void go_left() {
 	audio_play_interface_click();
-	if (*mode_selection_current_option > 0) {
-		--*mode_selection_current_option;
-	}else {
-		*mode_selection_current_option = NB_OPTIONS - 1;
-	}
+	static uint8_t const dest_option[] = {1, 0, 0};
+	*mode_selection_current_option = dest_option[*mode_selection_current_option];
 }
 
 static void go_right() {
 	audio_play_interface_click();
-	++*mode_selection_current_option;
-	if (*mode_selection_current_option >= NB_OPTIONS) {
-		*mode_selection_current_option = 0;
-	}
+	static uint8_t const dest_option[] = {1, 0, 1};
+	*mode_selection_current_option = dest_option[*mode_selection_current_option];
 }
 
 static void previous_screen() {
