@@ -294,7 +294,9 @@ title_original_music_state = $03
 ; MODE_SELECTION labels
 ;
 
-mode_selection_current_option = $00
+mode_selection_current_option = last_c_label+1 ; $39
+
+mode_selection_mem_buffer = $0580
 
 ;
 ; ONLINE_MODE_SELECTION labels

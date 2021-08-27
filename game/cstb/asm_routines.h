@@ -228,6 +228,17 @@ static void long_draw_zipped_nametable(uint8_t bank, uint8_t const* nametable) {
 }
 
 void fixed_memcpy();
+static void wrap_fixed_memcpy(uint8_t* dest, uint8_t const* src, uint8_t size) {
+	// Prepare fixed_memcpy parameters
+	*tmpfield1 = ptr_lsb(dest);
+	*tmpfield2 = ptr_msb(dest);
+	*tmpfield3 = ptr_lsb(src);
+	*tmpfield4 = ptr_msb(src);
+	*tmpfield5 = size;
+
+	// Call fixed_memcpy
+	fixed_memcpy();
+}
 static void long_memcpy(uint8_t* dest, uint8_t src_bank, uint8_t const* src, uint8_t size) {
 	// Prepare fixed_memcpy parameters
 	*tmpfield1 = ptr_lsb(dest);
@@ -238,6 +249,21 @@ static void long_memcpy(uint8_t* dest, uint8_t src_bank, uint8_t const* src, uin
 
 	// Call fixed_memcpy via trampoline
 	wrap_trampoline(src_bank, code_bank(), &fixed_memcpy);
+}
+
+/**
+ * @brief memcpy, adapted to 8bit cpu
+ *
+ * This is actually a shorthand alias for wrap_fixed_memcpy.
+ * It is recomended over libc's memcpy when possible as it is way faster and lighter.
+ *
+ * Caveats:
+ *  - Limited to 255 bytes max
+ *  - Does not copy bytes in natural order (do not use on volatile memory areas)
+ *  - No return value
+ */
+static void memcpy8(uint8_t* dest, uint8_t const* src, uint8_t size) {
+	wrap_fixed_memcpy(dest, src, size);
 }
 
 void get_unzipped_bytes();

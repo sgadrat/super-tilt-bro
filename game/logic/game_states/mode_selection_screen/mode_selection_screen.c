@@ -1,6 +1,5 @@
 #include <cstb.h>
 
-
 ///////////////////////////////////////
 // Global labels from the ASM codebase
 ///////////////////////////////////////
@@ -40,6 +39,13 @@ static uint8_t screen_bank() {
 
 static uint8_t tileset_bank() {
 	return ptr_lsb(&MENU_MODE_SELECTION_TILESET_BANK);
+}
+
+/** Not a real yield, pass a frame "as if" it gone through main loop */
+static void yield() {
+	wrap_trampoline(code_bank(), code_bank(), &sleep_frame);
+	fetch_controllers();
+	reset_nt_buffers();
 }
 
 ///////////////////////////////////////
@@ -90,48 +96,50 @@ static void next_screen() {
 	wrap_change_global_game_state(option_to_game_state[*mode_selection_current_option]);
 }
 
-static void show_selected_option() {
-	static uint8_t const nt_highlight_header[] = {0x23, 0xd1, 0x15};
-	static uint8_t const nt_highlight_payload[][21] = {
-		{
-			/**/          ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-			ATT(0,0,0,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-		},
-		{
-			/**/          ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-		},
-		{
-			/**/          ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1),
-		},
+static void show_selected_option(uint8_t shine) {
+	// Attributes-table related constants
+	static uint8_t const boxes_attributes_no_highlight[] = {
+		/**/          ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 	};
-	static uint8_t const nt_highlight_payload_no_network[][21] = {
-		{
-			/**/          ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3),
-			ATT(0,0,0,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-		},
-		{
-			/**/          ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(2,2,2,2), ATT(2,2,2,2), ATT(2,2,2,2), ATT(2,2,2,2),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(2,2,2,2), ATT(2,2,2,2), ATT(2,2,2,2), ATT(2,2,2,2),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-		},
-		{
-			/**/          ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3),
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1),
-		},
+	static uint8_t const boxes_attributes_no_highlight_no_network[] = {
+		/**/          ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3),
+		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3),
+		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 	};
+	static uint8_t const boxes_attributes_first_attribute_per_option[] = {0, 3, 17};
+	static uint8_t const boxes_attributes_nb_columns_per_option[] = {3, 4, 4};
+	static uint8_t const boxes_attributes_buff_header[] = {0x23, 0xd1, sizeof(boxes_attributes_no_highlight)};
 
-	if (no_network()) {
-		wrap_construct_nt_buffer(nt_highlight_header, nt_highlight_payload_no_network[*mode_selection_current_option]);
-	}else {
-		wrap_construct_nt_buffer(nt_highlight_header, nt_highlight_payload[*mode_selection_current_option]);
+	uint8_t const disabled_option = (no_network() && *mode_selection_current_option == OPTION_ONLINE);
+	uint8_t const active_attribute_value = (disabled_option ? ATT(3,3,3,3) : ATT(1,1,1,1));
+	uint8_t const shiny_attribute_value = ATT(2,2,2,2);
+
+	// Derivate the "nothing highligthed" attribute table to highlight the good box
+	memcpy8(
+		mode_selection_mem_buffer,
+		no_network() ? boxes_attributes_no_highlight_no_network : boxes_attributes_no_highlight,
+		sizeof(boxes_attributes_no_highlight)
+	);
+	uint8_t const first_attribute = boxes_attributes_first_attribute_per_option[*mode_selection_current_option];
+	uint8_t const nb_columns = boxes_attributes_nb_columns_per_option[*mode_selection_current_option];
+	for (uint8_t x = 0; x < nb_columns; ++x) {
+		for (uint8_t y = 0; y < 2; ++y) {
+			uint8_t const attribute_index = y * 8 + x + first_attribute;
+			mode_selection_mem_buffer[attribute_index] = active_attribute_value;
+			if (shine && x < 2) {
+				mode_selection_mem_buffer[attribute_index+1] = shiny_attribute_value;
+			}
+		}
+		if (shine && x < 2) {
+			wrap_construct_nt_buffer(boxes_attributes_buff_header, mode_selection_mem_buffer);
+			yield();
+		}
 	}
+
+	// Draw resulting attribute table
+	wrap_construct_nt_buffer(boxes_attributes_buff_header, mode_selection_mem_buffer);
 }
 
 void init_mode_selection_screen_extra() {
@@ -146,7 +154,7 @@ void init_mode_selection_screen_extra() {
 
 	// Initialize state
 	*mode_selection_current_option = *config_game_mode;
-	show_selected_option();
+	show_selected_option(0);
 }
 
 void mode_selection_screen_tick_extra() {
@@ -156,6 +164,7 @@ void mode_selection_screen_tick_extra() {
 	tick_menu();
 
 	// Check if a button is released and trigger correct action
+	uint8_t original_option = *mode_selection_current_option;
 	for (uint8_t controller = 0; controller < 2; ++controller) {
 		if (*(controller_a_btns + controller) == 0) {
 			switch (*(controller_a_last_frame_btns + controller)) {
@@ -176,5 +185,7 @@ void mode_selection_screen_tick_extra() {
 		}
 	}
 
-	show_selected_option();
+	if (*mode_selection_current_option != original_option) {
+		show_selected_option(1);
+	}
 }
