@@ -84,11 +84,11 @@ static void previous_screen() {
 static void next_screen() {
 	static uint8_t const option_to_game_state[] = {GAME_STATE_CONFIG, GAME_STATE_ONLINE_MODE_SELECTION, GAME_STATE_DONATION};
 
-#ifdef NO_NETWORK
-	if (*mode_selection_current_option == OPTION_ONLINE) {
-		return;
+	if (no_network()) {
+		if (*mode_selection_current_option == OPTION_ONLINE) {
+			return;
+		}
 	}
-#endif
 
 	audio_play_interface_click();
 	*config_game_mode = *mode_selection_current_option;
@@ -96,11 +96,9 @@ static void next_screen() {
 }
 
 static void show_selected_option() {
-#ifndef NO_NETWORK
 	static uint8_t const nt_highlight_header[] = {0x23, 0xd1, 0x15};
 	static uint8_t const nt_highlight_payload[][21] = {
 		{
-			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 			/**/          ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 			ATT(0,0,0,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 			ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
@@ -116,9 +114,7 @@ static void show_selected_option() {
 			ATT(0,0,0,0), ATT(0,0,0,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1),
 		},
 	};
-#else
-	static uint8_t const nt_highlight_header[] = {0x23, 0xd1, 0x15};
-	static uint8_t const nt_highlight_payload[][21] = {
+	static uint8_t const nt_highlight_payload_no_network[][21] = {
 		{
 			/**/          ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3),
 			ATT(0,0,0,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3),
@@ -135,9 +131,12 @@ static void show_selected_option() {
 			ATT(0,0,0,0), ATT(0,0,0,0), ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1), ATT(1,1,1,1),
 		},
 	};
-#endif
 
-	wrap_construct_nt_buffer(nt_highlight_header, nt_highlight_payload[*mode_selection_current_option]);
+	if (no_network()) {
+		wrap_construct_nt_buffer(nt_highlight_header, nt_highlight_payload_no_network[*mode_selection_current_option]);
+	}else {
+		wrap_construct_nt_buffer(nt_highlight_header, nt_highlight_payload[*mode_selection_current_option]);
+	}
 }
 
 void init_mode_selection_screen_extra() {

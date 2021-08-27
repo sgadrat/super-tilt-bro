@@ -48,6 +48,28 @@ static uint32_t random(uint32_t seed)
   return seed;
 }
 
+/**
+ * Return 0 if the built ROM has networking feature, else 1
+ *
+ * Use it instead of "#ifdef NO_NETWORK", which is not sensible to the ROM built.
+ */
+static uint8_t no_network() {
+	uint8_t res;
+	asm(
+		"\r\n" // empty first line. It may be indented, breaking preprocessor parsing
+		"#ifdef NO_NETWORK\r\n"
+		"lda #1\r\n"
+		"#else\r\n"
+		"lda #0\r\n"
+		"#endif\r\n"
+		"sta %0"
+		: "=r"(res)
+		:
+		: "a"
+	);
+	return res;
+}
+
 /** strnlen working on 8bit values */
 static uint8_t strnlen8(char const* s, uint8_t maxlen) {
 	uint8_t len = 0;
