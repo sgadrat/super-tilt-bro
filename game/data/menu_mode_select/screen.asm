@@ -30,8 +30,8 @@ CZ = $dc + TILE_ALPHANUM_Z
 
 &menu_mode_selection_palette:
 ; Background
-;    0-sky/inactive_box, 1-active_box,       2-title,         3-unused
-.byt $21,$0f,$02,$11,    $21,$0f,$08,$28,    $21,$0f,$28,$20, $21,$00,$00,$00
+;    0-sky/inactive_box, 1-active_box,       2-title,         3-disabled_box
+.byt $21,$0f,$02,$11,    $21,$0f,$08,$28,    $21,$0f,$28,$20, $21,$0f,$00,$10
 ; Sprites
 ;    0-unused,           1-unused,           2-unused,        3-clouds
 .byt $21,$00,$00,$00,    $21,$00,$00,$00,    $21,$00,$00,$00, $21,$0f,$00,$31
