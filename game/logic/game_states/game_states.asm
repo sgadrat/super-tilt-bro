@@ -9,9 +9,9 @@ VECTOR(init_stage_selection_screen)
 VECTOR(init_character_selection_screen)
 VECTOR(init_mode_selection_screen)
 VECTOR(init_netplay_launch_screen)
-VECTOR(init_donation_screen)
-VECTOR(init_donation_btc_screen)
-VECTOR(init_donation_paypal_screen)
+VECTOR(init_support_screen)
+VECTOR(init_support_btc_screen)
+VECTOR(init_support_paypal_screen)
 VECTOR(init_online_mode_screen)
 VECTOR(init_wifi_settings_screen)
 
@@ -26,9 +26,9 @@ VECTOR(stage_selection_screen_tick)
 VECTOR(character_selection_screen_tick)
 VECTOR(mode_selection_screen_tick)
 VECTOR(netplay_launch_screen_tick)
-VECTOR(donation_screen_tick)
-VECTOR(donation_qr_screen_tick)
-VECTOR(donation_qr_screen_tick)
+VECTOR(support_screen_tick)
+VECTOR(support_qr_screen_tick)
+VECTOR(support_qr_screen_tick)
 VECTOR(online_mode_screen_tick)
 VECTOR(wifi_settings_screen_tick)
 
@@ -37,8 +37,8 @@ VECTOR(wifi_settings_screen_tick)
 #include "game/logic/game_states/character_selection_screen.asm"
 #include "game/logic/game_states/config_screen.asm"
 #include "game/logic/game_states/credits_screen.asm"
-#include "game/logic/game_states/donation_screen.asm"
-#include "game/logic/game_states/donation_qr.asm"
+#include "game/logic/game_states/support_screen.asm"
+#include "game/logic/game_states/support_qr.asm"
 #include "game/logic/game_states/game/game.asm"
 #include "game/logic/game_states/gameover_screen.asm"
 #include "game/logic/game_states/mode_selection_screen.asm"

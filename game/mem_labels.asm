@@ -378,7 +378,7 @@ netplay_launch_nb_servers = $05
 ; DONATION labels
 ;
 
-donation_method = $00
+support_method = $00
 
 ;
 ; Common menus labels

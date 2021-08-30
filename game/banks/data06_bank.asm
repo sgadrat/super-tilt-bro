@@ -25,6 +25,25 @@ bank_data_menu_config_data_begin:
 #echo Menu config data:
 #print *-bank_data_menu_config_data_begin
 
+bank_data_charset_ascii_begin:
+#include "game/data/charsets/ascii.asm"
+#echo
+#echo ASCII Charset:
+#print *-bank_data_charset_ascii_begin
+
+bank_data_menu_support_data_begin:
+#include "game/data/menu_support/screen.asm"
+#include "game/data/menu_support/tilesets.asm"
+#echo
+#echo Menu support data:
+#print *-bank_data_menu_support_data_begin
+
+bank_data_charset_qr_code_begin:
+#include "game/data/charsets/qr_code.asm"
+#echo
+#echo QR code charset:
+#print *-bank_data_charset_qr_code_begin
+
 bank_data06_end:
 
 #echo
