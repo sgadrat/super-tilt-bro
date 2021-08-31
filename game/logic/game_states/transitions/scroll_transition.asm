@@ -352,10 +352,6 @@ scroll_transition:
 		beq update_clouds
 		cmp #STATE_TRANSITION(GAME_STATE_CREDITS, GAME_STATE_TITLE)
 		beq update_clouds
-		cmp #STATE_TRANSITION(GAME_STATE_CONFIG, GAME_STATE_CHARACTER_SELECTION)
-		beq update_clouds
-		cmp #STATE_TRANSITION(GAME_STATE_CHARACTER_SELECTION, GAME_STATE_CONFIG)
-		beq update_clouds
 
 			; Clouds do not need to be updated
 			lda #64                ; All sprites are from the destination screen
