@@ -1,3 +1,4 @@
+#define CLOUD_OFFSET(n) (n&$ff), (n>>8)
 state_transition_pre_scroll_down:
 .(
 	; Call the scrolling routine
@@ -17,7 +18,16 @@ state_transition_pre_scroll_down:
 	rts
 
 	camera_steps:
-	.byt 10, 20, 40, 60, 100, 140, 180, 220, 240, $ff
+	.byt 10,  CLOUD_OFFSET($ffff)
+	.byt 20,  CLOUD_OFFSET($ffff)
+	.byt 40,  CLOUD_OFFSET($fffe)
+	.byt 60,  CLOUD_OFFSET($fffd)
+	.byt 100, CLOUD_OFFSET($fffa)
+	.byt 140, CLOUD_OFFSET($fffa)
+	.byt 180, CLOUD_OFFSET($fffa)
+	.byt 220, CLOUD_OFFSET($fffa)
+	.byt 240, CLOUD_OFFSET($fffa) ; clouds scroll = -1-1-2-3-6*5 = -37
+	.byt $ff
 .)
 
 state_transition_pre_scroll_up:
@@ -39,7 +49,16 @@ state_transition_pre_scroll_up:
 	rts
 
 	camera_steps:
-	.byt 230, 220, 200, 180, 140, 100, 60, 20, 0, $ff
+	.byt 230, CLOUD_OFFSET($0001)
+	.byt 220, CLOUD_OFFSET($0001)
+	.byt 200, CLOUD_OFFSET($0002)
+	.byt 180, CLOUD_OFFSET($0003)
+	.byt 140, CLOUD_OFFSET($0006)
+	.byt 100, CLOUD_OFFSET($0006)
+	.byt 60,  CLOUD_OFFSET($0006)
+	.byt 20,  CLOUD_OFFSET($0006)
+	.byt 0,   CLOUD_OFFSET($0006) ; clouds scroll = 1+1+2+3+6*5 = 37
+	.byt $ff
 .)
 
 state_transition_post_scroll_down:
@@ -67,7 +86,20 @@ state_transition_post_scroll_down:
 	rts
 
 	camera_steps:
-	.byt 40, 80, 120, 160, 200, 240, 235, 239, 230, 239, 237, 235, 240, $ff
+	.byt 40,  CLOUD_OFFSET($fffa)
+	.byt 80,  CLOUD_OFFSET($fffa)
+	.byt 120, CLOUD_OFFSET($fffa)
+	.byt 160, CLOUD_OFFSET($fffa)
+	.byt 200, CLOUD_OFFSET($fffa)
+	.byt 240, CLOUD_OFFSET($fffa)
+	.byt 235, CLOUD_OFFSET($0001)
+	.byt 239, CLOUD_OFFSET($ffff)
+	.byt 230, CLOUD_OFFSET($0002)
+	.byt 239, CLOUD_OFFSET($fffe)
+	.byt 237, CLOUD_OFFSET($0000)
+	.byt 235, CLOUD_OFFSET($0000)
+	.byt 240, CLOUD_OFFSET($ffff) ; clouds scroll = -6*6+1-1+2-2+0*2-1 = -37
+	.byt $ff
 .)
 
 state_transition_post_scroll_up:
@@ -90,8 +122,22 @@ state_transition_post_scroll_up:
 	rts
 
 	camera_steps:
-	.byt 200, 160, 140, 120, 106, 93, 80, 67, 54, 41, 28, 15, 0, $ff
+	.byt 200, CLOUD_OFFSET($0006)
+	.byt 160, CLOUD_OFFSET($0006)
+	.byt 140, CLOUD_OFFSET($0003)
+	.byt 120, CLOUD_OFFSET($0003)
+	.byt 106, CLOUD_OFFSET($0003)
+	.byt 93,  CLOUD_OFFSET($0002)
+	.byt 80,  CLOUD_OFFSET($0002)
+	.byt 67,  CLOUD_OFFSET($0002)
+	.byt 54,  CLOUD_OFFSET($0002)
+	.byt 41,  CLOUD_OFFSET($0002)
+	.byt 28,  CLOUD_OFFSET($0002)
+	.byt 15,  CLOUD_OFFSET($0002)
+	.byt 0,   CLOUD_OFFSET($0002) ; clouds scroll = 6*2+3*3+2*8 = 37
+	.byt $ff
 .)
+#undef CLOUD_OFFSET
 
 ; Transition by scrolling between two screen, keeping menus clouds
 ;  tmpfield3 - origin screen 0 for top nametable, 2 for bottom one
@@ -99,10 +145,10 @@ state_transition_post_scroll_up:
 ;  register A - transition direction (1 - down ; 2 - up)
 scroll_transition:
 .(
-	STACK_FRAME_CNT_OFFSET = 0
-	STACK_SCROLL_BEGIN_OFFSET = 3
-	STACK_CLOUD_SCROLL_MSB_OFFSET = 4
-	STACK_CLOUD_SCROLL_LSB_OFFSET = 5
+	STACK_CAMERA_STEP_OFFSET = 0
+	STACK_CLOUD_SCROLL_MSB_OFFSET = 3
+	STACK_CLOUD_SCROLL_LSB_OFFSET = 4
+	STACK_SCROLL_BEGIN_OFFSET = 5
 
 	camera_steps_addr = extra_tmpfield1
 	; extra_tmpfield2 reserved for camera_steps_addr MSB
@@ -124,10 +170,6 @@ scroll_transition:
 			sta screen_sprites_offset_lsb
 			lda #0
 			sta screen_sprites_offset_msb
-			lda #$fa
-			pha      ; cloud_scroll_lsb
-			lda #$ff
-			pha      ; cloud_scroll_msb
 			lda #0
 			pha      ; scroll_begin
 			jmp end_set_values
@@ -141,10 +183,6 @@ scroll_transition:
 			sta screen_sprites_offset_lsb
 			lda #$ff
 			sta screen_sprites_offset_msb
-			lda #$6
-			pha      ; cloud_scroll_lsb
-			lda #$0
-			pha      ; cloud_scroll_msb
 			lda #240
 			pha      ; scroll_begin
 			;jmp end_set_values ; useless - fallthrough
@@ -203,7 +241,7 @@ scroll_transition:
 		ldy #0
 		scroll_frame:
 			; Scroll camera according to camera_steps table
-			lda (camera_steps_addr), y
+			lda (camera_steps_addr), y ; Set camera position on screen
 			cmp #$ff
 			beq clean
 			cmp #240
@@ -211,6 +249,16 @@ scroll_transition:
 				lda #239
 			set_camera_scroll:
 			sta scroll_y
+
+			iny                        ; Fetch clouds movement offset
+			lda (camera_steps_addr), y
+			pha ; cloud_scroll_lsb
+			iny
+			lda (camera_steps_addr), y
+			pha ; cloud_scroll_msb
+
+			dey                        ; Restore Y to point on the begining of the camera step
+			dey
 
 			; Save parts of state in registers and tmpfields
 			lda camera_steps_addr
@@ -256,21 +304,25 @@ scroll_transition:
 			pla
 			sta camera_steps_addr
 
+			; Trash temporary parameters on stack
+			pla ; cloud_scroll_msb
+			pla ; cloud_scroll_lsb
+
 			; Loop
+			iny
+			iny
 			iny
 			jmp scroll_frame
 
 		clean:
 		pla ; scroll_begin
-		pla ; cloud_scroll_msb
-		pla ; cloud_scroll_lsb
 
 		end:
 		rts
 	.)
 
 	; Scroll sprites
-	;  stack+3+STACK_FRAME_CNT_OFFSET - frame number
+	;  stack+3+STACK_CAMERA_STEP_OFFSET - frame number
 	;  stack+3+STACK_CLOUD_SCROLL_LSB_OFFSET - clouds scroll step LSB
 	;  stack+3+STACK_CLOUD_SCROLL_MSB_OFFSET - clouds scroll step MSB
 	;  stack+3+STACK_SCROLL_BEGIN_OFFSET - initial position of the screen
@@ -337,7 +389,7 @@ scroll_transition:
 
 		; Convert camera position to an offset from initial position (signed two bytes)
 		tsx
-		ldy stack + STACK_CALLER + STACK_FRAME_CNT_OFFSET, x
+		ldy stack + STACK_CALLER + STACK_CAMERA_STEP_OFFSET, x
 
 		lda stack + STACK_CALLER + STACK_SCROLL_BEGIN_OFFSET, x
 		sec
