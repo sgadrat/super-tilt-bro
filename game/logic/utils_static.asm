@@ -423,14 +423,14 @@ ppu_fill:
 ;  tmpfield3,tmpfield4 - Source
 ;  tmpfield5 - Number of bytes to copy
 ;
-; Overwrites TODO
+; Overwrites register A, register Y
 fixed_memcpy:
 .(
 	dest = tmpfield1
 	src = tmpfield3
 	count = tmpfield5
 
-	ldy tmpfield5
+	ldy count
 	copy_one_byte:
 		cpy #0
 		beq end

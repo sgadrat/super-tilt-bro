@@ -379,23 +379,35 @@ netplay_launch_nb_servers = $05
 ;
 
 support_method = $00
-
 ;
 ; Common menus labels
-;  Common to TITLE, CONFIG, CHARACTER_SELECTION, STAGE_SELECTION and CREDITS
+;  Common to TITLE, CONFIG, MODE_SELECTION and CREDITS
+;  Note that if other screens use this range, it must be repaired when comming back
 ;
 
-menu_common_tick_num = $50
+menu_common_cloud_1_x = $50
+menu_common_cloud_2_x = $51
+menu_common_cloud_3_x = $52
+menu_common_cloud_4_x = $53
+menu_common_cloud_5_x = $54
 
-menu_common_cloud_1_x = $51
-menu_common_cloud_2_x = $52
-menu_common_cloud_3_x = $53
-menu_common_cloud_1_y = $54
-menu_common_cloud_2_y = $55
-menu_common_cloud_3_y = $56
-menu_common_cloud_1_y_msb = $57
-menu_common_cloud_2_y_msb = $58
-menu_common_cloud_3_y_msb = $59
+menu_common_cloud_1_y = $55
+menu_common_cloud_2_y = $56
+menu_common_cloud_3_y = $57
+menu_common_cloud_4_y = $58
+menu_common_cloud_5_y = $59
+
+menu_common_cloud_1_y_msb = $5a
+menu_common_cloud_2_y_msb = $5b
+menu_common_cloud_3_y_msb = $5c
+menu_common_cloud_4_y_msb = $5d
+menu_common_cloud_5_y_msb = $5e
+
+menu_common_cloud_1_x_subpixel = $5f
+menu_common_cloud_2_x_subpixel = $60
+menu_common_cloud_3_x_subpixel = $61
+menu_common_cloud_4_x_subpixel = $62
+menu_common_cloud_5_x_subpixel = $63
 
 screen_sprites_y_lsb = $0400 ; $0400 to $043f
 screen_sprites_y_msb = $0440 ; $0440 to $047f

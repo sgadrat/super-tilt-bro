@@ -245,21 +245,7 @@ void init_config_screen_extra() {
 	long_construct_palettes_nt_buffer(screen_bank(), &menu_config_palette);
 
 	// Initialize common menus effects
-	if (*previous_global_game_state == GAME_STATE_MODE_SELECTION) {
-		// Transitioning from a screen with menu effects, simply reinit
-		re_init_menu();
-	}else {
-		// Common menu effects
-		init_menu();
-
-		// Set clouds Y position
-		*menu_common_cloud_1_y = 0x21;
-		*menu_common_cloud_1_y_msb = 0xff;
-		*menu_common_cloud_2_y = 0xba;
-		*menu_common_cloud_2_y_msb = 0xfe;
-		*menu_common_cloud_3_y = 0x65;
-		*menu_common_cloud_3_y_msb = 0xff;
-	}
+	re_init_menu();
 
 	// Initialize screen-specific effects
 	init_cursor();
