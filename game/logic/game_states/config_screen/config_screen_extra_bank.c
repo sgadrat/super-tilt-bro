@@ -245,7 +245,21 @@ void init_config_screen_extra() {
 	long_construct_palettes_nt_buffer(screen_bank(), &menu_config_palette);
 
 	// Initialize common menus effects
-	re_init_menu();
+	if (*previous_global_game_state == GAME_STATE_MODE_SELECTION) {
+		// Transitioning from a screen with menu effects, simply reinit
+		re_init_menu();
+	}else {
+		// Common menu effects
+		init_menu();
+
+		// Set clouds Y position
+		for (uint8_t cloud_index = 0; cloud_index < MENU_COMMON_NB_CLOUDS; ++cloud_index) {
+			int16_t y_pos = i16(menu_common_cloud_1_y[cloud_index], menu_common_cloud_1_y_msb[cloud_index]);
+			y_pos -= 37 * 2 * 2; // Each half-screen moves clouds 37 pixels up. Config screen is 2 screens down from initial state.
+			menu_common_cloud_1_y[cloud_index] = i16_lsb(y_pos);
+			menu_common_cloud_1_y_msb[cloud_index] = i16_msb(y_pos);
+		}
+	}
 
 	// Initialize screen-specific effects
 	init_cursor();
