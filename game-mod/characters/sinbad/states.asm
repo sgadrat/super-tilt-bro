@@ -2120,6 +2120,9 @@ sinbad_start_inactive_state:
 		lda #SINBAD_STATE_SPE_UP
 		sta player_a_state, x
 
+		; Reset fall speed
+		jsr reset_default_gravity
+
 		; Set initial velocity
 		lda #$00
 		sta player_a_velocity_h_low, x
@@ -2640,6 +2643,9 @@ sinbad_start_inactive_state:
 		sta player_a_velocity_h_low, x
 		sta player_a_velocity_v, x
 		sta player_a_velocity_v_low, x
+
+		; Reset fall speed
+		jsr reset_default_gravity
 
 		; Set the appropriate animation
 		;TODO specific animation

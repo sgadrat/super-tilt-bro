@@ -2041,6 +2041,9 @@ kiki_start_inactive_state:
 		sta player_a_velocity_v, x
 		sta player_a_velocity_v_low, x
 
+		; Reset fall speed
+		jsr reset_default_gravity
+
 		; Set the appropriate animation
 		;TODO specific animation
 		lda #<kiki_anim_jump

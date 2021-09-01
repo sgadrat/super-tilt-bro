@@ -2075,6 +2075,9 @@ pepper_input_idle_right:
 		sta player_a_velocity_v, x
 		sta player_a_velocity_v_low, x
 
+		; Reset fall speed
+		jsr reset_default_gravity
+
 		; Set the appropriate animation
 		;TODO specific animation
 		lda #<pepper_anim_jump
@@ -2829,6 +2832,9 @@ pepper_input_idle_right:
 		sta player_a_velocity_v_low,x
 		lda velocity_v_msb, y
 		sta player_a_velocity_v, x
+
+		; Reset fall speed
+		jsr reset_default_gravity
 
 		; Set the appropriate animation
 		lda #<pepper_anim_witch_fly

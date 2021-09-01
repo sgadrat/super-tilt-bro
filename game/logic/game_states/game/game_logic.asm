@@ -760,6 +760,9 @@ hurt_player:
 	; Apply force vector to the opponent
 	jsr apply_force_vector
 
+	; Reset fall speed
+	jsr reset_default_gravity
+
 	; Apply damages to the opponent
 	ldx current_player
 	lda player_a_hitbox_damages, x ; Put hitbox damages in A
