@@ -1871,10 +1871,20 @@ player_effects:
 		lda #>players_palettes ;
 		sta palette_buffer+1   ;
 
-		; Add palette offset related to hitstun state
-		lda player_a_hitstun, x
+		; Add alternate palette offset if appropriate
+		lda player_a_hitstun, x ; Blink under hitstun
 		and #%00000010
-		beq no_hitstun
+		bne alternate_palette
+
+		ldy system_index        ; Shine under fastfall
+		lda default_gravity_per_system_lsb, y
+		cmp player_a_gravity_lsb, x
+		bne alternate_palette
+		lda default_gravity_per_system_msb, y
+		cmp player_a_gravity_msb, x
+		beq palette_selected
+
+			alternate_palette:
 			lda palette_buffer
 			clc
 			adc #PLAYER_EFFECTS_PALLETTE_SIZE
@@ -1882,7 +1892,8 @@ player_effects:
 			lda palette_buffer+1
 			adc #0
 			sta palette_buffer+1
-		no_hitstun:
+
+		palette_selected:
 
 		; Add palette offset related to player number
 		cpx #1

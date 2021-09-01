@@ -132,6 +132,15 @@ audio_play_title_screen_text:
 	;rts ; useless, jump to subroutine
 .)
 
+audio_play_fast_fall:
+.(
+	audio_preserve_x_y
+	ldy #<sfx_fast_fall
+	ldx #>sfx_fast_fall
+	jmp audio_play_sfx_from_common_bank
+	;rts ; useless, jump to subroutine
+.)
+
 audio_play_interface_click:
 .(
 	audio_preserve_x_y

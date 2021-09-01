@@ -216,6 +216,7 @@ check_aerial_inputs:
 			lda controller_a_last_frame_btns, x
 			cmp #CONTROLLER_INPUT_TECH
 			bne no_fast_fall
+				; Set fast fall gravity and velocity
 				ldy system_index
 				lda sinbad_fastfall_gravity_msb, y
 				sta player_a_gravity_msb, x
@@ -223,6 +224,13 @@ check_aerial_inputs:
 				lda sinbad_fastfall_gravity_lsb, y
 				sta player_a_gravity_lsb, x
 				sta player_a_velocity_v_low, x
+
+				; Play SFX
+				txa
+				pha
+				jsr audio_play_fast_fall
+				pla
+				tax
 			no_fast_fall:
 			rts
 		.)
