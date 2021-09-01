@@ -2675,10 +2675,9 @@ kiki_start_inactive_state:
 		sprite_y_msb = tmpfield4
 
 		; Set the appropriate animation
-		; TODO draw a specific animation
-		lda #<kiki_anim_paint_side
+		lda #<kiki_anim_paint_up
 		sta tmpfield13
-		lda #>kiki_anim_paint_side
+		lda #>kiki_anim_paint_up
 		sta tmpfield14
 		jsr set_player_animation
 
