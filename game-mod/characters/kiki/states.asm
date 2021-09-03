@@ -856,7 +856,7 @@ kiki_global_onground:
 		bcs crash
 
 		; A valid tech was entered, land with momentum depending on tech's direction
-		jsr kiki_start_landing
+		jsr kiki_start_teching
 		lda player_a_state_field2, x
 		beq no_momentum
 		cmp #$01
@@ -1420,6 +1420,8 @@ kiki_start_inactive_state:
 		sta player_a_state_field1, x
 		sta player_a_state_clock, x
 
+		jsr audio_play_jump
+
 		; Set the appropriate animation
 		lda #<kiki_anim_jump
 		sta tmpfield13
@@ -1569,6 +1571,9 @@ kiki_start_inactive_state:
 		sta player_a_velocity_v, x
 		sta player_a_velocity_v_low, x
 
+		; Play SFX
+		jsr audio_play_aerial_jump
+
 		; Set the appropriate animation
 		;TODO use aerial_jump animation
 		lda #<kiki_anim_jump
@@ -1618,7 +1623,17 @@ kiki_start_inactive_state:
 	velocity_table(KIKI_LANDING_MAX_VELOCITY, land_max_velocity_msb, land_max_velocity_lsb)
 	velocity_table(-KIKI_LANDING_MAX_VELOCITY, land_max_neg_velocity_msb, land_max_neg_velocity_lsb)
 
+	&kiki_start_teching:
+	.(
+		jsr audio_play_tech
+		jmp kiki_start_landing_common
+	.)
 	&kiki_start_landing:
+	.(
+		jsr audio_play_land
+		; Fallthrough
+	.)
+	kiki_start_landing_common:
 	.(
 		; Set state
 		lda #KIKI_STATE_LANDING
@@ -2043,6 +2058,9 @@ kiki_start_inactive_state:
 
 		; Reset fall speed
 		jsr reset_default_gravity
+
+		; Play SFX
+		jsr audio_play_jump
 
 		; Set the appropriate animation
 		;TODO specific animation

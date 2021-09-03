@@ -745,7 +745,7 @@ pepper_check_aerial_inputs:
 		bcs crash
 
 		; A valid tech was entered, land with momentum depending on tech's direction
-		jsr pepper_start_landing
+		jsr pepper_start_teching
 		lda player_a_state_field2, x
 		beq no_momentum
 		cmp #$01
@@ -1341,6 +1341,8 @@ pepper_input_idle_right:
 		lda #0
 		sta player_a_state_clock, x
 
+		jsr audio_play_jump
+
 		; Set the appropriate animation
 		lda #<pepper_anim_jump
 		sta tmpfield13
@@ -1496,6 +1498,9 @@ pepper_input_idle_right:
 		lda #$00
 		sta player_a_velocity_v_low, x
 
+		; Play SFX
+		jsr audio_play_aerial_jump
+
 		; Set the appropriate animation
 		;TODO use pepper_anim_aerial_jump animation
 		lda #<pepper_anim_jump
@@ -1545,7 +1550,17 @@ pepper_input_idle_right:
 	velocity_table(PEPPER_LANDING_MAX_VELOCITY, land_max_velocity_msb, land_max_velocity_lsb)
 	velocity_table(-PEPPER_LANDING_MAX_VELOCITY, land_max_neg_velocity_msb, land_max_neg_velocity_lsb)
 
+	&pepper_start_teching:
+	.(
+		jsr audio_play_tech
+		jmp pepper_start_landing_common
+	.)
 	&pepper_start_landing:
+	.(
+		jsr audio_play_land
+		; Fallthrough
+	.)
+	pepper_start_landing_common:
 	.(
 		jsr pepper_global_onground
 
@@ -2077,6 +2092,9 @@ pepper_input_idle_right:
 
 		; Reset fall speed
 		jsr reset_default_gravity
+
+		; Play SFX
+		jsr audio_play_jump
 
 		; Set the appropriate animation
 		;TODO specific animation

@@ -809,10 +809,9 @@ sinbad_start_inactive_state:
 		lda #0
 		sta player_a_state_clock, x
 
+		jsr audio_play_jump
+
 		; Fallthrough to set the animation
-	.)
-	set_jumping_animation:
-	.(
 		; Set the appropriate animation
 		lda #<anim_sinbad_jumping
 		sta tmpfield13
@@ -964,10 +963,9 @@ sinbad_start_inactive_state:
 		sta player_a_velocity_v, x
 		sta player_a_velocity_v_low, x
 
-		; Fallthrough to set the animation
-	.)
-	set_aerial_jumping_animation:
-	.(
+		; Play SFX
+		jsr audio_play_aerial_jump
+
 		; Set the appropriate animation
 		lda #<anim_sinbad_aerial_jumping
 		sta tmpfield13
@@ -1165,7 +1163,7 @@ sinbad_start_inactive_state:
 		bcs crash
 
 			; A valid tech was entered, land with momentum depending on tech's direction
-			jsr sinbad_start_landing
+			jsr sinbad_start_teching
 			lda player_a_state_field2, x
 			beq no_momentum
 			cmp #$01
@@ -1638,7 +1636,17 @@ sinbad_start_inactive_state:
 	velocity_table(SINBAD_LANDING_MAX_VELOCITY, land_max_velocity_msb, land_max_velocity_lsb)
 	velocity_table(-SINBAD_LANDING_MAX_VELOCITY, land_max_neg_velocity_msb, land_max_neg_velocity_lsb)
 
+	&sinbad_start_teching:
+	.(
+		jsr audio_play_tech
+		jmp sinbad_start_landing_common
+	.)
 	&sinbad_start_landing:
+	.(
+		jsr audio_play_land
+		; Fallthrough
+	.)
+	sinbad_start_landing_common:
 	.(
 		jsr sinbad_global_onground
 
@@ -2646,6 +2654,9 @@ sinbad_start_inactive_state:
 
 		; Reset fall speed
 		jsr reset_default_gravity
+
+		; Play SFX
+		jsr audio_play_jump
 
 		; Set the appropriate animation
 		;TODO specific animation

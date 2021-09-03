@@ -132,6 +132,15 @@ audio_play_title_screen_text:
 	;rts ; useless, jump to subroutine
 .)
 
+audio_play_interface_click:
+.(
+	audio_preserve_x_y
+	ldy #<sfx_interface_click
+	ldx #>sfx_interface_click
+	jmp audio_play_sfx_from_common_bank
+	;rts ; useless, jump to subroutine
+.)
+
 audio_play_fast_fall:
 .(
 	audio_preserve_x_y
@@ -141,11 +150,38 @@ audio_play_fast_fall:
 	;rts ; useless, jump to subroutine
 .)
 
-audio_play_interface_click:
+audio_play_land:
 .(
 	audio_preserve_x_y
-	ldy #<sfx_interface_click
-	ldx #>sfx_interface_click
+	ldy #<sfx_land
+	ldx #>sfx_land
+	jmp audio_play_sfx_from_common_bank
+	;rts ; useless, jump to subroutine
+.)
+
+audio_play_tech:
+.(
+	audio_preserve_x_y
+	ldy #<sfx_tech
+	ldx #>sfx_tech
+	jmp audio_play_sfx_from_common_bank
+	;rts ; useless, jump to subroutine
+.)
+
+audio_play_jump:
+.(
+	audio_preserve_x_y
+	ldy #<sfx_jump
+	ldx #>sfx_jump
+	jmp audio_play_sfx_from_common_bank
+	;rts ; useless, jump to subroutine
+.)
+
+audio_play_aerial_jump:
+.(
+	audio_preserve_x_y
+	ldy #<sfx_aerial_jump
+	ldx #>sfx_aerial_jump
 	jmp audio_play_sfx_from_common_bank
 	;rts ; useless, jump to subroutine
 .)
