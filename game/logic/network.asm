@@ -281,13 +281,13 @@ network_tick_ingame:
 					sta $00, x        ; 4 cycles
 
 				inx ; 2 cycles
-				cpx #$50 ; 3 cycles
+				cpx #$52 ; 3 cycles
 				bne copy_one_byte ; 3 cycles
 			.)
 
 			; Note
-			;  Total - (4+4+2+3+3) * 79 = 16 * 79 = 1264
-			;  Unroll - (4+3) * 79 = 7 * 79 = 553
+			;  Total - (4+4+2+3+3) * 81 = 16 * 81 = 1296
+			;  Unroll - (4+3) * 81 = 7 * 81 = 567
 
 			; Copy hitboxes MSB
 			.(
@@ -400,6 +400,8 @@ network_tick_ingame:
 				sta player_a_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB
 				lda RAINBOW_DATA
 				sta player_a_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB
+				lda RAINBOW_DATA
+				sta player_a_animation+ANIMATION_STATE_OFFSET_NTSC_CNT
 
 				lda RAINBOW_DATA
 				sta player_b_animation+ANIMATION_STATE_OFFSET_DATA_VECTOR_LSB
@@ -413,6 +415,8 @@ network_tick_ingame:
 				sta player_b_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB
 				lda RAINBOW_DATA
 				sta player_b_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB
+				lda RAINBOW_DATA
+				sta player_b_animation+ANIMATION_STATE_OFFSET_NTSC_CNT
 			.)
 
 			; Copy character specific data
