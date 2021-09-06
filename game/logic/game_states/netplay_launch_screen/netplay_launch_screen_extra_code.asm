@@ -463,7 +463,7 @@ netplay_launch_screen_tick_extra:
 	estimate_latency_2:
 	.(
 		; Ping value from which we refuse to connect to the server (in milliseconds)
-		OUTRAGEOUS_PING = 200
+		OUTRAGEOUS_PING = 800
 
 		; Do nothing until ping responses are received
 		bit RAINBOW_FLAGS
