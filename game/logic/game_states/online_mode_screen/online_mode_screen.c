@@ -176,24 +176,6 @@ static uint8_t const set_protocol_cmd[] = {
 static uint8_t const esp_clear_cmd[] = {1, TOESP_MSG_CLEAR_BUFFERS};
 static uint8_t const connect_cmd[] = {1, TOESP_MSG_SERVER_CONNECT};
 
-static uint8_t const set_server_cmd[] = {
-#ifndef LOCAL_LOGIN_SERVER
-	// ESP header
-	23, TOESP_MSG_SERVER_SET_SETTINGS,
-	// Port
-	0x12, 0x34,
-	// Address
-	's', 't', 'b', '-', 'l', 'o', 'g', 'i', 'n', '.', 'w', 'o', 'n', 't', 'f', 'i', 'x', '.', 'i', 't',
-#else
-	// ESP header
-	12, TOESP_MSG_SERVER_SET_SETTINGS,
-	// Port
-	0x12, 0x34,
-	// Address
-	'l', 'o', 'c', 'a', 'l', 'h', 'o', 's', 't',
-#endif
-};
-
 struct Position16 {
     uint16_t x;
     uint16_t y;
@@ -746,6 +728,42 @@ static void anonymous_login_draw_connexion_window() {
 	}
 }
 
+static void connect_to_login_server() {
+#ifndef LOCAL_LOGIN_SERVER
+	static uint8_t const set_server_cmd[] = {
+		// ESP header
+		23, TOESP_MSG_SERVER_SET_SETTINGS,
+		// Port
+		0x12, 0x34,
+		// Address
+		's', 't', 'b', '-', 'l', 'o', 'g', 'i', 'n', '.', 'w', 'o', 'n', 't', 'f', 'i', 'x', '.', 'i', 't',
+	};
+	wrap_esp_send_cmd(set_server_cmd);
+#else
+	// Get configured server info
+	static uint8_t get_server_settings_cmd[] = {1, TOESP_MSG_SERVER_GET_CONFIG_SETTINGS};
+	wrap_esp_send_cmd(get_server_settings_cmd);
+	yield();
+	while (wrap_esp_get_msg(online_mode_selection_mem_buffer) <= 1) {
+		// Note - "<= 1" loops infinitly if no server is configured. We do not want to fallback to official one.
+		yield();
+	}
+
+	// Convert result to set_server command
+	uint16_t const login_server_port = 0x1234; // Hardcode port, it cannot be the same as game server (which is the configured one)
+	online_mode_selection_mem_buffer[1] = TOESP_MSG_SERVER_SET_SETTINGS;
+	online_mode_selection_mem_buffer[2] = u16_msb(login_server_port);
+	online_mode_selection_mem_buffer[3] = u16_lsb(login_server_port);
+
+	// Send built command
+	wrap_esp_send_cmd(online_mode_selection_mem_buffer);
+#endif
+
+	wrap_esp_send_cmd(set_protocol_cmd);
+	wrap_esp_send_cmd(connect_cmd);
+	yield();
+}
+
 static uint8_t anonymous_login() {
 	static uint8_t const login_msg_cmd[] = {
 		// ESP header
@@ -761,11 +779,7 @@ static uint8_t anonymous_login() {
 	yield();
 
 	// Contact login server to get an anonymous ID
-	wrap_esp_send_cmd(set_protocol_cmd);
-	wrap_esp_send_cmd(set_server_cmd);
-	wrap_esp_send_cmd(connect_cmd);
-	yield();
-
+	connect_to_login_server();
 	wrap_esp_send_cmd(login_msg_cmd);
 	yield();
 
@@ -865,10 +879,7 @@ static void password_login_process(uint8_t create) {
 	yield();
 
 	// Point connection to the login server
-	wrap_esp_send_cmd(set_protocol_cmd);
-	wrap_esp_send_cmd(set_server_cmd);
-	wrap_esp_send_cmd(connect_cmd);
-	yield();
+	connect_to_login_server();
 
 	// Send login request
 	password_login_send_request(create);
