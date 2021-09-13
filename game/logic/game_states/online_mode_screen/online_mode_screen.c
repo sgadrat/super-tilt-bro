@@ -559,21 +559,25 @@ static void update_game() {
 	uint8_t const UPDATE_ROM_FILE = 1;
 	static uint8_t const cmd_download_update[] = {
 		// Message header
-		1+2+54, TOESP_MSG_FILE_DOWNLOAD,
+		1+1+1+54+2, TOESP_MSG_FILE_DOWNLOAD,
 
-		// Destination
-		ESP_FILE_PATH_ROMS, UPDATE_ROM_FILE,
+		// File mode
+		ESP_FILE_MODE_AUTO,
 
 		// URL
+		54,
 		'h', 't', 't', 'p', ':', '/', '/', 'u', 'p', 'g', 'r', 'a', 'd', 'e', '.', 's', 'u', 'p', 'e', 'r', '-', 't', 'i', 'l', 't', '-', 'b', 'r', 'o', '.', 'c', 'o', 'm', '/', 'g', 'e', 't', '_', 'f', 'r', 'o', 'm', '/',
 		'0'+CONST_HUNDREDS(GAME_VERSION_MAJOR), '0'+CONST_TENS(GAME_VERSION_MAJOR), '0'+CONST_UNITS(GAME_VERSION_MAJOR), '-',
 		'0'+CONST_HUNDREDS(GAME_VERSION_TYPE),  '0'+CONST_TENS(GAME_VERSION_TYPE),  '0'+CONST_UNITS(GAME_VERSION_TYPE), '-',
 		'0'+CONST_HUNDREDS(GAME_VERSION_MINOR), '0'+CONST_TENS(GAME_VERSION_MINOR), '0'+CONST_UNITS(GAME_VERSION_MINOR),
+
+		// Destination
+		ESP_FILE_PATH_ROMS, UPDATE_ROM_FILE,
 	};
 	wrap_esp_send_cmd(cmd_download_update);
 
 	while(
-		wrap_esp_get_msg(online_mode_selection_mem_buffer) != 2 ||
+		wrap_esp_get_msg(online_mode_selection_mem_buffer) != 4 ||
 		online_mode_selection_mem_buffer[1] != FROMESP_MSG_FILE_DOWNLOAD
 	)
 	{
@@ -583,7 +587,7 @@ static void update_game() {
 		yield();
 	}
 
-	uint8_t const success = (online_mode_selection_mem_buffer[2] == 0);
+	uint8_t const success = (online_mode_selection_mem_buffer[2] == ESP_FILE_DOWNLOAD_SUCCESS);
 	if (!success) {
 		// Draw "no update available" message and wait for input before returning
 		draw_dialog_string(0x2146, 3, "already up to date");
@@ -592,7 +596,7 @@ static void update_game() {
 	}
 
 	// Parse ROM header
-	static uint8_t const cmd_open_file[] = {3, TOESP_MSG_FILE_OPEN, ESP_FILE_PATH_ROMS, UPDATE_ROM_FILE};
+	static uint8_t const cmd_open_file[] = {4, TOESP_MSG_FILE_OPEN, ESP_FILE_MODE_AUTO, ESP_FILE_PATH_ROMS, UPDATE_ROM_FILE};
 	wrap_esp_send_cmd(cmd_open_file);
 
 	uint8_t n_read = esp_read_file(1);

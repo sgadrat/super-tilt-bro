@@ -126,10 +126,10 @@ PROGRESS_BAR_LEN = 16
 	;rts ; useless, jumped to subroutine
 
 	cmd_open_file:
-		.byt 3, TOESP_MSG_FILE_OPEN, ESP_FILE_PATH_ROMS, 0
+		.byt 4, TOESP_MSG_FILE_OPEN, ESP_FILE_MODE_AUTO, ESP_FILE_PATH_ROMS, 0
 
 	esp_cmd_rom_file_exists:
-		.byt 3, TOESP_MSG_FILE_EXISTS, ESP_FILE_PATH_ROMS, 0
+		.byt 4, TOESP_MSG_FILE_EXISTS, ESP_FILE_MODE_AUTO, ESP_FILE_PATH_ROMS, 0
 
 #if 0
 	cmd_set_debug:
@@ -217,9 +217,6 @@ flash_sectors_launch:
 	jmp flash_sectors_ram
 
 	;rts ; useless, jump to a subroutine that never returns anyway
-
-	cmd_read_block:
-		.byt 2, TOESP_MSG_FILE_READ, 128
 .)
 
 &prepare_display:

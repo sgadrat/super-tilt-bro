@@ -41,17 +41,19 @@ TOESP_MSG_NETWORK_UNREGISTER               = 27  ; Unregister network
 ; FILE COMMANDS
 TOESP_MSG_FILE_OPEN                        = 28  ; Open working file
 TOESP_MSG_FILE_CLOSE                       = 29  ; Close working file
-TOESP_MSG_FILE_EXISTS                      = 30  ; Check if file exists
-TOESP_MSG_FILE_DELETE                      = 31  ; Delete a file
-TOESP_MSG_FILE_SET_CUR                     = 32  ; Set working file cursor position a file
-TOESP_MSG_FILE_READ                        = 33  ; Read working file (at specific position)
-TOESP_MSG_FILE_WRITE                       = 34  ; Write working file (at specific position)
-TOESP_MSG_FILE_APPEND                      = 35  ; Append data to working file
-TOESP_MSG_FILE_COUNT                       = 36  ; Count files in a specific path
-TOESP_MSG_FILE_GET_LIST                    = 37  ; Get list of existing files in a path
-TOESP_MSG_FILE_GET_FREE_ID                 = 38  ; Get an unexisting file ID in a specific path
-TOESP_MSG_FILE_GET_INFO                    = 39  ; Get file info (size + crc32)
-TOESP_MSG_FILE_DOWNLOAD                    = 40  ; Download a file from a giving URL to a specific path index / file index
+TOESP_MSG_FILE_STATUS                      = 30  ; Get working file status
+TOESP_MSG_FILE_EXISTS                      = 31  ; Check if file exists
+TOESP_MSG_FILE_DELETE                      = 32  ; Delete a file
+TOESP_MSG_FILE_SET_CUR                     = 33  ; Set working file cursor position a file
+TOESP_MSG_FILE_READ                        = 34  ; Read working file (at specific position)
+TOESP_MSG_FILE_WRITE                       = 35  ; Write working file (at specific position)
+TOESP_MSG_FILE_APPEND                      = 36  ; Append data to working file
+TOESP_MSG_FILE_COUNT                       = 37  ; Count files in a specific path
+TOESP_MSG_FILE_GET_LIST                    = 38  ; Get list of existing files in a path
+TOESP_MSG_FILE_GET_FREE_ID                 = 39  ; Get an unexisting file ID in a specific path
+TOESP_MSG_FILE_GET_INFO                    = 40  ; Get file info (size + crc32)
+TOESP_MSG_FILE_DOWNLOAD                    = 41  ; Download a file from a giving URL to a specific path index / file index
+TOESP_MSG_FILE_FORMAT                      = 42  ; Format file system
 
 ;-------------------------------------------------------------------------------
 ; Commands from ESP to NES
@@ -79,14 +81,15 @@ FROMESP_MSG_NETWORK_REGISTERED_DETAILS     = 11  ; Returns SSID for a registered
 FROMESP_MSG_NETWORK_REGISTERED             = 12  ; Returns registered networks status
 
 ; FILE CMDS
-FROMESP_MSG_FILE_EXISTS                    = 13  ; Returns if file exists or not
-FROMESP_MSG_FILE_DELETE                    = 14  ; Returns when trying to delete a file
-FROMESP_MSG_FILE_LIST                      = 15  ; Returns path file list (FILE_GET_LIST)
-FROMESP_MSG_FILE_DATA                      = 16  ; Returns file data (FILE_READ)
-FROMESP_MSG_FILE_COUNT                     = 17  ; Returns file count in a specific path
-FROMESP_MSG_FILE_ID                        = 18  ; Returns a free file ID (FILE_GET_FREE_ID)
-FROMESP_MSG_FILE_INFO                      = 19  ; Returns file info (size + CRC32) (FILE_GET_INFO)
-FROMESP_MSG_FILE_DOWNLOAD                  = 20  ; Returns download result code
+FROMESP_MSG_FILE_STATUS                    = 13  ; Returns the working file status
+FROMESP_MSG_FILE_EXISTS                    = 14  ; Returns if file exists or not
+FROMESP_MSG_FILE_DELETE                    = 15  ; Returns when trying to delete a file
+FROMESP_MSG_FILE_LIST                      = 16  ; Returns path file list (FILE_GET_LIST)
+FROMESP_MSG_FILE_DATA                      = 17  ; Returns file data (FILE_READ)
+FROMESP_MSG_FILE_COUNT                     = 18  ; Returns file count in a specific path
+FROMESP_MSG_FILE_ID                        = 19  ; Returns a free file ID (FILE_GET_FREE_ID)
+FROMESP_MSG_FILE_INFO                      = 20  ; Returns file info (size + CRC32) (FILE_GET_INFO)
+FROMESP_MSG_FILE_DOWNLOAD                  = 21  ; Returns download result code
 
 ;-------------------------------------------------------------------------------
 ; Constants to be used in commands
@@ -96,6 +99,10 @@ FROMESP_MSG_FILE_DOWNLOAD                  = 20  ; Returns download result code
 ESP_FILE_PATH_SAVE = 0
 ESP_FILE_PATH_ROMS = 1
 ESP_FILE_PATH_USER = 2
+
+; File open options
+ESP_FILE_MODE_AUTO = %00000000
+ESP_FILE_MODE_MANUAL = %00000001
 
 ; Server protocol
 ESP_PROTOCOL_WEBSOCKET         = 0
@@ -111,10 +118,24 @@ ESP_FILE_DELETE_FILE_NOT_FOUND            = 2
 ESP_FILE_DELETE_INVALID_PATH_OR_FILE      = 3
 
 ; File download results
-ESP_FILE_DOWNLOAD_SUCCESS                   = 0
-ESP_FILE_DOWNLOAD_ERROR_WHILE_DELETING_FILE = 1
-ESP_FILE_DOWNLOAD_DOWNLOAD_FAILED           = 2
-ESP_FILE_DOWNLOAD_INVALID_PATH_OR_FILE      = 3
+ESP_FILE_DOWNLOAD_SUCCESS                   = 0 ; Success (HTTP status in 2xx)
+ESP_FILE_DOWNLOAD_INVALID_DESTINATION       = 1 ; Invalid destination (path/filename)
+ESP_FILE_DOWNLOAD_ERROR_WHILE_DELETING_FILE = 2 ; Error while deleting existing file
+ESP_FILE_DOWNLOAD_UNKNOWN_PROTOCOL          = 3 ; Unknown / unsupported protocol
+ESP_FILE_DOWNLOAD_NETWORK_ERROR             = 4 ; Network error
+ESP_FILE_DOWNLOAD_HTTP_ERROR                = 5 ; HTTP status is not in 2xx
+
+ESP_FILE_DOWNLOAD_NETWORK_ERROR_CONNECTION_FAILED  = 255 ; Connection failed
+ESP_FILE_DOWNLOAD_NETWORK_ERROR_SEND_HEADER_FAILED = 254 ; Send header failed
+ESP_FILE_DOWNLOAD_NETWORK_ERROR_SEND_PAYLOAD_FILED = 253 ; Send payload failed
+ESP_FILE_DOWNLOAD_NETWORK_ERROR_NOT_CONNECTED      = 252 ; Not connected
+ESP_FILE_DOWNLOAD_NETWORK_ERROR_CONNECTION_LOST    = 251 ; Connection lost
+ESP_FILE_DOWNLOAD_NETWORK_ERROR_NO_STREAM          = 250 ; No stream
+ESP_FILE_DOWNLOAD_NETWORK_ERROR_NO_HTTP_SERVER     = 249 ; No HTTP server
+ESP_FILE_DOWNLOAD_NETWORK_ERROR_OUT_OF_RAM         = 248 ; Too less RAM
+ESP_FILE_DOWNLOAD_NETWORK_ERROR_ENCODING           = 247 ; Encoding
+ESP_FILE_DOWNLOAD_NETWORK_ERROR_STREAM_WRITE       = 246 ; Stream write
+ESP_FILE_DOWNLOAD_NETWORK_ERROR_READ_TIMEOUT       = 245 ; Read timeout
 
 ;-------------------------------------------------------------------------------
 ; Rainbow registers
@@ -127,6 +148,7 @@ RAINBOW_PRG_BANKING_2 = $5003
 RAINBOW_PRG_BANKING_3 = $5004
 RAINBOW_WRAM_BANKING = $5005
 RAINBOW_CONFIGURATION = $5006
+RAINBOW_CHR_BANKING_UPPER = 5007
 RAINBOW_CHR_BANKING_1 = $5400
 RAINBOW_CHR_BANKING_2 = $5401
 RAINBOW_CHR_BANKING_3 = $5402
