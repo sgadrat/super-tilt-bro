@@ -9,51 +9,60 @@ TOESP_MSG_DEBUG_SET_LEVEL                  = 2   ; Set debug level
 TOESP_MSG_DEBUG_LOG                        = 3   ; Debug / Log data
 TOESP_MSG_CLEAR_BUFFERS                    = 4   ; Clear RX/TX buffers
 TOESP_MSG_FROMESP_MSG_BUFFER_DROP_FROM_ESP = 5   ; Drop messages from TX (ESP->outside world) buffer
-TOESP_MSG_GET_WIFI_STATUS                  = 6   ; Get WiFi connection status
+TOESP_MSG_ESP_GET_FIRMWARE_VERSION         = 6   ; Get Rainbow firmware version
 TOESP_MSG_ESP_RESTART                      = 7   ; Restart ESP
 
+; WIFI CMDS
+TOESP_MSG_WIFI_GET_STATUS                  = 8   ; Get WiFi connection status
+TOESP_MSG_WIFI_GET_SSID                    = 9   ; Get WiFi network SSID
+TOESP_MSG_WIFI_GET_IP                      = 10  ; Get WiFi IP address
+
+; AP CMDS
+TOESP_MSG_AP_GET_SSID                      = 11  ; Get Access Point network SSID
+TOESP_MSG_AP_GET_IP                        = 12  ; Get Access Point IP address
+
 ; RND CMDS
-TOESP_MSG_RND_GET_BYTE                     = 8   ; Get random byte
-TOESP_MSG_RND_GET_BYTE_RANGE               = 9   ; Get random byte between custom min/max
-TOESP_MSG_RND_GET_WORD                     = 10  ; Get random word
-TOESP_MSG_RND_GET_WORD_RANGE               = 11  ; Get random word between custom min/max
+TOESP_MSG_RND_GET_BYTE                     = 13  ; Get random byte
+TOESP_MSG_RND_GET_BYTE_RANGE               = 14  ; Get random byte between custom min/max
+TOESP_MSG_RND_GET_WORD                     = 15  ; Get random word
+TOESP_MSG_RND_GET_WORD_RANGE               = 16  ; Get random word between custom min/max
 
 ; SERVER CMDS
-TOESP_MSG_SERVER_GET_STATUS                = 12  ; Get server connection status
-TOESP_MSG_SERVER_PING                      = 13  ; Get ping between ESP and server
-TOESP_MSG_SERVER_SET_PROTOCOL              = 14  ; Set protocol to be used to communicate (WS/UDP)
-TOESP_MSG_SERVER_GET_SETTINGS              = 15  ; Get current server host name and port
-TOESP_MSG_SERVER_GET_CONFIG_SETTINGS       = 16  ; Get server host name and port defined in the Rainbow config file
-TOESP_MSG_SERVER_SET_SETTINGS              = 17  ; Set current server host name and port
-TOESP_MSG_SERVER_RESTORE_SETTINGS          = 18  ; Restore server host name and port to values defined in the Rainbow config
-TOESP_MSG_SERVER_CONNECT                   = 19  ; Connect to server
-TOESP_MSG_SERVER_DISCONNECT                = 20  ; Disconnect from server
-TOESP_MSG_SERVER_SEND_MESSAGE              = 21  ; Send message to server
+TOESP_MSG_SERVER_GET_STATUS                = 17  ; Get server connection status
+TOESP_MSG_SERVER_PING                      = 18  ; Get ping between ESP and server
+TOESP_MSG_SERVER_SET_PROTOCOL              = 19  ; Set protocol to be used to communicate (WS/UDP)
+TOESP_MSG_SERVER_GET_SETTINGS              = 20  ; Get current server host name and port
+TOESP_MSG_SERVER_GET_CONFIG_SETTINGS       = 21  ; Get server host name and port defined in the Rainbow config file
+TOESP_MSG_SERVER_SET_SETTINGS              = 22  ; Set current server host name and port
+TOESP_MSG_SERVER_RESTORE_SETTINGS          = 23  ; Restore server host name and port to values defined in the Rainbow config
+TOESP_MSG_SERVER_CONNECT                   = 24  ; Connect to server
+TOESP_MSG_SERVER_DISCONNECT                = 25  ; Disconnect from server
+TOESP_MSG_SERVER_SEND_MESSAGE              = 26  ; Send message to server
 
 ; NETWORK CMDS
-TOESP_MSG_NETWORK_SCAN                     = 22  ; Scan networks around and return count
-TOESP_MSG_NETWORK_GET_SCANNED_DETAILS      = 23  ; Get scanned network details
-TOESP_MSG_NETWORK_GET_REGISTERED           = 24  ; Get registered networks status
-TOESP_MSG_NETWORK_GET_REGISTERED_DETAILS   = 25  ; Get registered network SSID
-TOESP_MSG_NETWORK_REGISTER                 = 26  ; Register network
-TOESP_MSG_NETWORK_UNREGISTER               = 27  ; Unregister network
+TOESP_MSG_NETWORK_SCAN                     = 27  ; Scan networks around and return count
+TOESP_MSG_NETWORK_GET_SCANNED_DETAILS      = 28  ; Get scanned network details
+TOESP_MSG_NETWORK_GET_REGISTERED           = 29  ; Get registered networks status
+TOESP_MSG_NETWORK_GET_REGISTERED_DETAILS   = 30  ; Get registered network SSID
+TOESP_MSG_NETWORK_REGISTER                 = 31  ; Register network
+TOESP_MSG_NETWORK_UNREGISTER               = 32  ; Unregister network
 
 ; FILE COMMANDS
-TOESP_MSG_FILE_OPEN                        = 28  ; Open working file
-TOESP_MSG_FILE_CLOSE                       = 29  ; Close working file
-TOESP_MSG_FILE_STATUS                      = 30  ; Get working file status
-TOESP_MSG_FILE_EXISTS                      = 31  ; Check if file exists
-TOESP_MSG_FILE_DELETE                      = 32  ; Delete a file
-TOESP_MSG_FILE_SET_CUR                     = 33  ; Set working file cursor position a file
-TOESP_MSG_FILE_READ                        = 34  ; Read working file (at specific position)
-TOESP_MSG_FILE_WRITE                       = 35  ; Write working file (at specific position)
-TOESP_MSG_FILE_APPEND                      = 36  ; Append data to working file
-TOESP_MSG_FILE_COUNT                       = 37  ; Count files in a specific path
-TOESP_MSG_FILE_GET_LIST                    = 38  ; Get list of existing files in a path
-TOESP_MSG_FILE_GET_FREE_ID                 = 39  ; Get an unexisting file ID in a specific path
-TOESP_MSG_FILE_GET_INFO                    = 40  ; Get file info (size + crc32)
-TOESP_MSG_FILE_DOWNLOAD                    = 41  ; Download a file from a giving URL to a specific path index / file index
-TOESP_MSG_FILE_FORMAT                      = 42  ; Format file system
+TOESP_MSG_FILE_OPEN                        = 33  ; Open working file
+TOESP_MSG_FILE_CLOSE                       = 34  ; Close working file
+TOESP_MSG_FILE_STATUS                      = 35  ; Get working file status
+TOESP_MSG_FILE_EXISTS                      = 36  ; Check if file exists
+TOESP_MSG_FILE_DELETE                      = 37  ; Delete a file
+TOESP_MSG_FILE_SET_CUR                     = 38  ; Set working file cursor position a file
+TOESP_MSG_FILE_READ                        = 39  ; Read working file (at specific position)
+TOESP_MSG_FILE_WRITE                       = 40  ; Write working file (at specific position)
+TOESP_MSG_FILE_APPEND                      = 41  ; Append data to working file
+TOESP_MSG_FILE_COUNT                       = 42  ; Count files in a specific path
+TOESP_MSG_FILE_GET_LIST                    = 43  ; Get list of existing files in a path
+TOESP_MSG_FILE_GET_FREE_ID                 = 44  ; Get an unexisting file ID in a specific path
+TOESP_MSG_FILE_GET_INFO                    = 45  ; Get file info (size + crc32)
+TOESP_MSG_FILE_DOWNLOAD                    = 46  ; Download a file from a giving URL to a specific path index / file index
+TOESP_MSG_FILE_FORMAT                      = 47  ; Format file system
 
 ;-------------------------------------------------------------------------------
 ; Commands from ESP to NES
@@ -62,34 +71,39 @@ TOESP_MSG_FILE_FORMAT                      = 42  ; Format file system
 ; ESP CMDS
 FROMESP_MSG_READY                          = 0   ; ESP is ready
 FROMESP_MSG_DEBUG_LEVEL                    = 1   ; Returns debug configuration
-FROMESP_MSG_WIFI_STATUS                    = 2   ; Returns WiFi connection status
+FROMESP_MSG_ESP_FIRMWARE_VERSION           = 2   ; Returns the Rainbow firmware version
+
+; WIFI / AP CMDS
+FROMESP_MSG_WIFI_STATUS                    = 3   ; Returns WiFi connection status
+FROMESP_MSG_SSID                           = 4   ; WiFi/AccessPoint SSID
+FROMESP_MSG_IP_ADDRESS                     = 5   ; WiFi/AccessPoint IP address
 
 ; RND CMDS
-FROMESP_MSG_RND_BYTE                       = 3   ; Returns random byte value
-FROMESP_MSG_RND_WORD                       = 4   ; Returns random word value
+FROMESP_MSG_RND_BYTE                       = 6   ; Returns random byte value
+FROMESP_MSG_RND_WORD                       = 7   ; Returns random word value
 
 ; SERVER CMDS
-FROMESP_MSG_SERVER_STATUS                  = 5   ; Returns server connection status
-FROMESP_MSG_SERVER_PING                    = 6   ; Returns min, max and average round-trip time and number of lost packets
-FROMESP_MSG_SERVER_SETTINGS                = 7   ; Returns server settings (host name + port)
-FROMESP_MSG_MESSAGE_FROM_SERVER            = 8   ; Message from server
+FROMESP_MSG_SERVER_STATUS                  = 8   ; Returns server connection status
+FROMESP_MSG_SERVER_PING                    = 9   ; Returns min, max and average round-trip time and number of lost packets
+FROMESP_MSG_SERVER_SETTINGS                = 10  ; Returns server settings (host name + port)
+FROMESP_MSG_MESSAGE_FROM_SERVER            = 11  ; Message from server
 
 ; NETWORK CMDS
-FROMESP_MSG_NETWORK_COUNT                  = 9   ; Returns number of networks found
-FROMESP_MSG_NETWORK_SCANNED_DETAILS        = 10  ; Returns details for a scanned network
-FROMESP_MSG_NETWORK_REGISTERED_DETAILS     = 11  ; Returns SSID for a registered network
-FROMESP_MSG_NETWORK_REGISTERED             = 12  ; Returns registered networks status
+FROMESP_MSG_NETWORK_COUNT                  = 12  ; Returns number of networks found
+FROMESP_MSG_NETWORK_SCANNED_DETAILS        = 13  ; Returns details for a scanned network
+FROMESP_MSG_NETWORK_REGISTERED_DETAILS     = 14  ; Returns SSID for a registered network
+FROMESP_MSG_NETWORK_REGISTERED             = 15  ; Returns registered networks status
 
 ; FILE CMDS
-FROMESP_MSG_FILE_STATUS                    = 13  ; Returns the working file status
-FROMESP_MSG_FILE_EXISTS                    = 14  ; Returns if file exists or not
-FROMESP_MSG_FILE_DELETE                    = 15  ; Returns when trying to delete a file
-FROMESP_MSG_FILE_LIST                      = 16  ; Returns path file list (FILE_GET_LIST)
-FROMESP_MSG_FILE_DATA                      = 17  ; Returns file data (FILE_READ)
-FROMESP_MSG_FILE_COUNT                     = 18  ; Returns file count in a specific path
-FROMESP_MSG_FILE_ID                        = 19  ; Returns a free file ID (FILE_GET_FREE_ID)
-FROMESP_MSG_FILE_INFO                      = 20  ; Returns file info (size + CRC32) (FILE_GET_INFO)
-FROMESP_MSG_FILE_DOWNLOAD                  = 21  ; Returns download result code
+FROMESP_MSG_FILE_STATUS                    = 16  ; Returns the working file status
+FROMESP_MSG_FILE_EXISTS                    = 17  ; Returns if file exists or not
+FROMESP_MSG_FILE_DELETE                    = 18  ; Returns when trying to delete a file
+FROMESP_MSG_FILE_LIST                      = 19  ; Returns path file list (FILE_GET_LIST)
+FROMESP_MSG_FILE_DATA                      = 20  ; Returns file data (FILE_READ)
+FROMESP_MSG_FILE_COUNT                     = 21  ; Returns file count in a specific path
+FROMESP_MSG_FILE_ID                        = 22  ; Returns a free file ID (FILE_GET_FREE_ID)
+FROMESP_MSG_FILE_INFO                      = 23  ; Returns file info (size + CRC32) (FILE_GET_INFO)
+FROMESP_MSG_FILE_DOWNLOAD                  = 24  ; Returns download result code
 
 ;-------------------------------------------------------------------------------
 ; Constants to be used in commands
@@ -141,35 +155,45 @@ ESP_FILE_DOWNLOAD_NETWORK_ERROR_READ_TIMEOUT       = 245 ; Read timeout
 ; Rainbow registers
 ;-------------------------------------------------------------------------------
 
-RAINBOW_DATA = $5000
-RAINBOW_FLAGS = $5001
-RAINBOW_PRG_BANKING_1 = $5002
-RAINBOW_PRG_BANKING_2 = $5003
-RAINBOW_PRG_BANKING_3 = $5004
-RAINBOW_WRAM_BANKING = $5005
-RAINBOW_CONFIGURATION = $5006
-RAINBOW_CHR_BANKING_UPPER = 5007
-RAINBOW_CHR_BANKING_1 = $5400
-RAINBOW_CHR_BANKING_2 = $5401
-RAINBOW_CHR_BANKING_3 = $5402
-RAINBOW_CHR_BANKING_4 = $5403
-RAINBOW_CHR_BANKING_5 = $5404
-RAINBOW_CHR_BANKING_6 = $5405
-RAINBOW_CHR_BANKING_7 = $5406
-RAINBOW_CHR_BANKING_8 = $5407
-RAINBOW_PULSE_CHANNEL_1_CONTROL = $5800
-RAINBOW_PULSE_CHANNEL_1_FREQ_LOW = $5801
-RAINBOW_PULSE_CHANNEL_1_FREQ_HIGH = $5802
-RAINBOW_PULSE_CHANNEL_2_CONTROL = $5803
-RAINBOW_PULSE_CHANNEL_2_FREQ_LOW = $5804
-RAINBOW_PULSE_CHANNEL_2_FREQ_HIGH = $5805
-RAINBOW_SAW_CHANNEL_FREQ_LOW = $5c01
-RAINBOW_SAW_CHANNEL_FREQ_HIGH = $5c02
-RAINBOW_MAPPER_VERSION = $5c03
-RAINBOW_IRQ_LATCH = $5c04
-RAINBOW_IRQ_RELOAD = $5c05
-RAINBOW_IRQ_DISABLE = $5c06
-RAINBOW_IRQ_ENABLE = $5c07
+RAINBOW_DATA = $4100
+RAINBOW_FLAGS = $4101
+
+RAINBOW_CONFIGURATION = $4110
+RAINBOW_MAPPER_VERSION = $4113
+
+RAINBOW_PRG_BANKING_1 = $4120
+RAINBOW_PRG_BANKING_2 = $4121
+RAINBOW_PRG_BANKING_3 = $4122
+RAINBOW_FPGA_WRAM_BANKING = $4123
+RAINBOW_WRAM_BANKING = $4124
+
+RAINBOW_CHR_BANKING_1 = $4130
+RAINBOW_CHR_BANKING_2 = $4131
+RAINBOW_CHR_BANKING_3 = $4132
+RAINBOW_CHR_BANKING_4 = $4133
+RAINBOW_CHR_BANKING_5 = $4134
+RAINBOW_CHR_BANKING_6 = $4135
+RAINBOW_CHR_BANKING_7 = $4136
+RAINBOW_CHR_BANKING_8 = $4137
+RAINBOW_CHR_BANKING_UPPER = $4138
+
+RAINBOW_IRQ_LATCH = $4140
+RAINBOW_IRQ_RELOAD = $4141
+RAINBOW_IRQ_DISABLE = $4142
+RAINBOW_IRQ_ENABLE = $4143
+
+RAINBOW_PULSE_CHANNEL_1_CONTROL = $4150
+RAINBOW_PULSE_CHANNEL_1_FREQ_LOW = $4151
+RAINBOW_PULSE_CHANNEL_1_FREQ_HIGH = $4152
+RAINBOW_PULSE_CHANNEL_2_CONTROL = $4153
+RAINBOW_PULSE_CHANNEL_2_FREQ_LOW = $4154
+RAINBOW_PULSE_CHANNEL_2_FREQ_HIGH = $4155
+RAINBOW_SAW_CHANNEL_ACCUMULATOR = $4156
+RAINBOW_SAW_CHANNEL_FREQ_LOW = $4157
+RAINBOW_SAW_CHANNEL_FREQ_HIGH = $4158
+
+RAINBOW_MULTIPLY_A = $4160
+RAINBOW_MULTIPLY_B = $4161
 
 ;-------------------------------------------------------------------------------
 ; Invariable messages

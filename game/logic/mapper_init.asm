@@ -39,13 +39,13 @@ mapper_init:
 	sta RAINBOW_PRG_BANKING_3
 
 	; Select the first CHR-BANK (Actually we don't care, the game don't use CHR banking, but let's be consistent)
-	lda #%00000000 ; .......p - bank number's upper bit (always zero if not in 1K CHR window)
+	lda #%00000000 ; .......u - bank number's upper bit (always zero if not in 1K CHR window)
 	sta RAINBOW_CHR_BANKING_UPPER
 	lda #%00000000 ; BBBBBBBB - first bank
 	sta RAINBOW_CHR_BANKING_1
 
 	; Select the first WRAM bank
-	lda #%10000000 ; c.BBBBbb - WRAM, first bank
+	lda #%00000000 ; ccBBBBbb - WRAM, first bank
 	sta RAINBOW_WRAM_BANKING
 
 	; Disable scanline IRQ

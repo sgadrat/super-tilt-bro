@@ -116,7 +116,7 @@ netplay_launch_screen_tick_extra:
 			.byt $02, $02, $e8, $f4, $f3, $f3, $ea, $e8, $f9, $ee, $f3, $ec, $02, $fc, $ee, $eb, $ee, $02, $02, $02
 
 		cmd_get_wifi_status:
-			.byt 1, TOESP_MSG_GET_WIFI_STATUS
+			.byt 1, TOESP_MSG_WIFI_GET_STATUS
 	.)
 
 	connecting_wifi_wait:

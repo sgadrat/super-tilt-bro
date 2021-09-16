@@ -202,7 +202,7 @@ static void display_wifi_status() {
 		vars()->wifi_status_ctx.refresh_timer = 0;
 
 		if (vars()->wifi_status_ctx.blocked == 0) {
-			static uint8_t const cmd_get_wifi_status[] = {1, TOESP_MSG_GET_WIFI_STATUS};
+			static uint8_t const cmd_get_wifi_status[] = {1, TOESP_MSG_WIFI_GET_STATUS};
 			wrap_esp_send_cmd(cmd_get_wifi_status);
 		}
 	}
