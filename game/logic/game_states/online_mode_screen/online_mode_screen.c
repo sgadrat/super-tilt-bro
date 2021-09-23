@@ -1527,7 +1527,7 @@ static void init_satellite_anim() {
 
 	// Init satellite state
 	struct SatelliteState* state = Satellite(online_mode_satellite_state);
-	state->velocity_h = SATELLITE_MAX_VELOCITY;
+	state->velocity_h = -SATELLITE_MAX_VELOCITY;
 	state->velocity_v = 0;
 	state->x = (127 << 8);
 	state->y = (114 << 8);
@@ -1558,7 +1558,7 @@ static void tick_satellite() {
 	// Place satellite animation
 	Anim(online_mode_selection_satellite_anim)->x = i16_msb(state->x);
 	Anim(online_mode_selection_satellite_anim)->y = i16_msb(state->y);
-	if (state->velocity_h > 0) {
+	if (state->velocity_h < 0) {
 		// Change sprite for a higher numbered when if should be behind earth
 		Anim(online_mode_selection_satellite_anim)->first_sprite_num = SATELLITE_ANIM_SPRITE_BG;
 		Anim(online_mode_selection_satellite_anim)->last_sprite_num = SATELLITE_ANIM_SPRITE_BG;
