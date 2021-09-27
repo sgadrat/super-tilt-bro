@@ -685,24 +685,42 @@ pepper_check_aerial_inputs:
 	&pepper_input_thrown:
 	.(
 		; Handle controller inputs
-		lda #<(input_table+1)
+		lda #<input_table
 		sta tmpfield1
-		lda #>(input_table+1)
+		lda #>input_table
 		sta tmpfield2
-		lda input_table
+		lda #INPUT_TABLE_LENGTH
 		sta tmpfield3
 		jmp controller_callbacks
 
 		; If a tech is entered, store it's direction in state_field2
 		; and if the counter is at 0, reset it to it's max value.
+		weak_tech_neutral:
+			jsr pepper_check_aerial_inputs
+			lda player_a_state, x
+			cmp #PEPPER_STATE_THROWN
+			bne end
 		tech_neutral:
 			lda #$00
 			jmp tech_common
+
+		weak_tech_right:
+			jsr pepper_check_aerial_inputs
+			lda player_a_state, x
+			cmp #PEPPER_STATE_THROWN
+			bne end
 		tech_right:
 			lda #$01
 			jmp tech_common
+
+		weak_tech_left:
+			jsr pepper_check_aerial_inputs
+			lda player_a_state, x
+			cmp #PEPPER_STATE_THROWN
+			bne end
 		tech_left:
 			lda #$02
+
 		tech_common:
 			sta player_a_state_field2, x
 			lda player_a_state_field1, x
@@ -721,16 +739,18 @@ pepper_check_aerial_inputs:
 		; Impactful controller states and associated callbacks
 		input_table:
 		.(
-			table_length:
-			.byt 3
 			controller_inputs:
 			.byt CONTROLLER_INPUT_TECH,        CONTROLLER_INPUT_TECH_RIGHT,   CONTROLLER_INPUT_TECH_LEFT
+			.byt CONTROLLER_INPUT_JUMP,        CONTROLLER_INPUT_JUMP_RIGHT,   CONTROLLER_INPUT_JUMP_LEFT
 			controller_callbacks_lo:
 			.byt <tech_neutral,                <tech_right,                   <tech_left
+			.byt <weak_tech_neutral,           <weak_tech_right,              <weak_tech_left
 			controller_callbacks_hi:
 			.byt >tech_neutral,                >tech_right,                   >tech_left
+			.byt >weak_tech_neutral,           >weak_tech_right,              >weak_tech_left
 			controller_default_callback:
 			.word no_tech
+			&INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
 		.)
 	.)
 

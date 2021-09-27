@@ -1111,20 +1111,38 @@ sinbad_start_inactive_state:
 		sta tmpfield1
 		lda #>controller_inputs
 		sta tmpfield2
-		lda #$03
+		lda #CONTROLLER_INPUTS_LENGTH
 		sta tmpfield3
 		jmp controller_callbacks
 
 		; If a tech is entered, store it's direction in state_field2
 		; and if the counter is at 0, reset it to it's max value.
+		weak_tech_neutral:
+			jsr check_aerial_inputs
+			lda player_a_state, x
+			cmp #SINBAD_STATE_THROWN
+			bne end
 		tech_neutral:
 			lda #$00
 			jmp tech_common
+
+		weak_tech_right:
+			jsr check_aerial_inputs
+			lda player_a_state, x
+			cmp #SINBAD_STATE_THROWN
+			bne end
 		tech_right:
 			lda #$01
 			jmp tech_common
+
+		weak_tech_left:
+			jsr check_aerial_inputs
+			lda player_a_state, x
+			cmp #SINBAD_STATE_THROWN
+			bne end
 		tech_left:
 			lda #$02
+
 		tech_common:
 			sta player_a_state_field2, x
 			lda player_a_state_field1, x
@@ -1143,12 +1161,16 @@ sinbad_start_inactive_state:
 		; Impactful controller states and associated callbacks
 		controller_inputs:
 		.byt CONTROLLER_INPUT_TECH,        CONTROLLER_INPUT_TECH_RIGHT,   CONTROLLER_INPUT_TECH_LEFT
+		.byt CONTROLLER_INPUT_JUMP,        CONTROLLER_INPUT_JUMP_RIGHT,   CONTROLLER_INPUT_JUMP_LEFT
 		controller_callbacks_lo:
 		.byt <tech_neutral,                <tech_right,                   <tech_left
+		.byt <weak_tech_neutral,           <weak_tech_right,              <weak_tech_left
 		controller_callbacks_hi:
 		.byt >tech_neutral,                >tech_right,                   >tech_left
+		.byt >weak_tech_neutral,           >weak_tech_right,              >weak_tech_left
 		controller_default_callback:
 		.word no_tech
+		CONTROLLER_INPUTS_LENGTH = controller_callbacks_lo - controller_inputs
 	.)
 
 	; Routine to be called when hitting the ground from thrown state
