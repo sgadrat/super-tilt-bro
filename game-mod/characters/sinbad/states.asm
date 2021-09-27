@@ -140,7 +140,7 @@ sinbad_apply_ground_friction:
 ;  register X - Player number
 ;
 ;  Overwrites tmpfield15 and tmpfield2 plus the ones overriten by the state starting subroutine
-check_aerial_inputs:
+sinbad_check_aerial_inputs:
 .(
 	input_marker = tmpfield15
 	player_btn = tmpfield2
@@ -896,7 +896,7 @@ sinbad_start_inactive_state:
 		bcc grounded                     ;
 
 		not_grounded:
-			jsr check_aerial_inputs
+			jsr sinbad_check_aerial_inputs
 			jmp end
 
 		grounded:
@@ -1118,7 +1118,7 @@ sinbad_start_inactive_state:
 		; If a tech is entered, store it's direction in state_field2
 		; and if the counter is at 0, reset it to it's max value.
 		weak_tech_neutral:
-			jsr check_aerial_inputs
+			jsr sinbad_check_aerial_inputs
 			lda player_a_state, x
 			cmp #SINBAD_STATE_THROWN
 			bne end
@@ -1127,7 +1127,7 @@ sinbad_start_inactive_state:
 			jmp tech_common
 
 		weak_tech_right:
-			jsr check_aerial_inputs
+			jsr sinbad_check_aerial_inputs
 			lda player_a_state, x
 			cmp #SINBAD_STATE_THROWN
 			bne end
@@ -1136,7 +1136,7 @@ sinbad_start_inactive_state:
 			jmp tech_common
 
 		weak_tech_left:
-			jsr check_aerial_inputs
+			jsr sinbad_check_aerial_inputs
 			lda player_a_state, x
 			cmp #SINBAD_STATE_THROWN
 			bne end
@@ -1152,7 +1152,7 @@ sinbad_start_inactive_state:
 				sta player_a_state_field1, x
 
 		no_tech:
-			jmp check_aerial_inputs
+			jmp sinbad_check_aerial_inputs
 			; No return, jump to subroutine
 
 		end:
@@ -1284,11 +1284,11 @@ sinbad_start_inactive_state:
 		lda controller_a_last_frame_btns, x
 		bne end
 
-		; Call check_aerial_inputs
+		; Call sinbad_check_aerial_inputs
 		;  If it does not change the player state, go to falling state
 		;  so that any button press makes the player falls from revival
 		;  platform
-		jsr check_aerial_inputs
+		jsr sinbad_check_aerial_inputs
 		lda player_a_state, x
 		cmp #SINBAD_STATE_RESPAWN
 		bne end
@@ -2757,7 +2757,7 @@ sinbad_start_inactive_state:
 		cmp player_a_state_clock, x
 		bcs grounded
 			not_grounded:
-				jmp check_aerial_inputs
+				jmp sinbad_check_aerial_inputs
 				; no return, jump to a subroutine
 		grounded:
 		rts

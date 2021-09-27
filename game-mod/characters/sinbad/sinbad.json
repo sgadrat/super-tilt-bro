@@ -465,7 +465,7 @@
 			"update_routine": "sinbad_tick_falling",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_start_landing",
-			"input_routine": "check_aerial_inputs",
+			"input_routine": "sinbad_check_aerial_inputs",
 			"onhurt_routine": "hurt_player"
 		},
 		{
