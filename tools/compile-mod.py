@@ -3,6 +3,7 @@ from stblib import ensure
 import json
 import math
 import os
+import re
 import stblib.asmformat.tiles
 import stblib.asmformat.animations
 import stblib.jsonformat
@@ -221,9 +222,23 @@ def generate_character(char, game_dir):
 			state_events_file.write('\n')
 
 	# Character's logic
+	expanded_source_code = char.sourcecode
+	re_include = re.compile('!include "(?P<src>[^"]+)"')
+	def include_replacement(m):
+		rel_templates_dir = 'tools/compile-mod'
+		templates_dir = '{}/{}'.format(game_dir, rel_templates_dir)
+		template_path = '{}/{}'.format(templates_dir, m.group('src'))
+		ensure(os.path.isfile(template_path), 'character {}\'s logic includes an non-existent template "{}"'.format(char.name, m.group('src')))
+		with open(template_path, 'r') as template_file:
+			return template_file.read()
+
+	while re_include.search(expanded_source_code) is not None:
+		expanded_source_code = re_include.sub(include_replacement, expanded_source_code)
+	expanded_source_code = expanded_source_code.replace('{char_name}', char.name).replace('{char_name_upper}', char.name.upper())
+
 	player_states_file_path = '{}/player_states.asm'.format(char_dir)
 	with open(player_states_file_path, 'w') as player_states_file:
-		player_states_file.write(char.sourcecode)
+		player_states_file.write(expanded_source_code)
 
 	# Animations
 	rel_animations_path = []
