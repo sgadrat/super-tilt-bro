@@ -973,6 +973,6 @@
 			"type": "animation_frame"
 		}
 	],
-	"name": "anim_sinbad_side_special_charge",
+	"name": "sinbad_anim_side_special_charge",
 	"type": "animation"
 }

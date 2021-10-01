@@ -125,6 +125,6 @@
 			"type": "animation_frame"
 		}
 	],
-	"name": "anim_sinbad_respawn",
+	"name": "sinbad_anim_respawn",
 	"type": "animation"
 }

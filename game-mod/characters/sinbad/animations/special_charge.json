@@ -589,6 +589,6 @@
 			"type": "animation_frame"
 		}
 	],
-	"name": "anim_sinbad_special_charge",
+	"name": "sinbad_anim_special_charge",
 	"type": "animation"
 }

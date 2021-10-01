@@ -93,6 +93,6 @@
 			"type": "animation_frame"
 		}
 	],
-	"name": "anim_sinbad_idle",
+	"name": "sinbad_anim_idle",
 	"type": "animation"
 }

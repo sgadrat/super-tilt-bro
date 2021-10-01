@@ -63,6 +63,6 @@
 			"type": "animation_frame"
 		}
 	],
-	"name": "anim_sinbad_spe_up_prepare",
+	"name": "sinbad_anim_spe_up_prepare",
 	"type": "animation"
 }

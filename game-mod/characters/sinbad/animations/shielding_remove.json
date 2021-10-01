@@ -249,6 +249,6 @@
 			"type": "animation_frame"
 		}
 	],
-	"name": "anim_sinbad_shielding_remove",
+	"name": "sinbad_anim_shielding_remove",
 	"type": "animation"
 }

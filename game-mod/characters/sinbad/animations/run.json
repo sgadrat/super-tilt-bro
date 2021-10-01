@@ -187,6 +187,6 @@
 			"type": "animation_frame"
 		}
 	],
-	"name": "anim_sinbad_run",
+	"name": "sinbad_anim_run",
 	"type": "animation"
 }

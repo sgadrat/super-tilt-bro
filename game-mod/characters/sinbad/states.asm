@@ -302,7 +302,7 @@ sinbad_check_aerial_inputs:
 	.)
 .)
 
-aerial_directional_influence:
+sinbad_aerial_directional_influence:
 .(
 	; merge_to_player_velocity parameter names
 	merged_v_low = tmpfield1
@@ -406,9 +406,9 @@ sinbad_start_inactive_state:
 	&sinbad_start_standing:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_idle
+		lda #<sinbad_anim_idle
 		sta tmpfield13
-		lda #>anim_sinbad_idle
+		lda #>sinbad_anim_idle
 		sta tmpfield14
 		jsr set_player_animation
 
@@ -592,9 +592,9 @@ sinbad_start_inactive_state:
 	set_running_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_run
+		lda #<sinbad_anim_run
 		sta tmpfield13
-		lda #>anim_sinbad_run
+		lda #>sinbad_anim_run
 		sta tmpfield14
 		jsr set_player_animation
 
@@ -777,9 +777,9 @@ sinbad_start_inactive_state:
 	set_falling_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_falling
+		lda #<sinbad_anim_falling
 		sta tmpfield13
-		lda #>anim_sinbad_falling
+		lda #>sinbad_anim_falling
 		sta tmpfield14
 		jmp set_player_animation
 
@@ -790,7 +790,7 @@ sinbad_start_inactive_state:
 	;  register X must contain the player number
 	&sinbad_tick_falling:
 	.(
-		jsr aerial_directional_influence
+		jsr sinbad_aerial_directional_influence
 		jmp apply_player_gravity
 		;rts ; useless, jump to subroutine
 	.)
@@ -813,9 +813,9 @@ sinbad_start_inactive_state:
 
 		; Fallthrough to set the animation
 		; Set the appropriate animation
-		lda #<anim_sinbad_jumping
+		lda #<sinbad_anim_jumping
 		sta tmpfield13
-		lda #>anim_sinbad_jumping
+		lda #>sinbad_anim_jumping
 		sta tmpfield14
 		jmp set_player_animation
 
@@ -967,9 +967,9 @@ sinbad_start_inactive_state:
 		jsr audio_play_aerial_jump
 
 		; Set the appropriate animation
-		lda #<anim_sinbad_aerial_jumping
+		lda #<sinbad_anim_aerial_jumping
 		sta tmpfield13
-		lda #>anim_sinbad_aerial_jumping
+		lda #>sinbad_anim_aerial_jumping
 		sta tmpfield14
 		jmp set_player_animation
 
@@ -983,7 +983,7 @@ sinbad_start_inactive_state:
 
 .(
 	jab_duration:
-		.byt anim_sinbad_jab_dur_pal, anim_sinbad_jab_dur_ntsc
+		.byt sinbad_anim_jab_dur_pal, sinbad_anim_jab_dur_ntsc
 
 	&sinbad_start_jabbing:
 	.(
@@ -996,9 +996,9 @@ sinbad_start_inactive_state:
 	set_jabbing_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_jab
+		lda #<sinbad_anim_jab
 		sta tmpfield13
-		lda #>anim_sinbad_jab
+		lda #>sinbad_anim_jab
 		sta tmpfield14
 		jmp set_player_animation
 
@@ -1049,173 +1049,7 @@ sinbad_start_inactive_state:
 ; Thrown
 ;
 
-.(
-	&sinbad_start_thrown:
-	.(
-		; Set player's state
-		lda #SINBAD_STATE_THROWN
-		sta player_a_state, x
-
-		; Initialize tech counter
-		lda #0
-		sta player_a_state_field1, x
-
-		; Fallthrough to set the animation
-	.)
-	set_thrown_animation:
-	.(
-		lda #<anim_sinbad_thrown
-		sta tmpfield13
-		lda #>anim_sinbad_thrown
-		sta tmpfield14
-		jsr set_player_animation
-
-		; Set the appropriate animation direction (depending on player's velocity)
-		lda player_a_velocity_h, x
-		bmi set_anim_left
-		lda DIRECTION_RIGHT
-		jmp set_anim_dir
-		set_anim_left:
-		lda DIRECTION_LEFT
-		set_anim_dir:
-		ldy #ANIMATION_STATE_OFFSET_DIRECTION
-		sta (tmpfield11), y
-
-		rts
-	.)
-
-	; To tech successfully the tech must be input at maximum TECH_MAX_FRAMES_BEFORE_COLLISION frames before hitting the ground.
-	; After expiration of a tech input, it is not possible to input another tech for TECH_NB_FORBIDDEN_FRAMES frames.
-	&sinbad_tick_thrown:
-	.(
-		; Decrement tech counter (to zero minimum)
-		lda player_a_state_field1, x
-		beq end_dec_tech_cnt
-			dec player_a_state_field1, x
-		end_dec_tech_cnt:
-
-		; Update velocity
-		lda player_a_hitstun, x
-		bne gravity
-			jsr aerial_directional_influence
-		gravity:
-		jmp apply_player_gravity
-
-		;rts ; useless, jump to subroutine
-	.)
-
-	&sinbad_input_thrown:
-	.(
-		; Handle controller inputs
-		lda #<controller_inputs
-		sta tmpfield1
-		lda #>controller_inputs
-		sta tmpfield2
-		lda #CONTROLLER_INPUTS_LENGTH
-		sta tmpfield3
-		jmp controller_callbacks
-
-		; If a tech is entered, store it's direction in state_field2
-		; and if the counter is at 0, reset it to it's max value.
-		weak_tech_neutral:
-			jsr sinbad_check_aerial_inputs
-			lda player_a_state, x
-			cmp #SINBAD_STATE_THROWN
-			bne end
-		tech_neutral:
-			lda #$00
-			jmp tech_common
-
-		weak_tech_right:
-			jsr sinbad_check_aerial_inputs
-			lda player_a_state, x
-			cmp #SINBAD_STATE_THROWN
-			bne end
-		tech_right:
-			lda #$01
-			jmp tech_common
-
-		weak_tech_left:
-			jsr sinbad_check_aerial_inputs
-			lda player_a_state, x
-			cmp #SINBAD_STATE_THROWN
-			bne end
-		tech_left:
-			lda #$02
-
-		tech_common:
-			sta player_a_state_field2, x
-			lda player_a_state_field1, x
-			bne end
-				ldy system_index
-				lda tech_window, y
-				sta player_a_state_field1, x
-
-		no_tech:
-			jmp sinbad_check_aerial_inputs
-			; No return, jump to subroutine
-
-		end:
-		rts
-
-		; Impactful controller states and associated callbacks
-		controller_inputs:
-		.byt CONTROLLER_INPUT_TECH,        CONTROLLER_INPUT_TECH_RIGHT,   CONTROLLER_INPUT_TECH_LEFT
-		.byt CONTROLLER_INPUT_JUMP,        CONTROLLER_INPUT_JUMP_RIGHT,   CONTROLLER_INPUT_JUMP_LEFT
-		controller_callbacks_lo:
-		.byt <tech_neutral,                <tech_right,                   <tech_left
-		.byt <weak_tech_neutral,           <weak_tech_right,              <weak_tech_left
-		controller_callbacks_hi:
-		.byt >tech_neutral,                >tech_right,                   >tech_left
-		.byt >weak_tech_neutral,           >weak_tech_right,              >weak_tech_left
-		controller_default_callback:
-		.word no_tech
-		CONTROLLER_INPUTS_LENGTH = controller_callbacks_lo - controller_inputs
-	.)
-
-	; Routine to be called when hitting the ground from thrown state
-	&sinbad_thrown_on_ground:
-	.(
-		;jsr sinbad_global_onground ; useless, will be done by start_landing or start_crashing
-
-		; If the tech counter is bellow the threshold, just crash
-		ldy system_index
-		lda tech_nb_forbidden_frames, y
-		cmp player_a_state_field1, x
-		bcs crash
-
-			; A valid tech was entered, land with momentum depending on tech's direction
-			jsr sinbad_start_teching
-			lda player_a_state_field2, x
-			beq no_momentum
-			cmp #$01
-			beq momentum_right
-				ldy system_index
-				lda sinbad_tech_speed_neg_msb, y
-				sta player_a_velocity_h, x
-				lda sinbad_tech_speed_neg_lsb, y
-				sta player_a_velocity_h_low, x
-				rts
-			no_momentum:
-				lda #$00
-				sta player_a_velocity_h, x
-				sta player_a_velocity_h_low, x
-				rts
-			momentum_right:
-				ldy system_index
-				lda sinbad_tech_speed_msb, y
-				sta player_a_velocity_h, x
-				lda sinbad_tech_speed_lsb, y
-				sta player_a_velocity_h_low, x
-				rts
-
-		crash:
-			jmp sinbad_start_crashing
-			; No return, jump to subroutine
-
-		;rts ; Useless, unreachable code
-	.)
-.)
+!include "std_thrown.asm"
 
 ;
 ; Respawn
@@ -1256,9 +1090,9 @@ sinbad_start_inactive_state:
 		sta player_a_walljump, x
 
 		; Set the appropriate animation
-		lda #<anim_sinbad_respawn
+		lda #<sinbad_anim_respawn
 		sta tmpfield13
-		lda #>anim_sinbad_respawn
+		lda #>sinbad_anim_respawn
 		sta tmpfield14
 		jmp set_player_animation
 
@@ -1306,7 +1140,7 @@ sinbad_start_inactive_state:
 
 .(
 	side_tilt_duration:
-		.byt anim_sinbad_side_tilt_dur_pal, anim_sinbad_side_tilt_dur_ntsc
+		.byt sinbad_anim_side_tilt_dur_pal, sinbad_anim_side_tilt_dur_ntsc
 
 	; Not per-system constant
 	;  The static decay ensures the same distance is traveled
@@ -1319,9 +1153,9 @@ sinbad_start_inactive_state:
 	&sinbad_start_side_tilt:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_side_tilt
+		lda #<sinbad_anim_side_tilt
 		sta tmpfield13
-		lda #>anim_sinbad_side_tilt
+		lda #>sinbad_anim_side_tilt
 		sta tmpfield14
 		jsr set_player_animation
 
@@ -1390,9 +1224,9 @@ sinbad_start_inactive_state:
 	&sinbad_start_special:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_special_charge
+		lda #<sinbad_anim_special_charge
 		sta tmpfield13
-		lda #>anim_sinbad_special_charge
+		lda #>sinbad_anim_special_charge
 		sta tmpfield14
 		jsr set_player_animation
 
@@ -1428,7 +1262,7 @@ sinbad_start_inactive_state:
 
 .(
 	duration_per_system:
-		.byt 2*anim_sinbad_special_dur_pal, 2*anim_sinbad_special_dur_ntsc
+		.byt 2*sinbad_anim_special_dur_pal, 2*sinbad_anim_special_dur_ntsc
 
 	STRIKE_HEIGHT = $10
 
@@ -1436,9 +1270,9 @@ sinbad_start_inactive_state:
 	.(
 
 		; Set the appropriate animation
-		lda #<anim_sinbad_special
+		lda #<sinbad_anim_special
 		sta tmpfield13
-		lda #>anim_sinbad_special
+		lda #>sinbad_anim_special
 		sta tmpfield14
 		jsr set_player_animation
 
@@ -1509,9 +1343,9 @@ sinbad_start_inactive_state:
 	set_side_special_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_side_special_charge
+		lda #<sinbad_anim_side_special_charge
 		sta tmpfield13
-		lda #>anim_sinbad_side_special_charge
+		lda #>sinbad_anim_side_special_charge
 		sta tmpfield14
 		jmp set_player_animation
 
@@ -1557,9 +1391,9 @@ sinbad_start_inactive_state:
 			sta player_a_state_field2, x
 
 			; Set the movement animation
-			lda #<anim_sinbad_side_special_jump
+			lda #<sinbad_anim_side_special_jump
 			sta tmpfield13
-			lda #>anim_sinbad_side_special_jump
+			lda #>sinbad_anim_side_special_jump
 			sta tmpfield14
 			jsr set_player_animation
 
@@ -1619,9 +1453,9 @@ sinbad_start_inactive_state:
 	set_helpless_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_helpless
+		lda #<sinbad_anim_helpless
 		sta tmpfield13
-		lda #>anim_sinbad_helpless
+		lda #>sinbad_anim_helpless
 		sta tmpfield14
 		jmp set_player_animation
 
@@ -1653,7 +1487,7 @@ sinbad_start_inactive_state:
 
 .(
 	landing_duration:
-		.byt anim_sinbad_landing_dur_pal, anim_sinbad_landing_dur_ntsc
+		.byt sinbad_anim_landing_dur_pal, sinbad_anim_landing_dur_ntsc
 
 	velocity_table(SINBAD_LANDING_MAX_VELOCITY, land_max_velocity_msb, land_max_velocity_lsb)
 	velocity_table(-SINBAD_LANDING_MAX_VELOCITY, land_max_neg_velocity_msb, land_max_neg_velocity_lsb)
@@ -1727,9 +1561,9 @@ sinbad_start_inactive_state:
 	set_landing_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_landing
+		lda #<sinbad_anim_landing
 		sta tmpfield13
-		lda #>anim_sinbad_landing
+		lda #>sinbad_anim_landing
 		sta tmpfield14
 		jsr set_player_animation
 
@@ -1762,7 +1596,7 @@ sinbad_start_inactive_state:
 
 .(
 	crashing_duration:
-		.byt anim_sinbad_crashing_dur_pal, anim_sinbad_crashing_dur_ntsc
+		.byt sinbad_anim_crashing_dur_pal, sinbad_anim_crashing_dur_ntsc
 
 	&sinbad_start_crashing:
 	.(
@@ -1781,9 +1615,9 @@ sinbad_start_inactive_state:
 	set_crashing_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_crashing
+		lda #<sinbad_anim_crashing
 		sta tmpfield13
-		lda #>anim_sinbad_crashing
+		lda #>sinbad_anim_crashing
 		sta tmpfield14
 		jsr set_player_animation
 
@@ -1827,7 +1661,7 @@ sinbad_start_inactive_state:
 
 .(
 	down_tilt_duration:
-		.byt anim_sinbad_down_tilt_dur_pal, anim_sinbad_down_tilt_dur_ntsc
+		.byt sinbad_anim_down_tilt_dur_pal, sinbad_anim_down_tilt_dur_ntsc
 
 	&sinbad_start_down_tilt:
 	.(
@@ -1845,9 +1679,9 @@ sinbad_start_inactive_state:
 	set_down_tilt_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_down_tilt
+		lda #<sinbad_anim_down_tilt
 		sta tmpfield13
-		lda #>anim_sinbad_down_tilt
+		lda #>sinbad_anim_down_tilt
 		sta tmpfield14
 		jmp set_player_animation
 
@@ -1876,7 +1710,7 @@ sinbad_start_inactive_state:
 
 .(
 	aerial_side_duration:
-		.byt anim_sinbad_aerial_side_dur_pal, anim_sinbad_aerial_side_dur_ntsc
+		.byt sinbad_anim_aerial_side_dur_pal, sinbad_anim_aerial_side_dur_ntsc
 
 	&sinbad_start_aerial_side:
 	.(
@@ -1894,9 +1728,9 @@ sinbad_start_inactive_state:
 	set_aerial_side_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_aerial_side
+		lda #<sinbad_anim_aerial_side
 		sta tmpfield13
-		lda #>anim_sinbad_aerial_side
+		lda #>sinbad_anim_aerial_side
 		sta tmpfield14
 		jmp set_player_animation
 
@@ -1921,7 +1755,7 @@ sinbad_start_inactive_state:
 
 .(
 	aerial_down_duration:
-		.byt anim_sinbad_aerial_down_dur_pal, anim_sinbad_aerial_down_dur_ntsc
+		.byt sinbad_anim_aerial_down_dur_pal, sinbad_anim_aerial_down_dur_ntsc
 
 	&sinbad_start_aerial_down:
 	.(
@@ -1939,9 +1773,9 @@ sinbad_start_inactive_state:
 	set_aerial_down_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_aerial_down
+		lda #<sinbad_anim_aerial_down
 		sta tmpfield13
-		lda #>anim_sinbad_aerial_down
+		lda #>sinbad_anim_aerial_down
 		sta tmpfield14
 		jmp set_player_animation
 
@@ -1966,7 +1800,7 @@ sinbad_start_inactive_state:
 
 .(
 	aerial_up_duration:
-		.byt anim_sinbad_aerial_up_dur_pal, anim_sinbad_aerial_up_dur_ntsc
+		.byt sinbad_anim_aerial_up_dur_pal, sinbad_anim_aerial_up_dur_ntsc
 
 	&sinbad_start_aerial_up:
 	.(
@@ -1984,9 +1818,9 @@ sinbad_start_inactive_state:
 	set_aerial_up_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_aerial_up
+		lda #<sinbad_anim_aerial_up
 		sta tmpfield13
-		lda #>anim_sinbad_aerial_up
+		lda #>sinbad_anim_aerial_up
 		sta tmpfield14
 		jmp set_player_animation
 
@@ -2011,7 +1845,7 @@ sinbad_start_inactive_state:
 
 .(
 	aerial_neutral_duration:
-		.byt anim_sinbad_aerial_neutral_dur_pal, anim_sinbad_aerial_neutral_dur_ntsc
+		.byt sinbad_anim_aerial_neutral_dur_pal, sinbad_anim_aerial_neutral_dur_ntsc
 
 	&sinbad_start_aerial_neutral:
 	.(
@@ -2029,9 +1863,9 @@ sinbad_start_inactive_state:
 	set_aerial_neutral_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_aerial_neutral
+		lda #<sinbad_anim_aerial_neutral
 		sta tmpfield13
-		lda #>anim_sinbad_aerial_neutral
+		lda #>sinbad_anim_aerial_neutral
 		sta tmpfield14
 		jmp set_player_animation
 
@@ -2072,9 +1906,9 @@ sinbad_start_inactive_state:
 	set_aerial_spe_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_aerial_spe
+		lda #<sinbad_anim_aerial_spe
 		sta tmpfield13
-		lda #>anim_sinbad_aerial_spe
+		lda #>sinbad_anim_aerial_spe
 		sta tmpfield14
 		jsr set_player_animation
 
@@ -2083,7 +1917,7 @@ sinbad_start_inactive_state:
 
 	&sinbad_tick_aerial_spe:
 	.(
-		jsr aerial_directional_influence
+		jsr sinbad_aerial_directional_influence
 
 		; Never move upward in this state
 		lda player_a_velocity_v, x
@@ -2171,9 +2005,9 @@ sinbad_start_inactive_state:
 	set_spe_up_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_spe_up_prepare
+		lda #<sinbad_anim_spe_up_prepare
 		sta tmpfield13
-		lda #>anim_sinbad_spe_up_prepare
+		lda #>sinbad_anim_spe_up_prepare
 		sta tmpfield14
 		jsr set_player_animation
 
@@ -2210,9 +2044,9 @@ sinbad_start_inactive_state:
 			sta player_a_velocity_v_low, x
 
 			; Set the movement animation
-			lda #<anim_sinbad_spe_up_jump
+			lda #<sinbad_anim_spe_up_jump
 			sta tmpfield13
-			lda #>anim_sinbad_spe_up_jump
+			lda #>sinbad_anim_spe_up_jump
 			sta tmpfield14
 			jsr set_player_animation
 
@@ -2223,7 +2057,7 @@ sinbad_start_inactive_state:
 			bpl top_reached
 
 				; The top is not reached, stay in special upward state but apply gravity and directional influence
-				jsr aerial_directional_influence
+				jsr sinbad_aerial_directional_influence
 				jsr apply_player_gravity
 				jmp end
 
@@ -2238,7 +2072,7 @@ sinbad_start_inactive_state:
 
 .(
 	spe_down_duration:
-		.byt anim_sinbad_spe_down_dur_pal, anim_sinbad_spe_down_dur_ntsc
+		.byt sinbad_anim_spe_down_dur_pal, sinbad_anim_spe_down_dur_ntsc
 
 	&sinbad_start_spe_down:
 	.(
@@ -2255,9 +2089,9 @@ sinbad_start_inactive_state:
 	set_spe_down_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_spe_down
+		lda #<sinbad_anim_spe_down
 		sta tmpfield13
-		lda #>anim_sinbad_spe_down
+		lda #>sinbad_anim_spe_down
 		sta tmpfield14
 		jsr set_player_animation
 
@@ -2303,7 +2137,7 @@ sinbad_start_inactive_state:
 
 .(
 	uptilt_duration:
-		.byt anim_sinbad_up_tilt_dur_pal, anim_sinbad_up_tilt_dur_ntsc
+		.byt sinbad_anim_up_tilt_dur_pal, sinbad_anim_up_tilt_dur_ntsc
 
 	&sinbad_start_up_tilt:
 	.(
@@ -2321,9 +2155,9 @@ sinbad_start_inactive_state:
 	set_up_tilt_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_up_tilt
+		lda #<sinbad_anim_up_tilt
 		sta tmpfield13
-		lda #>anim_sinbad_up_tilt
+		lda #>sinbad_anim_up_tilt
 		sta tmpfield14
 		jsr set_player_animation
 
@@ -2365,9 +2199,9 @@ sinbad_start_inactive_state:
 	set_shielding_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_shielding_full
+		lda #<sinbad_anim_shielding_full
 		sta tmpfield13
-		lda #>anim_sinbad_shielding_full
+		lda #>sinbad_anim_shielding_full
 		sta tmpfield14
 		jsr set_player_animation
 
@@ -2480,15 +2314,15 @@ sinbad_start_inactive_state:
 
 		; Get the animation corresponding to the shield's life
 		partial_shield:
-			lda #<anim_sinbad_shielding_partial
+			lda #<sinbad_anim_shielding_partial
 			sta tmpfield13
-			lda #>anim_sinbad_shielding_partial
+			lda #>sinbad_anim_shielding_partial
 			jmp still_shield
 
 		limit_shield:
-			lda #<anim_sinbad_shielding_limit
+			lda #<sinbad_anim_shielding_limit
 			sta tmpfield13
-			lda #>anim_sinbad_shielding_limit
+			lda #>sinbad_anim_shielding_limit
 
 		still_shield:
 			; Set the new shield animation
@@ -2510,7 +2344,7 @@ sinbad_start_inactive_state:
 
 .(
 	shieldlag_duration:
-		.byt anim_sinbad_shielding_remove_dur_pal, anim_sinbad_shielding_remove_dur_ntsc
+		.byt sinbad_anim_shielding_remove_dur_pal, sinbad_anim_shielding_remove_dur_ntsc
 
 	&sinbad_start_shieldlag:
 	.(
@@ -2528,9 +2362,9 @@ sinbad_start_inactive_state:
 	&set_shieldlag_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_shielding_remove
+		lda #<sinbad_anim_shielding_remove
 		sta tmpfield13
-		lda #>anim_sinbad_shielding_remove
+		lda #>sinbad_anim_shielding_remove
 		sta tmpfield14
 		jmp set_player_animation
 
@@ -2594,11 +2428,11 @@ sinbad_start_inactive_state:
 
 .(
 	spawn_duration:
-		.byt anim_sinbad_spawn_dur_pal, anim_sinbad_spawn_dur_ntsc
-#if anim_sinbad_spawn_dur_pal <> 50
+		.byt sinbad_anim_spawn_dur_pal, sinbad_anim_spawn_dur_ntsc
+#if sinbad_anim_spawn_dur_pal <> 50
 #error incorrect spawn duration
 #endif
-#if anim_sinbad_spawn_dur_ntsc <> 60
+#if sinbad_anim_spawn_dur_ntsc <> 60
 #error incorrect spawn duration (ntsc only)
 #endif
 
@@ -2622,9 +2456,9 @@ sinbad_start_inactive_state:
 	set_spawn_animation:
 	.(
 		; Set the appropriate animation
-		lda #<anim_sinbad_spawn
+		lda #<sinbad_anim_spawn
 		sta tmpfield13
-		lda #>anim_sinbad_spawn
+		lda #>sinbad_anim_spawn
 		sta tmpfield14
 		jmp set_player_animation
 
@@ -2682,9 +2516,9 @@ sinbad_start_inactive_state:
 
 		; Set the appropriate animation
 		;TODO specific animation
-		lda #<anim_sinbad_jumping
+		lda #<sinbad_anim_jumping
 		sta tmpfield13
-		lda #>anim_sinbad_jumping
+		lda #>sinbad_anim_jumping
 		sta tmpfield14
 		jsr set_player_animation
 

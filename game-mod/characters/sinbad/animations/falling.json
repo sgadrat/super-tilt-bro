@@ -47,6 +47,6 @@
 			"type": "animation_frame"
 		}
 	],
-	"name": "anim_sinbad_falling",
+	"name": "sinbad_anim_falling",
 	"type": "animation"
 }

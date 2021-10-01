@@ -308,6 +308,6 @@
 			"type": "animation_frame"
 		}
 	],
-	"name": "anim_sinbad_spawn",
+	"name": "sinbad_anim_spawn",
 	"type": "animation"
 }

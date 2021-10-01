@@ -407,7 +407,7 @@
 			"start_routine": "sinbad_start_thrown",
 			"update_routine": "sinbad_tick_thrown",
 			"offground_routine": "dummy_routine",
-			"onground_routine": "sinbad_thrown_on_ground",
+			"onground_routine": "sinbad_onground_thrown",
 			"input_routine": "sinbad_input_thrown",
 			"onhurt_routine": "hurt_player"
 		},

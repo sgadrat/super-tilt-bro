@@ -1,10 +1,4 @@
 ;
-; Character implementation details for "std" includes
-;
-
-PEPPER_HAS_GLOBAL_TICK = 1
-
-;
 ; States index
 ;
 

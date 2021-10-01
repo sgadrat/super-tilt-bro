@@ -36,7 +36,7 @@
 
 	&{char_name}_tick_thrown:
 	.(
-#if {char_name_upper}_HAS_GLOBAL_TICK
+#ifldef {char_name}_global_tick
 		jsr {char_name}_global_tick
 #endif
 
@@ -149,25 +149,24 @@
 			sta player_a_velocity_h, x
 			lda {char_name}_tech_speed_neg_lsb, y
 			sta player_a_velocity_h_low, x
-			jmp end
+			rts
 		no_momentum:
 			lda #$00
 			sta player_a_velocity_h, x
 			sta player_a_velocity_h_low, x
-			jmp end
+			rts
 		momentum_right:
 			ldy system_index
 			lda {char_name}_tech_speed_msb, y
 			sta player_a_velocity_h, x
 			lda {char_name}_tech_speed_lsb, y
 			sta player_a_velocity_h_low, x
-			jmp end
+			rts
 
 		crash:
 		jmp {char_name}_start_crashing
 		;Note - no return, jump to a subroutine
 
-		end:
-		rts
+		;rts ; Useless, unreachable code
 	.)
 .)
