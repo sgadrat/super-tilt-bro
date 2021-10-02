@@ -46,6 +46,45 @@ def compute_anim_duration_ntsc(anim):
 	raw_dur = compute_anim_duration_raw(anim)
 	return raw_dur + int(raw_dur / 5)
 
+def expand_macros(source, game_dir, char):
+	expanded_source_code = source
+
+	re_include = re.compile('!include "(?P<src>[^"]+)"')
+	re_define = re.compile('!define "(?P<name>[^"]+)" {(?P<value>[^}]+)}', flags=re.MULTILINE)
+	re_place = re.compile('!place "(?P<name>[^"]+)"')
+
+	# Resolve includes, recursively
+	def include_replacement(m):
+		rel_templates_dir = 'tools/compile-mod'
+		templates_dir = '{}/{}'.format(game_dir, rel_templates_dir)
+		template_path = '{}/{}'.format(templates_dir, m.group('src'))
+		ensure(os.path.isfile(template_path), 'character {}\'s logic includes an non-existent template "{}"'.format(char.name, m.group('src')))
+		with open(template_path, 'r') as template_file:
+			return template_file.read()
+
+	while re_include.search(expanded_source_code) is not None:
+		expanded_source_code = re_include.sub(include_replacement, expanded_source_code)
+
+	# Scan all defines, they are global
+	defined = {}
+	m = re_define.search(expanded_source_code)
+	while m is not None:
+		defined[m.group('name')] = m.group('value')
+		expanded_source_code = expanded_source_code[:m.start()] + expanded_source_code[m.end():]
+		m = re_define.search(expanded_source_code)
+
+	# Substitute template variables
+	expanded_source_code = expanded_source_code.replace('{char_name}', char.name).replace('{char_name_upper}', char.name.upper())
+
+	# Honorate places
+	def place_replacement(m):
+		ensure(m.group('name') in defined, 'unknown value to !place "{}"'.format(m.group('name')))
+		return defined[m.group('name')]
+	while re_place.search(expanded_source_code) is not None:
+		expanded_source_code = re_place.sub(place_replacement, expanded_source_code)
+
+	return expanded_source_code
+
 def generate_character(char, game_dir):
 	name_upper = char.name.upper()
 
@@ -222,20 +261,7 @@ def generate_character(char, game_dir):
 			state_events_file.write('\n')
 
 	# Character's logic
-	expanded_source_code = char.sourcecode
-	re_include = re.compile('!include "(?P<src>[^"]+)"')
-	def include_replacement(m):
-		rel_templates_dir = 'tools/compile-mod'
-		templates_dir = '{}/{}'.format(game_dir, rel_templates_dir)
-		template_path = '{}/{}'.format(templates_dir, m.group('src'))
-		ensure(os.path.isfile(template_path), 'character {}\'s logic includes an non-existent template "{}"'.format(char.name, m.group('src')))
-		with open(template_path, 'r') as template_file:
-			return template_file.read()
-
-	while re_include.search(expanded_source_code) is not None:
-		expanded_source_code = re_include.sub(include_replacement, expanded_source_code)
-	expanded_source_code = expanded_source_code.replace('{char_name}', char.name).replace('{char_name_upper}', char.name.upper())
-
+	expanded_source_code = expand_macros(char.sourcecode, game_dir, char)
 	player_states_file_path = '{}/player_states.asm'.format(char_dir)
 	with open(player_states_file_path, 'w') as player_states_file:
 		player_states_file.write(expanded_source_code)
