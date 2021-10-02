@@ -45,8 +45,8 @@
 			sta merged_h_high
 			lda {char_name}_aerial_directional_influence_strength, y
 			sta merge_step
-			jsr merge_to_player_velocity
-			jmp end
+			jmp merge_to_player_velocity
+			; No return, jump to a subroutine
 
 	go_right:
 		; Go to the right
@@ -73,8 +73,8 @@
 			sta merged_h_high
 			lda {char_name}_aerial_directional_influence_strength, y
 			sta merge_step
-			jsr merge_to_player_velocity
-			jmp end
+			jmp merge_to_player_velocity
+			; No return, jump to a subroutine
 
 	end:
 	rts
