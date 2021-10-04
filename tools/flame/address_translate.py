@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 import json
+import os
 import re
 import sys
+import time
 
 in_filename = '/tmp/nes.perf'
 
@@ -21,8 +23,26 @@ def translate(addr):
 
 # Translate stack part of perf report from address to routine name
 re_in_perf = re.compile('^(?P<stack>([0-9a-f]{4};)*)?(?P<instr>[0-9a-f]{4}) (?P<cycles>[0-9]+)$')
+in_file_size = os.stat(in_filename).st_size
+read_size = 0
+begin = time.time()
+last_progress = begin
 with open(in_filename, 'r') as in_file:
 	for line in in_file:
+		# Update progress
+		read_size += len(line)
+		if time.time() - last_progress > 10:
+			progress = read_size / in_file_size
+			time_spent = time.time() - begin
+			sys.stderr.write(
+				'{:.02f}% - {:.01f} minutes elapsed - ETA {:0.1f} minutes\r'.format(
+					100. * progress,
+					time_spent / 60,
+					((time_spent / progress) - time_spent) / 60
+				)
+			)
+			last_progress = time.time()
+
 		if line[-1] == '\n':
 			line = line[:-1]
 
