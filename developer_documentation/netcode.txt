@@ -1,0 +1,47 @@
+Netcode in a nutshell
+=====================
+
+uint32 network_current_frame <-- Local frame counter
+uint32 server_current_frame  <-- Frame counter recevied from server
+
+uint8 local_history[32]  <-- circle buffer of local player's inputs
+uint8 remote_history[32] <-- circle buffer of remote player's inputs
+(may refere to "both at the same time", simply by "history")
+
+// Executed once before first tick of the game
+init {
+	network_current_frame = 0
+	clear history
+}
+
+// Executed before every game tick
+tick {
+	local_history[network_current_frame+INPUT_LAG] = controller_a_btns
+	if controller state changed {
+		send new state to server
+	}
+	if received game state from server {
+		server_current_frame = value from message
+		copy inputs buffer from message to input history
+			starting at history[server_current_frame+1]
+		copy game state from message
+		copy immediate inputs from message
+			controller_X_last_frame_btns = value in message
+			controller_X_btns = value in message
+			remote_history[server_current_frame] = physical state from message
+
+		controller_X_last_frame_btns = controller_X_btns
+		while (server_current_frame < network_current_frame) {
+			update controller states
+				controller_X_btns = history[server_current_frame]
+			call game_tick()
+			controller_X_last_frame_btns = controller_X_btns
+			++server_current_frame
+		}
+		network_current_frame = server_current_frame
+	}
+	controller_X_btns = history[network_current_frame]
+	++network_current_frame
+	//NOTE: after returning, game_tick() will be executed
+}
+

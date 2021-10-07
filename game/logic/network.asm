@@ -326,7 +326,7 @@ network_tick_ingame:
 			lda RAINBOW_DATA
 			sta controller_b_btns
 			lda RAINBOW_DATA
-			sta controller_a_last_frame_btns
+			sta controller_a_last_frame_btns ; Note (stnp), useless bytes in the gamestate they will be overridden anyway
 			lda RAINBOW_DATA
 			sta controller_b_last_frame_btns
 
@@ -458,6 +458,7 @@ network_tick_ingame:
 			; Update last_frame_btns
 			;  it is not done by fetch_controller because we don't use the main loop
 			;TODO comment it better - it is useful for the next tick, and at this point we know we'll tick (be it rollback or normal)
+			;TODO this is done in two places, so is setting "controller_*_btns", could be put more together to show that the combination of both emulates "fetch_controllers"
 			lda controller_a_btns
 			sta controller_a_last_frame_btns
 			lda controller_b_btns
@@ -511,7 +512,7 @@ network_tick_ingame:
 
 					; Update last_frame_btns
 					;  it is not done by fetch_controller because we don't use the main loop
-					;TODO comment it better - we know we'll tick again (rollback on normal)
+					;TODO comment it better - we know we'll tick again (rollback or normal)
 					lda controller_a_btns
 					sta controller_a_last_frame_btns
 					lda controller_b_btns

@@ -1022,6 +1022,8 @@ apply_force_vector:
 ;   - "player_a_grounded, x", "player_a_walled, x", and "player_a_walled_direction, x" are set according to collisions
 ;
 ;  Overwrites register A, regiter Y, and tmpfield1 to tmpfield12
+;
+;FIXME bug - A walled player with null velocity becomes unwalled
 move_player:
 .(
 	elements_action_vector = tmpfield1 ; Not movable, parameter of stage_iterate_all_elements
