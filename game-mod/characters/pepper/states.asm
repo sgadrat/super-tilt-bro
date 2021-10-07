@@ -132,6 +132,7 @@ pepper_netload:
 	sta player_a_objects+1+ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB, y
 	lda RAINBOW_DATA
 	sta player_a_objects+1+ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB, y
+	;TODO ANIMATION_STATE_OFFSET_NTSC_CNT
 
 	rts
 .)
