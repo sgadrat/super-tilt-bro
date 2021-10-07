@@ -47,7 +47,7 @@ network_init_stage:
 		cpx #32
 		bne clear_one_input
 
-	sta network_last_known_remote_input
+	sta network_last_known_remote_input ;TODO could be init at $80 to be marked as "unknown, predict it", it would change nothing though predicting expects at least one known input
 
 	; Reinit frame counter
 	lda #$00
@@ -242,6 +242,7 @@ network_tick_ingame:
 				tay
 
 				; Copy delayed inputs
+				;TODO optimizable we could set "network_last_known_remote_input" once after the loop, we could avoid checking packet_time_flag each iteration
 				ldx #NETWORK_INPUT_LAG
 				copy_one_byte:
 					; Local input buffer
@@ -290,6 +291,7 @@ network_tick_ingame:
 			;  Unroll - (4+3) * 81 = 7 * 81 = 567
 
 			; Copy hitboxes MSB
+			;TODO optimizable put this near other copied field in memory, do only one loop
 			.(
 				ldx #0
 				copy_one_byte:
@@ -453,15 +455,24 @@ network_tick_ingame:
 				jsr call_pointed_subroutine
 			.)
 
+			; Update last_frame_btns
+			;  it is not done by fetch_controller because we don't use the main loop
+			;TODO comment it better - it is useful for the next tick, and at this point we know we'll tick (be it rollback or normal)
+			lda controller_a_btns
+			sta controller_a_last_frame_btns
+			lda controller_b_btns
+			sta controller_b_last_frame_btns
+
 			; Update game state until the current frame is at least equal to the one we where before reading the message
 			lda #1
 			sta network_rollback_mode
 			roll_forward_one_step:
 			.(
 				; If sever's frame is inferior to local frame
-				; TODO optimization - could be implemented like in signed_cmp
+				; TODO optimizable - could be implemented like in signed_cmp
 				;      one CMP, followed by SBCs, branching at the end on carry flag
 				;      to be determined, but considering 255 out of 256 times only the LSB is changing, it should be speeder
+				;      Could also compute the difference before the loop, result in one byte should be enough
 				lda server_current_frame_byte3
 				cmp network_current_frame_byte3
 				bcc do_it
@@ -481,13 +492,6 @@ network_tick_ingame:
 
 				do_it:
 
-					; Update last_frame_btns
-					;  it is not done by fetch_controller because we don't use the main loop
-					lda controller_a_btns
-					sta controller_a_last_frame_btns
-					lda controller_b_btns
-					sta controller_b_last_frame_btns
-
 					; Set local player input according to history
 					ldx network_local_player_number ; X = local player number
 
@@ -504,6 +508,14 @@ network_tick_ingame:
 
 					; Update game state
 					jsr game_tick
+
+					; Update last_frame_btns
+					;  it is not done by fetch_controller because we don't use the main loop
+					;TODO comment it better - we know we'll tick again (rollback on normal)
+					lda controller_a_btns
+					sta controller_a_last_frame_btns
+					lda controller_b_btns
+					sta controller_b_last_frame_btns
 
 					; Inc server_current_frame_byte
 					inc server_current_frame_byte0
