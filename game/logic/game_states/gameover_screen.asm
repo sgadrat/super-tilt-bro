@@ -212,6 +212,11 @@ init_gameover_screen:
 	; Change for music for gameover theme
 	jsr audio_music_gameover
 
+	; Set both gamepads as non-ready
+	lda #%00000000
+	sta gameover_gamepads_ready_a
+	sta gameover_gamepads_ready_b
+
 	rts
 
 	player_names:
@@ -223,19 +228,40 @@ init_gameover_screen:
 gameover_screen_tick:
 .(
 	.(
-		; If start button is released from any controller, go to next screen
+		; Check if gamepads are ready
+		;  "ready" is - all buttons have been released, then some button has been pressed
+		;  The goal is to avoid unintentional gameover skip because of a button pressed at the end of the game,
+		;  as well as unintentional action on next screen (by going to next screen while a button is pressed)
+		ldx #0
+		check_ready:
+			lda controller_a_last_frame_btns, x
+			bne controller_a_ok
+			lda controller_a_btns, x
+			beq controller_a_ok
+				lda #%00000001
+				sta gameover_gamepads_ready_a, x
+			controller_a_ok:
+
+			inx
+			cpx #2
+			bne check_ready
+
+		; If a button is released from any ready controller, go to next screen
 		ldx #0
 		check_one_controller:
-			lda controller_a_last_frame_btns, x
-			sta tmpfield1
-			lda controller_a_btns, x
-			sta tmpfield2
-			lda #CONTROLLER_BTN_START
-			bit tmpfield1
+			lda gameover_gamepads_ready_a, x
 			beq next_controller
-			bit tmpfield2
+
+			lda controller_a_btns, x
 			bne next_controller
-			jmp next_screen
+				lda controller_a_last_frame_btns, x
+				cmp #CONTROLLER_BTN_START
+				beq next_screen
+				cmp #CONTROLLER_BTN_A
+				beq next_screen
+				cmp #CONTROLLER_BTN_B
+				beq next_screen
+
 			next_controller:
 			inx
 			cpx #2

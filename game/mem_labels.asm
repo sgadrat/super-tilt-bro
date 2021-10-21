@@ -454,7 +454,9 @@ gameover_balloon3_velocity_h = $6b
 gameover_balloon4_velocity_h = $6c
 gameover_balloon5_velocity_h = $6d
 
-gameover_random = $4e
+gameover_random = $4d
+gameover_gamepads_ready_a = $4e
+gameover_gamepads_ready_b = $4f
 
 gameover_winner = $0580
 
