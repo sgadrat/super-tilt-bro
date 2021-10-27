@@ -152,31 +152,31 @@ player_b_gravity_lsb = $4f
 player_a_gravity_msb = $50
 player_b_gravity_msb = $51
 
-; $52 to $56 - unused
+player_a_grounded = $52 ; $00 if not grounded, else the offset of grounded platform from stage_data
+player_b_grounded = $53
+player_a_walled = $54 ; $00 if not touching a wall, else the offset of the platform from stage_data
+player_b_walled = $55
+player_a_walled_direction = $56 ; DIRECTION_LEFT - player is on the left of the wall
+player_b_walled_direction = $57 ; DIRECTION_RIGHT - player is on the right of the wall
 
-player_a_hurtbox_left_msb = $57
-player_b_hurtbox_left_msb = $58
-player_a_hurtbox_right_msb = $59
-player_b_hurtbox_right_msb = $5a
-player_a_hurtbox_top_msb = $5b
-player_b_hurtbox_top_msb = $5c
-player_a_hurtbox_bottom_msb = $5d
-player_b_hurtbox_bottom_msb = $5e
-player_a_hitbox_left_msb = $5f
-player_b_hitbox_left_msb = $60
-player_a_hitbox_right_msb = $61
-player_b_hitbox_right_msb = $62
-player_a_hitbox_top_msb = $63
-player_b_hitbox_top_msb = $64
-player_a_hitbox_bottom_msb = $65
-player_b_hitbox_bottom_msb = $66
+player_a_hurtbox_left_msb = $58
+player_b_hurtbox_left_msb = $59
+player_a_hurtbox_right_msb = $5a
+player_b_hurtbox_right_msb = $5b
+player_a_hurtbox_top_msb = $5c
+player_b_hurtbox_top_msb = $5d
+player_a_hurtbox_bottom_msb = $5e
+player_b_hurtbox_bottom_msb = $5f
+player_a_hitbox_left_msb = $60
+player_b_hitbox_left_msb = $61
+player_a_hitbox_right_msb = $62
+player_b_hitbox_right_msb = $63
+player_a_hitbox_top_msb = $64
+player_b_hitbox_top_msb = $65
+player_a_hitbox_bottom_msb = $66
+player_b_hitbox_bottom_msb = $67
 
-player_a_grounded = $67 ; $00 if not grounded, else the offset of grounded platform from stage_data
-player_b_grounded = $68
-player_a_walled = $69 ; $00 if not touching a wall, else the offset of the platform from stage_data
-player_b_walled = $6a
-player_a_walled_direction = $6b ; DIRECTION_LEFT - player is on the left of the wall
-player_b_walled_direction = $6c ; DIRECTION_RIGHT - player is on the right of the wall
+; $68-$6f unused
 
 screen_shake_counter = $70
 screen_shake_nextval_x = $71

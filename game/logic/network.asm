@@ -282,16 +282,16 @@ network_tick_ingame:
 					sta $00, x        ; 4 cycles
 
 				inx ; 2 cycles
-				cpx #$52 ; 3 cycles
+				cpx #$58 ; 3 cycles
 				bne copy_one_byte ; 3 cycles
 			.)
 
 			; Note
-			;  Total - (4+4+2+3+3) * 81 = 16 * 81 = 1296
-			;  Unroll - (4+3) * 81 = 7 * 81 = 567
+			;  Total - (4+4+2+3+3) * 87 = 16 * 87 = 1392
+			;  Unroll - (4+3) * 87 = 7 * 87 = 609
 
 			; Copy hitboxes MSB
-			;TODO optimizable put this near other copied field in memory, do only one loop
+			;TODO optimizable could be in the same loop than the rest of the gamestate
 			.(
 				ldx #0
 				copy_one_byte:
