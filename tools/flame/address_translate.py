@@ -10,11 +10,6 @@ in_filename = '/tmp/nes.perf'
 # Get routines addresses
 routines = json.load(sys.stdin)
 routines_dict = {x['begin']: x['name'] for x in routines}
-#routines_dict = {}
-#for addr_int in range(0x10000):
-#	for routine in routines:
-#		if addr_int >= routine['begin'] and addr_int < routine['end']:
-#			routines_dict[addr_int] = routine['name']
 
 # Utilities
 def translate(addr):
@@ -68,10 +63,6 @@ with open(in_filename, 'r') as in_file:
 		stack = m.group('stack')
 		instr = m.group('instr')
 		cycles = int(m.group('cycles'))
-		#stack, _, cycles = line.partition(' ')
-		#instr = stack[-4:]
-		#stack = stack[:-4]
-		#cycles = int(cycles)
 
 		if stack == '':
 			stack = ['top_level']
