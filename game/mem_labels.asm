@@ -176,7 +176,12 @@ player_b_hitbox_top_msb = $65
 player_a_hitbox_bottom_msb = $66
 player_b_hitbox_bottom_msb = $67
 
-; $68-$6f unused
+player_a_last_shown_damage = $68
+player_b_last_shown_damage = $69
+player_a_last_shown_stocks = $6a
+player_b_last_shown_stocks = $6b
+
+; $6c-$6f unused
 
 screen_shake_counter = $70
 screen_shake_nextval_x = $71

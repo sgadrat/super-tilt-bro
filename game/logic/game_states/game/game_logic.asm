@@ -101,6 +101,12 @@ init_game_state:
 		sta player_a_stocks
 		sta player_b_stocks
 
+		lda #$ff ; impossible value in screen damage meter cache, forcing it to redraw
+		sta player_a_last_shown_damage
+		sta player_b_last_shown_damage
+		sta player_a_last_shown_stocks
+		sta player_b_last_shown_stocks
+
 		lda #<player_a_animation                                       ;
 		sta tmpfield11                                                 ;
 		lda #>player_a_animation                                       ;
@@ -1736,120 +1742,179 @@ check_player_position:
 
 ; Show on screen player's damages
 ;  register X must contain the player number
+;
+; Overwrites A, Y, player_number, tmpfield1 to tmpfield5
 write_player_damages:
 .(
-	damages_ppu_position = tmpfield4
-	stocks_ppu_position = tmpfield7
-	player_stocks = tmpfield8
-	character_icon = tmpfield9
+	;TODO optimizable - could remove call to jsr last_nt_buffer and absolute,x indexing
+	;     rationale - stage/char code modifying background could be called after write_player_damages (ensuring X is zero in current implem)
+	;TODO optimizable - inverse X and Y for referencing player and ntbuffer index, allowing to use "zp,x" addressing mode
+
+	damage_tmp = tmpfield1
+	tile_construct = tmpfield2
+
+	player_stocks = tmpfield3
+	buffer_count = tmpfield4
+	character_icon = tmpfield5
+
+	; Do not compute buffers if it would match values on screen
+	lda player_a_damages, x
+	cmp player_a_last_shown_damage, x
+	bne do_it
+	lda player_a_stocks, x
+	cmp player_a_last_shown_stocks, x
+	bne do_it
+		rts
+	do_it:
+	lda player_a_stocks, x
+	sta player_a_last_shown_stocks, x
+	lda player_a_damages, x
+	sta player_a_last_shown_damage, x
 
 	; Save X
-	txa
-	pha
+	stx player_number
 
-	; Set on-screen text position depending on the player
-	cpx #$00
-	beq prepare_player_a
-	lda #$54
-	sta damages_ppu_position
-	lda #$14
-	sta stocks_ppu_position
-	jmp end_player_variables
-	prepare_player_a:
-	lda #$48
-	sta damages_ppu_position
-	lda #$08
-	sta stocks_ppu_position
-	end_player_variables:
+	; Write the damage buffer
+	.(
+		; Player number in Y
+		ldy player_number
 
-	; Put damages value parameter for number_to_tile_indexes
-	lda player_a_damages, x
-	sta tmpfield1
-	lda player_a_stocks, x
-	sta player_stocks
+		; Buffer header
+		jsr last_nt_buffer
+		lda #$01                    ; Continuation byte
+		sta nametable_buffers, x
+		lda #$23                    ; PPU address MSB
+		sta nametable_buffers+1, x
+		lda damages_ppu_position, y ; PPU address LSB
+		sta nametable_buffers+2, x
+		lda #$03                    ; Tiles count
+		sta nametable_buffers+3, x
 
-	; Get player's character icon while we have player index at hand
-	lda character_icons, x
-	sta character_icon
+		; Tiles, decimal representation of the value (value is capped at 199)
+		.(
+			lda player_a_damages, y
+			cmp #100
+			bcs one_hundred
+				less_than_one_hundred:
+					sta damage_tmp
+					lda #TILE_CHAR_0
+					sta nametable_buffers+4, x
+					jmp ok
+				one_hundred:
+					;sec ; Ensured by bcs
+					sbc #100
+					sta damage_tmp
+					lda #TILE_CHAR_1
+					sta nametable_buffers+4, x
+			ok:
+		.)
+		.(
+			;TODO optimizable - divide by two then use lookup table
+			lda #TILE_CHAR_0
+			sta tile_construct
 
-	; Write the begining of the damage buffer
-	jsr last_nt_buffer
-	lda #$01                 ; Continuation byte
-	sta nametable_buffers, x ;
-	inx
-	lda #$23                 ; PPU address MSB
-	sta nametable_buffers, x ;
-	inx
-	lda damages_ppu_position ; PPU address LSB
-	sta nametable_buffers, x ;
-	inx
-	lda #$03                 ; Tiles count
-	sta nametable_buffers, x ;
-	inx
+			lda damage_tmp
+			cmp #50
+			bcc less_than_fifty
+				;sec ; ensured by bcc not branching
+				sbc #50
+				sta damage_tmp
+				lda #TILE_CHAR_5
+				sta tile_construct
+			less_than_fifty:
 
-	; Store the tiles address as destination parameter for number_to_tile_indexes
-#if (nametable_buffers & $ff) <> 0
-#error Code bellow expects nametable_buffer to be page-aligned
-#endif
-	txa
-	sta tmpfield2
-	lda #>nametable_buffers
-	sta tmpfield3
+			lda damage_tmp
+			.( : cmp #10 : bcc ok : sbc #10 : inc tile_construct : ok : .)
+			.( : cmp #10 : bcc ok : sbc #10 : inc tile_construct : ok : .)
+			.( : cmp #10 : bcc ok : sbc #10 : inc tile_construct : ok : .)
+			.( : cmp #10 : bcc ok : sbc #10 : inc tile_construct : ok : .)
 
-	; Set the next continuation byte to 0
-	inx
-	inx
-	inx
-	lda #$00
-	sta nametable_buffers, x
-
-	; Populate tiles data for damage buffer
-	jsr number_to_tile_indexes
+			sta damage_tmp
+			lda tile_construct
+			sta nametable_buffers+5, x
+		.)
+		.(
+			lda damage_tmp
+			clc
+			adc #TILE_CHAR_0
+			sta nametable_buffers+6, x
+		.)
+	.)
 
 	; Construct stocks buffers
-	ldy #$00
-	jsr last_nt_buffer
-	stocks_buffer:
-	lda #$01                 ; Continuation byte
-	sta nametable_buffers, x ;
-	inx
-	lda #$23                 ; PPU address MSB
-	sta nametable_buffers, x ;
-	inx
-	lda stocks_ppu_position  ; PPU address LSB
-	clc                      ;
-	adc stocks_positions, y  ;
-	sta nametable_buffers, x ;
-	inx
-	lda #$01                 ; Tiles count
-	sta nametable_buffers, x ;
-	inx
-	cpy player_stocks        ;
-	bcs empty_stock          ;
-	lda character_icon       ;
-	jmp set_stock_tile       ; Set stock tile depending of the
-	empty_stock:             ; stock's availability
-	lda #TILE_SOLID_0        ;
-	set_stock_tile:          ;
-	sta nametable_buffers, x ;
-	inx
-	iny               ;
-	cpy #$04          ; Loop for each stock to print
-	bne stocks_buffer ;
-	lda #$00                 ; Next continuation byte to 0
-	sta nametable_buffers, x ;
+	.(
+		; Store character's icon in player-independant location
+		lda character_icons, y
+		sta character_icon
+
+		; Store player's stocks count in player-independant location
+		lda player_a_stocks, y
+		sta player_stocks
+
+		; Y = offset in stocks_ppu_position
+		tya
+		asl
+		asl
+		tay
+
+		; Write buffers
+		lda #3
+		sta buffer_count
+		stocks_buffer:
+			; Buffer header
+			lda #$01                   ; Continuation byte
+			sta nametable_buffers+7, x ;
+			lda #$23                   ; PPU address MSB
+			sta nametable_buffers+8, x ;
+			lda stocks_ppu_position, y ; PPU address LSB
+			sta nametable_buffers+9, x ;
+			lda #$01                    ; Tiles count
+			sta nametable_buffers+10, x ;
+
+			; Set stock tile depending of the stock's availability
+			lda buffer_count
+			cmp player_stocks
+			bcs empty_stock
+				filled_stock:
+					lda character_icon
+					jmp set_stock_tile
+				empty_stock:
+					lda #TILE_SOLID_0
+			set_stock_tile:
+			sta nametable_buffers+11, x
+
+			; Loop for each stock to print
+			iny
+
+			dec buffer_count
+			bmi end_loop
+				txa
+				clc
+				adc #5
+				tax
+
+				jmp stocks_buffer
+			end_loop:
+	.)
+
+	; Next continuation byte to 0
+	lda #$00
+	sta nametable_buffers+12, x
 
 	; Restore X
-	pla
-	tax
+	ldx player_number
 
 	rts
 
-	stocks_positions:
-	.byt 0, 3, 32, 35
+	damages_ppu_position:
+		.byt $48, $54
+
+	stocks_ppu_position:
+		.byt $08+35, $08+32, $08+3, $08
+		.byt $14+35, $14+32, $14+3, $14
 
 	character_icons:
-	.byt $d0, $d5
+		.byt $d0, $d5
 .)
 
 ; Update comestic effects on the player
