@@ -269,7 +269,7 @@ pepper_global_tick:
 		beq end_carrot_hit
 
 		; Check if opponent's hitbox is active
-		jsr switch_selected_player
+		SWITCH_SELECTED_PLAYER
 		lda player_a_hitbox_enabled, x
 		beq end_carrot_hit
 
@@ -1616,7 +1616,7 @@ pepper_input_idle_right:
 
 		end:
 		; Disable the hitbox to avoid multi-hits
-		jsr switch_selected_player
+		SWITCH_SELECTED_PLAYER
 		lda HITBOX_DISABLED
 		sta player_a_hitbox_enabled, x
 

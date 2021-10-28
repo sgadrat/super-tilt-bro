@@ -1589,7 +1589,7 @@ kiki_start_inactive_state:
 
 		end:
 		; Disable the hitbox to avoid multi-hits
-		jsr switch_selected_player
+		SWITCH_SELECTED_PLAYER
 		lda HITBOX_DISABLED
 		sta player_a_hitbox_enabled, x
 

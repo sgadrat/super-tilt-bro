@@ -169,7 +169,7 @@ network_tick_ingame:
 		lda network_player_local_btns_history, y ; write current input
 		sta controller_a_btns, x
 
-		jsr switch_selected_player
+		SWITCH_SELECTED_PLAYER
 		jsr set_opponent_buttons_from_history
 
 		; Increment frame counter
@@ -504,7 +504,7 @@ network_tick_ingame:
 					sta controller_a_btns, x
 
 					; Set remote player input according to history
-					jsr switch_selected_player
+					SWITCH_SELECTED_PLAYER
 					jsr set_opponent_buttons_from_history
 
 					; Update game state

@@ -362,6 +362,18 @@ duration
 	end_signed_cmp:\
 .)
 
+; Switch current player
+;  register X - Current player number
+;  Result is stored in register X
+;
+; See also the routine with the same name (lowercase)
+#define SWITCH_SELECTED_PLAYER .(:\
+	dex:\
+	bpl end_switch_selected_player:\
+		ldx #1:\
+	end_switch_selected_player:\
+.)
+
 ; Set register A to the sign extension of recently loaded value (based on N flag)
 #define SIGN_EXTEND() .(:\
 	bmi set_relative_msb_neg:\

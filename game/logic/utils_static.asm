@@ -452,14 +452,13 @@ fixed_memcpy:
 ; Switch current player
 ;  register X - Current player number
 ;  Result is stored in register X
+;
+; See macro with the same name (capitalized)
 switch_selected_player:
 .(
-	cpx #$00
-	beq select_player_b
 	dex
-	jmp end
-	select_player_b:
-	inx
+	bpl end
+		ldx #1
 	end:
 	rts
 .)

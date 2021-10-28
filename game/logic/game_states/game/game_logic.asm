@@ -639,7 +639,7 @@ check_player_hit:
 		sta striking_box_bottom_msb
 
 		; Switch current player to select the opponent
-		jsr switch_selected_player
+		SWITCH_SELECTED_PLAYER
 
 		; If opponent's hitbox is enabled, check hitbox on hitbox collisions
 		lda player_a_hitbox_enabled, x
@@ -730,9 +730,9 @@ check_player_hit:
 
 				; Fire on-hurt event
 				stx opponent_player
-				jsr switch_selected_player
+				SWITCH_SELECTED_PLAYER
 				stx current_player
-				jsr switch_selected_player
+				SWITCH_SELECTED_PLAYER
 				ldy config_player_a_character, x
 				SWITCH_BANK(characters_bank_number COMMA y)
 				lda characters_onhurt_routines_table_lsb, y
@@ -1711,10 +1711,10 @@ check_player_position:
 		; Set the winner for gameover screen
 		lda slow_down_counter
 		bne no_set_winner
-		jsr switch_selected_player
+		SWITCH_SELECTED_PLAYER
 		txa
 		sta gameover_winner
-		jsr switch_selected_player
+		SWITCH_SELECTED_PLAYER
 		no_set_winner:
 
 		; Do not keep an invalid number of stocks

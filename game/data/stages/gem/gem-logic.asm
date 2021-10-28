@@ -393,7 +393,7 @@ stage_gem_tick:
 
 		; Detect if the opponent just got thrown
 		ldx stage_gem_buffed_player
-		jsr switch_selected_player
+		SWITCH_SELECTED_PLAYER
 		lda player_a_state, x
 		cmp stage_gem_last_opponent_state
 		beq end_throw_handling
@@ -849,7 +849,7 @@ stage_gem_set_state_buff:
 
 	; Store initial opponent state
 	ldx stage_gem_buffed_player
-	jsr switch_selected_player
+	SWITCH_SELECTED_PLAYER
 	lda player_a_state, x
 	sta stage_gem_last_opponent_state
 
