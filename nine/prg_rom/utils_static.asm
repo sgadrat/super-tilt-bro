@@ -48,6 +48,7 @@ wait_next_frame:
 	rts
 .)
 
+#if 0
 ; Perform multibyte signed comparison
 ;  tmpfield6 - a (low)
 ;  tmpfield7 - a (high)
@@ -58,7 +59,7 @@ wait_next_frame:
 ;          C flag set if "(unsigned)a < (unsigned)b", unset otherwise
 ; Overwrites register A
 ;
-; See also the macro with the same name (capitalized)
+; Obsolete, see the macro with the same name (capitalized)
 signed_cmp:
 .(
 	; Trick from http://www.6502.org/tutorials/compare_beyond.html
@@ -76,6 +77,7 @@ signed_cmp:
 	end:
 	rts
 .)
+#endif
 
 ; Change A to its absolute unsigned value
 absolute_a:

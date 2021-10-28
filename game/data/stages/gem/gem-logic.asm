@@ -588,15 +588,9 @@ stage_gem_tick:
 		jsr steering_go_between_players
 
 		; Cap to max velocity
-		lda #STAGE_GEM_GEM_MAX_VELOCITY   ; If velocity_h >= MAX_VELOCITY
-		sta tmpfield9                     ;    velocity_h = MAX_VELOCITY
-		lda #0
-		sta tmpfield8
-		lda stage_gem_gem_velocity_h_high
-		sta tmpfield7
-		lda stage_gem_gem_velocity_h_low
-		sta tmpfield6
-		jsr signed_cmp
+		; If velocity_h >= MAX_VELOCITY
+		;    velocity_h = MAX_VELOCITY
+		SIGNED_CMP(stage_gem_gem_velocity_h_low, stage_gem_gem_velocity_h_high, #0, #STAGE_GEM_GEM_MAX_VELOCITY)
 		bmi vel_h_max_ok
 		lda #STAGE_GEM_GEM_MAX_VELOCITY
 		sta stage_gem_gem_velocity_h_high
@@ -604,15 +598,9 @@ stage_gem_tick:
 		sta stage_gem_gem_velocity_h_low
 		vel_h_max_ok:
 
-		lda #STAGE_GEM_GEM_MIN_VELOCITY   ; If MIN_VELOCITY >= velocity_h
-		sta tmpfield7                     ;    velocity_h = -MIN_VELOCITY
-		lda #0
-		sta tmpfield6
-		lda stage_gem_gem_velocity_h_high
-		sta tmpfield9
-		lda stage_gem_gem_velocity_h_low
-		sta tmpfield8
-		jsr signed_cmp
+		; If MIN_VELOCITY >= velocity_h
+		;    velocity_h = -MIN_VELOCITY
+		SIGNED_CMP(#0, #STAGE_GEM_GEM_MIN_VELOCITY, stage_gem_gem_velocity_h_low, stage_gem_gem_velocity_h_high)
 		bmi vel_h_min_ok:
 		lda #STAGE_GEM_GEM_MIN_VELOCITY
 		sta stage_gem_gem_velocity_h_high
@@ -620,15 +608,9 @@ stage_gem_tick:
 		sta stage_gem_gem_velocity_h_low
 		vel_h_min_ok:
 
-		lda #STAGE_GEM_GEM_MAX_VELOCITY   ; If velocity_v >= MAX_VELOCITY
-		sta tmpfield9                     ;    velocity_v = MAX_VELOCITY
-		lda #0
-		sta tmpfield8
-		lda stage_gem_gem_velocity_v_high
-		sta tmpfield7
-		lda stage_gem_gem_velocity_v_low
-		sta tmpfield6
-		jsr signed_cmp
+		; If velocity_v >= MAX_VELOCITY
+		;    velocity_v = MAX_VELOCITY
+		SIGNED_CMP(stage_gem_gem_velocity_v_low, stage_gem_gem_velocity_v_high, #0, #STAGE_GEM_GEM_MAX_VELOCITY)
 		bmi vel_v_max_ok
 		lda #STAGE_GEM_GEM_MAX_VELOCITY
 		sta stage_gem_gem_velocity_v_high
@@ -636,15 +618,9 @@ stage_gem_tick:
 		sta stage_gem_gem_velocity_v_low
 		vel_v_max_ok:
 
-		lda #STAGE_GEM_GEM_MIN_VELOCITY   ; If MIN_VELOCITY >= velocity_v
-		sta tmpfield7                     ;    velocity_v = -MIN_VELOCITY
-		lda #0
-		sta tmpfield6
-		lda stage_gem_gem_velocity_v_high
-		sta tmpfield9
-		lda stage_gem_gem_velocity_v_low
-		sta tmpfield8
-		jsr signed_cmp
+		; If MIN_VELOCITY >= velocity_v
+		;    velocity_v = -MIN_VELOCITY
+		SIGNED_CMP(#0, #STAGE_GEM_GEM_MIN_VELOCITY, stage_gem_gem_velocity_v_low, stage_gem_gem_velocity_v_high)
 		bmi vel_v_min_ok:
 		lda #STAGE_GEM_GEM_MIN_VELOCITY
 		sta stage_gem_gem_velocity_v_high

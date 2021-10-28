@@ -24,15 +24,7 @@
 		; Go to the left
 		ldy system_index
 
-		lda {char_name}_aerial_neg_speed_lsb, y
-		sta tmpfield6
-		lda {char_name}_aerial_neg_speed_msb, y
-		sta tmpfield7
-		lda player_a_velocity_h_low, x
-		sta tmpfield8
-		lda player_a_velocity_h, x
-		sta tmpfield9
-		jsr signed_cmp
+		SIGNED_CMP({char_name}_aerial_neg_speed_lsb COMMA y, {char_name}_aerial_neg_speed_msb COMMA y, player_a_velocity_h_low COMMA x, player_a_velocity_h COMMA x)
 		bpl end
 
 			lda player_a_velocity_v_low, x
@@ -52,15 +44,7 @@
 		; Go to the right
 		ldy system_index
 
-		lda player_a_velocity_h_low, x
-		sta tmpfield6
-		lda player_a_velocity_h, x
-		sta tmpfield7
-		lda {char_name}_aerial_speed_lsb, y
-		sta tmpfield8
-		lda {char_name}_aerial_speed_msb, y
-		sta tmpfield9
-		jsr signed_cmp
+		SIGNED_CMP(player_a_velocity_h_low COMMA x, player_a_velocity_h COMMA x, {char_name}_aerial_speed_lsb COMMA y, {char_name}_aerial_speed_msb COMMA y)
 		bpl end
 
 			lda player_a_velocity_v_low, x
