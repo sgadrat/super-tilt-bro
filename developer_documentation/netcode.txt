@@ -31,14 +31,18 @@ tick {
 			remote_history[server_current_frame] = physical state from message
 
 		controller_X_last_frame_btns = controller_X_btns
-		while (server_current_frame < network_current_frame) {
-			update controller states
-				controller_X_btns = history[server_current_frame]
-			call game_tick()
-			controller_X_last_frame_btns = controller_X_btns
-			++server_current_frame
+		if (network_current_frame > server_current_frame) {
+			network_frame_diff = network_current_frame - server_current_frame
+			while (network_frame_diff != 0) {
+				update controller states
+					controller_X_btns = history[server_current_frame]
+				call game_tick()
+				controller_X_last_frame_btns = controller_X_btns
+				--network_frame_diff
+			}
+		}else {
+			network_current_frame = server_current_frame
 		}
-		network_current_frame = server_current_frame
 	}
 	controller_X_btns = history[network_current_frame]
 	++network_current_frame

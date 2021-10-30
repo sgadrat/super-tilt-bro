@@ -254,24 +254,25 @@ stage_gem_frame_cnt = $8d
 ; Network engine labels
 ;
 
-server_current_frame_byte0 = $b1
-server_current_frame_byte1 = $b2
-server_current_frame_byte2 = $b3
-server_current_frame_byte3 = $b4
-network_rollback_mode = $b5 ; 0 - normal, 1 - rolling ; Note - also used by game tick to know if a frame will be drawn, may be renamed something more generic like "dummy_frame"
+server_current_frame_byte0 = $b0
+server_current_frame_byte1 = $b1
+server_current_frame_byte2 = $b2
+server_current_frame_byte3 = $b3
+network_rollback_mode = $b4 ; 0 - normal, 1 - rolling ; Note - also used by game tick to know if a frame will be drawn, may be renamed something more generic like "dummy_frame"
 
-network_current_frame_byte0 = $b6
-network_current_frame_byte1 = $b7
-network_current_frame_byte2 = $b8
-network_current_frame_byte3 = $b9
+network_current_frame_byte0 = $b5
+network_current_frame_byte1 = $b6
+network_current_frame_byte2 = $b7
+network_current_frame_byte3 = $b8
 
-network_client_id_byte0 = $ba
-network_client_id_byte1 = $bb
-network_client_id_byte2 = $bc
-network_client_id_byte3 = $bd
+network_client_id_byte0 = $b9
+network_client_id_byte1 = $ba
+network_client_id_byte2 = $bb
+network_client_id_byte3 = $bc
 
-network_last_sent_btns = $be
-network_local_player_number = $bf
+network_last_sent_btns = $bd
+network_local_player_number = $be
+network_frame_diff = $bf
 
 ;
 ; Network login labels

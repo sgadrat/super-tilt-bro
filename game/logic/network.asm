@@ -81,9 +81,9 @@ network_tick_ingame:
 		sta network_player_local_btns_history, y
 
 		; Send controller's state
-		lda network_last_sent_btns ; NOTE - optimizable as "controller_a_btns" is already in register A
-		cmp controller_a_btns
-		beq controller_sent
+		;lda controller_a_btns ; useless  - "controller_a_btns" is already in register A
+		cmp network_last_sent_btns
+		bne controller_sent
 
 			; ESP header
 			lda #11          ; Message length (10 bytes of payload + 1 byte for ESP message type)
@@ -242,35 +242,59 @@ network_tick_ingame:
 				tay
 
 				; Copy delayed inputs
-				;TODO optimizable we could set "network_last_known_remote_input" once after the loop, we could avoid checking packet_time_flag each iteration
+				;  Keep local inputs from message only if packet is in the future, we know our past inputs (and the server may not yet have the last one)
 				ldx #NETWORK_INPUT_LAG
-				copy_one_byte:
-					; Local input buffer
-					;  Keep only if packet is in the future, we know our past inputs (and the server may not yet have the last one)
-					lda packet_time_flag
-					cmp #PACKET_TIME_FUTURE
-					beq local_keep
-						lda RAINBOW_DATA
-						jmp local_ok
+				lda packet_time_flag
+				cmp #PACKET_TIME_FUTURE
+				beq local_keep
+					local_trash:
+					.(
+						copy_one_byte:
+							; Local input buffer
+							lda RAINBOW_DATA
+							nop
+
+							; Remote input buffer
+							lda RAINBOW_DATA
+							sta network_player_remote_btns_history, y
+
+							; Loop
+							dex
+							beq end_delayed_inputs
+								; Increment circular buffer index
+								iny
+								tya
+								and #%00011111
+								tay
+
+								; Loop
+								jmp copy_one_byte
+					.)
 					local_keep:
-						lda RAINBOW_DATA
-						sta network_player_local_btns_history, y
-					local_ok:
+					.(
+						copy_one_byte:
+							; Local input buffer
+							lda RAINBOW_DATA
+							sta network_player_local_btns_history, y
 
-					; Remote input buffer
-					lda RAINBOW_DATA
-					sta network_player_remote_btns_history, y
-					sty network_last_known_remote_input
+							; Remote input buffer
+							lda RAINBOW_DATA
+							sta network_player_remote_btns_history, y
 
-					; Increment circular buffer index
-					iny
-					tya
-					and #%00011111
-					tay
+							; Loop
+							dex
+							beq end_delayed_inputs
+								; Increment circular buffer index
+								iny
+								tya
+								and #%00011111
+								tay
 
-					; Loop
-					dex
-					bne copy_one_byte
+								; Loop
+								jmp copy_one_byte
+					.)
+				end_delayed_inputs:
+				sty network_last_known_remote_input
 			.)
 
 			; Copy gamestate
@@ -280,33 +304,28 @@ network_tick_ingame:
 
 					lda RAINBOW_DATA  ; 4 cycles
 					sta $00, x        ; 4 cycles
+					inx ; 2 cycles
 
-				inx ; 2 cycles
-				cpx #$58 ; 3 cycles
+					lda RAINBOW_DATA  ; 4 cycles
+					sta $00, x        ; 4 cycles
+					inx ; 2 cycles
+
+					lda RAINBOW_DATA  ; 4 cycles
+					sta $00, x        ; 4 cycles
+					inx ; 2 cycles
+
+					lda RAINBOW_DATA  ; 4 cycles
+					sta $00, x        ; 4 cycles
+					inx ; 2 cycles
+
+				cpx #$68 ; 3 cycles
 				bne copy_one_byte ; 3 cycles
 			.)
 
 			; Note
-			;  Total - (4+4+2+3+3) * 87 = 16 * 87 = 1392
-			;  Unroll - (4+3) * 87 = 7 * 87 = 609
-
-			; Copy hitboxes MSB
-			;TODO optimizable could be in the same loop than the rest of the gamestate
-			.(
-				ldx #0
-				copy_one_byte:
-
-					lda RAINBOW_DATA                 ; 4 cycles
-					sta player_a_hurtbox_left_msb, x ; 4 cycles
-
-				inx ; 2 cycles
-				cpx #$10 ; 3 cycles
-				bne copy_one_byte ; 3 cycles
-			.)
-
-			; Note
-			;  Total - (4+4+2+3+3) * 16 = 16 * 16 = 256
-			;  Unroll - (4+3) * 16 = 7 * 16 = 112
+			;  Rolled - (4+4+2+3+3) * 104 = 16 * 104 = 1664
+			;  Unroll - (4+3) * 104 = 7 * 104 = 728
+			;  4x rolled - ((4+4+2)*4 + 3 + 3) * (104/4) = 46 * 26 = 1196
 
 			; Copy special state
 			lda RAINBOW_DATA
@@ -464,32 +483,25 @@ network_tick_ingame:
 			lda controller_b_btns
 			sta controller_b_last_frame_btns
 
+			; Compute difference between server and local frame counters
+			; NOTE - expects less than 128 frames between both
+			lda network_current_frame_byte0
+			sec
+			sbc server_current_frame_byte0
+
+			; Do not rollback frames if server's frame is >= local frame
+			bmi no_rollback
+			beq no_rollback
+			sta network_frame_diff
+
 			; Update game state until the current frame is at least equal to the one we where before reading the message
 			lda #1
 			sta network_rollback_mode
 			roll_forward_one_step:
 			.(
 				; If sever's frame is inferior to local frame
-				; TODO optimizable - could be implemented like in signed_cmp
-				;      one CMP, followed by SBCs, branching at the end on carry flag
-				;      to be determined, but considering 255 out of 256 times only the LSB is changing, it should be speeder
-				;      Could also compute the difference before the loop, result in one byte should be enough
-				lda server_current_frame_byte3
-				cmp network_current_frame_byte3
-				bcc do_it
-				bne dont_do_it
-				lda server_current_frame_byte2
-				cmp network_current_frame_byte2
-				bcc do_it
-				bne dont_do_it
-				lda server_current_frame_byte1
-				cmp network_current_frame_byte1
-				bcc do_it
-				bne dont_do_it
-				lda server_current_frame_byte0
-				cmp network_current_frame_byte0
-				bcc do_it
-				jmp dont_do_it
+				lda network_frame_diff
+				beq dont_do_it
 
 				do_it:
 
@@ -518,17 +530,8 @@ network_tick_ingame:
 					lda controller_b_btns
 					sta controller_b_last_frame_btns
 
-					; Inc server_current_frame_byte
-					inc server_current_frame_byte0
-					bne end_inc
-					inc server_current_frame_byte1
-					bne end_inc
-					inc server_current_frame_byte2
-					bne end_inc
-					inc server_current_frame_byte3
-					end_inc:
-
 					; Loop
+					dec network_frame_diff
 					jmp roll_forward_one_step
 
 				end_loop:
@@ -537,7 +540,11 @@ network_tick_ingame:
 			lda #0
 			sta network_rollback_mode
 
-			; Copy (updated) server frame number to the local one
+			rts
+
+			no_rollback:
+
+			; Local frame number = server frame number
 			lda server_current_frame_byte0
 			sta network_current_frame_byte0
 			lda server_current_frame_byte1
