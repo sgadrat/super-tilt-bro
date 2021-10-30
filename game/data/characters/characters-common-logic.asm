@@ -11,27 +11,9 @@ set_player_animation:
 	;tmpfield15 shall not be modified, it is used by check_aerials_input which tends to start states which tend to set animations. May be a good idea to write a safer version of check_aerials_input
 
 	; Chose animation state
-	txa
-
-#if ANIMATION_STATE_LENGTH <> 13
-#error code expects an animation state's length of 13 bytes
-#endif
-	asl            ;
-	asl            ;
-	sta tmpfield16 ;
-	asl            ; A = X * ANIMATION_STATE_LENGTH (== offset of the player's animation state)
-	clc            ;
-	adc tmpfield16 ;
-	sta tmpfield16 ;
-	txa            ;
-	clc            ;
-	adc tmpfield16 ;
-
-	clc
-	adc #<player_a_animation
+	lda animation_state_vectors_lsb, x
 	sta animation_state_vector
-	lda #0
-	adc #>player_a_animation
+	lda animation_state_vectors_msb, x
 	sta animation_state_vector+1
 
 	; Reset animation
@@ -43,4 +25,9 @@ set_player_animation:
 	sta (animation_state_vector), y
 
 	rts
+
+	animation_state_vectors_lsb:
+		.byt <player_a_animation, <player_b_animation
+	animation_state_vectors_msb:
+		.byt >player_a_animation, >player_b_animation
 .)
