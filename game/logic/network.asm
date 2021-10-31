@@ -148,6 +148,14 @@ network_tick_ingame:
 				; Override gamestate with the one in message's payload
 				jsr update_state
 
+				; Update last_frame_btns
+				;  "update_state" leaves buttons as after the "game_tick", before "fetch_controllers"
+				;  So, it needs a full refresh, update only "last_frame_btns" here since "controller_*_btns" will be ubdated below
+				lda controller_a_btns
+				sta controller_a_last_frame_btns
+				lda controller_b_btns
+				sta controller_b_last_frame_btns
+
 				jmp state_updated
 
 			skip_message:
@@ -344,10 +352,6 @@ network_tick_ingame:
 			sta controller_a_btns
 			lda RAINBOW_DATA
 			sta controller_b_btns
-			lda RAINBOW_DATA
-			sta controller_a_last_frame_btns ; Note (stnp), useless bytes in the gamestate they will be overridden anyway
-			lda RAINBOW_DATA
-			sta controller_b_last_frame_btns
 
 			; Copy actually pressed opponent btns (keep_input_dirty may mess with normal values, but not this one)
 			.(
@@ -474,15 +478,6 @@ network_tick_ingame:
 				jsr call_pointed_subroutine
 			.)
 
-			; Update last_frame_btns
-			;  it is not done by fetch_controller because we don't use the main loop
-			;TODO comment it better - it is useful for the next tick, and at this point we know we'll tick (be it rollback or normal)
-			;TODO this is done in two places, so is setting "controller_*_btns", could be put more together to show that the combination of both emulates "fetch_controllers"
-			lda controller_a_btns
-			sta controller_a_last_frame_btns
-			lda controller_b_btns
-			sta controller_b_last_frame_btns
-
 			; Compute difference between server and local frame counters
 			; NOTE - expects less than 128 frames between both
 			lda network_current_frame_byte0
@@ -505,30 +500,31 @@ network_tick_ingame:
 
 				do_it:
 
-					; Set local player input according to history
-					ldx network_local_player_number ; X = local player number
+					; Emulate controllers updates not done by "fetch_controllers" since we are mocking the main loop
+					.(
+						; Update last_frame_btns
+						lda controller_a_btns
+						sta controller_a_last_frame_btns
+						lda controller_b_btns
+						sta controller_b_last_frame_btns
 
-					lda server_current_frame_byte0 ; Y = input offset in history
-					and #%00011111
-					tay
+						; Set local player input according to history
+						ldx network_local_player_number ; X = local player number
 
-					lda network_player_local_btns_history, y ; write current input
-					sta controller_a_btns, x
+						lda server_current_frame_byte0 ; Y = input offset in history
+						and #%00011111
+						tay
 
-					; Set remote player input according to history
-					SWITCH_SELECTED_PLAYER
-					jsr set_opponent_buttons_from_history
+						lda network_player_local_btns_history, y ; write current input
+						sta controller_a_btns, x
+
+						; Set remote player input according to history
+						SWITCH_SELECTED_PLAYER
+						jsr set_opponent_buttons_from_history
+					.)
 
 					; Update game state
 					jsr game_tick
-
-					; Update last_frame_btns
-					;  it is not done by fetch_controller because we don't use the main loop
-					;TODO comment it better - we know we'll tick again (rollback or normal)
-					lda controller_a_btns
-					sta controller_a_last_frame_btns
-					lda controller_b_btns
-					sta controller_b_last_frame_btns
 
 					; Loop
 					dec network_frame_diff
