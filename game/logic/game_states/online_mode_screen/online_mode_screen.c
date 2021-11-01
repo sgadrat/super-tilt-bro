@@ -700,7 +700,7 @@ static uint8_t select_setting() {
 
 		// Pace cursor
 		Anim(online_mode_selection_cursor_anim)->y = first_option_position + 8 * current_setting;
-		wrap_animation_draw(online_mode_selection_cursor_anim, 0, 0);
+		wrap_animation_draw(online_mode_selection_cursor_anim);
 		wrap_animation_tick(online_mode_selection_cursor_anim);
 
 		// Wait next frame
@@ -1120,7 +1120,7 @@ static void password_login(uint8_t create) {
 		Anim(online_mode_selection_cursor_anim)->y += move_y;
 
 		*player_number = 0;
-		wrap_animation_draw(online_mode_selection_cursor_anim, 0, 0);
+		wrap_animation_draw(online_mode_selection_cursor_anim);
 		wrap_animation_tick(online_mode_selection_cursor_anim);
 
 		// Take input
@@ -1257,7 +1257,7 @@ static uint8_t enter_game_password() {
 		Anim(online_mode_selection_cursor_anim)->x += move_x;
 
 		*player_number = 0;
-		wrap_animation_draw(online_mode_selection_cursor_anim, 0, 0);
+		wrap_animation_draw(online_mode_selection_cursor_anim);
 		wrap_animation_tick(online_mode_selection_cursor_anim);
 
 		// Take input
@@ -1497,7 +1497,7 @@ static void tick_ship() {
 
 	// Draw ship animation
 	*player_number = 0;
-	wrap_animation_draw(online_mode_selection_ship_anim, 0, 0);
+	wrap_animation_draw(online_mode_selection_ship_anim);
 	wrap_animation_tick(online_mode_selection_ship_anim);
 }
 
@@ -1514,7 +1514,7 @@ static void init_monster_anim() {
 static void tick_monster() {
 	// Draw monster animation
 	*player_number = 0;
-	wrap_animation_draw(online_mode_selection_monster_anim, 0, 0);
+	wrap_animation_draw(online_mode_selection_monster_anim);
 	wrap_animation_tick(online_mode_selection_monster_anim);
 }
 
@@ -1571,7 +1571,7 @@ static void tick_satellite() {
 
 	// Draw satellite animation
 	*player_number = 0;
-	wrap_animation_draw(online_mode_selection_satellite_anim, 0, 0);
+	wrap_animation_draw(online_mode_selection_satellite_anim);
 	wrap_animation_tick(online_mode_selection_satellite_anim);
 
 	// Hack sprite to have it behind background when is should be behind earth

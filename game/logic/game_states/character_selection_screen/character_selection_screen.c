@@ -22,7 +22,7 @@ struct FixScreenTaskState {
 // Global labels from the ASM codebase
 ///////////////////////////////////////
 
-extern uint8_t const anim_empty;
+extern uint8_t const anim_invisible;
 extern uint8_t const char_selection_nametable;
 extern uint8_t const char_selection_palette;
 extern uint8_t const characters_bank_number;
@@ -487,7 +487,7 @@ static void tick_bg_task(struct BgTaskState* task) {
 				// Hide builders
 				wrap_animation_state_change_animation(
 					character_selection_player_a_builder_anim + (task->player * ANIMATION_STATE_LENGTH),
-					&anim_empty
+					&anim_invisible
 				);
 
 				// Change step (stop there if there is no actual character selected)
@@ -589,7 +589,7 @@ static void refresh_player_character(uint8_t player) {
 	// Set inivisible animation for the character (don't risk ticking animation on the wrong character)
 	wrap_animation_state_change_animation(
 		character_selection_player_a_char_anim + (player * ANIMATION_STATE_LENGTH),
-		&anim_empty
+		&anim_invisible
 	);
 
 	// Start animation change async job (which will copy tiles in CHR-RAM before changing animation)
@@ -711,13 +711,13 @@ static void init_character_selection_screen_common() {
 	}
 
 	// Initialize Character animations
-	wrap_animation_init_state(character_selection_player_a_char_anim, &anim_empty);
+	wrap_animation_init_state(character_selection_player_a_char_anim, &anim_invisible);
 	Anim(character_selection_player_a_char_anim)->x = 108;
 	Anim(character_selection_player_a_char_anim)->y = 114;
 	Anim(character_selection_player_a_char_anim)->first_sprite_num = INGAME_PLAYER_A_FIRST_SPRITE;
 	Anim(character_selection_player_a_char_anim)->last_sprite_num = INGAME_PLAYER_A_LAST_SPRITE;
 
-	wrap_animation_init_state(character_selection_player_b_char_anim, &anim_empty);
+	wrap_animation_init_state(character_selection_player_b_char_anim, &anim_invisible);
 	Anim(character_selection_player_b_char_anim)->x = 140;
 	Anim(character_selection_player_b_char_anim)->y = 114;
 	Anim(character_selection_player_b_char_anim)->first_sprite_num = INGAME_PLAYER_B_FIRST_SPRITE;
@@ -737,13 +737,13 @@ static void init_character_selection_screen_common() {
 	Anim(character_selection_player_b_cursor_anim)->last_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 4;
 
 	// Initialize statue builder animations
-	wrap_animation_init_state(character_selection_player_a_builder_anim, &anim_empty);
+	wrap_animation_init_state(character_selection_player_a_builder_anim, &anim_invisible);
 	Anim(character_selection_player_a_builder_anim)->x = 0;
 	Anim(character_selection_player_a_builder_anim)->y = 0;
 	Anim(character_selection_player_a_builder_anim)->first_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 5;
 	Anim(character_selection_player_a_builder_anim)->last_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 8;
 
-	wrap_animation_init_state(character_selection_player_b_builder_anim, &anim_empty);
+	wrap_animation_init_state(character_selection_player_b_builder_anim, &anim_invisible);
 	Anim(character_selection_player_b_builder_anim)->x = 0;
 	Anim(character_selection_player_b_builder_anim)->y = 0;
 	Anim(character_selection_player_b_builder_anim)->first_sprite_num = INGAME_PLAYER_B_LAST_SPRITE + 9;
@@ -881,24 +881,24 @@ void character_selection_screen_tick_extra() {
 
 	// Draw token animations
 	*player_number = 0;
-	wrap_animation_draw(character_selection_player_a_cursor_anim, 0, 0);
+	wrap_animation_draw(character_selection_player_a_cursor_anim);
 	if (!*character_selection_player_a_ready) {
 		wrap_animation_tick(character_selection_player_a_cursor_anim);
 	}
 
 	*player_number = 1;
-	wrap_animation_draw(character_selection_player_b_cursor_anim, 0, 0);
+	wrap_animation_draw(character_selection_player_b_cursor_anim);
 	if (!*character_selection_player_b_ready) {
 		wrap_animation_tick(character_selection_player_b_cursor_anim);
 	}
 
 	// Draw builders animations
 	*player_number = 0;
-	wrap_animation_draw(character_selection_player_a_builder_anim, 0, 0);
+	wrap_animation_draw(character_selection_player_a_builder_anim);
 	wrap_animation_tick(character_selection_player_a_builder_anim);
 
 	*player_number = 1;
-	wrap_animation_draw(character_selection_player_b_builder_anim, 0, 0);
+	wrap_animation_draw(character_selection_player_b_builder_anim);
 	wrap_animation_tick(character_selection_player_b_builder_anim);
 
 	// Move tokens

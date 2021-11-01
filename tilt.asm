@@ -49,6 +49,7 @@
 #include "nine/macros.asm"
 #include "game/macros.asm"
 #include "game/rainbow_lib_macros.asm"
+#include "game/animation_extra_declarations.asm"
 #include "nine/nes_labels.asm"
 #include "game/mem_labels.asm"
 

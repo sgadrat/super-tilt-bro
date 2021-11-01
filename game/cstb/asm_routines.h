@@ -36,22 +36,14 @@ void wait_next_frame();
 static void wrap_trampoline(uint8_t call_bank, uint8_t return_bank, void(*routine)());
 
 void animation_draw();
-static void wrap_animation_draw(uint8_t const* animation_state, uint16_t camera_x, uint16_t camera_y) {
+static void wrap_animation_draw(uint8_t const* animation_state) {
 	*tmpfield11 = ptr_lsb(animation_state);
 	*tmpfield12 = ptr_msb(animation_state);
-	*tmpfield13 = u16_lsb(camera_x);
-	*tmpfield14 = u16_msb(camera_x);
-	*tmpfield15 = u16_lsb(camera_y);
-	*tmpfield16 = u16_msb(camera_y);
 	animation_draw();
 }
-static void long_animation_draw(uint8_t bank, uint8_t const* animation_state, uint16_t camera_x, uint16_t camera_y) {
+static void long_animation_draw(uint8_t bank, uint8_t const* animation_state) {
 	*tmpfield11 = ptr_lsb(animation_state);
 	*tmpfield12 = ptr_msb(animation_state);
-	*tmpfield13 = u16_lsb(camera_x);
-	*tmpfield14 = u16_msb(camera_x);
-	*tmpfield15 = u16_lsb(camera_y);
-	*tmpfield16 = u16_msb(camera_y);
 	wrap_trampoline(bank, code_bank(), &animation_draw);
 }
 

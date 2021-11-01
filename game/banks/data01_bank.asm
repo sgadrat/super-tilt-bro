@@ -6,9 +6,6 @@ bank_data01_begin:
 bank_data01_tileset_common_begin:
 #include "game/data/tilesets/common.asm"
 bank_data01_tileset_common_end:
-bank_data01_stage_plateau_begin:
-#include "game/data/stages/plateau/plateau.asm"
-bank_data01_stage_plateau_end:
 bank_data01_tileset_green_grass_begin:
 #include "game/data/tilesets/green_grass.asm"
 bank_data01_tileset_green_grass_end:
@@ -47,9 +44,6 @@ bank_data01_end:
 #echo
 #echo DATA01-bank data size:
 #print bank_data01_end-bank_data01_begin
-#echo
-#echo DATA01-bank Plateau size:
-#print bank_data01_stage_plateau_end-bank_data01_stage_plateau_begin
 #echo
 #echo DATA01-bank Green grass tileset size:
 #print bank_data01_tileset_green_grass_end-bank_data01_tileset_green_grass_begin

@@ -207,7 +207,7 @@ static void tick_cursor() {
 
 	// Tick animation
 	*player_number = 0;
-	long_animation_draw(anims_bank(), config_screen_cursor_anim, 0, 0);
+	long_animation_draw(anims_bank(), config_screen_cursor_anim);
 	long_animation_tick(anims_bank(), config_screen_cursor_anim);
 }
 

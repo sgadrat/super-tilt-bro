@@ -220,7 +220,7 @@ void stage_selection_screen_tick_extra() {
 
 	// Draw animations
 	*player_number = 0;
-	wrap_animation_draw(stage_selection_cursor_anim, 0, 0);
+	wrap_animation_draw(stage_selection_cursor_anim);
 	wrap_animation_tick(stage_selection_cursor_anim);
 
 	// Take inputs

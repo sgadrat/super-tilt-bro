@@ -2,7 +2,7 @@
 
 import re
 import stblib.animations
-from stblib.utils import asmint, asmsint8, asmsint16
+from stblib.utils import asmint, asmsint8, asmsint16, intasm8, intasm16, uintasm8
 import sys
 
 def animation_to_asm(animation):
@@ -13,12 +13,68 @@ def animation_to_asm(animation):
 	frame_num = 1
 	for frame in animation.frames:
 		serialized += '; Frame {}\n'.format(frame_num)
-		serialized += frame.serialize()
+		serialized += frame_to_asm(frame)
 		frame_num += 1
 	serialized += '; End of animation\n'
 	serialized += 'ANIM_ANIMATION_END\n'
 	serialized += '#print {}\n'.format(animation.name)
 	return serialized
+
+def frame_to_asm(frame):
+	# Frame begin
+	serialized = 'ANIM_FRAME_BEGIN(%d)\n' % frame.duration
+
+	# Hurtbox
+	if frame.hurtbox is not None:
+		serialized += 'ANIM_HURTBOX(%s, %s, %s, %s)\n' % (
+			intasm8(frame.hurtbox.left),
+			intasm8(frame.hurtbox.right),
+			intasm8(frame.hurtbox.top),
+			intasm8(frame.hurtbox.bottom)
+		)
+	else:
+		serialized += 'ANIM_NULL_HURTBOX\n'
+
+	# Hitbox
+	if frame.hitbox is not None:
+		serialized += 'ANIM_HITBOX(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)\n' % (
+			'$01' if frame.hitbox.enabled else '$00',
+			uintasm8(frame.hitbox.damages),
+			intasm16(frame.hitbox.base_h),
+			intasm16(frame.hitbox.base_v),
+			intasm16(frame.hitbox.force_h),
+			intasm16(frame.hitbox.force_v),
+			intasm8(frame.hitbox.left),
+			intasm8(frame.hitbox.right),
+			intasm8(frame.hitbox.top),
+			intasm8(frame.hitbox.bottom)
+		)
+	else:
+		serialized += 'ANIM_NULL_HITBOX\n'
+
+	# Sprites
+	foreground_sprites = []
+	normal_sprites = []
+	for sprite in frame.sprites:
+		if sprite.foreground:
+			foreground_sprites.append(sprite)
+		else:
+			normal_sprites.append(sprite)
+
+	serialized += 'ANIM_SPRITE_FOREGROUND_COUNT(%d)\n' % len(foreground_sprites)
+	for sprite in foreground_sprites:
+		serialized += sprite_to_asm(sprite)
+
+	serialized += 'ANIM_SPRITE_NORMAL_COUNT(%d)\n' % len(normal_sprites)
+	for sprite in normal_sprites:
+		serialized += sprite_to_asm(sprite)
+
+	return serialized
+
+def sprite_to_asm(sprite):
+	return 'ANIM_SPRITE(%s, %s, %s, %s)\n' % (
+		intasm8(sprite.y), sprite.tile, uintasm8(sprite.attr), intasm8(sprite.x)
+	)
 
 def frame_bin_size(frame):
 	"""
@@ -26,10 +82,11 @@ def frame_bin_size(frame):
 	"""
 	return (
 		1 + # ANIM_FRAME_BEGIN(duration)
-		(0 if frame.hurtbox is None else 5) + # ANIM_HURTBOX
-		(0 if frame.hitbox is None else 15) + # ANIM_HITBOX
-		(len(frame.sprites) * 5) + # ANIM_SPRITE
-		1 # ANIM_FRAME_END
+		4 + # ANIM_HURTBOX
+		11 + # ANIM_HITBOX
+		1 + # ANIM_SPRITE_FOREGROUND_COUNT
+		1 + # ANIM_SPRITE_NORMAL_COUNT
+		(len(frame.sprites) * 5) # ANIM_SPRITE
 	)
 
 RE_ANIM_LABEL = re.compile('(?P<name>([a-z]+_)?anim_[a-z_]+):')
@@ -46,6 +103,7 @@ def parse_animations(anim_file):
 	anim_file file-like object containing animations in assembly format
 	return a list of stblib.animations.Animation
 	"""
+	raise Exception('TODO: asm format of animations changed, update parse_animations()')
 	animations = []
 
 	current_anim = None

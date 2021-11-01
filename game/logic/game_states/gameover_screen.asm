@@ -263,11 +263,6 @@ gameover_screen_tick:
 		sta tmpfield11
 		lda #>player_a_animation
 		sta tmpfield12
-		lda #0
-		sta tmpfield13
-		sta tmpfield14
-		sta tmpfield15
-		sta tmpfield16
 		ldx gameover_winner
 		stx player_number
 		ldy config_player_a_character, x
@@ -280,11 +275,6 @@ gameover_screen_tick:
 		sta tmpfield11
 		lda #>player_b_animation
 		sta tmpfield12
-		lda #0
-		sta tmpfield13
-		sta tmpfield14
-		sta tmpfield15
-		sta tmpfield16
 		ldx gameover_winner
 		jsr switch_selected_player
 		stx player_number

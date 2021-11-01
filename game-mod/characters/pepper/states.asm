@@ -224,11 +224,6 @@ pepper_global_tick:
 	sta tmpfield11
 	lda pepper_carrot_anim_ptr_msb_per_player, x
 	sta tmpfield12
-	lda #0
-	sta tmpfield13
-	sta tmpfield14
-	sta tmpfield15
-	sta tmpfield16
 	stx player_number
 
 	lda network_rollback_mode

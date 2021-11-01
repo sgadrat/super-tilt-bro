@@ -45,11 +45,6 @@ character_selection_tick_char_anims:
 	tick_it:
 	.(
 		sta tmpfield12
-		lda #0
-		sta tmpfield13
-		sta tmpfield14
-		sta tmpfield15
-		sta tmpfield16
 		jsr animation_draw
 		jmp animation_tick
 		;rts ; useless, jump to subroutine

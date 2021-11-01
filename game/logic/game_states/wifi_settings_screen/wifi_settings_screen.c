@@ -167,7 +167,7 @@ static void update_cursor() {
 
 	// Draw cursor
 	*player_number = 0;
-	wrap_animation_draw((uint8_t*)anim, 0, 0);
+	wrap_animation_draw((uint8_t*)anim);
 	wrap_animation_tick((uint8_t*)anim);
 }
 

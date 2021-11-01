@@ -2003,8 +2003,6 @@ update_sprites:
 .(
 	; Pretty names
 	animation_vector = tmpfield11 ; Not movable - Used as parameter for stb_animation_draw subroutine
-	camera_x = tmpfield13         ; Not movable - Used as parameter for stb_animation_draw subroutine
-	camera_y = tmpfield15         ; Not movable - Used as parameter for stb_animation_draw subroutine
 
 	ldx #1 ; X is the player number
 	update_one_player_sprites:
@@ -2033,11 +2031,6 @@ update_sprites:
 			ldy #ANIMATION_STATE_OFFSET_Y_MSB
 			sta (animation_vector), y
 
-			lda #0
-			sta camera_x
-			sta camera_x+1
-			sta camera_y
-			sta camera_y+1
 			stx player_number
 			jsr stb_animation_draw
 			jsr animation_tick
@@ -2114,11 +2107,6 @@ update_sprites:
 				;jmp oos_indicator_placed
 
 			oos_indicator_placed:
-				lda #0
-				sta camera_x
-				sta camera_x+1
-				sta camera_y
-				sta camera_y+1
 				stx player_number
 				jsr animation_draw
 				jsr animation_tick

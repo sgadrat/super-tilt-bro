@@ -312,27 +312,44 @@ stage_gem_tick:
 						frame_number_ok:
 						tax
 
-						; Call draw_anim_frame
-						lda stage_gem_gem_position_x_high
-						sta tmpfield1
-						lda stage_gem_gem_position_y_high
-						sta tmpfield2
-						lda gem_explosion_frames_addr_lsb, x
-						sta tmpfield3
-						lda gem_explosion_frames_addr_msb, x
-						sta tmpfield4
-						lda #STAGE_GEM_STAGE_SPRITES
-						sta tmpfield5
-						lda #STAGE_GEM_STAGE_SPRITES+STAGE_GEM_NB_STAGE_SPRITES-1
-						sta tmpfield6
-						lda #0
-						sta tmpfield7
-						sta tmpfield8
-						sta tmpfield9
-						lda #1
-						stx player_number
+						; Place sprites
+						.(
+							; animation_handle_sprites parameters
+							animation_position_x = tmpfield1
+							animation_position_x_msb = tmpfield2
+							animation_position_y = tmpfield3
+							animation_position_y_msb = tmpfield4
+							frame_vector = tmpfield5
+							frame_vector_msb = tmpfield6
+							;first_sprite_index = tmpfield7
+							;last_sprite_index = tmpfield8
+							animation_direction = tmpfield9
+							;sprite_count = tmpfield10
+							;anim_state = tmpfield11
+							;anim_state_lsb = tmpfield12
+							;sign_extension_byte = tmpfield13
+							;attributes_modifier = tmpfield14
+							;sprite_direction = tmpfield15
 
-						jsr draw_anim_frame
+							lda gem_explosion_frames_addr_lsb, x
+							sta frame_vector
+							lda gem_explosion_frames_addr_msb, x
+							sta frame_vector_msb
+
+							lda stage_gem_gem_position_x_high
+							sta animation_position_x
+							lda stage_gem_gem_position_y_high
+							sta animation_position_y
+
+							lda #0
+							sta animation_direction
+							sta animation_position_y_msb
+							sta animation_position_x_msb
+
+							ldx #1
+
+							jsr stage_gem_draw_anim_frame
+						.)
 
 					end_draw_anim:
 				.)
@@ -360,34 +377,42 @@ stage_gem_tick:
 			and #%00000111
 			tax
 
+			; animation_handle_sprites parameters
+			animation_position_x = tmpfield1
+			animation_position_x_msb = tmpfield2
+			animation_position_y = tmpfield3
+			animation_position_y_msb = tmpfield4
+			frame_vector = tmpfield5
+			frame_vector_msb = tmpfield6
+			;first_sprite_index = tmpfield7
+			;last_sprite_index = tmpfield8
+			animation_direction = tmpfield9
+			;sprite_count = tmpfield10
+			;anim_state = tmpfield11
+			;anim_state_lsb = tmpfield12
+			;sign_extension_byte = tmpfield13
+			;attributes_modifier = tmpfield14
+			;sprite_direction = tmpfield15
+
 			lda gem_buff_frames_addr_lsb, x
-			sta tmpfield3
+			sta frame_vector
 			lda gem_buff_frames_addr_msb, x
-			sta tmpfield4
-			lda #STAGE_GEM_STAGE_SPRITES
-			sta tmpfield5
-			lda #STAGE_GEM_STAGE_SPRITES+STAGE_GEM_NB_STAGE_SPRITES-1
-			sta tmpfield6
+			sta frame_vector_msb
 
 			ldx stage_gem_buffed_player
-			stx player_number
 			lda player_a_x, x
-			sta tmpfield1
+			sta animation_position_x
 			lda player_a_y, x
-			sta tmpfield2
+			sta animation_position_y
 			lda player_a_x_screen, x
-			sta tmpfield8
+			sta animation_position_x_msb
 			lda player_a_y_screen, x
-			sta tmpfield9
-			lda player_a_direction, x
-			sta tmpfield7
+			sta animation_position_y_msb
+			;lda player_a_direction, x ; actually unsuported flipped animation (the animation is symetrical anyway)
+			lda #0
+			sta animation_direction
 
-			lda player_a_hitbox_enabled, x
-			pha
-			jsr draw_anim_frame
-			pla
-			ldx stage_gem_buffed_player
-			sta player_a_hitbox_enabled, x
+			jsr stage_gem_draw_anim_frame
 
 		end_update_anim:
 
@@ -863,5 +888,82 @@ stage_gem_place_gem:
 	sta STAGE_GEM_GEM_SPRITE_OAM
 	lda stage_gem_gem_position_x_high
 	sta STAGE_GEM_GEM_SPRITE_OAM+3
+	rts
+.)
+
+; Draw a frame from stage-specific animation format
+;  frame_vector - address of the frame to draw
+;  animation_position_x
+;  animation_position_x_msb
+;  animation_position_y
+;  animation_position_y_msb
+;  animation_direction
+;  X - player number, and attributes modifier
+;
+; Overwrites all registers, sign_extension_byte, sprite_count, attributes_modifier, player_number, sprite_direction
+stage_gem_draw_anim_frame:
+.(
+	; animation_handle_sprites parameters
+	animation_position_x = tmpfield1
+	animation_position_x_msb = tmpfield2
+	animation_position_y = tmpfield3
+	animation_position_y_msb = tmpfield4
+	frame_vector = tmpfield5
+	frame_vector_msb = tmpfield6
+	;first_sprite_index = tmpfield7
+	;last_sprite_index = tmpfield8
+	animation_direction = tmpfield9
+	sprite_count = tmpfield10
+	;anim_state = tmpfield11
+	;anim_state_lsb = tmpfield12
+	;sign_extension_byte = tmpfield13
+	attributes_modifier = tmpfield14
+	sprite_direction = tmpfield15
+
+	stx attributes_modifier
+	stx player_number
+
+	ldy #0
+	lda (frame_vector), y
+	sta sprite_count
+	pha
+	beq end_sprite_placing
+		iny
+
+		lda #4
+		sta sprite_direction
+
+		ldx #STAGE_GEM_STAGE_SPRITES*4
+
+		; Call sprite placing routine
+		jsr animation_handle_sprites
+	end_sprite_placing:
+
+	; Clear unused sprites
+	.(
+		; X = offset of the first unused sprite
+		pla
+		clc
+		adc #STAGE_GEM_STAGE_SPRITES
+		asl
+		asl
+		tax
+
+		; Clear sprites until the last reserved
+		lda #$fe
+		loop:
+			cpx #4*(STAGE_GEM_STAGE_SPRITES+STAGE_GEM_NB_STAGE_SPRITES)
+			beq end_loop
+
+				sta oam_mirror, x
+				inx
+				inx
+				inx
+				inx
+
+			jmp loop
+		end_loop:
+	.)
+
 	rts
 .)

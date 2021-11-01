@@ -20,7 +20,7 @@ fixed_bank_data_begin:
 fixed_bank_data_end:
 
 fixed_bank_code_begin:
-#include "game/logic/animation_opcodes.asm"
+#include "game/logic/animation_extra.asm"
 #include "game/logic/logic.asm"
 #include "game/logic/utils.asm"
 #include "nine/fixed_bank.asm"

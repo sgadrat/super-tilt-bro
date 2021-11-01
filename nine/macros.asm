@@ -272,39 +272,39 @@ duration
 ;
 ; Animation data representation
 ;  ANIM_FRAME_BEGIN(duration) - animation frame header
-;  ANIM_FRAME_END - animation frame footer
+;  ANIM_DEFAULT_HEADER - game-defined fixed length header data
+;  ANIM_SPRITE_FOREGROUND_COUNT(n) - number of foreground sprites in the frame
+;  ANIM_SPRITE_NORMAL_COUNT(n) - number of normal sprites in the frame
 ;  ANIM_ANIMATION_END - animation footer
 ;  ANIM_SPRITE(y,tile,attr,x) - sprite description
-;  ANIM_SPRITE_FOREGROUND(y,tile,attr,x) - sprite alway drawn on top of others
 ;
 ; Example:
 ;  animation_data:
 ;  ; Frame 1
 ;  ANIM_FRAME_BEGIN(32)
-;  ANIM_SPRITE_FOREGROUND($f9, TILE_PARTY_HAT, $01, $00) ; Y, tile, attr, X
-;  ANIM_SPRITE($00, TILE_OPEN_ARMS_SINBAD_HEAD, $00, $00)
-;  ANIM_SPRITE($08, TILE_OPEN_ARMS_SINBAD_BODY, $00, $00)
-;  ANIM_FRAME_END
+;  ANIM_DEFAULT_HEADER
+;  ANIM_SPRITE_FOREGROUND_COUNT(1)
+;    ANIM_SPRITE($f9, TILE_PARTY_HAT, $01, $00) ; Y, tile, attr, X
+;  ANIM_SPRITE_NORMAL_COUNT(2)
+;    ANIM_SPRITE($00, TILE_OPEN_ARMS_SINBAD_HEAD, $00, $00)
+;    ANIM_SPRITE($08, TILE_OPEN_ARMS_SINBAD_BODY, $00, $00)
 ;  ; Frame 2
 ;  ANIM_FRAME_BEGIN(32)
-;  ANIM_SPRITE_FOREGROUND($f9, TILE_PARTY_HAT, $01, $ff) ; Y, tile, attr, X
-;  ANIM_SPRITE($00, TILE_OPEN_ARMS_SINBAD_HEAD, $40, $00)
-;  ANIM_SPRITE($08, TILE_OPEN_ARMS_SINBAD_BODY, $40, $00)
-;  ANIM_FRAME_END
+;  ANIM_DEFAULT_HEADER
+;  ANIM_SPRITE_FOREGROUND_COUNT(1)
+;    ANIM_SPRITE($f9, TILE_PARTY_HAT, $01, $ff) ; Y, tile, attr, X
+;  ANIM_SPRITE_NORMAL_COUNT(2)
+;    ANIM_SPRITE($00, TILE_OPEN_ARMS_SINBAD_HEAD, $40, $00)
+;    ANIM_SPRITE($08, TILE_OPEN_ARMS_SINBAD_BODY, $40, $00)
 ;  ; End of animation
 ;  ANIM_ANIMATION_END
 ;
 
 #define ANIM_FRAME_BEGIN(duration) .byt duration
-#define ANIM_FRAME_END .byt $00
-
 #define ANIM_ANIMATION_END .byt $00
-
-#define ANIM_OPCODE_SPRITE $05
-#define ANIM_OPCODE_SPRITE_FOREGROUND $15
-
-#define ANIM_SPRITE(y,tile,attr,x) .byt ANIM_OPCODE_SPRITE, y, tile, attr, x
-#define ANIM_SPRITE_FOREGROUND(y,tile,attr,x) .byt ANIM_OPCODE_SPRITE_FOREGROUND, y, tile, attr, x
+#define ANIM_SPRITE_FOREGROUND_COUNT(n) .byt n
+#define ANIM_SPRITE_NORMAL_COUNT(n) .byt n
+#define ANIM_SPRITE(y,tile,attr,x) .byt y, tile, attr, x
 
 ;
 ; Transition between gamestates
