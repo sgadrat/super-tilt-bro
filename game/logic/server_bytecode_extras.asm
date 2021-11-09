@@ -12,6 +12,7 @@ server_bytecode_init:
 	param_stage_num = $00
 	character_a = $01
 	character_b = $02
+	video_system = $03
 
 	; Set game's configuration
 	jsr default_config
@@ -22,6 +23,8 @@ server_bytecode_init:
 	sta config_player_a_character
 	lda character_b
 	sta config_player_b_character
+	lda video_system
+	sta system_index
 
 	lda #3
 	sta config_initial_stocks
