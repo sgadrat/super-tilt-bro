@@ -83,7 +83,7 @@ network_tick_ingame:
 		; Send controller's state
 		;lda controller_a_btns ; useless  - "controller_a_btns" is already in register A
 		cmp network_last_sent_btns
-		bne controller_sent
+		beq controller_sent
 
 			; ESP header
 			lda #11          ; Message length (10 bytes of payload + 1 byte for ESP message type)
