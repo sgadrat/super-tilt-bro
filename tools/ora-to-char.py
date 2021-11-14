@@ -269,6 +269,7 @@ def ora_to_character(image_file, char_name):
 			place_in_tileset(tile, character.tileset, '{}_TILE_{}'.format(character.name.upper(), sprite_layer['name']))
 
 	# Construct animations and tileset
+	special_anims_found = []
 	for animation_stack in animations_stack['childs']:
 		# Parse animation
 		animation = stblib.animations.Animation()
@@ -395,14 +396,20 @@ def ora_to_character(image_file, char_name):
 
 		# Store parsed animation in character
 		if anim_name == 'victory':
+			special_anims_found.append('victory')
 			character.victory_animation = animation
 		elif anim_name == 'defeat':
+			special_anims_found.append('defeat')
 			character.defeat_animation = animation
 		elif anim_name == 'menu_select':
+			special_anims_found.append('menu_select')
 			character.menu_select_animation = animation
 		else:
 			character.animations.append(animation)
 
+	ensure('victory' in special_anims_found, 'no victory animation found')
+	ensure('defeat' in special_anims_found, 'no defeat animation found')
+	ensure('menu_select' in special_anims_found, 'no menu_select animation found')
 	character.animations = sorted(character.animations, key = lambda x: x.name)
 	return character
 

@@ -105,6 +105,7 @@ class Animation:
 			self.frames = []
 
 	def check(self):
+		ensure(len(self.frames) > 0, 'empty animation')
 		for frame in self.frames:
 			frame.check()
 
