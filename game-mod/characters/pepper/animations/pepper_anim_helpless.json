@@ -20,14 +20,6 @@
 					"y": -1
 				},
 				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_5",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": -1
-				},
-				{
 					"attr": 128,
 					"foreground": false,
 					"tile": "PEPPER_TILE_2",

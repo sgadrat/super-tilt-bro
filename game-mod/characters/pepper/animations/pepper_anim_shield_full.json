@@ -14,7 +14,7 @@
 				{
 					"attr": 1,
 					"foreground": true,
-					"tile": "PEPPER_TILE_35",
+					"tile": "PEPPER_TILE_34",
 					"type": "animation_sprite",
 					"x": -4,
 					"y": 0
@@ -22,7 +22,7 @@
 				{
 					"attr": 65,
 					"foreground": true,
-					"tile": "PEPPER_TILE_35",
+					"tile": "PEPPER_TILE_34",
 					"type": "animation_sprite",
 					"x": 4,
 					"y": 0
@@ -30,7 +30,7 @@
 				{
 					"attr": 129,
 					"foreground": true,
-					"tile": "PEPPER_TILE_35",
+					"tile": "PEPPER_TILE_34",
 					"type": "animation_sprite",
 					"x": -4,
 					"y": 8
@@ -38,7 +38,7 @@
 				{
 					"attr": 193,
 					"foreground": true,
-					"tile": "PEPPER_TILE_35",
+					"tile": "PEPPER_TILE_34",
 					"type": "animation_sprite",
 					"x": 4,
 					"y": 8
@@ -81,14 +81,6 @@
 					"tile": "PEPPER_TILE_4",
 					"type": "animation_sprite",
 					"x": -1,
-					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_5",
-					"type": "animation_sprite",
-					"x": 7,
 					"y": 8
 				}
 			],
@@ -108,7 +100,7 @@
 				{
 					"attr": 1,
 					"foreground": true,
-					"tile": "PEPPER_TILE_36",
+					"tile": "PEPPER_TILE_35",
 					"type": "animation_sprite",
 					"x": -4,
 					"y": 0
@@ -116,7 +108,7 @@
 				{
 					"attr": 65,
 					"foreground": true,
-					"tile": "PEPPER_TILE_36",
+					"tile": "PEPPER_TILE_35",
 					"type": "animation_sprite",
 					"x": 4,
 					"y": 0
@@ -124,7 +116,7 @@
 				{
 					"attr": 129,
 					"foreground": true,
-					"tile": "PEPPER_TILE_36",
+					"tile": "PEPPER_TILE_35",
 					"type": "animation_sprite",
 					"x": -4,
 					"y": 8
@@ -132,7 +124,7 @@
 				{
 					"attr": 193,
 					"foreground": true,
-					"tile": "PEPPER_TILE_36",
+					"tile": "PEPPER_TILE_35",
 					"type": "animation_sprite",
 					"x": 4,
 					"y": 8
@@ -175,14 +167,6 @@
 					"tile": "PEPPER_TILE_4",
 					"type": "animation_sprite",
 					"x": -1,
-					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_5",
-					"type": "animation_sprite",
-					"x": 7,
 					"y": 8
 				}
 			],

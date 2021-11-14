@@ -14,7 +14,7 @@
 				{
 					"attr": 1,
 					"foreground": true,
-					"tile": "PEPPER_TILE_59",
+					"tile": "PEPPER_TILE_58",
 					"type": "animation_sprite",
 					"x": -5,
 					"y": 5
@@ -54,7 +54,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "PEPPER_TILE_10",
+					"tile": "PEPPER_TILE_9",
 					"type": "animation_sprite",
 					"x": 0,
 					"y": 8
@@ -62,7 +62,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "PEPPER_TILE_52",
+					"tile": "PEPPER_TILE_51",
 					"type": "animation_sprite",
 					"x": 6,
 					"y": 10

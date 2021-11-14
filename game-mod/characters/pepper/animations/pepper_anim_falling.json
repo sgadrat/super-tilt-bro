@@ -50,14 +50,6 @@
 					"type": "animation_sprite",
 					"x": -1,
 					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_5",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 8
 				}
 			],
 			"type": "animation_frame"
@@ -84,7 +76,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "PEPPER_TILE_8",
+					"tile": "PEPPER_TILE_7",
 					"type": "animation_sprite",
 					"x": 7,
 					"y": -8
@@ -100,7 +92,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "PEPPER_TILE_9",
+					"tile": "PEPPER_TILE_8",
 					"type": "animation_sprite",
 					"x": 7,
 					"y": 0

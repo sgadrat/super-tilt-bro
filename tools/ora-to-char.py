@@ -367,6 +367,10 @@ def ora_to_character(image_file, char_name):
 								frame_child['name']
 							)
 
+							# Ignore fully transparent sprites
+							if tile == stblib.tiles.Tile():
+								continue
+
 							# Add tile to tileset if needed, get its name and attributes
 							tile_name, flip = place_in_tileset(
 								tile,

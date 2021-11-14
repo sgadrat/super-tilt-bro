@@ -14,7 +14,7 @@
 				{
 					"attr": 1,
 					"foreground": true,
-					"tile": "PEPPER_TILE_39",
+					"tile": "PEPPER_TILE_38",
 					"type": "animation_sprite",
 					"x": -4,
 					"y": 0
@@ -22,7 +22,7 @@
 				{
 					"attr": 65,
 					"foreground": true,
-					"tile": "PEPPER_TILE_39",
+					"tile": "PEPPER_TILE_38",
 					"type": "animation_sprite",
 					"x": 4,
 					"y": 0
@@ -30,7 +30,7 @@
 				{
 					"attr": 129,
 					"foreground": true,
-					"tile": "PEPPER_TILE_39",
+					"tile": "PEPPER_TILE_38",
 					"type": "animation_sprite",
 					"x": -4,
 					"y": 8
@@ -38,7 +38,7 @@
 				{
 					"attr": 193,
 					"foreground": true,
-					"tile": "PEPPER_TILE_39",
+					"tile": "PEPPER_TILE_38",
 					"type": "animation_sprite",
 					"x": 4,
 					"y": 8
@@ -82,14 +82,6 @@
 					"type": "animation_sprite",
 					"x": -1,
 					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_5",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 8
 				}
 			],
 			"type": "animation_frame"
@@ -108,7 +100,7 @@
 				{
 					"attr": 1,
 					"foreground": true,
-					"tile": "PEPPER_TILE_39",
+					"tile": "PEPPER_TILE_38",
 					"type": "animation_sprite",
 					"x": -6,
 					"y": -2
@@ -116,7 +108,7 @@
 				{
 					"attr": 65,
 					"foreground": true,
-					"tile": "PEPPER_TILE_39",
+					"tile": "PEPPER_TILE_38",
 					"type": "animation_sprite",
 					"x": 6,
 					"y": -2
@@ -124,7 +116,7 @@
 				{
 					"attr": 193,
 					"foreground": true,
-					"tile": "PEPPER_TILE_39",
+					"tile": "PEPPER_TILE_38",
 					"type": "animation_sprite",
 					"x": 6,
 					"y": 10
@@ -132,7 +124,7 @@
 				{
 					"attr": 129,
 					"foreground": true,
-					"tile": "PEPPER_TILE_39",
+					"tile": "PEPPER_TILE_38",
 					"type": "animation_sprite",
 					"x": -6,
 					"y": 10
@@ -176,14 +168,6 @@
 					"type": "animation_sprite",
 					"x": -1,
 					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_5",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 8
 				}
 			],
 			"type": "animation_frame"
@@ -202,7 +186,7 @@
 				{
 					"attr": 1,
 					"foreground": true,
-					"tile": "PEPPER_TILE_39",
+					"tile": "PEPPER_TILE_38",
 					"type": "animation_sprite",
 					"x": -10,
 					"y": -6
@@ -210,7 +194,7 @@
 				{
 					"attr": 65,
 					"foreground": true,
-					"tile": "PEPPER_TILE_39",
+					"tile": "PEPPER_TILE_38",
 					"type": "animation_sprite",
 					"x": 10,
 					"y": -6
@@ -218,7 +202,7 @@
 				{
 					"attr": 193,
 					"foreground": true,
-					"tile": "PEPPER_TILE_39",
+					"tile": "PEPPER_TILE_38",
 					"type": "animation_sprite",
 					"x": 10,
 					"y": 14
@@ -226,7 +210,7 @@
 				{
 					"attr": 129,
 					"foreground": true,
-					"tile": "PEPPER_TILE_39",
+					"tile": "PEPPER_TILE_38",
 					"type": "animation_sprite",
 					"x": -10,
 					"y": 14
@@ -270,14 +254,6 @@
 					"type": "animation_sprite",
 					"x": -1,
 					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_5",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 8
 				}
 			],
 			"type": "animation_frame"
@@ -296,7 +272,7 @@
 				{
 					"attr": 1,
 					"foreground": true,
-					"tile": "PEPPER_TILE_39",
+					"tile": "PEPPER_TILE_38",
 					"type": "animation_sprite",
 					"x": -14,
 					"y": -10
@@ -304,7 +280,7 @@
 				{
 					"attr": 65,
 					"foreground": true,
-					"tile": "PEPPER_TILE_39",
+					"tile": "PEPPER_TILE_38",
 					"type": "animation_sprite",
 					"x": 14,
 					"y": -10
@@ -312,7 +288,7 @@
 				{
 					"attr": 193,
 					"foreground": true,
-					"tile": "PEPPER_TILE_39",
+					"tile": "PEPPER_TILE_38",
 					"type": "animation_sprite",
 					"x": 14,
 					"y": 18
@@ -320,7 +296,7 @@
 				{
 					"attr": 129,
 					"foreground": true,
-					"tile": "PEPPER_TILE_39",
+					"tile": "PEPPER_TILE_38",
 					"type": "animation_sprite",
 					"x": -14,
 					"y": 18
@@ -363,14 +339,6 @@
 					"tile": "PEPPER_TILE_4",
 					"type": "animation_sprite",
 					"x": -1,
-					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "PEPPER_TILE_5",
-					"type": "animation_sprite",
-					"x": 7,
 					"y": 8
 				}
 			],
