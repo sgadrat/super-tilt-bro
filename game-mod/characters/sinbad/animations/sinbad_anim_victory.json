@@ -1,0 +1,70 @@
+{
+	"frames": [
+		{
+			"duration": 32,
+			"hitbox": null,
+			"hurtbox": null,
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_0",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": -7
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_1",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_2",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 32,
+			"hitbox": null,
+			"hurtbox": null,
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_0",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": -7
+				},
+				{
+					"attr": 64,
+					"foreground": false,
+					"tile": "SINBAD_TILE_1",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 64,
+					"foreground": false,
+					"tile": "SINBAD_TILE_2",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "sinbad_anim_victory",
+	"type": "animation"
+}

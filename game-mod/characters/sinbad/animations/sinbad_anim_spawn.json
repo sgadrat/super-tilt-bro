@@ -1,0 +1,313 @@
+{
+	"frames": [
+		{
+			"duration": 20,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 5,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_77",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 0
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "SINBAD_TILE_77",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 0
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 10,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_77",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": -8
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "SINBAD_TILE_77",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": -8
+				},
+				{
+					"attr": 129,
+					"foreground": false,
+					"tile": "SINBAD_TILE_77",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 0
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "SINBAD_TILE_77",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 0
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_77",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 8
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "SINBAD_TILE_77",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 5,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 65,
+					"foreground": true,
+					"tile": "SINBAD_TILE_20",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": true,
+					"tile": "SINBAD_TILE_7",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": true,
+					"tile": "SINBAD_TILE_8",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				},
+				{
+					"attr": 129,
+					"foreground": false,
+					"tile": "SINBAD_TILE_77",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": -8
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "SINBAD_TILE_77",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": -8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_77",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 0
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "SINBAD_TILE_77",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 0
+				},
+				{
+					"attr": 129,
+					"foreground": false,
+					"tile": "SINBAD_TILE_77",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 8
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "SINBAD_TILE_77",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 5,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 65,
+					"foreground": true,
+					"tile": "SINBAD_TILE_20",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": true,
+					"tile": "SINBAD_TILE_9",
+					"type": "animation_sprite",
+					"x": -8,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": true,
+					"tile": "SINBAD_TILE_10",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": true,
+					"tile": "SINBAD_TILE_11",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				},
+				{
+					"attr": 129,
+					"foreground": false,
+					"tile": "SINBAD_TILE_77",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 0
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "SINBAD_TILE_77",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 0
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 5,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_5",
+					"type": "animation_sprite",
+					"x": -8,
+					"y": 6
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_6",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 6
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_9",
+					"type": "animation_sprite",
+					"x": -8,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_10",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_11",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "sinbad_anim_spawn",
+	"type": "animation"
+}

@@ -1,0 +1,144 @@
+{
+	"frames": [
+		{
+			"duration": 1,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": 0,
+				"right": 8,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_5",
+					"type": "animation_sprite",
+					"x": -6,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_6",
+					"type": "animation_sprite",
+					"x": 2,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_35",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_36",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 3,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": 0,
+				"right": 8,
+				"top": 2,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_5",
+					"type": "animation_sprite",
+					"x": -6,
+					"y": 9
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_6",
+					"type": "animation_sprite",
+					"x": 2,
+					"y": 9
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_27",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_28",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": 0,
+				"right": 8,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_5",
+					"type": "animation_sprite",
+					"x": -6,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_6",
+					"type": "animation_sprite",
+					"x": 2,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_35",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_36",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "sinbad_anim_landing",
+	"type": "animation"
+}

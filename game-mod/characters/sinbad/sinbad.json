@@ -1,73 +1,5 @@
 {
-	"type": "character",
-	"name": "sinbad",
-	"sourcecode_file": "characters/sinbad/states.asm",
-	"netload_routine": "dummy_routine",
 	"ai": {
-		"type": "character_ai",
-		"sourcecode_file": "characters/sinbad/ai.asm",
-		"attacks": [
-			{
-				"type": "character_ai_attack",
-				"action": "ai_action_left_tilt",
-				"constraints": 0,
-				"hitbox": {
-					"type": "character_ai_hitbox",
-					"left": -32,
-					"right": -12,
-					"top": -12,
-					"bottom": 12
-				}
-			},
-			{
-				"type": "character_ai_attack",
-				"action": "ai_action_right_tilt",
-				"constraints": 0,
-				"hitbox": {
-					"type": "character_ai_hitbox",
-					"left": 19,
-					"right": 39,
-					"top": -12,
-					"bottom": 12
-				}
-			},
-			{
-				"type": "character_ai_attack",
-				"action": "ai_action_down_tilt",
-				"constraints": 1,
-				"hitbox": {
-					"type": "character_ai_hitbox",
-					"left": -5,
-					"right": -1,
-					"top": 8,
-					"bottom": 15
-				}
-			},
-			{
-				"type": "character_ai_attack",
-				"action": "ai_action_down_tilt",
-				"constraints": 2,
-				"hitbox": {
-					"type": "character_ai_hitbox",
-					"left": 3,
-					"right": 13,
-					"top": 8,
-					"bottom": 15
-				}
-			},
-			{
-				"type": "character_ai_attack",
-				"action": "ai_action_special_up",
-				"constraints": 0,
-				"hitbox": {
-					"type": "character_ai_hitbox",
-					"left": -15,
-					"right": 23,
-					"top": -48,
-					"bottom": 8
-				}
-			}
-		],
 		"action_selectors": [
 			"ai_shield_selector",
 			"sinbad_ai_attack_selector",
@@ -77,25 +9,396 @@
 		],
 		"actions": [
 			{
-				"type": "character_ai_action",
 				"name": "special_side",
 				"steps": [
 					{
-						"type": "character_ai_action_step",
+						"duration": 60,
 						"input": "CONTROLLER_INPUT_SPECIAL",
-						"duration": 60
+						"type": "character_ai_action_step"
 					},
 					{
-						"type": "character_ai_action_step",
+						"duration": 9,
 						"input": 0,
-						"duration": 9
+						"type": "character_ai_action_step"
 					}
-				]
+				],
+				"type": "character_ai_action"
 			}
-		]
+		],
+		"attacks": [
+			{
+				"action": "ai_action_left_tilt",
+				"constraints": 0,
+				"hitbox": {
+					"bottom": 12,
+					"left": -32,
+					"right": -12,
+					"top": -12,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			},
+			{
+				"action": "ai_action_right_tilt",
+				"constraints": 0,
+				"hitbox": {
+					"bottom": 12,
+					"left": 19,
+					"right": 39,
+					"top": -12,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			},
+			{
+				"action": "ai_action_down_tilt",
+				"constraints": 1,
+				"hitbox": {
+					"bottom": 15,
+					"left": -5,
+					"right": -1,
+					"top": 8,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			},
+			{
+				"action": "ai_action_down_tilt",
+				"constraints": 2,
+				"hitbox": {
+					"bottom": 15,
+					"left": 3,
+					"right": 13,
+					"top": 8,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			},
+			{
+				"action": "ai_action_special_up",
+				"constraints": 0,
+				"hitbox": {
+					"bottom": 8,
+					"left": -15,
+					"right": 23,
+					"top": -48,
+					"type": "character_ai_hitbox"
+				},
+				"type": "character_ai_attack"
+			}
+		],
+		"sourcecode_file": "characters/sinbad/ai.asm",
+		"type": "character_ai"
+	},
+	"animations": [
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_aerial_down.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_aerial_jumping.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_aerial_neutral.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_aerial_side.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_aerial_spe.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_aerial_up.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_crashing.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_down_tilt.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_falling.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_helpless.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_idle.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_jab.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_jumping.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_landing.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_respawn.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_run.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_shielding_full.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_shielding_limit.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_shielding_partial.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_shielding_remove.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_side_special_charge.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_side_special_jump.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_side_tilt.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_spawn.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_spe_down.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_spe_up_jump.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_spe_up_prepare.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_special.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_special_charge.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_thrown.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_up_tilt.json",
+			"type": "import"
+		}
+	],
+	"color_swaps": {
+		"alternate_colors": [
+			{
+				"colors": [
+					55,
+					58,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					55,
+					51,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					49,
+					32,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					55,
+					56,
+					58
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					55,
+					16,
+					54
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					55,
+					32,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					51,
+					51,
+					32
+				],
+				"type": "palette"
+			}
+		],
+		"primary_colors": [
+			{
+				"colors": [
+					8,
+					26,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					22,
+					16
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					1,
+					49,
+					51
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					24,
+					41
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					15,
+					7
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					40,
+					32
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					4,
+					36,
+					56
+				],
+				"type": "palette"
+			}
+		],
+		"secondary_colors": [
+			{
+				"colors": [
+					8,
+					16,
+					55
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					40,
+					55
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					1,
+					49,
+					51
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					24,
+					41
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					15,
+					15,
+					0
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					4,
+					36,
+					55
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					22,
+					55
+				],
+				"type": "palette"
+			}
+		],
+		"type": "character_colors"
+	},
+	"defeat_animation": {
+		"src": "characters/sinbad/animations/sinbad_anim_defeat.json",
+		"type": "import"
 	},
 	"illustration_large": {
-		"type": "tileset",
+		"name": null,
 		"src": "characters/sinbad/illustrations/large.gif",
 		"tilenames": [
 			"SINBAD_ILLUSTRATION_LARGE_1",
@@ -146,516 +449,421 @@
 			"SINBAD_ILLUSTRATION_LARGE_46",
 			"SINBAD_ILLUSTRATION_LARGE_47",
 			"SINBAD_ILLUSTRATION_LARGE_48"
-		]
+		],
+		"type": "tileset"
 	},
 	"illustration_small": {
-		"type": "tileset",
+		"name": null,
 		"src": "characters/sinbad/illustrations/small.gif",
 		"tilenames": [
 			"SINBAD_ILLUSTRATION_SMALL_1",
 			"SINBAD_ILLUSTRATION_SMALL_2",
 			"SINBAD_ILLUSTRATION_SMALL_3",
 			"SINBAD_ILLUSTRATION_SMALL_4"
-		]
+		],
+		"type": "tileset"
 	},
 	"illustration_token": {
-		"type": "tileset",
+		"name": null,
 		"src": "characters/sinbad/illustrations/token.gif",
 		"tilenames": [
 			"SINBAD_ILLUSTRATION_TOKEN_1"
-		]
-	},
-	"tileset": {
-		"type": "tileset",
-		"src": "characters/sinbad/tileset.gif",
-		"tilenames": [
-			"TILE_IDLE_SINBAD_HEAD",
-			"TILE_IDLE_SINBAD_BODY",
-			"TILE_SCIMITAR_BLADE",
-			"TILE_SCIMITAR_HANDLE",
-			"TILE_RUNNING_SINBAD_1_1",
-			"TILE_RUNNING_SINBAD_1_2",
-			"TILE_RUNNING_SINBAD_1_3",
-			"TILE_RUNNING_SINBAD_1_4",
-			"TILE_RUNNING_SINBAD_2_1",
-			"TILE_RUNNING_SINBAD_2_2",
-			"TILE_RUNNING_SINBAD_2_3",
-			"TILE_RUNNING_SINBAD_3_1",
-			"TILE_RUNNING_SINBAD_3_2",
-			"TILE_VERTICAL_SCIMITAR_BLADE",
-			"TILE_VERTICAL_SCIMITAR_HANDLE",
-			"TILE_ANGLED_SCIMITAR_BLADE",
-			"TILE_ANGLED_SCIMITAR_HANDLE",
-			"TILE_SIDE_TILT_SINBAD_1_1",
-			"TILE_SIDE_TILT_SINBAD_1_2",
-			"TILE_SIDE_TILT_SINBAD_1_3",
-			"TILE_SIDE_TILT_SINBAD_1_4",
-			"TILE_SIDE_TILT_SINBAD_2_1",
-			"TILE_SIDE_TILT_SINBAD_2_2",
-			"TILE_SIDE_TILT_SINBAD_3_1",
-			"TILE_SIDE_TILT_SINBAD_3_2",
-			"TILE_SIDE_TILT_SINBAD_3_3",
-			"TILE_ROLLED_SINBAD_1",
-			"TILE_ROLLED_SINBAD_2",
-			"TILE_ROLLED_SINBAD_3",
-			"TILE_ROLLED_SINBAD_4",
-			"TILE_ROLLED_SINBAD_HEAD_DOWN_1",
-			"TILE_ROLLED_SINBAD_HEAD_DOWN_2",
-			"TILE_ROLLED_SINBAD_HEAD_DOWN_3",
-			"TILE_ROLLED_SINBAD_HEAD_DOWN_4",
-			"TILE_ANGLED_DOWN_SCIMITAR_BLADE",
-			"TILE_ANGLED_DOWN_SCIMITAR_HANDLE",
-			"TILE_SINBAD_POWER_FLAMES_TINY_1",
-			"TILE_SINBAD_POWER_FLAMES_TINY_2",
-			"TILE_SINBAD_POWER_FLAMES_LITTLE_1",
-			"TILE_SINBAD_POWER_FLAMES_LITTLE_2",
-			"TILE_SINBAD_POWER_FLAMES_MEDIUM_1",
-			"TILE_SINBAD_POWER_FLAMES_MEDIUM_2",
-			"TILE_SINBAD_POWER_FLAMES_LARGE_1",
-			"TILE_SINBAD_POWER_FLAMES_LARGE_2",
-			"TILE_LANDING_SINBAD_1_TOP",
-			"TILE_LANDING_SINBAD_1_BOT",
-			"TILE_LANDING_SINBAD_2_TOP",
-			"TILE_LANDING_SINBAD_2_BOT",
-			"TILE_THROWN_SINBAD_1_NW",
-			"TILE_THROWN_SINBAD_1_NE",
-			"TILE_THROWN_SINBAD_1_SW",
-			"TILE_THROWN_SINBAD_1_SE",
-			"TILE_CRASHED_SINBAD_HEAD",
-			"TILE_CRASHED_SINBAD_BODY",
-			"TILE_THROWN_SINBAD_2_NW",
-			"TILE_THROWN_SINBAD_2_NE",
-			"TILE_THROWN_SINBAD_2_SW",
-			"TILE_THROWN_SINBAD_2_SE",
-			"TILE_JUMPING_SINBAD_2",
-			"TILE_JUMPING_SINBAD_3_HEAD",
-			"TILE_JUMPING_SINBAD_3_BODY",
-			"TILE_CHRASHING_SINBAD_1_SIDE",
-			"TILE_CHRASHING_SINBAD_1_HEAD",
-			"TILE_CHRASHING_SINBAD_1_BODY",
-			"TILE_CHRASHING_SINBAD_2_SIDE",
-			"TILE_CHRASHING_SINBAD_2_MIDDLE",
-			"TILE_OPEN_ARMS_SINBAD_HEAD",
-			"TILE_OPEN_ARMS_SINBAD_BODY",
-			"TILE_JOINED_HANDS_SINBAD_HEAD",
-			"TILE_JOINED_HANDS_SINBAD_BODY",
-			"TILE_PARTY_HAT",
-			"TILE_ROCKET_SINBAD_HEAD",
-			"TILE_ROCKET_SINBAD_BODY",
-			"TILE_DIVING_SINBAD_NW",
-			"TILE_DIVING_SINBAD_SW",
-			"TILE_DIVING_SINBAD_SE",
-			"TILE_LIGHT_STAR",
-			"TILE_LIGHT_STAR_BRANCH",
-			"TILE_AERIAL_UP_SINBAD_NW",
-			"TILE_AERIAL_UP_SINBAD_NE",
-			"TILE_AERIAL_UP_SINBAD_SW",
-			"TILE_AERIAL_UP_SINBAD_SE",
-			"TILE_SHIELD_FULL_1",
-			"TILE_SHIELD_FULL_2",
-			"TILE_SHIELD_PARTIAL_1",
-			"TILE_SHIELD_PARTIAL_2",
-			"TILE_SHIELD_LIMIT_1",
-			"TILE_SHIELD_LIMIT_2",
-			"TILE_REVIVAL_PLATFORM_1",
-			"TILE_REVIVAL_PLATFORM_2",
-			"TILE_ANGLED_DOWN_SCIMITAR_BLADE_SPARKS_LOW",
-			"TILE_ANGLED_DOWN_SCIMITAR_BLADE_SPARKS_MEDIUM",
-			"TILE_ANGLED_DOWN_SCIMITAR_BLADE_SPARKS_HIGH",
-			"TILE_PORTAL"
-		]
-	},
-	"victory_animation": {
-		"type": "import", "src": "characters/sinbad/animations/victory.json"
-	},
-	"defeat_animation": {
-		"type": "import", "src": "characters/sinbad/animations/defeat.json"
+		],
+		"type": "tileset"
 	},
 	"menu_select_animation": {
-		"type": "import", "src": "characters/sinbad/animations/menu_select.json"
+		"src": "characters/sinbad/animations/sinbad_anim_menu_select.json",
+		"type": "import"
 	},
-	"animations": [
-		{"type": "import", "src": "characters/sinbad/animations/aerial_down.json"},
-		{"type": "import", "src": "characters/sinbad/animations/aerial_jumping.json"},
-		{"type": "import", "src": "characters/sinbad/animations/aerial_neutral.json"},
-		{"type": "import", "src": "characters/sinbad/animations/aerial_side.json"},
-		{"type": "import", "src": "characters/sinbad/animations/aerial_spe.json"},
-		{"type": "import", "src": "characters/sinbad/animations/aerial_up.json"},
-		{"type": "import", "src": "characters/sinbad/animations/crashing.json"},
-		{"type": "import", "src": "characters/sinbad/animations/down_tilt.json"},
-		{"type": "import", "src": "characters/sinbad/animations/falling.json"},
-		{"type": "import", "src": "characters/sinbad/animations/helpless.json"},
-		{"type": "import", "src": "characters/sinbad/animations/idle.json"},
-		{"type": "import", "src": "characters/sinbad/animations/jab.json"},
-		{"type": "import", "src": "characters/sinbad/animations/jumping.json"},
-		{"type": "import", "src": "characters/sinbad/animations/landing.json"},
-		{"type": "import", "src": "characters/sinbad/animations/respawn.json"},
-		{"type": "import", "src": "characters/sinbad/animations/run.json"},
-		{"type": "import", "src": "characters/sinbad/animations/shielding_full.json"},
-		{"type": "import", "src": "characters/sinbad/animations/shielding_partial.json"},
-		{"type": "import", "src": "characters/sinbad/animations/shielding_limit.json"},
-		{"type": "import", "src": "characters/sinbad/animations/shielding_remove.json"},
-		{"type": "import", "src": "characters/sinbad/animations/side_special_charge.json"},
-		{"type": "import", "src": "characters/sinbad/animations/side_special_jump.json"},
-		{"type": "import", "src": "characters/sinbad/animations/side_tilt.json"},
-		{"type": "import", "src": "characters/sinbad/animations/spawn.json"},
-		{"type": "import", "src": "characters/sinbad/animations/special.json"},
-		{"type": "import", "src": "characters/sinbad/animations/special_charge.json"},
-		{"type": "import", "src": "characters/sinbad/animations/spe_down.json"},
-		{"type": "import", "src": "characters/sinbad/animations/spe_up_prepare.json"},
-		{"type": "import", "src": "characters/sinbad/animations/spe_up_jump.json"},
-		{"type": "import", "src": "characters/sinbad/animations/thrown.json"},
-		{"type": "import", "src": "characters/sinbad/animations/up_tilt.json"}
-	],
-	"color_swaps": {
-		"type": "character_colors",
-		"primary_colors": [
-			{
-				"type": "palette",
-				"colors": [8, 26, 32]
-			},
-			{
-				"type": "palette",
-				"colors": [8, 22, 16]
-			},
-			{
-				"type": "palette",
-				"colors": [1, 49, 51]
-			},
-			{
-				"type": "palette",
-				"colors": [8, 24, 41]
-			},
-			{
-				"type": "palette",
-				"colors": [8, 15, 7]
-			},
-			{
-				"type": "palette",
-				"colors": [8, 40, 32]
-			},
-			{
-				"type": "palette",
-				"colors": [4, 36, 56]
-			}
-		],
-		"alternate_colors": [
-			{
-				"type": "palette",
-				"colors": [55, 58, 32]
-			},
-			{
-				"type": "palette",
-				"colors": [55, 51, 32]
-			},
-			{
-				"type": "palette",
-				"colors": [49, 32, 32]
-			},
-			{
-				"type": "palette",
-				"colors": [55, 56, 58]
-			},
-			{
-				"type": "palette",
-				"colors": [55, 16, 54]
-			},
-			{
-				"type": "palette",
-				"colors": [55, 32, 32]
-			},
-			{
-				"type": "palette",
-				"colors": [51, 51, 32]
-			}
-		],
-		"secondary_colors": [
-			{
-				"type": "palette",
-				"colors": [8, 16, 55]
-			},
-			{
-				"type": "palette",
-				"colors": [8, 40, 55]
-			},
-			{
-				"type": "palette",
-				"colors": [1, 49, 51]
-			},
-			{
-				"type": "palette",
-				"colors": [8, 24, 41]
-			},
-			{
-				"type": "palette",
-				"colors": [15, 15, 0]
-			},
-			{
-				"type": "palette",
-				"colors": [4, 36, 55]
-			},
-			{
-				"type": "palette",
-				"colors": [8, 22, 55]
-			}
-		]
-	},
+	"name": "sinbad",
+	"netload_routine": "dummy_routine",
+	"sourcecode_file": "characters/sinbad/states.asm",
 	"states": [
 		{
-			"type": "character_state",
+			"input_routine": "sinbad_input_thrown",
 			"name": "SINBAD_STATE_THROWN",
-			"start_routine": "sinbad_start_thrown",
-			"update_routine": "sinbad_tick_thrown",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_onground_thrown",
-			"input_routine": "sinbad_input_thrown",
-			"onhurt_routine": "hurt_player"
+			"onhurt_routine": "hurt_player",
+			"start_routine": "sinbad_start_thrown",
+			"type": "character_state",
+			"update_routine": "sinbad_tick_thrown"
 		},
 		{
-			"type": "character_state",
-			"name": "SINBAD_STATE_RESPAWN",
-			"start_routine": "sinbad_start_respawn",
-			"update_routine": "sinbad_tick_respawn",
-			"offground_routine": "dummy_routine",
-			"onground_routine": "sinbad_global_onground",
 			"input_routine": "sinbad_input_respawn",
-			"onhurt_routine": "dummy_routine"
+			"name": "SINBAD_STATE_RESPAWN",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
+			"onhurt_routine": "dummy_routine",
+			"start_routine": "sinbad_start_respawn",
+			"type": "character_state",
+			"update_routine": "sinbad_tick_respawn"
 		},
 		{
-			"type": "character_state",
+			"input_routine": "dummy_routine",
 			"name": "SINBAD_STATE_INNEXISTANT",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
+			"onhurt_routine": "dummy_routine",
 			"start_routine": "sinbad_start_innexistant",
-			"update_routine": "dummy_routine",
-			"offground_routine": "dummy_routine",
-			"onground_routine": "sinbad_global_onground",
-			"input_routine": "dummy_routine",
-			"onhurt_routine": "dummy_routine"
+			"type": "character_state",
+			"update_routine": "dummy_routine"
 		},
 		{
-			"type": "character_state",
+			"input_routine": "keep_input_dirty",
 			"name": "SINBAD_STATE_SPAWN",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
+			"onhurt_routine": "dummy_routine",
 			"start_routine": "sinbad_start_spawn",
-			"update_routine": "sinbad_tick_spawn",
-			"offground_routine": "dummy_routine",
-			"onground_routine": "sinbad_global_onground",
-			"input_routine": "keep_input_dirty",
-			"onhurt_routine": "dummy_routine"
+			"type": "character_state",
+			"update_routine": "sinbad_tick_spawn"
 		},
 		{
-			"type": "character_state",
-			"name": "SINBAD_STATE_STANDING",
-			"update_routine": "sinbad_tick_standing",
-			"offground_routine": "sinbad_start_falling",
-			"onground_routine": "sinbad_global_onground",
 			"input_routine": "sinbad_input_standing",
-			"onhurt_routine": "hurt_player"
-		},
-		{
-			"type": "character_state",
-			"name": "SINBAD_STATE_RUNNING",
-			"update_routine": "sinbad_tick_running",
+			"name": "SINBAD_STATE_STANDING",
 			"offground_routine": "sinbad_start_falling",
 			"onground_routine": "sinbad_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_standing"
+		},
+		{
 			"input_routine": "sinbad_input_running",
-			"onhurt_routine": "hurt_player"
+			"name": "SINBAD_STATE_RUNNING",
+			"offground_routine": "sinbad_start_falling",
+			"onground_routine": "sinbad_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_running"
 		},
 		{
-			"type": "character_state",
-			"name": "SINBAD_STATE_FALLING",
-			"update_routine": "sinbad_tick_falling",
-			"offground_routine": "dummy_routine",
-			"onground_routine": "sinbad_start_landing",
 			"input_routine": "sinbad_check_aerial_inputs",
-			"onhurt_routine": "hurt_player"
+			"name": "SINBAD_STATE_FALLING",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "sinbad_start_landing",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_falling"
 		},
 		{
-			"type": "character_state",
-			"name": "SINBAD_STATE_JUMPING",
-			"update_routine": "sinbad_tick_jumping",
-			"offground_routine": "dummy_routine",
-			"onground_routine": "sinbad_global_onground",
 			"input_routine": "sinbad_input_jumping",
-			"onhurt_routine": "hurt_player"
+			"name": "SINBAD_STATE_JUMPING",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_jumping"
 		},
 		{
-			"type": "character_state",
-			"name": "SINBAD_STATE_JABBING",
-			"update_routine": "sinbad_tick_jabbing",
-			"offground_routine": "sinbad_start_falling",
-			"onground_routine": "sinbad_global_onground",
 			"input_routine": "sinbad_input_jabbing",
-			"onhurt_routine": "hurt_player"
+			"name": "SINBAD_STATE_JABBING",
+			"offground_routine": "sinbad_start_falling",
+			"onground_routine": "sinbad_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_jabbing"
 		},
 		{
-			"type": "character_state",
+			"input_routine": "keep_input_dirty",
 			"name": "SINBAD_STATE_SIDE_TILT",
-			"update_routine": "sinbad_tick_side_tilt",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_global_onground",
-			"input_routine": "keep_input_dirty",
-			"onhurt_routine": "hurt_player"
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_side_tilt"
 		},
 		{
-			"type": "character_state",
+			"input_routine": "dummy_routine",
 			"name": "SINBAD_STATE_SPECIAL_CHARGE",
-			"update_routine": "sinbad_tick_special_charge",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_global_onground",
-			"input_routine": "dummy_routine",
-			"onhurt_routine": "hurt_player"
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_special_charge"
 		},
 		{
-			"type": "character_state",
+			"input_routine": "dummy_routine",
 			"name": "SINBAD_STATE_SPECIAL_STRIKE",
-			"update_routine": "sinbad_tick_special_strike",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_global_onground",
-			"input_routine": "dummy_routine",
-			"onhurt_routine": "hurt_player"
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_special_strike"
 		},
 		{
-			"type": "character_state",
+			"input_routine": "dummy_routine",
 			"name": "SINBAD_STATE_SIDE_SPECIAL",
-			"update_routine": "sinbad_tick_side_special",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_global_onground",
-			"input_routine": "dummy_routine",
-			"onhurt_routine": "hurt_player"
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_side_special"
 		},
 		{
-			"type": "character_state",
-			"name": "SINBAD_STATE_HELPLESS",
-			"update_routine": "sinbad_tick_helpless",
-			"offground_routine": "dummy_routine",
-			"onground_routine": "sinbad_start_landing",
 			"input_routine": "sinbad_input_helpless",
-			"onhurt_routine": "hurt_player"
+			"name": "SINBAD_STATE_HELPLESS",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "sinbad_start_landing",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_helpless"
 		},
 		{
-			"type": "character_state",
+			"input_routine": "keep_input_dirty",
 			"name": "SINBAD_STATE_LANDING",
-			"update_routine": "sinbad_tick_landing",
 			"offground_routine": "sinbad_start_falling",
 			"onground_routine": "sinbad_global_onground",
-			"input_routine": "keep_input_dirty",
-			"onhurt_routine": "hurt_player"
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_landing"
 		},
 		{
-			"type": "character_state",
+			"input_routine": "keep_input_dirty",
 			"name": "SINBAD_STATE_CRASHING",
-			"update_routine": "sinbad_tick_crashing",
 			"offground_routine": "sinbad_start_falling",
 			"onground_routine": "sinbad_global_onground",
-			"input_routine": "keep_input_dirty",
-			"onhurt_routine": "hurt_player"
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_crashing"
 		},
 		{
-			"type": "character_state",
+			"input_routine": "keep_input_dirty",
 			"name": "SINBAD_STATE_DOWN_TILT",
-			"update_routine": "sinbad_tick_down_tilt",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_global_onground",
-			"input_routine": "keep_input_dirty",
-			"onhurt_routine": "hurt_player"
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_down_tilt"
 		},
 		{
-			"type": "character_state",
+			"input_routine": "keep_input_dirty",
 			"name": "SINBAD_STATE_AERIAL_SIDE",
-			"update_routine": "sinbad_tick_aerial_side",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_start_landing",
-			"input_routine": "keep_input_dirty",
-			"onhurt_routine": "hurt_player"
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_aerial_side"
 		},
 		{
-			"type": "character_state",
+			"input_routine": "keep_input_dirty",
 			"name": "SINBAD_STATE_AERIAL_DOWN",
-			"update_routine": "sinbad_tick_aerial_down",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_start_landing",
-			"input_routine": "keep_input_dirty",
-			"onhurt_routine": "hurt_player"
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_aerial_down"
 		},
 		{
-			"type": "character_state",
+			"input_routine": "keep_input_dirty",
 			"name": "SINBAD_STATE_AERIAL_UP",
-			"update_routine": "sinbad_tick_aerial_up",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_start_landing",
-			"input_routine": "keep_input_dirty",
-			"onhurt_routine": "hurt_player"
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_aerial_up"
 		},
 		{
-			"type": "character_state",
+			"input_routine": "keep_input_dirty",
 			"name": "SINBAD_STATE_AERIAL_NEUTRAL",
-			"update_routine": "sinbad_tick_aerial_neutral",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_start_landing",
-			"input_routine": "keep_input_dirty",
-			"onhurt_routine": "hurt_player"
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_aerial_neutral"
 		},
 		{
-			"type": "character_state",
-			"name": "SINBAD_STATE_AERIAL_SPE_NEUTRAL",
-			"update_routine": "sinbad_tick_aerial_spe",
-			"offground_routine": "dummy_routine",
-			"onground_routine": "sinbad_start_landing",
 			"input_routine": "sinbad_input_aerial_spe",
-			"onhurt_routine": "hurt_player"
+			"name": "SINBAD_STATE_AERIAL_SPE_NEUTRAL",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "sinbad_start_landing",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_aerial_spe"
 		},
 		{
-			"type": "character_state",
-			"name": "SINBAD_STATE_SPE_UP",
-			"update_routine": "sinbad_tick_spe_up",
-			"offground_routine": "dummy_routine",
-			"onground_routine": "sinbad_global_onground",
 			"input_routine": "dummy_routine",
-			"onhurt_routine": "hurt_player"
+			"name": "SINBAD_STATE_SPE_UP",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_spe_up"
 		},
 		{
-			"type": "character_state",
+			"input_routine": "keep_input_dirty",
 			"name": "SINBAD_STATE_SPE_DOWN",
-			"update_routine": "sinbad_tick_spe_down",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_global_onground",
-			"input_routine": "keep_input_dirty",
-			"onhurt_routine": "hurt_player"
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_spe_down"
 		},
 		{
-			"type": "character_state",
+			"input_routine": "keep_input_dirty",
 			"name": "SINBAD_STATE_UP_TILT",
-			"update_routine": "sinbad_tick_up_tilt",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_global_onground",
-			"input_routine": "keep_input_dirty",
-			"onhurt_routine": "hurt_player"
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_up_tilt"
 		},
 		{
-			"type": "character_state",
-			"name": "SINBAD_STATE_SHIELDING",
-			"update_routine": "sinbad_tick_shielding",
-			"offground_routine": "sinbad_start_falling",
-			"onground_routine": "sinbad_global_onground",
 			"input_routine": "sinbad_input_shielding",
-			"onhurt_routine": "sinbad_hurt_shielding"
-		},
-		{
-			"type": "character_state",
-			"name": "SINBAD_STATE_SHIELDLAG",
-			"update_routine": "sinbad_tick_shieldlag",
+			"name": "SINBAD_STATE_SHIELDING",
 			"offground_routine": "sinbad_start_falling",
 			"onground_routine": "sinbad_global_onground",
-			"input_routine": "keep_input_dirty",
-			"onhurt_routine": "hurt_player"
+			"onhurt_routine": "sinbad_hurt_shielding",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_shielding"
 		},
 		{
+			"input_routine": "keep_input_dirty",
+			"name": "SINBAD_STATE_SHIELDLAG",
+			"offground_routine": "sinbad_start_falling",
+			"onground_routine": "sinbad_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
 			"type": "character_state",
+			"update_routine": "sinbad_tick_shieldlag"
+		},
+		{
+			"input_routine": "sinbad_input_walljumping",
 			"name": "SINBAD_STATE_WALJUMPING",
-			"update_routine": "sinbad_tick_walljumping",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_global_onground",
-			"input_routine": "sinbad_input_walljumping",
-			"onhurt_routine": "hurt_player"
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_walljumping"
 		}
-	]
+	],
+	"tileset": {
+		"name": null,
+		"src": "characters/sinbad/tileset.gif",
+		"tilenames": [
+			"SINBAD_TILE_0",
+			"SINBAD_TILE_1",
+			"SINBAD_TILE_2",
+			"SINBAD_TILE_3",
+			"SINBAD_TILE_4",
+			"SINBAD_TILE_5",
+			"SINBAD_TILE_6",
+			"SINBAD_TILE_7",
+			"SINBAD_TILE_8",
+			"SINBAD_TILE_9",
+			"SINBAD_TILE_10",
+			"SINBAD_TILE_11",
+			"SINBAD_TILE_12",
+			"SINBAD_TILE_13",
+			"SINBAD_TILE_14",
+			"SINBAD_TILE_15",
+			"SINBAD_TILE_16",
+			"SINBAD_TILE_17",
+			"SINBAD_TILE_18",
+			"SINBAD_TILE_19",
+			"SINBAD_TILE_20",
+			"SINBAD_TILE_21",
+			"SINBAD_TILE_22",
+			"SINBAD_TILE_23",
+			"SINBAD_TILE_24",
+			"SINBAD_TILE_25",
+			"SINBAD_TILE_26",
+			"SINBAD_TILE_27",
+			"SINBAD_TILE_28",
+			"SINBAD_TILE_29",
+			"SINBAD_TILE_30",
+			"SINBAD_TILE_31",
+			"SINBAD_TILE_32",
+			"SINBAD_TILE_33",
+			"SINBAD_TILE_34",
+			"SINBAD_TILE_35",
+			"SINBAD_TILE_36",
+			"SINBAD_TILE_37",
+			"SINBAD_TILE_38",
+			"SINBAD_TILE_39",
+			"SINBAD_TILE_40",
+			"SINBAD_TILE_41",
+			"SINBAD_TILE_42",
+			"SINBAD_TILE_43",
+			"SINBAD_TILE_44",
+			"SINBAD_TILE_45",
+			"SINBAD_TILE_46",
+			"SINBAD_TILE_47",
+			"SINBAD_TILE_48",
+			"SINBAD_TILE_49",
+			"SINBAD_TILE_50",
+			"SINBAD_TILE_51",
+			"SINBAD_TILE_52",
+			"SINBAD_TILE_53",
+			"SINBAD_TILE_54",
+			"SINBAD_TILE_55",
+			"SINBAD_TILE_56",
+			"SINBAD_TILE_57",
+			"SINBAD_TILE_58",
+			"SINBAD_TILE_59",
+			"SINBAD_TILE_60",
+			"SINBAD_TILE_61",
+			"SINBAD_TILE_62",
+			"SINBAD_TILE_63",
+			"SINBAD_TILE_64",
+			"SINBAD_TILE_65",
+			"SINBAD_TILE_66",
+			"SINBAD_TILE_67",
+			"SINBAD_TILE_68",
+			"SINBAD_TILE_69",
+			"SINBAD_TILE_70",
+			"SINBAD_TILE_71",
+			"SINBAD_TILE_72",
+			"SINBAD_TILE_73",
+			"SINBAD_TILE_74",
+			"SINBAD_TILE_75",
+			"SINBAD_TILE_76",
+			"SINBAD_TILE_77",
+			"SINBAD_TILE_78",
+			"SINBAD_TILE_79",
+			"SINBAD_TILE_80",
+			"SINBAD_TILE_81",
+			"SINBAD_TILE_82",
+			"SINBAD_TILE_83",
+			"SINBAD_TILE_84",
+			"SINBAD_TILE_85",
+			"SINBAD_TILE_86",
+			"SINBAD_TILE_87",
+			"SINBAD_TILE_88",
+			"SINBAD_TILE_89",
+			"SINBAD_TILE_90",
+			"SINBAD_TILE_91",
+			"SINBAD_TILE_92",
+			"SINBAD_TILE_93"
+		],
+		"type": "tileset"
+	},
+	"type": "character",
+	"victory_animation": {
+		"src": "characters/sinbad/animations/sinbad_anim_victory.json",
+		"type": "import"
+	}
 }

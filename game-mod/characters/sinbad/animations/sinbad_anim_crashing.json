@@ -1,0 +1,290 @@
+{
+	"frames": [
+		{
+			"duration": 3,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": -8,
+				"right": 7,
+				"top": 10,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_43",
+					"type": "animation_sprite",
+					"x": -16,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_44",
+					"type": "animation_sprite",
+					"x": -8,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_45",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "SINBAD_TILE_43",
+					"type": "animation_sprite",
+					"x": 8,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 3,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 13,
+				"left": -8,
+				"right": 7,
+				"top": 6,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "SINBAD_TILE_46",
+					"type": "animation_sprite",
+					"x": -13,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "SINBAD_TILE_47",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 8
+				},
+				{
+					"attr": 65,
+					"foreground": true,
+					"tile": "SINBAD_TILE_46",
+					"type": "animation_sprite",
+					"x": 5,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_48",
+					"type": "animation_sprite",
+					"x": -8,
+					"y": 6
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_49",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 6
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 3,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": -8,
+				"right": 7,
+				"top": 8,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "SINBAD_TILE_46",
+					"type": "animation_sprite",
+					"x": -13,
+					"y": 8
+				},
+				{
+					"attr": 1,
+					"foreground": true,
+					"tile": "SINBAD_TILE_47",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 8
+				},
+				{
+					"attr": 65,
+					"foreground": true,
+					"tile": "SINBAD_TILE_46",
+					"type": "animation_sprite",
+					"x": 5,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_48",
+					"type": "animation_sprite",
+					"x": -8,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_49",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 13,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": -8,
+				"right": 7,
+				"top": 8,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_48",
+					"type": "animation_sprite",
+					"x": -8,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_49",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": -4,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_5",
+					"type": "animation_sprite",
+					"x": -6,
+					"y": 7
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_6",
+					"type": "animation_sprite",
+					"x": 2,
+					"y": 7
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_9",
+					"type": "animation_sprite",
+					"x": -8,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_10",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_11",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 4,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 15,
+				"left": 0,
+				"right": 7,
+				"top": 2,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_5",
+					"type": "animation_sprite",
+					"x": -6,
+					"y": 9
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_6",
+					"type": "animation_sprite",
+					"x": 2,
+					"y": 9
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_27",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_28",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "sinbad_anim_crashing",
+	"type": "animation"
+}

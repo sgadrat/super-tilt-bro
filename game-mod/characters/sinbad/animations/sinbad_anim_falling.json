@@ -1,0 +1,52 @@
+{
+	"frames": [
+		{
+			"duration": 100,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": 0,
+				"right": 8,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "SINBAD_TILE_19",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": -6
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "SINBAD_TILE_20",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 2
+				},
+				{
+					"attr": 128,
+					"foreground": false,
+					"tile": "SINBAD_TILE_22",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 128,
+					"foreground": false,
+					"tile": "SINBAD_TILE_21",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		}
+	],
+	"name": "sinbad_anim_falling",
+	"type": "animation"
+}
