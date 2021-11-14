@@ -52,19 +52,14 @@ def frame_to_asm(frame):
 	else:
 		serialized += 'ANIM_NULL_HITBOX\n'
 
-	# Sprites
-	foreground_sprites = []
-	normal_sprites = []
-	for sprite in frame.sprites:
-		if sprite.foreground:
-			foreground_sprites.append(sprite)
-		else:
-			normal_sprites.append(sprite)
-
+	# Foreground sprites
+	foreground_sprites = frame.foreground_sprites()
 	serialized += 'ANIM_SPRITE_FOREGROUND_COUNT(%d)\n' % len(foreground_sprites)
 	for sprite in foreground_sprites:
 		serialized += sprite_to_asm(sprite)
 
+	# Normal sprites
+	normal_sprites = frame.normal_sprites()
 	serialized += 'ANIM_SPRITE_NORMAL_COUNT(%d)\n' % len(normal_sprites)
 	for sprite in normal_sprites:
 		serialized += sprite_to_asm(sprite)

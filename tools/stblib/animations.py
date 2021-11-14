@@ -73,6 +73,20 @@ class Frame:
 			sprite.attr ^= 0x40
 		self.sprites.reverse()
 
+	def foreground_sprites(self):
+		foreground_sprites = []
+		for sprite in self.sprites:
+			if sprite.foreground:
+				foreground_sprites.append(sprite)
+		return foreground_sprites
+
+	def normal_sprites(self):
+		normal_sprites = []
+		for sprite in self.sprites:
+			if not sprite.foreground:
+				normal_sprites.append(sprite)
+		return normal_sprites
+
 	def check(self):
 		ensure(self.duration > 0 and self.duration < 256)
 		if self.hurtbox is not None:
