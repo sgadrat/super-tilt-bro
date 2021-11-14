@@ -197,7 +197,7 @@ def _jsonify_character(character, base_path):
 
 	# Export animations in their own file
 	def _externalize_anim(anim, animations_path_rel, base_path):
-		ensure(anim.get('name', '') != '', 'empty animation name')
+		ensure(anim.get('name') is not None and anim.get('name') != '', 'empty animation name')
 		anim_path_rel = '{}/{}.json'.format(animations_path_rel, anim['name'])
 		anim_path = '{}/{}'.format(base_path, anim_path_rel)
 		with open(anim_path, 'w') as anim_file:
