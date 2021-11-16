@@ -30,6 +30,12 @@
 lbl:\
 	.byt (pal_dur), (pal_dur)+((((pal_dur)*10)/5)+5)/10
 
+; Create a table with pal and ntsc equivalent durations
+;  Value is ceiled which is appropriate for frame-perfect duration in animations
+#define anim_duration_table(pal_dur, lbl) \
+lbl:\
+	.byt (pal_dur), (pal_dur)+((((pal_dur)*10)/5)+9)/10
+
 ; Create a table with pal and ntsc equivalent 2-bytes velocity
 #define velocity_table(pal_vel, lbl_msb, lbl_lsb) \
 lbl_msb:\

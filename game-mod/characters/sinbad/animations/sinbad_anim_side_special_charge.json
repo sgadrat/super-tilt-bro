@@ -14,7 +14,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "SINBAD_TILE_71",
+					"tile": "SINBAD_TILE_73",
 					"type": "animation_sprite",
 					"x": -7,
 					"y": 8
@@ -22,7 +22,7 @@
 				{
 					"attr": 65,
 					"foreground": false,
-					"tile": "SINBAD_TILE_71",
+					"tile": "SINBAD_TILE_73",
 					"type": "animation_sprite",
 					"x": 7,
 					"y": 8
@@ -68,222 +68,6 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "SINBAD_TILE_72",
-					"type": "animation_sprite",
-					"x": -7,
-					"y": 8
-				},
-				{
-					"attr": 65,
-					"foreground": false,
-					"tile": "SINBAD_TILE_72",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "SINBAD_TILE_9",
-					"type": "animation_sprite",
-					"x": -7,
-					"y": 1
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "SINBAD_TILE_10",
-					"type": "animation_sprite",
-					"x": 1,
-					"y": 1
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "SINBAD_TILE_11",
-					"type": "animation_sprite",
-					"x": 1,
-					"y": 9
-				}
-			],
-			"type": "animation_frame"
-		},
-		{
-			"duration": 7,
-			"hitbox": null,
-			"hurtbox": {
-				"bottom": 16,
-				"left": -5,
-				"right": 7,
-				"top": 0,
-				"type": "animation_hurtbox"
-			},
-			"sprites": [
-				{
-					"attr": 1,
-					"foreground": false,
-					"tile": "SINBAD_TILE_71",
-					"type": "animation_sprite",
-					"x": -7,
-					"y": 8
-				},
-				{
-					"attr": 65,
-					"foreground": false,
-					"tile": "SINBAD_TILE_71",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "SINBAD_TILE_9",
-					"type": "animation_sprite",
-					"x": -9,
-					"y": 0
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "SINBAD_TILE_10",
-					"type": "animation_sprite",
-					"x": -1,
-					"y": 0
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "SINBAD_TILE_11",
-					"type": "animation_sprite",
-					"x": -1,
-					"y": 8
-				}
-			],
-			"type": "animation_frame"
-		},
-		{
-			"duration": 7,
-			"hitbox": null,
-			"hurtbox": {
-				"bottom": 17,
-				"left": -3,
-				"right": 9,
-				"top": 1,
-				"type": "animation_hurtbox"
-			},
-			"sprites": [
-				{
-					"attr": 1,
-					"foreground": false,
-					"tile": "SINBAD_TILE_72",
-					"type": "animation_sprite",
-					"x": -7,
-					"y": 8
-				},
-				{
-					"attr": 65,
-					"foreground": false,
-					"tile": "SINBAD_TILE_72",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "SINBAD_TILE_9",
-					"type": "animation_sprite",
-					"x": -7,
-					"y": 1
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "SINBAD_TILE_10",
-					"type": "animation_sprite",
-					"x": 1,
-					"y": 1
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "SINBAD_TILE_11",
-					"type": "animation_sprite",
-					"x": 1,
-					"y": 9
-				}
-			],
-			"type": "animation_frame"
-		},
-		{
-			"duration": 7,
-			"hitbox": null,
-			"hurtbox": {
-				"bottom": 16,
-				"left": -5,
-				"right": 7,
-				"top": 0,
-				"type": "animation_hurtbox"
-			},
-			"sprites": [
-				{
-					"attr": 1,
-					"foreground": false,
-					"tile": "SINBAD_TILE_73",
-					"type": "animation_sprite",
-					"x": -7,
-					"y": 8
-				},
-				{
-					"attr": 65,
-					"foreground": false,
-					"tile": "SINBAD_TILE_73",
-					"type": "animation_sprite",
-					"x": 7,
-					"y": 8
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "SINBAD_TILE_9",
-					"type": "animation_sprite",
-					"x": -9,
-					"y": 0
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "SINBAD_TILE_10",
-					"type": "animation_sprite",
-					"x": -1,
-					"y": 0
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "SINBAD_TILE_11",
-					"type": "animation_sprite",
-					"x": -1,
-					"y": 8
-				}
-			],
-			"type": "animation_frame"
-		},
-		{
-			"duration": 7,
-			"hitbox": null,
-			"hurtbox": {
-				"bottom": 17,
-				"left": -3,
-				"right": 9,
-				"top": 1,
-				"type": "animation_hurtbox"
-			},
-			"sprites": [
-				{
-					"attr": 1,
-					"foreground": false,
 					"tile": "SINBAD_TILE_74",
 					"type": "animation_sprite",
 					"x": -7,
@@ -455,6 +239,222 @@
 					"attr": 65,
 					"foreground": false,
 					"tile": "SINBAD_TILE_75",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_9",
+					"type": "animation_sprite",
+					"x": -9,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_10",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_11",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 7,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 17,
+				"left": -3,
+				"right": 9,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 129,
+					"foreground": false,
+					"tile": "SINBAD_TILE_56",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 8
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "SINBAD_TILE_56",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_9",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 1
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_10",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 1
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_11",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 9
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 7,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": -5,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_75",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 8
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "SINBAD_TILE_75",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_9",
+					"type": "animation_sprite",
+					"x": -9,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_10",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_11",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 7,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 17,
+				"left": -3,
+				"right": 9,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 129,
+					"foreground": false,
+					"tile": "SINBAD_TILE_56",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 8
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "SINBAD_TILE_56",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 8
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_9",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 1
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_10",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 1
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_11",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 9
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 7,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": -5,
+				"right": 7,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_55",
+					"type": "animation_sprite",
+					"x": -7,
+					"y": 8
+				},
+				{
+					"attr": 65,
+					"foreground": false,
+					"tile": "SINBAD_TILE_55",
 					"type": "animation_sprite",
 					"x": 7,
 					"y": 8
@@ -554,7 +554,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "SINBAD_TILE_75",
+					"tile": "SINBAD_TILE_55",
 					"type": "animation_sprite",
 					"x": -7,
 					"y": 8
@@ -562,7 +562,7 @@
 				{
 					"attr": 65,
 					"foreground": false,
-					"tile": "SINBAD_TILE_75",
+					"tile": "SINBAD_TILE_55",
 					"type": "animation_sprite",
 					"x": 7,
 					"y": 8

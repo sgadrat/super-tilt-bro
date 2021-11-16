@@ -185,3 +185,22 @@ audio_play_aerial_jump:
 	jmp audio_play_sfx_from_common_bank
 	;rts ; useless, jump to subroutine
 .)
+
+audio_play_strike_lite:
+.(
+	audio_preserve_x_y
+	ldy #<sfx_strike_lite
+	ldx #>sfx_strike_lite
+	jmp audio_play_sfx_from_common_bank
+	;rts ; useless, jump to subroutine
+.)
+
+;TODO sfx in character-specific data (and bank)
+sinbad_audio_play_jab3_land:
+.(
+	audio_preserve_x_y
+	ldy #<sinbad_sfx_jab3_land
+	ldx #>sinbad_sfx_jab3_land
+	jmp audio_play_sfx_from_common_bank
+	;rts ; useless, jump to subroutine
+.)

@@ -136,7 +136,15 @@
 			"type": "import"
 		},
 		{
-			"src": "characters/sinbad/animations/sinbad_anim_jab.json",
+			"src": "characters/sinbad/animations/sinbad_anim_jab1.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_jab2.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/sinbad/animations/sinbad_anim_jab3.json",
 			"type": "import"
 		},
 		{
@@ -560,8 +568,8 @@
 			"update_routine": "sinbad_tick_jumping"
 		},
 		{
-			"input_routine": "sinbad_input_jabbing",
-			"name": "SINBAD_STATE_JABBING",
+			"input_routine": "sinbad_input_jabbing1",
+			"name": "SINBAD_STATE_JABBING_1",
 			"offground_routine": "sinbad_start_falling",
 			"onground_routine": "sinbad_global_onground",
 			"onhurt_routine": "hurt_player",
@@ -758,6 +766,26 @@
 			"start_routine": null,
 			"type": "character_state",
 			"update_routine": "sinbad_tick_walljumping"
+		},
+		{
+			"input_routine": "sinbad_input_jabbing2",
+			"name": "SINBAD_STATE_JABBING_2",
+			"offground_routine": "sinbad_start_falling",
+			"onground_routine": "sinbad_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_jabbing"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "SINBAD_STATE_JABBING_3",
+			"offground_routine": "sinbad_start_falling",
+			"onground_routine": "sinbad_global_onground",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_jab3"
 		}
 	],
 	"tileset": {

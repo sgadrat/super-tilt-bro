@@ -22,7 +22,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "SINBAD_TILE_57",
+					"tile": "SINBAD_TILE_59",
 					"type": "animation_sprite",
 					"x": 9,
 					"y": 8
@@ -30,7 +30,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "SINBAD_TILE_58",
+					"tile": "SINBAD_TILE_60",
 					"type": "animation_sprite",
 					"x": 0,
 					"y": 0
@@ -38,7 +38,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "SINBAD_TILE_52",
+					"tile": "SINBAD_TILE_54",
 					"type": "animation_sprite",
 					"x": 8,
 					"y": 0
@@ -46,7 +46,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "SINBAD_TILE_59",
+					"tile": "SINBAD_TILE_61",
 					"type": "animation_sprite",
 					"x": 0,
 					"y": 8
@@ -54,7 +54,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "SINBAD_TILE_60",
+					"tile": "SINBAD_TILE_62",
 					"type": "animation_sprite",
 					"x": 8,
 					"y": 8
@@ -84,7 +84,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "SINBAD_TILE_61",
+					"tile": "SINBAD_TILE_63",
 					"type": "animation_sprite",
 					"x": 10,
 					"y": 8
@@ -92,7 +92,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "SINBAD_TILE_51",
+					"tile": "SINBAD_TILE_53",
 					"type": "animation_sprite",
 					"x": 0,
 					"y": 0
@@ -100,7 +100,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "SINBAD_TILE_52",
+					"tile": "SINBAD_TILE_54",
 					"type": "animation_sprite",
 					"x": 8,
 					"y": 0
@@ -108,7 +108,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "SINBAD_TILE_53",
+					"tile": "SINBAD_TILE_51",
 					"type": "animation_sprite",
 					"x": 0,
 					"y": 8
@@ -116,7 +116,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "SINBAD_TILE_54",
+					"tile": "SINBAD_TILE_52",
 					"type": "animation_sprite",
 					"x": 8,
 					"y": 8
@@ -146,7 +146,7 @@
 				{
 					"attr": 1,
 					"foreground": false,
-					"tile": "SINBAD_TILE_62",
+					"tile": "SINBAD_TILE_64",
 					"type": "animation_sprite",
 					"x": 9,
 					"y": 8
@@ -154,7 +154,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "SINBAD_TILE_58",
+					"tile": "SINBAD_TILE_60",
 					"type": "animation_sprite",
 					"x": 0,
 					"y": 0
@@ -162,7 +162,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "SINBAD_TILE_52",
+					"tile": "SINBAD_TILE_54",
 					"type": "animation_sprite",
 					"x": 8,
 					"y": 0
@@ -170,7 +170,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "SINBAD_TILE_63",
+					"tile": "SINBAD_TILE_65",
 					"type": "animation_sprite",
 					"x": 0,
 					"y": 8
@@ -178,7 +178,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "SINBAD_TILE_64",
+					"tile": "SINBAD_TILE_66",
 					"type": "animation_sprite",
 					"x": 8,
 					"y": 8

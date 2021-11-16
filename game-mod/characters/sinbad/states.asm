@@ -10,7 +10,7 @@ SINBAD_STATE_STANDING = PLAYER_STATE_STANDING                     ;  4
 SINBAD_STATE_RUNNING = PLAYER_STATE_RUNNING                       ;  5
 SINBAD_STATE_FALLING = CUSTOM_PLAYER_STATES_BEGIN + 0             ;  6
 SINBAD_STATE_JUMPING = CUSTOM_PLAYER_STATES_BEGIN + 1             ;  7
-SINBAD_STATE_JABBING = CUSTOM_PLAYER_STATES_BEGIN + 2             ;  8
+SINBAD_STATE_JABBING_1 = CUSTOM_PLAYER_STATES_BEGIN + 2           ;  8
 SINBAD_STATE_SIDE_TILT = CUSTOM_PLAYER_STATES_BEGIN + 3           ;  9
 SINBAD_STATE_SPECIAL_CHARGE = CUSTOM_PLAYER_STATES_BEGIN + 4      ;  a
 SINBAD_STATE_SPECIAL_STRIKE = CUSTOM_PLAYER_STATES_BEGIN + 5      ;  b
@@ -30,6 +30,8 @@ SINBAD_STATE_UP_TILT = CUSTOM_PLAYER_STATES_BEGIN + 18            ; 18
 SINBAD_STATE_SHIELDING = CUSTOM_PLAYER_STATES_BEGIN + 19          ; 19
 SINBAD_STATE_SHIELDLAG = CUSTOM_PLAYER_STATES_BEGIN + 20          ; 1a
 SINBAD_STATE_WALLJUMPING = CUSTOM_PLAYER_STATES_BEGIN + 21        ; 1b
+SINBAD_STATE_JABBING_2 = CUSTOM_PLAYER_STATES_BEGIN + 22          ; 1c
+SINBAD_STATE_JABBING_3 = CUSTOM_PLAYER_STATES_BEGIN + 23          ; 1d
 
 ;
 ; Gameplay constants
@@ -738,34 +740,93 @@ sinbad_start_inactive_state:
 ;
 
 .(
-	jab_duration:
-		.byt sinbad_anim_jab_dur_pal, sinbad_anim_jab_dur_ntsc
+	jab1_duration:
+		.byt sinbad_anim_jab1_dur_pal, sinbad_anim_jab1_dur_ntsc
+	anim_duration_table(sinbad_anim_jab1_dur_pal-10, jab1_cuttable_duration)
+
+	jab2_duration:
+		.byt sinbad_anim_jab2_dur_pal, sinbad_anim_jab2_dur_ntsc
+	anim_duration_table(sinbad_anim_jab2_dur_pal-10, jab2_cuttable_duration)
+
+	jab3_duration:
+		.byt sinbad_anim_jab3_dur_pal, sinbad_anim_jab3_dur_ntsc
+	anim_duration_table(sinbad_anim_jab3_dur_pal-9, jab3_sfx_time)
 
 	&sinbad_start_jabbing:
 	.(
-		lda #SINBAD_STATE_JABBING
+		lda #SINBAD_STATE_JABBING_1
 		sta player_a_state, x
-		lda #0
+		ldy system_index
+		lda jab1_duration, y
 		sta player_a_state_clock, x
-		; Fallthrough
-	.)
-	set_jabbing_animation:
-	.(
+
 		; Set the appropriate animation
-		lda #<sinbad_anim_jab
+		lda #<sinbad_anim_jab1
 		sta tmpfield13
-		lda #>sinbad_anim_jab
+		lda #>sinbad_anim_jab1
+		sta tmpfield14
+		jsr set_player_animation
+
+		; SFX
+		jmp audio_play_strike_lite
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	&sinbad_start_jabbing2:
+	.(
+		lda #SINBAD_STATE_JABBING_2
+		sta player_a_state, x
+		ldy system_index
+		lda jab2_duration, y
+		sta player_a_state_clock, x
+
+		; Set the appropriate animation
+		lda #<sinbad_anim_jab2
+		sta tmpfield13
+		lda #>sinbad_anim_jab2
+		sta tmpfield14
+		jsr set_player_animation
+
+		; SFX
+		jmp audio_play_strike_lite
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	&sinbad_start_jabbing3:
+	.(
+		lda #SINBAD_STATE_JABBING_3
+		sta player_a_state, x
+		ldy system_index
+		lda jab2_duration, y
+		sta player_a_state_clock, x
+
+		; Set the appropriate animation
+		lda #<sinbad_anim_jab3
+		sta tmpfield13
+		lda #>sinbad_anim_jab3
 		sta tmpfield14
 		jmp set_player_animation
 
 		;rts ; useless, jump to subroutine
 	.)
 
+	&sinbad_tick_jab3:
+	.(
+		; Play SFX when landing
+		ldy system_index
+		lda player_a_state_clock, x
+		cmp jab3_sfx_time, y
+		bne ok
+
+			jsr sinbad_audio_play_jab3_land
+
+		ok:
+		;Fallthrough
+	.)
 	&sinbad_tick_jabbing:
 	.(
-		; Tick clock
-		inc player_a_state_clock, x
-
 		; Do not move, velocity tends toward vector (0,0)
 		lda #$00
 		sta tmpfield4
@@ -777,9 +838,7 @@ sinbad_start_inactive_state:
 		jsr merge_to_player_velocity
 
 		; At the end of the move, return to standing state
-		ldy system_index
-		lda player_a_state_clock, x
-		cmp jab_duration, y
+		dec player_a_state_clock, x
 		bne end
 			jmp sinbad_start_inactive_state
 			; No return, jump to subroutine
@@ -788,14 +847,54 @@ sinbad_start_inactive_state:
 		rts
 	.)
 
-	&sinbad_input_jabbing:
+	&sinbad_input_jabbing1:
 	.(
-		; Allow to cut the animation for another jab
-		lda controller_a_btns, x
-		cmp #CONTROLLER_INPUT_JAB
-		bne end
-			jmp sinbad_start_jabbing
-			; No return, jump to subroutine
+		ldy system_index
+		lda jab1_cuttable_duration, y
+		cmp player_a_state_clock, x
+		bcs take_input
+
+			not_yet:
+				; Keep keypress dirty, but acknowledge key release
+				;  So releasing then pressing again jab input correctly bufferises the jab input
+				lda controller_a_btns, x
+				beq end
+					jmp keep_input_dirty
+
+			take_input:
+				; Allow to cut the animation for another jab
+				lda controller_a_btns, x
+				cmp #CONTROLLER_INPUT_JAB
+				bne end
+					jmp sinbad_start_jabbing2
+					; No return, jump to subroutine
+
+		end:
+		rts
+	.)
+
+	&sinbad_input_jabbing2:
+	.(
+		ldy system_index
+		lda jab2_cuttable_duration, y
+		cmp player_a_state_clock, x
+		bcs take_input
+
+			not_yet:
+				; Keep keypress dirty, but acknowledge key release
+				;  So releasing then pressing again jab input correctly bufferises the jab input
+				lda controller_a_btns, x
+				beq end
+					jmp keep_input_dirty
+
+			take_input:
+				; Allow to cut the animation for another jab
+				lda controller_a_btns, x
+				cmp #CONTROLLER_INPUT_JAB
+				bne end
+					jmp sinbad_start_jabbing3
+					; No return, jump to subroutine
+
 		end:
 		rts
 	.)

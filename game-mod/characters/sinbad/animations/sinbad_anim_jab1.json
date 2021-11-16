@@ -2,24 +2,120 @@
 	"frames": [
 		{
 			"duration": 2,
-			"hitbox": {
-				"base_h": -512,
-				"base_v": -512,
-				"bottom": 2,
-				"damages": 1,
-				"enabled": true,
-				"force_h": -4,
-				"force_v": -4,
-				"left": -4,
-				"right": 2,
-				"top": -7,
-				"type": "animation_hitbox"
-			},
+			"hitbox": null,
 			"hurtbox": {
-				"bottom": 15,
+				"bottom": 16,
+				"left": -1,
+				"right": 8,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_23",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": -2
+				},
+				{
+					"attr": 1,
+					"foreground": false,
+					"tile": "SINBAD_TILE_24",
+					"type": "animation_sprite",
+					"x": 7,
+					"y": 6
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_7",
+					"type": "animation_sprite",
+					"x": 1,
+					"y": 1
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_51",
+					"type": "animation_sprite",
+					"x": -2,
+					"y": 9
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_52",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 9
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": -1,
+				"right": 8,
+				"top": 1,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "SINBAD_TILE_19",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": -4
+				},
+				{
+					"attr": 193,
+					"foreground": false,
+					"tile": "SINBAD_TILE_20",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 4
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_7",
+					"type": "animation_sprite",
+					"x": -1,
+					"y": 1
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_51",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 9
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_52",
+					"type": "animation_sprite",
+					"x": 4,
+					"y": 9
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 2,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
 				"left": -3,
 				"right": 7,
-				"top": 1,
+				"top": 2,
 				"type": "animation_hurtbox"
 			},
 			"sprites": [
@@ -29,7 +125,7 @@
 					"tile": "SINBAD_TILE_24",
 					"type": "animation_sprite",
 					"x": -4,
-					"y": -7
+					"y": -3
 				},
 				{
 					"attr": 193,
@@ -37,6 +133,22 @@
 					"tile": "SINBAD_TILE_23",
 					"type": "animation_sprite",
 					"x": -4,
+					"y": 5
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_53",
+					"type": "animation_sprite",
+					"x": -4,
+					"y": 1
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "SINBAD_TILE_54",
+					"type": "animation_sprite",
+					"x": 4,
 					"y": 1
 				},
 				{
@@ -45,28 +157,12 @@
 					"tile": "SINBAD_TILE_51",
 					"type": "animation_sprite",
 					"x": -4,
-					"y": 1
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "SINBAD_TILE_52",
-					"type": "animation_sprite",
-					"x": 4,
-					"y": 1
-				},
-				{
-					"attr": 0,
-					"foreground": false,
-					"tile": "SINBAD_TILE_53",
-					"type": "animation_sprite",
-					"x": -4,
 					"y": 9
 				},
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "SINBAD_TILE_54",
+					"tile": "SINBAD_TILE_52",
 					"type": "animation_sprite",
 					"x": 4,
 					"y": 9
@@ -77,23 +173,23 @@
 		{
 			"duration": 2,
 			"hitbox": {
-				"base_h": -512,
-				"base_v": -512,
-				"bottom": 4,
-				"damages": 1,
-				"enabled": false,
-				"force_h": -4,
-				"force_v": -4,
+				"base_h": 0,
+				"base_v": -800,
+				"bottom": 10,
+				"damages": 2,
+				"enabled": true,
+				"force_h": 0,
+				"force_v": 0,
 				"left": -8,
 				"right": -1,
-				"top": -5,
+				"top": 1,
 				"type": "animation_hitbox"
 			},
 			"hurtbox": {
-				"bottom": 15,
+				"bottom": 16,
 				"left": -3,
 				"right": 7,
-				"top": 1,
+				"top": 2,
 				"type": "animation_hurtbox"
 			},
 			"sprites": [
@@ -103,7 +199,7 @@
 					"tile": "SINBAD_TILE_24",
 					"type": "animation_sprite",
 					"x": -8,
-					"y": -5
+					"y": -1
 				},
 				{
 					"attr": 193,
@@ -111,7 +207,7 @@
 					"tile": "SINBAD_TILE_23",
 					"type": "animation_sprite",
 					"x": -8,
-					"y": 3
+					"y": 7
 				},
 				{
 					"attr": 0,
@@ -143,16 +239,16 @@
 		{
 			"duration": 2,
 			"hitbox": {
-				"base_h": -512,
-				"base_v": -512,
-				"bottom": 11,
-				"damages": 1,
+				"base_h": 0,
+				"base_v": -800,
+				"bottom": 13,
+				"damages": 2,
 				"enabled": false,
-				"force_h": -4,
-				"force_v": -4,
+				"force_h": 0,
+				"force_v": 0,
 				"left": -12,
 				"right": 0,
-				"top": 6,
+				"top": 8,
 				"type": "animation_hitbox"
 			},
 			"hurtbox": {
@@ -169,7 +265,7 @@
 					"tile": "SINBAD_TILE_5",
 					"type": "animation_sprite",
 					"x": -12,
-					"y": 6
+					"y": 7
 				},
 				{
 					"attr": 1,
@@ -177,7 +273,7 @@
 					"tile": "SINBAD_TILE_6",
 					"type": "animation_sprite",
 					"x": -4,
-					"y": 6
+					"y": 7
 				},
 				{
 					"attr": 0,
@@ -209,13 +305,13 @@
 		{
 			"duration": 2,
 			"hitbox": {
-				"base_h": -512,
-				"base_v": -512,
+				"base_h": 0,
+				"base_v": -800,
 				"bottom": 18,
-				"damages": 1,
+				"damages": 2,
 				"enabled": false,
-				"force_h": -4,
-				"force_v": -4,
+				"force_h": 0,
+				"force_v": 0,
 				"left": -6,
 				"right": 2,
 				"top": 13,
@@ -273,7 +369,7 @@
 			"type": "animation_frame"
 		},
 		{
-			"duration": 2,
+			"duration": 4,
 			"hitbox": null,
 			"hurtbox": {
 				"bottom": 15,
@@ -327,7 +423,7 @@
 			"type": "animation_frame"
 		},
 		{
-			"duration": 2,
+			"duration": 4,
 			"hitbox": null,
 			"hurtbox": {
 				"bottom": 15,
@@ -381,7 +477,7 @@
 			"type": "animation_frame"
 		},
 		{
-			"duration": 2,
+			"duration": 4,
 			"hitbox": null,
 			"hurtbox": {
 				"bottom": 15,
@@ -427,6 +523,6 @@
 			"type": "animation_frame"
 		}
 	],
-	"name": "sinbad_anim_jab",
+	"name": "sinbad_anim_jab1",
 	"type": "animation"
 }

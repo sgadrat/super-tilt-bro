@@ -46,7 +46,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "SINBAD_TILE_55",
+					"tile": "SINBAD_TILE_57",
 					"type": "animation_sprite",
 					"x": -4,
 					"y": 14
@@ -54,7 +54,7 @@
 				{
 					"attr": 64,
 					"foreground": false,
-					"tile": "SINBAD_TILE_55",
+					"tile": "SINBAD_TILE_57",
 					"type": "animation_sprite",
 					"x": 4,
 					"y": 14
@@ -108,7 +108,7 @@
 				{
 					"attr": 0,
 					"foreground": false,
-					"tile": "SINBAD_TILE_56",
+					"tile": "SINBAD_TILE_58",
 					"type": "animation_sprite",
 					"x": -4,
 					"y": 14
@@ -116,7 +116,7 @@
 				{
 					"attr": 64,
 					"foreground": false,
-					"tile": "SINBAD_TILE_56",
+					"tile": "SINBAD_TILE_58",
 					"type": "animation_sprite",
 					"x": 4,
 					"y": 14
