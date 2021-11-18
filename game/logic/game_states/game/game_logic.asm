@@ -419,6 +419,12 @@ game_tick:
 		sta tmpfield2
 		jsr call_pointed_subroutine
 
+		; Keep inputs dirty (inlined double call to keep_input_dirty)
+		lda controller_a_last_frame_btns
+		sta controller_a_btns
+		lda controller_b_last_frame_btns
+		sta controller_b_btns
+
 		; Update visual effects
 		lda network_rollback_mode
 		bne end_effects
