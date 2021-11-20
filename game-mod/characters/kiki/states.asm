@@ -273,31 +273,6 @@ kiki_netload:
 	rts
 .)
 
-; Apply air or ground friction, depending on character being grounded
-; Ground friction is less than normal, to allow some sliding
-kiki_apply_friction_lite:
-.(
-	lda player_a_grounded, x
-	beq air_friction
-		ground_friction:
-			lda #$00
-			sta tmpfield4
-			sta tmpfield3
-			sta tmpfield2
-			sta tmpfield1
-			ldy system_index
-			lda kiki_ground_friction_strength_weak, y
-			sta tmpfield5
-			jmp merge_to_player_velocity
-			; No return, jump to subroutine
-		air_friction:
-			jsr kiki_apply_air_friction
-			jmp apply_player_gravity
-			; No return, jump to subroutine
-
-	;rts ; useless, no branch returns
-.)
-
 ; Input table for aerial moves, special values are
 ;  fast_fall - mandatorily on INPUT_NONE to take effect on release of DOWN
 ;  jump      - automatically choose between aerial jump or wall jump

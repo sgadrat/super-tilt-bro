@@ -342,24 +342,24 @@ pepper_global_tick:
 		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,  CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
 		.byt CONTROLLER_INPUT_SPECIAL_DOWN_LEFT, CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
 		controller_callbacks_lo
-		.byt <fast_fall,                        <pepper_start_send_carrot
-		.byt <pepper_start_send_carrot,         <jump
+		.byt <fast_fall,                        <pepper_start_plan_7b
+		.byt <pepper_start_plan_7b,             <jump
 		.byt <jump,                             <jump
 		.byt <pepper_start_aerial_side,         <pepper_start_aerial_side
 		.byt <pepper_start_hyperspeed_landing,  <pepper_start_aerial_firework
-		.byt <pepper_start_potion_smash,        <pepper_start_teleport
+		.byt <pepper_start_potion_smash,        <pepper_start_plan_7b
 		.byt <pepper_start_witch_fly,           <pepper_start_aerial_wrench_grab
 		.byt <pepper_start_aerial_firework,     <pepper_start_aerial_firework
 		.byt <pepper_start_witch_fly_direction, <pepper_start_witch_fly_direction
 		.byt <pepper_start_hyperspeed_landing,  <pepper_start_hyperspeed_landing
 		.byt <pepper_start_aerial_wrench_grab,  <pepper_start_aerial_wrench_grab
 		controller_callbacks_hi
-		.byt >fast_fall,                        >pepper_start_send_carrot
-		.byt >pepper_start_send_carrot,         >jump
+		.byt >fast_fall,                        >pepper_start_plan_7b
+		.byt >pepper_start_plan_7b,             >jump
 		.byt >jump,                             >jump
 		.byt >pepper_start_aerial_side,         >pepper_start_aerial_side
 		.byt >pepper_start_hyperspeed_landing,  >pepper_start_aerial_firework
-		.byt >pepper_start_potion_smash,        >pepper_start_teleport
+		.byt >pepper_start_potion_smash,        >pepper_start_plan_7b
 		.byt >pepper_start_witch_fly,           >pepper_start_aerial_wrench_grab
 		.byt >pepper_start_aerial_firework,     >pepper_start_aerial_firework
 		.byt >pepper_start_witch_fly_direction, >pepper_start_witch_fly_direction
@@ -653,7 +653,7 @@ pepper_start_inactive_state:
 			.byt <pepper_start_shielding,           <pepper_start_shielding
 			.byt <pepper_start_down_tilt,           <input_left_tilt
 			.byt <input_right_tilt,                 <input_left_special
-			.byt <input_right_special,              <pepper_start_teleport
+			.byt <input_right_special,              <pepper_start_plan_7b
 			.byt <pepper_start_witch_fly,           <pepper_start_witch_fly_direction
 			.byt <pepper_start_witch_fly_direction, <pepper_start_up_tilt
 			.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
@@ -667,7 +667,7 @@ pepper_start_inactive_state:
 			.byt >pepper_start_shielding,           >pepper_start_shielding
 			.byt >pepper_start_down_tilt,           >input_left_tilt
 			.byt >input_right_tilt,                 >input_left_special
-			.byt >input_right_special,              >pepper_start_teleport
+			.byt >input_right_special,              >pepper_start_plan_7b
 			.byt >pepper_start_witch_fly,           >pepper_start_witch_fly_direction
 			.byt >pepper_start_witch_fly_direction, >pepper_start_up_tilt
 			.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
@@ -715,7 +715,7 @@ pepper_start_inactive_state:
 		.(
 			lda DIRECTION_LEFT
 			sta player_a_direction, x
-			jmp pepper_start_send_carrot
+			jmp pepper_start_plan_7b
 			;rts ; useless - pepper_start_jumping is a routine
 		.)
 
@@ -723,7 +723,7 @@ pepper_start_inactive_state:
 		.(
 			lda DIRECTION_RIGHT
 			sta player_a_direction, x
-			jmp pepper_start_send_carrot
+			jmp pepper_start_plan_7b
 			;rts ; useless - pepper_start_jumping is a routine
 		.)
 	.)
@@ -894,8 +894,8 @@ pepper_input_idle_right:
 			.byt <pepper_start_jumping,             <pepper_start_shielding
 			.byt <pepper_start_shielding,           <pepper_start_shielding
 			.byt <pepper_start_down_tilt,           <pepper_start_side_tilt
-			.byt <pepper_start_side_tilt,           <pepper_start_send_carrot
-			.byt <pepper_start_send_carrot,         <pepper_start_teleport
+			.byt <pepper_start_side_tilt,           <pepper_start_plan_7b
+			.byt <pepper_start_plan_7b,             <pepper_start_plan_7b
 			.byt <pepper_start_witch_fly,           <pepper_start_witch_fly_direction
 			.byt <pepper_start_witch_fly_direction, <pepper_start_up_tilt
 			.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
@@ -908,8 +908,8 @@ pepper_input_idle_right:
 			.byt >pepper_start_jumping,             >pepper_start_shielding
 			.byt >pepper_start_shielding,           >pepper_start_shielding
 			.byt >pepper_start_down_tilt,           >pepper_start_side_tilt
-			.byt >pepper_start_side_tilt,           >pepper_start_send_carrot
-			.byt >pepper_start_send_carrot,         >pepper_start_teleport
+			.byt >pepper_start_side_tilt,           >pepper_start_plan_7b
+			.byt >pepper_start_plan_7b,             >pepper_start_plan_7b
 			.byt >pepper_start_witch_fly,           >pepper_start_witch_fly_direction
 			.byt >pepper_start_witch_fly_direction, >pepper_start_up_tilt
 			.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
@@ -2113,6 +2113,27 @@ pepper_input_idle_right:
 	.)
 .)
 
+;
+; Plan 7-B
+;
+
+.(
+	&pepper_start_plan_7b:
+	.(
+		; Check that carrot is placed
+		;  if not - place him
+		;  else - teleport
+		ldy pepper_carrot_anim_per_player, x
+		lda stage_data+ANIMATION_STATE_OFFSET_X_MSB, y
+		cmp #PEPPER_CARROT_NOT_PLACED
+		beq pepper_start_send_carrot
+
+			placed:
+				jmp pepper_start_teleport
+				; No return, jump to subroutine
+	.)
+.)
+
 .(
 	pepper_anim_send_carrot_dur:
 		.byt pepper_anim_send_carrot_dur_pal, pepper_anim_send_carrot_dur_ntsc
@@ -2129,11 +2150,11 @@ pepper_input_idle_right:
 		sta player_a_state_clock, x
 
 		; Cancel any momentum
-		lda #0
-		sta player_a_velocity_h, x
-		sta player_a_velocity_h_low, x
-		sta player_a_velocity_v, x
-		sta player_a_velocity_v_low, x
+		;lda #0
+		;sta player_a_velocity_h, x
+		;sta player_a_velocity_h_low, x
+		;sta player_a_velocity_v, x
+		;sta player_a_velocity_v_low, x
 
 		; Set the appropriate animation
 		lda #<pepper_anim_send_carrot
@@ -2214,9 +2235,13 @@ pepper_input_idle_right:
 			; Return to inactive state
 			jmp pepper_start_inactive_state
 			; No return, jump to subroutine
-		do_tick:
 
-		rts
+		do_tick:
+			; Apply friction and gravity
+			jmp pepper_apply_friction_lite
+			; No return, jump to subroutine
+
+		;rts ; useless, no branch returns
 
 		carrot_offset_x_lsb_per_direction:
 		.byt $e8, $18
@@ -2264,44 +2289,30 @@ pepper_input_idle_right:
 			; Y = offset to carrot's animation
 			ldy pepper_carrot_anim_per_player, x
 
-			; Check that carrot is placed, else don't move
+			; move_step_x = (carrot_x - player_x) / 4
+			;FIXME check that divide by 4 works with ntsc (if move time is 5 frames, it may appear strange, or even SD if near blastline)
+			lda stage_data+ANIMATION_STATE_OFFSET_X_LSB, y
+			sec
+			sbc player_a_x, x
+			sta move_step_x, x
 			lda stage_data+ANIMATION_STATE_OFFSET_X_MSB, y
-			cmp #PEPPER_CARROT_NOT_PLACED
-			bne compute_steps
+			sbc player_a_x_screen, x
+			lsr
+			ror move_step_x, x
+			lsr
+			ror move_step_x, x
 
-				no_move:
-					lda #0
-					sta move_step_x, x
-					sta move_step_y, x
-					jmp ok
-
-				compute_steps:
-					; move_step_x = (carrot_x - player_x) / 4
-					;FIXME check that divide by 4 works with ntsc (if move time is 5 frames, it may appear strange, or even SD if near blastline)
-					lda stage_data+ANIMATION_STATE_OFFSET_X_LSB, y
-					sec
-					sbc player_a_x, x
-					sta move_step_x, x
-					lda stage_data+ANIMATION_STATE_OFFSET_X_MSB, y
-					sbc player_a_x_screen, x
-					lsr
-					ror move_step_x, x
-					lsr
-					ror move_step_x, x
-
-					; move_step_y = (carrot_y - player_y) / 4
-					lda stage_data+ANIMATION_STATE_OFFSET_Y_LSB, y
-					sec
-					sbc player_a_y, x
-					sta move_step_y, x
-					lda stage_data+ANIMATION_STATE_OFFSET_Y_MSB, y
-					sbc player_a_y_screen, x
-					lsr
-					ror move_step_y, x
-					lsr
-					ror move_step_y, x
-
-			ok:
+			; move_step_y = (carrot_y - player_y) / 4
+			lda stage_data+ANIMATION_STATE_OFFSET_Y_LSB, y
+			sec
+			sbc player_a_y, x
+			sta move_step_y, x
+			lda stage_data+ANIMATION_STATE_OFFSET_Y_MSB, y
+			sbc player_a_y_screen, x
+			lsr
+			ror move_step_y, x
+			lsr
+			ror move_step_y, x
 		.)
 
 		; Set the appropriate animation

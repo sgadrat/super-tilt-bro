@@ -1,3 +1,33 @@
+#iflused {char_name}_apply_friction_lite
+; Apply air or ground friction, depending on character being grounded
+;  Gravity is applied if character is airborne
+;  Ground friction is less than normal, to allow some sliding
+;
+; This is the typical go-to friction routine for aerial moves that are not cancelled by landing
+{char_name}_apply_friction_lite:
+.(
+	lda player_a_grounded, x
+	beq air_friction
+		ground_friction:
+			lda #$00
+			sta tmpfield4
+			sta tmpfield3
+			sta tmpfield2
+			sta tmpfield1
+			ldy system_index
+			lda {char_name}_ground_friction_strength_weak, y
+			sta tmpfield5
+			jmp merge_to_player_velocity
+			; No return, jump to subroutine
+		air_friction:
+			jsr {char_name}_apply_air_friction
+			jmp apply_player_gravity
+			; No return, jump to subroutine
+
+	;rts ; useless, no branch returns
+.)
+#endif
+
 #iflused {char_name}_apply_air_friction
 {char_name}_apply_air_friction:
 .(
