@@ -1953,12 +1953,13 @@ player_effects:
 		bne alternate_palette
 
 		ldy system_index        ; Shine under fastfall
-		lda default_gravity_per_system_lsb, y
-		cmp player_a_gravity_lsb, x
-		bne alternate_palette
 		lda default_gravity_per_system_msb, y
 		cmp player_a_gravity_msb, x
-		beq palette_selected
+		bcc alternate_palette ; default gravity < current gravity
+		bne palette_selected ; default gravity > current gravity
+			lda default_gravity_per_system_lsb, y
+			cmp player_a_gravity_lsb, x
+			bcs palette_selected ; default gravity >= current gravity
 
 			alternate_palette:
 			lda palette_buffer

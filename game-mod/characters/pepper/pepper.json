@@ -204,6 +204,14 @@
 			"type": "import"
 		},
 		{
+			"src": "characters/pepper/animations/pepper_anim_dzzz_charge.json",
+			"type": "import"
+		},
+		{
+			"src": "characters/pepper/animations/pepper_anim_dzzz_strike.json",
+			"type": "import"
+		},
+		{
 			"src": "characters/pepper/animations/pepper_anim_falling.json",
 			"type": "import"
 		},
@@ -838,6 +846,26 @@
 			"start_routine": null,
 			"type": "character_state",
 			"update_routine": "pepper_tick_wrench_grab"
+		},
+		{
+			"input_routine": "dummy_routine",
+			"name": "PEPPER_STATE_DZZZ_CHARGE",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_dzzz_charge"
+		},
+		{
+			"input_routine": "keep_input_dirty",
+			"name": "PEPPER_STATE_DZZZ_STRIKE",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "hurt_player",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_dzzz_strike"
 		}
 	],
 	"tileset": {
@@ -907,7 +935,19 @@
 			"PEPPER_TILE_60",
 			"PEPPER_TILE_61",
 			"PEPPER_TILE_62",
-			"PEPPER_TILE_63"
+			"PEPPER_TILE_63",
+			"PEPPER_TILE_64",
+			"PEPPER_TILE_65",
+			"PEPPER_TILE_66",
+			"PEPPER_TILE_67",
+			"PEPPER_TILE_68",
+			"PEPPER_TILE_69",
+			"PEPPER_TILE_70",
+			"PEPPER_TILE_71",
+			"PEPPER_TILE_72",
+			"PEPPER_TILE_73",
+			"PEPPER_TILE_74",
+			"PEPPER_TILE_75"
 		],
 		"type": "tileset"
 	},

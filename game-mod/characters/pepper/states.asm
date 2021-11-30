@@ -30,6 +30,8 @@ PEPPER_STATE_SEND_CARROT = CUSTOM_PLAYER_STATES_BEGIN + 18
 PEPPER_STATE_WITCH_FLY = CUSTOM_PLAYER_STATES_BEGIN + 19
 PEPPER_STATE_TELEPORT = CUSTOM_PLAYER_STATES_BEGIN + 20
 PEPPER_STATE_WRENCH_GRAB = CUSTOM_PLAYER_STATES_BEGIN + 21
+PEPPER_STATE_DZZZ_CHARGE = CUSTOM_PLAYER_STATES_BEGIN + 22
+PEPPER_STATE_DZZZ_STRIKE = CUSTOM_PLAYER_STATES_BEGIN + 23
 
 ;
 ; Gameplay constants
@@ -342,8 +344,8 @@ pepper_global_tick:
 		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,  CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
 		.byt CONTROLLER_INPUT_SPECIAL_DOWN_LEFT, CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
 		controller_callbacks_lo
-		.byt <fast_fall,                        <pepper_start_plan_7b
-		.byt <pepper_start_plan_7b,             <jump
+		.byt <fast_fall,                        <pepper_start_dzzz_right
+		.byt <pepper_start_dzzz_left,           <jump
 		.byt <jump,                             <jump
 		.byt <pepper_start_aerial_side,         <pepper_start_aerial_side
 		.byt <pepper_start_hyperspeed_landing,  <pepper_start_aerial_firework
@@ -354,8 +356,8 @@ pepper_global_tick:
 		.byt <pepper_start_hyperspeed_landing,  <pepper_start_hyperspeed_landing
 		.byt <pepper_start_aerial_wrench_grab,  <pepper_start_aerial_wrench_grab
 		controller_callbacks_hi
-		.byt >fast_fall,                        >pepper_start_plan_7b
-		.byt >pepper_start_plan_7b,             >jump
+		.byt >fast_fall,                        >pepper_start_dzzz_right
+		.byt >pepper_start_dzzz_left,           >jump
 		.byt >jump,                             >jump
 		.byt >pepper_start_aerial_side,         >pepper_start_aerial_side
 		.byt >pepper_start_hyperspeed_landing,  >pepper_start_aerial_firework
@@ -652,8 +654,8 @@ pepper_start_inactive_state:
 			.byt <pepper_input_idle_jump_left,      <pepper_start_shielding
 			.byt <pepper_start_shielding,           <pepper_start_shielding
 			.byt <pepper_start_down_tilt,           <input_left_tilt
-			.byt <input_right_tilt,                 <input_left_special
-			.byt <input_right_special,              <pepper_start_plan_7b
+			.byt <input_right_tilt,                 <pepper_start_dzzz_left
+			.byt <pepper_start_dzzz_right,          <pepper_start_plan_7b
 			.byt <pepper_start_witch_fly,           <pepper_start_witch_fly_direction
 			.byt <pepper_start_witch_fly_direction, <pepper_start_up_tilt
 			.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
@@ -666,8 +668,8 @@ pepper_start_inactive_state:
 			.byt >pepper_input_idle_jump_left,      >pepper_start_shielding
 			.byt >pepper_start_shielding,           >pepper_start_shielding
 			.byt >pepper_start_down_tilt,           >input_left_tilt
-			.byt >input_right_tilt,                 >input_left_special
-			.byt >input_right_special,              >pepper_start_plan_7b
+			.byt >input_right_tilt,                 >pepper_start_dzzz_left
+			.byt >pepper_start_dzzz_right,          >pepper_start_plan_7b
 			.byt >pepper_start_witch_fly,           >pepper_start_witch_fly_direction
 			.byt >pepper_start_witch_fly_direction, >pepper_start_up_tilt
 			.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
@@ -708,22 +710,6 @@ pepper_start_inactive_state:
 			lda DIRECTION_RIGHT
 			sta player_a_direction, x
 			jmp pepper_start_side_tilt
-			;rts ; useless - pepper_start_jumping is a routine
-		.)
-
-		input_left_special:
-		.(
-			lda DIRECTION_LEFT
-			sta player_a_direction, x
-			jmp pepper_start_plan_7b
-			;rts ; useless - pepper_start_jumping is a routine
-		.)
-
-		input_right_special:
-		.(
-			lda DIRECTION_RIGHT
-			sta player_a_direction, x
-			jmp pepper_start_plan_7b
 			;rts ; useless - pepper_start_jumping is a routine
 		.)
 	.)
@@ -894,8 +880,8 @@ pepper_input_idle_right:
 			.byt <pepper_start_jumping,             <pepper_start_shielding
 			.byt <pepper_start_shielding,           <pepper_start_shielding
 			.byt <pepper_start_down_tilt,           <pepper_start_side_tilt
-			.byt <pepper_start_side_tilt,           <pepper_start_plan_7b
-			.byt <pepper_start_plan_7b,             <pepper_start_plan_7b
+			.byt <pepper_start_side_tilt,           <pepper_start_dzzz_left
+			.byt <pepper_start_dzzz_right,          <pepper_start_plan_7b
 			.byt <pepper_start_witch_fly,           <pepper_start_witch_fly_direction
 			.byt <pepper_start_witch_fly_direction, <pepper_start_up_tilt
 			.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
@@ -908,8 +894,8 @@ pepper_input_idle_right:
 			.byt >pepper_start_jumping,             >pepper_start_shielding
 			.byt >pepper_start_shielding,           >pepper_start_shielding
 			.byt >pepper_start_down_tilt,           >pepper_start_side_tilt
-			.byt >pepper_start_side_tilt,           >pepper_start_plan_7b
-			.byt >pepper_start_plan_7b,             >pepper_start_plan_7b
+			.byt >pepper_start_side_tilt,           >pepper_start_dzzz_left
+			.byt >pepper_start_dzzz_right,          >pepper_start_plan_7b
 			.byt >pepper_start_witch_fly,           >pepper_start_witch_fly_direction
 			.byt >pepper_start_witch_fly_direction, >pepper_start_up_tilt
 			.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
@@ -2516,6 +2502,126 @@ pepper_input_idle_right:
 		jmp set_player_animation
 
 		;rts ; useless, jump to subroutine
+	.)
+.)
+
+;
+; Dzzz
+;
+
+.(
+	PEPPER_DZZZ_GRAVITY = $0100
+
+	strike_duration:
+		.byt pepper_anim_dzzz_strike_dur_pal, pepper_anim_dzzz_strike_dur_ntsc
+
+	anim_duration_table(25, charge_duration)
+
+	velocity_table(PEPPER_DZZZ_GRAVITY, pepper_dzzz_gravity_msb, pepper_dzzz_gravity_lsb)
+
+	&pepper_start_dzzz_left:
+	.(
+		lda DIRECTION_LEFT
+		sta player_a_direction, x
+		jmp pepper_start_dzzz
+		;rts ; useless, jump to subroutine
+	.)
+
+	&pepper_start_dzzz_right:
+	.(
+		lda DIRECTION_RIGHT
+		sta player_a_direction, x
+		; Falthrough to pepper_start_dzzz
+	.)
+
+	&pepper_start_dzzz:
+	.(
+		; Set state
+		lda #PEPPER_STATE_DZZZ_CHARGE
+		sta player_a_state, x
+
+		; Reset clock
+		ldy system_index
+		lda charge_duration, y
+		sta player_a_state_clock, x
+
+		; Cancel vertical momentum
+		lda #0
+		sta player_a_velocity_v_low, x
+		sta player_a_velocity_v, x
+
+		; Lower horizontal momentum
+		lda player_a_velocity_h, x ; Set sign bit in carry flag, so the following bitshift is a signed division
+		rol
+
+		ror player_a_velocity_h, x
+		ror player_a_velocity_h_low, x
+
+		; Lower gravity
+		ldy system_index
+		lda pepper_dzzz_gravity_lsb, y
+		sta player_a_gravity_lsb, x
+		lda pepper_dzzz_gravity_msb, y
+		sta player_a_gravity_msb, x
+
+		; Set the appropriate animation
+		lda #<pepper_anim_dzzz_charge
+		sta tmpfield13
+		lda #>pepper_anim_dzzz_charge
+		sta tmpfield14
+		jmp set_player_animation
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	&pepper_tick_dzzz_charge:
+	.(
+		jsr pepper_global_tick
+
+		dec player_a_state_clock, x
+		bne tick
+			jmp pepper_start_dzzz_strike
+			; No return, jump to subroutine
+		tick:
+			jmp pepper_apply_friction_lite
+			; No return, jump to subroutine
+		;rts ; useless, no branch return
+	.)
+
+	pepper_start_dzzz_strike:
+	.(
+		; Set state
+		lda #PEPPER_STATE_DZZZ_STRIKE
+		sta player_a_state, x
+
+		; Reset clock
+		ldy system_index
+		lda strike_duration, y
+		sta player_a_state_clock, x
+
+		; Set the appropriate animation
+		lda #<pepper_anim_dzzz_strike
+		sta tmpfield13
+		lda #>pepper_anim_dzzz_strike
+		sta tmpfield14
+		jmp set_player_animation
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	&pepper_tick_dzzz_strike:
+	.(
+		jsr pepper_global_tick
+
+		dec player_a_state_clock, x
+		bne tick
+			jsr reset_default_gravity
+			jmp pepper_start_inactive_state
+			; No return, jump to subroutine
+		tick:
+			jmp pepper_apply_friction_lite
+			; No return, jump to subroutine
+		;rts ; useless, no branch return
 	.)
 .)
 
