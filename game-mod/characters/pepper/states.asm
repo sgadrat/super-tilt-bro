@@ -352,7 +352,7 @@ pepper_global_tick:
 		.byt <pepper_start_potion_smash,        <pepper_start_plan_7b
 		.byt <pepper_start_witch_fly,           <pepper_start_aerial_wrench_grab
 		.byt <pepper_start_aerial_firework,     <pepper_start_aerial_firework
-		.byt <pepper_start_witch_fly_direction, <pepper_start_witch_fly_direction
+		.byt <pepper_start_witch_fly_right,     <pepper_start_witch_fly_left
 		.byt <pepper_start_hyperspeed_landing,  <pepper_start_hyperspeed_landing
 		.byt <pepper_start_aerial_wrench_grab,  <pepper_start_aerial_wrench_grab
 		controller_callbacks_hi
@@ -364,7 +364,7 @@ pepper_global_tick:
 		.byt >pepper_start_potion_smash,        >pepper_start_plan_7b
 		.byt >pepper_start_witch_fly,           >pepper_start_aerial_wrench_grab
 		.byt >pepper_start_aerial_firework,     >pepper_start_aerial_firework
-		.byt >pepper_start_witch_fly_direction, >pepper_start_witch_fly_direction
+		.byt >pepper_start_witch_fly_right,     >pepper_start_witch_fly_left
 		.byt >pepper_start_hyperspeed_landing,  >pepper_start_hyperspeed_landing
 		.byt >pepper_start_aerial_wrench_grab,  >pepper_start_aerial_wrench_grab
 		controller_default_callback
@@ -656,8 +656,8 @@ pepper_start_inactive_state:
 			.byt <pepper_start_down_tilt,           <input_left_tilt
 			.byt <input_right_tilt,                 <pepper_start_dzzz_left
 			.byt <pepper_start_dzzz_right,          <pepper_start_plan_7b
-			.byt <pepper_start_witch_fly,           <pepper_start_witch_fly_direction
-			.byt <pepper_start_witch_fly_direction, <pepper_start_up_tilt
+			.byt <pepper_start_witch_fly,           <pepper_start_witch_fly_left
+			.byt <pepper_start_witch_fly_right,     <pepper_start_up_tilt
 			.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
 			.byt <pepper_start_flash_potion,        <pepper_start_wrench_grab
 			.byt <pepper_start_wrench_grab,         <pepper_start_wrench_grab
@@ -670,8 +670,8 @@ pepper_start_inactive_state:
 			.byt >pepper_start_down_tilt,           >input_left_tilt
 			.byt >input_right_tilt,                 >pepper_start_dzzz_left
 			.byt >pepper_start_dzzz_right,          >pepper_start_plan_7b
-			.byt >pepper_start_witch_fly,           >pepper_start_witch_fly_direction
-			.byt >pepper_start_witch_fly_direction, >pepper_start_up_tilt
+			.byt >pepper_start_witch_fly,           >pepper_start_witch_fly_left
+			.byt >pepper_start_witch_fly_right,     >pepper_start_up_tilt
 			.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
 			.byt >pepper_start_flash_potion,        >pepper_start_wrench_grab
 			.byt >pepper_start_wrench_grab,         >pepper_start_wrench_grab
@@ -882,8 +882,8 @@ pepper_input_idle_right:
 			.byt <pepper_start_down_tilt,           <pepper_start_side_tilt
 			.byt <pepper_start_side_tilt,           <pepper_start_dzzz_left
 			.byt <pepper_start_dzzz_right,          <pepper_start_plan_7b
-			.byt <pepper_start_witch_fly,           <pepper_start_witch_fly_direction
-			.byt <pepper_start_witch_fly_direction, <pepper_start_up_tilt
+			.byt <pepper_start_witch_fly,           <pepper_start_witch_fly_left
+			.byt <pepper_start_witch_fly_right,     <pepper_start_up_tilt
 			.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
 			.byt <pepper_start_flash_potion,        <pepper_start_wrench_grab
 			.byt <pepper_start_wrench_grab,         <pepper_start_wrench_grab
@@ -896,8 +896,8 @@ pepper_input_idle_right:
 			.byt >pepper_start_down_tilt,           >pepper_start_side_tilt
 			.byt >pepper_start_side_tilt,           >pepper_start_dzzz_left
 			.byt >pepper_start_dzzz_right,          >pepper_start_plan_7b
-			.byt >pepper_start_witch_fly,           >pepper_start_witch_fly_direction
-			.byt >pepper_start_witch_fly_direction, >pepper_start_up_tilt
+			.byt >pepper_start_witch_fly,           >pepper_start_witch_fly_left
+			.byt >pepper_start_witch_fly_right,     >pepper_start_up_tilt
 			.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
 			.byt >pepper_start_flash_potion,        >pepper_start_wrench_grab
 			.byt >pepper_start_wrench_grab,         >pepper_start_wrench_grab
@@ -1040,11 +1040,11 @@ pepper_input_idle_right:
 			controller_callbacks_lo:
 			.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
 			.byt <pepper_start_up_tilt,             <pepper_start_witch_fly
-			.byt <pepper_start_witch_fly_direction, <pepper_start_witch_fly_direction
+			.byt <pepper_start_witch_fly_left,      <pepper_start_witch_fly_right
 			controller_callbacks_hi:
 			.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
 			.byt >pepper_start_up_tilt,             >pepper_start_witch_fly
-			.byt >pepper_start_witch_fly_direction, >pepper_start_witch_fly_direction
+			.byt >pepper_start_witch_fly_left, >pepper_start_witch_fly_right
 			controller_default_callback:
 			.word end
 			&INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
@@ -2397,23 +2397,19 @@ pepper_input_idle_right:
 	duration_table(FLY_DURATION, fly_duration)
 	velocity_table(-VELOCITY_V, velocity_v_msb, velocity_v_lsb)
 
-	&pepper_start_witch_fly_direction:
+	&pepper_start_witch_fly_right:
 	.(
-		lda controller_a_btns, x
-		cmp #CONTROLLER_INPUT_SPECIAL_LEFT
-		beq left
-		cmp #CONTROLLER_INPUT_SPECIAL_RIGHT
-		bne pepper_start_witch_fly
-			right:
-				lda DIRECTION_RIGHT
-				sta player_a_direction, x
-				jmp pepper_start_witch_fly
-			left:
-				lda DIRECTION_LEFT
-				sta player_a_direction, x
-				;jmp pepper_start_witch_fly ; useless, fallthrough
-
-		; Fallthrough to pepper_start_witch_fly
+		lda DIRECTION_RIGHT
+		sta player_a_direction, x
+		jmp pepper_start_witch_fly
+		;rts ; useless, jump to subroutine
+	.)
+	&pepper_start_witch_fly_left:
+	.(
+		lda DIRECTION_LEFT
+		sta player_a_direction, x
+		jmp pepper_start_witch_fly
+		;rts ; useless, jump to subroutine
 	.)
 	&pepper_start_witch_fly:
 	.(
