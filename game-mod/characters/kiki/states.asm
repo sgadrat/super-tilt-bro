@@ -509,6 +509,11 @@ kiki_global_onground:
 		lda #KIKI_MAX_WALLJUMPS
 		sta player_a_walljump, x
 
+		; Set platform creation allowed flag
+		lda #%10000000
+		ora kiki_a_platform_state, x
+		sta kiki_a_platform_state, x
+
 		; Set the appropriate animation
 		lda #<kiki_anim_respawn
 		sta tmpfield13
