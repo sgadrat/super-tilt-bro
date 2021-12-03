@@ -29,7 +29,7 @@ init_title_screen:
 	sta oam_mirror+1
 	lda #$00           ; Attributes
 	sta oam_mirror+2
-	lda #185           ; X
+	lda #177           ; X
 	sta oam_mirror+3
 
 	; Place NTSC indicator
