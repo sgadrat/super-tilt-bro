@@ -4,6 +4,12 @@
 
 bank_data07_begin:
 
+bank_data_theme_volcano_begin:
+#include "game/data/music/theme_volcano.asm"
+#echo
+#echo Theme volcano size:
+#print *-bank_data_theme_volcano_begin
+
 bank_data_credits_illustration_graphics_begin:
 #include "game/data/menu_credits/illustration_graphics.asm"
 #echo

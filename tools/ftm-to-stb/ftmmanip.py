@@ -833,7 +833,7 @@ def remove_instruments(music):
 
 					# Apply instrument effects to the timeline
 					if seq_vol is not None:
-						ensure(len(seq_vol['sequence']) > 0, 'instrument {:X} has an empty volume sequence')
+						ensure(len(seq_vol['sequence']) > 0, 'instrument {:X} has an empty volume sequence'.format(instrument_idx))
 
 						if get_chan_type(modified, chan_idx) == '2a03-triangle':
 							# Until the next note, the channel is mute if the volume is zero
@@ -924,7 +924,7 @@ def remove_instruments(music):
 					if seq_dut is not None:
 						ensure(len(seq_dut['sequence']) > 0)
 						if seq_dut['loop'] != -1:
-							warn('instrument {:X} has a looping duty enveloppe: TODO handle loops')
+							warn('instrument {:X} has a looping duty enveloppe: TODO handle loops'.format(instrument_idx))
 
 						# Find initial reference duty (even if above the note)
 						ref_duty = None
@@ -999,10 +999,14 @@ def remove_instruments(music):
 						seq_dut = None
 
 					if seq_arp is not None:
-						ensure(len(seq_arp['sequence']) > 0, 'instrument {:X} has an empty arpeggio sequence')
+						ensure(len(seq_arp['sequence']) > 0, 'instrument {:X} has an empty arpeggio sequence'.format(instrument_idx))
+						ensure(seq_arp['setting'] == 0, 'instrument {:X} use a non-absolute arpeggio: TODO handle fixed and relative arpeggio'.format(instrument_idx))
 
-						# Find reference note
-						ref_note_idx = get_note_table_index(ref_note)
+						# Get reference note in numerical form
+						if get_chan_type(modified, chan_idx) == '2a03-noise':
+							ref_note_idx = int(ref_note[0], 16)
+						else:
+							ref_note_idx = get_note_table_index(ref_note)
 
 						# Until the next note, the note is adjusted by the enveloppe
 						sequence_step = 0
@@ -1015,20 +1019,45 @@ def remove_instruments(music):
 								return False
 
 							# Compute value as impacted by the sequence
-							enveloppe_note_idx = ref_note_idx + seq_arp['sequence'][sequence_step]
-							if enveloppe_note_idx >= len(note_table_names):
-								warn('arpegio enveloppe goes over the notes table in {}: last note of the table used'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-								))
-								enveloppe_note_idx = len(note_table_names) - 1
-							elif enveloppe_note_idx < 0:
-								warn('arpegio enveloppe goes under the notes table in {}: first note of the table used'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-								))
-								enveloppe_note_idx = 0
+							sequence_value = seq_arp['sequence'][sequence_step]
+							if get_chan_type(modified, chan_idx) == '2a03-noise':
+								# Noise channel has 16 possible frequences, against 96 notes in the table for other channels
+								#  divide by 6 to have a correspondance
+								if sequence_value % 6 != 0:
+									warn('arpegio enveloppe of instrument {:X} contains values not multiple of 6: truncated down'.format(instrument_idx))
+								sequence_value = sequence_value // 6
+
+							enveloppe_note_idx = ref_note_idx + sequence_value
+
+							# Bound computed value to valid values
+							if get_chan_type(modified, chan_idx) == '2a03-noise':
+								if enveloppe_note_idx > 0xf:
+									warn('arpegio enveloppe for noise goes over F in {}: F used'.format(
+										row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+									))
+									enveloppe_note_idx = 0xf
+								elif enveloppe_note_idx < 0:
+									warn('arpegio enveloppe for noise goes under 0 in {}: 0 used'.format(
+										row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+									))
+									enveloppe_note_idx = 0
+							else:
+								if enveloppe_note_idx >= len(note_table_names):
+									warn('arpegio enveloppe goes over the notes table in {}: last note of the table used'.format(
+										row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+									))
+									enveloppe_note_idx = len(note_table_names) - 1
+								elif enveloppe_note_idx < 0:
+									warn('arpegio enveloppe goes under the notes table in {}: first note of the table used'.format(
+										row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+									))
+									enveloppe_note_idx = 0
 
 							# Place computed value
-							current_chan_row['note'] = note_table_names[enveloppe_note_idx]
+							if get_chan_type(modified, chan_idx) == '2a03-noise':
+								current_chan_row['note'] = '{:X}-#'.format(enveloppe_note_idx)
+							else:
+								current_chan_row['note'] = note_table_names[enveloppe_note_idx]
 
 							# Advance sequence
 							if seq_arp['loop'] == -1:
@@ -1043,7 +1072,7 @@ def remove_instruments(music):
 						seq_arp = None
 
 					if seq_pit is not None:
-						ensure(len(seq_pit['sequence']) > 0, 'instrument {:X} has an empty pitch sequence')
+						ensure(len(seq_pit['sequence']) > 0, 'instrument {:X} has an empty pitch sequence'.format(instrument_idx))
 
 						# Until the next note, the note is adjusted by the envelope
 						sequence_step = 0
