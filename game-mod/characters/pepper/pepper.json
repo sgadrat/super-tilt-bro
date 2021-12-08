@@ -947,7 +947,12 @@
 			"PEPPER_TILE_72",
 			"PEPPER_TILE_73",
 			"PEPPER_TILE_74",
-			"PEPPER_TILE_75"
+			"PEPPER_TILE_75",
+			"PEPPER_TILE_76",
+			"PEPPER_TILE_77",
+			"PEPPER_TILE_78",
+			"PEPPER_TILE_79",
+			"PEPPER_TILE_80"
 		],
 		"type": "tileset"
 	},
