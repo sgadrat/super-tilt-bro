@@ -18,10 +18,11 @@ extern uint8_t const MENU_MODE_SELECTION_TILESET_BANK;
 // Constants specific to this file
 ///////////////////////////////////////
 
-//static uint8_t const NB_OPTIONS = 3;
-static uint8_t const OPTION_LOCAL = 0;
+//static uint8_t const NB_OPTIONS = 4;
+//static uint8_t const OPTION_LOCAL = 0;
 static uint8_t const OPTION_ONLINE = 1;
-static uint8_t const OPTION_SUPPORT = 2;
+//static uint8_t const OPTION_SUPPORT = 2;
+//static uint8_t const OPTION_CREDITS = 3;
 
 ///////////////////////////////////////
 // Utility functions
@@ -54,26 +55,25 @@ static void yield() {
 
 static void go_up() {
 	audio_play_interface_click();
-	if (*mode_selection_current_option == OPTION_SUPPORT) {
-		*mode_selection_current_option = OPTION_LOCAL;
-	}else {
-		*mode_selection_current_option = OPTION_SUPPORT;
-	}
+	static uint8_t const dest_option[] = {3, 3, 0, 2};
+	*mode_selection_current_option = dest_option[*mode_selection_current_option];
 }
 
 static void go_down() {
-	go_up();
+	audio_play_interface_click();
+	static uint8_t const dest_option[] = {2, 2, 3, 0};
+	*mode_selection_current_option = dest_option[*mode_selection_current_option];
 }
 
 static void go_left() {
 	audio_play_interface_click();
-	static uint8_t const dest_option[] = {1, 0, 0};
+	static uint8_t const dest_option[] = {1, 0, 0, 0};
 	*mode_selection_current_option = dest_option[*mode_selection_current_option];
 }
 
 static void go_right() {
 	audio_play_interface_click();
-	static uint8_t const dest_option[] = {1, 0, 1};
+	static uint8_t const dest_option[] = {1, 0, 1, 2};
 	*mode_selection_current_option = dest_option[*mode_selection_current_option];
 }
 
@@ -83,7 +83,7 @@ static void previous_screen() {
 }
 
 static void next_screen() {
-	static uint8_t const option_to_game_state[] = {GAME_STATE_CONFIG, GAME_STATE_ONLINE_MODE_SELECTION, GAME_STATE_DONATION};
+	static uint8_t const option_to_game_state[] = {GAME_STATE_CONFIG, GAME_STATE_ONLINE_MODE_SELECTION, GAME_STATE_DONATION, GAME_STATE_CREDITS};
 
 	if (no_network()) {
 		if (*mode_selection_current_option == OPTION_ONLINE) {
@@ -101,15 +101,20 @@ static void show_selected_option(uint8_t shine) {
 	static uint8_t const boxes_attributes_no_highlight[] = {
 		/**/          ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 	};
 	static uint8_t const boxes_attributes_no_highlight_no_network[] = {
 		/**/          ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3),
 		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3),
-		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 	};
-	static uint8_t const boxes_attributes_first_attribute_per_option[] = {0, 3, 17};
-	static uint8_t const boxes_attributes_nb_columns_per_option[] = {3, 4, 4};
+	static uint8_t const boxes_attributes_first_attribute_per_option[] = {0, 3, 17, 24};
+	static uint8_t const boxes_attributes_nb_columns_per_option[] = {3, 4, 4, 3};
+	static uint8_t const boxes_attributes_nb_rows_per_option[] = {2, 2, 1, 2};
 	static uint8_t const boxes_attributes_buff_header[] = {0x23, 0xd1, sizeof(boxes_attributes_no_highlight)};
 
 	uint8_t const disabled_option = (no_network() && *mode_selection_current_option == OPTION_ONLINE);
@@ -124,8 +129,9 @@ static void show_selected_option(uint8_t shine) {
 	);
 	uint8_t const first_attribute = boxes_attributes_first_attribute_per_option[*mode_selection_current_option];
 	uint8_t const nb_columns = boxes_attributes_nb_columns_per_option[*mode_selection_current_option];
+	uint8_t const nb_rows = boxes_attributes_nb_rows_per_option[*mode_selection_current_option];
 	for (uint8_t x = 0; x < nb_columns; ++x) {
-		for (uint8_t y = 0; y < 2; ++y) {
+		for (uint8_t y = 0; y < nb_rows; ++y) {
 			uint8_t const attribute_index = y * 8 + x + first_attribute;
 			mode_selection_mem_buffer[attribute_index] = active_attribute_value;
 			if (shine && x < 2) {
