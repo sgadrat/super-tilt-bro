@@ -44,6 +44,14 @@ bank_data_charset_qr_code_begin:
 #echo QR code charset:
 #print *-bank_data_charset_qr_code_begin
 
+bank_data_credits_logic_begin:
+;FIXME code is dependent on these data to be located on the same bank
+#include "game/data/menu_credits/credits.asm"
+#include "game/logic/game_states/credits_screen/credits_screen_extra_code.asm"
+#echo
+#echo Credits logic size:
+#print *-bank_data_credits_logic_begin
+
 bank_data06_end:
 
 #echo

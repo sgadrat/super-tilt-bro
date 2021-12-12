@@ -13,6 +13,3 @@ game/data/characters/characters-index.asm
 game/data/characters/characters-data/
 game/data/tilesets/ruins.asm
 game/extra_banks.asm
-game/banks/data07_bank.asm
-game/banks/data08_bank.asm
-game/banks/data09_bank.asm

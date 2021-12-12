@@ -11,7 +11,7 @@ import stblib.utils
 import sys
 import textwrap
 
-FIRST_AVAILABLE_BANK = 7
+FIRST_AVAILABLE_BANK = 8
 
 def text_asm(text, size, space_tile):
 	"""
@@ -509,7 +509,7 @@ def generate_banks(char_to_bank, tileset_to_bank, game_dir):
 		for bank_number in range(FIRST_AVAILABLE_BANK, 31):
 			bank_index_file.write('\n#define CURRENT_BANK_NUMBER {}\n'.format(stblib.utils.uintasm8(bank_number)))
 			if bank_number in char_to_bank.values() or bank_number in tileset_to_bank.values():
-				bank_index_file.write('#include "game/banks/data{:02d}_bank.asm"\n'.format(bank_number))
+				bank_index_file.write('#include "game/banks/data{:02d}_bank.built.asm"\n'.format(bank_number))
 				if bank_number not in data_banks:
 					data_banks.append(bank_number)
 			else:
@@ -517,7 +517,7 @@ def generate_banks(char_to_bank, tileset_to_bank, game_dir):
 
 	# Construct data banks
 	for bank_number in data_banks:
-		bank_file_path = '{}/game/banks/data{:02d}_bank.asm'.format(game_dir, bank_number)
+		bank_file_path = '{}/game/banks/data{:02d}_bank.built.asm'.format(game_dir, bank_number)
 		with open(bank_file_path, 'w') as bank_file:
 			# Header
 			bank_file.write(textwrap.dedent("""\

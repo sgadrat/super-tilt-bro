@@ -48,19 +48,12 @@ static void long_animation_draw(uint8_t bank, uint8_t const* animation_state) {
 }
 
 void animation_init_state();
-static void wrap_animation_init_state(uint8_t const* animation_state, uint8_t const* animation_data) {
+static void wrap_animation_init_state(uint8_t* animation_state, uint8_t const* animation_data) {
 	*tmpfield11 = ptr_lsb(animation_state);
 	*tmpfield12 = ptr_msb(animation_state);
 	*tmpfield13 = ptr_lsb(animation_data);
 	*tmpfield14 = ptr_msb(animation_data);
 	animation_init_state();
-}
-static void long_animation_init_state(uint8_t bank, uint8_t const* animation_state, uint8_t const* animation_data) {
-	*tmpfield11 = ptr_lsb(animation_state);
-	*tmpfield12 = ptr_msb(animation_state);
-	*tmpfield13 = ptr_lsb(animation_data);
-	*tmpfield14 = ptr_msb(animation_data);
-	wrap_trampoline(bank, code_bank(), &animation_init_state);
 }
 
 void animation_tick();

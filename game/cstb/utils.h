@@ -1,4 +1,5 @@
 #pragma once
+#include <cstb/mem_labels.h>
 #include <cstb/types.h>
 #include <stdint.h>
 #pragma GCC diagnostic push
@@ -85,6 +86,19 @@ static uint8_t strnlen8(char const* s, uint8_t maxlen) {
 		++len;
 	}
 	return len;
+}
+
+/**
+ * @brief Reset background color to sky-blue, for use when leaving a screen that uses another color.
+ *
+ * Force sky-blue as background color to avoid a flash during transition from a screen using another color.
+ * Voluntary side effect: cancels any remaining nt buffer to not risk to have nmi longer than vblank.
+ */
+static void reset_bg_color() {
+	static uint8_t const palette_buffer[] = {0x01, 0x3f, 0x00, 0x01, 0x21, 0x00};
+	for (uint8_t i = 0; i < sizeof(palette_buffer); ++i) {
+		nametable_buffers[i] = palette_buffer[i];
+	}
 }
 
 extern uint8_t const CURRENT_BANK_NUMBER; // Actually an ASM macro, use its address or "code_bank()"

@@ -285,13 +285,7 @@ static void next_screen() {
 static void previous_screen() {
 	change_screen_cleaning();
 
-	// Force sky-blue as background color to avoid a black flash during transition
-	// (voluntary side effect: cancels any remaining nt buffer to not risk to have nmi longer than vblank)
-	static uint8_t const palette_buffer[] = {0x01, 0x3f, 0x00, 0x01, 0x21, 0x00};
-	for (uint8_t i = 0; i < sizeof(palette_buffer); ++i) {
-		nametable_buffers[i] = palette_buffer[i];
-	}
-
+	reset_bg_color();
 	wrap_change_global_game_state(*config_game_mode == GAME_MODE_ONLINE ? GAME_STATE_ONLINE_MODE_SELECTION : GAME_STATE_CONFIG);
 }
 

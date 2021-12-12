@@ -305,6 +305,25 @@ mode_selection_current_option = last_c_label+1 ; $39
 mode_selection_mem_buffer = $0580
 
 ;
+; CREDITS labels
+;
+
+credits_current_page = last_c_label+1 ; $39
+credits_page_dirty = credits_current_page+1 ; $3a
+credits_last_illustration_lsb = credits_page_dirty+1 ; $3b
+credits_last_illustration_msb = credits_last_illustration_lsb+1 ; $3c
+credits_last_illustration_bank = credits_last_illustration_msb+1 ; $3d
+
+credits_mem_buffer = $0580 ; $0580 to $05bf (64 bytes)
+credits_cursor_anim = $05c0 ; $05c0 to $05cc
+;$05cd to $05ff - unused
+credits_bubble_anim_1 = $068d ; to $0699
+credits_bubble_anim_2 = $069a ; to $06a6
+credits_bubble_anim_3 = $06a7 ; to $06b3
+credits_bubble_anim_4 = $06b4 ; to $06c0
+credits_bubble_anims = credits_bubble_anim_1
+
+;
 ; ONLINE_MODE_SELECTION labels
 ;
 

@@ -185,7 +185,7 @@ static void update_screen() {
 
 static void init_cursor() {
 	// Init animation
-	long_animation_init_state(anims_bank(), config_screen_cursor_anim, &menu_config_anim_cursor);
+	wrap_animation_init_state(config_screen_cursor_anim, &menu_config_anim_cursor);
 	Anim(config_screen_cursor_anim)->x = CURSOR_POS_X;
 	Anim(config_screen_cursor_anim)->y = cursor_pos_y[*config_selected_option];
 	Anim(config_screen_cursor_anim)->first_sprite_num = CURSOR_ANIM_FIRST_SPRITE;
