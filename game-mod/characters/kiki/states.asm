@@ -273,56 +273,6 @@ kiki_netload:
 	rts
 .)
 
-; Input table for aerial moves, special values are
-;  fast_fall - mandatorily on INPUT_NONE to take effect on release of DOWN
-;  jump      - automatically choose between aerial jump or wall jump
-;  no_input  - expected default
-!define "KIKI_AERIAL_INPUTS_TABLE" {
-	.(
-		controller_inputs:
-		.byt CONTROLLER_INPUT_NONE,               CONTROLLER_INPUT_SPECIAL_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_LEFT,       CONTROLLER_INPUT_JUMP
-		.byt CONTROLLER_INPUT_JUMP_RIGHT,         CONTROLLER_INPUT_JUMP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_LEFT,        CONTROLLER_INPUT_ATTACK_RIGHT
-		.byt CONTROLLER_INPUT_DOWN_TILT,          CONTROLLER_INPUT_ATTACK_UP
-		.byt CONTROLLER_INPUT_JAB,                CONTROLLER_INPUT_SPECIAL
-		.byt CONTROLLER_INPUT_SPECIAL_UP,         CONTROLLER_INPUT_SPECIAL_DOWN
-		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,    CONTROLLER_INPUT_ATTACK_UP_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT,   CONTROLLER_INPUT_SPECIAL_UP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_DOWN_RIGHT,  CONTROLLER_INPUT_ATTACK_DOWN_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT, CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
-		controller_callbacks_lo:
-		.byt <fast_fall,                   <kiki_start_side_spe_right
-		.byt <kiki_start_side_spe_left,    <jump
-		.byt <jump,                        <jump
-		.byt <kiki_start_side_aerial_left, <kiki_start_side_aerial_right
-		.byt <kiki_start_down_aerial,      <kiki_start_up_aerial
-		.byt <kiki_start_neutral_aerial,   <kiki_start_top_wall
-		.byt <kiki_start_down_wall,        <kiki_start_counter_guard
-		.byt <kiki_start_up_aerial,        <kiki_start_up_aerial
-		.byt <kiki_start_down_wall,        <kiki_start_down_wall
-		.byt <kiki_start_down_aerial,      <kiki_start_down_aerial
-		.byt <kiki_start_counter_guard,    <kiki_start_counter_guard
-		controller_callbacks_hi:
-		.byt >fast_fall,                   >kiki_start_side_spe_right
-		.byt >kiki_start_side_spe_left,    >jump
-		.byt >jump,                        >jump
-		.byt >kiki_start_side_aerial_left, >kiki_start_side_aerial_right
-		.byt >kiki_start_down_aerial,      >kiki_start_up_aerial
-		.byt >kiki_start_neutral_aerial,   >kiki_start_top_wall
-		.byt >kiki_start_down_wall,        >kiki_start_counter_guard
-		.byt >kiki_start_up_aerial,        >kiki_start_up_aerial
-		.byt >kiki_start_down_wall,        >kiki_start_down_wall
-		.byt >kiki_start_down_aerial,      >kiki_start_down_aerial
-		.byt >kiki_start_counter_guard,    >kiki_start_counter_guard
-		controller_default_callback:
-		.word no_input
-		&INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
-	.)
-}
-
-!include "std_aerial_input.asm"
-
 kiki_hide_platform:
 .(
 	; Hide platform (set sprites Y position offscreen)
@@ -465,10 +415,57 @@ kiki_global_onground:
 	rts
 .)
 
-;
-; Thrown
-;
 
+; Input table for aerial moves, special values are
+;  fast_fall - mandatorily on INPUT_NONE to take effect on release of DOWN
+;  jump      - automatically choose between aerial jump or wall jump
+;  no_input  - expected default
+!define "KIKI_AERIAL_INPUTS_TABLE" {
+	.(
+		controller_inputs:
+		.byt CONTROLLER_INPUT_NONE,               CONTROLLER_INPUT_SPECIAL_RIGHT
+		.byt CONTROLLER_INPUT_SPECIAL_LEFT,       CONTROLLER_INPUT_JUMP
+		.byt CONTROLLER_INPUT_JUMP_RIGHT,         CONTROLLER_INPUT_JUMP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_LEFT,        CONTROLLER_INPUT_ATTACK_RIGHT
+		.byt CONTROLLER_INPUT_DOWN_TILT,          CONTROLLER_INPUT_ATTACK_UP
+		.byt CONTROLLER_INPUT_JAB,                CONTROLLER_INPUT_SPECIAL
+		.byt CONTROLLER_INPUT_SPECIAL_UP,         CONTROLLER_INPUT_SPECIAL_DOWN
+		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,    CONTROLLER_INPUT_ATTACK_UP_LEFT
+		.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT,   CONTROLLER_INPUT_SPECIAL_UP_LEFT
+		.byt CONTROLLER_INPUT_ATTACK_DOWN_RIGHT,  CONTROLLER_INPUT_ATTACK_DOWN_LEFT
+		.byt CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT, CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
+		controller_callbacks_lo:
+		.byt <fast_fall,                   <kiki_start_side_spe_right
+		.byt <kiki_start_side_spe_left,    <jump
+		.byt <jump,                        <jump
+		.byt <kiki_start_side_aerial_left, <kiki_start_side_aerial_right
+		.byt <kiki_start_down_aerial,      <kiki_start_up_aerial
+		.byt <kiki_start_neutral_aerial,   <kiki_start_top_wall
+		.byt <kiki_start_down_wall,        <kiki_start_counter_guard
+		.byt <kiki_start_up_aerial,        <kiki_start_up_aerial
+		.byt <kiki_start_down_wall,        <kiki_start_down_wall
+		.byt <kiki_start_down_aerial,      <kiki_start_down_aerial
+		.byt <kiki_start_counter_guard,    <kiki_start_counter_guard
+		controller_callbacks_hi:
+		.byt >fast_fall,                   >kiki_start_side_spe_right
+		.byt >kiki_start_side_spe_left,    >jump
+		.byt >jump,                        >jump
+		.byt >kiki_start_side_aerial_left, >kiki_start_side_aerial_right
+		.byt >kiki_start_down_aerial,      >kiki_start_up_aerial
+		.byt >kiki_start_neutral_aerial,   >kiki_start_top_wall
+		.byt >kiki_start_down_wall,        >kiki_start_counter_guard
+		.byt >kiki_start_up_aerial,        >kiki_start_up_aerial
+		.byt >kiki_start_down_wall,        >kiki_start_down_wall
+		.byt >kiki_start_down_aerial,      >kiki_start_down_aerial
+		.byt >kiki_start_counter_guard,    >kiki_start_counter_guard
+		controller_default_callback:
+		.word no_input
+		&INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
+	.)
+}
+
+!include "std_aerial_input.asm"
+!include "std_crashing.asm"
 !include "std_thrown.asm"
 
 ;
@@ -1301,68 +1298,6 @@ kiki_start_inactive_state:
 		ldy system_index
 		lda player_a_state_clock, x
 		cmp landing_duration, y
-		bne end
-			jmp kiki_start_inactive_state
-			; No return, jump to subroutine
-
-		end:
-		rts
-	.)
-.)
-
-;
-; Crashing
-;
-
-.(
-	crashing_duration:
-		.byt kiki_anim_crash_dur_pal, kiki_anim_crash_dur_ntsc
-
-	&kiki_start_crashing:
-	.(
-		; Set state
-		lda #KIKI_STATE_CRASHING
-		sta player_a_state, x
-
-		; Reset clock
-		lda #0
-		sta player_a_state_clock, x
-
-		; Set the appropriate animation
-		lda #<kiki_anim_crash
-		sta tmpfield13
-		lda #>kiki_anim_crash
-		sta tmpfield14
-		jsr set_player_animation
-
-		; Play crash sound
-		jmp audio_play_crash
-
-		;rts ; useless, jump to subroutine
-	.)
-
-	&kiki_tick_crashing:
-	.(
-		jsr kiki_global_tick
-
-		; Tick clock
-		inc player_a_state_clock, x
-
-		; Do not move, velocity tends toward vector (0,0)
-		lda #$00
-		sta tmpfield4
-		sta tmpfield3
-		sta tmpfield2
-		sta tmpfield1
-		ldy system_index
-		lda kiki_ground_friction_strength_strong, y
-		sta tmpfield5
-		jsr merge_to_player_velocity
-
-		; After move's time is out, go to standing state
-		lda player_a_state_clock, x
-		ldy system_index
-		cmp crashing_duration, y
 		bne end
 			jmp kiki_start_inactive_state
 			; No return, jump to subroutine

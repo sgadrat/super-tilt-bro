@@ -116,7 +116,7 @@
 			"type": "import"
 		},
 		{
-			"src": "characters/sinbad/animations/sinbad_anim_crashing.json",
+			"src": "characters/sinbad/animations/sinbad_anim_crash.json",
 			"type": "import"
 		},
 		{

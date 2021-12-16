@@ -374,6 +374,7 @@ pepper_global_tick:
 }
 
 !include "std_aerial_input.asm"
+!include "std_crashing.asm"
 !include "std_thrown.asm"
 
 ;
@@ -1227,69 +1228,6 @@ pepper_input_idle_right:
 		bne end
 			jmp pepper_start_inactive_state
 			; No return, jump to subroutine
-
-		end:
-		rts
-	.)
-.)
-
-;
-; Crashing
-;
-
-.(
-	crashing_duration:
-		.byt pepper_anim_crash_dur_pal, pepper_anim_crash_dur_ntsc
-
-	&pepper_start_crashing:
-	.(
-		; Set state
-		lda #PEPPER_STATE_CRASHING
-		sta player_a_state, x
-
-		; Reset clock
-		lda #0
-		sta player_a_state_clock, x
-
-		; Set the appropriate animation
-		lda #<pepper_anim_crash
-		sta tmpfield13
-		lda #>pepper_anim_crash
-		sta tmpfield14
-		jsr set_player_animation
-
-		; Play crash sound
-		jmp audio_play_crash
-
-		;rts ; useless, jump to subroutine
-	.)
-
-	&pepper_tick_crashing:
-	.(
-		jsr pepper_global_tick
-
-		PEPPER_STATE_CRASHING_DURATION = 30
-
-		; Tick clock
-		inc player_a_state_clock, x
-
-		; Do not move, velocity tends toward vector (0,0)
-		lda #$00
-		sta tmpfield4
-		sta tmpfield3
-		sta tmpfield2
-		sta tmpfield1
-		ldy system_index
-		lda pepper_ground_friction_strength_strong, y
-		sta tmpfield5
-		jsr merge_to_player_velocity
-
-		; After move's time is out, go to standing state
-		lda player_a_state_clock, x
-		ldy system_index
-		cmp crashing_duration, y
-		bne end
-		jsr pepper_start_idle
 
 		end:
 		rts

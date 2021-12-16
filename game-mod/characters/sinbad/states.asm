@@ -141,6 +141,8 @@ sinbad_global_onground:
 }
 
 !include "std_aerial_input.asm"
+!include "std_crashing.asm"
+!include "std_thrown.asm"
 
 ; Choose between falling or idle depending if grounded
 sinbad_start_inactive_state:
@@ -901,12 +903,6 @@ sinbad_start_inactive_state:
 .)
 
 ;
-; Thrown
-;
-
-!include "std_thrown.asm"
-
-;
 ; Respawn
 ;
 
@@ -1438,71 +1434,6 @@ sinbad_start_inactive_state:
 		ldy system_index
 		lda player_a_state_clock, x
 		cmp landing_duration, y
-		bne end
-			jmp sinbad_start_inactive_state
-
-		end:
-		rts
-	.)
-.)
-
-;
-; Crashing
-;
-
-.(
-	crashing_duration:
-		.byt sinbad_anim_crashing_dur_pal, sinbad_anim_crashing_dur_ntsc
-
-	&sinbad_start_crashing:
-	.(
-		jsr sinbad_global_onground
-
-		; Set state
-		lda #SINBAD_STATE_CRASHING
-		sta player_a_state, x
-
-		; Reset clock
-		lda #0
-		sta player_a_state_clock, x
-
-		; Fallthrough to set the animation
-	.)
-	set_crashing_animation:
-	.(
-		; Set the appropriate animation
-		lda #<sinbad_anim_crashing
-		sta tmpfield13
-		lda #>sinbad_anim_crashing
-		sta tmpfield14
-		jsr set_player_animation
-
-		; Play crash sound
-		jsr audio_play_crash
-
-		rts
-	.)
-
-	&sinbad_tick_crashing:
-	.(
-		; Tick clock
-		inc player_a_state_clock, x
-
-		; Do not move, velocity tends toward vector (0,0)
-		lda #$00
-		sta tmpfield4
-		sta tmpfield3
-		sta tmpfield2
-		sta tmpfield1
-		ldy system_index
-		lda sinbad_ground_friction_strength_strong, y
-		sta tmpfield5
-		jsr merge_to_player_velocity
-
-		; After move's time is out, go to standing state
-		lda player_a_state_clock, x
-		ldy system_index
-		cmp crashing_duration, y
 		bne end
 			jmp sinbad_start_inactive_state
 
