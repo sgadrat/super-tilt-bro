@@ -1279,6 +1279,7 @@ pepper_input_idle_right:
 		sta tmpfield3
 		sta tmpfield2
 		sta tmpfield1
+		ldy system_index
 		lda pepper_ground_friction_strength_strong, y
 		sta tmpfield5
 		jsr merge_to_player_velocity
