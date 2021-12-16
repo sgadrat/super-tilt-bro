@@ -11,7 +11,7 @@ import json
 import sys
 
 # Parameters
-if len(sys.argv) < 2 or sys.argv[1].lower in ['-h', '--help']:
+if len(sys.argv) < 2 or sys.argv[1].lower() in ['-h', '--help']:
 	print('usage: {} source_file [max_optim] [out_file]'.format(sys.argv[0]))
 	print()
 	print('\tsource_file\tFamitracker module text export')

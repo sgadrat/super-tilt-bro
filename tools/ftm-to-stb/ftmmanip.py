@@ -264,6 +264,23 @@ def get_pitch_effects(chan_row):
 			res.append(current_effect_idx)
 	return res
 
+def get_pitch_effect(chan_row):
+	"""
+	Return the pitch effect in a row.
+
+	If there is no pitch effect, return None.
+	If there are multiple pitch effects, return the one that will be kept by remove_useless_pitch_effects.
+	"""
+	effects = get_pitch_effects(chan_row)
+	final_effect = None
+	for effect in effects:
+		if final_effect is None:
+			final_effect = effect
+		elif is_pitch_slide_activation_effect(effect):
+			final_effect = effect
+			break
+	return final_effect
+
 def get_chan_type(music, chan_idx):
 	"""
 	Return the type of a channel
@@ -294,11 +311,26 @@ def get_previous_note(music, track_idx, pattern_idx, chan_idx, row_idx):
 
 	return {'note': original_note, 'reliable': not has_pitch_fuckery}
 
+def get_current_pitch_effect(music, track_idx, pattern_idx, chan_idx, row_idx):
+	"""
+	Return the pitch effect impacting the current row (even if placed on a previous row)
+	"""
+	current_effect = None
+	def effect_scanner(current_pattern_idx, current_row_idx):
+		nonlocal current_effect
+		current_row = music['tracks'][track_idx]['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+		current_effect_idx = get_pitch_effect(current_row)
+		if current_effect_idx is not None:
+			current_effect = current_row['effects'][current_effect_idx]
+			return False
+	scan_previous_chan_rows(effect_scanner, music, track_idx, pattern_idx, chan_idx, row_idx)
+	return current_effect
+
 def scan_previous_chan_rows(callback, music, track_idx, pattern_idx, chan_idx, start_row_idx):
 	"""
 	Invoke callback on all previous rows for the channel, ignoring pattern boundary.
 
-	Stops after invoking the very row line of the track or if callback returns False
+	Stops after invoking the first row of the track or if callback returns False
 
 	Notes:
 
@@ -1008,15 +1040,33 @@ def remove_instruments(music):
 						else:
 							ref_note_idx = get_note_table_index(ref_note)
 
+						# Warn if there is an active pitch slide and note's row doesn't stop it
+						pitch_effect = get_current_pitch_effect(modified, track_idx, pattern_idx, chan_idx, row_idx)
+						if pitch_effect is not None and is_pitch_slide_activation_effect(pitch_effect):
+							warn('Note with arpegio instrument starts while a slide effect is active {}: arpegio mechanically cancels pitch slides'.format(
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							))
+
 						# Until the next note, the note is adjusted by the enveloppe
 						sequence_step = 0
+						first_row = True
 						def scanner_arp(current_pattern_idx, current_row_idx):
-							nonlocal sequence_step
+							nonlocal first_row, sequence_step
 							current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
 
 							# Stop on any row with a note
 							if current_chan_row['note'] != '...' and (current_pattern_idx, current_row_idx) != (pattern_idx, row_idx):
 								return False
+
+							# Warn if there is a pitch effect (check on first row already done before scanning)
+							if first_row:
+								first_row = False
+							else:
+								pitch_effect_idx = get_pitch_effect(current_chan_row)
+								if pitch_effect_idx is not None and is_pitch_slide_activation_effect(current_chan_row['effects'][pitch_effect_idx]):
+									warn('pitch effect on pattern while instrument has arpegio enveloppe in {}: arpegio mechanically cancels pitch slides'.format(
+										row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+									))
 
 							# Compute value as impacted by the sequence
 							sequence_value = seq_arp['sequence'][sequence_step]
@@ -1033,23 +1083,23 @@ def remove_instruments(music):
 							if get_chan_type(modified, chan_idx) == '2a03-noise':
 								if enveloppe_note_idx > 0xf:
 									warn('arpegio enveloppe for noise goes over F in {}: F used'.format(
-										row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+										row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
 									))
 									enveloppe_note_idx = 0xf
 								elif enveloppe_note_idx < 0:
 									warn('arpegio enveloppe for noise goes under 0 in {}: 0 used'.format(
-										row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+										row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
 									))
 									enveloppe_note_idx = 0
 							else:
 								if enveloppe_note_idx >= len(note_table_names):
 									warn('arpegio enveloppe goes over the notes table in {}: last note of the table used'.format(
-										row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+										row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
 									))
 									enveloppe_note_idx = len(note_table_names) - 1
 								elif enveloppe_note_idx < 0:
 									warn('arpegio enveloppe goes under the notes table in {}: first note of the table used'.format(
-										row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+										row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
 									))
 									enveloppe_note_idx = 0
 
@@ -2826,12 +2876,17 @@ def samples_to_source(music):
 	Depends: to_mod_format
 	"""
 	music_name = 'title' #TODO get it from music structure, would need to extract it from ftm header
+	music_name_low = music_name.lower()
+	music_name_up = music_name.upper()
 	track_names = ['pulse1', 'pulse2', 'triangle', 'noise']
 
+	# Banking information
+	asm_header = 'music_{music_name_up}_bank = CURRENT_BANK_NUMBER\n'.format(**locals())
+
 	# Music header
-	music_header = 'music_{music_name}_info:\n'.format(**locals())
+	music_header = 'music_{music_name_low}_info:\n'.format(**locals())
 	for track_name in track_names:
-		music_header += '.word music_{music_name}_track_{track_name}\n'.format(**locals())
+		music_header += '.word music_{music_name_low}_track_{track_name}\n'.format(**locals())
 
 	original_tempo = music['tracks'][0]['tempo']
 	for original_track_idx in range(len(music['tracks'])):
@@ -2850,9 +2905,9 @@ def samples_to_source(music):
 	tracks_source = ''
 	for track_idx in range(len(track_names)):
 		track_name = track_names[track_idx]
-		tracks_source += 'music_{music_name}_track_{track_name}:\n'.format(**locals())
+		tracks_source += 'music_{music_name_low}_track_{track_name}:\n'.format(**locals())
 		for sample_num in music['mod']['channels'][track_idx]:
-			tracks_source += '.word music_{music_name}_sample_{sample_num}\n'.format(**locals())
+			tracks_source += '.word music_{music_name_low}_sample_{sample_num}\n'.format(**locals())
 		tracks_source += 'MUSIC_END\n\n'
 
 	# Samples
@@ -2866,7 +2921,7 @@ def samples_to_source(music):
 	for sample in music['mod']['samples']:
 		if samples_source != '':
 			samples_source += '\n'
-		samples_source += 'music_{music_name}_sample_{sample_num}:\n.(\n'.format(**locals())
+		samples_source += 'music_{music_name_low}_sample_{sample_num}:\n.(\n'.format(**locals())
 		for opcode in sample['opcodes']:
 			samples_source += '\t{}{}({})\n'.format(opcode_prefix[sample['type']], opcode['name'], ','.join([str(x) for x in opcode['parameters']]))
 		samples_source += '\tSAMPLE_END\n.)\n'
@@ -2876,7 +2931,7 @@ def samples_to_source(music):
 	modified = copy.deepcopy(music)
 	modified['src'] = {
 		'type': 'samples_source',
-		'value': music_header + '\n' + tracks_source + '\n' +samples_source,
+		'value': asm_header + '\n' + music_header + '\n' + tracks_source + '\n' +samples_source,
 	}
 	return modified
 
