@@ -787,7 +787,7 @@ def apply_s_effect(music):
 						warn('SXX effect goes falls beyond pattern end in {}: moved to end of pattern'.format(
 							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 						))
-						dest_row_idx = len(pattern['rows'] - 1)
+						dest_row_idx = len(pattern['rows']) - 1
 					dest_chan_row = get_row(modified, track=track_idx, pattern=pattern_idx, chan=chan_idx, row=dest_row_idx)
 
 					if dest_chan_row['note'] != '...':
@@ -2881,7 +2881,7 @@ def samples_to_source(music):
 	track_names = ['pulse1', 'pulse2', 'triangle', 'noise']
 
 	# Banking information
-	asm_header = 'music_{music_name_up}_bank = CURRENT_BANK_NUMBER\n'.format(**locals())
+	asm_header = 'music_{music_name_low}_bank = CURRENT_BANK_NUMBER\n'.format(**locals())
 
 	# Music header
 	music_header = 'music_{music_name_low}_info:\n'.format(**locals())
@@ -2893,12 +2893,13 @@ def samples_to_source(music):
 		if music['tracks'][original_track_idx]['tempo'] != original_tempo:
 			warn('unhandled various tempo between tracks, using first one ({})'.format(original_tempo))
 
+	tempo = 0
 	if original_tempo == 150:
 		tempo = 0
 	elif original_tempo == 125:
 		tempo = 1
 	else:
-		warn('unknown tempo {}, defaulting to PAL (125)'.format(original_tempo))
+		warn('unknown tempo {}, defaulting to NTSC (150)'.format(original_tempo))
 	music_header += '.byt {}\n'.format(tempo)
 
 	# Tracks
