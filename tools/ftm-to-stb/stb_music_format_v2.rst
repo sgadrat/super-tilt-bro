@@ -76,6 +76,34 @@ CHAN_DUTY::
 	DD: new duty
 	z: reserved zero bit
 
+FREQUENCY_ADD::
+
+	Add a value to the frequency being played.
+
+	OOOO OTTT  TTTT TTTT  DDDD DDDD
+
+	TTT TTTT TTTT: Frequency to add to the value in APU register
+	DDDD DDDD: Duration, in display frames
+
+	If resulting frequency overflows, it is capped to %111 1111 1111.
+
+	The next opcode will be executed only after the specified duration. If duration is zero,
+	next opcodes will be executed immediately until one with a non-null duration is found.
+
+FREQUENCY_SUB::
+
+	Subtract a value to the frequency being played.
+
+	OOOO OTTT  TTTT TTTT  DDDD DDDD
+
+	TTT TTTT TTTT: Frequency to subtract to the value in APU register
+	DDDD DDDD: Duration, in display frames
+
+	If resulting frequency underflows, it is capped to %000 0000 0000.
+
+	The next opcode will be executed only after the specified duration. If duration is zero,
+	next opcodes will be executed immediately until one with a non-null duration is found.
+
 PITCH_SLIDE::
 
 	Set the change in pitch to be applied each display frame.

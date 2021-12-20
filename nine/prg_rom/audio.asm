@@ -251,7 +251,7 @@ audio_music_extra_tick:
 
 ; Play one tick of the audio engine
 ;
-; Overwrites all registers, and tmpfield1 to tmpfield4
+; Overwrites all registers, tmpfield1 to tmpfield4, and extra_tmpfield1 to extra_tmpfield5
 audio_music_tick:
 .(
 	apu_timer_high_byte = extra_tmpfield1
@@ -789,6 +789,109 @@ audio_music_tick:
 		rts
 	.)
 
+	opcode_pulse_frequency_add:
+	.(
+		; OOOO OTTT  TTTT TTTT  DDDD DDDD
+
+		added_value_msb = tmpfield1
+
+		; TTT TTTT TTTT - Add to mirrored APU value, cap at max on overflow
+		.(
+			; Store msb of the parameter
+			lda (current_opcode), y
+			and #%00000111
+			sta added_value_msb
+
+			; Add LSBs
+			iny
+			lda (current_opcode), y
+			clc
+			adc audio_square1_apu_timer_low_byte, x
+			sta audio_square1_apu_timer_low_byte, x
+
+			; Add MSBs
+			lda audio_square1_apu_timer_high_byte, x
+			and #%00000111
+			adc added_value_msb
+			sta apu_timer_high_byte
+
+			; Avoid overflow
+			cmp #%00001000
+			bcc value_computed
+				; Overflow, cap to %111.1111.1111
+				lda #%00000111
+				sta apu_timer_high_byte
+				lda #%11111111
+				sta audio_square1_apu_timer_low_byte, x
+			value_computed:
+
+			; Place MSB in mirror, preserving length counter
+			lda audio_square1_apu_timer_high_byte, x
+			and #%11111000
+			ora apu_timer_high_byte
+			sta audio_square1_apu_timer_high_byte, x
+		.)
+
+		; DDDD DDDD
+		iny
+		lda (current_opcode), y
+		sta audio_square1_wait_cnt, x
+
+		lda #3
+		rts
+	.)
+
+	opcode_pulse_frequency_sub:
+	.(
+		; OOOO OTTT  TTTT TTTT  DDDD DDDD
+
+		subbed_valued_msb = tmpfield1
+
+		; TTT TTTT TTTT - Subtract to mirrored APU value, cap at zero on underflow
+		.(
+			; Store msb of the parameter
+			lda (current_opcode), y
+			and #%00000111
+			sta subbed_value_msb
+
+			; Sub LSBs
+			iny
+			lda audio_square1_apu_timer_low_byte, x
+			sec
+			sbc (current_opcode), y
+			sta audio_square1_apu_timer_low_byte, x
+
+			; Sub MSBs
+			lda audio_square1_apu_timer_high_byte, x
+			and #%00000111
+			sbc subbed_value_msb
+			sta apu_timer_high_byte
+
+			; Avoid underflow
+			cmp #%00001000
+			bcc value_computed
+				; Underflow, cap to %000.0000.0000
+				lda #%00000000
+				sta apu_timer_high_byte
+				sta audio_square1_apu_timer_low_byte, x
+			value_computed:
+
+			; Place MSB in mirror, preserving length counter
+			lda audio_square1_apu_timer_high_byte, x
+			and #%11111000
+			ora apu_timer_high_byte
+			sta audio_square1_apu_timer_high_byte, x
+		.)
+
+		; DDDD DDDD
+		iny
+		lda (current_opcode), y
+		sta audio_square1_wait_cnt, x
+
+		lda #3
+		rts
+	.)
+
 	opcode_play_timed_freq:
 	.(
 		; OOOO OTTT  TTTT TTTT  DDDD DDDD
@@ -1241,12 +1344,12 @@ audio_music_tick:
 	.byt <opcode_sample_end, <opcode_chan_params, <opcode_chan_volume_low, <opcode_chan_volume_high, <opcode_play_timed_freq
 	.byt <opcode_play_note, <opcode_wait, <opcode_long_wait, <opcode_halt, <opcode_pitch_slide
 	.byt <opcode_set_duty, <opcode_play_timed_note, <opcode_pulse_meta_uslide, <opcode_pulse_meta_dslide, <opcode_pulse_meta_uslide
-	.byt <opcode_pulse_meta_dslide
+	.byt <opcode_pulse_meta_dslide, <opcode_pulse_frequency_add, <opcode_pulse_frequency_sub
 	pulse1_opcode_routines_msb:
 	.byt >opcode_sample_end, >opcode_chan_params, >opcode_chan_volume_low, >opcode_chan_volume_high, >opcode_play_timed_freq
 	.byt >opcode_play_note, >opcode_wait, >opcode_long_wait, >opcode_halt, >opcode_pitch_slide
 	.byt >opcode_set_duty, >opcode_play_timed_note, >opcode_pulse_meta_uslide, >opcode_pulse_meta_dslide, >opcode_pulse_meta_uslide
-	.byt >opcode_pulse_meta_dslide
+	.byt >opcode_pulse_meta_dslide, >opcode_pulse_frequency_add, >pcode_pulse_frequency_sub
 
 	noise_opcode_routines_lsb:
 	.byt <opcode_noise_sample_end, <opcode_noise_set_volume, <opcode_noise_set_periodic, <opcode_noise_play_timed_freq, <opcode_noise_wait

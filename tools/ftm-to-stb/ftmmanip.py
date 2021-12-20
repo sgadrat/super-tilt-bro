@@ -2282,6 +2282,7 @@ def compute_note_length(music):
 	"""
 	#TODO for now simply use 5, real value should certainly be gcd(num frames between non-empty rows) (maybe ingoring rare occurence of shorter times)
 	#     or simply use track's speed (except on degenerate case were a lot of FXX is used, allow to specify it)
+	#     Note that is does not changes a lot of things, PLAY_NOTE opcode is rarely used (PLAY_TIMED_NOTE is less CPU intensive and the same size)
 	modified = copy.deepcopy(music)
 	for sample in modified['uctf']['samples']:
 		sample['default_note_length'] = 5

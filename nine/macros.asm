@@ -53,6 +53,8 @@ AUDIO_OP_META_NOTE_SLIDE_UP = 12
 AUDIO_OP_META_NOTE_SLIDE_DOWN = 13
 AUDIO_OP_META_WAIT_SLIDE_UP = 14
 AUDIO_OP_META_WAIT_SLIDE_DOWN = 15
+AUDIO_OP_FREQUENCY_ADD = 16
+AUDIO_OP_FREQUENCY_SUB = 17
 
 AUDIO_OP_NOISE_SET_VOLUME = 1
 AUDIO_OP_NOISE_SET_PERIODIC = 2
@@ -97,6 +99,16 @@ note_idx
 #define PITCH_SLIDE(step) .byt \
 (AUDIO_OP_PITCH_SLIDE << 3) + ((step >> 8) & %00000100), \
 <step
+
+#define AUDIO_PULSE_FREQUENCY_ADD(freq,duration) .byt \
+(AUDIO_OP_FREQUENCY_ADD << 3) + (freq >> 8), \
+<freq, \
+duration
+
+#define AUDIO_PULSE_FREQUENCY_SUB(freq,duration) .byt \
+(AUDIO_OP_FREQUENCY_SUB << 3) + (freq >> 8), \
+<freq, \
+duration
 
 #define AUDIO_PULSE_META_NOTE(note_idx,duration) .byt \
 (AUDIO_OP_META_NOTE_SLIDE_DOWN << 3) + %00000000, \
