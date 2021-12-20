@@ -27,13 +27,15 @@ OUT_FILE_PATH = None if len(sys.argv) < 4 else sys.argv[3]
 VERBOSE = False
 
 # Logging
+def logdate():
+	return datetime.datetime.fromtimestamp(time.time()).isoformat()
 def log(msg):
 	sys.stderr.write('{}\n'.format(msg))
 def debug(msg):
 	if VERBOSE:
-		log('  DEBUG: [{}] {}'.format(datetime.datetime.fromtimestamp(time.time()).isoformat(), msg))
+		log('  DEBUG: [{}] {}'.format(logdate(), msg))
 def info(msg):
-	log('   INFO: {}'.format(msg))
+	log('   INFO: [{}] {}'.format(logdate(), msg))
 def warn(msg):
 	log('WARNING: {}'.format(msg))
 
@@ -85,11 +87,12 @@ music = ftmmanip.optim_pulse_opcodes_to_meta(music)
 
 optimal = False
 pass_num = 0
+total_size = -1
 while not optimal and pass_num < MAX_OPTIM_PASSES:
 	pass_num += 1
 	info('optimization pass #{} (size={} bytes, index_filling=[{}])'.format(
 		pass_num,
-		music.get('stats', {'total_size': -1})['total_size'],
+		total_size,
 		[len(x) for x in music['mod']['channels']]
 	))
 
@@ -107,6 +110,7 @@ while not optimal and pass_num < MAX_OPTIM_PASSES:
 		saved = copy.deepcopy(music)
 		saved = ftmmanip.samples_to_source(saved)
 		saved = ftmmanip.compute_stats(saved)
+		total_size = saved['stats']['total_size']
 		with open(OUT_FILE_PATH, 'w') as out_file:
 			json.dump(saved, out_file)
 

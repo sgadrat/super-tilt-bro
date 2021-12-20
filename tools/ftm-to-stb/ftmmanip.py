@@ -1961,7 +1961,7 @@ def apply_a_effect(music):
 
 						if current_volume_effect is not None:
 							if current_volume_effect[0] != 'A':
-								warn('Axy intterupted by another volume effect in {}: volume slide stopped'.format(
+								warn('Axy interrupted by another volume effect in {}: volume slide stopped'.format(
 									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 								))
 							break
@@ -1972,7 +1972,7 @@ def apply_a_effect(music):
 						current_chan_row['volume'] = '{:2X}'.format(int(current_volume))
 
 						# Stop if the slide hit the end
-						if current_volume in [0, 15]:
+						if current_volume <= 0 or current_volume >= 15:
 							break
 
 						current_row_idx += 1
