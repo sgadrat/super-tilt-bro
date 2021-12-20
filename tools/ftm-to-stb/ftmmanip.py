@@ -6,6 +6,9 @@ import sys
 # Error handling functions
 #
 
+def debug(msg):
+	sys.stderr.write('{}\n'.format(msg))
+
 def warn(msg):
 	sys.stderr.write('{}\n'.format(msg))
 
@@ -488,9 +491,69 @@ def flatten_orders(music):
 
 	return modified
 
-def unroll_f_effect(music):
+#
+# Obsolete: seems to be based on false assumptions
+#  - Don't take module's original speed into account (While FXX and speed are interlinked)
+#  - FXX effect impact only its row (While should change permanentely the module's speed)
+#  - Considere all FXX equal (While XX >= 0x20 means tempo change)
+#
+#def unroll_f_effect(music):
+#	"""
+#	Remove FXX effect, place empty lines to compensate
+#
+#	Depends: get_num_channels
+#	"""
+#	# Copy the music without its patterns
+#	modified = copy.deepcopy(music)
+#	for track in modified['tracks']:
+#		track['patterns'] = []
+#
+#	# Rewrite patterns with FXX effects unrolled
+#	for track_idx in range(len(music['tracks'])):
+#		for original_pattern in music['tracks'][track_idx]['patterns']:
+#			modified['tracks'][track_idx]['patterns'].append({'rows': []})
+#			for original_row in original_pattern['rows']:
+#				# Copy the row without FXX effect, noting the number of dummy rows to add
+#				modified_row = copy.deepcopy(original_row)
+#				repeats = 0
+#				for channel in modified_row['channels']:
+#					for i in range(len(channel['effects'])):
+#						if channel['effects'][i][0] == 'F':
+#							repeats = int(channel['effects'][i][1:], 16) - 1
+#							# F00 case:
+#							#  It makes no sense. Maybe infinite beats per minute.
+#							#  Famitracker wiki state that F00 is valid, without detail on what it does.
+#							#  Famitracker chm states that it is invalid.
+#							#  It seems to be equivalent to F01, until a proof is given, let's just crash.
+#							ensure(repeats >= 0, 'unhandled effect F00')
+#							channel['effects'][i] = '...'
+#
+#				# Store modified row and dummies to compensate the lack of FXX effect
+#				modified['tracks'][track_idx]['patterns'][-1]['rows'].append(modified_row)
+#
+#				dummy_row = {'channels': []}
+#				for n_effects in modified['tracks'][track_idx]['channels_effects']:
+#					dummy_row['channels'].append({
+#						'note': '...',
+#						'instrument': '..',
+#						'volume': '.',
+#						'effects': ['...'] * n_effects
+#					})
+#				for i in range(repeats):
+#					modified['tracks'][track_idx]['patterns'][-1]['rows'].append(copy.deepcopy(dummy_row))
+#
+#	# Sanity checks and return
+#	assert len(modified['tracks']) == len(music['tracks']), 'number of tracks differs between modified and original (modified:{}, original:{})'.format(len(modified['tracks']), len(music['tracks']))
+#	for track_id in range(len(music['tracks'])):
+#		assert len(modified['tracks'][track_idx]['patterns']) == len(music['tracks'][track_idx]['patterns'])
+#		for pattern_idx in range(len(music['tracks'][track_idx]['patterns'])):
+#			assert len(modified['tracks'][track_idx]['patterns'][pattern_idx]) >= len(music['tracks'][track_idx]['patterns'][pattern_idx]), 'pattern {:02x}-{:02x} is shorted than original'.format(track_idx, pattern_idx)
+#
+#	return modified
+
+def unroll_speed(music):
 	"""
-	Remove FXX effect, place empty lines to compensate
+	Place empty lines to compensate track's speed. Also remove FXX effects impacting speed.
 
 	Depends: get_num_channels
 	"""
@@ -499,25 +562,30 @@ def unroll_f_effect(music):
 	for track in modified['tracks']:
 		track['patterns'] = []
 
-	# Rewrite patterns with FXX effects unrolled
+	# Rewrite patterns with speed unrolled
 	for track_idx in range(len(music['tracks'])):
-		for original_pattern in music['tracks'][track_idx]['patterns']:
+		current_speed = modified['tracks'][track_idx]['speed']
+		for pattern_idx in range(len(music['tracks'][track_idx]['patterns'])):
+			original_pattern = music['tracks'][track_idx]['patterns'][pattern_idx]
 			modified['tracks'][track_idx]['patterns'].append({'rows': []})
-			for original_row in original_pattern['rows']:
+			for row_idx in range(len(original_pattern['rows'])):
+				original_row = original_pattern['rows'][row_idx]
+
 				# Copy the row without FXX effect, noting the number of dummy rows to add
 				modified_row = copy.deepcopy(original_row)
-				repeats = 0
 				for channel in modified_row['channels']:
 					for i in range(len(channel['effects'])):
 						if channel['effects'][i][0] == 'F':
-							repeats = int(channel['effects'][i][1:], 16) - 1
+							new_speed = int(channel['effects'][i][1:], 16)
 							# F00 case:
 							#  It makes no sense. Maybe infinite beats per minute.
 							#  Famitracker wiki state that F00 is valid, without detail on what it does.
 							#  Famitracker chm states that it is invalid.
 							#  It seems to be equivalent to F01, until a proof is given, let's just crash.
-							ensure(repeats >= 0, 'unhandled effect F00')
-							channel['effects'][i] = '...'
+							ensure(new_speed > 0, 'unhandled effect F00')
+							if new_speed < 0x20:
+								channel['effects'][i] = '...'
+								current_speed = new_speed
 
 				# Store modified row and dummies to compensate the lack of FXX effect
 				modified['tracks'][track_idx]['patterns'][-1]['rows'].append(modified_row)
@@ -530,7 +598,11 @@ def unroll_f_effect(music):
 						'volume': '.',
 						'effects': ['...'] * n_effects
 					})
-				for i in range(repeats):
+
+				ensure(current_speed > 0, 'unhandled speed of {} in {}'.format(
+					current_speed, row_identifier(track_idx, pattern_idx, row_idx, 0)
+				));
+				for i in range(current_speed - 1):
 					modified['tracks'][track_idx]['patterns'][-1]['rows'].append(copy.deepcopy(dummy_row))
 
 	# Sanity checks and return
@@ -955,8 +1027,6 @@ def remove_instruments(music):
 
 					if seq_dut is not None:
 						ensure(len(seq_dut['sequence']) > 0)
-						if seq_dut['loop'] != -1:
-							warn('instrument {:X} has a looping duty enveloppe: TODO handle loops'.format(instrument_idx))
 
 						# Find initial reference duty (even if above the note)
 						ref_duty = None
@@ -2211,6 +2281,7 @@ def compute_note_length(music):
 	Depends: to_uncompressed_format
 	"""
 	#TODO for now simply use 5, real value should certainly be gcd(num frames between non-empty rows) (maybe ingoring rare occurence of shorter times)
+	#     or simply use track's speed (except on degenerate case were a lot of FXX is used, allow to specify it)
 	modified = copy.deepcopy(music)
 	for sample in modified['uctf']['samples']:
 		sample['default_note_length'] = 5
@@ -2696,15 +2767,35 @@ def split_samples(music):
 	min_pattern_size = 1
 
 	# Handle channel types separately
+	debug('split samples: min_pattern_size={} max_pattern_size={}'.format(min_pattern_size, max_pattern_size))
 	for searched_sample_type in ['music_sample_2a03_pulse', 'music_sample_2a03_triangle', 'music_sample_2a03_noise']:
+		debug('\tsearching sample type {}'.format(searched_sample_type))
+
+		# Compute number of free spots in sample index (used to avoid processing too costly patterns)
+		channel_idx_by_sample_type = {
+			'music_sample_2a03_pulse': [0, 1],
+			'music_sample_2a03_triangle': [2],
+			'music_sample_2a03_noise': [3],
+		}
+		MAX_CHANNEL_INDEX_ENTRIES = 127
+		free_index_spots = 0
+		for channel_idx in channel_idx_by_sample_type[searched_sample_type]:
+			free_index_spots = max(free_index_spots, MAX_CHANNEL_INDEX_ENTRIES - len(music['mod']['channels'][channel_idx]))
+
+		# Avoid processing channels that cannot handle more sample split
+		if free_index_spots == 0:
+			continue
+
 		# Scan all samples, searching for patterns
+		debug('\tscanning patterns')
 		patterns = {}
 		for n_opcodes in range(min_pattern_size, max_pattern_size):
 			for scaned_sample in music['mod']['samples']:
 				if scaned_sample['type'] != searched_sample_type:
 					continue
 
-				for pattern_pos in range(len(scaned_sample['opcodes']) - n_opcodes + 1):
+				last_possible_pattern_pos = len(scaned_sample['opcodes']) - n_opcodes
+				for pattern_pos in range(last_possible_pattern_pos + 1):
 					# Extract pattern
 					pattern_opcodes = scaned_sample['opcodes'][pattern_pos:pattern_pos+n_opcodes]
 					assert len(pattern_opcodes) == n_opcodes
@@ -2716,37 +2807,65 @@ def split_samples(music):
 						continue
 
 					# Increment pattern's count
-					key = json.dumps(pattern_opcodes, sort_keys=True)
+					#key = json.dumps(pattern_opcodes, sort_keys=True)
+					key = tuple(((x['name'], tuple(x['parameters'])) for x in pattern_opcodes))
 					if key in patterns.keys():
 						patterns[key]['count'] += 1
 					else:
 						patterns[key] = {
 							'opcodes': pattern_opcodes,
-							'count': 1
+							'count': 1,
+							'n_edge': 0, # Number of times the pattern is at the very begining or very end of the sample
 						}
+					if pattern_pos == 0 or pattern_pos == last_possible_pattern_pos:
+						patterns[key]['n_edge'] += 1
 
 		# Get the patterns ordered by the number of bytes they save
+		debug('\tcount bytes saved per pattern')
+		pattern_priority_option = 'bytes_per_index'
 		flat_patterns = [patterns[k] for k in patterns]
 		for pattern in flat_patterns:
 			pattern_size_in_bytes = 0
 			for opcode in pattern['opcodes']:
 				pattern_size_in_bytes += get_opcode_size(opcode)
 
+			# Number of bytes saved
+			#TODO use "n_edge" to reduce error margin precision
 			bytes_saved = pattern_size_in_bytes * (pattern['count'] - 1) # Bytes saved by storing the pattern in a sample instead of repeating it
 			bytes_saved -= 2 + pattern['count'] * (4 + 2) # Bytes wasted by referencing more samples in the track (worst case: 2 for pattern's SAMPLE_END + per-use<4 for new samples references in track + 2 for new SAMPLE_END in splitted sample>)
 			pattern['bytes_saved'] = bytes_saved
 
-		flat_patterns.sort(key=lambda x: x['bytes_saved'], reverse=True)
+			# Number of extra entries in the track's sample list
+			#  Note: It is an approximation, notably over-valued if the pattern is repeated multiples times at the begining of a sample.
+			#        Never undervalued.
+			pattern['extra_index'] = pattern['n_edge'] + 2 * (pattern['count'] - pattern['n_edge'])
+
+		if pattern_priority_option == 'bytes':
+			flat_patterns.sort(key=lambda x: x['bytes_saved'], reverse=True)
+		elif pattern_priority_option == 'bytes_per_index':
+			flat_patterns.sort(key=lambda x: (x['bytes_saved'] / x['extra_index'], x['bytes_saved']), reverse=True)
+		else:
+			assert False, 'unknow pattern priority option "{}"'.format(pattern_priority_option)
 
 		# Try to extract each pattern until one can be extracted without breaking the limites of samples in any track
+		debug('\textract best pattern (out of {})'.format(len(flat_patterns)))
 		for best_pattern in flat_patterns:
+			debug('\t\tCheck pattern (-bytes={} +entries={})'.format(best_pattern['bytes_saved'], best_pattern['extra_index']))
+
 			# Determine if it is worth extracting the pattern to its own sample
 			if best_pattern['bytes_saved'] <= 0:
 				break # logically could be "continue", but it is not worth checking next patterns as they are ordered by "byte_saved"
 
+			# Determine if sample list can support the extra charge
+			if best_pattern['extra_index'] > free_index_spots:
+				continue
+
+			# Get a modifiable mod
+			debug('\t\tcopy mod')
 			mod = copy.deepcopy(music['mod'])
 
 			# Add a sample for the pattern
+			debug('\t\tadd new sample')
 			pattern_sample_index = len(mod['samples'])
 			mod['samples'].append({
 				'type': searched_sample_type,
@@ -2754,6 +2873,7 @@ def split_samples(music):
 			})
 
 			# Split samples containing this pattern
+			debug('\t\tsplit samples')
 			sample_index_update = {} # key: original sample index - value: new sequence of sample indexes
 			for original_sample_index in range(len(mod['samples'])):
 				# Do not process samples of other types
@@ -2795,6 +2915,7 @@ def split_samples(music):
 					sample_index_update[original_sample_index] = new_sample_indexes
 
 			# Modify channels to reference splitted samples
+			debug('\t\tmodify references')
 			overflow = False
 			for chan_idx in range(len(mod['channels'])):
 				new_indexes = []
@@ -2803,11 +2924,12 @@ def split_samples(music):
 						new_indexes.append(original_index)
 					else:
 						new_indexes.extend(sample_index_update[original_index])
-				if len(new_indexes) > 127:
+				if len(new_indexes) > MAX_CHANNEL_INDEX_ENTRIES:
 					overflow = True
 				mod['channels'][chan_idx] = new_indexes
 
 			# Apply changes if it does not overflow maximum sample count
+			debug('\t\tapply changes')
 			if not overflow:
 				music['mod'] = mod
 				break

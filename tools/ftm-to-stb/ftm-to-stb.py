@@ -5,10 +5,12 @@ Read a ftm text export and convert it to a json structure closely matching stb b
 """
 
 import copy
+import datetime
 import ftmtxt
 import ftmmanip
 import json
 import sys
+import time
 
 # Parameters
 if len(sys.argv) < 2 or sys.argv[1].lower() in ['-h', '--help']:
@@ -22,15 +24,20 @@ if len(sys.argv) < 2 or sys.argv[1].lower() in ['-h', '--help']:
 SOURCE_FILE_PATH = sys.argv[1]
 MAX_OPTIM_PASSES = 0 if len(sys.argv) < 3 else int(sys.argv[2])
 OUT_FILE_PATH = None if len(sys.argv) < 4 else sys.argv[3]
+VERBOSE = False
 
 # Logging
 def log(msg):
 	sys.stderr.write('{}\n'.format(msg))
+def debug(msg):
+	if VERBOSE:
+		log('  DEBUG: [{}] {}'.format(datetime.datetime.fromtimestamp(time.time()).isoformat(), msg))
 def info(msg):
 	log('   INFO: {}'.format(msg))
 def warn(msg):
 	log('WARNING: {}'.format(msg))
 
+ftmmanip.debug = debug
 ftmmanip.warn = warn
 ftmtxt.warn = warn
 
@@ -44,7 +51,7 @@ with open(SOURCE_FILE_PATH, 'r') as f:
 #  * ... (whatever is a direct translation of the original with less things to handle)
 music = ftmmanip.get_num_channels(music)
 music = ftmmanip.flatten_orders(music)
-music = ftmmanip.unroll_f_effect(music)
+music = ftmmanip.unroll_speed(music)
 music = ftmmanip.cut_at_b_effect(music)
 music = ftmmanip.apply_g_effect(music)
 music = ftmmanip.apply_d_effect(music)
@@ -80,14 +87,22 @@ optimal = False
 pass_num = 0
 while not optimal and pass_num < MAX_OPTIM_PASSES:
 	pass_num += 1
-	info('optimization pass #{}'.format(pass_num))
+	info('optimization pass #{} (size={} bytes, index_filling=[{}])'.format(
+		pass_num,
+		music.get('stats', {'total_size': -1})['total_size'],
+		[len(x) for x in music['mod']['channels']]
+	))
 
 	original_music_mod = copy.deepcopy(music['mod'])
 
+	debug('optim: split_samples')
 	music = ftmmanip.split_samples(music)
+	debug('optim: reuse_samples')
 	music = ftmmanip.reuse_samples(music)
+	debug('optim: remove_unused_samples')
 	music = ftmmanip.remove_unused_samples(music)
 
+	debug('optim: save result')
 	if OUT_FILE_PATH is not None:
 		saved = copy.deepcopy(music)
 		saved = ftmmanip.samples_to_source(saved)
@@ -107,3 +122,6 @@ music = ftmmanip.compute_stats(music)
 # Show result
 if OUT_FILE_PATH is None:
 	print(json.dumps(music))
+elif MAX_OPTIM_PASSES == 0:
+	with open(OUT_FILE_PATH, 'w') as out_file:
+		json.dump(music, out_file)
