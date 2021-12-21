@@ -52,9 +52,9 @@ pitch_effects = ['0', '1', '2', '3', '4', 'Q', 'R']
 volume_effects = ['7', 'A', 'E']
 
 uctf_fields_by_type = {
-	'2a03-pulse': ['note', 'volume', 'duty', 'pitch_slide'],
-	'2a03-triangle': ['note', 'pitch_slide'],
-	'2a03-noise': ['freq', 'volume', 'periodic', 'pitch_slide'],
+	'2a03-pulse': ['note', 'frequency_adjust', 'volume', 'duty', 'pitch_slide'],
+	'2a03-triangle': ['note', 'frequency_adjust', 'pitch_slide'],
+	'2a03-noise': ['freq', 'frequency_adjust', 'volume', 'periodic', 'pitch_slide'],
 }
 
 timed_opcodes = [
@@ -64,6 +64,8 @@ timed_opcodes = [
 	'2a03_pulse.WAIT',
 	'2a03_pulse.LONG_WAIT',
 	'2a03_pulse.HALT',
+	'2a03_pulse.AUDIO_PULSE_FREQUENCY_ADD',
+	'2a03_pulse.AUDIO_PULSE_FREQUENCY_SUB',
 	'2a03_pulse.AUDIO_PULSE_META_NOTE',
 	'2a03_pulse.AUDIO_PULSE_META_NOTE_VOL',
 	'2a03_pulse.AUDIO_PULSE_META_NOTE_DUT',
@@ -108,6 +110,8 @@ opcode_size = {
 	'2a03_pulse.LONG_WAIT': 2,
 	'2a03_pulse.HALT': 1,
 	'2a03_pulse.PITCH_SLIDE': 2,
+	'2a03_pulse.AUDIO_PULSE_FREQUENCY_ADD': 3,
+	'2a03_pulse.AUDIO_PULSE_FREQUENCY_SUB': 3,
 	#'2a03_pulse.AUDIO_PULSE_META_NOTE': 3, # Disabled for now as a poor man sanity check (should be avoided in most cases)
 	'2a03_pulse.AUDIO_PULSE_META_NOTE_VOL': 4,
 	'2a03_pulse.AUDIO_PULSE_META_NOTE_DUT': 4,
@@ -232,6 +236,29 @@ def is_pitch_slide_activation_effect(effect):
 		effect not in ['000', '100', '200', '300'] and
 		effect[0:2] != '40'
 	)
+
+def place_extra_effect(chan_row, effect, replace, msg):
+	"""
+	Place an extra effect, creating the structure if needed
+	"""
+	# Ensure extra_effects field is present
+	if 'extra_effects' not in chan_row:
+		chan_row['extra_effects'] = []
+
+	# Check conflicting effect
+	existing_effect_idx = None
+	for current_effect_idx in range(len(chan_row['extra_effects'])):
+		current_effect = chan_row['extra_effects'][current_effect_idx]
+		if current_effect['effect'] == effect['effect']:
+			existing_effect_idx = current_effect_idx
+			warn(msg)
+
+	# Place
+	if existing_effect_idx is not None:
+		if replace:
+			chan_row['extra_effects'][existing_effect_idx] = effect
+	else:
+		chan_row['extra_effects'].append(effect)
 
 def place_pitch_effect(chan_row, effect, replace, warn_on_stop=False, msg=None):
 	"""
@@ -1055,39 +1082,35 @@ def _apply_arpegio_sequence(seq_arp, ref_note, modified, instrument_idx, track_i
 		ref_note_idx = int(ref_note[0], 16)
 	else:
 		ref_note_idx = get_note_table_index(ref_note)
+	last_note_idx = ref_note_idx
 
-	# Warn if there is an active pitch slide and note's row doesn't stop it
+	# Check if there is an active pitch effect impacting the first row
 	pitch_effect = get_current_pitch_effect(modified, track_idx, pattern_idx, chan_idx, row_idx)
-	if pitch_effect is not None and is_pitch_slide_activation_effect(pitch_effect):
-		warn('Note with arpegio instrument starts while a slide effect is active {}: arpegio mechanically cancels pitch slides'.format(
-			row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-		))
+	has_pitch_effect = pitch_effect is not None and is_pitch_slide_activation_effect(pitch_effect)
 
 	# Until the next note, the note is adjusted by the enveloppe
 	sequence_step = 0
 	first_row = True
 	def scanner_arp(current_pattern_idx, current_row_idx):
-		nonlocal first_row, sequence_step, track
+		nonlocal first_row, has_pitch_effect, last_note_idx, ref_note_idx, sequence_step, track
 		current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
 
 		# Stop on any row with a note
 		if current_chan_row['note'] != '...' and (current_pattern_idx, current_row_idx) != (pattern_idx, row_idx):
 			return False
 
-		# Warn if there is a pitch effect (check on first row already done before scanning)
+		# Check if pitch effect starts or ends here
 		if first_row:
 			first_row = False
 		else:
 			pitch_effect_idx = get_pitch_effect(current_chan_row)
-			if pitch_effect_idx is not None and is_pitch_slide_activation_effect(current_chan_row['effects'][pitch_effect_idx]):
-				warn('pitch effect on pattern while instrument has arpegio enveloppe in {}: arpegio mechanically cancels pitch slides'.format(
-					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
-				))
+			if pitch_effect_idx is not None:
+				has_pitch_effect = is_pitch_slide_activation_effect(current_chan_row['effects'][pitch_effect_idx])
 
 		# Compute value as impacted by the sequence
 		sequence_value = seq_arp['sequence'][sequence_step]
 		if get_chan_type(modified, chan_idx) == '2a03-noise':
-			# Noise channel has 16 possible frequences, against 96 notes in the table for other channels
+			# Noise channel has 16 possible frequencies, against 96 notes in the table for other channels
 			#  divide by 6 to have a correspondance
 			if sequence_value % 6 != 0:
 				warn('arpegio enveloppe of instrument {:X} contains values not multiple of 6: truncated down'.format(instrument_idx))
@@ -1120,10 +1143,30 @@ def _apply_arpegio_sequence(seq_arp, ref_note, modified, instrument_idx, track_i
 				enveloppe_note_idx = 0
 
 		# Place computed value
-		if get_chan_type(modified, chan_idx) == '2a03-noise':
-			current_chan_row['note'] = '{:X}-#'.format(enveloppe_note_idx)
+		if not has_pitch_effect or current_chan_row['note'] != '...':
+			# There is not pitch effect, or we are on the first row (setting the note), so we can simply place the resulting note
+			if get_chan_type(modified, chan_idx) == '2a03-noise':
+				current_chan_row['note'] = '{:X}-#'.format(enveloppe_note_idx)
+			else:
+				current_chan_row['note'] = note_table_names[enveloppe_note_idx]
 		else:
-			current_chan_row['note'] = note_table_names[enveloppe_note_idx]
+			# There is an active pitch effect that may impact the played frequency, place the wanted difference with current frequency
+			if get_chan_type(modified, chan_idx) == '2a03-noise':
+				pitch_diff = enveloppe_note_idx - last_note_idx
+			else:
+				pitch_diff = note_table_freqs[enveloppe_note_idx] - note_table_freqs[last_note_idx]
+
+			if pitch_diff != 0:
+				place_extra_effect(
+					current_chan_row,
+					{'effect': 'frequency_adjust', 'value': pitch_diff},
+					replace=True,
+					msg='conflicting frequency_adjust caused by arpegio instrument in {}: replacing existing effect, TODO merge frequency_adjust effects'.format(
+						row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+					)
+				)
+
+		last_note_idx = enveloppe_note_idx
 
 		# Advance sequence
 		if seq_arp['loop'] == -1:
@@ -2172,6 +2215,7 @@ def to_uncompressed_format(music):
 					else:
 						duty_effect = '...'
 						pitch_slide = None
+						frequency_adjust = None
 						for effect in chan_row['effects']:
 							if effect[0] == 'V':
 								duty_effect = effect
@@ -2179,10 +2223,14 @@ def to_uncompressed_format(music):
 								pitch_slide = -int(effect[1:], 16)
 							elif effect[0] == '2':
 								pitch_slide = int(effect[1:], 16)
+						for effect in chan_row.get('extra_effects', []):
+							if effect['effect'] == 'frequency_adjust':
+								frequency_adjust = effect['value']
 
 						if sample['type'] == '2a03-pulse':
 							sample['lines'].append({
 								'note': chan_row['note'] if chan_row['note'] != '...' else None,
+								'frequency_adjust': frequency_adjust,
 								'volume': int(chan_row['volume'], 16) if chan_row['volume'] != '.' else None,
 								'duty': int(duty_effect[1:], 16) if duty_effect != '...' else None,
 								'pitch_slide': pitch_slide
@@ -2190,11 +2238,13 @@ def to_uncompressed_format(music):
 						elif sample['type'] == '2a03-triangle':
 							sample['lines'].append({
 								'note': chan_row['note'] if chan_row['note'] != '...' else None,
+								'frequency_adjust': frequency_adjust,
 								'pitch_slide': pitch_slide
 							})
 						elif sample['type'] == '2a03-noise':
 							sample['lines'].append({
 								'freq': chan_row['note'] if chan_row['note'] != '...' else None,
+								'frequency_adjust': frequency_adjust,
 								'volume': int(chan_row['volume'], 16) if chan_row['volume'] != '.' else None,
 								'periodic': int(duty_effect[1:], 16) if duty_effect != '...' else None,
 								'pitch_slide': pitch_slide
@@ -2236,7 +2286,7 @@ def remove_duplicates(music):
 
 			# Remove fields from current row that actually did not change
 			assert isinstance(line, dict), 'unsuported sample line value'
-			assert list(line.keys()) == uctf_fields, 'unsuported uctf line format (if you added a supported effect, remove_duplicated_note() certainly must be updated)'
+			assert list(line.keys()) == uctf_fields, 'unsuported uctf line format (if you added a supported effect, remove_duplicates() certainly must be updated)'
 
 			def field_changed(field):
 				return line[field] is not None and line[field] != last_line_values[field]
@@ -2251,6 +2301,9 @@ def remove_duplicates(music):
 						# Do not remove a duplicate note if there was a pitch slide
 						# Note: "is not None" part of the condition means "if pitch slide was never set in this sample" which
 						#        is an aggressive optimization (previous sample could have set a pitch slide)
+						is_empty = False
+					if field == 'frequency_adjust':
+						# Do not remove frequency_adjust, it only impacts the line on which it is. Last value is no more impacting current line.
 						is_empty = False
 					else:
 						line[field] = None
@@ -2345,6 +2398,11 @@ def to_mod_format(music):
 				actual_note_index = len(note_table_names) - 1
 			return get_note_frequency(note_table_names[actual_note_index])
 
+		if line['note'] is not None and line['frequency_adjust'] is not None:
+			warn('got a note ({}) and frequency adjust ({}) on same line: ignoring frequency adjust'.format(
+				line['note'], line['frequency_adjust']
+			))
+
 		duration = line['duration']
 		if line['note'] in ['---', '===']:
 			step = min(duration, 8)
@@ -2399,7 +2457,36 @@ def to_mod_format(music):
 					'name': 'PLAY_TIMED_FREQ',
 					'parameters': [
 						offseted_get_note_frequency(line['note']),
-						duration
+						step
+					]
+				})
+				duration -= step
+		elif line['frequency_adjust'] is not None:
+			step = min(duration, 255)
+			if line['frequency_adjust'] == 0:
+				# This is actually not a problem, could happen if multiple logic parts played with frequency adjust
+				# Warn here because:
+				#  - This code is new, I want to see how it behaves
+				#  - For now, only arpegio instrument plays with frequency adjust, so it should never happen
+				#  - Ease of converting the log to a "debug" instead of "warn"
+				warn('frequency adjust of zero: ignore')
+			elif line['frequency_adjust'] > 0:
+				opcodes.append({
+					'type': 'music_sample_2a03_pulse_opcode',
+					'name': 'AUDIO_PULSE_FREQUENCY_ADD',
+					'parameters': [
+						line['frequency_adjust'],
+						step
+					]
+				})
+				duration -= step
+			else: # line['frequency_adjust'] < 0
+				opcodes.append({
+					'type': 'music_sample_2a03_pulse_opcode',
+					'name': 'AUDIO_PULSE_FREQUENCY_SUB',
+					'parameters': [
+						-line['frequency_adjust'],
+						step
 					]
 				})
 				duration -= step
@@ -2439,6 +2526,7 @@ def to_mod_format(music):
 		for line in sample['lines']:
 			assert isinstance(line, dict), 'bad sample line format (is there still some "empty_row"?)'
 			assert 'note' in line
+			assert 'frequency_adjust' in line
 			assert 'volume' in line
 			assert 'duty' in line
 			assert 'duration' in line
@@ -2501,6 +2589,7 @@ def to_mod_format(music):
 		for line in sample['lines']:
 			assert isinstance(line, dict), 'bad sample line format (is there still some "empty_row"?)'
 			assert 'note' in line
+			assert 'frequency_adjust' in line
 			assert 'volume' not in line
 			assert 'duty' not in line
 			assert 'duration' in line
@@ -2547,6 +2636,7 @@ def to_mod_format(music):
 			assert isinstance(line, dict), 'bad sample line format (is there still some "empty_row"?)'
 			assert 'note' not in line
 			assert 'freq' in line
+			assert 'frequency_adjust' in line
 			assert 'volume' in line
 			assert 'duty' not in line
 			assert 'periodic' in line
@@ -2597,6 +2687,11 @@ def to_mod_format(music):
 			# Timed opcodes (play, wait or halt)
 			duration = line['duration']
 
+			if line['freq'] is not None and line['frequency_adjust'] is not None:
+				warn('got a noise frequency ({}) and frequency adjust ({}) on same line: ignoring frequency adjust'.format(
+					line['freq'], line['frequency_adjust']
+				))
+
 			if line['freq'] in ['---', '===']:
 				step = min(duration, 8)
 				assert duration >= 1
@@ -2616,6 +2711,16 @@ def to_mod_format(music):
 					'parameters': [freq, step]
 				})
 				duration -= step
+			elif line['frequency_adjust'] is not None:
+				if line['frequency_adjust'] == 0:
+					# This is actually not a problem, could happen if multiple logic parts played with frequency adjust
+					# Warn here because:
+					#  - This code is new, I want to see how it behaves
+					#  - For now, only arpegio instrument plays with frequency adjust, so it should never happen
+					#  - Ease of converting the log to a "debug" instead of "warn"
+					warn('frequency adjust of zero: ignore')
+				else:
+					warn('TODO add opcodes for frequency adjust in noise channel')
 
 			while duration > 0:
 				if duration <= 16:

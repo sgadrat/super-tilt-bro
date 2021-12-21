@@ -50,6 +50,7 @@ LINE::
 
 	{
 		"note": NOTE_NAME,
+		"frequency_adjustement": int12 [-2047;+2047],
 		"volume": uint4,
 		"duty": uint2,
 		"pitch_slide": int16,
@@ -59,6 +60,7 @@ LINE::
 
 	{
 		"note": NOTE_NAME,
+		"frequency_adjustement": int12 [-2047;+2047],
 		"pitch_slide": int16,
 	}
 
@@ -66,6 +68,7 @@ LINE::
 
 	{
 		"freq": NOISE_NOTE_NAME,
+		"frequency_adjustement": int5 [-15;+15],
 		"volume": uint4,
 		"periodic": uint1,
 		"pitch_slide": int5 [-15;+15],
