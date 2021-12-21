@@ -872,6 +872,336 @@ def apply_s_effect(music):
 
 	return modified
 
+def _apply_volume_sequence(seq_vol, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx):
+	ensure(len(seq_vol['sequence']) > 0, 'instrument {:X} has an empty volume sequence'.format(instrument_idx))
+
+	# Common variables
+	track = modified['tracks'][track_idx]
+
+	# Handle volume envelope, triange is special: lacking volume control is can be mute when envelope is zero
+	if get_chan_type(modified, chan_idx) == '2a03-triangle':
+		# Until the next note, the channel is mute if the volume is zero
+		sequence_step = 0
+		last_envelope_value = None
+		def scanner_vol_tri(current_pattern_idx, current_row_idx):
+			nonlocal last_envelope_value, sequence_step, track
+			current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+
+			# Stop on any row with a note
+			if current_chan_row['note'] != '...' and (current_pattern_idx, current_row_idx) != (pattern_idx, row_idx):
+				return False
+
+			# Modify row according to the envelope
+			envelope_value = seq_vol['sequence'][sequence_step]
+			if envelope_value != last_envelope_value:
+				# Place an halt if volume reaches zero
+				if envelope_value == 0 and last_envelope_value != 0:
+					current_chan_row['note'] = '---'
+
+				# Place the original note if volume becomes non-zero
+				if envelope_value != 0 and last_envelope_value == 0:
+					current_chan_row['note'] = ref_note
+
+				last_envelope_value = envelope_value
+
+			# Advance sequence
+			if seq_vol['loop'] == -1:
+				sequence_step = min(sequence_step + 1, len(seq_vol['sequence']) - 1)
+			else:
+				sequence_step += 1
+				if sequence_step >= len(seq_vol['sequence']):
+					sequence_step = seq_vol['loop']
+		scan_next_chan_rows(scanner_vol_tri, modified, track_idx, pattern_idx, row_idx)
+
+		# Inform that the sequence is handled
+		return True
+
+	elif get_chan_type(modified, chan_idx) in ['2a03-pulse', '2a03-noise']:
+		# Find initial reference volume (even if above the note)
+		ref_volume = None
+		def check_row_volume(curent_pattern_idx, current_row_idx):
+			nonlocal ref_volume, track, chan_idx
+			current_chan_row = track['patterns'][curent_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+			if current_chan_row['volume'] != '.':
+				ref_volume = int(current_chan_row['volume'], 16)
+				return False
+		scan_previous_chan_rows(check_row_volume, modified, track_idx, pattern_idx, chan_idx, row_idx)
+
+		if ref_volume is None:
+			ref_volume = 15
+
+		# Until the next note, the volume is adjusted by the enveloppe
+		sequence_step = 0
+		stop_row = None
+		def scanner_apply_volume(curent_pattern_idx, current_row_idx):
+			nonlocal ref_volume, sequence_step, stop_row, track
+			first_line = (curent_pattern_idx == pattern_idx and current_row_idx == row_idx)
+			current_chan_row = track['patterns'][curent_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+
+			if current_chan_row['note'] != '...' and not first_line:
+				stop_row = current_chan_row
+				return False
+
+			if current_chan_row['volume'] != '.':
+				ref_volume = int(current_chan_row['volume'], 16)
+
+			enveloppe_volume = int(.5 + (ref_volume * (seq_vol['sequence'][sequence_step] / 15.)))
+			enveloppe_volume = max(0, enveloppe_volume)
+			enveloppe_volume = min(15, enveloppe_volume)
+			current_chan_row['volume'] = '{:X}'.format(enveloppe_volume)
+
+			# Advance sequence
+			if seq_vol['loop'] == -1:
+				sequence_step = min(sequence_step + 1, len(seq_vol['sequence']) - 1)
+			else:
+				sequence_step += 1
+				if sequence_step >= len(seq_vol['sequence']):
+					sequence_step = seq_vol['loop']
+		scan_next_chan_rows(scanner_apply_volume, modified, track_idx, pattern_idx, row_idx)
+
+		# On the next note, explicitely reset reference volume
+		if stop_row is not None and stop_row['volume'] == '.':
+			stop_row['volume'] = '{:X}'.format(ref_volume)
+
+		# Inform that the sequence is handled
+		return True
+
+	# Unhandled channel type
+	return False
+
+def _apply_duty_sequence(seq_dut, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx):
+	ensure(len(seq_dut['sequence']) > 0)
+	track = modified['tracks'][track_idx]
+
+	# Find initial reference duty (even if above the note)
+	ref_duty = None
+	def check_row_duty(curent_pattern_idx, current_row_idx):
+		nonlocal ref_duty, track, chan_idx
+		current_chan_row = track['patterns'][curent_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+		for current_effect in current_chan_row['effects']:
+			if current_effect[0] == 'V':
+				ref_duty = int(current_effect[1:], 16)
+				return False
+	scan_previous_chan_rows(check_row_duty, modified, track_idx, pattern_idx, chan_idx, row_idx)
+
+	if ref_duty is None:
+		warn('unable to find reference duty for instrument enveloppe in {}: considere it as V00'.format(
+			row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+		))
+		ref_duty = 0
+
+	# Until the next note, the duty is adjusted by the enveloppe
+	sequence_step = 0
+	stopped_on_track_end = True
+	def scanner_dut(current_pattern_idx, current_row_idx):
+		nonlocal ref_duty, sequence_step, stopped_on_track_end
+		current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+
+		# Stop on any row with a note
+		if current_chan_row['note'] != '...' and (current_pattern_idx, current_row_idx) != (pattern_idx, row_idx):
+
+			# On the next note, explicitely reset reference duty
+			has_duty_effect = False
+			for current_effect in current_chan_row['effects']:
+				if current_effect[0] == 'V':
+					has_duty_effect = True
+			if not has_duty_effect:
+				current_chan_row['effects'].append('V{:02X}'.format(ref_duty))
+
+			# Stop iterating
+			stopped_on_track_end = False
+			return False
+
+		# Check for new reference duty
+		duty_effect_idx = None
+		for current_effect_idx in range(len(current_chan_row['effects'])):
+			current_effect = current_chan_row['effects'][current_effect_idx]
+			if current_effect[0] == 'V':
+				ref_duty = int(current_effect[1:], 16)
+				duty_effect_idx = current_effect_idx
+
+		# Compute value as impacted by the sequence
+		enveloppe_duty = seq_dut['sequence'][sequence_step]
+		if duty_effect_idx is not None:
+			current_chan_row['effects'][duty_effect_idx] = 'V{:02X}'.format(enveloppe_duty)
+		else:
+			current_chan_row['effects'].append('V{:02X}'.format(enveloppe_duty))
+
+		# Advance sequence
+		if seq_dut['loop'] == -1:
+			sequence_step = min(sequence_step + 1, len(seq_dut['sequence']) - 1)
+		else:
+			sequence_step += 1
+			if sequence_step >= len(seq_dut['sequence']):
+				sequence_step = seq_dut['loop']
+	scan_next_chan_rows(scanner_dut, modified, track_idx, pattern_idx, row_idx )
+
+	# Warn if envelop goes past the end of the track, hoping there is an explicit VXX at the begining to reset duty
+	if stopped_on_track_end:
+		warn('duty envelope from {} goes beyond the end of the track'.format(
+			row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+		))
+
+	# Inform that the sequence is handled
+	return True
+
+def _apply_arpegio_sequence(seq_arp, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx):
+	ensure(len(seq_arp['sequence']) > 0, 'instrument {:X} has an empty arpeggio sequence'.format(instrument_idx))
+	ensure(seq_arp['setting'] == 0, 'instrument {:X} use a non-absolute arpeggio: TODO handle fixed and relative arpeggio'.format(instrument_idx))
+	track = modified['tracks'][track_idx]
+
+	# Get reference note in numerical form
+	if get_chan_type(modified, chan_idx) == '2a03-noise':
+		ref_note_idx = int(ref_note[0], 16)
+	else:
+		ref_note_idx = get_note_table_index(ref_note)
+
+	# Warn if there is an active pitch slide and note's row doesn't stop it
+	pitch_effect = get_current_pitch_effect(modified, track_idx, pattern_idx, chan_idx, row_idx)
+	if pitch_effect is not None and is_pitch_slide_activation_effect(pitch_effect):
+		warn('Note with arpegio instrument starts while a slide effect is active {}: arpegio mechanically cancels pitch slides'.format(
+			row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+		))
+
+	# Until the next note, the note is adjusted by the enveloppe
+	sequence_step = 0
+	first_row = True
+	def scanner_arp(current_pattern_idx, current_row_idx):
+		nonlocal first_row, sequence_step, track
+		current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+
+		# Stop on any row with a note
+		if current_chan_row['note'] != '...' and (current_pattern_idx, current_row_idx) != (pattern_idx, row_idx):
+			return False
+
+		# Warn if there is a pitch effect (check on first row already done before scanning)
+		if first_row:
+			first_row = False
+		else:
+			pitch_effect_idx = get_pitch_effect(current_chan_row)
+			if pitch_effect_idx is not None and is_pitch_slide_activation_effect(current_chan_row['effects'][pitch_effect_idx]):
+				warn('pitch effect on pattern while instrument has arpegio enveloppe in {}: arpegio mechanically cancels pitch slides'.format(
+					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+				))
+
+		# Compute value as impacted by the sequence
+		sequence_value = seq_arp['sequence'][sequence_step]
+		if get_chan_type(modified, chan_idx) == '2a03-noise':
+			# Noise channel has 16 possible frequences, against 96 notes in the table for other channels
+			#  divide by 6 to have a correspondance
+			if sequence_value % 6 != 0:
+				warn('arpegio enveloppe of instrument {:X} contains values not multiple of 6: truncated down'.format(instrument_idx))
+			sequence_value = sequence_value // 6
+
+		enveloppe_note_idx = ref_note_idx + sequence_value
+
+		# Bound computed value to valid values
+		if get_chan_type(modified, chan_idx) == '2a03-noise':
+			if enveloppe_note_idx > 0xf:
+				warn('arpegio enveloppe for noise goes over F in {}: F used'.format(
+					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+				))
+				enveloppe_note_idx = 0xf
+			elif enveloppe_note_idx < 0:
+				warn('arpegio enveloppe for noise goes under 0 in {}: 0 used'.format(
+					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+				))
+				enveloppe_note_idx = 0
+		else:
+			if enveloppe_note_idx >= len(note_table_names):
+				warn('arpegio enveloppe goes over the notes table in {}: last note of the table used'.format(
+					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+				))
+				enveloppe_note_idx = len(note_table_names) - 1
+			elif enveloppe_note_idx < 0:
+				warn('arpegio enveloppe goes under the notes table in {}: first note of the table used'.format(
+					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+				))
+				enveloppe_note_idx = 0
+
+		# Place computed value
+		if get_chan_type(modified, chan_idx) == '2a03-noise':
+			current_chan_row['note'] = '{:X}-#'.format(enveloppe_note_idx)
+		else:
+			current_chan_row['note'] = note_table_names[enveloppe_note_idx]
+
+		# Advance sequence
+		if seq_arp['loop'] == -1:
+			sequence_step = min(sequence_step + 1, len(seq_arp['sequence']) - 1)
+		else:
+			sequence_step += 1
+			if sequence_step >= len(seq_arp['sequence']):
+				sequence_step = seq_arp['loop']
+	scan_next_chan_rows(scanner_arp, modified, track_idx, pattern_idx, row_idx )
+
+	# Inform that the sequence is handled
+	return True
+
+def _apply_pitch_sequence(seq_pit, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx):
+	ensure(len(seq_pit['sequence']) > 0, 'instrument {:X} has an empty pitch sequence'.format(instrument_idx))
+	track = modified['tracks'][track_idx]
+
+	# Until the next note, the note is adjusted by the envelope
+	sequence_step = 0
+	current_slide = None
+	last_chan_row = None
+	def scanner_pit(current_pattern_idx, current_row_idx):
+		nonlocal current_slide, last_chan_row, sequence_step
+		current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+		last_chan_row = current_chan_row
+
+		# Stop on any row with a note
+		if current_chan_row['note'] != '...' and (current_pattern_idx, current_row_idx) != (pattern_idx, row_idx):
+			return False
+
+		# Compute a pitch slide effect according to envelope
+		#FIXME is is one tick late as instrument envelope is immediate while pitch slide begins its effect on the next tick
+		#      - An idea whould be to change UCTF to hold frequencies instead of notes
+		#        so we can flatten pitch envelopes
+		#      - Another could be to add an opcode "instant pitch modify",
+		#        that would affect pitch immediately, without long term effect (unlike 1xx/2xx),
+		#        this is easy to mix with actual pitch-slide, and actually what instrument pitch envelope do
+		#        (bonus: it avoids to use frequencies directly, so more PAL+NTSC friendly)
+		envelope_pitch = seq_pit['sequence'][sequence_step]
+		envelope_effect = '{}{:02X}'.format(
+			'1' if envelope_pitch <= 0 else '2',
+			abs(envelope_pitch)
+		)
+
+		# Place computed value
+		if envelope_pitch != current_slide:
+			place_pitch_effect(
+				current_chan_row, envelope_effect, replace=True, warn_on_stop=False,
+				msg='instrument pitch envelope conflict with pattern in {}: overwrite pattern'.format(
+					row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+				)
+			)
+			current_slide = envelope_pitch
+
+		# Advance sequence
+		if seq_pit['loop'] == -1:
+			sequence_step = min(sequence_step + 1, len(seq_pit['sequence']) - 1)
+			sequence_step = sequence_step + 1
+			if sequence_step >= len(seq_pit['sequence']):
+				return False
+		else:
+			sequence_step += 1
+			if sequence_step >= len(seq_pit['sequence']):
+				sequence_step = seq_pit['loop']
+	scan_next_chan_rows(scanner_pit, modified, track_idx, pattern_idx, row_idx)
+
+	# End envelope's effect with a 100
+	if last_chan_row is not None:
+		if last_chan_row['note'] != '...':
+			# Envelope ended by a note, do not replace any existing effect
+			place_pitch_effect(last_chan_row, '100', replace=False)
+		else:
+			# Envelope ended another way, we certainly placed an effect on it, replace it
+			place_pitch_effect(last_chan_row, '100', replace=True)
+
+	# Inform that the sequence is handled
+	return True
+
 def remove_instruments(music):
 	"""
 	Apply instruments effects to the timeline
@@ -882,7 +1212,7 @@ def remove_instruments(music):
 		if seq_idx == -1:
 			return None
 		return music['macros'][chan_type][seq_type][seq_idx]
-		
+
 	modified = copy.deepcopy(music)
 
 	for track_idx in range(len(modified['tracks'])):
@@ -937,323 +1267,20 @@ def remove_instruments(music):
 
 					# Apply instrument effects to the timeline
 					if seq_vol is not None:
-						ensure(len(seq_vol['sequence']) > 0, 'instrument {:X} has an empty volume sequence'.format(instrument_idx))
-
-						if get_chan_type(modified, chan_idx) == '2a03-triangle':
-							# Until the next note, the channel is mute if the volume is zero
-							sequence_step = 0
-							last_envelope_value = None
-							def scanner_vol_tri(current_pattern_idx, current_row_idx):
-								nonlocal last_envelope_value, sequence_step
-								current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
-
-								# Stop on any row with a note
-								if current_chan_row['note'] != '...' and (current_pattern_idx, current_row_idx) != (pattern_idx, row_idx):
-									return False
-
-								# Modify row according to the envelope
-								envelope_value = seq_vol['sequence'][sequence_step]
-								if envelope_value != last_envelope_value:
-									# Place an halt if volume reaches zero
-									if envelope_value == 0 and last_envelope_value != 0:
-										current_chan_row['note'] = '---'
-
-									# Place the original note if volume becomes non-zero
-									if envelope_value != 0 and last_envelope_value == 0:
-										current_chan_row['note'] = ref_note
-
-									last_envelope_value = envelope_value
-
-								# Advance sequence
-								if seq_vol['loop'] == -1:
-									sequence_step = min(sequence_step + 1, len(seq_vol['sequence']) - 1)
-								else:
-									sequence_step += 1
-									if sequence_step >= len(seq_vol['sequence']):
-										sequence_step = seq_vol['loop']
-							scan_next_chan_rows(scanner_vol_tri, modified, track_idx, pattern_idx, row_idx )
-
-							# Mark sequence as handled for this row
-							seq_vol = None
-						elif get_chan_type(modified, chan_idx) in ['2a03-pulse', '2a03-noise']:
-							# Find initial reference volume (even if above the note)
-							ref_volume = None
-							def check_row_volume(curent_pattern_idx, current_row_idx):
-								nonlocal ref_volume, track, chan_idx
-								current_chan_row = track['patterns'][curent_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
-								if current_chan_row['volume'] != '.':
-									ref_volume = int(current_chan_row['volume'], 16)
-									return False
-							scan_previous_chan_rows(check_row_volume, modified, track_idx, pattern_idx, chan_idx, row_idx)
-
-							if ref_volume is None:
-								ref_volume = 15
-
-							# Until the next note, the volume is adjusted by the enveloppe
-							sequence_step = 0
-							stop_row = None
-							def scanner_apply_volume(curent_pattern_idx, current_row_idx):
-								nonlocal ref_volume, sequence_step, stop_row
-								first_line = (curent_pattern_idx == pattern_idx and current_row_idx == row_idx)
-								current_chan_row = track['patterns'][curent_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
-
-								if current_chan_row['note'] != '...' and not first_line:
-									stop_row = current_chan_row
-									return False
-
-								if current_chan_row['volume'] != '.':
-									ref_volume = int(current_chan_row['volume'], 16)
-
-								enveloppe_volume = int(.5 + (ref_volume * (seq_vol['sequence'][sequence_step] / 15.)))
-								enveloppe_volume = max(0, enveloppe_volume)
-								enveloppe_volume = min(15, enveloppe_volume)
-								current_chan_row['volume'] = '{:X}'.format(enveloppe_volume)
-
-								# Advance sequence
-								if seq_vol['loop'] == -1:
-									sequence_step = min(sequence_step + 1, len(seq_vol['sequence']) - 1)
-								else:
-									sequence_step += 1
-									if sequence_step >= len(seq_vol['sequence']):
-										sequence_step = seq_vol['loop']
-							scan_next_chan_rows(scanner_apply_volume, modified, track_idx, pattern_idx, row_idx)
-
-							# On the next note, explicitely reset reference volume
-							if stop_row is not None and stop_row['volume'] == '.':
-								stop_row['volume'] = '{:X}'.format(ref_volume)
-
-							# Mark volume sequence as handled for this row
+						if (_apply_volume_sequence(seq_vol, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx)):
 							seq_vol = None
 
 					if seq_dut is not None:
-						ensure(len(seq_dut['sequence']) > 0)
-
-						# Find initial reference duty (even if above the note)
-						ref_duty = None
-						def check_row_duty(curent_pattern_idx, current_row_idx):
-							nonlocal ref_duty, track, chan_idx
-							current_chan_row = track['patterns'][curent_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
-							for current_effect in current_chan_row['effects']:
-								if current_effect[0] == 'V':
-									ref_duty = int(current_effect[1:], 16)
-									return False
-						scan_previous_chan_rows(check_row_duty, modified, track_idx, pattern_idx, chan_idx, row_idx)
-
-						if ref_duty is None:
-							warn('unable to find reference duty for instrument enveloppe in {}: considere it as V00'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-							))
-							ref_duty = 0
-
-						# Until the next note, the duty is adjusted by the enveloppe
-						sequence_step = 0
-						stopped_on_track_end = True
-						def scanner_dut(current_pattern_idx, current_row_idx):
-							nonlocal ref_duty, sequence_step, stopped_on_track_end
-							current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
-
-							# Stop on any row with a note
-							if current_chan_row['note'] != '...' and (current_pattern_idx, current_row_idx) != (pattern_idx, row_idx):
-
-								# On the next note, explicitely reset reference duty
-								has_duty_effect = False
-								for current_effect in current_chan_row['effects']:
-									if current_effect[0] == 'V':
-										has_duty_effect = True
-								if not has_duty_effect:
-									current_chan_row['effects'].append('V{:02X}'.format(ref_duty))
-
-								# Stop iterating
-								stopped_on_track_end = False
-								return False
-
-							# Check for new reference duty
-							duty_effect_idx = None
-							for current_effect_idx in range(len(current_chan_row['effects'])):
-								current_effect = current_chan_row['effects'][current_effect_idx]
-								if current_effect[0] == 'V':
-									ref_duty = int(current_effect[1:], 16)
-									duty_effect_idx = current_effect_idx
-
-							# Compute value as impacted by the sequence
-							enveloppe_duty = seq_dut['sequence'][sequence_step]
-							if duty_effect_idx is not None:
-								current_chan_row['effects'][duty_effect_idx] = 'V{:02X}'.format(enveloppe_duty)
-							else:
-								current_chan_row['effects'].append('V{:02X}'.format(enveloppe_duty))
-
-							# Advance sequence
-							if seq_dut['loop'] == -1:
-								sequence_step = min(sequence_step + 1, len(seq_dut['sequence']) - 1)
-							else:
-								sequence_step += 1
-								if sequence_step >= len(seq_dut['sequence']):
-									sequence_step = seq_dut['loop']
-						scan_next_chan_rows(scanner_dut, modified, track_idx, pattern_idx, row_idx )
-
-						# Warn if envelop goes past the end of the track, hoping there is an explicit VXX at the begining to reset duty
-						if stopped_on_track_end:
-							warn('duty envelope from {} goes beyond the end of the track'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-							))
-
-						# Mark duty sequence as handled for this row
-						seq_dut = None
+						if (_apply_duty_sequence(seq_dut, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx)):
+							seq_dut = None
 
 					if seq_arp is not None:
-						ensure(len(seq_arp['sequence']) > 0, 'instrument {:X} has an empty arpeggio sequence'.format(instrument_idx))
-						ensure(seq_arp['setting'] == 0, 'instrument {:X} use a non-absolute arpeggio: TODO handle fixed and relative arpeggio'.format(instrument_idx))
-
-						# Get reference note in numerical form
-						if get_chan_type(modified, chan_idx) == '2a03-noise':
-							ref_note_idx = int(ref_note[0], 16)
-						else:
-							ref_note_idx = get_note_table_index(ref_note)
-
-						# Warn if there is an active pitch slide and note's row doesn't stop it
-						pitch_effect = get_current_pitch_effect(modified, track_idx, pattern_idx, chan_idx, row_idx)
-						if pitch_effect is not None and is_pitch_slide_activation_effect(pitch_effect):
-							warn('Note with arpegio instrument starts while a slide effect is active {}: arpegio mechanically cancels pitch slides'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-							))
-
-						# Until the next note, the note is adjusted by the enveloppe
-						sequence_step = 0
-						first_row = True
-						def scanner_arp(current_pattern_idx, current_row_idx):
-							nonlocal first_row, sequence_step
-							current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
-
-							# Stop on any row with a note
-							if current_chan_row['note'] != '...' and (current_pattern_idx, current_row_idx) != (pattern_idx, row_idx):
-								return False
-
-							# Warn if there is a pitch effect (check on first row already done before scanning)
-							if first_row:
-								first_row = False
-							else:
-								pitch_effect_idx = get_pitch_effect(current_chan_row)
-								if pitch_effect_idx is not None and is_pitch_slide_activation_effect(current_chan_row['effects'][pitch_effect_idx]):
-									warn('pitch effect on pattern while instrument has arpegio enveloppe in {}: arpegio mechanically cancels pitch slides'.format(
-										row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
-									))
-
-							# Compute value as impacted by the sequence
-							sequence_value = seq_arp['sequence'][sequence_step]
-							if get_chan_type(modified, chan_idx) == '2a03-noise':
-								# Noise channel has 16 possible frequences, against 96 notes in the table for other channels
-								#  divide by 6 to have a correspondance
-								if sequence_value % 6 != 0:
-									warn('arpegio enveloppe of instrument {:X} contains values not multiple of 6: truncated down'.format(instrument_idx))
-								sequence_value = sequence_value // 6
-
-							enveloppe_note_idx = ref_note_idx + sequence_value
-
-							# Bound computed value to valid values
-							if get_chan_type(modified, chan_idx) == '2a03-noise':
-								if enveloppe_note_idx > 0xf:
-									warn('arpegio enveloppe for noise goes over F in {}: F used'.format(
-										row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
-									))
-									enveloppe_note_idx = 0xf
-								elif enveloppe_note_idx < 0:
-									warn('arpegio enveloppe for noise goes under 0 in {}: 0 used'.format(
-										row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
-									))
-									enveloppe_note_idx = 0
-							else:
-								if enveloppe_note_idx >= len(note_table_names):
-									warn('arpegio enveloppe goes over the notes table in {}: last note of the table used'.format(
-										row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
-									))
-									enveloppe_note_idx = len(note_table_names) - 1
-								elif enveloppe_note_idx < 0:
-									warn('arpegio enveloppe goes under the notes table in {}: first note of the table used'.format(
-										row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
-									))
-									enveloppe_note_idx = 0
-
-							# Place computed value
-							if get_chan_type(modified, chan_idx) == '2a03-noise':
-								current_chan_row['note'] = '{:X}-#'.format(enveloppe_note_idx)
-							else:
-								current_chan_row['note'] = note_table_names[enveloppe_note_idx]
-
-							# Advance sequence
-							if seq_arp['loop'] == -1:
-								sequence_step = min(sequence_step + 1, len(seq_arp['sequence']) - 1)
-							else:
-								sequence_step += 1
-								if sequence_step >= len(seq_arp['sequence']):
-									sequence_step = seq_arp['loop']
-						scan_next_chan_rows(scanner_arp, modified, track_idx, pattern_idx, row_idx )
-
-						# Mark sequence as handled for this row
-						seq_arp = None
+						if (_apply_arpegio_sequence(seq_arp, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx)):
+							seq_arp = None
 
 					if seq_pit is not None:
-						ensure(len(seq_pit['sequence']) > 0, 'instrument {:X} has an empty pitch sequence'.format(instrument_idx))
-
-						# Until the next note, the note is adjusted by the envelope
-						sequence_step = 0
-						current_slide = None
-						last_chan_row = None
-						def scanner_pit(current_pattern_idx, current_row_idx):
-							nonlocal current_slide, last_chan_row, sequence_step
-							current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
-							last_chan_row = current_chan_row
-
-							# Stop on any row with a note
-							if current_chan_row['note'] != '...' and (current_pattern_idx, current_row_idx) != (pattern_idx, row_idx):
-								return False
-
-							# Compute a pitch slide effect according to envelope
-							#FIXME is is one tick late as instrument envelope is immediate while pitch slide begins its effect on the next tick
-							#      - An idea whould be to change UCTF to hold frequencies instead of notes
-							#        so we can flatten pitch envelopes
-							#      - Another could be to add an opcode "instant pitch modify",
-							#        that would affect pitch immediately, without long term effect (unlike 1xx/2xx),
-							#        this is easy to mix with actual pitch-slide, and actually what instrument pitch envelope do
-							#        (bonus: it avoids to use frequencies directly, so more PAL+NTSC friendly)
-							envelope_pitch = seq_pit['sequence'][sequence_step]
-							envelope_effect = '{}{:02X}'.format(
-								'1' if envelope_pitch <= 0 else '2',
-								abs(envelope_pitch)
-							)
-
-							# Place computed value
-							if envelope_pitch != current_slide:
-								place_pitch_effect(
-									current_chan_row, envelope_effect, replace=True, warn_on_stop=False,
-									msg='instrument pitch envelope conflict with pattern in {}: overwrite pattern'.format(
-										row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-									)
-								)
-								current_slide = envelope_pitch
-
-							# Advance sequence
-							if seq_pit['loop'] == -1:
-								sequence_step = min(sequence_step + 1, len(seq_pit['sequence']) - 1)
-								sequence_step = sequence_step + 1
-								if sequence_step >= len(seq_pit['sequence']):
-									return False
-							else:
-								sequence_step += 1
-								if sequence_step >= len(seq_pit['sequence']):
-									sequence_step = seq_pit['loop']
-						scan_next_chan_rows(scanner_pit, modified, track_idx, pattern_idx, row_idx)
-
-						# End envelope's effect with a 100
-						if last_chan_row is not None:
-							if last_chan_row['note'] != '...':
-								# Envelope ended by a note, do not replace any existing effect
-								place_pitch_effect(last_chan_row, '100', replace=False)
-							else:
-								# Envelope ended another way, we certainly placed an effect on it, replace it
-								place_pitch_effect(last_chan_row, '100', replace=True)
-
-						# Mark sequence as handled for this row
-						seq_pit = None
+						if (_apply_pitch_sequence(seq_pit, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx)):
+							seq_pit = None
 
 					# Remove instrument reference (only if completely handled, to keep warnings where it was partial)
 					if (
