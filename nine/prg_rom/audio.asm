@@ -845,7 +845,7 @@ audio_music_tick:
 	.(
 		; OOOO OTTT  TTTT TTTT  DDDD DDDD
 
-		subbed_valued_msb = tmpfield1
+		subbed_value_msb = tmpfield1
 
 		; TTT TTTT TTTT - Subtract to mirrored APU value, cap at zero on underflow
 		.(
@@ -1349,7 +1349,7 @@ audio_music_tick:
 	.byt >opcode_sample_end, >opcode_chan_params, >opcode_chan_volume_low, >opcode_chan_volume_high, >opcode_play_timed_freq
 	.byt >opcode_play_note, >opcode_wait, >opcode_long_wait, >opcode_halt, >opcode_pitch_slide
 	.byt >opcode_set_duty, >opcode_play_timed_note, >opcode_pulse_meta_uslide, >opcode_pulse_meta_dslide, >opcode_pulse_meta_uslide
-	.byt >opcode_pulse_meta_dslide, >opcode_pulse_frequency_add, >pcode_pulse_frequency_sub
+	.byt >opcode_pulse_meta_dslide, >opcode_pulse_frequency_add, >opcode_pulse_frequency_sub
 
 	noise_opcode_routines_lsb:
 	.byt <opcode_noise_sample_end, <opcode_noise_set_volume, <opcode_noise_set_periodic, <opcode_noise_play_timed_freq, <opcode_noise_wait
