@@ -1395,6 +1395,7 @@ def repeat_3_effect(music):
 			pattern = track['patterns'][pattern_idx]
 			for chan_idx in range(modified['params']['n_chan']):
 
+				original_portamento_effect_idx = None
 				current_portamento = 0
 				for row_idx in range(len(pattern['rows'])):
 					chan_row = pattern['rows'][row_idx]['channels'][chan_idx]
@@ -1414,6 +1415,20 @@ def repeat_3_effect(music):
 						elif effect[0] in pitch_effects:
 							has_other_pitch_effect = True
 
+					# Check that we are still treating the original effect
+					if original_portamento_effect_idx is None:
+						original_portamento_effect_idx = portamento_effect_idx
+
+					if portamento_effect_idx is not None and portamento_effect_idx != original_portamento_effect_idx:
+						#TODO propper handling of multi effects on different columns (may need to rewrite this function from scratch)
+						warn('multiple 3XX effects in {}: keeping the one on column {}, removing from column {}'.format(
+							row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
+							original_portamento_effect_idx,
+							portamento_effect_idx
+						))
+						chan_row['effects'][portamento_effect_idx] = '...'
+						portamento_effect_idx = None
+
 					# Parse effect
 					portamento_effect = chan_row['effects'][portamento_effect_idx] if portamento_effect_idx is not None else None
 					new_portamento = int(portamento_effect[1:], 16) if portamento_effect_idx is not None else None
@@ -1428,7 +1443,7 @@ def repeat_3_effect(music):
 						continue
 
 					# Special case of portamento 0, deactivation. Place 100 if there is no other pitch effect
-					if new_portamento == 0 and not has_other_pitch_effect:
+					if new_portamento == 0:# and not has_other_pitch_effect:
 						chan_row['effects'][portamento_effect_idx] = '100'
 
 					# Update current portamento value
@@ -1437,7 +1452,12 @@ def repeat_3_effect(music):
 
 					# If there is a note, repeat portamento
 					if chan_row['note'] not in ['...', '---', '==='] and portamento_effect_idx is None and current_portamento != 0:
-						chan_row['effects'].append('3{:02X}'.format(current_portamento))
+						if chan_row['effects'][original_portamento_effect_idx] != '...' and chan_row['effects'][original_portamento_effect_idx][0] not in pitch_effects:
+							warn('unable to place portamento because of non-pitch effect in {}'.format(
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							))
+						if chan_row['effects'][original_portamento_effect_idx] == '...':
+							chan_row['effects'][original_portamento_effect_idx] = '3{:02X}'.format(current_portamento)
 
 	return modified
 
@@ -1523,7 +1543,7 @@ def apply_3_effect(music):
 					dest_row_idx = row_idx + duration
 					if dest_row_idx >= len(pattern['rows']):
 						warn('3xx effect goes over pattern limits in {}: truncated to pattern end'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							row_identifier(track_idx, pattern_idx, dest_row_idx, chan_idx)
 						))
 						dest_row_idx = len(pattern['rows']) - 1
 
@@ -1542,9 +1562,8 @@ def apply_3_effect(music):
 					for current_row_idx in range(row_idx+1, dest_row_idx+1):
 						current_row = pattern['rows'][current_row_idx]['channels'][chan_idx]
 						explicit_stop = current_row['note'] != '...'
-						for effect in current_row['effects']:
-							if effect[0] in pitch_effects:
-								explicit_stop = True
+						if current_row['effects'][portamento_effect_idx][0] in pitch_effects:
+							explicit_stop = True
 
 						explicitely_stopped = explicitely_stopped or explicit_stop
 
@@ -1552,11 +1571,16 @@ def apply_3_effect(music):
 						pattern['rows'][dest_row_idx]['channels'][chan_idx]['note'] = chan_row['note']
 
 						dest_has_pitch = False
-						for current_effect in pattern['rows'][dest_row_idx]['channels'][chan_idx]['effects']:
-							if current_effect[0] in pitch_effects:
-								dest_has_pitch = True
+						current_effect = pattern['rows'][dest_row_idx]['channels'][chan_idx]['effects'][portamento_effect_idx]
+						if current_effect[0] in pitch_effects:
+							dest_has_pitch = True
+
 						if not dest_has_pitch:
-							pattern['rows'][dest_row_idx]['channels'][chan_idx]['effects'].append('100')
+							if current_effect != '...':
+								warn('non-pitch effect at portamento end location in {}: removing the non-pitch effect'.format(
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+								))
+							pattern['rows'][dest_row_idx]['channels'][chan_idx]['effects'][portamento_effect_idx] = '100'
 
 					# Remove the note from origin row
 					chan_row['note'] = '...'
@@ -1652,12 +1676,16 @@ def apply_q_effect(music):
 					stop_chan_row = pattern['rows'][stop_row_idx]['channels'][chan_idx]
 
 					stop_has_pitch_effect = False
-					for current_effect in stop_chan_row['effects']:
-						if current_effect[0] in pitch_effects:
-							stop_has_pitch_effect = True
+					if stop_chan_row['effects'][q_effect_idx][0] in pitch_effects:
+						stop_has_pitch_effect = True
 
 					if not stop_has_pitch_effect:
-						stop_chan_row['effects'].append('100') #TODO should use an empty effect column if possible
+						if stop_chan_row['effects'][q_effect_idx] != '...':
+							warn('Qxy stops where a non-pitch effect is placed in {}: removing non-pitch effect {}'.format(
+								row_identifier(track_idx, pattern_idx, stop_row_idx, chan_idx),
+								stop_chan_row['effects'][q_effect_idx]
+							))
+						stop_chan_row['effects'][q_effect_idx] = '100'
 
 					if stop_chan_row['note'] == '...':
 						stop_chan_row['note'] = note_table_names[note_table_index_stop]
