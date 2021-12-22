@@ -1764,6 +1764,138 @@ def apply_r_effect(music):
 def apply_4_effect(music):
 	modified = copy.deepcopy(music)
 
+	#
+	# Vibrato apply functions
+	#
+
+	def vibrato_flatten_noise(depth, modified, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx):
+		"""
+		Apply vibrato on noise channel by flattening it.
+		This is costly, but can handles step values lower than 1, which is the minimum of 1xx effect.
+		"""
+		track = modified['tracks'][track_idx]
+
+		# Get original pitch
+		current_pitch = None
+		def scanner_flatten_original_pitch(current_pattern_idx, current_row_idx):
+			nonlocal current_pitch, track
+			current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+			if current_chan_row['note'] not in ['...', '---', '===']:
+				current_pitch = int(current_chan_row['note'][0], 16)
+				return False
+		scan_previous_chan_rows(scanner_flatten_original_pitch, modified, track_idx, pattern_idx, chan_idx, row_idx)
+
+		ensure(current_pitch is not None, 'unable to find original pitch for 4xy in {}: TODO handle it for next notes'.format(
+			row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+		))
+
+		# Remove effect from pattern
+		chan_row['effects'][vibrato_effect_idx] = '...'
+
+		# Compute vibrato envelope
+		vibrato_envelope = []
+		for i in range(16):
+			vibrato_envelope.append(int(i * depth / 16))
+		for i in range(16):
+			vibrato_envelope.append(int((16 - i) * depth / 16))
+		for i in range(16):
+			vibrato_envelope.append(int(-i * depth / 16))
+		for i in range(16):
+			vibrato_envelope.append(int(-(16 - i) * depth / 16))
+		assert len(vibrato_envelope) == 64
+
+		# Apply vibrato until another pitch effect is found or the slide is over
+		envelope_step = 0
+		def scanner_flatten_apply(current_pattern_idx, current_row_idx):
+			nonlocal current_pitch, envelope_step
+			current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+
+			# Stop on any pitch effect
+			initial_row = (current_pattern_idx == pattern_idx and current_row_idx == row_idx)
+			if not initial_row and len(get_pitch_effects(current_chan_row)) != 0:
+				#TODO warn if not a 4xy
+				return False
+
+			# Stop on halt/release
+			if current_chan_row['note'] in ['---', '===']:
+				warn('4xy goes through a stop in {} at {}: effect truncated'.format(
+					row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
+					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+				))
+				return False
+
+			# Reset pitch if a note is found on column
+			if current_chan_row['note'] != '...':
+				current_pitch = int(current_chan_row['note'][0], 16)
+
+			# Rewrite note as impacted by envelope
+			pitch_with_envelope = current_pitch + vibrato_envelope[envelope_step]
+			pitch_with_envelope = max(0, min(15, pitch_with_envelope))
+			current_chan_row['note'] = '{:X}-#'.format(pitch_with_envelope)
+
+			# Step envelope position
+			envelope_step = (envelope_step + effect_speed) % len(vibrato_envelope)
+		scan_next_chan_rows(scanner_flatten_apply, modified, track_idx, pattern_idx, row_idx)
+
+	def vibrato_slide(step, half_way_time, modified, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx):
+		"""
+		Apply vibrato on any channel by convering it to a series of 1xx 2xx.
+		This is cheap, but can conflict with other pitch effects.
+		"""
+		# Step must be an integer
+		step_int = int(0.5 + step)
+		if abs(step_int - step) / step > .1:
+			warn('4xy transformation to pitch slide is imprecise in {}: precision lost'.format(
+				row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+			))
+		step = step_int
+
+		# Replace current row's effect with a 2xx effect for the initial half way pitch deviation
+		time_left = half_way_time
+		current_direction = '2'
+		chan_row['effects'][vibrato_effect_idx] = '{}{:02X}'.format(current_direction, step)
+
+		# Every one way pitch deviation, change direction. Until the next pitch impacting effect.
+		current_row_idx = row_idx + 1
+		while current_row_idx < len(pattern['rows']):
+			current_chan_row = pattern['rows'][current_row_idx]['channels'][chan_idx]
+
+			# If the row has any pitch effect, just stop
+			#   warn if pitch impacting effect is not a 4xy (these effects should be stopped by a 40*)
+			has_pitch_effect = False
+			for checked_effect in current_chan_row['effects']:
+				if checked_effect[0] in pitch_effects:
+					if False and checked_effect[0] != '4':
+						#TODO output a notice, not a warning (possibly due to previous manipulations)
+						#     of andremove False from if's condition
+						warn('4xy effect is interrupted by another effect type in {}, starting in {}'.format(
+							row_identifier(track_idx, pattern_idx, current_row_idx, chan_idx),
+							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+						))
+					has_pitch_effect = True
+
+			if has_pitch_effect:
+				break
+
+			# If it is time, change direction
+			time_left -= 1
+			if time_left <= 0:
+				current_direction = '2' if current_direction == '1' else '1'
+				time_left = one_way_time
+				current_chan_row['effects'].append('{}{:02X}'.format(current_direction, step)) #TODO should use an empty effect column if possible
+
+			# Next
+			current_row_idx += 1
+
+		# Check if we hit the end of pattern
+		if current_row_idx >= len(pattern['rows']):
+			warn('4xy effect extends after pattern in {}: effect truncated'.format(row_identifier(track_idx, pattern_idx, row_idx, chan_idx)))
+			pattern['rows'][-1]['channels'][chan_idx]['effects'].append('100') #TODO should use an empty effect column if possible
+
+	#
+	# Common logic
+	#
+
 	# Iterate on rows per channel
 	for track_idx in range(len(modified['tracks'])):
 		track = modified['tracks'][track_idx]
@@ -1792,6 +1924,8 @@ def apply_4_effect(music):
 						continue
 
 					if has_other_pitch_effect:
+						# NOTE could be handled by flattening the vibratto, using frequency_adjust extra effect
+						#      or better, by merging 1xx 2xx effects on different columns as a post-processing step (would be universal)
 						warn('multiple pitch effects in {}: 4xy will be ignored'.format(
 							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 						))
@@ -1828,117 +1962,9 @@ def apply_4_effect(music):
 					# Transform effect
 					assert conversion_type in ['flatten', 'pitch-slide']
 					if get_chan_type(modified, chan_idx) == '2a03-noise' and conversion_type == 'flatten':
-						# Get original pitch
-						current_pitch = None
-						def scanner_flatten_original_pitch(current_pattern_idx, current_row_idx):
-							nonlocal current_pitch
-							current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
-							if current_chan_row['note'] not in ['...', '---', '===']:
-								current_pitch = int(current_chan_row['note'][0], 16)
-								return False
-						scan_previous_chan_rows(scanner_flatten_original_pitch, modified, track_idx, pattern_idx, chan_idx, row_idx)
-
-						ensure(current_pitch is not None, 'unable to find original pitch for 4xy in {}: TODO handle it for next notes'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-						))
-
-						# Remove effect from pattern
-						chan_row['effects'][vibrato_effect_idx] = '...'
-
-						# Compute vibrato envelope
-						vibrato_envelope = []
-						for i in range(16):
-							vibrato_envelope.append(int(i * depth / 16))
-						for i in range(16):
-							vibrato_envelope.append(int((16 - i) * depth / 16))
-						for i in range(16):
-							vibrato_envelope.append(int(-i * depth / 16))
-						for i in range(16):
-							vibrato_envelope.append(int(-(16 - i) * depth / 16))
-						assert len(vibrato_envelope) == 64
-
-						# Apply vibrato until another pitch effect is found or the slide is over
-						envelope_step = 0
-						def scanner_flatten_apply(current_pattern_idx, current_row_idx):
-							nonlocal current_pitch, envelope_step
-							current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
-
-							# Stop on any pitch effect
-							initial_row = (current_pattern_idx == pattern_idx and current_row_idx == row_idx)
-							if not initial_row and len(get_pitch_effects(current_chan_row)) != 0:
-								#TODO warn if not a 4xy
-								return False
-
-							# Stop on halt/release
-							if current_chan_row['note'] in ['---', '===']:
-								warn('4xy goes through a stop in {} at {}: effect truncated'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
-									row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
-								))
-								return False
-
-							# Reset pitch if a note is found on column
-							if current_chan_row['note'] != '...':
-								current_pitch = int(current_chan_row['note'][0], 16)
-
-							# Rewrite note as impacted by envelope
-							pitch_with_envelope = current_pitch + vibrato_envelope[envelope_step]
-							pitch_with_envelope = max(0, min(15, pitch_with_envelope))
-							current_chan_row['note'] = '{:X}-#'.format(pitch_with_envelope)
-
-							# Step envelope position
-							envelope_step = (envelope_step + effect_speed) % len(vibrato_envelope)
-						scan_next_chan_rows(scanner_flatten_apply, modified, track_idx, pattern_idx, row_idx)
+						vibrato_flatten_noise(depth, modified, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx)
 					elif conversion_type == 'pitch-slide':
-						# Step must be an integer
-						step_int = int(0.5 + step)
-						if abs(step_int - step) / step > .1:
-							warn('4xy transformation to pitch slide is imprecise in {}: precision lost'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-							))
-						step = step_int
-
-						# Replace current row's effect with a 2xx effect for the initial half way pitch deviation
-						time_left = half_way_time
-						current_direction = '2'
-						chan_row['effects'][vibrato_effect_idx] = '{}{:02X}'.format(current_direction, step)
-
-						# Every one way pitch deviation, change direction. Until the next pitch impacting effect.
-						current_row_idx = row_idx + 1
-						while current_row_idx < len(pattern['rows']):
-							current_chan_row = pattern['rows'][current_row_idx]['channels'][chan_idx]
-
-							# If the row has any pitch effect, just stop
-							#   warn if pitch impacting effect is not a 4xy (these effects should be stopped by a 40*)
-							has_pitch_effect = False
-							for checked_effect in current_chan_row['effects']:
-								if checked_effect[0] in pitch_effects:
-									if False and checked_effect[0] != '4':
-										#TODO output a notice, not a warning (possibly due to previous manipulations)
-										#     of andremove False from if's condition
-										warn('4xy effect is interrupted by another effect type in {}, starting in {}'.format(
-											row_identifier(track_idx, pattern_idx, current_row_idx, chan_idx),
-											row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-										))
-									has_pitch_effect = True
-
-							if has_pitch_effect:
-								break
-
-							# If it is time, change direction
-							time_left -= 1
-							if time_left <= 0:
-								current_direction = '2' if current_direction == '1' else '1'
-								time_left = one_way_time
-								current_chan_row['effects'].append('{}{:02X}'.format(current_direction, step)) #TODO should use an empty effect column if possible
-
-							# Next
-							current_row_idx += 1
-
-						# Check if we hit the end of pattern
-						if current_row_idx >= len(pattern['rows']):
-							warn('4xy effect extends after pattern in {}: effect truncated'.format(row_identifier(track_idx, pattern_idx, row_idx, chan_idx)))
-							pattern['rows'][-1]['channels'][chan_idx]['effects'].append('100') #TODO should use an empty effect column if possible
+						vibrato_slide(step, half_way_time, modified, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx)
 					else:
 						warn('unhandled 4xy in {} chan_type="{}" conversion="{}": effect ignored'.format(
 							row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
