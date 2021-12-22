@@ -6,6 +6,7 @@ Read a ftm text export and convert it to a json structure closely matching stb b
 
 import copy
 import datetime
+import debugtools
 import ftmtxt
 import ftmmanip
 import json
@@ -70,6 +71,7 @@ music = ftmmanip.repeat_3_effect(music)
 music = ftmmanip.apply_3_effect(music)
 music = ftmmanip.apply_4_effect(music)
 music = ftmmanip.merge_pitch_slides(music)
+#print(debugtools.human_readable_track(music['tracks'][0]))
 
 # Compatibility checks
 music = ftmmanip.warn_instruments(music)
