@@ -2304,7 +2304,8 @@ def remove_duplicates(music):
 						is_empty = False
 					if field == 'frequency_adjust':
 						# Do not remove frequency_adjust, it only impacts the line on which it is. Last value is no more impacting current line.
-						is_empty = False
+						if line[field] is not None:
+							is_empty = False
 					else:
 						line[field] = None
 
