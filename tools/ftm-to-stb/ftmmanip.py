@@ -263,35 +263,26 @@ def place_extra_effect(chan_row, effect, replace, msg):
 	else:
 		chan_row['extra_effects'].append(effect)
 
-def place_pitch_effect(chan_row, effect, replace, warn_on_stop=False, msg=None):
+def place_pitch_effect(chan_row, effect, effect_idx, replace, warn_on_stop=False, msg=None):
 	"""
 	Place a pitch effect in a row, taking care of existing conflicting effects
 
 	If there is a conflicting pitch effect: it is replaced by the new one if `replace` is set, else the new one is not placed.
 
 	msg will be output as a warning if there is a conflicting effect which is not equivalent to the new one.
-
-	DEPRECATED: ftm modules work with effects from different columns being cumulable, this function considere all columns to be equivalent
-				It is symptomatic of a long lasting misconception while developping this script that should be fixed whenever/wherever needed
-				The official solution is now to considere only the column of an effect when handling it, with post-processing merging 1xx and 2xx from different columns
 	"""
-	pitch_effect_idx = None
-	for current_effect_idx in range(len(chan_row['effects'])):
-		current_effect = chan_row['effects'][current_effect_idx]
-		if current_effect[0] in pitch_effects:
-			pitch_effect_idx = current_effect_idx
-	pitch_effect = None if pitch_effect_idx is None else chan_row['effects'][pitch_effect_idx]
+	current_effect = chan_row['effects'][effect_idx]
 
 	if msg is not None:
-		if pitch_effect_idx is not None and pitch_effect != effect:
-			if is_pitch_slide_activation_effect(effect) or is_pitch_slide_activation_effect(pitch_effect):
-				if warn_on_stop or is_pitch_slide_activation_effect(pitch_effect):
+		if current_effect != '...' and current_effect != effect:
+			if current_effect[0] not in pitch_effects:
+				warn('place pitch effect over a non-pitch effect: {}'.format(msg))
+			elif is_pitch_slide_activation_effect(effect) or is_pitch_slide_activation_effect(current_effect):
+				if warn_on_stop or is_pitch_slide_activation_effect(current_effect):
 					warn(msg)
 
-	if pitch_effect_idx is None:
-		chan_row['effects'].append(effect)
-	elif replace:
-		chan_row['effects'][pitch_effect_idx] = effect
+	if current_effect == '...' or replace:
+		chan_row['effects'][effect_idx] = effect
 
 def get_pitch_effects(chan_row):
 	res = []
@@ -906,7 +897,7 @@ def apply_s_effect(music):
 
 	return modified
 
-def _apply_volume_sequence(seq_vol, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx):
+def _apply_volume_sequence(seq_vol, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx):
 	ensure(len(seq_vol['sequence']) > 0, 'instrument {:X} has an empty volume sequence'.format(instrument_idx))
 
 	# Common variables
@@ -1003,7 +994,7 @@ def _apply_volume_sequence(seq_vol, ref_note, modified, instrument_idx, track_id
 	# Unhandled channel type
 	return False
 
-def _apply_duty_sequence(seq_dut, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx):
+def _apply_duty_sequence(seq_dut, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx):
 	ensure(len(seq_dut['sequence']) > 0)
 	track = modified['tracks'][track_idx]
 
@@ -1040,7 +1031,7 @@ def _apply_duty_sequence(seq_dut, ref_note, modified, instrument_idx, track_idx,
 				if current_effect[0] == 'V':
 					has_duty_effect = True
 			if not has_duty_effect:
-				current_chan_row['effects'].append('V{:02X}'.format(ref_duty))
+				current_chan_row['effects'].append('V{:02X}'.format(ref_duty)) #HACK don't use effect_idx, keep it for pitch effects
 
 			# Stop iterating
 			stopped_on_track_end = False
@@ -1059,7 +1050,7 @@ def _apply_duty_sequence(seq_dut, ref_note, modified, instrument_idx, track_idx,
 		if duty_effect_idx is not None:
 			current_chan_row['effects'][duty_effect_idx] = 'V{:02X}'.format(enveloppe_duty)
 		else:
-			current_chan_row['effects'].append('V{:02X}'.format(enveloppe_duty))
+			current_chan_row['effects'].append('V{:02X}'.format(enveloppe_duty)) #HACK don't use effect_idx, keep it for pitch effects
 
 		# Advance sequence
 		if seq_dut['loop'] == -1:
@@ -1079,7 +1070,7 @@ def _apply_duty_sequence(seq_dut, ref_note, modified, instrument_idx, track_idx,
 	# Inform that the sequence is handled
 	return True
 
-def _apply_arpegio_sequence(seq_arp, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx):
+def _apply_arpegio_sequence(seq_arp, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx):
 	ensure(len(seq_arp['sequence']) > 0, 'instrument {:X} has an empty arpeggio sequence'.format(instrument_idx))
 	ensure(seq_arp['setting'] == 0, 'instrument {:X} use a non-absolute arpeggio: TODO handle fixed and relative arpeggio'.format(instrument_idx))
 	track = modified['tracks'][track_idx]
@@ -1092,6 +1083,7 @@ def _apply_arpegio_sequence(seq_arp, ref_note, modified, instrument_idx, track_i
 	last_note_idx = ref_note_idx
 
 	# Check if there is an active pitch effect impacting the first row
+	#TODO cannot check only one pitch effect, has_pitch_effect should be True if any column has an active pitch effect
 	pitch_effect = get_current_pitch_effect(modified, track_idx, pattern_idx, chan_idx, row_idx)
 	has_pitch_effect = pitch_effect is not None and is_pitch_slide_activation_effect(pitch_effect)
 
@@ -1187,7 +1179,7 @@ def _apply_arpegio_sequence(seq_arp, ref_note, modified, instrument_idx, track_i
 	# Inform that the sequence is handled
 	return True
 
-def _apply_pitch_sequence(seq_pit, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx):
+def _apply_pitch_sequence(seq_pit, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx):
 	ensure(len(seq_pit['sequence']) > 0, 'instrument {:X} has an empty pitch sequence'.format(instrument_idx))
 	track = modified['tracks'][track_idx]
 
@@ -1196,7 +1188,7 @@ def _apply_pitch_sequence(seq_pit, ref_note, modified, instrument_idx, track_idx
 	current_slide = None
 	last_chan_row = None
 	def scanner_pit(current_pattern_idx, current_row_idx):
-		nonlocal current_slide, last_chan_row, sequence_step
+		nonlocal current_slide, last_chan_row, sequence_step, track
 		current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
 		last_chan_row = current_chan_row
 
@@ -1221,7 +1213,7 @@ def _apply_pitch_sequence(seq_pit, ref_note, modified, instrument_idx, track_idx
 		# Place computed value
 		if envelope_pitch != current_slide:
 			place_pitch_effect(
-				current_chan_row, envelope_effect, replace=True, warn_on_stop=False,
+				current_chan_row, envelope_effect, effect_idx, replace=True, warn_on_stop=False,
 				msg='instrument pitch envelope conflict with pattern in {}: overwrite pattern'.format(
 					row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 				)
@@ -1244,10 +1236,10 @@ def _apply_pitch_sequence(seq_pit, ref_note, modified, instrument_idx, track_idx
 	if last_chan_row is not None:
 		if last_chan_row['note'] != '...':
 			# Envelope ended by a note, do not replace any existing effect
-			place_pitch_effect(last_chan_row, '100', replace=False)
+			place_pitch_effect(last_chan_row, '100', effect_idx, replace=False)
 		else:
 			# Envelope ended another way, we certainly placed an effect on it, replace it
-			place_pitch_effect(last_chan_row, '100', replace=True)
+			place_pitch_effect(last_chan_row, '100', effect_idx, replace=True)
 
 	# Inform that the sequence is handled
 	return True
@@ -1263,13 +1255,41 @@ def remove_instruments(music):
 			return None
 		return music['macros'][chan_type][seq_type][seq_idx]
 
+	def effect_key(track_idx, chan_idx):
+		return (track_idx, chan_idx)
+
 	modified = copy.deepcopy(music)
 
+	# Create an effect column per channel reserved to instruments usage
+	instrument_effect_idx = {} # key=track_idx.chan_idx, value=index of the effect column for instruments usage
+	for track_idx in range(len(modified['tracks'])):
+		for chan_idx in range(modified['params']['n_chan']):
+			# Search for the largest effects list
+			max_effects = 0
+			def max_effect_scanner(current_pattern_idx, current_row_idx):
+				nonlocal max_effects, track_idx, chan_idx
+				current_chan_row = modified['tracks'][track_idx]['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+				max_effects = max(max_effects, len(current_chan_row['effects']))
+			scan_next_chan_rows(max_effect_scanner, modified, track_idx, 0, 0)
+
+			# Save info of the next column ID, to be used by instruments
+			instrument_effect_idx[effect_key(track_idx, chan_idx)] = max_effects
+
+			# Create a new column, and ensure all row have it
+			def create_columns_scanner(current_pattern_idx, current_row_idx):
+				nonlocal max_effects, track_idx, chan_idx
+				current_chan_row = modified['tracks'][track_idx]['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+				while len(current_chan_row['effects']) < max_effects+1:
+					current_chan_row['effects'].append('...')
+			scan_next_chan_rows(create_columns_scanner, modified, track_idx, 0, 0)
+
+	# Scan each row to flatten instruments
 	for track_idx in range(len(modified['tracks'])):
 		track = modified['tracks'][track_idx]
 		for pattern_idx in range(len(track['patterns'])):
 			pattern = track['patterns'][pattern_idx]
 			for chan_idx in range(modified['params']['n_chan']):
+				effect_idx = instrument_effect_idx[effect_key(track_idx, chan_idx)]
 				for row_idx in range(len(pattern['rows'])):
 					chan_row = pattern['rows'][row_idx]['channels'][chan_idx]
 
@@ -1317,19 +1337,19 @@ def remove_instruments(music):
 
 					# Apply instrument effects to the timeline
 					if seq_vol is not None:
-						if (_apply_volume_sequence(seq_vol, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx)):
+						if (_apply_volume_sequence(seq_vol, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx)):
 							seq_vol = None
 
 					if seq_dut is not None:
-						if (_apply_duty_sequence(seq_dut, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx)):
+						if (_apply_duty_sequence(seq_dut, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx)):
 							seq_dut = None
 
 					if seq_arp is not None:
-						if (_apply_arpegio_sequence(seq_arp, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx)):
+						if (_apply_arpegio_sequence(seq_arp, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx)):
 							seq_arp = None
 
 					if seq_pit is not None:
-						if (_apply_pitch_sequence(seq_pit, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx)):
+						if (_apply_pitch_sequence(seq_pit, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx)):
 							seq_pit = None
 
 					# Remove instrument reference (only if completely handled, to keep warnings where it was partial)
