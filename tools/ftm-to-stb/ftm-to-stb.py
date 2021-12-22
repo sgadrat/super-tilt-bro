@@ -36,10 +36,13 @@ def debug(msg):
 		log('  DEBUG: [{}] {}'.format(logdate(), msg))
 def info(msg):
 	log('   INFO: [{}] {}'.format(logdate(), msg))
+def notice(msg):
+	log(' NOTICE: {}'.format(msg))
 def warn(msg):
 	log('WARNING: {}'.format(msg))
 
 ftmmanip.debug = debug
+ftmmanip.notice = notice
 ftmmanip.warn = warn
 ftmtxt.warn = warn
 
@@ -66,6 +69,7 @@ music = ftmmanip.apply_r_effect(music)
 music = ftmmanip.repeat_3_effect(music)
 music = ftmmanip.apply_3_effect(music)
 music = ftmmanip.apply_4_effect(music)
+music = ftmmanip.merge_pitch_slides(music)
 
 # Compatibility checks
 music = ftmmanip.warn_instruments(music)

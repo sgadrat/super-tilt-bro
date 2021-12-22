@@ -9,6 +9,9 @@ import sys
 def debug(msg):
 	sys.stderr.write('{}\n'.format(msg))
 
+def notice(msg):
+	sys.stderr.write('{}\n'.format(msg))
+
 def warn(msg):
 	sys.stderr.write('{}\n'.format(msg))
 
@@ -267,6 +270,10 @@ def place_pitch_effect(chan_row, effect, replace, warn_on_stop=False, msg=None):
 	If there is a conflicting pitch effect: it is replaced by the new one if `replace` is set, else the new one is not placed.
 
 	msg will be output as a warning if there is a conflicting effect which is not equivalent to the new one.
+
+	DEPRECATED: ftm modules work with effects from different columns being cumulable, this function considere all columns to be equivalent
+				It is symptomatic of a long lasting misconception while developping this script that should be fixed whenever/wherever needed
+				The official solution is now to considere only the column of an effect when handling it, with post-processing merging 1xx and 2xx from different columns
 	"""
 	pitch_effect_idx = None
 	for current_effect_idx in range(len(chan_row['effects'])):
@@ -1113,7 +1120,7 @@ def _apply_arpegio_sequence(seq_arp, ref_note, modified, instrument_idx, track_i
 			# Noise channel has 16 possible frequencies, against 96 notes in the table for other channels
 			#  divide by 6 to have a correspondance
 			if sequence_value % 6 != 0:
-				warn('arpegio enveloppe of instrument {:X} contains values not multiple of 6: truncated down'.format(instrument_idx))
+				notice('arpegio enveloppe of instrument {:X} contains values not multiple of 6: truncated down'.format(instrument_idx))
 			sequence_value = sequence_value // 6
 
 		enveloppe_note_idx = ref_note_idx + sequence_value
@@ -1121,23 +1128,23 @@ def _apply_arpegio_sequence(seq_arp, ref_note, modified, instrument_idx, track_i
 		# Bound computed value to valid values
 		if get_chan_type(modified, chan_idx) == '2a03-noise':
 			if enveloppe_note_idx > 0xf:
-				warn('arpegio enveloppe for noise goes over F in {}: F used'.format(
+				notice('arpegio enveloppe for noise goes over F in {}: F used'.format(
 					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
 				))
 				enveloppe_note_idx = 0xf
 			elif enveloppe_note_idx < 0:
-				warn('arpegio enveloppe for noise goes under 0 in {}: 0 used'.format(
+				notice('arpegio enveloppe for noise goes under 0 in {}: 0 used'.format(
 					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
 				))
 				enveloppe_note_idx = 0
 		else:
 			if enveloppe_note_idx >= len(note_table_names):
-				warn('arpegio enveloppe goes over the notes table in {}: last note of the table used'.format(
+				notice('arpegio enveloppe goes over the notes table in {}: last note of the table used'.format(
 					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
 				))
 				enveloppe_note_idx = len(note_table_names) - 1
 			elif enveloppe_note_idx < 0:
-				warn('arpegio enveloppe goes under the notes table in {}: first note of the table used'.format(
+				notice('arpegio enveloppe goes under the notes table in {}: first note of the table used'.format(
 					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
 				))
 				enveloppe_note_idx = 0
@@ -1341,6 +1348,8 @@ def remove_instruments(music):
 def remove_useless_pitch_effects(music):
 	"""
 	When there is multiple pitch effects on a line, remove some to avoid random selection by effects blindly refusing to start.
+
+	DEPRECATED: In ftm modules effect rows are independent of each others. The whole script has to evolve to take this in consideration.
 	"""
 	modified = copy.deepcopy(music)
 
@@ -1369,11 +1378,6 @@ def remove_useless_pitch_effects(music):
 						for effect_idx in pitch_stop_effects_idx:
 							chan_row['effects'][effect_idx] = '...'
 						continue
-
-					# Simplify pitch stop effects by keeping only one
-					for effect_idx in pitch_stop_effects_idx[1:]:
-						chan_row['effects'][effect_idx] = '...'
-					continue
 
 	return modified
 
@@ -1811,6 +1815,7 @@ def apply_4_effect(music):
 			current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
 
 			# Stop on any pitch effect
+			#TODO only stop on pitch effect in the same column
 			initial_row = (current_pattern_idx == pattern_idx and current_row_idx == row_idx)
 			if not initial_row and len(get_pitch_effects(current_chan_row)) != 0:
 				#TODO warn if not a 4xy
@@ -1860,37 +1865,48 @@ def apply_4_effect(music):
 		while current_row_idx < len(pattern['rows']):
 			current_chan_row = pattern['rows'][current_row_idx]['channels'][chan_idx]
 
-			# If the row has any pitch effect, just stop
+			# If there is any pitch effect in the same column as the initial 4xy, just stop
 			#   warn if pitch impacting effect is not a 4xy (these effects should be stopped by a 40*)
 			has_pitch_effect = False
-			for checked_effect in current_chan_row['effects']:
-				if checked_effect[0] in pitch_effects:
-					if False and checked_effect[0] != '4':
-						#TODO output a notice, not a warning (possibly due to previous manipulations)
-						#     of andremove False from if's condition
-						warn('4xy effect is interrupted by another effect type in {}, starting in {}'.format(
-							row_identifier(track_idx, pattern_idx, current_row_idx, chan_idx),
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-						))
-					has_pitch_effect = True
+			current_effect = current_chan_row['effects'][vibrato_effect_idx]
+			if current_effect[0] in pitch_effects:
+				if current_effect[0] != '4':
+					notice('4xy effect is interrupted by another effect type in {}, starting in {}'.format(
+						row_identifier(track_idx, pattern_idx, current_row_idx, chan_idx),
+						row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+					))
+				has_pitch_effect = True
 
 			if has_pitch_effect:
 				break
+
+			# If there is a non-pitch effect, move it to another column
+			if current_effect != '...':
+				#NOTE A solution could be to have an early filter that places non-pitch effect on other collumns
+				#     than pitch effects while keeping interdependent effects on the same column
+				#     Example: from one column containing pitch slides and volume slides,
+				#              we get two columnsi: one with only pitch slides, another with only volume slides
+				warn('non-pitch effect while a 4xy is active in {}: moving the non-pitch effect to another column'.format(
+					row_identifier(track_idx, pattern_idx, current_row_idx, chan_idx),
+				))
+				current_chan_row['effects'][vibrato_effect_idx] = '...'
+				current_chan_row['effects'].append(current_effect)
 
 			# If it is time, change direction
 			time_left -= 1
 			if time_left <= 0:
 				current_direction = '2' if current_direction == '1' else '1'
 				time_left = one_way_time
-				current_chan_row['effects'].append('{}{:02X}'.format(current_direction, step)) #TODO should use an empty effect column if possible
+				current_chan_row['effects'][vibrato_effect_idx] = '{}{:02X}'.format(current_direction, step)
 
 			# Next
 			current_row_idx += 1
 
 		# Check if we hit the end of pattern
 		if current_row_idx >= len(pattern['rows']):
+			#TODO use scanner to avoid that
 			warn('4xy effect extends after pattern in {}: effect truncated'.format(row_identifier(track_idx, pattern_idx, row_idx, chan_idx)))
-			pattern['rows'][-1]['channels'][chan_idx]['effects'].append('100') #TODO should use an empty effect column if possible
+			pattern['rows'][-1]['channels'][chan_idx]['effects'][vibrato_effect_idx] = '100'
 
 	#
 	# Common logic
@@ -1912,6 +1928,7 @@ def apply_4_effect(music):
 						effect = chan_row['effects'][effect_idx]
 						if effect[0] == '4':
 							if vibrato_effect_idx is not None:
+								#TODO handle columns separately
 								warn('multiple 4xy effects in {}: some will be ignored'.format(
 									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 								))
@@ -1924,13 +1941,12 @@ def apply_4_effect(music):
 						continue
 
 					if has_other_pitch_effect:
-						# NOTE could be handled by flattening the vibratto, using frequency_adjust extra effect
-						#      or better, by merging 1xx 2xx effects on different columns as a post-processing step (would be universal)
-						warn('multiple pitch effects in {}: 4xy will be ignored'.format(
+						#TODO Handle multiple 4xy (by handling columns separately)
+						#TODO Maybe fail if we have to flatten noise or
+						#     warn harder since it is compatble with pitch effect but not other flattening.
+						warn('multiple pitch effects in {}: 4xy support for it is partial'.format(
 							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 						))
-						chan_row['effects'][vibrato_effect_idx] = '...'
-						continue
 
 					# Special handling of 40*, simply stop pitch slide
 					effect = chan_row['effects'][vibrato_effect_idx]
@@ -2080,6 +2096,45 @@ def apply_a_effect(music):
 
 	return modified
 
+def merge_pitch_slides(music):
+	"""
+	Merge 1xx and 2xx effects impacting the same row into only one.
+	"""
+	for track_idx in range(len(music['tracks'])):
+		for chan_idx in range(music['params']['n_chan']):
+			currrent_slide = {}
+			def scanner_pitch_merge(current_pattern_idx, current_row_idx):
+				nonlocal chan_idx, currrent_slide, music, track_idx
+				current_row = music['tracks'][track_idx]['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+
+				# Remove slide effects from pattern, and update current slide info of each row
+				has_new_slide = False
+				for effect_idx in range(len(current_row['effects'])):
+					effect = current_row['effects'][effect_idx]
+					if effect[0] in ['1', '2']:
+						if effect[0] == '1':
+							currrent_slide[effect_idx] = -int(effect[1:], 16)
+						else:
+							currrent_slide[effect_idx] = int(effect[1:], 16)
+
+						current_row['effects'][effect_idx] = '...'
+						has_new_slide = True
+
+				# Compute merged slide value
+				if has_new_slide:
+					merged_slide = 0
+					for row_slide in currrent_slide.values():
+						merged_slide += row_slide
+
+					current_row['effects'].append('{}{:02X}'.format(
+						'1' if merged_slide <= 0 else '2',
+						abs(merged_slide)
+					))
+
+			scan_next_chan_rows(scanner_pitch_merge, music, track_idx, 0, 0)
+
+	return music
+
 def warn_instruments(music):
 	"""
 	Output warnings if the music uses instruments not handled by the engine
@@ -2113,12 +2168,30 @@ def warn_effects(music):
 				row = pattern['rows'][row_idx]
 				for channel_idx in [0, 1, 2, 3]:
 					chan_row = row['channels'][channel_idx]
+
+					pitch_effects = []
+					duty_effects = []
 					for effect in chan_row['effects']:
 						if effect[0] not in ['.', '1', '2', 'V']:
 							warn('effect not handled in {}: effect={}'.format(
 								row_identifier(track_idx, pattern_idx, row_idx, channel_idx),
 								effect
 							))
+						elif effect[0] in ['1', '2']:
+							pitch_effects.append(effect)
+						elif effect[0] == 'V':
+							duty_effects.append(effect)
+
+					if len(pitch_effects) > 1:
+						warn('multiple pitch effects not merged in {}: effects={}'.format(
+							row_identifier(track_idx, pattern_idx, row_idx, channel_idx),
+							pitch_effects
+						))
+					if len(duty_effects) > 1:
+						warn('multiple duty effects not merged in {}: effects={}'.format(
+							row_identifier(track_idx, pattern_idx, row_idx, channel_idx),
+							duty_effects
+						))
 	return music
 
 def remove_superfluous_volume(music):
