@@ -2491,6 +2491,234 @@ def big_samples(music):
 
 	return music
 
+def extend_empty_rows(music):
+	"""
+	Modify the uctf to replace all "empty_row" by their extended form
+
+	Depends: to_uncompressed_format
+	"""
+	for sample in music['uctf']['samples']:
+		for line_idx in range(len(sample['lines'])):
+			if sample['lines'][line_idx] == 'empty_row':
+				fields = uctf_fields_by_type[sample['type']]
+				sample['lines'][line_idx] = {x: None for x in fields}
+
+	return music
+
+def adapt_tempo(music):
+	"""
+	Duplicate or remove lines to convert to a supported tempo
+
+	Depends: to_uncompressed_format, extend_empty_rows
+	NotAfter: remove_duplicates, aggregate_lines
+	"""
+
+	#
+	# Constants and helpers
+	#
+
+	supported_tempos = [125, 150]
+
+	def uctf_find_value_at_sample_begin(field, music, sample_idx):
+		assert field != 'frequency_adjust', 'frequency_adjust does not behave like other fields'
+
+		# Check that sample is used in only once in one channel (else start values may differ)
+		chan_idx = None
+		for current_chan_idx in range(len(music['uctf']['channels'])):
+			occurences = music['uctf']['channels'][current_chan_idx].count(sample_idx)
+			if occurences == 1 and chan_idx is None:
+				chan_idx = current_chan_idx
+			elif occurences > 0 and chan_idx is not None:
+				return (None, 'unable to find value of {} at the begining of sample {}, used by multiple channels'.format(field, sample_idx))
+			elif occurences > 1:
+				return (None, 'unable to find value of {} at the begining of sample {}, used by multiple channels'.format(field, sample_idx))
+
+		if chan_idx is None:
+			notice('unused sample')
+			return (None, None)
+
+		# List previous samples
+		chan_samples_list = music['uctf']['channels'][chan_idx]
+		sample_position = chan_samples_list.index(sample_idx)
+		previous_samples = chan_samples_list[:sample_position]
+		previous_samples.reverse()
+
+		# Search for value in previous samples
+		for reference_sample_idx in previous_samples:
+			reference_sample = music['uctf']['samples'][reference_sample_idx]
+			for line_idx in range(len(reference_sample['lines'])-1, -1, -1):
+				if reference_sample['lines'][line_idx][field] is not None:
+					return (reference_sample['lines'][line_idx][field], None)
+
+		# Nothing found
+		return (None, None)
+
+	#
+	# Implementation
+	#
+
+	# Do nothing on multi-track files, please read the TODO
+	if len(music['tracks']) > 1:
+		warn('unsupported multi-tracks file: no tempo adjust (and certainly a lot of other troubles)') #TODO change the "uctf" field to be an array of uctf objects instead of a single object
+		return music
+
+	# Adjust tempo of each track
+	for track_idx in range(len(music['tracks'])):
+		original_tempo = music['tracks'][track_idx]['tempo']
+
+		# Nothing to do if already at a supported tempo
+		if original_tempo in supported_tempos:
+			continue
+
+		# Check that all channels are composed of equivalent samples (same number, same duration)
+		chans_length = None
+		chans_samples_durations = None
+		check_ok = True
+		for chan_idx in range(len(music['uctf']['channels'])):
+			# Empty chans are allowed, and cause not trouble
+			current_chan_length = len(music['uctf']['channels'][chan_idx])
+			if current_chan_length == 0:
+				continue
+
+			# Check than chan has the same number of samples than others
+			if chans_length is not None and current_chan_length != chans_length:
+				warn('channels of track #{} does not have the same number of samples: no tempo adjust'.format(track_idx))
+				check_ok = False
+				break
+			chans_length = current_chan_length
+
+			# Check that chan's sample are the same duration as others
+			current_samples_duration = []
+			for sample_idx in music['uctf']['channels'][chan_idx]:
+				current_samples_duration.append(len(music['uctf']['samples'][sample_idx]))
+			if chans_samples_durations is not None and current_samples_duration != chans_samples_durations:
+				warn('channels of track #{} have samples of different durations: no tempo adjust'.format(track_idx))
+				check_ok = False
+				break
+
+		if not check_ok:
+			continue
+
+		# Select the closest supported tempo
+		target_tempo = sorted(supported_tempos, key=lambda x: abs(original_tempo - x))[0]
+		notice('converting tempo from {} to {}'.format(original_tempo, target_tempo))
+
+		# Determine changes to apply
+		operation = None
+		rythm = None
+		if target_tempo > original_tempo:
+			# Add a lines to slow down music played too fast by the engine
+			operation = 'add_lines'
+			tempo_diff = target_tempo - original_tempo
+			rythm = original_tempo / tempo_diff
+		else:
+			# Remove a lines to speed up music played too slowly by the engine
+			operation = 'remove_line'
+			tempo_diff = original_tempo - target_tempo
+			rythm = target_tempo / tempo_diff
+
+		# Change samples to adapt to new tempo
+		for sample_idx in range(len(music['uctf']['samples'])):
+			sample = music['uctf']['samples'][sample_idx]
+
+			new_lines = []
+			last_operation_count = 0
+			for original_line_idx in range(len(sample['lines'])):
+				original_line = sample['lines'][original_line_idx]
+				assert original_line != 'empty_row', 'adapt_tempo does not support "empty_row", you should run extend_empty_rows() filter'
+				ensure(isinstance(original_line, dict), 'unsupported uctf line type')
+
+				# Check if the speedup/slowdown operation must be done on this line
+				operation_time = False
+				operation_count = original_line_idx // rythm
+				if operation_count != last_operation_count:
+					last_operation_count = operation_count
+					operation_time = True
+
+				# Apply changes
+				if operation == 'add_lines':
+					ensure(False, 'TODO tempo slowdown')
+				else: #operation == 'remove_lines'
+					# Remove the line
+					if operation_time:
+						# Easy access to next line
+						next_line_idx = original_line_idx + 1
+						next_line = None
+						if next_line_idx < len(sample['lines']):
+							next_line = sample['lines'][next_line_idx]
+						else:
+							next_line_idx = None
+
+						# Merge current line in the next one
+						if next_line_idx is not None:
+							for field in next_line:
+								if field == 'frequency_adjust':
+									# Special field, merging meaning adding both values
+									current_freq_adjust = original_line['frequency_adjust'] if original_line['frequency_adjust'] is not None else 0
+									next_freq_adjust = next_line['frequency_adjust'] if next_line['frequency_adjust'] is not None else 0
+									merged_freq_adjust = current_freq_adjust + next_freq_adjust
+									if next_line.get('note') is None and next_line.get('freq') is None:
+										next_line['frequency_adjust'] = merged_freq_adjust if merged_freq_adjust != 0 else None
+								else:
+									#FIXME merging a note in line with frequency adjust creates a line with both (should often be simplifiable to another note)
+									# Keep destination value if there is one, else place original value in destination line
+									if next_line[field] is None:
+										next_line[field] = original_line[field]
+
+						# Add slide speed of current line in previous one
+						if len(new_lines) > 0:
+							previous_line = new_lines[-1]
+
+							# Find slide value of previous line
+							previous_line_slide = None
+							error = None
+							for reference_line_idx in range(len(new_lines)-1, -1, -1):
+								if new_lines[reference_line_idx]['pitch_slide'] is not None:
+									previous_line_slide = new_lines[reference_line_idx]['pitch_slide']
+
+							if previous_line_slide is None:
+								previous_line_slide, error = uctf_find_value_at_sample_begin('pitch_slide', music, sample_idx)
+
+							if previous_line_slide is None:
+								if error is None:
+									# Will behave differently than famitracker only if pitch slide was set before looping
+									warn('no pitch slide for uctf sample={} line={}: assume zero'.format(
+										sample_idx, original_line_idx-1
+									))
+									previous_line_slide = 0
+								else:
+									warn('unknown pitch slide for an uctf line sample={} line={}: {}'.format(
+										sample_idx, original_line_idx-1,
+										error
+									))
+									#TODO determine what to do
+									#     note: we may already have modified the "music" by altering other samples
+									ensure(False)
+
+							# Find slide value of original line
+							original_line_slide = original_line['pitch_slide'] if original_line['pitch_slide'] is not None else previous_line_slide
+
+							# Adapt previous slide to compensate for the loss of original line
+							previous_line['pitch_slide'] = previous_line_slide + original_line_slide
+
+							# Ensure slide value is reset on next line
+							if next_line is not None and next_line['pitch_slide'] is None:
+								next_line['pitch_slide'] = original_line_slide
+
+						# Skip processing this line (not adding it to new lines)
+						continue
+
+				# Add line to the new list of lines
+				new_lines.append(original_line)
+
+			# Update sample with new lines
+			sample['lines'] = new_lines
+
+		# Change tempo information in header
+		music['tracks'][track_idx]['tempo'] = target_tempo
+
+	return music
+
 def remove_duplicates(music):
 	"""
 	Simplify any duplicate field in UCTF by None.

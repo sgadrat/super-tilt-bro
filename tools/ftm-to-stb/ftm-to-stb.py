@@ -83,6 +83,8 @@ music = ftmmanip.std_empty_row(music)
 music = ftmmanip.to_uncompressed_format(music)
 
 #music = ftmmanip.big_samples(music)
+music = ftmmanip.extend_empty_rows(music)
+music = ftmmanip.adapt_tempo(music)
 
 music = ftmmanip.remove_duplicates(music)
 music = ftmmanip.aggregate_lines(music)
