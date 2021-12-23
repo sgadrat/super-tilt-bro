@@ -221,11 +221,28 @@ def get_note_table_index(note):
 
 	return note_table_names.index(note)
 
+def get_frequency_table_index(freq):
+	"""
+	Index of a frequency in the notes table
+
+	Returns None if not found, 0x7ff returns G-0 (the lowest note with this frequency)
+	"""
+	for i in range(len(note_table_freqs)-1, -1, -1):
+		if note_table_freqs[i] == freq:
+			return i
+	return None
+
 def get_note_frequency(note):
 	"""
 	Return the frequency of a note designated by its name
 	"""
 	return note_table_freqs[get_note_table_index(note)]
+
+def get_note_from_frequency(freq):
+	"""
+	Return the name of a note designated by its frequencty
+	"""
+	return note_table_names[get_frequency_table_index(freq)]
 
 def get_row(music, track, pattern, chan, row):
 	"""
@@ -319,25 +336,85 @@ def get_chan_type(music, chan_idx):
 def get_previous_note(music, track_idx, pattern_idx, chan_idx, row_idx):
 	"""
 	Return the previous known note and if it is reliable to asume that it is still being played
-
-	TODO actually return a frequence and compute it if there is some pitch effects along the way
 	"""
+	# Find original note position
+	original_note_pattern = None
+	original_note_row = None
 	original_note = None
-	has_pitch_fuckery = False
-	def scanner(current_pattern_idx, current_row_idx):
-		nonlocal has_pitch_fuckery, original_note
+	def find_note_scanner(current_pattern_idx, current_row_idx):
+		nonlocal music, track_idx, chan_idx, original_note_pattern, original_note_row, original_note
 		current_row = music['tracks'][track_idx]['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
-
-		for current_effect in current_row['effects']:
-			if is_pitch_slide_activation_effect(current_effect):
-				has_pitch_fuckery = True
-
 		if current_row['note'] not in ['...', '---', '===']:
+			original_note_pattern = current_pattern_idx
+			original_note_row = current_row_idx
 			original_note = current_row['note']
 			return False
-	scan_previous_chan_rows(scanner, music, track_idx, pattern_idx, chan_idx, row_idx-1)
+	scan_previous_chan_rows(find_note_scanner, music, track_idx, pattern_idx, chan_idx, row_idx-1)
 
-	return {'note': original_note, 'reliable': not has_pitch_fuckery}
+	# No note found, abort now
+	if original_note is None:
+		return {
+			'note': original_note,
+			'reliable': True,
+			'frequency': 0,
+			'approximate_note': original_note,
+			'unhandled_cases': []
+		}
+
+	# Compute impact of pitch effects on current row
+	reliable = True
+	frequency = get_note_frequency(original_note)
+	unhandled_cases = []
+	current_slide = {}
+	found_destination = False
+	def compute_slide_scanner(current_pattern_idx, current_row_idx):
+		nonlocal music, track_idx, chan_idx, pattern_idx, row_idx, reliable, frequency, unhandled_cases, current_slide, found_destination
+		current_row = music['tracks'][track_idx]['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+
+		# Stop when we came back to where we are searching the current frequency
+		target_pattern_idx = pattern_idx
+		target_row_idx = row_idx
+		if (current_pattern_idx, current_row_idx) == (target_pattern_idx, target_row_idx):
+			found_destination = True
+			return False
+
+		# Compute new slide value
+		#TODO merge this code with merge_pitch_slides
+		for effect_idx in range(len(current_row['effects'])):
+			effect = current_row['effects'][effect_idx]
+			if effect[0] == '1':
+				current_slide[effect_idx] = -int(effect[1:], 16)
+			elif effect[0] == '2':
+				current_slide[effect_idx] = int(effect[1:], 16)
+			elif effect[0] in pitch_effects:
+				if is_pitch_slide_activation_effect(effect):
+					unhandled_cases.append('non 1xx/2xx effect in {}'.format(
+						row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+					))
+				else:
+					current_slide[effect_idx] = 0
+
+		# Update frequency
+		merged_current_slide = 0
+		for column in current_slide:
+			merged_current_slide += current_slide[column]
+
+		if merged_current_slide != 0:
+			reliable = False
+			frequency += merged_current_slide
+	scan_next_chan_rows(compute_slide_scanner, music, track_idx, original_note_pattern, original_note_row)
+
+	assert found_destination, 'never came back to where we are searching for previous note, original search point must exist'
+
+	# Compute result
+	approximate_note_index = sorted(note_table_freqs, key=lambda x: abs(x - frequency))[0]
+	return {
+		'note': original_note,
+		'reliable': reliable and len(unhandled_cases) == 0,
+		'frequency': frequency,
+		'approximate_note': get_note_from_frequency(approximate_note_index),
+		'unhandled_cases': unhandled_cases
+	}
 
 def get_current_pitch_effect(music, track_idx, pattern_idx, chan_idx, row_idx):
 	"""
@@ -1505,17 +1582,24 @@ def apply_3_effect(music):
 						chan_row['effects'][portamento_effect_idx] = '...'
 						continue
 
-					if not original_note['reliable']:
-						warn('3xx effect while origin note was impacted by pitch effect in {}: effect ignored'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-						))
-						chan_row['effects'][portamento_effect_idx] = '...'
-						continue
+					if original_note['reliable']:
+						original_note = original_note['note']
+					else:
+						if original_note['unhandled_cases'] != []:
+							warn('3xx effect while origin note was impacted by unhandled pitch effect in {}: original note roughly estimated'.format(
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							))
+						else:
+							notice('3xx effect while origin note was impacted by pitch effect in {}: original note estimated (precision={}%)'.format(
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
+								100 * (1 - abs(get_note_frequency(original_note['approximate_note']) - original_note['frequency']) / original_note['frequency'])
+							))
+						original_note = original_note['approximate_note']
 
 					# Compute useful values
 					effect = chan_row['effects'][portamento_effect_idx]
 					slide_speed = int(effect[1:], 16)
-					freq_start = get_note_frequency(original_note['note'])
+					freq_start = get_note_frequency(original_note)
 					freq_stop = get_note_frequency(chan_row['note'])
 					duration = int(abs(freq_start - freq_stop) / slide_speed) # Round down, we do not want to go over the destination frequence
 
