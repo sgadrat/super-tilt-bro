@@ -48,7 +48,7 @@ ftmmanip.warn = warn
 ftmtxt.warn = warn
 
 # Read original file
-with open(SOURCE_FILE_PATH, 'r') as f:
+with open(SOURCE_FILE_PATH, 'r', encoding='latin1') as f:
 	music = ftmtxt.to_dict(f)
 
 # Simplify structure
