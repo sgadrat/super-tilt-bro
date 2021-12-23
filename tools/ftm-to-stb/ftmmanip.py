@@ -1261,6 +1261,7 @@ def remove_instruments(music):
 	modified = copy.deepcopy(music)
 
 	# Create an effect column per channel reserved to instruments usage
+	# NOTE: we could need to actually create one column per enveloppe type to be safe (and remove HACKs adding their own columns in apply_*_sequence)
 	instrument_effect_idx = {} # key=track_idx.chan_idx, value=index of the effect column for instruments usage
 	for track_idx in range(len(modified['tracks'])):
 		for chan_idx in range(modified['params']['n_chan']):
@@ -1362,42 +1363,6 @@ def remove_instruments(music):
 						seq_wid is None
 					):
 						chan_row['instrument'] = '..'
-
-	return modified
-
-def remove_useless_pitch_effects(music):
-	"""
-	When there is multiple pitch effects on a line, remove some to avoid random selection by effects blindly refusing to start.
-
-	DEPRECATED: In ftm modules effect rows are independent of each others. The whole script has to evolve to take this in consideration.
-	"""
-	modified = copy.deepcopy(music)
-
-	# Iterate on rows per channel
-	for track_idx in range(len(modified['tracks'])):
-		track = modified['tracks'][track_idx]
-		for pattern_idx in range(len(track['patterns'])):
-			pattern = track['patterns'][pattern_idx]
-			for chan_idx in range(modified['params']['n_chan']):
-				for row_idx in range(len(pattern['rows'])):
-					chan_row = pattern['rows'][row_idx]['channels'][chan_idx]
-
-					# List effects on this row (by category)
-					pitch_activation_effects_idx = []
-					pitch_stop_effects_idx = []
-					for effect_idx in range(len(chan_row['effects'])):
-						effect = chan_row['effects'][effect_idx]
-						if effect[0] in pitch_effects:
-							if is_pitch_slide_activation_effect(effect):
-								pitch_activation_effects_idx.append(effect_idx)
-							else:
-								pitch_stop_effects_idx.append(effect_idx)
-
-					# If activation and deactivation effects cohexist, prioretize activation effects
-					if len(pitch_activation_effects_idx) > 0 and len(pitch_stop_effects_idx) > 0:
-						for effect_idx in pitch_stop_effects_idx:
-							chan_row['effects'][effect_idx] = '...'
-						continue
 
 	return modified
 
