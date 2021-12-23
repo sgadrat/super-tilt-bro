@@ -1546,26 +1546,29 @@ def apply_3_effect(music):
 					assert dest_row_idx > row_idx
 					for current_row_idx in range(row_idx+1, dest_row_idx+1):
 						current_row = pattern['rows'][current_row_idx]['channels'][chan_idx]
-						explicit_stop = current_row['note'] != '...'
-						if current_row['effects'][portamento_effect_idx][0] in pitch_effects:
-							explicit_stop = True
 
-						explicitely_stopped = explicitely_stopped or explicit_stop
+						explicitely_stopped = current_row['note'] != '...'
+						if current_row['effects'][portamento_effect_idx][0] in pitch_effects:
+							explicitely_stopped = True
+
+						if explicitely_stopped:
+							dest_row_idx = current_row_idx
+							break
 
 					if not explicitely_stopped:
 						pattern['rows'][dest_row_idx]['channels'][chan_idx]['note'] = chan_row['note']
 
-						dest_has_pitch = False
-						current_effect = pattern['rows'][dest_row_idx]['channels'][chan_idx]['effects'][portamento_effect_idx]
-						if current_effect[0] in pitch_effects:
-							dest_has_pitch = True
+					dest_has_pitch = False
+					current_effect = pattern['rows'][dest_row_idx]['channels'][chan_idx]['effects'][portamento_effect_idx]
+					if current_effect[0] in pitch_effects:
+						dest_has_pitch = True
 
-						if not dest_has_pitch:
-							if current_effect != '...':
-								warn('non-pitch effect at portamento end location in {}: removing the non-pitch effect'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-								))
-							pattern['rows'][dest_row_idx]['channels'][chan_idx]['effects'][portamento_effect_idx] = '100'
+					if not dest_has_pitch:
+						if current_effect != '...':
+							warn('non-pitch effect at portamento end location in {}: removing the non-pitch effect'.format(
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							))
+						pattern['rows'][dest_row_idx]['channels'][chan_idx]['effects'][portamento_effect_idx] = '100'
 
 					# Remove the note from origin row
 					chan_row['note'] = '...'
