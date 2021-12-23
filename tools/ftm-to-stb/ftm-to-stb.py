@@ -82,6 +82,8 @@ music = ftmmanip.remove_superfluous_duty(music)
 music = ftmmanip.std_empty_row(music)
 music = ftmmanip.to_uncompressed_format(music)
 
+#music = ftmmanip.big_samples(music)
+
 music = ftmmanip.remove_duplicates(music)
 music = ftmmanip.aggregate_lines(music)
 music = ftmmanip.compute_note_length(music)

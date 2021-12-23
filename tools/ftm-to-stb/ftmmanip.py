@@ -2457,6 +2457,40 @@ def to_uncompressed_format(music):
 
 	return modified
 
+def big_samples(music):
+	"""
+	Experimental: flatten all uctf channels to one big sample, to see if it improves compression
+	Depends: to_uncompressed_format
+	"""
+	# Create flat samples, one per channel concatening all samples used by this channel
+	new_samples = []
+	new_chan_index = {} # key: channel index, value: new list of samples index
+	for chan_idx in range(len(music['uctf']['channels'])):
+		original_channel_samples = music['uctf']['channels'][chan_idx]
+
+		new_channel_sample = {
+			'type': None,
+			'lines': []
+		}
+		for original_sample_idx in original_channel_samples:
+			original_channel_sample = music['uctf']['samples'][original_sample_idx]
+			ensure(new_channel_sample['type'] is None or original_channel_sample['type'] == new_channel_sample['type'])
+			new_channel_sample['type'] = original_channel_sample['type']
+			new_channel_sample['lines'] += original_channel_sample['lines']
+
+		if len(new_channel_sample['lines']) > 0:
+			new_chan_index[chan_idx] = [len(new_samples)]
+			new_samples.append(new_channel_sample)
+
+	# Replace music samples by the flat samples
+	music['uctf']['samples'] = new_samples
+
+	# Reconstruct channels' sample index
+	for chan_idx in range(len(music['uctf']['channels'])):
+		music['uctf']['channels'][chan_idx] = new_chan_index.get(chan_idx, [])
+
+	return music
+
 def remove_duplicates(music):
 	"""
 	Simplify any duplicate field in UCTF by None.
@@ -3123,6 +3157,9 @@ def split_samples(music):
 		debug('\tscanning patterns')
 		patterns = {}
 		for n_opcodes in range(min_pattern_size, max_pattern_size):
+			if len(patterns) > 200000:
+				warn('break at 200000 patterns found in {}, n_opcodes={}/{}'.format(searched_sample_type, n_opcodes, max_pattern_size))
+				break
 			for scaned_sample in music['mod']['samples']:
 				if scaned_sample['type'] != searched_sample_type:
 					continue
