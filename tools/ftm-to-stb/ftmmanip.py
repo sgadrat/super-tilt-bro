@@ -3344,7 +3344,7 @@ def optim_pulse_opcodes_to_meta(music):
 
 	return music
 
-def split_samples(music):
+def split_samples(music, max_patterns=None):
 	"""
 	Split samples to get repeated patterns in their own sample
 
@@ -3385,8 +3385,8 @@ def split_samples(music):
 		debug('\tscanning patterns')
 		patterns = {}
 		for n_opcodes in range(min_pattern_size, max_pattern_size):
-			if len(patterns) > 200000:
-				warn('break at 200000 patterns found in {}, n_opcodes={}/{}'.format(searched_sample_type, n_opcodes, max_pattern_size))
+			if max_patterns is not None and len(patterns) >= max_patterns:
+				warn('break at {} patterns found in {}, n_opcodes={}/{}'.format(len(patterns), searched_sample_type, n_opcodes, max_pattern_size))
 				break
 			for scaned_sample in music['mod']['samples']:
 				if scaned_sample['type'] != searched_sample_type:
