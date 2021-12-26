@@ -2758,12 +2758,12 @@ def remove_duplicates(music):
 					last_line_values[field] = line[field]
 					is_empty = False
 				else:
-					if field == 'note' and last_line_values['pitch_slide'] != 0 and last_line_values['pitch_slide'] is not None:
+					if field == 'note' and line['note'] is not None and last_line_values['pitch_slide'] != 0 and last_line_values['pitch_slide'] is not None:
 						# Do not remove a duplicate note if there was a pitch slide
 						# Note: "is not None" part of the condition means "if pitch slide was never set in this sample" which
 						#        is an aggressive optimization (previous sample could have set a pitch slide)
 						is_empty = False
-					if field == 'frequency_adjust':
+					elif field == 'frequency_adjust':
 						# Do not remove frequency_adjust, it only impacts the line on which it is. Last value is no more impacting current line.
 						if line[field] is not None:
 							is_empty = False
