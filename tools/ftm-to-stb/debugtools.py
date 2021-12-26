@@ -25,7 +25,7 @@ def human_readable_track(track):
 
 	return serialized
 
-def human_readable_uctf(uctf):
+def human_readable_uctf(uctf, row_count=True):
 	serialized = ''
 	for channel_idx in range(len(uctf['channels'])):
 		serialized += 'CHANNEL {:02X}\n'.format(channel_idx)
@@ -41,7 +41,14 @@ def human_readable_uctf(uctf):
 			values = []
 			for field in ftmmanip.uctf_fields_by_type[sample['type']]:
 				values.append(str(line[field]) if line[field] is not None else '...')
-			serialized += '{:02X} : {}\n'.format(line_idx, '\t'.join(values))
+			for field in line:
+				if field not in ftmmanip.uctf_fields_by_type[sample['type']]:
+					values.append('{}={}'.format(field, line[field]))
+
+			if row_count:
+				serialized += '{:02X} : {}\n'.format(line_idx, '\t'.join(values))
+			else:
+				serialized += '{}\n'.format('\t'.join(values))
 		serialized += '\n'
 
 	return serialized
