@@ -2610,12 +2610,12 @@ def adapt_tempo(music):
 			# Add a lines to slow down music played too fast by the engine
 			operation = 'add_lines'
 			tempo_diff = target_tempo - original_tempo
-			rythm = original_tempo / tempo_diff
+			rythm = target_tempo / tempo_diff
 		else:
 			# Remove a lines to speed up music played too slowly by the engine
 			operation = 'remove_line'
 			tempo_diff = original_tempo - target_tempo
-			rythm = target_tempo / tempo_diff
+			rythm = original_tempo / tempo_diff
 
 		# Change samples to adapt to new tempo
 		for sample_idx in range(len(music['uctf']['samples'])):
@@ -2630,7 +2630,7 @@ def adapt_tempo(music):
 
 				# Check if the speedup/slowdown operation must be done on this line
 				operation_time = False
-				operation_count = original_line_idx // rythm
+				operation_count = (original_line_idx + 1) // rythm
 				if operation_count != last_operation_count:
 					last_operation_count = operation_count
 					operation_time = True
@@ -2675,6 +2675,7 @@ def adapt_tempo(music):
 							for reference_line_idx in range(len(new_lines)-1, -1, -1):
 								if new_lines[reference_line_idx]['pitch_slide'] is not None:
 									previous_line_slide = new_lines[reference_line_idx]['pitch_slide']
+									break
 
 							if previous_line_slide is None:
 								previous_line_slide, error = uctf_find_value_at_sample_begin('pitch_slide', music, sample_idx)
@@ -2699,7 +2700,9 @@ def adapt_tempo(music):
 							original_line_slide = original_line['pitch_slide'] if original_line['pitch_slide'] is not None else previous_line_slide
 
 							# Adapt previous slide to compensate for the loss of original line
-							previous_line['pitch_slide'] = previous_line_slide + original_line_slide
+							adapted_slide = previous_line_slide + original_line_slide
+							if adapted_slide != previous_line_slide:
+								previous_line['pitch_slide'] = previous_line_slide + original_line_slide
 
 							# Ensure slide value is reset on next line
 							if next_line is not None and next_line['pitch_slide'] is None:
