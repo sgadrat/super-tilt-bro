@@ -1,5 +1,5 @@
 import copy
-import json
+import re
 import sys
 
 #
@@ -1185,35 +1185,23 @@ def _apply_arpegio_sequence(seq_arp, ref_note, modified, instrument_idx, track_i
 
 		# Compute value as impacted by the sequence
 		sequence_value = seq_arp['sequence'][sequence_step]
-		if get_chan_type(modified, chan_idx) == '2a03-noise':
-			# Noise channel has 16 possible frequencies, against 96 notes in the table for other channels
-			#  divide by 6 to have a correspondance
-			if sequence_value % 6 != 0:
-				notice('arpegio enveloppe of instrument {:X} contains values not multiple of 6: truncated down'.format(instrument_idx))
-			sequence_value = sequence_value // 6
-
 		enveloppe_note_idx = ref_note_idx + sequence_value
 
 		# Bound computed value to valid values
 		if get_chan_type(modified, chan_idx) == '2a03-noise':
 			if enveloppe_note_idx > 0xf:
-				notice('arpegio enveloppe for noise goes over F in {}: F used'.format(
-					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
-				))
-				enveloppe_note_idx = 0xf
-			elif enveloppe_note_idx < 0:
-				notice('arpegio enveloppe for noise goes under 0 in {}: 0 used'.format(
-					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
-				))
-				enveloppe_note_idx = 0
+				enveloppe_note_idx %= 10
+			while enveloppe_note_idx < 0:
+				enveloppe_note_idx += 0x10
 		else:
+			#TODO check famitracker behaviour, is may be to loop through the table (strange behaviour, but consistent with what happens on noise)
 			if enveloppe_note_idx >= len(note_table_names):
-				notice('arpegio enveloppe goes over the notes table in {}: last note of the table used'.format(
+				warn('arpegio enveloppe goes over the notes table in {}: last note of the table used'.format(
 					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
 				))
 				enveloppe_note_idx = len(note_table_names) - 1
 			elif enveloppe_note_idx < 0:
-				notice('arpegio enveloppe goes under the notes table in {}: first note of the table used'.format(
+				warn('arpegio enveloppe goes under the notes table in {}: first note of the table used'.format(
 					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
 				))
 				enveloppe_note_idx = 0
@@ -3412,7 +3400,6 @@ def split_samples(music, max_patterns=None):
 						continue
 
 					# Increment pattern's count
-					#key = json.dumps(pattern_opcodes, sort_keys=True)
 					key = tuple(((x['name'], tuple(x['parameters'])) for x in pattern_opcodes))
 					if key in patterns.keys():
 						patterns[key]['count'] += 1
@@ -3602,7 +3589,9 @@ def samples_to_source(music):
 
 	Depends: to_mod_format
 	"""
-	music_name = 'title' #TODO get it from music structure, would need to extract it from ftm header
+	music_name = re.sub('[^a-z0-9_]', '', music['tracks'][0]['name'].lower().replace(' ', '_')).strip('_')
+	if music_name == '':
+		music_name = 'title'
 	music_name_low = music_name.lower()
 	music_name_up = music_name.upper()
 	track_names = ['pulse1', 'pulse2', 'triangle', 'noise']
