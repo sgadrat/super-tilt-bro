@@ -2764,7 +2764,11 @@ def remove_duplicates(music):
 					if field == 'note' and line['note'] is not None and last_line_values['pitch_slide'] != 0 and last_line_values['pitch_slide'] is not None:
 						# Do not remove a duplicate note if there was a pitch slide
 						# Note: "is not None" part of the condition means "if pitch slide was never set in this sample" which
-						#        is an aggressive optimization (previous sample could have set a pitch slide)
+						#       is an aggressive optimization (previous sample could have set a pitch slide)
+						#       TODO should be checked against previous samples in the channel, like for previous_line_slide in adapt_tempo
+						is_empty = False
+					elif field == 'freq' and line['freq'] is not None and last_line_values['pitch_slide'] != 0 and last_line_values['pitch_slide'] is not None:
+						# Same as with "note" but for noise channel
 						is_empty = False
 					elif field == 'frequency_adjust':
 						# Do not remove frequency_adjust, it only impacts the line on which it is. Last value is no more impacting current line.
