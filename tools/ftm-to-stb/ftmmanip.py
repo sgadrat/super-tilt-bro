@@ -3114,17 +3114,25 @@ def to_mod_format(music):
 			has_new_pitch_slide = line['pitch_slide'] is not None and line['pitch_slide'] != previous_state['pitch_slide']
 
 			if has_new_volume:
+				value = line['volume']
+				if value < 0 or value > 0xf:
+					warn('serializing noise volume of "{:X}": fixing to {:X}'.format(value, value % 0x10))
+					value %= 0x10
 				opcodes.append({
 					'type': 'music_sample_2a03_noise_opcode',
 					'name': 'SET_VOLUME',
-					'parameters': [line['volume']]
+					'parameters': [value]
 				})
 
 			if has_new_periodic:
+				value = line['periodic']
+				if value not in [0, 1]:
+					warn('serializing noise periodic value "{}": fixing to {}'.format(value, value % 2))
+					value %= 2
 				opcodes.append({
 					'type': 'music_sample_2a03_noise_opcode',
 					'name': 'SET_PERIODIC',
-					'parameters': [line['periodic']]
+					'parameters': [value]
 				})
 
 			if has_new_pitch_slide:
