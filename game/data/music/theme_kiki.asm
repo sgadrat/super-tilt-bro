@@ -16,9 +16,9 @@ music_kiki_track_pulse1:
 .word music_kiki_sample_117
 .word music_kiki_sample_0
 .word music_kiki_sample_1
-.word music_kiki_sample_35
-.word music_kiki_sample_63
-.word music_kiki_sample_66
+.word music_kiki_sample_37
+.word music_kiki_sample_64
+.word music_kiki_sample_67
 .word music_kiki_sample_135
 .word music_kiki_sample_132
 .word music_kiki_sample_136
@@ -27,27 +27,27 @@ music_kiki_track_pulse1:
 .word music_kiki_sample_120
 .word music_kiki_sample_120
 .word music_kiki_sample_119
-.word music_kiki_sample_64
-.word music_kiki_sample_63
 .word music_kiki_sample_65
-.word music_kiki_sample_2
-.word music_kiki_sample_36
-.word music_kiki_sample_63
+.word music_kiki_sample_64
 .word music_kiki_sample_66
+.word music_kiki_sample_2
+.word music_kiki_sample_38
+.word music_kiki_sample_64
+.word music_kiki_sample_67
 .word music_kiki_sample_133
 .word music_kiki_sample_132
 .word music_kiki_sample_134
 .word music_kiki_sample_3
 .word music_kiki_sample_4
-.word music_kiki_sample_92
-.word music_kiki_sample_90
-.word music_kiki_sample_91
-.word music_kiki_sample_90
-.word music_kiki_sample_91
-.word music_kiki_sample_90
-.word music_kiki_sample_69
+.word music_kiki_sample_95
+.word music_kiki_sample_93
+.word music_kiki_sample_94
+.word music_kiki_sample_93
+.word music_kiki_sample_94
+.word music_kiki_sample_93
+.word music_kiki_sample_71
 .word music_kiki_sample_27
-.word music_kiki_sample_79
+.word music_kiki_sample_81
 .word music_kiki_sample_155
 .word music_kiki_sample_126
 .word music_kiki_sample_126
@@ -59,15 +59,15 @@ music_kiki_track_pulse1:
 .word music_kiki_sample_126
 .word music_kiki_sample_137
 .word music_kiki_sample_138
-.word music_kiki_sample_92
-.word music_kiki_sample_90
-.word music_kiki_sample_91
-.word music_kiki_sample_90
-.word music_kiki_sample_91
-.word music_kiki_sample_90
-.word music_kiki_sample_69
+.word music_kiki_sample_95
+.word music_kiki_sample_93
+.word music_kiki_sample_94
+.word music_kiki_sample_93
+.word music_kiki_sample_94
+.word music_kiki_sample_93
+.word music_kiki_sample_71
 .word music_kiki_sample_28
-.word music_kiki_sample_79
+.word music_kiki_sample_81
 .word music_kiki_sample_155
 .word music_kiki_sample_126
 .word music_kiki_sample_126
@@ -79,61 +79,61 @@ music_kiki_track_pulse1:
 .word music_kiki_sample_126
 .word music_kiki_sample_137
 .word music_kiki_sample_139
-.word music_kiki_sample_92
-.word music_kiki_sample_90
-.word music_kiki_sample_91
-.word music_kiki_sample_90
-.word music_kiki_sample_45
+.word music_kiki_sample_95
+.word music_kiki_sample_93
+.word music_kiki_sample_94
+.word music_kiki_sample_93
+.word music_kiki_sample_47
 .word music_kiki_sample_5
 .word music_kiki_sample_6
 .word music_kiki_sample_7
 .word music_kiki_sample_110
 .word music_kiki_sample_109
+.word music_kiki_sample_83
+.word music_kiki_sample_53
+.word music_kiki_sample_111
+.word music_kiki_sample_109
+.word music_kiki_sample_84
+.word music_kiki_sample_62
+.word music_kiki_sample_111
+.word music_kiki_sample_109
 .word music_kiki_sample_84
 .word music_kiki_sample_51
 .word music_kiki_sample_111
 .word music_kiki_sample_109
-.word music_kiki_sample_85
-.word music_kiki_sample_60
-.word music_kiki_sample_111
-.word music_kiki_sample_109
-.word music_kiki_sample_85
-.word music_kiki_sample_49
+.word music_kiki_sample_83
+.word music_kiki_sample_53
 .word music_kiki_sample_111
 .word music_kiki_sample_109
 .word music_kiki_sample_84
-.word music_kiki_sample_51
+.word music_kiki_sample_62
 .word music_kiki_sample_111
 .word music_kiki_sample_109
-.word music_kiki_sample_85
-.word music_kiki_sample_60
+.word music_kiki_sample_84
+.word music_kiki_sample_62
 .word music_kiki_sample_111
 .word music_kiki_sample_109
-.word music_kiki_sample_85
-.word music_kiki_sample_60
-.word music_kiki_sample_111
-.word music_kiki_sample_109
-.word music_kiki_sample_85
+.word music_kiki_sample_84
 .word music_kiki_sample_110
 .word music_kiki_sample_109
+.word music_kiki_sample_83
+.word music_kiki_sample_53
+.word music_kiki_sample_111
+.word music_kiki_sample_109
+.word music_kiki_sample_84
+.word music_kiki_sample_62
+.word music_kiki_sample_111
+.word music_kiki_sample_109
 .word music_kiki_sample_84
 .word music_kiki_sample_51
 .word music_kiki_sample_111
 .word music_kiki_sample_109
-.word music_kiki_sample_85
-.word music_kiki_sample_60
+.word music_kiki_sample_84
+.word music_kiki_sample_62
 .word music_kiki_sample_111
 .word music_kiki_sample_109
-.word music_kiki_sample_85
-.word music_kiki_sample_49
-.word music_kiki_sample_111
-.word music_kiki_sample_109
-.word music_kiki_sample_85
-.word music_kiki_sample_60
-.word music_kiki_sample_111
-.word music_kiki_sample_109
-.word music_kiki_sample_85
-.word music_kiki_sample_50
+.word music_kiki_sample_84
+.word music_kiki_sample_52
 MUSIC_END
 
 music_kiki_track_pulse2:
@@ -164,7 +164,7 @@ music_kiki_track_pulse2:
 .word music_kiki_sample_183
 .word music_kiki_sample_193
 .word music_kiki_sample_183
-.word music_kiki_sample_55
+.word music_kiki_sample_57
 .word music_kiki_sample_178
 .word music_kiki_sample_197
 .word music_kiki_sample_202
@@ -185,7 +185,7 @@ music_kiki_track_pulse2:
 .word music_kiki_sample_198
 .word music_kiki_sample_197
 .word music_kiki_sample_199
-.word music_kiki_sample_55
+.word music_kiki_sample_57
 .word music_kiki_sample_178
 .word music_kiki_sample_197
 .word music_kiki_sample_202
@@ -199,7 +199,7 @@ music_kiki_track_pulse2:
 .word music_kiki_sample_197
 .word music_kiki_sample_202
 .word music_kiki_sample_175
-.word music_kiki_sample_56
+.word music_kiki_sample_58
 .word music_kiki_sample_178
 .word music_kiki_sample_197
 .word music_kiki_sample_202
@@ -222,31 +222,31 @@ music_kiki_track_pulse2:
 .word music_kiki_sample_201
 .word music_kiki_sample_9
 .word music_kiki_sample_10
-.word music_kiki_sample_86
-.word music_kiki_sample_97
-.word music_kiki_sample_100
-.word music_kiki_sample_87
-.word music_kiki_sample_32
-.word music_kiki_sample_104
-.word music_kiki_sample_105
-.word music_kiki_sample_104
-.word music_kiki_sample_105
-.word music_kiki_sample_104
-.word music_kiki_sample_106
 .word music_kiki_sample_88
-.word music_kiki_sample_97
-.word music_kiki_sample_100
-.word music_kiki_sample_89
-.word music_kiki_sample_33
-.word music_kiki_sample_104
-.word music_kiki_sample_105
-.word music_kiki_sample_104
-.word music_kiki_sample_105
-.word music_kiki_sample_104
-.word music_kiki_sample_106
-.word music_kiki_sample_98
-.word music_kiki_sample_97
 .word music_kiki_sample_99
+.word music_kiki_sample_102
+.word music_kiki_sample_89
+.word music_kiki_sample_34
+.word music_kiki_sample_106
+.word music_kiki_sample_107
+.word music_kiki_sample_106
+.word music_kiki_sample_107
+.word music_kiki_sample_106
+.word music_kiki_sample_108
+.word music_kiki_sample_90
+.word music_kiki_sample_99
+.word music_kiki_sample_102
+.word music_kiki_sample_91
+.word music_kiki_sample_35
+.word music_kiki_sample_106
+.word music_kiki_sample_107
+.word music_kiki_sample_106
+.word music_kiki_sample_107
+.word music_kiki_sample_106
+.word music_kiki_sample_108
+.word music_kiki_sample_100
+.word music_kiki_sample_99
+.word music_kiki_sample_101
 .word music_kiki_sample_11
 .word music_kiki_sample_12
 .word music_kiki_sample_13
@@ -282,21 +282,21 @@ music_kiki_track_triangle:
 .word music_kiki_sample_216
 .word music_kiki_sample_215
 .word music_kiki_sample_217
-.word music_kiki_sample_37
+.word music_kiki_sample_39
 .word music_kiki_sample_160
-.word music_kiki_sample_40
+.word music_kiki_sample_43
 .word music_kiki_sample_160
-.word music_kiki_sample_40
-.word music_kiki_sample_40
-.word music_kiki_sample_40
-.word music_kiki_sample_40
-.word music_kiki_sample_40
-.word music_kiki_sample_40
-.word music_kiki_sample_40
-.word music_kiki_sample_40
-.word music_kiki_sample_40
+.word music_kiki_sample_43
+.word music_kiki_sample_43
+.word music_kiki_sample_43
+.word music_kiki_sample_43
+.word music_kiki_sample_43
+.word music_kiki_sample_43
+.word music_kiki_sample_43
+.word music_kiki_sample_43
+.word music_kiki_sample_43
 .word music_kiki_sample_160
-.word music_kiki_sample_40
+.word music_kiki_sample_43
 .word music_kiki_sample_159
 .word music_kiki_sample_24
 .word music_kiki_sample_171
@@ -336,52 +336,52 @@ music_kiki_track_triangle:
 .word music_kiki_sample_207
 .word music_kiki_sample_209
 .word music_kiki_sample_156
-.word music_kiki_sample_34
+.word music_kiki_sample_36
 .word music_kiki_sample_156
-.word music_kiki_sample_34
-.word music_kiki_sample_34
-.word music_kiki_sample_34
-.word music_kiki_sample_34
-.word music_kiki_sample_34
-.word music_kiki_sample_34
-.word music_kiki_sample_34
-.word music_kiki_sample_34
+.word music_kiki_sample_36
+.word music_kiki_sample_36
+.word music_kiki_sample_36
+.word music_kiki_sample_36
+.word music_kiki_sample_36
+.word music_kiki_sample_36
+.word music_kiki_sample_36
+.word music_kiki_sample_36
 .word music_kiki_sample_156
-.word music_kiki_sample_34
+.word music_kiki_sample_36
 .word music_kiki_sample_21
-.word music_kiki_sample_74
+.word music_kiki_sample_76
 .word music_kiki_sample_131
 .word music_kiki_sample_118
 .word music_kiki_sample_118
-.word music_kiki_sample_75
+.word music_kiki_sample_77
 .word music_kiki_sample_16
 .word music_kiki_sample_22
-.word music_kiki_sample_74
+.word music_kiki_sample_76
 .word music_kiki_sample_131
 .word music_kiki_sample_118
 .word music_kiki_sample_118
-.word music_kiki_sample_75
+.word music_kiki_sample_77
 .word music_kiki_sample_17
 .word music_kiki_sample_131
 .word music_kiki_sample_118
 .word music_kiki_sample_118
-.word music_kiki_sample_73
+.word music_kiki_sample_75
 .word music_kiki_sample_180
 .word music_kiki_sample_179
 .word music_kiki_sample_181
 .word music_kiki_sample_179
 .word music_kiki_sample_182
 .word music_kiki_sample_18
-.word music_kiki_sample_80
+.word music_kiki_sample_82
 .word music_kiki_sample_165
-.word music_kiki_sample_93
+.word music_kiki_sample_96
 .word music_kiki_sample_165
-.word music_kiki_sample_93
-.word music_kiki_sample_93
-.word music_kiki_sample_93
-.word music_kiki_sample_93
+.word music_kiki_sample_96
+.word music_kiki_sample_96
+.word music_kiki_sample_96
+.word music_kiki_sample_96
 .word music_kiki_sample_165
-.word music_kiki_sample_93
+.word music_kiki_sample_96
 .word music_kiki_sample_164
 .word music_kiki_sample_29
 .word music_kiki_sample_30
@@ -396,132 +396,132 @@ music_kiki_track_triangle:
 MUSIC_END
 
 music_kiki_track_noise:
-.word music_kiki_sample_107
-.word music_kiki_sample_70
-.word music_kiki_sample_94
-.word music_kiki_sample_82
-.word music_kiki_sample_81
-.word music_kiki_sample_39
-.word music_kiki_sample_39
-.word music_kiki_sample_82
-.word music_kiki_sample_81
-.word music_kiki_sample_38
-.word music_kiki_sample_82
-.word music_kiki_sample_81
-.word music_kiki_sample_39
-.word music_kiki_sample_82
-.word music_kiki_sample_81
-.word music_kiki_sample_39
-.word music_kiki_sample_39
-.word music_kiki_sample_38
-.word music_kiki_sample_82
-.word music_kiki_sample_81
-.word music_kiki_sample_39
-.word music_kiki_sample_82
-.word music_kiki_sample_81
+.word music_kiki_sample_32
+.word music_kiki_sample_86
+.word music_kiki_sample_85
+.word music_kiki_sample_45
+.word music_kiki_sample_45
+.word music_kiki_sample_86
+.word music_kiki_sample_85
 .word music_kiki_sample_44
+.word music_kiki_sample_86
+.word music_kiki_sample_85
+.word music_kiki_sample_45
+.word music_kiki_sample_86
+.word music_kiki_sample_85
+.word music_kiki_sample_45
+.word music_kiki_sample_45
+.word music_kiki_sample_44
+.word music_kiki_sample_86
+.word music_kiki_sample_85
+.word music_kiki_sample_45
+.word music_kiki_sample_86
+.word music_kiki_sample_85
+.word music_kiki_sample_46
 .word music_kiki_sample_20
-.word music_kiki_sample_57
 .word music_kiki_sample_59
-.word music_kiki_sample_42
-.word music_kiki_sample_101
-.word music_kiki_sample_102
-.word music_kiki_sample_57
-.word music_kiki_sample_59
-.word music_kiki_sample_43
-.word music_kiki_sample_101
-.word music_kiki_sample_102
-.word music_kiki_sample_57
-.word music_kiki_sample_59
-.word music_kiki_sample_42
-.word music_kiki_sample_62
 .word music_kiki_sample_61
-.word music_kiki_sample_57
-.word music_kiki_sample_59
 .word music_kiki_sample_41
-.word music_kiki_sample_57
-.word music_kiki_sample_59
-.word music_kiki_sample_42
-.word music_kiki_sample_101
-.word music_kiki_sample_102
-.word music_kiki_sample_57
-.word music_kiki_sample_59
-.word music_kiki_sample_42
-.word music_kiki_sample_23
+.word music_kiki_sample_97
 .word music_kiki_sample_103
-.word music_kiki_sample_101
-.word music_kiki_sample_61
-.word music_kiki_sample_57
-.word music_kiki_sample_83
-.word music_kiki_sample_81
-.word music_kiki_sample_70
-.word music_kiki_sample_78
-.word music_kiki_sample_76
-.word music_kiki_sample_71
-.word music_kiki_sample_76
-.word music_kiki_sample_77
-.word music_kiki_sample_52
-.word music_kiki_sample_53
-.word music_kiki_sample_46
-.word music_kiki_sample_47
-.word music_kiki_sample_72
-.word music_kiki_sample_78
-.word music_kiki_sample_76
-.word music_kiki_sample_71
-.word music_kiki_sample_76
-.word music_kiki_sample_77
-.word music_kiki_sample_52
-.word music_kiki_sample_54
-.word music_kiki_sample_46
-.word music_kiki_sample_48
-.word music_kiki_sample_72
-.word music_kiki_sample_78
-.word music_kiki_sample_76
-.word music_kiki_sample_71
-.word music_kiki_sample_76
-.word music_kiki_sample_77
-.word music_kiki_sample_57
-.word music_kiki_sample_58
-.word music_kiki_sample_107
-.word music_kiki_sample_108
+.word music_kiki_sample_105
 .word music_kiki_sample_59
+.word music_kiki_sample_61
 .word music_kiki_sample_42
-.word music_kiki_sample_101
-.word music_kiki_sample_102
-.word music_kiki_sample_95
-.word music_kiki_sample_94
-.word music_kiki_sample_82
-.word music_kiki_sample_81
-.word music_kiki_sample_39
-.word music_kiki_sample_39
-.word music_kiki_sample_82
-.word music_kiki_sample_81
-.word music_kiki_sample_67
-.word music_kiki_sample_96
-.word music_kiki_sample_94
-.word music_kiki_sample_82
-.word music_kiki_sample_81
-.word music_kiki_sample_39
-.word music_kiki_sample_39
-.word music_kiki_sample_38
-.word music_kiki_sample_82
-.word music_kiki_sample_81
-.word music_kiki_sample_39
-.word music_kiki_sample_82
-.word music_kiki_sample_81
-.word music_kiki_sample_39
-.word music_kiki_sample_39
+.word music_kiki_sample_97
+.word music_kiki_sample_103
+.word music_kiki_sample_105
+.word music_kiki_sample_59
+.word music_kiki_sample_61
+.word music_kiki_sample_41
+.word music_kiki_sample_63
+.word music_kiki_sample_103
+.word music_kiki_sample_104
+.word music_kiki_sample_59
+.word music_kiki_sample_61
+.word music_kiki_sample_40
+.word music_kiki_sample_59
+.word music_kiki_sample_61
+.word music_kiki_sample_41
+.word music_kiki_sample_97
+.word music_kiki_sample_103
+.word music_kiki_sample_105
+.word music_kiki_sample_59
+.word music_kiki_sample_61
+.word music_kiki_sample_41
+.word music_kiki_sample_23
+.word music_kiki_sample_98
+.word music_kiki_sample_97
+.word music_kiki_sample_103
+.word music_kiki_sample_104
+.word music_kiki_sample_59
+.word music_kiki_sample_87
+.word music_kiki_sample_85
 .word music_kiki_sample_68
-.word music_kiki_sample_96
-.word music_kiki_sample_94
-.word music_kiki_sample_82
-.word music_kiki_sample_81
-.word music_kiki_sample_39
-.word music_kiki_sample_39
-.word music_kiki_sample_38
-.word music_kiki_sample_82
-.word music_kiki_sample_81
-.word music_kiki_sample_39
+.word music_kiki_sample_74
+.word music_kiki_sample_72
+.word music_kiki_sample_69
+.word music_kiki_sample_72
+.word music_kiki_sample_73
+.word music_kiki_sample_54
+.word music_kiki_sample_55
+.word music_kiki_sample_48
+.word music_kiki_sample_49
+.word music_kiki_sample_70
+.word music_kiki_sample_74
+.word music_kiki_sample_72
+.word music_kiki_sample_69
+.word music_kiki_sample_72
+.word music_kiki_sample_73
+.word music_kiki_sample_54
+.word music_kiki_sample_56
+.word music_kiki_sample_48
+.word music_kiki_sample_50
+.word music_kiki_sample_70
+.word music_kiki_sample_74
+.word music_kiki_sample_72
+.word music_kiki_sample_69
+.word music_kiki_sample_72
+.word music_kiki_sample_73
+.word music_kiki_sample_59
+.word music_kiki_sample_60
+.word music_kiki_sample_92
+.word music_kiki_sample_61
+.word music_kiki_sample_41
+.word music_kiki_sample_97
+.word music_kiki_sample_103
+.word music_kiki_sample_105
+.word music_kiki_sample_33
+.word music_kiki_sample_86
+.word music_kiki_sample_85
+.word music_kiki_sample_45
+.word music_kiki_sample_45
+.word music_kiki_sample_86
+.word music_kiki_sample_85
+.word music_kiki_sample_79
+.word music_kiki_sample_78
+.word music_kiki_sample_86
+.word music_kiki_sample_85
+.word music_kiki_sample_45
+.word music_kiki_sample_45
+.word music_kiki_sample_44
+.word music_kiki_sample_86
+.word music_kiki_sample_85
+.word music_kiki_sample_45
+.word music_kiki_sample_86
+.word music_kiki_sample_85
+.word music_kiki_sample_45
+.word music_kiki_sample_45
+.word music_kiki_sample_80
+.word music_kiki_sample_78
+.word music_kiki_sample_86
+.word music_kiki_sample_85
+.word music_kiki_sample_45
+.word music_kiki_sample_45
+.word music_kiki_sample_44
+.word music_kiki_sample_86
+.word music_kiki_sample_85
+.word music_kiki_sample_45
 .word music_kiki_sample_26
 MUSIC_END
 
@@ -2885,82 +2885,82 @@ music_kiki_sample_20:
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_HALT(1)
 	AUDIO_NOISE_SET_VOLUME(12)
-	AUDIO_NOISE_SET_PERIODIC(2)
+	AUDIO_NOISE_SET_PERIODIC(0)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(10,1)
 	AUDIO_NOISE_SET_PERIODIC(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_PERIODIC(0)
 	AUDIO_NOISE_WAIT(7)
 	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_PITCH_SLIDE_UP(1)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
 	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_PITCH_SLIDE_UP(2)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(2)
 	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_PITCH_SLIDE_UP(1)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
 	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_PITCH_SLIDE_UP(2)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(2)
 	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_PITCH_SLIDE_UP(1)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
 	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_PITCH_SLIDE_UP(2)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(2)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_SET_PERIODIC(2)
-	AUDIO_NOISE_PITCH_SLIDE_UP(1)
+	AUDIO_NOISE_SET_PERIODIC(0)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(10,1)
 	AUDIO_NOISE_SET_PERIODIC(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_PERIODIC(0)
 	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_PITCH_SLIDE_UP(2)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(2)
 	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_PITCH_SLIDE_UP(1)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
 	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_PITCH_SLIDE_UP(2)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(2)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(3)
-	AUDIO_NOISE_PITCH_SLIDE_UP(1)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
 	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_PITCH_SLIDE_UP(2)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(2)
 	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_PITCH_SLIDE_UP(1)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
 	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_PITCH_SLIDE_UP(2)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(2)
 	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_PITCH_SLIDE_UP(1)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
 	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_PITCH_SLIDE_UP(2)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(2)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(4)
-	AUDIO_NOISE_SET_PERIODIC(2)
-	AUDIO_NOISE_PITCH_SLIDE_UP(1)
+	AUDIO_NOISE_SET_PERIODIC(0)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(10,1)
 	AUDIO_NOISE_SET_PERIODIC(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_PERIODIC(0)
 	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_PITCH_SLIDE_UP(2)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(2)
 	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_PITCH_SLIDE_UP(1)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
 	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_PITCH_SLIDE_UP(2)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(2)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_PITCH_SLIDE_UP(1)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
 	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_PITCH_SLIDE_UP(2)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(2)
 	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_PITCH_SLIDE_UP(1)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
 	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_PITCH_SLIDE_UP(2)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(2)
 	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_PITCH_SLIDE_UP(1)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
 	AUDIO_NOISE_HALT(3)
-	AUDIO_NOISE_PITCH_SLIDE_UP(2)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(2)
 	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_PITCH_SLIDE_UP(1)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
 	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_PITCH_SLIDE_UP(2)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(2)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(5)
 	AUDIO_NOISE_PITCH_SLIDE_UP(0)
@@ -3031,6 +3031,8 @@ music_kiki_sample_22:
 
 music_kiki_sample_23:
 .(
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(7)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(5)
@@ -3040,17 +3042,18 @@ music_kiki_sample_23:
 	AUDIO_NOISE_SET_VOLUME(2)
 	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(4,1)
 	AUDIO_NOISE_SET_VOLUME(0)
@@ -3069,15 +3072,16 @@ music_kiki_sample_23:
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_HALT(0)
 	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(4)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,2)
 	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
 	AUDIO_NOISE_SET_VOLUME(8)
@@ -3091,15 +3095,16 @@ music_kiki_sample_23:
 	AUDIO_NOISE_SET_VOLUME(2)
 	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(4)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,2)
 	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
@@ -3107,15 +3112,15 @@ music_kiki_sample_23:
 	AUDIO_NOISE_SET_VOLUME(4)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,2)
 	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(4)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,2)
 	SAMPLE_END
 .)
 
@@ -3385,6 +3390,110 @@ music_kiki_sample_31:
 
 music_kiki_sample_32:
 .(
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_PITCH_SLIDE_UP(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(5,2)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(3)
+	AUDIO_NOISE_SET_VOLUME(4)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(3)
+	AUDIO_NOISE_WAIT(5)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(2)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	SAMPLE_END
+.)
+
+music_kiki_sample_33:
+.(
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(8,2)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_PITCH_SLIDE_UP(0)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(3)
+	AUDIO_NOISE_SET_VOLUME(4)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(3)
+	AUDIO_NOISE_WAIT(5)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(2)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	SAMPLE_END
+.)
+
+music_kiki_sample_34:
+.(
 	AUDIO_PULSE_META_NOTE_DUT_DSLIDE(10,1,2,0)
 	CHAN_DUTY(1)
 	WAIT(0)
@@ -3396,7 +3505,7 @@ music_kiki_sample_32:
 	SAMPLE_END
 .)
 
-music_kiki_sample_33:
+music_kiki_sample_35:
 .(
 	AUDIO_PULSE_META_WAIT_DUT_DSLIDE(4,0,32)
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,64)
@@ -3406,14 +3515,14 @@ music_kiki_sample_33:
 	SAMPLE_END
 .)
 
-music_kiki_sample_34:
+music_kiki_sample_36:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(4,4)
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,8)
 	SAMPLE_END
 .)
 
-music_kiki_sample_35:
+music_kiki_sample_37:
 .(
 	CHAN_VOLUME_LOW(4)
 	PLAY_TIMED_NOTE(0,70)
@@ -3424,7 +3533,7 @@ music_kiki_sample_35:
 	SAMPLE_END
 .)
 
-music_kiki_sample_36:
+music_kiki_sample_38:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(38,1,1,6)
 	AUDIO_PULSE_META_NOTE_DUT_VOL(41,1,2,2)
@@ -3444,7 +3553,7 @@ music_kiki_sample_36:
 	SAMPLE_END
 .)
 
-music_kiki_sample_37:
+music_kiki_sample_39:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(52,3,40)
 	AUDIO_PULSE_META_NOTE_DSLIDE(23,6,0)
@@ -3473,7 +3582,262 @@ music_kiki_sample_37:
 	SAMPLE_END
 .)
 
-music_kiki_sample_38:
+music_kiki_sample_40:
+.(
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(4,1)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(9,1)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(11,1)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(4)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(4)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(12)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(14)
+	AUDIO_NOISE_SET_PERIODIC(1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_SET_VOLUME(11)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(4)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(3)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(7)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_SET_PERIODIC(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,1)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(3)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(10,2)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(5,1)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
+	AUDIO_NOISE_SET_VOLUME(4)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(9,1)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(11,1)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	SAMPLE_END
+.)
+
+music_kiki_sample_41:
+.(
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_HALT(4)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(4,1)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	SAMPLE_END
+.)
+
+music_kiki_sample_42:
+.(
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(3)
+	AUDIO_NOISE_WAIT(2)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(4,1)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	SAMPLE_END
+.)
+
+music_kiki_sample_43:
+.(
+	AUDIO_PULSE_META_WAIT_USLIDE(4,-10)
+	AUDIO_PULSE_META_WAIT_USLIDE(1,-20)
+	SAMPLE_END
+.)
+
+music_kiki_sample_44:
 .(
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
@@ -3510,7 +3874,7 @@ music_kiki_sample_38:
 	SAMPLE_END
 .)
 
-music_kiki_sample_39:
+music_kiki_sample_45:
 .(
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_WAIT(0)
@@ -3545,262 +3909,7 @@ music_kiki_sample_39:
 	SAMPLE_END
 .)
 
-music_kiki_sample_40:
-.(
-	AUDIO_PULSE_META_WAIT_USLIDE(4,-10)
-	AUDIO_PULSE_META_WAIT_USLIDE(1,-20)
-	SAMPLE_END
-.)
-
-music_kiki_sample_41:
-.(
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(4,1)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(9,1)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(11,1)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(4)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(4)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(12)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(14)
-	AUDIO_NOISE_SET_PERIODIC(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(11)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(4)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(3)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(7)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_SET_PERIODIC(0)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(5,1)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(3)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(6,2)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(5,1)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
-	AUDIO_NOISE_SET_VOLUME(4)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(9,1)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(11,1)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	SAMPLE_END
-.)
-
-music_kiki_sample_42:
-.(
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_HALT(4)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(4,1)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	SAMPLE_END
-.)
-
-music_kiki_sample_43:
-.(
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(3)
-	AUDIO_NOISE_WAIT(2)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(4,1)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	SAMPLE_END
-.)
-
-music_kiki_sample_44:
+music_kiki_sample_46:
 .(
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_WAIT(0)
@@ -3869,7 +3978,7 @@ music_kiki_sample_44:
 	SAMPLE_END
 .)
 
-music_kiki_sample_45:
+music_kiki_sample_47:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(42,1,1,8)
 	AUDIO_PULSE_META_NOTE_DUT_VOL(46,1,2,5)
@@ -3950,18 +4059,22 @@ music_kiki_sample_45:
 	SAMPLE_END
 .)
 
-music_kiki_sample_46:
+music_kiki_sample_48:
 .(
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_SET_PERIODIC(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_SET_PERIODIC(1)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
@@ -4002,17 +4115,18 @@ music_kiki_sample_46:
 	AUDIO_NOISE_SET_VOLUME(2)
 	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_SET_PERIODIC(1)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
@@ -4058,25 +4172,26 @@ music_kiki_sample_46:
 	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(15)
 	AUDIO_NOISE_SET_PERIODIC(0)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
 	SAMPLE_END
 .)
 
-music_kiki_sample_47:
+music_kiki_sample_49:
 .(
 	AUDIO_NOISE_SET_VOLUME(5)
 	AUDIO_NOISE_SET_PERIODIC(1)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
 	AUDIO_NOISE_SET_VOLUME(4)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(3)
@@ -4095,7 +4210,7 @@ music_kiki_sample_47:
 	SAMPLE_END
 .)
 
-music_kiki_sample_48:
+music_kiki_sample_50:
 .(
 	AUDIO_NOISE_SET_VOLUME(5)
 	AUDIO_NOISE_SET_PERIODIC(1)
@@ -4118,7 +4233,7 @@ music_kiki_sample_48:
 	SAMPLE_END
 .)
 
-music_kiki_sample_49:
+music_kiki_sample_51:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(58,1,2,8)
 	AUDIO_PULSE_META_WAIT_DUT_VOL(1,0,6)
@@ -4131,7 +4246,7 @@ music_kiki_sample_49:
 	SAMPLE_END
 .)
 
-music_kiki_sample_50:
+music_kiki_sample_52:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL_DSLIDE(58,1,2,8,1)
 	AUDIO_PULSE_META_WAIT_DUT_VOL(1,0,6)
@@ -4240,7 +4355,7 @@ music_kiki_sample_50:
 	SAMPLE_END
 .)
 
-music_kiki_sample_51:
+music_kiki_sample_53:
 .(
 	WAIT(0)
 	CHAN_VOLUME_LOW(0)
@@ -4257,7 +4372,7 @@ music_kiki_sample_51:
 	SAMPLE_END
 .)
 
-music_kiki_sample_52:
+music_kiki_sample_54:
 .(
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_PITCH_SLIDE_UP(0)
@@ -4279,17 +4394,18 @@ music_kiki_sample_52:
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_HALT(6)
 	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_SET_PERIODIC(1)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
@@ -4322,7 +4438,7 @@ music_kiki_sample_52:
 	SAMPLE_END
 .)
 
-music_kiki_sample_53:
+music_kiki_sample_55:
 .(
 	AUDIO_NOISE_SET_PERIODIC(1)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
@@ -4336,13 +4452,10 @@ music_kiki_sample_53:
 	AUDIO_NOISE_WAIT(2)
 	AUDIO_NOISE_SET_VOLUME(2)
 	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_SET_PERIODIC(0)
-	AUDIO_NOISE_WAIT(0)
 	SAMPLE_END
 .)
 
-music_kiki_sample_54:
+music_kiki_sample_56:
 .(
 	AUDIO_NOISE_SET_PERIODIC(1)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
@@ -4356,13 +4469,10 @@ music_kiki_sample_54:
 	AUDIO_NOISE_WAIT(2)
 	AUDIO_NOISE_SET_VOLUME(2)
 	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_SET_PERIODIC(0)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
 	SAMPLE_END
 .)
 
-music_kiki_sample_55:
+music_kiki_sample_57:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(46,1,1,10)
 	AUDIO_PULSE_META_NOTE_DUT_VOL(50,1,2,6)
@@ -4377,7 +4487,7 @@ music_kiki_sample_55:
 	SAMPLE_END
 .)
 
-music_kiki_sample_56:
+music_kiki_sample_58:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(34,1,1,6)
 	AUDIO_PULSE_META_NOTE_DUT_VOL(38,1,2,2)
@@ -4396,7 +4506,7 @@ music_kiki_sample_56:
 	SAMPLE_END
 .)
 
-music_kiki_sample_57:
+music_kiki_sample_59:
 .(
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_PITCH_SLIDE_UP(0)
@@ -4428,21 +4538,22 @@ music_kiki_sample_57:
 	AUDIO_NOISE_SET_VOLUME(0)
 	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
 	SAMPLE_END
 .)
 
-music_kiki_sample_58:
+music_kiki_sample_60:
 .(
 	AUDIO_NOISE_SET_VOLUME(4)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
@@ -4462,44 +4573,46 @@ music_kiki_sample_58:
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_HALT(0)
 	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
 	AUDIO_NOISE_SET_VOLUME(15)
 	AUDIO_NOISE_HALT(1)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
 	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(9,1)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(14,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(1,5)
-	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,3)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(9,2)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(5)
@@ -4511,17 +4624,18 @@ music_kiki_sample_58:
 	AUDIO_NOISE_SET_VOLUME(2)
 	AUDIO_NOISE_WAIT(4)
 	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
 	AUDIO_NOISE_SET_VOLUME(8)
@@ -4551,17 +4665,18 @@ music_kiki_sample_58:
 	AUDIO_NOISE_SET_VOLUME(0)
 	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
 	AUDIO_NOISE_SET_VOLUME(8)
@@ -4575,49 +4690,49 @@ music_kiki_sample_58:
 	AUDIO_NOISE_SET_VOLUME(2)
 	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	SAMPLE_END
 .)
 
-music_kiki_sample_59:
+music_kiki_sample_61:
 .(
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
@@ -4662,7 +4777,7 @@ music_kiki_sample_59:
 	SAMPLE_END
 .)
 
-music_kiki_sample_60:
+music_kiki_sample_62:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(58,1,2,8)
 	AUDIO_PULSE_META_WAIT_DUT_VOL(1,0,6)
@@ -4676,24 +4791,8 @@ music_kiki_sample_60:
 	SAMPLE_END
 .)
 
-music_kiki_sample_61:
+music_kiki_sample_63:
 .(
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(4,1)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
 	AUDIO_NOISE_SET_VOLUME(8)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(7)
@@ -4704,48 +4803,6 @@ music_kiki_sample_61:
 	AUDIO_NOISE_WAIT(2)
 	AUDIO_NOISE_SET_VOLUME(2)
 	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_HALT(1)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	SAMPLE_END
-.)
-
-music_kiki_sample_62:
-.(
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(3)
-	AUDIO_NOISE_WAIT(2)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(5)
@@ -4763,21 +4820,22 @@ music_kiki_sample_62:
 	AUDIO_NOISE_SET_VOLUME(0)
 	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(4)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,2)
 	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
 	SAMPLE_END
 .)
 
-music_kiki_sample_63:
+music_kiki_sample_64:
 .(
 	PLAY_TIMED_NOTE(2,41)
 	HALT(0)
@@ -4858,7 +4916,7 @@ music_kiki_sample_63:
 	SAMPLE_END
 .)
 
-music_kiki_sample_64:
+music_kiki_sample_65:
 .(
 	CHAN_DUTY(0)
 	CHAN_VOLUME_HIGH(0)
@@ -4870,7 +4928,7 @@ music_kiki_sample_64:
 	SAMPLE_END
 .)
 
-music_kiki_sample_65:
+music_kiki_sample_66:
 .(
 	CHAN_VOLUME_HIGH(7)
 	PLAY_TIMED_NOTE(0,44)
@@ -4894,7 +4952,7 @@ music_kiki_sample_65:
 	SAMPLE_END
 .)
 
-music_kiki_sample_66:
+music_kiki_sample_67:
 .(
 	CHAN_VOLUME_HIGH(7)
 	PLAY_TIMED_NOTE(0,46)
@@ -4920,74 +4978,26 @@ music_kiki_sample_66:
 	SAMPLE_END
 .)
 
-music_kiki_sample_67:
-.(
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(6,2)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_PITCH_SLIDE_UP(0)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_SET_VOLUME(4)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(3)
-	AUDIO_NOISE_WAIT(2)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
-	SAMPLE_END
-.)
-
 music_kiki_sample_68:
 .(
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(6,2)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_PITCH_SLIDE_UP(0)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(3)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(4)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(9,2)
 	SAMPLE_END
 .)
 
 music_kiki_sample_69:
+.(
+	AUDIO_NOISE_SET_VOLUME(1)
+	SAMPLE_END
+.)
+
+music_kiki_sample_70:
+.(
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_SET_PERIODIC(0)
+	SAMPLE_END
+.)
+
+music_kiki_sample_71:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(39,1,1,8)
 	AUDIO_PULSE_META_NOTE_DUT_VOL(43,1,2,5)
@@ -5008,26 +5018,192 @@ music_kiki_sample_69:
 	SAMPLE_END
 .)
 
-music_kiki_sample_70:
-.(
-	AUDIO_NOISE_SET_VOLUME(10)
-	SAMPLE_END
-.)
-
-music_kiki_sample_71:
-.(
-	AUDIO_NOISE_SET_VOLUME(2)
-	SAMPLE_END
-.)
-
 music_kiki_sample_72:
 .(
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_SET_PERIODIC(0)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(3)
+	AUDIO_NOISE_WAIT(2)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(4)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,2)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
 	SAMPLE_END
 .)
 
 music_kiki_sample_73:
+.(
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(2)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(4)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,2)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	SAMPLE_END
+.)
+
+music_kiki_sample_74:
+.(
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_PITCH_SLIDE_UP(0)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(4)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,2)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	SAMPLE_END
+.)
+
+music_kiki_sample_75:
 .(
 	PLAY_TIMED_NOTE(0,54)
 	HALT(3)
@@ -5065,7 +5241,7 @@ music_kiki_sample_73:
 	SAMPLE_END
 .)
 
-music_kiki_sample_74:
+music_kiki_sample_76:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(60,4,40)
 	PITCH_SLIDE(0)
@@ -5079,7 +5255,7 @@ music_kiki_sample_74:
 	SAMPLE_END
 .)
 
-music_kiki_sample_75:
+music_kiki_sample_77:
 .(
 	PLAY_TIMED_NOTE(0,51)
 	HALT(3)
@@ -5101,150 +5277,44 @@ music_kiki_sample_75:
 	SAMPLE_END
 .)
 
-music_kiki_sample_76:
-.(
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(3)
-	AUDIO_NOISE_WAIT(2)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(4)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	SAMPLE_END
-.)
-
-music_kiki_sample_77:
-.(
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(2)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(4)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	SAMPLE_END
-.)
-
 music_kiki_sample_78:
 .(
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(3)
+	AUDIO_NOISE_SET_VOLUME(4)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(3)
+	AUDIO_NOISE_WAIT(5)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(9)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_PITCH_SLIDE_UP(1)
+	AUDIO_NOISE_WAIT(3)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
+	AUDIO_NOISE_WAIT(2)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_HALT(0)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PITCH_SLIDE_UP(0)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
 	AUDIO_NOISE_SET_VOLUME(8)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(7)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_PITCH_SLIDE_UP(0)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_WAIT(2)
 	AUDIO_NOISE_SET_VOLUME(2)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(1)
@@ -5267,23 +5337,77 @@ music_kiki_sample_78:
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(0)
 	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(4)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(2)
 	SAMPLE_END
 .)
 
 music_kiki_sample_79:
+.(
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(6,2)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_PITCH_SLIDE_UP(0)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(3)
+	AUDIO_NOISE_SET_VOLUME(4)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(3)
+	AUDIO_NOISE_WAIT(2)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
+	SAMPLE_END
+.)
+
+music_kiki_sample_80:
+.(
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(6,2)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_PITCH_SLIDE_UP(0)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(3)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(4)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(9,2)
+	SAMPLE_END
+.)
+
+music_kiki_sample_81:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(53,1,2,8)
 	CHAN_DUTY(0)
@@ -5303,7 +5427,7 @@ music_kiki_sample_79:
 	SAMPLE_END
 .)
 
-music_kiki_sample_80:
+music_kiki_sample_82:
 .(
 	AUDIO_PULSE_META_NOTE_DSLIDE(48,3,67)
 	PITCH_SLIDE(0)
@@ -5311,77 +5435,92 @@ music_kiki_sample_80:
 	SAMPLE_END
 .)
 
-music_kiki_sample_81:
-.(
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(2)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	SAMPLE_END
-.)
-
-music_kiki_sample_82:
-.(
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(2)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	SAMPLE_END
-.)
-
 music_kiki_sample_83:
+.(
+	CHAN_VOLUME_LOW(1)
+	SAMPLE_END
+.)
+
+music_kiki_sample_84:
+.(
+	CHAN_VOLUME_LOW(1)
+	WAIT(0)
+	CHAN_VOLUME_LOW(0)
+	WAIT(0)
+	SAMPLE_END
+.)
+
+music_kiki_sample_85:
+.(
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(2)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	SAMPLE_END
+.)
+
+music_kiki_sample_86:
+.(
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(2)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	SAMPLE_END
+.)
+
+music_kiki_sample_87:
 .(
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
@@ -5396,53 +5535,53 @@ music_kiki_sample_83:
 	AUDIO_NOISE_SET_VOLUME(2)
 	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(4)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_HALT(1)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(4)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_HALT(1)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(10,1)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(4)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(1,2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,2)
 	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(10,1)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(4)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(1,2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,2)
 	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(5,1)
+	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(6,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(10,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(5,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,1)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(6,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(10,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(10)
@@ -5494,22 +5633,7 @@ music_kiki_sample_83:
 	SAMPLE_END
 .)
 
-music_kiki_sample_84:
-.(
-	CHAN_VOLUME_LOW(1)
-	SAMPLE_END
-.)
-
-music_kiki_sample_85:
-.(
-	CHAN_VOLUME_LOW(1)
-	WAIT(0)
-	CHAN_VOLUME_LOW(0)
-	WAIT(0)
-	SAMPLE_END
-.)
-
-music_kiki_sample_86:
+music_kiki_sample_88:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(15,1,2,10)
 	CHAN_DUTY(1)
@@ -5524,7 +5648,7 @@ music_kiki_sample_86:
 	SAMPLE_END
 .)
 
-music_kiki_sample_87:
+music_kiki_sample_89:
 .(
 	CHAN_DUTY(2)
 	PLAY_TIMED_NOTE(0,22)
@@ -5562,7 +5686,7 @@ music_kiki_sample_87:
 	SAMPLE_END
 .)
 
-music_kiki_sample_88:
+music_kiki_sample_90:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(15,1,2,10)
 	CHAN_DUTY(1)
@@ -5577,7 +5701,7 @@ music_kiki_sample_88:
 	SAMPLE_END
 .)
 
-music_kiki_sample_89:
+music_kiki_sample_91:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_USLIDE(25,1,2,-5)
 	CHAN_DUTY(1)
@@ -5612,7 +5736,42 @@ music_kiki_sample_89:
 	SAMPLE_END
 .)
 
-music_kiki_sample_90:
+music_kiki_sample_92:
+.(
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_PITCH_SLIDE_UP(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(5,2)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(3)
+	AUDIO_NOISE_SET_VOLUME(4)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(3)
+	AUDIO_NOISE_WAIT(5)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
+	SAMPLE_END
+.)
+
+music_kiki_sample_93:
 .(
 	CHAN_VOLUME_LOW(0)
 	WAIT(3)
@@ -5643,7 +5802,7 @@ music_kiki_sample_90:
 	SAMPLE_END
 .)
 
-music_kiki_sample_91:
+music_kiki_sample_94:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(39,1,1,8)
 	AUDIO_PULSE_META_NOTE_DUT_VOL(43,1,2,5)
@@ -5654,7 +5813,7 @@ music_kiki_sample_91:
 	SAMPLE_END
 .)
 
-music_kiki_sample_92:
+music_kiki_sample_95:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(39,1,1,8)
 	AUDIO_PULSE_META_NOTE_DUT_VOL(43,1,2,5)
@@ -5665,51 +5824,59 @@ music_kiki_sample_92:
 	SAMPLE_END
 .)
 
-music_kiki_sample_93:
+music_kiki_sample_96:
 .(
 	AUDIO_PULSE_META_WAIT_DSLIDE(4,18)
 	AUDIO_PULSE_META_WAIT_DSLIDE(1,36)
 	SAMPLE_END
 .)
 
-music_kiki_sample_94:
+music_kiki_sample_97:
 .(
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(3)
+	AUDIO_NOISE_WAIT(2)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
+	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
 	AUDIO_NOISE_SET_VOLUME(8)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(7)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(3)
 	AUDIO_NOISE_WAIT(2)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
 	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
 	SAMPLE_END
 .)
 
-music_kiki_sample_95:
+music_kiki_sample_98:
 .(
 	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(8,2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(5,2)
 	AUDIO_NOISE_SET_VOLUME(8)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(7)
@@ -5719,51 +5886,117 @@ music_kiki_sample_95:
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(5)
 	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_SET_VOLUME(4)
-	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(3)
-	AUDIO_NOISE_WAIT(5)
-	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_PITCH_SLIDE_UP(8)
 	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(8)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(16)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_PITCH_SLIDE_UP(8)
+	AUDIO_NOISE_WAIT(2)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_HALT(0)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(16)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_PITCH_SLIDE_UP(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
 	AUDIO_NOISE_SET_VOLUME(10)
-	SAMPLE_END
-.)
-
-music_kiki_sample_96:
-.(
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
 	AUDIO_NOISE_SET_VOLUME(8)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_SET_VOLUME(4)
 	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(3)
-	AUDIO_NOISE_WAIT(5)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(9)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_PITCH_SLIDE_DOWN(1)
-	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_PITCH_SLIDE_UP(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_PITCH_SLIDE_UP(1)
 	AUDIO_NOISE_WAIT(2)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_HALT(0)
-	AUDIO_NOISE_PITCH_SLIDE_UP(2)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PITCH_SLIDE_UP(0)
+	AUDIO_NOISE_HALT(6)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
+	AUDIO_NOISE_SET_VOLUME(8)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(7)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(3)
+	AUDIO_NOISE_WAIT(2)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_HALT(4)
+	AUDIO_NOISE_SET_VOLUME(5)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(4,1)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(0)
+	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_SET_VOLUME(10)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
 	SAMPLE_END
 .)
 
-music_kiki_sample_97:
+music_kiki_sample_99:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_DSLIDE(22,1,2,0)
 	CHAN_DUTY(1)
@@ -5821,7 +6054,7 @@ music_kiki_sample_97:
 	SAMPLE_END
 .)
 
-music_kiki_sample_98:
+music_kiki_sample_100:
 .(
 	AUDIO_PULSE_META_NOTE_DUT_VOL(15,1,2,12)
 	CHAN_DUTY(1)
@@ -5836,7 +6069,7 @@ music_kiki_sample_98:
 	SAMPLE_END
 .)
 
-music_kiki_sample_99:
+music_kiki_sample_101:
 .(
 	CHAN_DUTY(2)
 	PLAY_TIMED_NOTE(0,18)
@@ -5888,7 +6121,7 @@ music_kiki_sample_99:
 	SAMPLE_END
 .)
 
-music_kiki_sample_100:
+music_kiki_sample_102:
 .(
 	CHAN_DUTY(2)
 	PLAY_TIMED_NOTE(0,22)
@@ -5913,46 +6146,7 @@ music_kiki_sample_100:
 	SAMPLE_END
 .)
 
-music_kiki_sample_101:
-.(
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(3)
-	AUDIO_NOISE_WAIT(2)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(3)
-	AUDIO_NOISE_WAIT(2)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	SAMPLE_END
-.)
-
-music_kiki_sample_102:
+music_kiki_sample_103:
 .(
 	AUDIO_NOISE_SET_VOLUME(5)
 	AUDIO_NOISE_WAIT(0)
@@ -5981,17 +6175,45 @@ music_kiki_sample_102:
 	AUDIO_NOISE_SET_VOLUME(2)
 	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
 	AUDIO_NOISE_SET_VOLUME(9)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(6)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
 	AUDIO_NOISE_SET_VOLUME(1)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(15,3)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,2)
+	SAMPLE_END
+.)
+
+music_kiki_sample_104:
+.(
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(15)
+	AUDIO_NOISE_HALT(1)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(7,1)
+	AUDIO_NOISE_SET_VOLUME(9)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(6)
+	AUDIO_NOISE_WAIT(0)
+	AUDIO_NOISE_SET_VOLUME(2)
+	AUDIO_NOISE_PLAY_TIMED_FREQ(12,1)
+	AUDIO_NOISE_SET_VOLUME(1)
+	AUDIO_NOISE_WAIT(0)
+	SAMPLE_END
+.)
+
+music_kiki_sample_105:
+.(
 	AUDIO_NOISE_SET_VOLUME(10)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
 	AUDIO_NOISE_SET_VOLUME(8)
@@ -6010,131 +6232,7 @@ music_kiki_sample_102:
 	SAMPLE_END
 .)
 
-music_kiki_sample_103:
-.(
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(5,2)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_PITCH_SLIDE_UP(0)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_SET_VOLUME(3)
-	AUDIO_NOISE_PITCH_SLIDE_DOWN(8)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_PITCH_SLIDE_UP(8)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_PITCH_SLIDE_UP(16)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_PITCH_SLIDE_DOWN(8)
-	AUDIO_NOISE_WAIT(2)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_HALT(0)
-	AUDIO_NOISE_PITCH_SLIDE_UP(16)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PITCH_SLIDE_UP(0)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(3)
-	AUDIO_NOISE_WAIT(2)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_HALT(6)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(3)
-	AUDIO_NOISE_WAIT(2)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_HALT(4)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(4,1)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	SAMPLE_END
-.)
-
-music_kiki_sample_104:
+music_kiki_sample_106:
 .(
 	PLAY_TIMED_NOTE(1,53)
 	PLAY_TIMED_NOTE(0,62)
@@ -6167,14 +6265,14 @@ music_kiki_sample_104:
 	SAMPLE_END
 .)
 
-music_kiki_sample_105:
+music_kiki_sample_107:
 .(
 	CHAN_VOLUME_LOW(6)
 	PLAY_TIMED_NOTE(0,65)
 	SAMPLE_END
 .)
 
-music_kiki_sample_106:
+music_kiki_sample_108:
 .(
 	CHAN_DUTY(2)
 	PLAY_TIMED_NOTE(0,17)
@@ -6207,45 +6305,6 @@ music_kiki_sample_106:
 	WAIT(0)
 	CHAN_VOLUME_HIGH(7)
 	HALT(4)
-	SAMPLE_END
-.)
-
-music_kiki_sample_107:
-.(
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_PITCH_SLIDE_UP(0)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(5,2)
-	AUDIO_NOISE_SET_VOLUME(8)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(7)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(5)
-	AUDIO_NOISE_WAIT(3)
-	AUDIO_NOISE_SET_VOLUME(4)
-	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_SET_VOLUME(3)
-	AUDIO_NOISE_WAIT(5)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(1)
-	SAMPLE_END
-.)
-
-music_kiki_sample_108:
-.(
-	AUDIO_NOISE_SET_VOLUME(15)
-	AUDIO_NOISE_PLAY_TIMED_FREQ(0,1)
-	AUDIO_NOISE_SET_VOLUME(9)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(6)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(2)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(1)
-	AUDIO_NOISE_WAIT(0)
-	AUDIO_NOISE_SET_VOLUME(0)
-	AUDIO_NOISE_WAIT(4)
 	SAMPLE_END
 .)
 
