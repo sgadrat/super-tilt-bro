@@ -1147,7 +1147,7 @@ def _apply_duty_sequence(seq_dut, ref_note, modified, instrument_idx, track_idx,
 	# Inform that the sequence is handled
 	return True
 
-def _apply_arpegio_sequence(seq_arp, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx, force_absolute_notes):
+def _apply_arpeggio_sequence(seq_arp, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx, force_absolute_notes):
 	"""
 	force_absolute_notes: if False and the enveloppe is impacted by pitch effect, a frequency_adjust effect will be placed to
 	                      allow the arpeggio to be played alongside the pitch effect.
@@ -1201,12 +1201,12 @@ def _apply_arpegio_sequence(seq_arp, ref_note, modified, instrument_idx, track_i
 		else:
 			#TODO check famitracker behaviour, is may be to loop through the table (strange behaviour, but consistent with what happens on noise)
 			if enveloppe_note_idx >= len(note_table_names):
-				warn('arpegio enveloppe goes over the notes table in {}: last note of the table used'.format(
+				warn('arpeggio enveloppe goes over the notes table in {}: last note of the table used'.format(
 					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
 				))
 				enveloppe_note_idx = len(note_table_names) - 1
 			elif enveloppe_note_idx < 0:
-				warn('arpegio enveloppe goes under the notes table in {}: first note of the table used'.format(
+				warn('arpeggio enveloppe goes under the notes table in {}: first note of the table used'.format(
 					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
 				))
 				enveloppe_note_idx = 0
@@ -1230,7 +1230,7 @@ def _apply_arpegio_sequence(seq_arp, ref_note, modified, instrument_idx, track_i
 					current_chan_row,
 					{'effect': 'frequency_adjust', 'value': pitch_diff},
 					replace=True,
-					msg='conflicting frequency_adjust caused by arpegio instrument in {}: replacing existing effect, TODO merge frequency_adjust effects'.format(
+					msg='conflicting frequency_adjust caused by arpeggio instrument in {}: replacing existing effect, TODO merge frequency_adjust effects'.format(
 						row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
 					)
 				)
@@ -1421,7 +1421,7 @@ def remove_instruments(music, arp_force_absolute_notes=True):
 							seq_dut = None
 
 					if seq_arp is not None:
-						if (_apply_arpegio_sequence(seq_arp, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx, force_absolute_notes=arp_force_absolute_notes)):
+						if (_apply_arpeggio_sequence(seq_arp, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx, force_absolute_notes=arp_force_absolute_notes)):
 							seq_arp = None
 
 					if seq_pit is not None:
@@ -2934,7 +2934,7 @@ def to_mod_format(music):
 				# This is actually not a problem, could happen if multiple logic parts played with frequency adjust
 				# Warn here because:
 				#  - This code is new, I want to see how it behaves
-				#  - For now, only arpegio instrument plays with frequency adjust, so it should never happen
+				#  - For now, only arpeggio instrument plays with frequency adjust, so it should never happen
 				#  - Ease of converting the log to a "debug" instead of "warn"
 				warn('frequency adjust of zero: ignore')
 			elif line['frequency_adjust'] > 0:
@@ -3191,7 +3191,7 @@ def to_mod_format(music):
 					# This is actually not a problem, could happen if multiple logic parts played with frequency adjust
 					# Warn here because:
 					#  - This code is new, I want to see how it behaves
-					#  - For now, only arpegio instrument plays with frequency adjust, so it should never happen
+					#  - For now, only arpeggio instrument plays with frequency adjust, so it should never happen
 					#  - Ease of converting the log to a "debug" instead of "warn"
 					warn('frequency adjust of zero: ignore')
 				else:
