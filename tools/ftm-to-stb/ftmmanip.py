@@ -1545,6 +1545,7 @@ def apply_3_effect(music):
 						effect = chan_row['effects'][effect_idx]
 						if effect[0] == '3':
 							if portamento_effect_idx is not None:
+								#TODO handle columns separately
 								warn('multiple 3xx effects in {}: some will be ignored'.format(
 									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 								))
@@ -1557,6 +1558,7 @@ def apply_3_effect(music):
 						continue
 
 					if has_other_pitch_effect:
+						#TODO handle columns separately
 						warn('multiple pitch effects in {}: 3xx will be ignored'.format(
 							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 						))

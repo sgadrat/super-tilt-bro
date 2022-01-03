@@ -40,10 +40,11 @@ def human_readable_uctf(uctf, row_count=True):
 			line = sample['lines'][line_idx]
 			values = []
 			for field in ftmmanip.uctf_fields_by_type[sample['type']]:
-				values.append(str(line[field]) if line[field] is not None else '...')
-			for field in line:
-				if field not in ftmmanip.uctf_fields_by_type[sample['type']]:
-					values.append('{}={}'.format(field, line[field]))
+				values.append(str(line[field]) if line != 'empty_row' and line[field] is not None else '...')
+			if line != 'empty_row':
+				for field in line:
+					if field not in ftmmanip.uctf_fields_by_type[sample['type']]:
+						values.append('{}={}'.format(field, line[field]))
 
 			if row_count:
 				serialized += '{:02X} : {}\n'.format(line_idx, '\t'.join(values))
