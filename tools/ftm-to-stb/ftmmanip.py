@@ -271,6 +271,7 @@ def place_extra_effect(chan_row, effect, replace, msg):
 		current_effect = chan_row['extra_effects'][current_effect_idx]
 		if current_effect['effect'] == effect['effect']:
 			existing_effect_idx = current_effect_idx
+			#TODO option to not warn if effects have the same value
 			warn(msg)
 
 	# Place
@@ -279,6 +280,23 @@ def place_extra_effect(chan_row, effect, replace, msg):
 			chan_row['extra_effects'][existing_effect_idx] = effect
 	else:
 		chan_row['extra_effects'].append(effect)
+
+def get_extra_effect(chan_row, effect_name, default=None):
+	"""
+	Retrieve the value of an effect for a row.
+
+	This is an ease of use function, not handling the case where multiple effects with the same name are on the same row.
+	"""
+	value = default
+	found = False
+
+	for current_effect in chan_row.get('extra_effects', []):
+		if current_effect['effect'] == effect_name:
+			assert found == False, "multiple '{}' effects present while retrieved by get_extra_effect"
+			value = current_effect['value']
+			found = True
+
+	return value
 
 def place_pitch_effect(chan_row, effect, effect_idx, replace, warn_on_stop=False, msg=None):
 	"""
@@ -1212,12 +1230,22 @@ def _apply_arpeggio_sequence(seq_arp, ref_note, modified, instrument_idx, track_
 				enveloppe_note_idx = 0
 
 		# Place computed value
-		if force_absolute_notes or has_pitch_effect or current_chan_row['note'] != '...':
+		if force_absolute_notes or not has_pitch_effect or current_chan_row['note'] != '...':
 			# There is not pitch effect, or we are on the first row (setting the note), so we can simply place the resulting note
 			if get_chan_type(modified, chan_idx) == '2a03-noise':
 				current_chan_row['note'] = '{:X}-#'.format(enveloppe_note_idx)
 			else:
 				current_chan_row['note'] = note_table_names[enveloppe_note_idx]
+
+			# This is not a normal note in the pattern, prevent 3XX from moving it
+			place_extra_effect(
+				current_chan_row,
+				{'effect': '3xx_skip', 'value': True},
+				replace=True,
+				msg='conflicting 3xx_skip caused by arpeggio instrument in {}: replacing existing effect, TODO avoid warn if exising is already True'.format(
+					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+				)
+			)
 		else:
 			# There is an active pitch effect that may impact the played frequency, place the wanted difference with current frequency
 			if get_chan_type(modified, chan_idx) == '2a03-noise':
@@ -1511,7 +1539,7 @@ def repeat_3_effect(music):
 						current_portamento = new_portamento if not has_other_pitch_effect else 0
 
 					# If there is a note, repeat portamento
-					if chan_row['note'] not in ['...', '---', '==='] and portamento_effect_idx is None and current_portamento != 0:
+					if chan_row['note'] not in ['...', '---', '==='] and not get_extra_effect(chan_row, '3xx_skip', False) and portamento_effect_idx is None and current_portamento != 0:
 						if chan_row['effects'][original_portamento_effect_idx] != '...' and chan_row['effects'][original_portamento_effect_idx][0] not in pitch_effects:
 							warn('unable to place portamento because of non-pitch effect in {}'.format(
 								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
