@@ -351,7 +351,7 @@ def get_chan_type(music, chan_idx):
 	#TODO handle other cases than VRC6 (checking extensions in music)
 	return ['2a03-pulse', '2a03-pulse', '2a03-triangle', '2a03-noise', '2a03-pcm', 'vrc6-pulse', 'vrc6-pulse', 'vrc6-saw'][chan_idx]
 
-def get_previous_note(music, track_idx, pattern_idx, chan_idx, row_idx):
+def get_previous_note(music, track_idx, pattern_idx, chan_idx, row_idx, ignore_stop=True):
 	"""
 	Return the previous known note and if it is reliable to asume that it is still being played
 	"""
@@ -362,7 +362,7 @@ def get_previous_note(music, track_idx, pattern_idx, chan_idx, row_idx):
 	def find_note_scanner(current_pattern_idx, current_row_idx):
 		nonlocal music, track_idx, chan_idx, original_note_pattern, original_note_row, original_note
 		current_row = music['tracks'][track_idx]['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
-		if current_row['note'] not in ['...', '---', '===']:
+		if current_row['note'] not in ['...', '---', '==='] or (current_row['note'] in ['---', '==='] and not ignore_stop):
 			original_note_pattern = current_pattern_idx
 			original_note_row = current_row_idx
 			original_note = current_row['note']
@@ -370,7 +370,7 @@ def get_previous_note(music, track_idx, pattern_idx, chan_idx, row_idx):
 	scan_previous_chan_rows(find_note_scanner, music, track_idx, pattern_idx, chan_idx, row_idx-1)
 
 	# No note found, abort now
-	if original_note is None:
+	if original_note is None or original_note in ['---', '===']:
 		return {
 			'note': original_note,
 			'reliable': True,
@@ -1540,6 +1540,13 @@ def repeat_3_effect(music):
 
 					# If there is a note, repeat portamento
 					if chan_row['note'] not in ['...', '---', '==='] and not get_extra_effect(chan_row, '3xx_skip', False) and portamento_effect_idx is None and current_portamento != 0:
+
+						# Do not apply on notes preceded by a stop (matches famitracker's behaviour)
+						#NOTE: Check actually done by apply_3_effect, reactivate here if log-flood is too ennoying
+						#if get_previous_note(modified, track_idx, pattern_idx, chan_idx, row_idx, ignore_stop=False)['note'] in ['---', '===']:
+						#	continue
+
+						# Place the 3xx effect
 						if chan_row['effects'][original_portamento_effect_idx] != '...' and chan_row['effects'][original_portamento_effect_idx][0] not in pitch_effects:
 							warn('unable to place portamento because of non-pitch effect in {}'.format(
 								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
@@ -1601,10 +1608,17 @@ def apply_3_effect(music):
 						continue
 
 					# Search for original note
-					original_note = get_previous_note(modified, track_idx, pattern_idx, chan_idx, row_idx)
+					original_note = get_previous_note(modified, track_idx, pattern_idx, chan_idx, row_idx, ignore_stop=False)
 
 					if original_note['note'] is None:
 						warn('3xx effect without original note in {}: effect ignored'.format(
+							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+						))
+						chan_row['effects'][portamento_effect_idx] = '...'
+						continue
+
+					if original_note['note'] in ['---', '===']:
+						notice('3xx effect on a note preceded by a stop in {}: effect ignored'.format(
 							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 						))
 						chan_row['effects'][portamento_effect_idx] = '...'
