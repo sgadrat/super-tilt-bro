@@ -899,7 +899,7 @@ audio_music_tick:
 		; TTT TTTT TTTT - direct write to APU (mirrored)
 		lda (current_opcode), y
 		and #%00000111
-		ora #%11111000 ;TODO this actually hardocode a long value for "length counter load", which should be adequat most times. If we want to play with it, actually use register mirroring, and add opcodes to handle this value
+		ora #%11111000 ;TODO this actually hardcode a long value for "length counter load", which should be adequat most times. If we want to play with it, actually use register mirroring, and add opcodes to handle this value
 		sta audio_square1_apu_timer_high_byte, x
 
 		iny
