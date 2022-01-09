@@ -1780,13 +1780,31 @@ def apply_q_effect(music):
 					# Replace current row's effect with the equivalent 1xx effect
 					chan_row['effects'][q_effect_idx] = '1{:02X}'.format(slide_speed)
 
-					# Place an 100 effect and the stop note at stop location
+					# Determine actual stop row
+					#  it can be before duration if
+					#   - There is a note before destination, or
+					#   - there is a pitch effect before destination
 					stop_row_idx = row_idx + duration
 					if stop_row_idx >= len(pattern['rows']):
 						warn('Qxy effect extends after pattern in {}: effect truncated'.format(
 							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 						))
 						stop_row_idx = len(pattern['rows']) - 1
+
+					def scanner_find_duration(current_pattern_idx, current_row_idx):
+						nonlocal pattern_idx, stop_row_idx, track
+						if current_row_idx >= stop_row_idx:
+							return False
+						if current_pattern_idx != pattern_idx:
+							return False # Don't scan next patterns, the rest of this function don't support it
+
+						current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+						if current_chan_row['note'] != '...' or current_chan_row['effects'][q_effect_idx][0] in pitch_effects:
+							stop_row_idx = current_row_idx
+							return False
+					scan_next_chan_rows(scanner_find_duration, modified, track_idx, pattern_idx, row_idx+1)
+
+					# Place an 100 effect and the stop note at stop location
 					stop_chan_row = pattern['rows'][stop_row_idx]['channels'][chan_idx]
 
 					stop_has_pitch_effect = False
@@ -1884,6 +1902,10 @@ def apply_r_effect(music):
 
 					# Replace current row's effect with the equivalent 2xx effect
 					chan_row['effects'][r_effect_idx] = '2{:02X}'.format(slide_speed)
+
+					# Determine stop row
+					#TODO copy from apply_q_effect
+					warn('TODO update QXX effect')
 
 					# Place an 100 effect and the stop note at stop location
 					stop_row_idx = row_idx + duration
