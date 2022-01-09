@@ -64,6 +64,9 @@ for line in sys.stdin:
 		dur = int(m.group('dur')) + 1
 
 	total += dur
+	print(line)
+	if dur != 0:
+		print(' => {:02x} ({:02x} + {:02x})'.format(total, total - dur, dur))
 	current_sample += dur
 
 print('total: {}'.format(total))

@@ -3190,17 +3190,24 @@ def to_mod_format(music):
 				})
 
 			if has_new_pitch_slide:
+				value = line['pitch_slide']
+				if value < -15 or 15 < value:
+					#FIXME may be caused by adapt_tempo filter, in this case it is not a big deal. Should be fixed in adapt_tempo to avoid warning flood.
+					fixed_value = min(max(value, -15), 15) # Same behaviour as bigger values: reach end of range in one tick
+					warn('serializing noise pitch slide value "{}": fixing to {}'.format(value, fixed_value))
+					value = fixed_value
+
 				if line['pitch_slide'] > 0:
 					opcodes.append({
 						'type': 'music_sample_2a03_noise_opcode',
 						'name': 'PITCH_SLIDE_DOWN', #NOTE not a bug, positive pitch slide means pitch slide DOWN
-						'parameters': [line['pitch_slide']]
+						'parameters': [value]
 					})
 				else:
 					opcodes.append({
 						'type': 'music_sample_2a03_noise_opcode',
 						'name': 'PITCH_SLIDE_UP',
-						'parameters': [abs(line['pitch_slide'])]
+						'parameters': [abs(value)]
 					})
 
 			# Timed opcodes (play, wait or halt)
@@ -3212,7 +3219,7 @@ def to_mod_format(music):
 				))
 
 			if line['freq'] in ['---', '===']:
-				step = min(duration, 8)
+				step = min(duration, 16)
 				assert duration >= 1
 				opcodes.append({
 					'type': 'music_sample_2a03_noise_opcode',

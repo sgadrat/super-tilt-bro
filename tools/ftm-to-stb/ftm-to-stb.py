@@ -94,9 +94,13 @@ music = ftmmanip.to_mod_format(music)
 # Optimize
 music = ftmmanip.optim_pulse_opcodes_to_meta(music)
 
+saved = copy.deepcopy(music)
+saved = ftmmanip.samples_to_source(saved)
+saved = ftmmanip.compute_stats(saved)
+total_size = saved['stats']['total_size']
+
 optimal = False
 pass_num = 0
-total_size = -1
 while not optimal and pass_num < MAX_OPTIM_PASSES:
 	pass_num += 1
 	info('optimization pass #{} (size={} bytes, index_filling=[{}])'.format(
