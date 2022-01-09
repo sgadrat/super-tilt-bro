@@ -1,43 +1,11 @@
 music_kiki_bank = CURRENT_BANK_NUMBER
 
-music_kiki_pulse_silence_sample:
-	HALT(7)
-	SAMPLE_END
-
-music_kiki_pulse_silence:
-.word music_kiki_pulse_silence_sample
-MUSIC_END
-
-music_kiki_noise_silence_sample:
-	AUDIO_NOISE_HALT(7)
-	SAMPLE_END
-
-music_kiki_noise_silence:
-.word music_kiki_noise_silence_sample
-MUSIC_END
-
-music_kiki_info:
-#if 1
-.word music_kiki_track_pulse1
-.word music_kiki_track_pulse2
-.word music_kiki_track_triangle
-.word music_kiki_track_noise
-#else
-.word music_kiki_pulse_silence
-.word music_kiki_pulse_silence
-.word music_kiki_pulse_silence
-.word music_kiki_track_noise
-#endif
-.byt 0
-
-#if 0
 music_kiki_info:
 .word music_kiki_track_pulse1
 .word music_kiki_track_pulse2
 .word music_kiki_track_triangle
 .word music_kiki_track_noise
 .byt 0
-#endif
 
 music_kiki_track_pulse1:
 .word music_kiki_sample_115
@@ -5381,8 +5349,7 @@ music_kiki_sample_85:
 	AUDIO_NOISE_SET_VOLUME(2)
 	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_SET_VOLUME(10)
-	AUDIO_NOISE_HALT(7)
-	AUDIO_NOISE_WAIT(1)
+	AUDIO_NOISE_HALT(9)
 	AUDIO_NOISE_SET_VOLUME(2)
 	AUDIO_NOISE_PLAY_TIMED_FREQ(2,1)
 	AUDIO_NOISE_SET_VOLUME(1)
@@ -5637,14 +5604,14 @@ music_kiki_sample_95:
 	AUDIO_NOISE_WAIT(1)
 	AUDIO_NOISE_PITCH_SLIDE_DOWN(8)
 	AUDIO_NOISE_WAIT(1)
-	AUDIO_NOISE_PITCH_SLIDE_DOWN(16)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(15)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(2)
 	AUDIO_NOISE_PITCH_SLIDE_UP(8)
 	AUDIO_NOISE_WAIT(2)
 	AUDIO_NOISE_SET_VOLUME(8)
 	AUDIO_NOISE_HALT(0)
-	AUDIO_NOISE_PITCH_SLIDE_DOWN(16)
+	AUDIO_NOISE_PITCH_SLIDE_DOWN(15)
 	AUDIO_NOISE_WAIT(0)
 	AUDIO_NOISE_SET_VOLUME(15)
 	AUDIO_NOISE_PITCH_SLIDE_UP(0)
