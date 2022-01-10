@@ -1701,233 +1701,155 @@ def apply_3_effect(music):
 
 	return modified
 
-def apply_q_effect(music):
-	modified = copy.deepcopy(music)
+def apply_qr_effect(music, effect_name):
+	"""
+	Can apply Qxy or Rxy effects, as they are similar
+
+	effect_name: 'Q" to apply Qxy effects, 'R' to apply Rxy effects
+	"""
+	# Helper functions
+	def w(m):
+		warn('{}xy {}'.format(effect_name, m))
 
 	# Iterate on rows per channel
-	for track_idx in range(len(modified['tracks'])):
-		track = modified['tracks'][track_idx]
+	for track_idx in range(len(music['tracks'])):
+		track = music['tracks'][track_idx]
 		for pattern_idx in range(len(track['patterns'])):
 			pattern = track['patterns'][pattern_idx]
-			for chan_idx in range(modified['params']['n_chan']):
+			for chan_idx in range(music['params']['n_chan']):
 				for row_idx in range(len(pattern['rows'])):
 					chan_row = pattern['rows'][row_idx]['channels'][chan_idx]
-
-					# Find if current row has a Q effect
-					q_effect_idx = None
-					has_other_pitch_effect = False
 					for effect_idx in range(len(chan_row['effects'])):
-						effect = chan_row['effects'][effect_idx]
-						if effect[0] == 'Q':
-							if q_effect_idx is not None:
-								warn('multiple Qxy effects in {}: some will be ignored'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-								))
-							q_effect_idx = effect_idx
-						elif effect[0] in pitch_effects:
-							has_other_pitch_effect = True
 
-					# Do not process the row if it has no Q effect or is a non-supported corner case
-					if q_effect_idx is None:
-						continue
-
-					if has_other_pitch_effect:
-						warn('multiple pitch effects in {}: Qxy will be ignored'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-						))
-						chan_row['effects'][q_effect_idx] = '...'
-						continue
-
-					origin_note = chan_row['note']
-					if chan_row['note'] in ['...', '---', '===']:
-						origin_note_info = get_previous_note(modified, track_idx, pattern_idx, chan_idx, row_idx)
-
-						error = False
-						if origin_note_info['note'] is None:
-							warn('Qxy effect without explicit note in {}: effect ignored'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-							))
-							error = True
-
-						if not origin_note_info['reliable']:
-							warn('Qxy effect with reference note impacted by pitch effect in {}: ignored'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-							))
-							error = True
-
-						if error:
-							chan_row['effects'][q_effect_idx] = '...'
+						# Trigger processing only when we encounter the effect
+						if chan_row['effects'][effect_idx][0] != effect_name:
 							continue
 
-						origin_note = origin_note_info['note']
+						# Get original note
+						origin_note = chan_row['note']
 
-					# Compute useful values
-					effect = chan_row['effects'][q_effect_idx]
-					effect_x = int(effect[1], 16)
-					effect_y = int(effect[2], 16)
-					slide_speed = 2 * effect_x + 1
-					freq_start = get_note_frequency(origin_note)
-					note_table_index_stop = get_note_table_index(origin_note) + effect_y
-					if note_table_index_stop >= len(note_table_freqs):
-						warn('Qxy effect extends after notes table in {}: effect truncated'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-						))
-						note_table_index_stop = len(note_table_freqs) - 1
-					freq_stop = note_table_freqs[note_table_index_stop]
-					assert freq_stop <= freq_start
-					duration = int((freq_start - freq_stop) / slide_speed)
-
-					# Replace current row's effect with the equivalent 1xx effect
-					chan_row['effects'][q_effect_idx] = '1{:02X}'.format(slide_speed)
-
-					# Determine actual stop row
-					#  it can be before duration if
-					#   - There is a note before destination, or
-					#   - there is a pitch effect before destination
-					stop_row_idx = row_idx + duration
-					if stop_row_idx >= len(pattern['rows']):
-						warn('Qxy effect extends after pattern in {}: effect truncated'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-						))
-						stop_row_idx = len(pattern['rows']) - 1
-
-					def scanner_find_duration(current_pattern_idx, current_row_idx):
-						nonlocal pattern_idx, stop_row_idx, track
-						if current_row_idx >= stop_row_idx:
-							return False
-						if current_pattern_idx != pattern_idx:
-							return False # Don't scan next patterns, the rest of this function don't support it
-
-						current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
-						if current_chan_row['note'] != '...' or current_chan_row['effects'][q_effect_idx][0] in pitch_effects:
-							stop_row_idx = current_row_idx
-							return False
-					scan_next_chan_rows(scanner_find_duration, modified, track_idx, pattern_idx, row_idx+1)
-
-					# Place an 100 effect and the stop note at stop location
-					stop_chan_row = pattern['rows'][stop_row_idx]['channels'][chan_idx]
-
-					stop_has_pitch_effect = False
-					if stop_chan_row['effects'][q_effect_idx][0] in pitch_effects:
-						stop_has_pitch_effect = True
-
-					if not stop_has_pitch_effect:
-						if stop_chan_row['effects'][q_effect_idx] != '...':
-							warn('Qxy stops where a non-pitch effect is placed in {}: removing non-pitch effect {}'.format(
-								row_identifier(track_idx, pattern_idx, stop_row_idx, chan_idx),
-								stop_chan_row['effects'][q_effect_idx]
-							))
-						stop_chan_row['effects'][q_effect_idx] = '100'
-
-					if stop_chan_row['note'] == '...':
-						stop_chan_row['note'] = note_table_names[note_table_index_stop]
-
-	return modified
-
-def apply_r_effect(music):
-	modified = copy.deepcopy(music)
-
-	# Iterate on rows per channel
-	for track_idx in range(len(modified['tracks'])):
-		track = modified['tracks'][track_idx]
-		for pattern_idx in range(len(track['patterns'])):
-			pattern = track['patterns'][pattern_idx]
-			for chan_idx in range(modified['params']['n_chan']):
-				for row_idx in range(len(pattern['rows'])):
-					chan_row = pattern['rows'][row_idx]['channels'][chan_idx]
-
-					# Find if current row has a R effect
-					r_effect_idx = None
-					has_other_pitch_effect = False
-					for effect_idx in range(len(chan_row['effects'])):
-						effect = chan_row['effects'][effect_idx]
-						if effect[0] == 'R':
-							if r_effect_idx is not None:
-								warn('multiple Rxy effects in {}: some will be ignored'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-								))
-							r_effect_idx = effect_idx
-						elif effect[0] in pitch_effects:
-							has_other_pitch_effect = True
-
-					# Do not process the row if it has no R effect or is a non-supported corner case
-					if r_effect_idx is None:
-						continue
-
-					if has_other_pitch_effect:
-						warn('multiple pitch effects in {}: Rxy will be ignored'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-						))
-						chan_row['effects'][r_effect_idx] = '...'
-						continue
-
-					origin_note = chan_row['note']
-					if chan_row['note'] in ['...', '---', '===']:
-						origin_note_info = get_previous_note(modified, track_idx, pattern_idx, chan_idx, row_idx)
-
-						error = False
-						if origin_note_info['note'] is None:
-							warn('Rxy effect without explicit note in {}: effect ignored'.format(
+						if origin_note in ['---', '===']:
+							w('effect on a stop in {}: Rxy ignored'.format(
 								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 							))
-							error = True
-
-						if not origin_note_info['reliable']:
-							warn('Rxy effect with reference note impacted by pitch effect in {}: ignored'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-							))
-							error = True
-
-						if error:
-							chan_row['effects'][r_effect_idx] = '...'
+							chan_row['effects'][effect_idx] = '...'
 							continue
 
-						origin_note = origin_note_info['note']
+						if origin_note == '...':
+							origin_note_info = get_previous_note(music, track_idx, pattern_idx, chan_idx, row_idx, ignore_stop=False)
 
-					# Compute useful values
-					effect = chan_row['effects'][r_effect_idx]
-					effect_x = int(effect[1], 16)
-					effect_y = int(effect[2], 16)
-					slide_speed = 2 * effect_x + 1
-					freq_start = get_note_frequency(origin_note)
-					note_table_index_stop = get_note_table_index(origin_note) - effect_y
-					if note_table_index_stop < 0:
-						warn('Rxy effect extends before notes table in {}: effect truncated'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-						))
-						note_table_index_stop = 0
-					freq_stop = note_table_freqs[note_table_index_stop]
-					assert freq_start <= freq_stop
-					duration = int((freq_stop - freq_start) / slide_speed)
+							error = False
+							if origin_note_info['note'] is None:
+								w('effect without explicit note in {}: effect ignored'.format(
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+								))
+								error = True
 
-					# Replace current row's effect with the equivalent 2xx effect
-					chan_row['effects'][r_effect_idx] = '2{:02X}'.format(slide_speed)
+							if origin_note_info['note'] in ['---', '===']:
+								w('effect while previous note is a stop in {}: effect ignored'.format(
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+								))
+								error = True
 
-					# Determine stop row
-					#TODO copy from apply_q_effect
-					warn('TODO update QXX effect')
+							if not origin_note_info['reliable']:
+								#NOTE it should be doable to use computed frequency if necessary, ultimately we just want to compute freq_start and freq_stop
+								w('effect with reference note impacted by pitch effect in {}: ignored'.format(
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+								))
+								error = True
 
-					# Place an 100 effect and the stop note at stop location
-					stop_row_idx = row_idx + duration
-					if stop_row_idx >= len(pattern['rows']):
-						warn('Rxy effect extends after pattern in {}: effect truncated'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-						))
-						stop_row_idx = len(pattern['rows']) - 1
-					stop_chan_row = pattern['rows'][stop_row_idx]['channels'][chan_idx]
+							if error:
+								chan_row['effects'][effect_idx] = '...'
+								continue
 
-					stop_has_pitch_effect = False
-					for current_effect in stop_chan_row['effects']:
-						if current_effect[0] in pitch_effects:
+							origin_note = origin_note_info['note']
+
+						# Compute useful values
+						effect = chan_row['effects'][effect_idx]
+						effect_x = int(effect[1], 16)
+						effect_y = int(effect[2], 16)
+						slide_speed = 2 * effect_x + 1
+						freq_start = get_note_frequency(origin_note)
+						note_table_index_stop = None
+						freq_stop = None
+						duration = None
+
+						if effect_name == 'Q':
+							note_table_index_stop = get_note_table_index(origin_note) + effect_y
+							if note_table_index_stop >= len(note_table_freqs):
+								warn('Qxy effect extends after notes table in {}: effect truncated'.format(
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+								))
+								note_table_index_stop = len(note_table_freqs) - 1
+							freq_stop = note_table_freqs[note_table_index_stop]
+							assert freq_stop <= freq_start
+							duration = int((freq_start - freq_stop) / slide_speed)
+						else:
+							note_table_index_stop = get_note_table_index(origin_note) - effect_y
+							if note_table_index_stop < 0:
+								w('effect extends before notes table in {}: effect truncated'.format(
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+								))
+								note_table_index_stop = 0
+							freq_stop = note_table_freqs[note_table_index_stop]
+							assert freq_start <= freq_stop
+							duration = int((freq_stop - freq_start) / slide_speed)
+
+						ensure(duration > 0, 'TODO handle super speedy Q/R effects (should just place dest note at start)')
+
+						# Replace current row's effect with the equivalent pitch slide effect
+						chan_row['effects'][effect_idx] = '{}{:02X}'.format({'Q':1,'R':2}[effect_name], slide_speed)
+
+						# Determine actual stop row
+						#  it can be before duration if
+						#   - There is a note before destination, or
+						#   - there is a pitch effect before destination
+						stop_row_pattern_idx = None
+						stop_row_idx = None
+						current_step = 1
+						def scanner_find_duration(current_pattern_idx, current_row_idx):
+							nonlocal current_step, stop_row_idx, stop_row_pattern_idx, track
+							current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+							if current_step == duration or current_chan_row['note'] != '...' or current_chan_row['effects'][effect_idx][0] in pitch_effects:
+								stop_row_pattern_idx = current_pattern_idx
+								stop_row_idx = current_row_idx
+								return False
+							current_step += 1
+						scan_next_chan_rows(scanner_find_duration, music, track_idx, pattern_idx, row_idx+1)
+
+						if stop_row_idx is None:
+							#NOTE possible if the effect lasts after the last pattern, should be fixed if it occurs
+							w('effect stop row not found in {}: effect ignored'.format(
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							))
+							chan_row['effects'][effect_idx] = '...'
+							continue
+
+						# Place an 100 effect and the stop note at stop location
+						stop_chan_row = track['patterns'][stop_row_pattern_idx]['rows'][stop_row_idx]['channels'][chan_idx]
+
+						stop_has_pitch_effect = False
+						if stop_chan_row['effects'][effect_idx][0] in pitch_effects:
 							stop_has_pitch_effect = True
 
-					if not stop_has_pitch_effect:
-						stop_chan_row['effects'].append('100') #TODO should use an empty effect column if possible
+						if not stop_has_pitch_effect:
+							if stop_chan_row['effects'][effect_idx] != '...':
+								w('effect stops where a non-pitch effect is placed in {}: removing non-pitch effect {}'.format(
+									row_identifier(track_idx, pattern_idx, stop_row_idx, chan_idx),
+									stop_chan_row['effects'][effect_idx]
+								))
+							stop_chan_row['effects'][effect_idx] = '100'
 
-					if stop_chan_row['note'] == '...':
-						stop_chan_row['note'] = note_table_names[note_table_index_stop]
+						if stop_chan_row['note'] == '...':
+							stop_chan_row['note'] = note_table_names[note_table_index_stop]
 
-	return modified
+	return music
+
+def apply_q_effect(music):
+	return apply_qr_effect(music, 'Q')
+
+def apply_r_effect(music):
+	return apply_qr_effect(music, 'R')
 
 def apply_4_effect(music):
 	modified = copy.deepcopy(music)
