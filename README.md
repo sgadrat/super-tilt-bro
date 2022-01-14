@@ -10,7 +10,7 @@ Build dependencies
 ------------------
 
 - XA cross assembler for 6502.
-  - It may be found on Archlinux in the package "community/xa", on ubuntu in the package "xa65"  and for others you may find information [here](http://www.floodgap.com/retrotech/xa/).
+  - Actually a fork of it, with increased memory limits. You can find it [here](https://github.com/sgadrat/xa65-stb).
 - 6502-gcc
   - [Build it from](https://github.com/itszor/gcc-6502-bits)
 - python >= 3.2
@@ -25,6 +25,8 @@ XA_BIN=/path/to/xa CC_BIN=/path/to/6502-gcc ./build.sh
 ```
 
 It will generate the game as `Super_Tilt_Bro_(E).nes`. If any problem occurs you may find clues in the `build.log` file.
+
+Note: `Super_Tilt_Bro_(E).nes` requires the support for the RAINBOW mapper, which is not yet included in any emulator. You can play it with a fork of FCEUX [here](https://github.com/sgadrat/fceux/tree/rainbow-stable) or play `tilt_no_network_unrom_(E).nes` (without networking) in any emulator.
 
 ## Playing
 
