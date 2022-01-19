@@ -32,13 +32,13 @@ PROGRESS_BAR_LEN = 16
 
 	; ESP enable, the full ultra safe sequence
 	lda #%00000001    ; Enable communication with the ESP
-	sta RAINBOW_FLAGS
+	sta RAINBOW_WIFI_CONF
 
 	lda #<esp_cmd_clear_buffers ; Clear RX/TX buffers
 	ldx #>esp_cmd_clear_buffers
 	jsr esp_send_cmd_short
 
-	ldx #2              ; Wait two frames for the clear to happen
+	ldx #2              ; Wait two frames for the clear to happen, and PPU warmup
 	bit PPUSTATUS
 	vblank_wait:
 		bit PPUSTATUS
@@ -46,19 +46,13 @@ PROGRESS_BAR_LEN = 16
 	dex
 	bne vblank_wait
 
-	wait_empty_buffer:        ; Be really sure that the clear happened
-		bit RAINBOW_FLAGS
-		bmi wait_empty_buffer
-
 	lda #<esp_cmd_get_esp_status ; Wait for ESP to be ready
 	ldx #>esp_cmd_get_esp_status
 	jsr esp_send_cmd_short
 	jsr esp_wait_answer
 
-	lda RAINBOW_DATA ; Burn garbage byte
-
 	.( ; Message length, must be 1
-		ldx RAINBOW_DATA
+		ldx esp_rx_buffer+ESP_MSG_SIZE
 		cpx #1
 		beq ok
 			jmp fatal_failure
@@ -66,12 +60,14 @@ PROGRESS_BAR_LEN = 16
 	.)
 
 	.( ; Message type, must be READY
-		lda RAINBOW_DATA
+		lda esp_rx_buffer+ESP_MSG_TYPE
 		cmp #FROMESP_MSG_READY
 		beq ok
 			jmp fatal_failure
 		ok:
 	.)
+
+	sta RAINBOW_WIFI_RX
 
 	; Enable noise channel to be able to output debug sounds
 	lda #%00001000 ; ---DNT21
@@ -92,25 +88,24 @@ PROGRESS_BAR_LEN = 16
 		jsr esp_send_cmd_short
 		jsr esp_wait_answer
 
-		lda RAINBOW_DATA ; Garbage byte
-		nop
-
-		lda RAINBOW_DATA
+		lda esp_rx_buffer+ESP_MSG_SIZE
 		cmp #2
 		beq expected_length
 			jmp fatal_failure
 		expected_length:
 
-		lda RAINBOW_DATA ; Message type
+		lda esp_rx_buffer+ESP_MSG_TYPE ; Message type
 		cmp #FROMESP_MSG_FILE_EXISTS
 		beq expected_type
 			jmp fatal_failure
 		expected_type:
 
-		lda RAINBOW_DATA ; Result - 0, file not found - 1, file exists
+		lda esp_rx_buffer+ESP_MSG_PAYLOAD+0 ; Result - 0, file not found - 1, file exists
 		bne file_exists ; loosy condition, accept any other value than 0 - better allow flashing if ESP_FILE_EXISTS api was extended
 			jmp fatal_failure
 		file_exists:
+
+		sta RAINBOW_WIFI_RX ; Acknowledge message reception
 	.)
 
 	; Open factory ROM file
@@ -380,30 +375,27 @@ flash_sectors_rom:
 		.(
 			; Read one block
 			wait_esp_ready:
-				bit RAINBOW_FLAGS
-				bmi wait_esp_ready
+				bit RAINBOW_WIFI_TX
+				bpl wait_esp_ready
 
 			lda #2
-			sta RAINBOW_DATA
+			sta esp_rx_buffer+ESP_MSG_SIZE
 			lda #TOESP_MSG_FILE_READ
-			sta RAINBOW_DATA
+			sta esp_rx_buffer+ESP_MSG_TYPE
 			lda #BLOCK_SIZE
-			sta RAINBOW_DATA
+			sta esp_rx_buffer+ESP_MSG_PAYLOAD+0
 
 			wait_answer:
-				bit RAINBOW_FLAGS
+				bit RAINBOW_WIFI_RX
 				bpl wait_answer
 
-			; Burn response header
-			;  Garbage byte
+			; Store current byte offset on stack
+			; Ignore response header
 			;  Message length
 			;  FROMESP_MSG_FILE_DATA
 			;  Data length (should be BLOCK_SIZE, unless the file is shorter than expected)
-			ldx #4
-			burn_byte:
-				lda RAINBOW_DATA
-				dex
-				bne burn_byte
+			lda #ESP_MSG_PAYLOAD+1
+			pha
 
 			; Write data
 			ldy #0
@@ -417,9 +409,13 @@ flash_sectors_rom:
 				lda #$a0
 				sta $d555
 
-				lda RAINBOW_DATA            ; value to write
+				pla
+				tax
+				lda esp_rx_buffer, x        ; value to write
 				sta (current_write_addr), y ; destination address
 				sta tmpfield1
+				inx
+				pha
 
 				; Wait programation execution
 				;  Must read the expected value twice in a row, ensuring DQ6 oscilating behaviour ended
@@ -478,6 +474,9 @@ flash_sectors_rom:
 				sta current_write_addr_msb
 #endif
 			.)
+
+			; Acknowledge message reception
+			sta RAINBOW_WIFI_RX
 
 			; Loop
 			dec num_blocks

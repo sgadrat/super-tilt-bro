@@ -26,9 +26,9 @@ mapper_init:
 	stx APU_DMC_FLAGS ; disable DMC IRQs
 
 #ifdef MAPPER_RAINBOW
-	; Enable ESP
+	; Enable ESP, disable IRQ
 	lda #%00000001
-	sta RAINBOW_FLAGS
+	sta RAINBOW_WIFI_CONF
 
 	; Configure rainbow mapper
 	lda #%00011110 ; ssmmrccp - horizontal mirroring, CHR-RAM, 8k CHR window, 16k+8k+8k PRG banking
@@ -44,6 +44,11 @@ mapper_init:
 	lda #%00000000 ; BBBBBBBB - first bank
 	sta RAINBOW_CHR_BANKING_1
 
+	; Select the second FPGA WRAM bank
+	;  half of the first one is always mapped at $4800, using the second by default avoids mirroring
+	lda #%00000001
+	sta RAINBOW_FPGA_WRAM_BANKING
+
 	; Select the first WRAM bank
 	lda #%00000000 ; ccBBBBbb - WRAM, first bank
 	sta RAINBOW_WRAM_BANKING
@@ -56,6 +61,12 @@ mapper_init:
 	sta RAINBOW_PULSE_CHANNEL_1_FREQ_HIGH
 	sta RAINBOW_PULSE_CHANNEL_2_FREQ_HIGH
 	sta RAINBOW_SAW_CHANNEL_FREQ_HIGH
+
+	; Set ESP messages memory to consecutive pages
+	lda #0
+	sta RAINBOW_WIFI_RX_DEST
+	lda #1
+	sta RAINBOW_WIFI_TX_SOURCE
 
 	; Enter rescue mode if magic buttons are pressed
 	.(

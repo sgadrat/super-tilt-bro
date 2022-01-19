@@ -30,7 +30,7 @@ network_init_stage:
 .(
 	; Enable ESP
 	lda #1
-	sta RAINBOW_FLAGS
+	sta RAINBOW_WIFI_CONF
 
 	; Clear rolling mode
 	lda #0
@@ -68,7 +68,7 @@ network_tick_ingame:
 		; Do nothing in rollback mode, it would be recursive
 		lda network_rollback_mode
 		beq do_tick
-		jmp end
+		jmp end ; optimizable, equivalent to "rts", would be even better to not call the routine in rollback mode
 		do_tick:
 
 		; Update local controller's history
@@ -85,68 +85,76 @@ network_tick_ingame:
 		cmp network_last_sent_btns
 		beq controller_sent
 
+			; Wait mapper to be ready
+			.(
+				wait_mapper:
+					bit RAINBOW_WIFI_TX
+					bpl wait_mapper
+			.)
+
 			; ESP header
 			lda #11          ; Message length (10 bytes of payload + 1 byte for ESP message type)
-			sta RAINBOW_DATA
+			sta esp_tx_buffer+ESP_MSG_SIZE
 
 			lda #TOESP_MSG_SERVER_SEND_MESSAGE ; ESP message type
-			sta RAINBOW_DATA
+			sta esp_tx_buffer+ESP_MSG_TYPE
 
 			; Payload
 			lda #STNP_CLI_MSG_TYPE_CONTROLLER_STATE ; message_type
-			sta RAINBOW_DATA
+			sta esp_tx_buffer+ESP_MSG_PAYLOAD+0
 
 			lda network_client_id_byte0 ; client_id
-			sta RAINBOW_DATA
+			sta esp_tx_buffer+ESP_MSG_PAYLOAD+1
 			lda network_client_id_byte1
-			sta RAINBOW_DATA
+			sta esp_tx_buffer+ESP_MSG_PAYLOAD+2
 			lda network_client_id_byte2
-			sta RAINBOW_DATA
+			sta esp_tx_buffer+ESP_MSG_PAYLOAD+3
 			lda network_client_id_byte3
-			sta RAINBOW_DATA
+			sta esp_tx_buffer+ESP_MSG_PAYLOAD+4
 
 			lda network_current_frame_byte0 ; timestamp
-			sta RAINBOW_DATA
+			sta esp_tx_buffer+ESP_MSG_PAYLOAD+5
 			lda network_current_frame_byte1
-			sta RAINBOW_DATA
+			sta esp_tx_buffer+ESP_MSG_PAYLOAD+6
 			lda network_current_frame_byte2
-			sta RAINBOW_DATA
+			sta esp_tx_buffer+ESP_MSG_PAYLOAD+7
 			lda network_current_frame_byte3
-			sta RAINBOW_DATA
+			sta esp_tx_buffer+ESP_MSG_PAYLOAD+8
 
 			lda controller_a_btns ; controller state
-			sta RAINBOW_DATA
+			sta esp_tx_buffer+ESP_MSG_PAYLOAD+9
 			sta network_last_sent_btns
+
+			; Send
+			sta RAINBOW_WIFI_TX
 
 		controller_sent:
 
 		; Receive new state
-		bit RAINBOW_FLAGS
+		bit RAINBOW_WIFI_RX
 		bpl state_updated
 
-			; Burn garbage byte
-			lda RAINBOW_DATA
-			nop
-
-			; Trash length byte (consistency check is not trivial as message has variable length)
-			lda RAINBOW_DATA
-			nop
+			; Ignore length byte (consistency check is not trivial as message has variable length)
+			; lda esp_rx_buffer+ESP_MSG_SIZE
 
 			; Check message type
-			lda RAINBOW_DATA
+			lda esp_rx_buffer+ESP_MSG_TYPE
 			cmp #FROMESP_MSG_MESSAGE_FROM_SERVER
 			bne skip_message
 
-			lda RAINBOW_DATA ; Message type from payload
+			lda esp_rx_buffer+ESP_MSG_PAYLOAD+0 ; Message type from payload
 			cmp #STNP_SRV_MSG_TYPE_NEWSTATE
 			bne skip_message
 
-				; Burn prediction ID
+				; Ignore prediction ID
 				; TODO use it to avoid useless state reset
-				lda RAINBOW_DATA
+				;lda esp_rx_buffer+ESP_MSG_PAYLOAD+1
 
 				; Override gamestate with the one in message's payload
 				jsr update_state
+
+				; Acknowledge message reception
+				sta RAINBOW_WIFI_RX
 
 				; Update last_frame_btns
 				;  "update_state" leaves buttons as after the "game_tick", before "fetch_controllers"
@@ -159,11 +167,13 @@ network_tick_ingame:
 				jmp state_updated
 
 			skip_message:
-				; Clear buffered message
-				lda #1
-				sta RAINBOW_DATA
-				lda #TOESP_MSG_CLEAR_BUFFERS
-				sta RAINBOW_DATA
+				; Acknowledge message reception
+				sta RAINBOW_WIFI_RX
+
+				; Clear buffered messages (cleaning in case the corrupted message was a problem with the esp)
+				lda #<esp_cmd_clear_buffers
+				ldx #>esp_cmd_clear_buffers
+				jsr esp_send_cmd_short
 
 		state_updated:
 
@@ -199,19 +209,22 @@ network_tick_ingame:
 		packet_time_flag = tmpfield1
 		PACKET_TIME_PAST = 0
 		PACKET_TIME_FUTURE = 1
+		FRAME_COUNTER_OFFSET = ESP_MSG_PAYLOAD+2
+		DELAYED_INPUTS_OFFSET = FRAME_COUNTER_OFFSET+4
+		GAMESTATE_OFFSET = DELAYED_INPUTS_OFFSET+(NETWORK_INPUT_LAG*2)
 
 		.(
 			; Extract frame counter, and compare it to local timestamp
-			lda RAINBOW_DATA
+			lda esp_rx_buffer+FRAME_COUNTER_OFFSET+0
 			sta server_current_frame_byte0
 			cmp network_current_frame_byte0
-			lda RAINBOW_DATA
+			lda esp_rx_buffer+FRAME_COUNTER_OFFSET+1
 			sta server_current_frame_byte1
 			sbc network_current_frame_byte1
-			lda RAINBOW_DATA
+			lda esp_rx_buffer+FRAME_COUNTER_OFFSET+2
 			sta server_current_frame_byte2
 			sbc network_current_frame_byte2
-			lda RAINBOW_DATA
+			lda esp_rx_buffer+FRAME_COUNTER_OFFSET+3
 			sta server_current_frame_byte3
 			sbc network_current_frame_byte3
 
@@ -251,7 +264,7 @@ network_tick_ingame:
 
 				; Copy delayed inputs
 				;  Keep local inputs from message only if packet is in the future, we know our past inputs (and the server may not yet have the last one)
-				ldx #NETWORK_INPUT_LAG
+				ldx #0
 				lda packet_time_flag
 				cmp #PACKET_TIME_FUTURE
 				beq local_keep
@@ -259,15 +272,16 @@ network_tick_ingame:
 					.(
 						copy_one_byte:
 							; Local input buffer
-							lda RAINBOW_DATA
-							nop
+							;lda esp_rx_buffer+DELAYED_INPUTS_OFFSET+0, x
 
 							; Remote input buffer
-							lda RAINBOW_DATA
+							lda esp_rx_buffer+DELAYED_INPUTS_OFFSET+1, x
 							sta network_player_remote_btns_history, y
 
 							; Loop
-							dex
+							inx
+							inx
+							cpx #NETWORK_INPUT_LAG*2
 							beq end_delayed_inputs
 								; Increment circular buffer index
 								iny
@@ -282,15 +296,17 @@ network_tick_ingame:
 					.(
 						copy_one_byte:
 							; Local input buffer
-							lda RAINBOW_DATA
+							lda esp_rx_buffer+DELAYED_INPUTS_OFFSET+0, x
 							sta network_player_local_btns_history, y
 
 							; Remote input buffer
-							lda RAINBOW_DATA
+							lda esp_rx_buffer+DELAYED_INPUTS_OFFSET+1, x
 							sta network_player_remote_btns_history, y
 
 							; Loop
-							dex
+							inx
+							inx
+							cpx #NETWORK_INPUT_LAG*2
 							beq end_delayed_inputs
 								; Increment circular buffer index
 								iny
@@ -306,27 +322,28 @@ network_tick_ingame:
 			.)
 
 			; Copy gamestate
+			GAMESTATE_SIZE = $68
 			.(
 				ldx #0
 				copy_one_byte:
 
-					lda RAINBOW_DATA  ; 4 cycles
-					sta $00, x        ; 4 cycles
+					lda esp_rx_buffer+GAMESTATE_OFFSET, x  ; 4 cycles
+					sta $00, x                             ; 4 cycles
 					inx ; 2 cycles
 
-					lda RAINBOW_DATA  ; 4 cycles
-					sta $00, x        ; 4 cycles
+					lda esp_rx_buffer+GAMESTATE_OFFSET, x  ; 4 cycles
+					sta $00, x                             ; 4 cycles
 					inx ; 2 cycles
 
-					lda RAINBOW_DATA  ; 4 cycles
-					sta $00, x        ; 4 cycles
+					lda esp_rx_buffer+GAMESTATE_OFFSET, x  ; 4 cycles
+					sta $00, x                             ; 4 cycles
 					inx ; 2 cycles
 
-					lda RAINBOW_DATA  ; 4 cycles
-					sta $00, x        ; 4 cycles
+					lda esp_rx_buffer+GAMESTATE_OFFSET, x  ; 4 cycles
+					sta $00, x                             ; 4 cycles
 					inx ; 2 cycles
 
-				cpx #$68 ; 3 cycles
+				cpx #GAMESTATE_SIZE ; 3 cycles
 				bne copy_one_byte ; 3 cycles
 			.)
 
@@ -336,7 +353,7 @@ network_tick_ingame:
 			;  4x rolled - ((4+4+2)*4 + 3 + 3) * (104/4) = 46 * 26 = 1196
 
 			; Copy special state
-			lda RAINBOW_DATA
+			lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE
 			sta screen_shake_counter
 			bne screen_shake_updated
 				; Received a "no screen shake", ensure that scrolling is reset
@@ -348,9 +365,10 @@ network_tick_ingame:
 			screen_shake_updated:
 
 			; Copy controllers state
-			lda RAINBOW_DATA
+			CONTROLLERS_STATE_OFFSET = GAMESTATE_OFFSET+GAMESTATE_SIZE+1
+			lda esp_rx_buffer+CONTROLLERS_STATE_OFFSET+0
 			sta controller_a_btns
-			lda RAINBOW_DATA
+			lda esp_rx_buffer+CONTROLLERS_STATE_OFFSET+1
 			sta controller_b_btns
 
 			; Copy actually pressed opponent btns (keep_input_dirty may mess with normal values, but not this one)
@@ -361,22 +379,22 @@ network_tick_ingame:
 				;     Beware of race conditions, if the server receives the ControllerState packet after sending the NewState
 				;       That would cause desychronization (until next NewGameState received), because we updated history with predicted info from server
 #if 1
+				; optimizable now that we can read in random access, we may not have to use the stack to store the useful value
 				lda network_local_player_number
 				bne player_b
 
 					player_a:
-						; Local player is player A, burn its buttons (already in our history)
-						lda RAINBOW_DATA
-						nop
-						lda RAINBOW_DATA
+						; Local player is player A, ignore its buttons (already in our history)
+						;lda esp_rx_buffer+CONTROLLERS_STATE_OFFSET+2
+						lda esp_rx_buffer+CONTROLLERS_STATE_OFFSET+3
 						pha
 						jmp ok
 
 					player_b:
-						; Local player is player B, burn its buttons (already in our history)
-						lda RAINBOW_DATA
+						; Local player is player B, ignore its buttons (already in our history)
+						lda esp_rx_buffer+CONTROLLERS_STATE_OFFSET+2
 						pha
-						lda RAINBOW_DATA
+						;lda esp_rx_buffer+CONTROLLERS_STATE_OFFSET+3
 				ok:
 
 				; Register it in opponent's input history
@@ -395,59 +413,64 @@ network_tick_ingame:
 
 					player_a:
 						; Local player is player A
-						lda RAINBOW_DATA
+						lda esp_rx_buffer+CONTROLLERS_STATE_OFFSET+2
 						sta network_player_local_btns_history, y
-						lda RAINBOW_DATA
+						lda esp_rx_buffer+CONTROLLERS_STATE_OFFSET+3
 						sta network_player_remote_btns_history, y
 						jmp ok
 
 					player_b:
 						; Local player is player B
-						lda RAINBOW_DATA
+						lda esp_rx_buffer+CONTROLLERS_STATE_OFFSET+2
 						sta network_player_remote_btns_history, y
-						lda RAINBOW_DATA
+						lda esp_rx_buffer+CONTROLLERS_STATE_OFFSET+3
 						sta network_player_local_btns_history, y
 				ok:
 #endif
 			.)
 
 			; Copy animation states
+			ANIM_OFFSET = CONTROLLERS_STATE_OFFSET+4
 			.(
-				lda RAINBOW_DATA
+				lda esp_rx_buffer+ANIM_OFFSET+0
 				sta player_a_animation+ANIMATION_STATE_OFFSET_DATA_VECTOR_LSB
-				lda RAINBOW_DATA
+				lda esp_rx_buffer+ANIM_OFFSET+1
 				sta player_a_animation+ANIMATION_STATE_OFFSET_DATA_VECTOR_MSB
-				lda RAINBOW_DATA
+				lda esp_rx_buffer+ANIM_OFFSET+2
 				sta player_a_animation+ANIMATION_STATE_OFFSET_DIRECTION
-				lda RAINBOW_DATA
+				lda esp_rx_buffer+ANIM_OFFSET+3
 				sta player_a_animation+ANIMATION_STATE_OFFSET_CLOCK
-				lda RAINBOW_DATA
+				lda esp_rx_buffer+ANIM_OFFSET+4
 				sta player_a_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB
-				lda RAINBOW_DATA
+				lda esp_rx_buffer+ANIM_OFFSET+5
 				sta player_a_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB
-				lda RAINBOW_DATA
+				lda esp_rx_buffer+ANIM_OFFSET+6
 				sta player_a_animation+ANIMATION_STATE_OFFSET_NTSC_CNT
 
-				lda RAINBOW_DATA
+				lda esp_rx_buffer+ANIM_OFFSET+7
 				sta player_b_animation+ANIMATION_STATE_OFFSET_DATA_VECTOR_LSB
-				lda RAINBOW_DATA
+				lda esp_rx_buffer+ANIM_OFFSET+8
 				sta player_b_animation+ANIMATION_STATE_OFFSET_DATA_VECTOR_MSB
-				lda RAINBOW_DATA
+				lda esp_rx_buffer+ANIM_OFFSET+9
 				sta player_b_animation+ANIMATION_STATE_OFFSET_DIRECTION
-				lda RAINBOW_DATA
+				lda esp_rx_buffer+ANIM_OFFSET+10
 				sta player_b_animation+ANIMATION_STATE_OFFSET_CLOCK
-				lda RAINBOW_DATA
+				lda esp_rx_buffer+ANIM_OFFSET+11
 				sta player_b_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB
-				lda RAINBOW_DATA
+				lda esp_rx_buffer+ANIM_OFFSET+12
 				sta player_b_animation+ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB
-				lda RAINBOW_DATA
+				lda esp_rx_buffer+ANIM_OFFSET+13
 				sta player_b_animation+ANIMATION_STATE_OFFSET_NTSC_CNT
 			.)
 
 			; Copy character specific data
+			CHARACTERS_OFFSET = ANIM_OFFSET+14
+			lda #CHARACTERS_OFFSET
+			pha
 			.(
 				ldx #0
 				copy_one_char:
+					; Point to character's netload routine
 					ldy config_player_a_character, x
 
 					lda characters_netload_routine_lsb, y
@@ -456,16 +479,27 @@ network_tick_ingame:
 					sta tmpfield2
 
 					SWITCH_BANK(characters_bank_number COMMA y)
+
+					; Call netload routine
+					pla
+					tay
 					stx player_number
 					jsr call_pointed_subroutine
-					ldx player_number
 
+					ldx player_number
+					tya
+					pha
+
+					; Loop
 					inx
 					cpx #2
 					bne copy_one_char
 			.)
+			;NOTE at this point there is still the current offset on the stack
 
 			; Copy stage specific data
+			pla
+			tax
 			.(
 				ldy config_selected_stage
 

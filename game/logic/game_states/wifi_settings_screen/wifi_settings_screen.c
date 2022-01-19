@@ -210,9 +210,11 @@ static void display_wifi_status() {
 }
 
 static void send_cmd_get_network_details(uint8_t network_id) {
-	RAINBOW_DATA = 2;
-	RAINBOW_DATA = TOESP_MSG_NETWORK_GET_SCANNED_DETAILS;
-	RAINBOW_DATA = network_id;
+	esp_wait_tx();
+	(&esp_tx_buffer)[0] = 2;
+	(&esp_tx_buffer)[1] = TOESP_MSG_NETWORK_GET_SCANNED_DETAILS;
+	(&esp_tx_buffer)[2] = network_id;
+	RAINBOW_WIFI_TX = 0;
 }
 
 static void refresh_password_window() {
@@ -337,24 +339,31 @@ static void register_network_in_msg() {
 	uint8_t const ssid_len = msg[MSG_NETWORK_SSID_OFFSET];
 	uint8_t const password_len = strnlen8(mem()->password, 16);
 
+	// Wait mapper to be ready to send a message
+	esp_wait_tx();
+
 	// Message header
-	RAINBOW_DATA = 2 + 1 + ssid_len + 1 + password_len;
-	RAINBOW_DATA = TOESP_MSG_NETWORK_REGISTER;
+	(&esp_tx_buffer)[0] = 2 + 1 + ssid_len + 1 + password_len;
+	(&esp_tx_buffer)[1] = TOESP_MSG_NETWORK_REGISTER;
 
 	// Network ID
-	RAINBOW_DATA = 0;
+	(&esp_tx_buffer)[2] = 0;
 
 	// SSID
-	RAINBOW_DATA = ssid_len;
+	(&esp_tx_buffer)[3] = ssid_len;
 	for (uint8_t i = 1; i <= ssid_len; ++i) {
-		RAINBOW_DATA = msg[MSG_NETWORK_SSID_OFFSET + i];
+		(&esp_tx_buffer)[3+i] = msg[MSG_NETWORK_SSID_OFFSET + i];
 	}
 
 	// Password
-	RAINBOW_DATA = password_len;
+	uint8_t const msg_network_password_offset = 3 + 1 + ssid_len;
+	(&esp_tx_buffer)[msg_network_password_offset] = password_len;
 	for (uint8_t i = 0; i < password_len; ++i) {
-		RAINBOW_DATA = mem()->password[i];
+		(&esp_tx_buffer)[msg_network_password_offset+1+i] = mem()->password[i];
 	}
+
+	// Send message
+	RAINBOW_WIFI_TX = 0;
 }
 
 static void update_net_list() {

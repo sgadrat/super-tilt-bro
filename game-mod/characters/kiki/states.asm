@@ -194,65 +194,71 @@ kiki_init:
 
 kiki_netload:
 .(
-	; NOTE performance can be improved by having a branch per player (avoiding "indirect, y" indexing)
-	ldy #0
 	cpx #0
 	beq load_element
-		ldy #player_b_objects-player_a_objects
+		ldx #player_b_objects-player_a_objects
 	load_element:
 
 	; Platform stage-element
-	lda RAINBOW_DATA
-	sta player_a_objects+0, y
-	lda RAINBOW_DATA
-	sta player_a_objects+1, y
-	lda RAINBOW_DATA
-	sta player_a_objects+2, y
-	lda RAINBOW_DATA
-	sta player_a_objects+3, y
-	lda RAINBOW_DATA
-	sta player_a_objects+4, y
-	lda RAINBOW_DATA
-	sta player_a_objects+5, y
-	lda RAINBOW_DATA
-	sta player_a_objects+6, y
-	lda RAINBOW_DATA
-	sta player_a_objects+7, y
-	lda RAINBOW_DATA
-	sta player_a_objects+8, y
+	lda esp_rx_buffer+0, y
+	sta player_a_objects+0, x
+	lda esp_rx_buffer+1, y
+	sta player_a_objects+1, x
+	lda esp_rx_buffer+2, y
+	sta player_a_objects+2, x
+	lda esp_rx_buffer+3, y
+	sta player_a_objects+3, x
+	lda esp_rx_buffer+4, y
+	sta player_a_objects+4, x
+	lda esp_rx_buffer+5, y
+	sta player_a_objects+5, x
+	lda esp_rx_buffer+6, y
+	sta player_a_objects+6, x
+	lda esp_rx_buffer+7, y
+	sta player_a_objects+7, x
+	lda esp_rx_buffer+8, y
+	sta player_a_objects+8, x
 
 #if STAGE_ELEMENT_SIZE <> 9
 #error above code expects stage elements to be 9 bytes
 #endif
 
 	; Y pos of the platform (kiki_first_wall_sprite_y_per_player)
-	lda RAINBOW_DATA
-	sta player_a_objects+10, y
-	lda RAINBOW_DATA
-	sta player_a_objects+11, y
+	lda esp_rx_buffer+9, y
+	sta player_a_objects+10, x
+	lda esp_rx_buffer+10, y
+	sta player_a_objects+11, x
 
 	; X pos of the platform tiles
+	ldx player_number
 	lda kiki_first_wall_sprite_per_player, x
 	asl
 	asl
-	tay
+	tax
 
-	lda RAINBOW_DATA
-	sta oam_mirror+3, y
-	lda RAINBOW_DATA
-	sta oam_mirror+4+3, y
+	lda esp_rx_buffer+11, y
+	sta oam_mirror+3, x
+	lda esp_rx_buffer+12, y
+	sta oam_mirror+4+3, x
 
 	; Platform tiles
-	lda RAINBOW_DATA
-	sta oam_mirror+1, y
-	lda RAINBOW_DATA
-	sta oam_mirror+4+1, y
+	lda esp_rx_buffer+13, y
+	sta oam_mirror+1, x
+	lda esp_rx_buffer+14, y
+	sta oam_mirror+4+1, x
+
+	; Update buffer cursor
+	tya
+	clc
+	adc #15
+	tay
 
 	; Ensure platform is correctly displayed
 	.(
 		; Shall be drawn if
 		;  timer > blink threshold, or
 		;  blink is in a visible tick
+		ldx player_number
 		lda kiki_a_platform_state, x
 		and #KIKI_PLATFORM_BLINK_THRESHOLD_MASK
 		bne displayed

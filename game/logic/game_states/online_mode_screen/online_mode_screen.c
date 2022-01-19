@@ -486,28 +486,24 @@ static void clear_form_cursor() {
 }
 
 static uint8_t esp_read_file(uint8_t size) {
-	// Wait for the ESP to be ready
-	do{
-		yield();
-	}while ((RAINBOW_FLAGS & 0x80) != 0);
-
 	// Send read command to ESP
-	RAINBOW_DATA = 2;
-	RAINBOW_DATA = TOESP_MSG_FILE_READ;
-	RAINBOW_DATA = size;
+	esp_wait_tx();
+	(&esp_tx_buffer)[0] = 2;
+	(&esp_tx_buffer)[1] = TOESP_MSG_FILE_READ;
+	(&esp_tx_buffer)[2] = size;
+	RAINBOW_WIFI_TX = 0;
 
 	// Wait answer
 	do{
 		yield();
-	}while ((RAINBOW_FLAGS & 0x80) == 0);
+	}while ((RAINBOW_WIFI_RX & 0x80) == 0);
 
-	// Burn response header
-	RAINBOW_DATA; // Garbage byte
-	RAINBOW_DATA; // Message size
-	if (RAINBOW_DATA != FROMESP_MSG_FILE_DATA) { // Message type
+	// Parse response header
+	//  message_size - message_type - read_size
+	if ((&esp_rx_buffer)[1] != FROMESP_MSG_FILE_DATA) {
 		return 0;
 	}
-	return RAINBOW_DATA; // Read size
+	return (&esp_rx_buffer)[2];
 }
 
 __attribute__((unused))
@@ -600,12 +596,13 @@ static void update_game() {
 	wrap_esp_send_cmd(cmd_open_file);
 
 	uint8_t n_read = esp_read_file(1);
+	uint8_t const header_len = (&esp_rx_buffer)[3];
+	RAINBOW_WIFI_RX = 0;
 	if (n_read != 1) {
 		draw_dialog_string(0x2146, 3, "error  empty file");
 		wait_confirm_input();
 		return;
 	}
-	uint8_t header_len = RAINBOW_DATA;
 	if (header_len < 1) {
 		draw_dialog_string(0x2146, 3, "error  invalid hdr");
 		wait_confirm_input();
@@ -613,17 +610,12 @@ static void update_game() {
 	}
 
 	n_read = esp_read_file(header_len);
+	uint8_t const safe = (&esp_rx_buffer)[3];
+	RAINBOW_WIFI_RX = 0;
 	if (n_read != header_len) {
 		draw_dialog_string(0x2146, 3, "error  truncated");
 		wait_confirm_input();
 		return;
-	}
-	uint8_t const safe = RAINBOW_DATA; --header_len;
-
-	// Burn unknown header bytes
-	while (header_len != 0) {
-		RAINBOW_DATA;
-		--header_len;
 	}
 
 	// Show confirmation dialogue

@@ -102,39 +102,43 @@ pepper_last_anim_sprite_per_player:
 
 pepper_netload:
 .(
-	; NOTE performance can be improved by having a branch per player (avoiding "indirect, y" indexing)
-	ldy #0
 	cpx #0
 	beq load_element
-		ldy #player_b_objects-player_a_objects
+		ldx #player_b_objects-player_a_objects
 	load_element:
 
 	; Carrot's animation
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+0, y
 	sta player_a_objects+1+ANIMATION_STATE_OFFSET_X_LSB, y
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+1, y
 	sta player_a_objects+1+ANIMATION_STATE_OFFSET_X_MSB, y
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+2, y
 	sta player_a_objects+1+ANIMATION_STATE_OFFSET_Y_LSB, y
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+3, y
 	sta player_a_objects+1+ANIMATION_STATE_OFFSET_Y_MSB, y
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+4, y
 	sta player_a_objects+1+ANIMATION_STATE_OFFSET_DATA_VECTOR_LSB, y
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+5, y
 	sta player_a_objects+1+ANIMATION_STATE_OFFSET_DATA_VECTOR_MSB, y
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+6, y
 	sta player_a_objects+1+ANIMATION_STATE_OFFSET_DIRECTION, y
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+7, y
 	sta player_a_objects+1+ANIMATION_STATE_OFFSET_CLOCK, y
-	;lda RAINBOW_DATA
+	;lda esp_rx_buffer+, y
 	;sta player_a_objects+1+ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM, y ; Never change
-	;lda RAINBOW_DATA
+	;lda esp_rx_buffer+, y
 	;sta player_a_objects+1+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM, y ; Never change
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+8, y
 	sta player_a_objects+1+ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB, y
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+9, y
 	sta player_a_objects+1+ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB, y
 	;TODO ANIMATION_STATE_OFFSET_NTSC_CNT
+
+	; Update message's cursor
+	tya
+	clc
+	adc #10
+	tay
 
 	rts
 .)

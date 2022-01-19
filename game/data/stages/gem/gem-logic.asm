@@ -84,7 +84,7 @@ stage_gem_init:
 stage_gem_netload:
 .(
 	; Load gem's state
-	ldx RAINBOW_DATA
+	ldx esp_rx_buffer+0, x
 	stx stage_gem_gem_state
 
 	; Load fields for the new state
@@ -97,9 +97,9 @@ stage_gem_netload:
 	gem_netload_cooldown:
 	.(
 		; Load state's variables
-		lda RAINBOW_DATA
+		lda esp_rx_buffer+1, x
 		sta stage_gem_gem_cooldown_low
-		lda RAINBOW_DATA
+		lda esp_rx_buffer+2, x
 		sta stage_gem_gem_cooldown_high
 
 		; Ensure sprites consistency
@@ -111,26 +111,27 @@ stage_gem_netload:
 	gem_netload_active:
 	.(
 		; Load state's variables
-		lda RAINBOW_DATA
+		lda esp_rx_buffer+1, x
 		sta stage_gem_gem_position_x_low
-		lda RAINBOW_DATA
+		lda esp_rx_buffer+2, x
 		sta stage_gem_gem_position_x_high
-		lda RAINBOW_DATA
+		lda esp_rx_buffer+3, x
 		sta stage_gem_gem_position_y_low
-		lda RAINBOW_DATA
+		lda esp_rx_buffer+4, x
 		sta stage_gem_gem_position_y_high
-		lda RAINBOW_DATA
+		lda esp_rx_buffer+5, x
 		sta stage_gem_gem_velocity_h_low
-		lda RAINBOW_DATA
+		lda esp_rx_buffer+6, x
 		sta stage_gem_gem_velocity_h_high
-		lda RAINBOW_DATA
+		lda esp_rx_buffer+7, x
 		sta stage_gem_gem_velocity_v_low
-		lda RAINBOW_DATA
+		lda esp_rx_buffer+8, x
 		sta stage_gem_gem_velocity_v_high
 
 		; Ensure sprites consistency
 		STAGE_GEM_HIDE_SPRITES ; Note, just in case we were in "buff" state previously (should be really rare)
 
+		;FIXME set X/Y position, else it won't show if in screen shake
 		lda #TILE_GEM
 		sta STAGE_GEM_GEM_SPRITE_OAM+1 ; Tile number
 		lda #3
@@ -142,7 +143,7 @@ stage_gem_netload:
 	gem_netload_breaking:
 	.(
 		; Load state's variables
-		lda RAINBOW_DATA
+		lda esp_rx_buffer+1, x
 		sta stage_gem_buffed_player
 
 		; Ensure sprites consistency
@@ -157,13 +158,13 @@ stage_gem_netload:
 	gem_netload_buff:
 	.(
 		; Load state's variables
-		lda RAINBOW_DATA
+		lda esp_rx_buffer+1, x
 		sta stage_gem_gem_cooldown_low
-		lda RAINBOW_DATA
+		lda esp_rx_buffer+2, x
 		sta stage_gem_gem_cooldown_high
-		lda RAINBOW_DATA
+		lda esp_rx_buffer+3, x
 		sta stage_gem_last_opponent_state
-		lda RAINBOW_DATA
+		lda esp_rx_buffer+4, x
 		sta stage_gem_buffed_player
 
 		; Ensure sprites consistency

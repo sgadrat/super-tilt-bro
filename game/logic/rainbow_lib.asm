@@ -20,49 +20,51 @@ TOESP_MSG_WIFI_GET_IP                      = 10  ; Get WiFi IP address
 ; AP CMDS
 TOESP_MSG_AP_GET_SSID                      = 11  ; Get Access Point network SSID
 TOESP_MSG_AP_GET_IP                        = 12  ; Get Access Point IP address
+TOESP_MSG_AP_GET_CONFIG                    = 13  ; Get Access Point config
+TOESP_MSG_AP_SET_CONFING                   = 14  ; Set Access Point config
 
 ; RND CMDS
-TOESP_MSG_RND_GET_BYTE                     = 13  ; Get random byte
-TOESP_MSG_RND_GET_BYTE_RANGE               = 14  ; Get random byte between custom min/max
-TOESP_MSG_RND_GET_WORD                     = 15  ; Get random word
-TOESP_MSG_RND_GET_WORD_RANGE               = 16  ; Get random word between custom min/max
+TOESP_MSG_RND_GET_BYTE                     = 15  ; Get random byte
+TOESP_MSG_RND_GET_BYTE_RANGE               = 16  ; Get random byte between custom min/max
+TOESP_MSG_RND_GET_WORD                     = 17  ; Get random word
+TOESP_MSG_RND_GET_WORD_RANGE               = 18  ; Get random word between custom min/max
 
 ; SERVER CMDS
-TOESP_MSG_SERVER_GET_STATUS                = 17  ; Get server connection status
-TOESP_MSG_SERVER_PING                      = 18  ; Get ping between ESP and server
-TOESP_MSG_SERVER_SET_PROTOCOL              = 19  ; Set protocol to be used to communicate (WS/UDP)
-TOESP_MSG_SERVER_GET_SETTINGS              = 20  ; Get current server host name and port
-TOESP_MSG_SERVER_GET_CONFIG_SETTINGS       = 21  ; Get server host name and port defined in the Rainbow config file
-TOESP_MSG_SERVER_SET_SETTINGS              = 22  ; Set current server host name and port
-TOESP_MSG_SERVER_RESTORE_SETTINGS          = 23  ; Restore server host name and port to values defined in the Rainbow config
-TOESP_MSG_SERVER_CONNECT                   = 24  ; Connect to server
-TOESP_MSG_SERVER_DISCONNECT                = 25  ; Disconnect from server
-TOESP_MSG_SERVER_SEND_MESSAGE              = 26  ; Send message to server
+TOESP_MSG_SERVER_GET_STATUS                = 19  ; Get server connection status
+TOESP_MSG_SERVER_PING                      = 20  ; Get ping between ESP and server
+TOESP_MSG_SERVER_SET_PROTOCOL              = 21  ; Set protocol to be used to communicate (WS/UDP)
+TOESP_MSG_SERVER_GET_SETTINGS              = 22  ; Get current server host name and port
+TOESP_MSG_SERVER_GET_CONFIG_SETTINGS       = 23  ; Get server host name and port defined in the Rainbow config file
+TOESP_MSG_SERVER_SET_SETTINGS              = 24  ; Set current server host name and port
+TOESP_MSG_SERVER_RESTORE_SETTINGS          = 25  ; Restore server host name and port to values defined in the Rainbow config
+TOESP_MSG_SERVER_CONNECT                   = 26  ; Connect to server
+TOESP_MSG_SERVER_DISCONNECT                = 27  ; Disconnect from server
+TOESP_MSG_SERVER_SEND_MESSAGE              = 28  ; Send message to server
 
 ; NETWORK CMDS
-TOESP_MSG_NETWORK_SCAN                     = 27  ; Scan networks around and return count
-TOESP_MSG_NETWORK_GET_SCANNED_DETAILS      = 28  ; Get scanned network details
-TOESP_MSG_NETWORK_GET_REGISTERED           = 29  ; Get registered networks status
-TOESP_MSG_NETWORK_GET_REGISTERED_DETAILS   = 30  ; Get registered network SSID
-TOESP_MSG_NETWORK_REGISTER                 = 31  ; Register network
-TOESP_MSG_NETWORK_UNREGISTER               = 32  ; Unregister network
+TOESP_MSG_NETWORK_SCAN                     = 29  ; Scan networks around and return count
+TOESP_MSG_NETWORK_GET_SCANNED_DETAILS      = 30  ; Get scanned network details
+TOESP_MSG_NETWORK_GET_REGISTERED           = 31  ; Get registered networks status
+TOESP_MSG_NETWORK_GET_REGISTERED_DETAILS   = 32  ; Get registered network SSID
+TOESP_MSG_NETWORK_REGISTER                 = 33  ; Register network
+TOESP_MSG_NETWORK_UNREGISTER               = 34  ; Unregister network
 
 ; FILE COMMANDS
-TOESP_MSG_FILE_OPEN                        = 33  ; Open working file
-TOESP_MSG_FILE_CLOSE                       = 34  ; Close working file
-TOESP_MSG_FILE_STATUS                      = 35  ; Get working file status
-TOESP_MSG_FILE_EXISTS                      = 36  ; Check if file exists
-TOESP_MSG_FILE_DELETE                      = 37  ; Delete a file
-TOESP_MSG_FILE_SET_CUR                     = 38  ; Set working file cursor position a file
-TOESP_MSG_FILE_READ                        = 39  ; Read working file (at specific position)
-TOESP_MSG_FILE_WRITE                       = 40  ; Write working file (at specific position)
-TOESP_MSG_FILE_APPEND                      = 41  ; Append data to working file
-TOESP_MSG_FILE_COUNT                       = 42  ; Count files in a specific path
-TOESP_MSG_FILE_GET_LIST                    = 43  ; Get list of existing files in a path
-TOESP_MSG_FILE_GET_FREE_ID                 = 44  ; Get an unexisting file ID in a specific path
-TOESP_MSG_FILE_GET_INFO                    = 45  ; Get file info (size + crc32)
-TOESP_MSG_FILE_DOWNLOAD                    = 46  ; Download a file from a giving URL to a specific path index / file index
-TOESP_MSG_FILE_FORMAT                      = 47  ; Format file system
+TOESP_MSG_FILE_OPEN                        = 35  ; Open working file
+TOESP_MSG_FILE_CLOSE                       = 36  ; Close working file
+TOESP_MSG_FILE_STATUS                      = 37  ; Get working file status
+TOESP_MSG_FILE_EXISTS                      = 38  ; Check if file exists
+TOESP_MSG_FILE_DELETE                      = 39  ; Delete a file
+TOESP_MSG_FILE_SET_CUR                     = 40  ; Set working file cursor position a file
+TOESP_MSG_FILE_READ                        = 41  ; Read working file (at specific position)
+TOESP_MSG_FILE_WRITE                       = 42  ; Write working file (at specific position)
+TOESP_MSG_FILE_APPEND                      = 43  ; Append data to working file
+TOESP_MSG_FILE_COUNT                       = 44  ; Count files in a specific path
+TOESP_MSG_FILE_GET_LIST                    = 45  ; Get list of existing files in a path
+TOESP_MSG_FILE_GET_FREE_ID                 = 46  ; Get an unexisting file ID in a specific path
+TOESP_MSG_FILE_GET_INFO                    = 47  ; Get file info (size + crc32)
+TOESP_MSG_FILE_DOWNLOAD                    = 48  ; Download a file from a giving URL to a specific path index / file index
+TOESP_MSG_FILE_FORMAT                      = 49  ; Format file system
 
 ;-------------------------------------------------------------------------------
 ; Commands from ESP to NES
@@ -77,33 +79,34 @@ FROMESP_MSG_ESP_FIRMWARE_VERSION           = 2   ; Returns the Rainbow firmware 
 FROMESP_MSG_WIFI_STATUS                    = 3   ; Returns WiFi connection status
 FROMESP_MSG_SSID                           = 4   ; WiFi/AccessPoint SSID
 FROMESP_MSG_IP_ADDRESS                     = 5   ; WiFi/AccessPoint IP address
+FROMESP_MSG_AP_CONFIG                      = 6   ; Returns AP config
 
 ; RND CMDS
-FROMESP_MSG_RND_BYTE                       = 6   ; Returns random byte value
-FROMESP_MSG_RND_WORD                       = 7   ; Returns random word value
+FROMESP_MSG_RND_BYTE                       = 7   ; Returns random byte value
+FROMESP_MSG_RND_WORD                       = 8   ; Returns random word value
 
 ; SERVER CMDS
-FROMESP_MSG_SERVER_STATUS                  = 8   ; Returns server connection status
-FROMESP_MSG_SERVER_PING                    = 9   ; Returns min, max and average round-trip time and number of lost packets
-FROMESP_MSG_SERVER_SETTINGS                = 10  ; Returns server settings (host name + port)
-FROMESP_MSG_MESSAGE_FROM_SERVER            = 11  ; Message from server
+FROMESP_MSG_SERVER_STATUS                  = 9   ; Returns server connection status
+FROMESP_MSG_SERVER_PING                    = 10  ; Returns min, max and average round-trip time and number of lost packets
+FROMESP_MSG_SERVER_SETTINGS                = 11  ; Returns server settings (host name + port)
+FROMESP_MSG_MESSAGE_FROM_SERVER            = 12  ; Message from server
 
 ; NETWORK CMDS
-FROMESP_MSG_NETWORK_COUNT                  = 12  ; Returns number of networks found
-FROMESP_MSG_NETWORK_SCANNED_DETAILS        = 13  ; Returns details for a scanned network
-FROMESP_MSG_NETWORK_REGISTERED_DETAILS     = 14  ; Returns SSID for a registered network
-FROMESP_MSG_NETWORK_REGISTERED             = 15  ; Returns registered networks status
+FROMESP_MSG_NETWORK_COUNT                  = 13  ; Returns number of networks found
+FROMESP_MSG_NETWORK_SCANNED_DETAILS        = 14  ; Returns details for a scanned network
+FROMESP_MSG_NETWORK_REGISTERED_DETAILS     = 15  ; Returns SSID for a registered network
+FROMESP_MSG_NETWORK_REGISTERED             = 16  ; Returns registered networks status
 
 ; FILE CMDS
-FROMESP_MSG_FILE_STATUS                    = 16  ; Returns the working file status
-FROMESP_MSG_FILE_EXISTS                    = 17  ; Returns if file exists or not
-FROMESP_MSG_FILE_DELETE                    = 18  ; Returns when trying to delete a file
-FROMESP_MSG_FILE_LIST                      = 19  ; Returns path file list (FILE_GET_LIST)
-FROMESP_MSG_FILE_DATA                      = 20  ; Returns file data (FILE_READ)
-FROMESP_MSG_FILE_COUNT                     = 21  ; Returns file count in a specific path
-FROMESP_MSG_FILE_ID                        = 22  ; Returns a free file ID (FILE_GET_FREE_ID)
-FROMESP_MSG_FILE_INFO                      = 23  ; Returns file info (size + CRC32) (FILE_GET_INFO)
-FROMESP_MSG_FILE_DOWNLOAD                  = 24  ; Returns download result code
+FROMESP_MSG_FILE_STATUS                    = 17  ; Returns the working file status
+FROMESP_MSG_FILE_EXISTS                    = 18  ; Returns if file exists or not
+FROMESP_MSG_FILE_DELETE                    = 19  ; Returns when trying to delete a file
+FROMESP_MSG_FILE_LIST                      = 20  ; Returns path file list (FILE_GET_LIST)
+FROMESP_MSG_FILE_DATA                      = 21  ; Returns file data (FILE_READ)
+FROMESP_MSG_FILE_COUNT                     = 22  ; Returns file count in a specific path
+FROMESP_MSG_FILE_ID                        = 23  ; Returns a free file ID (FILE_GET_FREE_ID)
+FROMESP_MSG_FILE_INFO                      = 24  ; Returns file info (size + CRC32) (FILE_GET_INFO)
+FROMESP_MSG_FILE_DOWNLOAD                  = 25  ; Returns download result code
 
 ;-------------------------------------------------------------------------------
 ; Constants to be used in commands
@@ -155,8 +158,11 @@ ESP_FILE_DOWNLOAD_NETWORK_ERROR_READ_TIMEOUT       = 245 ; Read timeout
 ; Rainbow registers
 ;-------------------------------------------------------------------------------
 
-RAINBOW_DATA = $4100
-RAINBOW_FLAGS = $4101
+RAINBOW_WIFI_CONF = $4100
+RAINBOW_WIFI_RX = $4101
+RAINBOW_WIFI_TX = $4102
+RAINBOW_WIFI_RX_DEST = $4103
+RAINBOW_WIFI_TX_SOURCE = $4104
 
 RAINBOW_CONFIGURATION = $4110
 RAINBOW_MAPPER_VERSION = $4113
@@ -196,6 +202,14 @@ RAINBOW_MULTIPLY_A = $4160
 RAINBOW_MULTIPLY_B = $4161
 
 ;-------------------------------------------------------------------------------
+; Message parsing constants
+;-------------------------------------------------------------------------------
+
+ESP_MSG_SIZE = 0
+ESP_MSG_TYPE = 1
+ESP_MSG_PAYLOAD = 2
+
+;-------------------------------------------------------------------------------
 ; Invariable messages
 ;-------------------------------------------------------------------------------
 
@@ -209,7 +223,12 @@ esp_cmd_get_esp_status:
 ; Utility routines
 ;-------------------------------------------------------------------------------
 
-; Shorter call convetion for esp_send_cmd
+; Hardcoded position of the buffers for convenience routines
+;  If you change buffers positions (RAINBOW_WIFI_RX_DEST/TX_DEST), you should update it
+esp_rx_buffer = $4800
+esp_tx_buffer = $4900
+
+; Shorter call convention for esp_send_cmd
 ;  register A - address of the command data (lsb)
 ;  register X - address of the command data (msb)
 ;
@@ -232,18 +251,26 @@ esp_send_cmd_short:
 ; Overwrites all registers
 esp_send_cmd:
 .(
+	; Wait for the mapper to be ready to send a message to ESP
+	jsr esp_wait_tx
+
+	; Get length field
 	ldy #0
 	lda (tmpfield1), y
-	sta RAINBOW_DATA
-
 	tax
-	iny
-	copy_one_byte:
-		lda (tmpfield1), y
-		sta RAINBOW_DATA
+
+	; Copy message
+	sta esp_tx_buffer
+	copy_payload_byte:
 		iny
+		lda (tmpfield1), y
+		sta esp_tx_buffer, y
+
 		dex
-		bne copy_one_byte
+		bne copy_payload_byte
+
+	; Send message
+	sta RAINBOW_WIFI_TX
 
 	rts
 .)
@@ -272,33 +299,31 @@ esp_get_msg:
 .(
 	ldy #0
 
-	bit RAINBOW_FLAGS
+	bit RAINBOW_WIFI_RX
 	bmi store_msg
 
 		; No message, set msg_len to zero
 		lda #0
 		sta (tmpfield1), y
-		jmp end
+		rts
 
 	store_msg:
-		lda RAINBOW_DATA ; Garbage byte
-		nop
-		lda RAINBOW_DATA ; Message length
+		; Copy message in destination buffer
+		lda esp_rx_buffer
 		sta (tmpfield1), y
-
 		tax
-		inx
-		copy_one_byte:
-			dex
-			beq end
 
+		store_payload:
 			iny
-			lda RAINBOW_DATA
+			lda esp_rx_buffer, y
 			sta (tmpfield1), y
 
-			jmp copy_one_byte
+			dex
+			bne store_payload
 
-	end:
+		; Acknoledge message reception
+		sta RAINBOW_WIFI_RX
+
 	rts
 .)
 
@@ -306,7 +331,16 @@ esp_get_msg:
 esp_wait_answer:
 .(
 	wait_ready_bit:
-		bit RAINBOW_FLAGS
+		bit RAINBOW_WIFI_RX
+		bpl wait_ready_bit
+	rts
+.)
+
+; Wait for mapper to be ready to send data to esp
+esp_wait_tx:
+.(
+	wait_ready_bit:
+		bit RAINBOW_WIFI_TX
 		bpl wait_ready_bit
 	rts
 .)

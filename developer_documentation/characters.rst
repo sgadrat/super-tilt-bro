@@ -1,3 +1,11 @@
+Constraints on netload routines
+===============================
+
+ * ``A``: output: Can be modified
+ * ``X``: output: Can be modified, input: Contains player number
+ * ``Y``: output: Must be incremented by character's payload size, input: offset of character's data in current message
+ * ``player_number``: output: Cannot be modified, input: Contains player number
+
 Constraints on tick routines
 ============================
 

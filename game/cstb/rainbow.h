@@ -11,17 +11,21 @@
 
 #include "cstb/rainbow_constants.h"
 
-static uint8_t const ESP_MSG_SIZE = 0;
-static uint8_t const ESP_MSG_TYPE = 1;
-static uint8_t const ESP_MSG_PAYLOAD = 2;
-
 ////////////////////////////////////
 // Registers
 ////////////////////////////////////
 
-extern uint8_t volatile RAINBOW_DATA;
-extern uint8_t volatile RAINBOW_FLAGS;
+extern uint8_t volatile RAINBOW_WIFI_CONF;
+extern uint8_t volatile RAINBOW_WIFI_RX;
+extern uint8_t volatile RAINBOW_WIFI_TX;
 extern uint8_t volatile RAINBOW_WRAM_BANKING;
+
+////////////////////////////////////
+// Buffers
+////////////////////////////////////
+
+extern uint8_t esp_rx_buffer;
+extern uint8_t esp_tx_buffer;
 
 ////////////////////////////////////
 // Routines without arguments

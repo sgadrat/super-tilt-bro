@@ -4,7 +4,7 @@ init_netplay_launch_screen_extra:
 .(
 	; Enable ESP
 	lda #1
-	sta RAINBOW_FLAGS
+	sta RAINBOW_WIFI_CONF
 
 	; Construct nt buffers for palettes (to avoid changing it mid-frame)
 	lda #<palette_netplay_launch
@@ -28,26 +28,16 @@ init_netplay_launch_screen_extra:
 	sta netplay_launch_state
 
 	; Wait for ESP to be ready
-	wait_esp:
-	.(
-		ESP_SEND_CMD(esp_status_cmd)
-		lda #<netplay_launch_received_msg
-		sta tmpfield1
-		lda #>netplay_launch_received_msg
-		sta tmpfield2
-		jsr esp_get_msg
-
-		cpy #0
-		beq wait_esp
-	.)
+	lda #<esp_cmd_get_esp_status ; Wait for ESP to be ready
+	ldx #>esp_cmd_get_esp_status
+	jsr esp_send_cmd_short
+	jsr esp_wait_answer
+	sta RAINBOW_WIFI_RX
 
 	; Initialize UDP socket
 	ESP_SEND_CMD(set_udp_cmd)
 
 	rts
-
-	esp_status_cmd:
-		.byt 1, TOESP_MSG_GET_ESP_STATUS
 
 	set_udp_cmd:
 		.byt 2, TOESP_MSG_SERVER_SET_PROTOCOL, ESP_PROTOCOL_UDP
@@ -425,10 +415,9 @@ netplay_launch_screen_tick_extra:
 		jsr show_step_name
 
 		; Purge buffers
-		lda #1
-		sta RAINBOW_DATA
-		lda #TOESP_MSG_CLEAR_BUFFERS
-		sta RAINBOW_DATA
+		lda #<esp_cmd_clear_buffers
+		ldx #>esp_cmd_clear_buffers
+		jsr esp_send_cmd_short
 
 		; Next step
 		inc netplay_launch_state
@@ -466,32 +455,27 @@ netplay_launch_screen_tick_extra:
 		OUTRAGEOUS_PING = 800
 
 		; Do nothing until ping responses are received
-		bit RAINBOW_FLAGS
+		bit RAINBOW_WIFI_RX
 		bpl end
 
 			; Store ping value
-			lda RAINBOW_DATA ; garbage byte
-			nop
-
-			lda RAINBOW_DATA ; message size
+			lda esp_rx_buffer+ESP_MSG_SIZE ; message size
 			cmp #5
 			bne error_no_contact
 
-			lda RAINBOW_DATA ; message type
-			nop
+			;lda esp_rx_buffer+ESP_MSG_TYPE ; message type
 
-			lda RAINBOW_DATA ; min
+			lda esp_rx_buffer+ESP_MSG_PAYLOAD+0 ; min
 			sta netplay_launch_ping_min
 
-			lda RAINBOW_DATA ; max
+			lda esp_rx_buffer+ESP_MSG_PAYLOAD+1 ; max
 			sta netplay_launch_ping_max
 			cmp #OUTRAGEOUS_PING/4
 			bcs error_bad_ping
 
-			lda RAINBOW_DATA ; avg
-			nop
+			;lda esp_rx_buffer+ESP_MSG_PAYLOAD+2 ; avg
 
-			lda RAINBOW_DATA ; lost
+			lda esp_rx_buffer+ESP_MSG_PAYLOAD+3 ; lost
 			bne error_bad_ping
 
 			;TODO show ping
@@ -501,17 +485,21 @@ netplay_launch_screen_tick_extra:
 
 			; Next step
 			inc netplay_launch_state
-			jmp end
+			jmp end_msg
 
 		error_no_contact:
 			lda #ERROR_STATE_NO_CONTACT
 			sta netplay_launch_state
-			jmp end
+			jmp end_msg
 
 		error_bad_ping:
 			lda #ERROR_STATE_BAD_PING
 			sta netplay_launch_state
-			;jmp end
+			;jmp end_msg
+
+		end_msg:
+			; Acknowledge message reception
+			sta RAINBOW_WIFI_RX
 
 		end:
 		jmp back_on_b
@@ -538,27 +526,29 @@ netplay_launch_screen_tick_extra:
 		flags_byte = tmpfield1
 
 		; Send connection message
+		jsr esp_wait_tx
+
 		lda #31                                ; ESP header
-		sta RAINBOW_DATA
+		sta esp_tx_buffer+0
 		lda #TOESP_MSG_SERVER_SEND_MESSAGE
-		sta RAINBOW_DATA
+		sta esp_tx_buffer+1
 
 		lda #STNP_CLI_MSG_TYPE_CONNECTION ; message_type
-		sta RAINBOW_DATA
+		sta esp_tx_buffer+2
 		lda network_client_id_byte0 ; client_id
-		sta RAINBOW_DATA
+		sta esp_tx_buffer+3
 		lda network_client_id_byte1
-		sta RAINBOW_DATA
+		sta esp_tx_buffer+4
 		lda network_client_id_byte2
-		sta RAINBOW_DATA
+		sta esp_tx_buffer+5
 		lda network_client_id_byte3
-		sta RAINBOW_DATA
+		sta esp_tx_buffer+6
 		lda netplay_launch_ping_min ; min ping
-		sta RAINBOW_DATA
+		sta esp_tx_buffer+7
 		lda #5 ; protocol_version
-		sta RAINBOW_DATA
+		sta esp_tx_buffer+8
 		lda netplay_launch_ping_max ; max ping
-		sta RAINBOW_DATA
+		sta esp_tx_buffer+9
 
 		lda system_index
 		clc
@@ -571,30 +561,32 @@ netplay_launch_screen_tick_extra:
 		ora flags_byte ; support
 
 		ora #>GAME_VERSION ; release_type + version_major
-		sta RAINBOW_DATA
+		sta esp_tx_buffer+10
 
 		lda #<GAME_VERSION ; version_minor
-		sta RAINBOW_DATA
+		sta esp_tx_buffer+11
 
 		lda config_player_a_character ; selected_character
-		sta RAINBOW_DATA
+		sta esp_tx_buffer+12
 		lda config_player_a_character_palette ; selected_palette
-		sta RAINBOW_DATA
+		sta esp_tx_buffer+13
 		lda config_selected_stage ; selected_stage
-		sta RAINBOW_DATA
+		sta esp_tx_buffer+14
 
 		lda network_ranked ; ranked_play
-		sta RAINBOW_DATA
+		sta esp_tx_buffer+15
 
 		.( ; password
 			ldx #0
 			copy_one_byte:
 				lda network_game_password, x
-				sta RAINBOW_DATA
+				sta esp_tx_buffer+16, x
 				inx
 				cpx #16
 				bne copy_one_byte
 		.)
+
+		sta RAINBOW_WIFI_TX
 
 		; Next step - wait for a response
 		lda #NETPLAY_LAUNCH_REEMISSION_TIMER

@@ -12,26 +12,26 @@ STAGE_PIT_MOVING_PLATFORM_2_OFFSET = STAGE_PIT_MOVING_PLATFORM_1_OFFSET + STAGE_
 
 stage_pit_netload:
 .(
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+0, x
 	sta stage_pit_platform1_direction_v
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+1, x
 	sta stage_pit_platform2_direction_v
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+2, x
 	sta stage_pit_platform1_direction_h
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+3, x
 	sta stage_pit_platform2_direction_h
 
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+4, x
 	sta stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_TOP
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+5, x
 	sta stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_LEFT
 	clc
 	adc #38
 	sta stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_1_OFFSET+STAGE_PLATFORM_OFFSET_RIGHT
 
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+6, x
 	sta stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_2_OFFSET+STAGE_PLATFORM_OFFSET_TOP
-	lda RAINBOW_DATA
+	lda esp_rx_buffer+7, x
 	sta stage_data+STAGE_OFFSET_ELEMENTS+STAGE_PIT_MOVING_PLATFORM_2_OFFSET+STAGE_PLATFORM_OFFSET_LEFT
 	;clc ; useless, last ADC should not overflow (platforms stay on screen)
 	adc #38
