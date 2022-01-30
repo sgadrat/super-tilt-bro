@@ -440,9 +440,17 @@ game_tick:
 	; Do nothing during a slowdown skipped frame
 	lda slow_down_counter
 	beq no_slowdown
-	jsr slowdown
-	lda tmpfield1
-	bne end
+		jsr slowdown
+		lda tmpfield1
+		beq no_slowdown
+			; Keep inputs dirty (inlined double call to keep_input_dirty)
+			lda controller_a_last_frame_btns
+			sta controller_a_btns
+			lda controller_b_last_frame_btns
+			sta controller_b_btns
+
+			; Skip this frame
+			rts
 	no_slowdown:
 
 	; Call stage's logic
@@ -461,13 +469,12 @@ game_tick:
 	jsr update_players
 
 	; Update screen
-	jsr update_sprites
+	jmp update_sprites
 
-	end:
-	rts
+	;rts ; useless, jump to subroutine
 .)
 
-; Set tmpfield1 to 1 if ne current frame need to be skipped, follow to gameover
+; Set tmpfield1 to 1 if the current frame need to be skipped, follow to gameover
 ; screen when the counter goes to zero
 slowdown:
 .(
