@@ -556,6 +556,17 @@ def scan_next_chan_rows(callback, music, track_idx, pattern_idx, start_row_idx):
 # Music modifiers
 #
 
+def isolate_track(music, track_index):
+	"""
+	Remove all tracks except one.
+
+	Other modifiers' behavior is wildly untested on multi-tracks context (but should be supported),
+	and when the goal is to generate UCTF, there is only support for one track.
+	"""
+	assert len(music['tracks']) > track_index, "track #{} not found".format(track_index + 1)
+	music['tracks'] = [music['tracks'][track_index]]
+	return music
+
 def get_num_channels(music):
 	"""
 	Count the number of channels in the music and stores it in global parameters

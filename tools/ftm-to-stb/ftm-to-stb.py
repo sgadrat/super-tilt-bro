@@ -15,17 +15,22 @@ import time
 
 # Parameters
 if len(sys.argv) < 2 or sys.argv[1].lower() in ['-h', '--help']:
-	print('usage: {} source_file [max_optim] [out_file]'.format(sys.argv[0]))
+	print('usage: {} source_file [track] [max_optim] [out_file]'.format(sys.argv[0]))
 	print()
 	print('\tsource_file\tFamitracker module text export')
-	print('\tmax_optim\tMaximal number of optimization pass')
+	print('\ttrack\tIndex of the track to extract, begining at zero for the first track (default: 0, first track)')
+	print('\tmax_optim\tMaximal number of optimization pass (default: 0, no optim)')
 	print('\tout_file\tOutput file, stdout by default')
 	sys.exit(1)
 
 SOURCE_FILE_PATH = sys.argv[1]
-MAX_OPTIM_PASSES = 0 if len(sys.argv) < 3 else int(sys.argv[2])
-OUT_FILE_PATH = None if len(sys.argv) < 4 else sys.argv[3]
+TRACK_INDEX = 0 if len(sys.argv) < 3 else int(sys.argv[2])
+MAX_OPTIM_PASSES = 0 if len(sys.argv) < 4 else int(sys.argv[3])
+OUT_FILE_PATH = None if len(sys.argv) < 5 else sys.argv[4]
 VERBOSE = False
+
+if OUT_FILE_PATH == '-':
+	OUT_FILE_PATH = None
 
 # Logging
 def logdate():
@@ -55,6 +60,7 @@ with open(SOURCE_FILE_PATH, 'r', encoding='latin1') as f:
 #  * pre-interpreting effects not handled by the engine
 #  * standardizing things
 #  * ... (whatever is a direct translation of the original with less things to handle)
+music = ftmmanip.isolate_track(music, TRACK_INDEX)
 music = ftmmanip.get_num_channels(music)
 music = ftmmanip.flatten_orders(music)
 music = ftmmanip.unroll_speed(music)
