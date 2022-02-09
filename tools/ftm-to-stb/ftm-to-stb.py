@@ -46,10 +46,13 @@ def notice(msg):
 	log(' NOTICE: {}'.format(msg))
 def warn(msg):
 	log('WARNING: {}'.format(msg))
+def error(msg):
+	log('  ERROR: {}'.format(msg))
 
 ftmmanip.debug = debug
 ftmmanip.notice = notice
 ftmmanip.warn = warn
+ftmmanip.error = error
 ftmtxt.warn = warn
 
 # Read original file
@@ -64,9 +67,10 @@ music = ftmmanip.isolate_track(music, TRACK_INDEX)
 music = ftmmanip.get_num_channels(music)
 music = ftmmanip.flatten_orders(music)
 music = ftmmanip.unroll_speed(music)
-music = ftmmanip.cut_at_b_effect(music)
-music = ftmmanip.apply_g_effect(music)
+music = ftmmanip.apply_forward_b_effect(music)
+music = ftmmanip.apply_backward_b_effect(music)
 music = ftmmanip.apply_d_effect(music)
+music = ftmmanip.apply_g_effect(music)
 music = ftmmanip.apply_s_effect(music)
 music = ftmmanip.apply_a_effect(music)
 music = ftmmanip.remove_instruments(music)

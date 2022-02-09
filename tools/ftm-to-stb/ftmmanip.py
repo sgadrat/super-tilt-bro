@@ -7,12 +7,27 @@ import sys
 #
 
 def debug(msg):
+	"""
+	Debugging messages that are highly situational and may sometimes help the developper
+	"""
 	sys.stderr.write('{}\n'.format(msg))
 
 def notice(msg):
+	"""
+	Normal processing that may have audible impact but cannot be handled perfectly
+	"""
 	sys.stderr.write('{}\n'.format(msg))
 
 def warn(msg):
+	"""
+	Possible inconsistency with what the original music
+	"""
+	sys.stderr.write('{}\n'.format(msg))
+
+def error(msg):
+	"""
+	Non fatal, but highly impacting. The converted music will not sound like the original.
+	"""
 	sys.stderr.write('{}\n'.format(msg))
 
 def ensure(cond, msg = None):
@@ -745,14 +760,78 @@ def unroll_speed(music):
 
 	return modified
 
-def cut_at_b_effect(music):
+def apply_forward_b_effect(music):
 	"""
-	Cut each track at the first Bxx effect
+	Cut pages when a Bxx to a later page is encountered
+
+	Depends: flatten_orders
+	NotAfter: anything that makes pattern missmatch pages (currently nothing does that before UCTF conversion)
+	"""
+	modified = copy.deepcopy(music)
+
+	for track_idx in range(len(music['tracks'])):
+		original_track = music['tracks'][track_idx]
+		modified_track = modified['tracks'][track_idx]
+		for pattern_idx in range(len(original_track['patterns'])):
+			original_pattern = original_track['patterns'][pattern_idx]
+			modified_pattern = modified_track['patterns'][pattern_idx]
+			for row_idx in range(len(original_pattern['rows'])):
+				original_row = original_pattern['rows'][row_idx]
+				modified_row = modified_pattern['rows'][row_idx]
+
+				# Check for presence of a Bxx effect anywhere in the row
+				bxx_location = None
+				for chan_idx in range(len(original_row['channels'])):
+					for effect_idx in range(len(original_row['channels'][chan_idx]['effects'])):
+						effect = original_row['channels'][chan_idx]['effects'][effect_idx]
+						if effect[0] == 'B':
+							if bxx_location is not None:
+								if effect != original_row['channels'][bxx_location['chan']]['effects'][bxx_location['effect']]:
+									warn('multiple Bxx in {}: some are ignored'.format(
+										row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+									))
+								modified_row['channels'][bxx_location['chan']]['effects'][bxx_location['effect']] = '...'
+							bxx_location = {'chan':chan_idx, 'effect':effect_idx}
+
+				# Handle special cases
+				if bxx_location is None:
+					# No BXX effect, nothing to do on this row
+					continue
+
+				effect = original_row['channels'][bxx_location['chan']]['effects'][bxx_location['effect']]
+				destination_pattern_idx = int(effect[1:], 16)
+
+				if destination_pattern_idx <= pattern_idx:
+					# Ignore backward BXX, not handled by this modifier
+					continue
+
+				if destination_pattern_idx != pattern_idx + 1:
+					#NOTE handling is may be not trivial, if a later backward BXX jump to a skipped pattern the only solution is to re-order patterns
+					error('Forward BXX is not to the next pattern in {}: interpreted as if it was to next pattern'.format(
+						row_identifier(track_idx, pattern_idx, row_idx, bxx_location['chan'])
+					))
+
+				# Remove Bxx effect from modified music
+				modified_row['channels'][bxx_location['chan']]['effects'][bxx_location['effect']] = '...'
+
+				# Truncate pattern after the current row
+				modified_pattern['rows'] = modified_pattern['rows'][:row_idx+1]
+
+				# Avoid iterating on removed rows
+				break
+
+	return modified
+
+def apply_backward_b_effect(music):
+	"""
+	Cut each track at the first backward Bxx effect
 
 	Note: only B00 is handled, anything else is interpreted as B00
+
+	Depends: apply_forward_b_effect
 	"""
 	def bxx_scanner(current_pattern_idx, current_row_idx):
-		nonlocal cut_position
+		nonlocal cut_position, track_idx
 		current_row = music['tracks'][track_idx]['patterns'][current_pattern_idx]['rows'][current_row_idx]
 
 		# Check for presence of a Bxx effect anywhere in the row
@@ -761,10 +840,6 @@ def cut_at_b_effect(music):
 			for effect_idx in range(len(current_row['channels'][chan_idx]['effects'])):
 				effect = current_row['channels'][chan_idx]['effects'][effect_idx]
 				if effect[0] == 'B':
-					if effect[1:] != '00':
-						warn('Bxx with "xx != 00" in {}: interpreted as B00'.format(
-							row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
-						))
 					if bxx_location is not None:
 						warn('multiple Bxx in {}: some are ignored'.format(
 							row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
@@ -772,9 +847,19 @@ def cut_at_b_effect(music):
 						current_row['channels'][bxx_location['chan']]['effects'][bxx_location['effect']] = '...'
 					bxx_location = {'chan':chan_idx, 'effect':effect_idx}
 
+		# If a backward BXX is found, note the row on which it appear and remove the BXX effect
 		if bxx_location is not None:
-			cut_position = {'pattern': current_pattern_idx, 'row': current_row_idx}
-			return False
+			effect = current_row['channels'][bxx_location['chan']]['effects'][bxx_location['effect']]
+			destination_pattern_idx = int(effect[1:], 16)
+			if destination_pattern_idx <= current_pattern_idx:
+				if destination_pattern_idx != 0:
+					warn('Backward Bxx with "xx != 00" in {}: interpreted as B00'.format(
+						row_identifier(track_idx, current_pattern_idx, current_row_idx, bxx_location['chan'])
+					))
+
+				cut_position = {'pattern': current_pattern_idx, 'row': current_row_idx}
+				current_row['channels'][bxx_location['chan']]['effects'][bxx_location['effect']] = '...'
+				return False
 
 	# Search for a cut position in each track
 	for track_idx in range(len(music['tracks'])):
@@ -786,12 +871,61 @@ def cut_at_b_effect(music):
 			pattern = track['patterns'][cut_position['pattern']]
 
 			# Remove rows at the end of the pattern
-			pattern['rows'] = pattern['rows'][:cut_position['row']] #NOTE this will cut the row with Bxx effect (hope nobody puts anything else on the last row)
+			pattern['rows'] = pattern['rows'][:cut_position['row']+1]
 
 			# Remove patterns after the one containing Bxx
 			track['patterns'] = track['patterns'][:cut_position['pattern']+1]
 
 	return music
+
+def apply_d_effect(music):
+	"""
+	Cut pages when a Dxx is encountered
+	"""
+	modified = copy.deepcopy(music)
+
+	for track_idx in range(len(music['tracks'])):
+		original_track = music['tracks'][track_idx]
+		modified_track = modified['tracks'][track_idx]
+		for pattern_idx in range(len(original_track['patterns'])):
+			original_pattern = original_track['patterns'][pattern_idx]
+			modified_pattern = modified_track['patterns'][pattern_idx]
+			for row_idx in range(len(original_pattern['rows'])):
+				original_row = original_pattern['rows'][row_idx]
+				modified_row = modified_pattern['rows'][row_idx]
+
+				# Check for presence of a Dxx effect anywhere in the row
+				dxx_location = None
+				for chan_idx in range(len(original_row['channels'])):
+					for effect_idx in range(len(original_row['channels'][chan_idx]['effects'])):
+						effect = original_row['channels'][chan_idx]['effects'][effect_idx]
+						if effect[0] == 'D':
+							if dxx_location is not None:
+								warn('multiple Dxx in {}: some are ignored'.format(
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+								))
+								modified_row['channels'][dxx_location['chan']]['effects'][dxx_location['effect']] = '...'
+							dxx_location = {'chan':chan_idx, 'effect':effect_idx}
+
+				# Handle special cases
+				if dxx_location is None:
+					continue
+
+				if original_row['channels'][dxx_location['chan']]['effects'][dxx_location['effect']] != 'D00':
+					warn('Dxx with xx != 00 in {}: interpreted as D00'.format(
+						row_identifier(track_idx, pattern_idx, row_idx, dxx_location['chan'])
+					))
+
+				# Remove Dxx effect from modified music
+				modified_row['channels'][dxx_location['chan']]['effects'][dxx_location['effect']] = '...'
+
+				# Truncate pattern after the current row
+				modified_pattern['rows'] = modified_pattern['rows'][:row_idx+1]
+
+				# Avoid iterating on removed rows
+				break
+
+	return modified
 
 def apply_g_effect(music):
 	"""
@@ -886,55 +1020,6 @@ def apply_g_effect(music):
 					}
 
 					del chan_row # This line is mainly here to explicit that we just rewrited the row (so chan_row keeps a reference to the obsolete value)
-
-	return modified
-
-def apply_d_effect(music):
-	"""
-	Cut pages when a Dxx is encountered
-	"""
-	modified = copy.deepcopy(music)
-
-	for track_idx in range(len(music['tracks'])):
-		original_track = music['tracks'][track_idx]
-		modified_track = modified['tracks'][track_idx]
-		for pattern_idx in range(len(original_track['patterns'])):
-			original_pattern = original_track['patterns'][pattern_idx]
-			modified_pattern = modified_track['patterns'][pattern_idx]
-			for row_idx in range(len(original_pattern['rows'])):
-				original_row = original_pattern['rows'][row_idx]
-				modified_row = modified_pattern['rows'][row_idx]
-
-				# Check for presence of a Dxx effect anywhere in the row
-				dxx_location = None
-				for chan_idx in range(len(original_row['channels'])):
-					for effect_idx in range(len(original_row['channels'][chan_idx]['effects'])):
-						effect = original_row['channels'][chan_idx]['effects'][effect_idx]
-						if effect[0] == 'D':
-							if dxx_location is not None:
-								warn('multiple Dxx in {}: some are ignored'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-								))
-								modified_row['channels'][dxx_location['chan']]['effects'][dxx_location['effect']] = '...'
-							dxx_location = {'chan':chan_idx, 'effect':effect_idx}
-
-				# Handle special cases
-				if dxx_location is None:
-					continue
-
-				if original_row['channels'][dxx_location['chan']]['effects'][dxx_location['effect']] != 'D00':
-					warn('Dxx with xx != 00 in {}: interpreted as D00'.format(
-						row_identifier(track_idx, pattern_idx, row_idx, dxx_location['chan'])
-					))
-
-				# Remove Dxx effect from modified music
-				modified_row['channels'][dxx_location['chan']]['effects'][dxx_location['effect']] = '...'
-
-				# Truncate pattern after the current row
-				modified_pattern['rows'] = modified_pattern['rows'][:row_idx+1]
-
-				# Avoid iterating on removed rows
-				break
 
 	return modified
 
