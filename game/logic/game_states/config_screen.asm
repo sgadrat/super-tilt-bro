@@ -7,6 +7,7 @@ default_config:
 	sta config_ai_level
 	sta config_player_b_character
 	sta config_requested_player_b_character
+	sta config_ticks_per_frame
 
 	lda #$00
 	sta config_selected_stage

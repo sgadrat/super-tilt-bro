@@ -160,7 +160,12 @@ title_screen_tick:
 			jmp end
 
 			cheat_succeed:
-				lda #GAME_STATE_CREDITS
+				jsr default_config
+				lda #2
+				sta config_ticks_per_frame
+				lda #3
+				sta config_ai_level
+				lda #GAME_STATE_INGAME
 				jsr change_global_game_state
 
 		; If all buttons of any controller are released on this frame, got to the next screen

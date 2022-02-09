@@ -123,23 +123,33 @@ reset:
 
 forever:
 .(
-	; Call common routines to all states
+	; Keep game's pace under control
 	jsr wait_next_frame
-	jsr audio_music_tick
-	jsr fetch_controllers
+	lda config_ticks_per_frame
+	sta current_frame_tick
 
-	; Tick current game state
-	lda global_game_state
-	asl
-	tax
-	lda game_states_tick, x
-	sta tmpfield1
-	lda game_states_tick+1, x
-	sta tmpfield2
-	jsr call_pointed_subroutine
+	; Update game state
+	tick_state:
+		; Call common routines to all states
+		jsr audio_music_tick
+		jsr fetch_controllers
 
-	; Call audio a second time if necessary to emulate 60Hz system
-	jsr audio_music_extra_tick
+		; Tick current game state
+		lda global_game_state
+		asl
+		tax
+		lda game_states_tick, x
+		sta tmpfield1
+		lda game_states_tick+1, x
+		sta tmpfield2
+		jsr call_pointed_subroutine
+
+		; Call audio a second time if necessary to emulate 60Hz system
+		jsr audio_music_extra_tick
+
+		; Loop if there is multi-tick per frames
+		dec current_frame_tick
+		bne tick_state
 
 	jmp forever
 .)

@@ -631,6 +631,8 @@ config_requested_player_b_character = $0543
 config_requested_player_a_palette = $0544
 config_requested_player_b_palette = $0545
 config_ingame_track = $0546
+config_ticks_per_frame = $0547
+current_frame_tick = $0548
 ;$0580 to $05ff may be used by game states
 
 ;$06xx may be used by audio engine, see "Audio engine labels"
