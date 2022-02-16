@@ -112,6 +112,22 @@ FROMESP_MSG_FILE_DOWNLOAD                  = 25  ; Returns download result code
 ; Constants to be used in commands
 ;-------------------------------------------------------------------------------
 
+; Server protocol
+ESP_PROTOCOL_WEBSOCKET         = 0
+ESP_PROTOCOL_WEBSOCKET_SECURED = 1
+ESP_PROTOCOL_TCP               = 2
+ESP_PROTOCOL_TCP_SECURED       = 3
+ESP_PROTOCOL_UDP               = 4
+
+; Wi-Fi status
+ESP_WIFI_STATUS_IDLE_STATUS     = 0
+ESP_WIFI_STATUS_NO_SSID_AVAIL   = 1
+ESP_WIFI_STATUS_SCAN_COMPLETED  = 2
+ESP_WIFI_STATUS_CONNECTED       = 3
+ESP_WIFI_STATUS_CONNECT_FAILED  = 4
+ESP_WIFI_STATUS_CONNECTION_LOST = 5
+ESP_WIFI_STATUS_DISCONNECTED    = 6
+
 ; Filesystem directories
 ESP_FILE_PATH_SAVE = 0
 ESP_FILE_PATH_ROMS = 1
@@ -120,13 +136,6 @@ ESP_FILE_PATH_USER = 2
 ; File open options
 ESP_FILE_MODE_AUTO = %00000000
 ESP_FILE_MODE_MANUAL = %00000001
-
-; Server protocol
-ESP_PROTOCOL_WEBSOCKET         = 0
-ESP_PROTOCOL_WEBSOCKET_SECURED = 1
-ESP_PROTOCOL_TCP               = 2
-ESP_PROTOCOL_TCP_SECURED       = 3
-ESP_PROTOCOL_UDP               = 4
 
 ; File delete results
 ESP_FILE_DELETE_SUCCESS                   = 0
@@ -215,6 +224,9 @@ ESP_MSG_PAYLOAD = 2
 
 esp_cmd_clear_buffers:
 	.byt 1, TOESP_MSG_CLEAR_BUFFERS
+
+esp_cmd_connect:
+	.byt 1, TOESP_MSG_SERVER_CONNECT;
 
 esp_cmd_get_esp_status:
 	.byt 1, TOESP_MSG_GET_ESP_STATUS

@@ -392,12 +392,20 @@ stage_selection_mem_buffer = $0580 ; $0580 to $05bf (4*16 bytes)
 ; NETPLAY_LAUNCH labels
 ;
 
-netplay_launch_state = $00
-netplay_launch_counter = $01
-netplay_launch_ping_min = $02
-netplay_launch_ping_max = $03
-netplay_launch_server = $04
-netplay_launch_nb_servers = $05
+netplay_launch_cursor_anim = last_c_label+1
+netplay_launch_bg_task = netplay_launch_cursor_anim+13
+netplay_launch_fg_task = netplay_launch_bg_task+2
+netplay_launch_server = netplay_launch_fg_task+2
+netplay_launch_nb_servers = netplay_launch_server+1
+netplay_launch_local_ping_count = netplay_launch_nb_servers+1
+netplay_launch_local_ping_values = netplay_launch_local_ping_count+1
+netplay_launch_local_ping_quality = netplay_launch_local_ping_values+3
+netplay_launch_rival_ping_count = netplay_launch_local_ping_quality+1
+netplay_launch_rival_ping_values = netplay_launch_rival_ping_count+1
+netplay_launch_rival_ping_quality = netplay_launch_rival_ping_values+3
+netplay_launch_countdown = netplay_launch_rival_ping_quality+1
+
+netplay_launch_bg_mem_buffer = $0580 ; $0580 to $???? (current biggest usage, 3+16 bytes, map illustration draw)
 
 ;
 ; DONATION labels
@@ -641,4 +649,3 @@ virtual_frame_cnt = $0700
 network_last_known_remote_input = $07bf
 network_player_local_btns_history = $07c0 ; one byte per frame, circular buffers, 32 entries
 network_player_remote_btns_history = $07e0 ;
-netplay_launch_received_msg = $0702

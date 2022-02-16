@@ -116,7 +116,6 @@ say "Assemble the game ..."
 log "====================="
 asm cmd 'Super_Tilt_Bro_(E)'           ""
 asm exe 'server_bytecode'              "-DSERVER_BYTECODE -DNO_INES_HEADER"
-asm exe 'tilt_ai_(E)'                  "-DNETWORK_AI"
 asm exe 'tilt_no_network_(E)'          "$no_network_flag"
 asm exe 'tilt_rainbow512_(E)'          "-DMAPPER_RAINBOW512"
 asm exe 'tilt_no_network_unrom512_(E)' "$no_network_flag -DMAPPER_UNROM512"
@@ -131,7 +130,7 @@ say "======================="
 #  Static bank cannot be safely upgraded, so avoid modifying it
 #  Only a warning for ease of development, should be an error when carts are distributed to non-technical players.
 static_bank_hash=`tail -c 4096 'Super_Tilt_Bro_(E).nes' | md5sum - | grep -Eo '^[0-9a-f]+'`
-if [ "$static_bank_hash" != 'd80b5f9b09efa9d2993e93dd026dcc23' ]; then
+if [ "$static_bank_hash" != 'b24f99504b0c83aea2074f57d0ecc78d' ]; then
 	say "WARNING: static bank changed"
 	say "======================="
 fi

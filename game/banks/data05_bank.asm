@@ -4,18 +4,6 @@
 
 bank_data05_begin:
 
-bank_data_netplay_launch_screen_extra_data_begin:
-#include "game/data/menu_netplay_launch/screen.asm"
-#echo
-#echo netplay launch extra data size:
-#print *-bank_data_netplay_launch_screen_extra_data_begin
-
-bank_data_netplay_launch_screen_extra_code_begin:
-#include "game/logic/game_states/netplay_launch_screen/netplay_launch_screen_extra_code.asm"
-#echo
-#echo netplay launch extra code size:
-#print *-bank_data_netplay_launch_screen_extra_code_begin
-
 bank_data_theme_sinbad_begin:
 #include "game/data/music/theme_sinbad.asm"
 #echo

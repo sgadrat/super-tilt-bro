@@ -37,8 +37,6 @@ extern uint8_t const tileset_charset_alphanum_fg0_bg2;
 extern uint8_t const tileset_menu_online_mode;
 extern uint8_t const tileset_menu_online_mode_sprites;
 
-extern uint8_t volatile RAINBOW_MAPPER_VERSION;
-
 extern uint8_t const MENU_ONLINE_MODE_TILESET_BANK_NUMBER; // Actually a label, use its address or "tileset_bank()"
 extern uint8_t const TILESET_CHARSET_ALPHANUM_FG0_BG2_BANK_NUMBER; // Actually a label, use its address or "charset_bank()"
 

@@ -13,6 +13,7 @@ struct BgTaskState {
 // Global labels from the ASM codebase
 ///////////////////////////////////////
 
+extern uint8_t const init_netplay_launch_screen;
 extern uint8_t const menu_stage_selection_selector_anim;
 extern uint8_t const stage_selection_palette;
 extern uint8_t const stages_bank;
@@ -43,7 +44,7 @@ static uint8_t const BG_STEP_DRAW_GENERIC_BACKGROUND = 1;
 static uint8_t const BG_STEP_STAGE_PICTURE_INIT = 2;
 static uint8_t const BG_STEP_STAGE_PICTURE = 3;
 static uint8_t const BG_STEP_DEACTIVATED = 255;
-static uint8_t const TILE_MENU_CHAR_SELECT_STAGE_SELECTOR = 0x41;
+static uint8_t const TILE_MENU_CHAR_SELECT_STAGE_SELECTOR = 0x40;
 
 static uint16_t const selector_position_x[] = {112, 120, 128, 136};
 
@@ -75,14 +76,19 @@ static void nt_buffers_vertical() {
 // State implementation
 ///////////////////////////////////////
 
-static void change_screen_cleaning() {
-	// Copy selected values in actual values
-	*config_selected_stage = *config_requested_stage;
-}
-
 static void skip_frame() {
 	wrap_trampoline(code_bank(), code_bank(), &sleep_frame);
 	reset_nt_buffers();
+}
+
+static void change_screen_cleaning() {
+	// Copy selected values in actual values
+	*config_selected_stage = *config_requested_stage;
+
+	// Set nt buffer writes in horizontal mode
+	//  note: it will not take effect until the next frame, so skip it
+	nt_buffers_horizontal();
+	skip_frame();
 }
 
 static void fade_out() {
@@ -102,11 +108,6 @@ static void fade_out() {
 		},
 	};
 
-	// Set nt buffer writes in horizontal mode
-	//  note: it will not take effect until the next frame, so skip it
-	nt_buffers_horizontal();
-	skip_frame();
-
 	for (uint8_t fade_step = 0; fade_step < 3; ++fade_step) {
 		wrap_construct_nt_buffer(nt_palette_header, step_palettes[fade_step]);
 		for (uint8_t delay = 5; delay > 0; --delay) {
@@ -124,11 +125,11 @@ static void tick_bg_task() {
 	static uint8_t const upper_frame_border_header[] = {0x21, 0xe8, 16};
 	static uint8_t const lower_frame_border_header[] = {0x23, 0x88, 16};
 	static uint8_t const frame_clear_bot[] = {0x23, 0xa8, 16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-	static uint8_t const frame_selector[] = {0x21, 0xcb, 10, 0x00, 0x00, 0x00, tsel, tsel, tsel, tsel, 0x00, 0x00, 0x00};
+	static uint8_t const frame_selector[] = {0x21, 0xc8, 16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, tsel, tsel, tsel, tsel, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 	// Screen init nametable buffers
 	static uint8_t const nt_palette_header[] = {0x3f, 0x00, 0x20};
-	static uint8_t const nt_attributes_body[] = {0xff, 0xff, 0xff, 0xff};
+	static uint8_t const nt_attributes_body[] = {0xaa, 0xaa, 0xaa, 0xaa};
 	static uint8_t const nt_attributes_headers[][3] = {
 		{0x23, 0xe2, 4},
 		{0x23, 0xea, 4},
@@ -262,15 +263,17 @@ void stage_selection_screen_tick_extra() {
 						case CONTROLLER_BTN_START:
 							audio_play_interface_click();
 							change_screen_cleaning();
-							fade_out();
-							wrap_change_global_game_state(*config_game_mode == GAME_MODE_ONLINE ? GAME_STATE_NETPLAY_LAUNCH : GAME_STATE_INGAME);
+							if (*config_game_mode == GAME_MODE_ONLINE) {
+								wrap_change_global_game_state_lite(GAME_STATE_NETPLAY_LAUNCH, &init_netplay_launch_screen);
+							}else {
+								fade_out();
+								wrap_change_global_game_state(GAME_STATE_INGAME);
+							}
 							break;
 
 						case CONTROLLER_BTN_B:
 							audio_play_interface_click();
 							change_screen_cleaning();
-							nt_buffers_horizontal();
-							skip_frame();
 							stage_selection_back_to_char_select();
 							break;
 					}

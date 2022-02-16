@@ -89,6 +89,21 @@ static void wrap_change_global_game_state(uint8_t new_state) {
 	);
 }
 
+void change_global_game_state_lite();
+static void wrap_change_global_game_state_lite(uint8_t new_state, uint8_t const* init_routine) {
+	*tmpfield1 = ptr_lsb(init_routine);
+	*tmpfield2 = ptr_msb(init_routine);
+	*tmpfield3 = new_state;
+	change_global_game_state_lite();
+}
+
+static void long_change_global_game_state_lite(uint8_t bank, uint8_t new_state, uint8_t const* init_routine) {
+	*tmpfield1 = ptr_lsb(init_routine);
+	*tmpfield2 = ptr_msb(init_routine);
+	*tmpfield3 = new_state;
+	wrap_trampoline(bank, code_bank(), &change_global_game_state_lite);
+}
+
 void trampoline();
 static void wrap_trampoline(uint8_t call_bank, uint8_t return_bank, void(*routine)()) {
 	*extra_tmpfield1 = ptr_lsb(routine);
