@@ -17,6 +17,7 @@ void audio_mute_music();
 void audio_play_interface_click();
 void audio_unmute_music();
 void dummy_routine();
+void esp_wait_rx();
 void esp_wait_tx();
 void flash_all_sectors();
 void fetch_controllers();

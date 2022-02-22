@@ -49,7 +49,7 @@ PROGRESS_BAR_LEN = 16
 	lda #<esp_cmd_get_esp_status ; Wait for ESP to be ready
 	ldx #>esp_cmd_get_esp_status
 	jsr esp_send_cmd_short
-	jsr esp_wait_answer
+	jsr esp_wait_rx
 
 	.( ; Message length, must be 1
 		ldx esp_rx_buffer+ESP_MSG_SIZE
@@ -86,7 +86,7 @@ PROGRESS_BAR_LEN = 16
 		lda #<esp_cmd_rom_file_exists
 		ldx #>esp_cmd_rom_file_exists
 		jsr esp_send_cmd_short
-		jsr esp_wait_answer
+		jsr esp_wait_rx
 
 		lda esp_rx_buffer+ESP_MSG_SIZE
 		cmp #2
@@ -379,8 +379,8 @@ flash_sectors_rom:
 				bpl wait_esp_ready
 
 			lda #2
-			sta esp_rx_buffer+ESP_MSG_SIZE
-			lda #TOESP_MSG_FILE_READ
+			sta esp_rx_buffer+ESP_MSG_SIZE ;TODO investigate - seems weird to write in RX buffer, and not trigger a register write after
+			lda #TOESP_MSG_FILE_READ       ;     looks like I wrote buggy code when converting to latest rainbow mapper
 			sta esp_rx_buffer+ESP_MSG_TYPE
 			lda #BLOCK_SIZE
 			sta esp_rx_buffer+ESP_MSG_PAYLOAD+0

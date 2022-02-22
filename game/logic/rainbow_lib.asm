@@ -340,7 +340,7 @@ esp_get_msg:
 .)
 
 ; Wait for ESP data to be ready to read
-esp_wait_answer:
+esp_wait_rx:
 .(
 	wait_ready_bit:
 		bit RAINBOW_WIFI_RX

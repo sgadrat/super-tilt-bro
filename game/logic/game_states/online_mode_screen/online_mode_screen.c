@@ -129,7 +129,9 @@ static uint8_t const MONSTER_ANIM_LAST_SPRITE = 1;
 static uint8_t const SATELLITE_ANIM_SPRITE_FG = 4;
 static uint8_t const SATELLITE_ANIM_SPRITE_BG = 63;
 
-int16_t const SATELLITE_MAX_VELOCITY = (1 << 8) + 32;
+static int16_t const SATELLITE_MAX_VELOCITY = (1 << 8) + 32;
+
+static uint8_t const FILE_NUM_NETWORK_CREDENTIALS = 0;
 
 typedef enum {
 	LOGIN_UNLOGGED = 0,
@@ -903,6 +905,12 @@ static void password_login_process(uint8_t create) {
 				// Mark logged as authentified
 				*network_logged = LOGIN_LOGGED;
 
+				// Store credential in persistent storage
+				esp_file_open(ESP_FILE_PATH_USER, FILE_NUM_NETWORK_CREDENTIALS);
+				esp_file_write(network_login, 16);
+				esp_file_write(network_password, 16);
+				esp_file_close();
+
 				// Stop waiting a message
 				break;
 			}else if (check_login_message(STNP_LOGIN_FROM_SERVER_LOGIN_FAILED)) {
@@ -1044,11 +1052,7 @@ static void password_login_input(uint8_t controller_btns, uint8_t last_frame_btn
 					case CONTROLLER_BTN_START:
 						audio_play_interface_click();
 						if (*current_field == 0) {
-							uint8_t last_char = 0;
-							while (network_password[last_char] != 0 && last_char != 15) {
-								++last_char;
-							}
-							*char_cursor = last_char;
+							*char_cursor = strnlen8((char*)network_password, 15);
 							*current_field = 1;
 						}else {
 							password_login_process(create);
@@ -1058,11 +1062,7 @@ static void password_login_input(uint8_t controller_btns, uint8_t last_frame_btn
 					case CONTROLLER_BTN_B:
 						audio_play_interface_click();
 						if (*current_field == 1) {
-							uint8_t last_char = 0;
-							while (network_login[last_char] != 0 && last_char != 15) {
-								++last_char;
-							}
-							*char_cursor = last_char;
+							*char_cursor = strnlen8((char*)network_login, 15);
 							*current_field = 0;
 						}else {
 							*stay_in_window = 0;
@@ -1093,7 +1093,7 @@ static void password_login(uint8_t create) {
 	static uint8_t const password_nt_header[] = {0x22, 0x08, 16};
 
 	uint8_t current_field = 0;
-	uint8_t char_cursor = 0;
+	uint8_t char_cursor = strnlen8((char*)network_login, 15);
 	uint8_t stay_in_window = 1;
 	uint8_t cursor_state = 0;
 	while (stay_in_window) {
@@ -1620,12 +1620,19 @@ void init_online_mode_screen_extra() {
 
 	// Initialize State in WRAM
 	if (*network_logged == LOGIN_UNLOGGED) {
-		for (uint8_t i = 0; i < 16; ++i) {
-			network_login[i] = 0;
-			network_password[i] = 0;
-		}
-		for (uint8_t i = 0; i < 4; ++i) {
-			network_client_id_byte0[i] = 0;
+		if (esp_file_exists(ESP_FILE_PATH_USER, FILE_NUM_NETWORK_CREDENTIALS)) {
+			esp_file_open(ESP_FILE_PATH_USER, FILE_NUM_NETWORK_CREDENTIALS);
+			esp_file_read(network_login, 16);
+			esp_file_read(network_password, 16);
+			esp_file_close();
+		}else {
+			for (uint8_t i = 0; i < 16; ++i) {
+				network_login[i] = 0;
+				network_password[i] = 0;
+			}
+			for (uint8_t i = 0; i < 4; ++i) {
+				network_client_id_byte0[i] = 0;
+			}
 		}
 	}
 

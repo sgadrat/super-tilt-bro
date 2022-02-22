@@ -65,11 +65,22 @@ static void esp_rx_message_acknowledge() {
 	RAINBOW_WIFI_RX = 0;
 }
 
-static void esp_tx_ready() {
-}
-
 static void esp_tx_message_send() {
 	RAINBOW_WIFI_TX = 0;
+}
+
+static void esp_wait_answer(uint8_t type) {
+	uint8_t* const rx = &esp_rx_buffer;
+
+	bool found = false;
+	while(!found) {
+		esp_wait_rx();
+		if (rx[ESP_MSG_TYPE] != type) {
+			esp_rx_message_acknowledge();
+		}else {
+			found = true;
+		}
+	}
 }
 
 static void esp_set_server_settings(uint16_t port, char const* host) {
@@ -77,13 +88,81 @@ static void esp_set_server_settings(uint16_t port, char const* host) {
 
 	esp_wait_tx();
 
-	uint8_t* buff = &esp_tx_buffer;
+	uint8_t* const buff = &esp_tx_buffer;
 	buff[0] = host_len + 3;
 	buff[1] = TOESP_MSG_SERVER_SET_SETTINGS;
 	buff[2] = u16_msb(port);
 	buff[3] = u16_lsb(port);
 	wrap_fixed_memcpy(buff+4, (uint8_t*)host, host_len);
 
+	esp_tx_message_send();
+}
+
+static void esp_file_close() {
+	uint8_t* const tx = &esp_tx_buffer;
+
+	esp_wait_tx();
+	tx[0] = 1;
+	tx[1] = TOESP_MSG_FILE_CLOSE;
+	esp_tx_message_send();
+}
+
+static bool esp_file_exists(uint8_t path, uint8_t file) {
+	uint8_t* const tx = &esp_tx_buffer;
+	uint8_t* const rx = &esp_rx_buffer;
+
+	esp_wait_tx();
+	tx[0] = 4;
+	tx[1] = TOESP_MSG_FILE_EXISTS;
+	tx[2] = ESP_FILE_MODE_AUTO;
+	tx[3] = path;
+	tx[4] = file;
+	esp_tx_message_send();
+
+	esp_wait_answer(FROMESP_MSG_FILE_EXISTS);
+	bool exists = rx[ESP_MSG_PAYLOAD];
+	esp_rx_message_acknowledge();
+
+	return exists;
+}
+
+static void esp_file_open(uint8_t path, uint8_t file) {
+	uint8_t* const tx = &esp_tx_buffer;
+
+	esp_wait_tx();
+	tx[0] = 4;
+	tx[1] = TOESP_MSG_FILE_OPEN;
+	tx[2] = ESP_FILE_MODE_AUTO;
+	tx[3] = path;
+	tx[4] = file;
+	esp_tx_message_send();
+}
+
+static uint8_t esp_file_read(uint8_t* dest, uint8_t count) {
+	uint8_t* const tx = &esp_tx_buffer;
+	uint8_t* const rx = &esp_rx_buffer;
+
+	esp_wait_tx();
+	tx[0] = 2;
+	tx[1] = TOESP_MSG_FILE_READ;
+	tx[2] = count;
+	esp_tx_message_send();
+
+	esp_wait_answer(FROMESP_MSG_FILE_DATA);
+	uint8_t n_read = rx[ESP_MSG_PAYLOAD+0];
+	wrap_fixed_memcpy(dest, rx+ESP_MSG_PAYLOAD+1, n_read);
+	esp_rx_message_acknowledge();
+
+	return n_read;
+}
+
+static void esp_file_write(uint8_t* src, uint8_t count) {
+	uint8_t* const tx = &esp_tx_buffer;
+
+	esp_wait_tx();
+	tx[0] = count + 1;
+	tx[1] = TOESP_MSG_FILE_WRITE;
+	wrap_fixed_memcpy(tx+2, src, count);
 	esp_tx_message_send();
 }
 
