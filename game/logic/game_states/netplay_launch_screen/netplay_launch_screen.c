@@ -202,6 +202,7 @@ static void display_ping_quality(uint8_t quality, uint8_t line, uint8_t col) {
 		" excellent ",
 		"   good    ",
 		"   poor    ",
+		" super bad "
 	};
 	set_text(quality_str[quality], line, col);
 }
@@ -454,10 +455,10 @@ static void got_start_game_msg() {
 	*config_player_b_weapon_palette = *config_player_b_character_palette;
 
 	// Store opponent's connection info (for display)
-	//TODO update STNP to have ping values
 	*netplay_launch_rival_ping_quality = msg[STNP_START_GAME_FIELD_PLAYER_CONNECTIONS + *network_local_player_number];
+	uint8_t const ping_field = (*network_local_player_number ? STNP_START_GAME_FIELD_PA_PING : STNP_START_GAME_FIELD_PB_PING);
 	for (uint8_t ping_idx = 0; ping_idx < NB_PINGS; ++ping_idx) {
-		netplay_launch_rival_ping_values[ping_idx] = PING_QUALITY_UNKNOWN;
+		netplay_launch_rival_ping_values[ping_idx] = msg[ping_field + ping_idx];
 	}
 	*netplay_launch_rival_ping_count = NB_PINGS;
 
@@ -776,7 +777,7 @@ static void connection_send_msg() {
 	esp_wait_tx();
 	uint8_t * buff = &esp_tx_buffer;
 
-	buff[0] = 31; // ESP header
+	buff[0] = 33; // ESP header
 	buff[1] = TOESP_MSG_SERVER_SEND_MESSAGE;
 
 	buff[2] = STNP_CLI_MSG_TYPE_CONNECTION; // message_type
@@ -784,22 +785,24 @@ static void connection_send_msg() {
 	buff[4] = *network_client_id_byte1;
 	buff[5] = *network_client_id_byte2;
 	buff[6] = *network_client_id_byte3;
-	buff[7] = ping_min; // min ping
-	buff[8] = 5; // protocol_version
-	buff[9] = ping_max; // max ping
+	buff[7] = 6; // protocol_version
+	buff[8] = 6; // protocol_version_mirror
+
+	buff[9] = netplay_launch_local_ping_values[0]; // ping
+	buff[10] = netplay_launch_local_ping_values[1];
+	buff[11] = netplay_launch_local_ping_values[2];
 
 	uint8_t flags_byte = (*system_index == 0 ? 0x00 : 0x80); // framerate
 	flags_byte |= (RAINBOW_MAPPER_VERSION & 0x60); // support
-	buff[10] = (flags_byte | u16_msb(GAME_VERSION)); // release_type + version_major
-	buff[11] = u16_lsb(GAME_VERSION); // version_minor
+	buff[12] = (flags_byte | u16_msb(GAME_VERSION)); // release_type + version_major
+	buff[13] = u16_lsb(GAME_VERSION); // version_minor
 
-	buff[12] = *config_player_a_character; // selected_character
-	buff[13] = *config_player_a_character_palette; // selected_palette
-	buff[14] = *config_selected_stage; // selected_stage
+	buff[14] = *config_player_a_character; // selected_character
+	buff[15] = *config_player_a_character_palette; // selected_palette
+	buff[16] = *config_selected_stage; // selected_stage
+	buff[17] = *network_ranked; // ranked_play
 
-	buff[15] = *network_ranked; // ranked_play
-
-	wrap_fixed_memcpy(buff+16, network_game_password, 16);
+	wrap_fixed_memcpy(buff+18, network_game_password, 16);
 
 	esp_tx_message_send();
 
@@ -828,8 +831,7 @@ static void connection_wait_msg() {
 	switch ((&esp_rx_buffer)[ESP_MSG_PAYLOAD+0]) {
 		case STNP_SRV_MSG_TYPE_CONNECTED: {
 			// Display connection quality
-			//TODO update STNP to find the info in the packet
-			*netplay_launch_local_ping_quality = 1;
+			*netplay_launch_local_ping_quality = (&esp_rx_buffer)[ESP_MSG_PAYLOAD + STNP_CONNECTED_FIELD_CONNECTION_QUALITY];
 
 			// Next step
 			++Task(netplay_launch_fg_task)->step;
