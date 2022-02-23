@@ -4,7 +4,7 @@
 #define Y(n) (n&$ff), (n>>8)
 clouds_initial_position:
 	.byt X(180), Y(16)
-	.byt X(16), Y(119)
+	.byt X(0), Y(119)
 	.byt X(100), Y(187)
 	.byt X(30), Y(308)
 	.byt X(150), Y(390)
@@ -12,7 +12,7 @@ clouds_initial_position:
 #undef Y
 
 menu_common_clouds_speed:
-	.byt $60, $80, $20, $80, $60
+	.byt $80, $20, $60, $80, $60
 
 &init_menu:
 .(

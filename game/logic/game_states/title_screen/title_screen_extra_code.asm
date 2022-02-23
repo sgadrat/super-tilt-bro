@@ -1,8 +1,6 @@
 TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 
 .(
-TITLE_ANIMATION_STEP_END = 5
-
 &init_title_screen_extra:
 .(
 	; Clear background of nametable 2
@@ -41,7 +39,7 @@ TITLE_ANIMATION_STEP_END = 5
 		sta oam_mirror+5
 		lda #$00                 ; Attributes
 		sta oam_mirror+6
-		lda #100                 ; X
+		lda #92                  ; X
 		sta oam_mirror+7
 	ntsc_indicator_done:
 
@@ -141,18 +139,32 @@ TITLE_ANIMATION_STEP_END = 5
 		sta title_animation_frame
 		sta title_animation_state
 
-		; Hide logo and text
+		; Set palette for hidden text and logo
 		lda #<initial_palette
 		sta tmpfield1
 		lda #>initial_palette
 		sta tmpfield2
 		jsr construct_palettes_nt_buffer
 
+		; Hide logo
+		lda PPUSTATUS
+		lda #$23
+		sta PPUADDR
+		lda #$c0
+		sta PPUADDR
+
+		ldx #40
+		lda #%11111111
+		set_attr_byte:
+			sta PPUDATA
+			dex
+			bne set_attr_byte
+
 		rts
 
 		initial_palette:
 		; Background
-		.byt $21,$21,$21,$21, $21,$0f,$20,$00, $21,$20,$0f,$00, $21,$21,$21,$21, ; 0 - logo, 1 - credits title, 2 - credits section, 3 - text and number with same colors
+		.byt $21,$0f,$21,$30, $21,$24,$24,$24, $21,$00,$00,$00, $21,$21,$21,$21 ; 0 - logo, 1 - logo special,2 - unused, 3 - text
 		; Sprites
 		.byt $21,$21,$21,$00, $21,$00,$00,$00, $21,$00,$00,$00, $21,$0f,$00,$31 ; 0 - text, 1,2 - unused, 3 - cloud
 	.)
@@ -236,13 +248,34 @@ TITLE_ANIMATION_STEP_END = 5
 		rts
 
 		anim_state_handlers_lsb:
-		.byt <wait_logo, <show_logo, <shake, <wait_text, <show_text, <dummy_routine
+		.byt <hide_subtitle
+		.byt <wait_logo, <wait
+		.byt <show_super_1, <show_super_2, <shake, <wait
+		.byt <show_tilt_1, <show_tilt_2, <shake, <wait
+		.byt <show_bro_1, <show_bro_2, <shake, <wait
+		.byt <show_subtitle, <wait
+		.byt <show_text
+		.byt <dummy_routine
 		anim_state_handlers_msb:
-		.byt >wait_logo, >show_logo, >shake, >wait_text, >show_text, >dummy_routine
+		.byt >hide_subtitle
+		.byt >wait_logo, >wait
+		.byt >show_super_1, >show_super_2, >shake, >wait
+		.byt >show_tilt_1, >show_tilt_2, >shake, >wait
+		.byt >show_bro_1, >show_bro_2, >shake, >wait
+		.byt >show_subtitle, >wait
+		.byt >show_text
+		.byt >dummy_routine
 
-#if anim_state_handlers_msb-anim_state_handlers_lsb <> TITLE_ANIMATION_STEP_END+1
-#error TITLE_ANIMATION_STEP_END constant is out of sync with actual steps
-#endif
+		time_begin:
+		.byt 25, 30
+		time_logo_parts:
+		.byt 10, 12
+		time_subtitle:
+		.byt 5, 6
+		time_text:
+		.byt 10, 12
+
+		+TITLE_ANIMATION_STEP_END = anim_state_handlers_msb-anim_state_handlers_lsb-1
 
 		change_anim_state:
 		.(
@@ -252,36 +285,106 @@ TITLE_ANIMATION_STEP_END = 5
 			rts
 		.)
 
-		wait_logo:
+		wait:
 		.(
 			lda title_animation_frame
-			cmp #25
+			cmp title_wait_time
 			bne end
-
 				jsr change_anim_state
-
 			end:
 			rts
 		.)
 
-		show_logo:
+		hide_subtitle:
 		.(
-			; Change palette to show the logo
-			jsr last_nt_buffer
-			ldy #0
-			copy_one_byte:
-				lda logo_palette_nt_buffer, y
-				sta nametable_buffers, x
+			lda #<subtitle_nt_buffer
+			ldy #>subtitle_nt_buffer
+			jsr push_nt_buffer
 
-				inx
-				iny
-				cpy #8
-				bne copy_one_byte
+			jmp change_anim_state
+			;rts
+
+			subtitle_nt_buffer:
+				.byt $22, $2c, 7, $00, $00, $00, $00, $00, $00, $00
+		.)
+
+		wait_logo:
+		.(
+			ldx system_index
+			lda time_begin, x
+			sta title_wait_time
+			jmp change_anim_state
+			;rts
+		.)
+
+		; Set contiguous attributes to the same value
+		;  register A - attribute value
+		;  register X - number of attibutes to change
+		;  register Y - address of first attribute to set (LSB)
+		set_attr:
+		.(
+			; Construct buffer
+			sty title_buffer+1
+			ldy #$23
+			sty title_buffer+0
+			stx title_buffer+2
+			set_one_byte:
+				sta title_buffer+2, x
+				dex
+				bne set_one_byte
+
+			; Push buffer
+			lda #<title_buffer
+			ldy #>title_buffer
+			jmp push_nt_buffer
+
+			;rts ; useless, jump to subroutine
+		.)
+
+		; Set attributes of the "Super" part of the title
+		;  register A - attribute value, set every two bits (ex. %01010101 to set attribute to palette 1)
+		;
+		; Overwrites all registers
+		set_super_attr:
+		.(
+			; Upper part
+			pha
+			ldx #14
+			ldy #$c1
+			jsr set_attr
+
+			; Lower part
+			pla
+			ora #%11110000
+			ldx #6
+			ldy #$d1
+			jmp set_attr
+
+			;rts ; useless, jump to subroutine
+		.)
+
+		show_super_1:
+		.(
+			; Change attributes to show part the logo
+			lda #%01010101
+			jsr set_super_attr
 
 			; Play apparition sound
 			jsr audio_play_death ;TODO sound crafted for this purpose
 
-			; Initialize sceen shake
+			; Go to next anim state
+			jmp change_anim_state
+
+			;rts
+		.)
+
+		show_super_2:
+		.(
+			; Change attributes to show part the logo
+			lda #%00000000
+			jsr set_super_attr
+
+			; Initialize screen shake
 			lda #4
 			sta screen_shake_counter
 			lda #3
@@ -289,13 +392,143 @@ TITLE_ANIMATION_STEP_END = 5
 			lda #$fa
 			sta screen_shake_nextval_y
 
+			; Set wait timer
+			ldx system_index
+			lda time_logo_parts, x
+			sta title_wait_time
+
 			; Go to next anim state
 			jsr change_anim_state
 
 			rts
+		.)
 
-			logo_palette_nt_buffer:
-				.byt $01, $3f, $01, $03, $0f, $21, $30, $00 ; Continuation byte, PPU addr MSB, PPU addr LSB, data size, data..., end byte
+		show_tilt_1:
+		.(
+			; Change attributes to show part the logo
+			lda #%01010000
+			ldx #4
+			ldy #$d0
+			jsr set_attr
+
+			lda #%01010101
+			ldx #4
+			ldy #$d8
+			jsr set_attr
+
+			lda #%01010101
+			ldx #4
+			ldy #$e0
+			jsr set_attr
+
+			; Play apparition sound
+			jsr audio_play_death ;TODO sound crafted for this purpose
+
+			; Go to next anim state
+			jmp change_anim_state
+
+			;rts
+		.)
+
+		show_tilt_2:
+		.(
+			; Change attributes to show part the logo
+			lda #%00000000
+			ldx #4
+			ldy #$d0
+			jsr set_attr
+
+			lda #%00000000
+			ldx #4
+			ldy #$d8
+			jsr set_attr
+
+			lda #%00000000
+			ldx #4
+			ldy #$e0
+			jsr set_attr
+
+			; Initialize screen shake
+			lda #4
+			sta screen_shake_counter
+			lda #3
+			sta screen_shake_nextval_x
+			lda #$fa
+			sta screen_shake_nextval_y
+
+			; Set wait timer
+			ldx system_index
+			lda time_logo_parts, x
+			sta title_wait_time
+
+			; Go to next anim state
+			jsr change_anim_state
+
+			rts
+		.)
+
+		show_bro_1:
+		.(
+			; Change attributes to show part the logo
+			lda #%01010000
+			ldx #4
+			ldy #$d4
+			jsr set_attr
+
+			lda #%01010101
+			ldx #4
+			ldy #$dc
+			jsr set_attr
+
+			lda #%01010101
+			ldx #4
+			ldy #$e4
+			jsr set_attr
+
+			; Play apparition sound
+			jsr audio_play_death ;TODO sound crafted for this purpose
+
+			; Go to next anim state
+			jmp change_anim_state
+
+			;rts
+		.)
+
+		show_bro_2:
+		.(
+			; Change attributes to show part the logo
+			lda #%00000000
+			ldx #4
+			ldy #$d4
+			jsr set_attr
+
+			lda #%00000000
+			ldx #4
+			ldy #$dc
+			jsr set_attr
+
+			lda #%00000000
+			ldx #4
+			ldy #$e4
+			jsr set_attr
+
+			; Initialize screen shake
+			lda #4
+			sta screen_shake_counter
+			lda #3
+			sta screen_shake_nextval_x
+			lda #$fa
+			sta screen_shake_nextval_y
+
+			; Set wait timer
+			ldx system_index
+			lda time_subtitle, x
+			sta title_wait_time
+
+			; Go to next anim state
+			jsr change_anim_state
+
+			rts
 		.)
 
 		shake:
@@ -311,17 +544,73 @@ TITLE_ANIMATION_STEP_END = 5
 			rts
 		.)
 
-		wait_text:
+		show_subtitle:
 		.(
-			lda title_animation_frame
-			cmp #20
-			bne end
+			; Write subtitle on screen, two chars per frame
+			lda #2
+			pha
 
-				jsr audio_play_title_screen_text
-				jsr change_anim_state
+			write_one_char:
+				lda title_animation_frame
+				tax
+				dex
+				txa
+				asl
+				asl
+
+				clc
+				adc #<subtitle_nt_buffer_1
+				pha
+				lda #0
+				adc #>subtitle_nt_buffer_1
+				tay
+				pla
+
+				jsr push_nt_buffer
+
+				lda title_animation_frame
+				cmp #7
+				bne next_char
+					; Set wait timer
+					ldx system_index
+					lda time_text, x
+					sta title_wait_time
+
+					; Clear stack
+					pla
+
+					; Next state
+					jmp change_anim_state
+					; No return, jump to subroutine
+
+				next_char:
+				pla
+				tay
+				dey
+				beq end
+					tya
+					pha
+
+					inc title_animation_frame
+					jmp write_one_char
 
 			end:
 			rts
+
+			subtitle_nt_buffer_1:
+				.byt $22, $2c, 1, TILE_CHAR_F
+			subtitle_nt_buffer_2:
+				.byt $22, $2d, 1, TILE_CHAR_O
+			subtitle_nt_buffer_3:
+				.byt $22, $2e, 1, TILE_CHAR_R
+			subtitle_nt_buffer_4:
+				.byt $22, $2f, 1, $00
+			subtitle_nt_buffer_5:
+				.byt $22, $30, 1, TILE_CHAR_N
+			subtitle_nt_buffer_6:
+				.byt $22, $31, 1, TILE_CHAR_E
+			subtitle_nt_buffer_7:
+				.byt $22, $32, 1, TILE_CHAR_S
 		.)
 
 		show_text:
