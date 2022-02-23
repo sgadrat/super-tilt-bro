@@ -30,28 +30,6 @@ global_init:
 		cmp #$a0
 		bne copy_one_page
 
-	; Copy common tiles in CHR-RAM
-	.(
-		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tileset
-		;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tileset
-
-		SWITCH_BANK(#TILESET_COMMON_BANK_NUMBER)
-
-		lda #<tileset_common
-		sta tileset_addr
-		lda #>tileset_common
-		sta tileset_addr+1
-
-		PPU_COMMON_TILES_ADDR = ($2000-(tileset_common_end-tileset_common_tiles))
-		lda PPUSTATUS
-		lda #>PPU_COMMON_TILES_ADDR
-		sta PPUADDR
-		lda #<PPU_COMMON_TILES_ADDR
-		sta PPUADDR
-
-		jsr cpu_to_ppu_copy_tileset
-	.)
-
 	; Set data bank
 	;TODO check if still necessary (seems to be a leftover of NROM to UNROM512 conversion)
 	lda #DATA_BANK_NUMBER

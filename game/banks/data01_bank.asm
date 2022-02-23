@@ -12,9 +12,6 @@ bank_data01_tileset_green_grass_end:
 bank_data01_tileset_menus_begin:
 #include "game/data/tilesets/menus_tileset.asm"
 bank_data01_tileset_menus_end:
-bank_data01_tileset_logo_begin:
-#include "game/data/tilesets/logo.asm"
-bank_data01_tileset_logo_end:
 bank_data01_char_select_screen_extra_data_begin:
 #include "game/data/menu_char_select/screen.asm"
 #include "game/data/menu_char_select/tilesets.asm"
@@ -53,9 +50,6 @@ bank_data01_end:
 #echo
 #echo DATA01-bank Common tileset size:
 #print bank_data01_tileset_common_end-bank_data01_tileset_common_begin
-#echo
-#echo DATA01-bank Logo tileset size:
-#print bank_data01_tileset_logo_end-bank_data01_tileset_logo_begin
 #echo
 #echo DATA01-bank Character selection screen extra data:
 #print bank_data01_char_select_screen_extra_data_end-bank_data01_char_select_screen_extra_data_begin

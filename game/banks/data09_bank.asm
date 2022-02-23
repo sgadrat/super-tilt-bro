@@ -17,6 +17,19 @@ bank_data_netplay_launch_screen_extra_code_begin:
 #echo netplay launch extra code size:
 #print *-bank_data_netplay_launch_screen_extra_code_begin
 
+bank_data_title_screen_extra_data_begin:
+#include "game/data/title_screen/screen.asm"
+#include "game/data/title_screen/tilesets.asm"
+#echo
+#echo Title screen extra data size:
+#print *-bank_data_title_screen_extra_data_begin
+
+bank_data_title_screen_extra_code_begin:
+#include "game/logic/game_states/title_screen/title_screen_extra_code.asm"
+#echo
+#echo Title screen extra code size:
+#print *-bank_data_title_screen_extra_code_begin
+
 bank_data09_end:
 
 #echo

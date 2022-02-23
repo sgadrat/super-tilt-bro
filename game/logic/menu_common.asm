@@ -90,29 +90,6 @@ menu_common_clouds_speed:
 		.byt 0, TILE_CLOUD_5, $63, 0
 .)
 
-; Set the CHR-RAM contents as expected by menus
-;
-; Overwrites register A, registerY, tmpfield1, tmpfield2, tmpfield3
-;
-; Shall only be called while PPU rendering is turned off
-&set_menu_chr:
-.(
-	tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tiles
-	;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tiles
-
-	lda #<tileset_menus
-	sta tileset_addr
-	lda #>tileset_menus
-	sta tileset_addr+1
-
-	SWITCH_BANK(#TILESET_MENUS_BANK_NUMBER)
-
-	jsr cpu_to_ppu_copy_tileset_background
-
-	jmp copy_common_tileset
-	;rts ; useless, jump to subroutine
-.)
-
 &tick_menu:
 .(
 	tick_moving_clouds:

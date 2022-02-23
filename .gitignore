@@ -1,6 +1,7 @@
 *.swp
 *.nes
 *.nes.deb
+*.dbg
 *.nl
 *.bin
 *.built.asm

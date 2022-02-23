@@ -1,5 +1,3 @@
-TILESET_LOGO_BANK_NUMBER = CURRENT_BANK_NUMBER
-
 tileset_logo:
 
 ; Tileset's size in tiles (zero means 256)
