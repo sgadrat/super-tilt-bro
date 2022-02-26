@@ -6,7 +6,8 @@
 ;   number of tiles - Number of tiles in this buffer
 ;   tiles - One byte per tile, representing the tile number
 ;
-; Overwrites register X and tmpfield1
+; Overwrites all registers
+; NOTE as a part of the NMI handler, avoid using tmpfields. They must be preserved by interruption handlers.
 process_nt_buffers:
 .(
 	lda PPUSTATUS ; reset PPUADDR state
@@ -27,9 +28,8 @@ process_nt_buffers:
 		sta PPUADDR
 		inx
 
-		; Save tiles counter to tmpfield1
-		lda nametable_buffers, x
-		sta tmpfield1
+		; Read tiles counter
+		ldy nametable_buffers, x
 		inx
 
 		write_one_tile:
@@ -39,7 +39,7 @@ process_nt_buffers:
 
 			; Next tile
 			inx
-			dec tmpfield1
+			dey
 			bne write_one_tile
 			jmp handle_nt_buffer
 
