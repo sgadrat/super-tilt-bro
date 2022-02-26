@@ -231,7 +231,7 @@ audio_unmute_music:
 
 ; Play a tick when two ticks are needed in one frame to play at normal speed
 ;
-; Overwrites all registers, and tmpfield1 to tmpfield4
+; Overwrites all registers, tmpfield1 to tmpfield4, and extra_tmpfield1 to extra_tmpfield5
 audio_music_extra_tick:
 .(
 	lda system_index

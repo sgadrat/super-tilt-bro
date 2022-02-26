@@ -9,50 +9,92 @@ cursed:
 nmi:
 .(
 	; Save CPU registers
-	php
 	pha
 	txa
 	pha
 	tya
 	pha
 
+#if NMI_DRAW <> 0
+#error code below expects NMI_DRAW to be zero
+#endif
+
 	; Do not draw anything if not ready
 	lda nmi_processing
-	beq end
+	bne special_processing
 
-	; reload PPU OAM (Objects Attributes Memory) with fresh data from cpu memory
-	lda #$00
-	sta OAMADDR
-	lda #$02
-	sta OAMDMA
+		; Reload PPU OAM (Objects Attributes Memory) with fresh data from cpu memory
+		lda #$00
+		sta OAMADDR
+		lda #$02
+		sta OAMDMA
 
-	; Rewrite nametable based on nt_buffers
-	jsr process_nt_buffers
+		; Rewrite nametable based on nt_buffers
+		jsr process_nt_buffers
 
-	; Scroll
-	lda ppuctrl_val
-	sta PPUCTRL
-	lda PPUSTATUS
-	lda scroll_x
-	sta PPUSCROLL
-	lda scroll_y
-	sta PPUSCROLL
+		; Scroll
+		lda ppuctrl_val
+		sta PPUCTRL
+		lda PPUSTATUS
+		lda scroll_x
+		sta PPUSCROLL
+		lda scroll_y
+		sta PPUSCROLL
 
-	; Inform that NMI is handled
-	lda #$00
-	sta nmi_processing
+		; Inform that NMI is handled
+		lda #NMI_SKIP
+		sta nmi_processing
 
-	end:
+		; Return right now
+		;  Inlined here instead at the natural end of routine, because drawing things on screen is the "normal"
+		;  behavior, and the only one in wich the game tend to be in a performance-critical state
+		end:
+			pla
+			tay
+			pla
+			tax
+			pla
 
-	; Restore CPU registers
-	pla
-	tay
-	pla
-	tax
-	pla
-	plp
+			rti
 
-	rti
+	special_processing:
+	cmp #NMI_AUDIO
+	beq nmi_tick_music
+	jmp end
+
+	nmi_tick_music:
+	.(
+		; Save tmpfield that can be modified by audio engine
+		ldx #0
+		save_one_couple:
+			lda tmpfield1, x
+			pha
+			lda extra_tmpfield1, x
+			pha
+			inx
+			cpx #5
+			bne save_one_couple
+
+		; Call audio engine, restoring current bank after
+		lda current_bank
+		pha
+		jsr audio_music_extra_tick
+		jsr audio_music_tick
+		pla
+		jsr switch_bank
+
+		; Restore (extra_)tmpfields
+		ldx #4
+		restore_one_couple:
+			pla
+			sta extra_tmpfield1, x
+			pla
+			sta tmpfield1, x
+			dex
+			bpl restore_one_couple
+
+		jmp end
+	.)
 .)
 
 reset:
@@ -116,6 +158,8 @@ reset:
 	jsr audio_init
 	jsr global_init
 
+	lda #GAME_STATE_UNKNOWN
+	sta global_game_state
 	lda #INITIAL_GAME_STATE
 	jsr change_global_game_state
 	;rts ; useless, Fallthrough to forever (and actually change_global_game_state does not return)

@@ -38,8 +38,8 @@ global_init:
 	; Initialize configuration
 	jsr default_config
 
-	; Enable music, but do not activate APU, it will be done when a music starts
-	lda #$01
+	; Disable music
+	lda #$00
 	sta audio_music_enabled
 
 	; Network config

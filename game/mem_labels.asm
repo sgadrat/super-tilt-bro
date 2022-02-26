@@ -580,6 +580,8 @@ config_player_a_character = $e0
 config_player_b_character = $e1
 config_game_mode = $e2
 
+current_bank = $e3
+
 ;
 ; Zero-page constants
 ;

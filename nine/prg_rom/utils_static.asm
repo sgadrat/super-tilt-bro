@@ -40,11 +40,15 @@ fetch_controllers:
 ; Wait the next frame, returns once NMI is complete
 wait_next_frame:
 .(
-	lda #$01
+#if NMI_DRAW <> 0
+#error code below expects NMI_DRAW to be zero
+#endif
+
+	lda #NMI_DRAW
 	sta nmi_processing
 	waiting:
 		lda nmi_processing
-		bne waiting
+		beq waiting
 	rts
 .)
 

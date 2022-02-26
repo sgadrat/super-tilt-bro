@@ -88,8 +88,14 @@ change_global_game_state:
 		jsr pre_transition
 
 		; Disable rendering
-		lda #$00
+		;  Keep NMI in audio mode to compensate for not going trhough the main loop each frame
+		;  (State initialization routines typically take some frames to play with vram)
+		;  (This will be magically restored to normal behavior by the next call to wait_next_frame)
+		lda #NMI_AUDIO
+		sta nmi_processing
+		lda #%10010000
 		sta PPUCTRL
+		lda #$00
 		sta PPUMASK
 		sta ppuctrl_val
 
@@ -188,7 +194,7 @@ change_global_game_state:
 
 		no_transition:
 			lda #%10010000  ;
-			sta ppuctrl_val ; Reactivate NMI
+			sta ppuctrl_val ; Reactivate rendering
 			sta PPUCTRL     ;
 			jsr wait_next_frame ; Avoid re-enabling mid-frame
 			lda #%00011110 ; Enable sprites and background rendering

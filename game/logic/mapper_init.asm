@@ -43,6 +43,7 @@ mapper_init:
 	sta RAINBOW_CHR_BANKING_UPPER
 	lda #%00000000 ; BBBBBBBB - first bank
 	sta RAINBOW_CHR_BANKING_1
+	sta current_bank
 
 	; Select the second FPGA WRAM bank
 	;  half of the first one is always mapped at $4800, using the second by default avoids mirroring

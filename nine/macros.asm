@@ -402,8 +402,9 @@ duration
 ; Should be equivalent to the switch_bank routine
 #ifdef MAPPER_RAINBOW
 #define SWITCH_BANK(n) .(:\
-    lda n:\
-    sta RAINBOW_PRG_BANKING_1:\
+	lda n:\
+	sta current_bank:\
+	sta RAINBOW_PRG_BANKING_1:\
 .)
 #else
 #ifdef MAPPER_UNROM
@@ -413,8 +414,9 @@ duration
 .)
 #else
 #define SWITCH_BANK(n) .(:\
-    lda n:\
-    sta $c000:\
+	lda n:\
+	sta current_bank:\
+	sta $c000:\
 .)
 #endif
 #endif

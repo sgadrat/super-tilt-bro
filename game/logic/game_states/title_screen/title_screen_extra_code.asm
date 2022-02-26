@@ -58,13 +58,14 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 	lda previous_global_game_state
 	cmp #GAME_STATE_MODE_SELECTION
 	beq soft_init
-	cmp #GAME_STATE_CREDITS
-	beq soft_init
 
 		; Complete reinitialization
+		lda #1
+		sta title_original_music_state ;NOTE The only case for complete reinitialization is a fresh reset, assume we want music at boot
+
 		jsr init_menu
 		jsr init_title_animation
-		jsr set_music_track ; Note that it is important even if silenced, we dont want to risk unmuting without any music selected
+		jsr set_music_track
 		jmp end_menu_init
 
 	soft_init:

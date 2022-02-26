@@ -147,6 +147,7 @@ clear_bg_bot_left:
 switch_bank:
 .(
 #ifdef MAPPER_RAINBOW
+	sta current_bank
 	sta RAINBOW_PRG_BANKING_1
 #else
 #ifdef MAPPER_UNROM
@@ -157,12 +158,14 @@ switch_bank:
 	tsx
 	lda stack+2, x
 	tax
+	sta current_bank
 	sta bank_table, x
 
 	pla
 	tax
 	pla
 #else
+	sta current_bank
 	sta $c000
 #endif
 #endif

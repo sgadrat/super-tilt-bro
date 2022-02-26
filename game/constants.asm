@@ -3,6 +3,11 @@ GAME_VERSION_MAJOR = 2
 GAME_VERSION_MINOR = 10
 GAME_VERSION = (GAME_VERSION_TYPE << 10) + (GAME_VERSION_MAJOR << 8) + GAME_VERSION_MINOR
 
+; What is expected for the next NMI
+NMI_DRAW = 0
+NMI_SKIP = 1
+NMI_AUDIO = 2
+
 #define INITIAL_GAME_STATE $01
 
 GAME_STATE_INGAME = $00
@@ -19,6 +24,7 @@ GAME_STATE_DONATION_BTC = $0a
 GAME_STATE_DONATION_PAYPAL = $0b
 GAME_STATE_ONLINE_MODE_SELECTION = $0c
 GAME_STATE_WIFI_SETTINGS = $0d
+GAME_STATE_UNKNOWN = $ff
 ;NOTE maximum supported value is $0f, because get_transition_id returns an ID on one byte. To handle more than 16 states, it should be changed.
 
 DEFAULT_GRAVITY = $0200
