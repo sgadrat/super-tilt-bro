@@ -123,11 +123,11 @@ audio_play_shield_break:
 	;rts ; useless, jump to subroutine
 .)
 
-audio_play_title_screen_text:
+audio_play_title_screen_subtitle:
 .(
 	audio_preserve_x_y
-	ldy #<sfx_title_screen_text
-	ldx #>sfx_title_screen_text
+	ldy #<sfx_title_screen_subtitle
+	ldx #>sfx_title_screen_subtitle
 	jmp audio_play_sfx_from_common_bank
 	;rts ; useless, jump to subroutine
 .)

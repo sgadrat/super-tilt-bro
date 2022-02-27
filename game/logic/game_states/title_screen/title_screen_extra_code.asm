@@ -254,8 +254,8 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 		.byt <show_super_1, <show_super_2, <shake, <wait
 		.byt <show_tilt_1, <show_tilt_2, <shake, <wait
 		.byt <show_bro_1, <show_bro_2, <shake, <wait
-		.byt <show_subtitle, <wait
-		.byt <show_text
+		.byt <subtitle_sfx, <show_subtitle, <wait
+		.byt <play_music, <show_text
 		.byt <dummy_routine
 		anim_state_handlers_msb:
 		.byt >hide_subtitle
@@ -263,8 +263,8 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 		.byt >show_super_1, >show_super_2, >shake, >wait
 		.byt >show_tilt_1, >show_tilt_2, >shake, >wait
 		.byt >show_bro_1, >show_bro_2, >shake, >wait
-		.byt >show_subtitle, >wait
-		.byt >show_text
+		.byt >subtitle_sfx, >show_subtitle, >wait
+		.byt >play_music, >show_text
 		.byt >dummy_routine
 
 		time_begin:
@@ -545,6 +545,13 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 			rts
 		.)
 
+		subtitle_sfx:
+		.(
+			jsr audio_play_title_screen_subtitle
+			jmp change_anim_state
+			;rts
+		.)
+
 		show_subtitle:
 		.(
 			; Write subtitle on screen, two chars per frame
@@ -614,6 +621,14 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 				.byt $22, $32, 1, TILE_CHAR_S
 		.)
 
+		play_music:
+		.(
+			jsr set_music_track
+			jsr title_screen_restore_music_state
+			jmp change_anim_state
+			;rts
+		.)
+
 		show_text:
 		.(
 			; Get color counter in Y
@@ -649,9 +664,7 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 				jmp end
 
 			finish:
-				; Finish by finally enabling music and going to next state
-				jsr set_music_track
-				jsr title_screen_restore_music_state
+				; Finish by going to the next state
 				jsr change_anim_state
 
 			end:
