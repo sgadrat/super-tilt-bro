@@ -379,11 +379,13 @@ flash_sectors_rom:
 				bpl wait_esp_ready
 
 			lda #2
-			sta esp_rx_buffer+ESP_MSG_SIZE ;TODO investigate - seems weird to write in RX buffer, and not trigger a register write after
-			lda #TOESP_MSG_FILE_READ       ;     looks like I wrote buggy code when converting to latest rainbow mapper
-			sta esp_rx_buffer+ESP_MSG_TYPE
+			sta esp_tx_buffer+ESP_MSG_SIZE
+			lda #TOESP_MSG_FILE_READ
+			sta esp_tx_buffer+ESP_MSG_TYPE
 			lda #BLOCK_SIZE
-			sta esp_rx_buffer+ESP_MSG_PAYLOAD+0
+			sta esp_tx_buffer+ESP_MSG_PAYLOAD+0
+
+			sta RAINBOW_WIFI_TX
 
 			wait_answer:
 				bit RAINBOW_WIFI_RX
@@ -415,6 +417,7 @@ flash_sectors_rom:
 				sta (current_write_addr), y ; destination address
 				sta tmpfield1
 				inx
+				txa
 				pha
 
 				; Wait programation execution
@@ -453,6 +456,9 @@ flash_sectors_rom:
 				cpy #BLOCK_SIZE
 				bne write_one_byte
 			.)
+
+			; Clean stack
+			pla
 
 			; Update write pointer
 			.(
