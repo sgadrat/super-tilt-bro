@@ -294,7 +294,19 @@
 		},
 		{
 			"duration": 4,
-			"hitbox": null,
+			"hitbox": {
+				"base_h": 0,
+				"base_v": -1000,
+				"bottom": 16,
+				"damages": 2,
+				"enabled": true,
+				"force_h": 0,
+				"force_v": -8,
+				"left": 16,
+				"right": 29,
+				"top": 10,
+				"type": "animation_hitbox"
+			},
 			"hurtbox": {
 				"bottom": 16,
 				"left": 1,
