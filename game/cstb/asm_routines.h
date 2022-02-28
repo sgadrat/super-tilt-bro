@@ -79,6 +79,17 @@ static void wrap_animation_state_change_animation(uint8_t const* animation_state
 	animation_state_change_animation();
 }
 
+void audio_play_sfx_from_list();
+static void wrap_audio_play_sfx_from_list(uint8_t sfx_index) {
+	asm(
+		"ldx %0\n\t"
+		"jsr audio_play_sfx_from_list"
+		:
+		: "r"(sfx_index)
+		: "a", "x", "memory"
+	);
+}
+
 void change_global_game_state();
 static void wrap_change_global_game_state(uint8_t new_state) {
 	asm(

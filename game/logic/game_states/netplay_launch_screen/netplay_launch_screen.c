@@ -18,8 +18,11 @@ extern uint8_t const esp_cmd_connect;
 extern uint8_t const init_stage_selection_screen;
 extern uint8_t const menu_netplay_launch_selector_anim;
 
-extern uint8_t const TILE_MENU_NETPLAY_LAUNCH_SPRITE_SERVER; // Actually a label, use its address or "server_tile()"
-extern uint8_t const TILE_MENU_NETPLAY_LAUNCH_WIFI_ICON; // Actually a label, use its address or "wifi_icon_tile()"
+// Labels containing a useful value, use their address or their associated function
+extern uint8_t const TILE_MENU_NETPLAY_LAUNCH_SPRITE_SERVER; // server_tile()
+extern uint8_t const TILE_MENU_NETPLAY_LAUNCH_WIFI_ICON; // wifi_icon_tile()
+extern uint8_t const SFX_COUNTDOWN_TICK_IDX;
+extern uint8_t const SFX_COUNTDOWN_REACH_IDX;
 
 ///////////////////////////////////////
 // Netplay launch's ASM functions
@@ -394,6 +397,9 @@ static void tick_bg_task() {
 				set_text("         ", 9, 5);
 				display_ping(1, 9, 4);
 				display_ping_quality(*netplay_launch_rival_ping_quality, 10, 4);
+
+				// Next step, expected to be BG_STEP_COUNTDOWN
+				task->count = 255;
 				++task->step;
 			}
 			break;
@@ -401,7 +407,20 @@ static void tick_bg_task() {
 
 		case BG_STEP_COUNTDOWN: {
 			if (*netplay_launch_countdown != COUNTDOWN_DEACTIVATED) {
-				uint8_t const seconds_left = ((*netplay_launch_countdown + FADEOUT_DURATION) / (*system_index ? 50 : 60));
+				uint8_t const fps = (*system_index ? 50 : 60);
+				uint8_t const seconds_left = ((*netplay_launch_countdown + FADEOUT_DURATION) / fps);
+
+				// Audio tick when number changes
+				if (seconds_left != task->count) {
+					if (seconds_left != 0) {
+						wrap_audio_play_sfx_from_list(ptr_lsb(&SFX_COUNTDOWN_TICK_IDX));
+					}else {
+						wrap_audio_play_sfx_from_list(ptr_lsb(&SFX_COUNTDOWN_REACH_IDX));
+					}
+					task->count = seconds_left;
+				}
+
+				// Write unmutable text
 				set_text("start in ", 12, 3);
 
 				// Write only one tile, no ease of use function for that, and not sure there will ever be another usage, so craft the buffer by hand
@@ -462,13 +481,24 @@ static void got_start_game_msg() {
 	}
 	*netplay_launch_rival_ping_count = NB_PINGS;
 
+	// Cut music
+	*netplay_launch_original_music_state = *audio_music_enabled;
+	audio_mute_music();
+
 	// Wait some frames
-	*netplay_launch_countdown = 200 - FADEOUT_DURATION;
+	uint8_t const fps = (*system_index ? 50 : 60);
+	uint8_t const duration = (4 * fps);
+	*netplay_launch_countdown = duration - FADEOUT_DURATION;
 	while (*netplay_launch_countdown > 0) {
 		skip_frame();
 		--*netplay_launch_countdown;
 	}
+
+	// Transition animation
 	fade_out();
+	if (*netplay_launch_original_music_state != 0) {
+		audio_unmute_music();
+	}
 
 	// Go ingame
 	wrap_change_global_game_state(GAME_STATE_INGAME);

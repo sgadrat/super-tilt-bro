@@ -395,18 +395,19 @@ stage_selection_mem_buffer = $0580 ; $0580 to $05bf (4*16 bytes)
 ; NETPLAY_LAUNCH labels
 ;
 
-netplay_launch_cursor_anim = last_c_label+1
-netplay_launch_bg_task = netplay_launch_cursor_anim+13
-netplay_launch_fg_task = netplay_launch_bg_task+2
-netplay_launch_server = netplay_launch_fg_task+2
-netplay_launch_nb_servers = netplay_launch_server+1
-netplay_launch_local_ping_count = netplay_launch_nb_servers+1
-netplay_launch_local_ping_values = netplay_launch_local_ping_count+1
-netplay_launch_local_ping_quality = netplay_launch_local_ping_values+3
-netplay_launch_rival_ping_count = netplay_launch_local_ping_quality+1
-netplay_launch_rival_ping_values = netplay_launch_rival_ping_count+1
-netplay_launch_rival_ping_quality = netplay_launch_rival_ping_values+3
-netplay_launch_countdown = netplay_launch_rival_ping_quality+1
+netplay_launch_cursor_anim = last_c_label+1 ; $39-$45
+netplay_launch_bg_task = netplay_launch_cursor_anim+13 ; $46-$47
+netplay_launch_fg_task = netplay_launch_bg_task+2 ; $48-$49
+netplay_launch_server = netplay_launch_fg_task+2 ; $4a
+netplay_launch_nb_servers = netplay_launch_server+1 ; $4b
+netplay_launch_local_ping_count = netplay_launch_nb_servers+1 ; $4c
+netplay_launch_local_ping_values = netplay_launch_local_ping_count+1 ; $4d-$4f
+netplay_launch_local_ping_quality = netplay_launch_local_ping_values+3 ; $50
+netplay_launch_rival_ping_count = netplay_launch_local_ping_quality+1 ; $51
+netplay_launch_rival_ping_values = netplay_launch_rival_ping_count+1 ; $52-$54
+netplay_launch_rival_ping_quality = netplay_launch_rival_ping_values+3 ; $55
+netplay_launch_countdown = netplay_launch_rival_ping_quality+1 ; $56
+netplay_launch_original_music_state = netplay_launch_countdown+1 ; $57
 
 netplay_launch_bg_mem_buffer = $0580 ; $0580 to $???? (current biggest usage, 3+16 bytes, map illustration draw)
 

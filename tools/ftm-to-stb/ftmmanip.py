@@ -622,6 +622,7 @@ def flatten_orders(music):
 			for row_idx in range(original_track['pattern']):
 				modified_row = {'channels': []}
 				for chan_idx in range(len(order)):
+					#FIXME pattern may not exists, should return an empty row in this case
 					modified_row['channels'].append(copy.deepcopy(get_row(music, track=track_idx, pattern=order[chan_idx], chan=chan_idx, row=row_idx)))
 				modified_pattern['rows'].append(modified_row)
 

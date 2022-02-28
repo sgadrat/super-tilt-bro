@@ -27,6 +27,7 @@ audio_play_sfx:
 	stx audio_fx_noise_current_opcode_msb
 	sta audio_fx_noise_current_opcode_bank
 
+&audio_play_sfx_direct:
 	lda #0
 	sta audio_fx_noise_wait_cnt
 	sta audio_fx_noise_pitch_slide

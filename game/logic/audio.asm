@@ -69,6 +69,35 @@ audio_play_sfx_from_common_bank:
 	rts
 .)
 
+; Play a sound effect from the global effects list
+;  register X - Index of the effect to play
+;
+; Overwrites register A
+audio_play_sfx_from_list:
+.(
+	lda sfx_list_lsb, x
+	sta audio_fx_noise_current_opcode
+	lda sfx_list_msb, x
+	sta audio_fx_noise_current_opcode_msb
+	lda sfx_list_bnk, x
+	sta audio_fx_noise_current_opcode_bank
+
+	jmp audio_play_sfx_direct
+	;rts ; Useless, jump to subroutine
+.)
+
+sfx_list_lsb:
+	SFX_COUNTDOWN_TICK_IDX = * - sfx_list_lsb
+	.byt <sfx_countdown_tick
+	SFX_COUNTDOWN_REACH_IDX = * - sfx_list_lsb
+	.byt <sfx_countdown_reach
+sfx_list_msb:
+	.byt >sfx_countdown_tick
+	.byt >sfx_countdown_reach
+sfx_list_bnk:
+	.byt SFX_BANK
+	.byt SFX_BANK
+
 audio_play_crash:
 .(
 	audio_preserve_x_y
