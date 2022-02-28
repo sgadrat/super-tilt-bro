@@ -84,13 +84,13 @@ stage_gem_init:
 stage_gem_netload:
 .(
 	; Load gem's state
-	ldx esp_rx_buffer+0, x
-	stx stage_gem_gem_state
+	ldy esp_rx_buffer+0, x
+	sty stage_gem_gem_state
 
 	; Load fields for the new state
-	lda gem_state_netload_routines_lsb, x
+	lda gem_state_netload_routines_lsb, y
 	sta tmpfield1
-	lda gem_state_netload_routines_msb, x
+	lda gem_state_netload_routines_msb, y
 	sta tmpfield2
 	jmp (tmpfield1)
 
