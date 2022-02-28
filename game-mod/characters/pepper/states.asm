@@ -109,29 +109,29 @@ pepper_netload:
 
 	; Carrot's animation
 	lda esp_rx_buffer+0, y
-	sta player_a_objects+1+ANIMATION_STATE_OFFSET_X_LSB, y
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_X_LSB, x
 	lda esp_rx_buffer+1, y
-	sta player_a_objects+1+ANIMATION_STATE_OFFSET_X_MSB, y
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_X_MSB, x
 	lda esp_rx_buffer+2, y
-	sta player_a_objects+1+ANIMATION_STATE_OFFSET_Y_LSB, y
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_Y_LSB, x
 	lda esp_rx_buffer+3, y
-	sta player_a_objects+1+ANIMATION_STATE_OFFSET_Y_MSB, y
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_Y_MSB, x
 	lda esp_rx_buffer+4, y
-	sta player_a_objects+1+ANIMATION_STATE_OFFSET_DATA_VECTOR_LSB, y
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_DATA_VECTOR_LSB, x
 	lda esp_rx_buffer+5, y
-	sta player_a_objects+1+ANIMATION_STATE_OFFSET_DATA_VECTOR_MSB, y
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_DATA_VECTOR_MSB, x
 	lda esp_rx_buffer+6, y
-	sta player_a_objects+1+ANIMATION_STATE_OFFSET_DIRECTION, y
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_DIRECTION, x
 	lda esp_rx_buffer+7, y
-	sta player_a_objects+1+ANIMATION_STATE_OFFSET_CLOCK, y
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_CLOCK, x
 	;lda esp_rx_buffer+, y
-	;sta player_a_objects+1+ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM, y ; Never change
+	;sta player_a_objects+1+ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM, x ; Never change
 	;lda esp_rx_buffer+, y
-	;sta player_a_objects+1+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM, y ; Never change
+	;sta player_a_objects+1+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM, x ; Never change
 	lda esp_rx_buffer+8, y
-	sta player_a_objects+1+ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB, y
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_FRAME_VECTOR_LSB, x
 	lda esp_rx_buffer+9, y
-	sta player_a_objects+1+ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB, y
+	sta player_a_objects+1+ANIMATION_STATE_OFFSET_FRAME_VECTOR_MSB, x
 	;TODO ANIMATION_STATE_OFFSET_NTSC_CNT
 
 	; Update message's cursor
