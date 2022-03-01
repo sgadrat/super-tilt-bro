@@ -212,16 +212,23 @@ init_game_state:
 					; Get color
 					lda players_palettes, x
 
-					; Skip if black or cannot be lightened
+					; Skip if cannot be lightened, special handling for black
 					cmp #$0f
-					beq end_color
+					beq lighten_black
 					cmp #$30
 					bcs end_color
 
-						; Up color to the lighter value
-						clc
-						adc #$10
-						sta players_palettes, x
+						ligthen_normal:
+							; Up color to the lighter value
+							clc
+							adc #$10
+							sta players_palettes, x
+							jmp end_color
+
+						lighten_black:
+							; Change to dark-grey
+							lda #$00
+							sta players_palettes, x
 
 					; Loop on three colors
 					end_color:
