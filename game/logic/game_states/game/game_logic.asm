@@ -198,6 +198,39 @@ init_game_state:
 		ldy #1
 		jsr place_character_alternate_palette
 
+		; If both players have the same character with same colors, lighten player B's colors
+		.(
+			lda config_player_a_character
+			cmp config_player_b_character
+			bne ok
+			lda config_player_a_character_palette
+			cmp config_player_b_character_palette
+			bne ok
+				ldx #16+4 ; Player B's normal palette, first color
+				ldy #3
+				lighten_one_color:
+					; Get color
+					lda players_palettes, x
+
+					; Skip if black or cannot be lightened
+					cmp #$0f
+					beq end_color
+					cmp #$30
+					bcs end_color
+
+						; Up color to the lighter value
+						clc
+						adc #$10
+						sta players_palettes, x
+
+					; Loop on three colors
+					end_color:
+					inx
+					dey
+					bne lighten_one_color
+			ok:
+		.)
+
 		; Initialize weapons palettes
 		jsr wait_vbi ; Wait the begining of a VBI before writing data to PPU's palettes
 
