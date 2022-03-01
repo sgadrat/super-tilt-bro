@@ -361,7 +361,7 @@
 			{
 				"colors": [
 					1,
-					49,
+					50,
 					51
 				],
 				"type": "palette"
@@ -369,24 +369,8 @@
 			{
 				"colors": [
 					8,
-					24,
-					41
-				],
-				"type": "palette"
-			},
-			{
-				"colors": [
-					15,
-					15,
-					0
-				],
-				"type": "palette"
-			},
-			{
-				"colors": [
-					4,
-					36,
-					55
+					57,
+					40
 				],
 				"type": "palette"
 			},
@@ -395,6 +379,22 @@
 					8,
 					22,
 					55
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					8,
+					50,
+					55
+				],
+				"type": "palette"
+			},
+			{
+				"colors": [
+					7,
+					35,
+					51
 				],
 				"type": "palette"
 			}
