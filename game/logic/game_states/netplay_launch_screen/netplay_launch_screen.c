@@ -474,7 +474,8 @@ static void got_start_game_msg() {
 	*config_player_b_weapon_palette = *config_player_b_character_palette;
 
 	// Store opponent's connection info (for display)
-	*netplay_launch_rival_ping_quality = msg[STNP_START_GAME_FIELD_PLAYER_CONNECTIONS + *network_local_player_number];
+	uint8_t const connections_qualities = msg[STNP_START_GAME_FIELD_PLAYER_CONNECTIONS];
+	*netplay_launch_rival_ping_quality = (*network_local_player_number == 0 ? connections_qualities >> 4 : connections_qualities & 0x0f);
 	uint8_t const ping_field = (*network_local_player_number ? STNP_START_GAME_FIELD_PA_PING : STNP_START_GAME_FIELD_PB_PING);
 	for (uint8_t ping_idx = 0; ping_idx < NB_PINGS; ++ping_idx) {
 		netplay_launch_rival_ping_values[ping_idx] = msg[ping_field + ping_idx];
