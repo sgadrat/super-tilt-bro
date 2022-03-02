@@ -24,6 +24,7 @@ GAME_STATE_DONATION_BTC = $0a
 GAME_STATE_DONATION_PAYPAL = $0b
 GAME_STATE_ONLINE_MODE_SELECTION = $0c
 GAME_STATE_WIFI_SETTINGS = $0d
+GAME_STATE_ARCADE_MODE = $0e
 GAME_STATE_UNKNOWN = $ff
 ;NOTE maximum supported value is $0f, because get_transition_id returns an ID on one byte. To handle more than 16 states, it should be changed.
 
@@ -32,6 +33,7 @@ DEFAULT_GRAVITY = $0200
 ; Variants of ingame state
 GAME_MODE_LOCAL = $00
 GAME_MODE_ONLINE = $01
+GAME_MODE_ARCADE = $02
 
 ; States used by the game engine, they must have a referenced start_routine
 PLAYER_STATE_THROWN = $00

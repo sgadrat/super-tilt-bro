@@ -532,13 +532,26 @@ slowdown:
 		jmp end
 
 	next_screen:
-	lda #0
-	sta network_rollback_mode
-	lda #GAME_STATE_GAMEOVER
-	jsr change_global_game_state
+	ldx config_game_mode
+	lda game_modes_gameover_lsb, x
+	sta tmpfield1
+	lda game_modes_gameover_msb, x
+	sta tmpfield2
+	jsr call_pointed_subroutine
 
 	end:
 	rts
+.)
+
+; Your typical handler for game mod's gameover routine
+; Go to gameover screen, ensuring rollback mode is deactivated (would prevent further animations)
+game_mode_goto_gameover:
+.(
+	lda #0
+	sta network_rollback_mode
+	lda #GAME_STATE_GAMEOVER
+	jmp change_global_game_state
+	;rts ; useless, jump to subroutine
 .)
 
 update_players:

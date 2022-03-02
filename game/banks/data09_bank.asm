@@ -30,6 +30,12 @@ bank_data_title_screen_extra_code_begin:
 #echo Title screen extra code size:
 #print *-bank_data_title_screen_extra_code_begin
 
+bank_data_arcade_mode_extra_code_begin:
+#include "game/logic/game_states/arcade_mode/arcade_mode_extra_code.asm"
+#echo
+#echo arcade mode extra code size:
+#print *-bank_data_arcade_mode_extra_code_begin
+
 bank_data09_end:
 
 #echo

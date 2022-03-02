@@ -14,6 +14,7 @@ VECTOR(init_support_btc_screen)
 VECTOR(init_support_paypal_screen)
 VECTOR(init_online_mode_screen)
 VECTOR(init_wifi_settings_screen)
+VECTOR(init_arcade_mode)
 
 ; Subroutine called each frame
 game_states_tick:
@@ -31,6 +32,7 @@ VECTOR(support_qr_screen_tick)
 VECTOR(support_qr_screen_tick)
 VECTOR(online_mode_screen_tick)
 VECTOR(wifi_settings_screen_tick)
+VECTOR(arcade_mode_tick)
 
 ;NOTE if you change these tables, do not forget to update GAME_STATE_* constants
 
@@ -48,3 +50,4 @@ VECTOR(wifi_settings_screen_tick)
 #include "game/logic/game_states/title_screen.asm"
 #include "game/logic/game_states/transitions/transitions.asm"
 #include "game/logic/game_states/wifi_settings_screen.asm"
+#include "game/logic/game_states/arcade_mode.asm"
