@@ -93,7 +93,7 @@ stages_tileset_lsb:
 .byt <tileset_ruins ; Shelf
 .byt <tileset_magma ; Gem
 
-.byt <tileset_ruins
+.byt <arcade_test_stage_tileset
 
 stages_tileset_msb:
 .byt >tileset_ruins ; Plateau
@@ -101,7 +101,7 @@ stages_tileset_msb:
 .byt >tileset_ruins ; Shelf
 .byt >tileset_magma ; Gem
 
-.byt >tileset_ruins
+.byt >arcade_test_stage_tileset
 
 stages_tileset_bank:
 .byt TILESET_RUINS_BANK_NUMBER ; Plateau
@@ -109,4 +109,4 @@ stages_tileset_bank:
 .byt TILESET_RUINS_BANK_NUMBER ; Shelf
 .byt TILESET_MAGMA_BANK_NUMBER ; Gem
 
-.byt TILESET_RUINS_BANK_NUMBER
+.byt ARCADE_TEST_TILESET_BANK_NUMBER

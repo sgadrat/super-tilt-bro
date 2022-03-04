@@ -34,7 +34,9 @@ typedef struct Encounter {
 static Encounter const encounters[] = {
 	{ENCOUNTER_TARGETS, {{0}}},
 	{ENCOUNTER_FIGHT, {{0, 1, 0}}},
+	{ENCOUNTER_TARGETS, {{0}}},
 	{ENCOUNTER_FIGHT, {{1, 2, 0}}},
+	{ENCOUNTER_TARGETS, {{0}}},
 	{ENCOUNTER_FIGHT, {{2, 3, 0}}},
 	{ENCOUNTER_FIGHT, {{0, 4, 1}}},
 };

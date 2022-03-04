@@ -38,6 +38,7 @@ bank_data_arcade_mode_extra_code_begin:
 
 bank_data_arcade_stage_test01_begin:
 #include "game/data/stages/arcade/test01/test01.asm"
+#include "game/data/stages/arcade/test_tileset.asm"
 #echo
 #echo arcade stage test01 size:
 #print *-bank_data_arcade_stage_test01_begin
