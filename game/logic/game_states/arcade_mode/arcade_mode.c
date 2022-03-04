@@ -8,22 +8,35 @@ extern uint8_t const charset_alphanum;
 
 // Labels, use their address or the associtated function
 extern uint8_t const CHARSET_ALPHANUM_BANK_NUMBER; // charset_bank()
+extern uint8_t const stage_arcade_first_index;
 
 ///////////////////////////////////////
 // Constants specific to this file
 ///////////////////////////////////////
 
 typedef struct Encounter {
-	uint8_t character;
-	uint8_t difficulty;
-	uint8_t skin;
+	uint8_t type;
+	union {
+		struct {
+			uint8_t character;
+			uint8_t difficulty;
+			uint8_t skin;
+		} fight;
+		struct {
+			uint8_t stage;
+		} targets;
+	};
 } Encounter;
 
+#define ENCOUNTER_FIGHT 0
+#define ENCOUNTER_TARGETS 1
+
 static Encounter const encounters[] = {
-	{0, 1, 0},
-	{1, 2, 0},
-	{2, 3, 0},
-	{0, 4, 1},
+	{ENCOUNTER_TARGETS, {{0}}},
+	{ENCOUNTER_FIGHT, {{0, 1, 0}}},
+	{ENCOUNTER_FIGHT, {{1, 2, 0}}},
+	{ENCOUNTER_FIGHT, {{2, 3, 0}}},
+	{ENCOUNTER_FIGHT, {{0, 4, 1}}},
 };
 uint8_t const n_encounters = sizeof(encounters) / sizeof(Encounter);
 
@@ -86,15 +99,26 @@ static void previous_screen() {
 
 static void next_screen() {
 	*config_initial_stocks = 0;
-	*config_ai_level = min(current_encounter().difficulty, 3);
-	*config_selected_stage = 0;
 	*config_player_a_character_palette = 0;
-	*config_player_b_character_palette = current_encounter().skin;
 	*config_player_a_weapon_palette = 0;
-	*config_player_b_weapon_palette = current_encounter().skin;
 	*config_player_a_character = 0;
-	*config_player_b_character = current_encounter().character;
+	*arcade_mode_stage_type = current_encounter().type;
 	*config_game_mode = GAME_MODE_ARCADE;
+
+	if (*arcade_mode_stage_type == ENCOUNTER_FIGHT) {
+		*config_ai_level = min(current_encounter().fight.difficulty, 3);
+		*config_selected_stage = 0;
+		*config_player_b_character_palette = current_encounter().fight.skin;
+		*config_player_b_weapon_palette = current_encounter().fight.skin;
+		*config_player_b_character = current_encounter().fight.character;
+	}else {
+		*config_ai_level = 0;
+		*config_selected_stage = ptr_lsb(&stage_arcade_first_index) + current_encounter().targets.stage;
+		*config_player_b_character_palette = 0;
+		*config_player_b_weapon_palette = 0;
+		*config_player_b_character = 0;
+	}
+
 	wrap_change_global_game_state(GAME_STATE_INGAME);
 }
 
@@ -230,9 +254,13 @@ void arcade_mode_tick_extra() {
 	}
 
 	// Display next encounter
-	set_text("next encounter", 13, 10);
-	set_text(character_names[current_encounter().character], 14, 12);
-	set_text(difficulty_names[current_encounter().difficulty], 15, 12);
+	if (current_encounter().type == ENCOUNTER_FIGHT) {
+		set_text("next encounter", 13, 10);
+		set_text(character_names[current_encounter().fight.character], 14, 12);
+		set_text(difficulty_names[current_encounter().fight.difficulty], 15, 12);
+	}else {
+		set_text("reach the exit", 13, 10);
+	}
 
 	// Check if a button is released and trigger correct action
 	while (true) {

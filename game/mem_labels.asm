@@ -222,6 +222,8 @@ ai_current_action_modifier = $05d8
 ai_delay = $05d9
 ai_max_delay = $05da
 
+arcade_mode_stage_type = $05db
+
 ;
 ; Stage specific labels
 ;
