@@ -41,7 +41,31 @@ game_mode_arcade_pre_update:
 
 	common:
 
-	jmp game_mode_local_pre_update ;HACK local mode only handle AI, and we want AI too
+	; Increment counter
+	.(
+		inc arcade_mode_counter_frames
+		lda arcade_mode_counter_frames
+		cmp #60
+		bne ok
+
+			lda #0
+			sta arcade_mode_counter_frames
+
+			inc arcade_mode_counter_seconds
+			lda arcade_mode_counter_seconds
+			cmp #60
+			bne ok
+
+				lda #0
+				sta arcade_mode_counter_seconds
+
+				inc arcade_mode_counter_minutes
+
+		ok:
+	.)
+
+	;HACK local mode only handle AI, and we want AI too
+	jmp game_mode_local_pre_update
 	;rts ; useless, jump to subroutine
 
 	is_player_on_exit:

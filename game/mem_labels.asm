@@ -662,6 +662,9 @@ current_frame_tick = $0548
 
 arcade_mode_current_encounter = $0549
 arcade_mode_player_damages = $054a
+arcade_mode_counter_frames = $054b
+arcade_mode_counter_seconds = $054c
+arcade_mode_counter_minutes = $054d
 
 ;$0580 to $05ff may be used by game states
 

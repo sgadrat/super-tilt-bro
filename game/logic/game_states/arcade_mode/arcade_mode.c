@@ -87,6 +87,16 @@ static void set_text(char const* text, uint8_t line, uint8_t col) {
 	wrap_push_nt_buffer(arcade_mode_bg_mem_buffer);
 }
 
+static void set_num(uint8_t num, uint8_t line, uint8_t col) {
+	arcade_mode_bg_mem_buffer[6+0] = '0'+(num/100);
+	num %= 100;
+	arcade_mode_bg_mem_buffer[6+1] = '0'+(num/10);
+	num %= 10;
+	arcade_mode_bg_mem_buffer[6+2] = '0'+(num);
+	arcade_mode_bg_mem_buffer[6+3] = 0;
+	set_text((char*)arcade_mode_bg_mem_buffer+6, line, col);
+}
+
 ///////////////////////////////////////
 // State implementation
 ///////////////////////////////////////
@@ -124,6 +134,42 @@ static void next_screen() {
 	wrap_change_global_game_state(GAME_STATE_INGAME);
 }
 
+static uint8_t input() {
+	for (uint8_t controller = 0; controller < 2; ++controller) {
+		if (*(controller_a_btns + controller) == 0) {
+			switch (*(controller_a_last_frame_btns + controller)) {
+				case CONTROLLER_BTN_B:
+					return INPUT_BACK; break;
+				case CONTROLLER_BTN_START:
+				case CONTROLLER_BTN_A:
+					return INPUT_NEXT; break;
+			}
+		}
+	}
+	return INPUT_NONE;
+}
+
+static void wait_input() {
+	while (true) {
+		switch(input()) {
+			case INPUT_BACK:
+				previous_screen(); break;
+			case INPUT_NEXT:
+				yield(); //HACK without it next input read will read the same thing
+				return;
+		}
+		yield();
+	}
+}
+
+static void display_timer() {
+	set_num(*arcade_mode_counter_minutes, 5, 4);
+	set_text("min", 5, 8);
+	set_num(*arcade_mode_counter_seconds, 5, 12);
+	set_text("seconds", 5, 16);
+	yield();
+}
+
 void init_arcade_mode_extra() {
 	// Draw screen
 	//long_construct_palettes_nt_buffer(screen_bank(), &menu_mode_selection_palette);
@@ -145,34 +191,9 @@ void init_arcade_mode_extra() {
 	if (*arcade_mode_current_encounter == 0) {
 		*arcade_mode_last_game_winner = 0;
 		*arcade_mode_player_damages = 0;
-	}
-}
-
-uint8_t input() {
-	for (uint8_t controller = 0; controller < 2; ++controller) {
-		if (*(controller_a_btns + controller) == 0) {
-			switch (*(controller_a_last_frame_btns + controller)) {
-				case CONTROLLER_BTN_B:
-					return INPUT_BACK; break;
-				case CONTROLLER_BTN_START:
-				case CONTROLLER_BTN_A:
-					return INPUT_NEXT; break;
-			}
-		}
-	}
-	return INPUT_NONE;
-}
-
-void wait_input() {
-	while (true) {
-		switch(input()) {
-			case INPUT_BACK:
-				previous_screen(); break;
-			case INPUT_NEXT:
-				yield(); //HACK without it next input read will read the same thing
-				return;
-		}
-		yield();
+		*arcade_mode_counter_frames = 0;
+		*arcade_mode_counter_seconds = 0;
+		*arcade_mode_counter_minutes = 0;
 	}
 }
 
@@ -196,6 +217,7 @@ void arcade_mode_tick_extra() {
 
 	// Gameover handling
 	if (*arcade_mode_last_game_winner != 0) {
+		display_timer();
 		set_text("gameover", 13, 11);
 		wait_input();
 		previous_screen();
@@ -250,10 +272,14 @@ void arcade_mode_tick_extra() {
 	}
 
 	if (*arcade_mode_current_encounter == n_encounters) {
+		display_timer();
 		set_text("congratulation", 15, 10);
 		wait_input();
 		previous_screen();
 	}
+
+	// Display timer
+	display_timer();
 
 	// Display next encounter
 	if (current_encounter().type == ENCOUNTER_FIGHT) {
