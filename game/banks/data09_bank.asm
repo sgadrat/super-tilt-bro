@@ -36,6 +36,12 @@ bank_data_arcade_mode_extra_code_begin:
 #echo arcade mode extra code size:
 #print *-bank_data_arcade_mode_extra_code_begin
 
+bank_data_arcade_mode_screen_begin:
+#include "game/data/arcade/screen.asm"
+#echo
+#echo arcade mode screen size:
+#print *-bank_data_arcade_mode_screen_begin
+
 bank_data_arcade_stage_test01_begin:
 #include "game/data/stages/arcade/test01/test01.asm"
 #include "game/data/stages/arcade/test_tileset.asm"

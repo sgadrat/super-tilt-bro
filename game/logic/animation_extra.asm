@@ -3,7 +3,7 @@
 ;  player_number - player number
 ;  tmpfield11,tmpfield12 - animation state address
 ;
-;  Note, player_number and X muste have the same value. X is used by this routine, player_number by fetch hooks.
+;  Note, player_number and X must have the same value. X is used by this routine, player_number by fetch hooks.
 ;
 ; Overwrites tmpfields 1 to 10, tmpfields 13 to 16 and all registers
 stb_animation_draw:

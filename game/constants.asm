@@ -81,8 +81,11 @@ NETWORK_INPUT_LAG = 4
 #define INGAME_PLAYER_B_FIRST_SPRITE 16
 #define INGAME_PLAYER_B_LAST_SPRITE 31
 
+;FIXME old macros should be replaced by new labels everywhere (it impacts syntax, so it deserves its own commit)
 #define DIRECTION_LEFT #$00
 #define DIRECTION_RIGHT #$01
+DIRECTION_LEFT2 = 0
+DIRECTION_RIGHT2 = 1
 
 #define HITBOX_DISABLED #$00
 #define HITBOX_ENABLED #$01

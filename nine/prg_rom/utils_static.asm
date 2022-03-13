@@ -251,6 +251,7 @@ draw_zipped_nametable:
 	lda #$00
 	sta PPUADDR
 
+&draw_zipped_vram:
 	ldy #$00
 	load_background:
 		lda (compressed_nametable), y

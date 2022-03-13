@@ -97,7 +97,7 @@ change_global_game_state:
 		sta PPUCTRL
 		lda #$00
 		sta PPUMASK
-		sta ppuctrl_val
+		sta ppuctrl_val ;TODO investigate, ppuctr_val != PPUCTRL, it may be a bug, certainly non-impacting since we are in audio mode
 
 		; Clear not processed drawings
 		jsr reset_nt_buffers

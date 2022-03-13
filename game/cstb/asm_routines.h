@@ -23,6 +23,7 @@ void flash_all_sectors();
 void fetch_controllers();
 void flash_safe_sectors();
 void init_menu();
+void particle_handlers_reinit();
 void process_nt_buffers();
 void reset_nt_buffers();
 void re_init_menu();
@@ -240,6 +241,24 @@ static void long_draw_zipped_nametable(uint8_t bank, uint8_t const* nametable) {
 	wrap_trampoline(bank, code_bank(), &draw_zipped_nametable);
 }
 
+void draw_zipped_vram();
+static void wrap_draw_zipped_vram(uint8_t const* nametable, uint16_t ppu_addr) {
+	*tmpfield1 = ptr_lsb(nametable);
+	*tmpfield2 = ptr_msb(nametable);
+	*PPUSTATUS;
+	*PPUADDR = u16_msb(ppu_addr);
+	*PPUADDR = u16_lsb(ppu_addr);
+	draw_zipped_vram();
+}
+static void long_draw_zipped_vram(uint8_t bank, uint8_t const* nametable, uint16_t ppu_addr) {
+	*tmpfield1 = ptr_lsb(nametable);
+	*tmpfield2 = ptr_msb(nametable);
+	*PPUSTATUS;
+	*PPUADDR = u16_msb(ppu_addr);
+	*PPUADDR = u16_lsb(ppu_addr);
+	wrap_trampoline(bank, code_bank(), &draw_zipped_vram);
+}
+
 void fixed_memcpy();
 static void wrap_fixed_memcpy(uint8_t* dest, uint8_t const* src, uint8_t size) {
 	// Prepare fixed_memcpy parameters
@@ -313,6 +332,35 @@ static uint8_t wrap_last_nt_buffer() {
 		: "a", "x"
 	);
 	return index;
+}
+
+void place_character_ppu_tiles_direct();
+static void wrap_place_character_ppu_tiles_direct(uint8_t player_num, uint8_t char_num) {
+	asm(
+		"ldx %0\n\t"
+		"ldy %1\n\t"
+		"jsr place_character_ppu_tiles_direct"
+		:
+		: "r"(player_num), "r"(char_num)
+		: "a", "x", "y", "memory"
+	);
+}
+static void long_place_character_ppu_tiles_direct(uint8_t player_num, uint8_t char_num) {
+	asm(
+		"ldx %0\n\t"
+		"ldy %1\n\t"
+		"lda #<place_character_ppu_tiles_direct\n\t"
+		"sta extra_tmpfield1\n\t"
+		"lda #>place_character_ppu_tiles_direct\n\t"
+		"sta extra_tmpfield2\n\t"
+		"lda #CURRENT_BANK_NUMBER\n\t"
+		"sta extra_tmpfield3\n\t"
+		"sta extra_tmpfield4\n\t"
+		"jsr trampoline"
+		:
+		: "r"(player_num), "r"(char_num)
+		: "a", "x", "y", "memory"
+	);
 }
 
 void push_nt_buffer();

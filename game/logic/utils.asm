@@ -8,6 +8,7 @@ place_character_ppu_tiles:
 .(
 	ldy config_player_a_character, x
 
+&place_character_ppu_tiles_direct:
 	SWITCH_BANK(characters_bank_number COMMA y)
 
 	lda PPUSTATUS

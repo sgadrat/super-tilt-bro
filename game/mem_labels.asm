@@ -421,6 +421,18 @@ arcade_mode_last_game_winner = last_c_label+1 ; $39
 
 arcade_mode_bg_mem_buffer = $0580 ; $0580 to $05a3 (max text size 32 + nt buffer header)
 
+cutscene_anims = $0580 ; $0580 to $05b3 - 4 animation states
+cutscene_anims_enabled = $05b4 ; $05b4 to $05b7 - 4 bytes
+cutscene_anims_velocity_h_pixel = $05b8 ; to $05bb
+cutscene_anims_velocity_h_subpixel = $05bc ; to $05bf
+cutscene_anims_velocity_v_pixel = $05c0 ; to $05c3
+cutscene_anims_velocity_v_subpixel = $05c4 ; to $05c7
+cutscene_anims_pos_x_subpixel = $05c8 ; to $05cb
+cutscene_anims_pos_y_subpixel = $05cc ; to $05cf
+cutscene_anims_bank = $05d0 ; to $05d3
+cutscene_autoscroll_h = $05d4
+cutscene_autoscroll_v = $05d5
+
 ;
 ; DONATION labels
 ;

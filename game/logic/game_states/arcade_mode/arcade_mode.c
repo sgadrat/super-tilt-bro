@@ -4,15 +4,28 @@
 // Global labels from the ASM codebase
 ///////////////////////////////////////
 
+extern uint8_t const arcade_mode_palette;
 extern uint8_t const charset_alphanum;
+extern uint8_t const cutscene_sinbad_story_bird_msg;
 
-// Labels, use their address or the associtated function
+// Labels, use their address or the associated function
+extern uint8_t const ARCADE_MODE_SCREEN_BANK; // screen_bank()
 extern uint8_t const CHARSET_ALPHANUM_BANK_NUMBER; // charset_bank()
+extern uint8_t const cutscene_sinbad_story_bird_msg_bank;
 extern uint8_t const stage_arcade_first_index;
 
 ///////////////////////////////////////
 // Constants specific to this file
 ///////////////////////////////////////
+
+typedef struct Cutscene {
+	uint8_t const* palette;
+	uint8_t const* nametable;
+	uint8_t const* nametable_bot;
+	uint8_t const* bg_tileset;
+	uint8_t const* sprites_tileset;
+	void(*logic)();
+} __attribute__((__packed__)) Cutscene;
 
 typedef struct Encounter {
 	uint8_t type;
@@ -25,20 +38,26 @@ typedef struct Encounter {
 		struct {
 			uint8_t stage;
 		} targets;
+		struct {
+			uint8_t const* scene;
+			uint16_t bank;
+		} cutscene;
 	};
-} Encounter;
+} __attribute__((__packed__)) Encounter;
 
 #define ENCOUNTER_FIGHT 0
 #define ENCOUNTER_TARGETS 1
+#define ENCOUNTER_CUTSCENE 2
 
 static Encounter const encounters[] = {
-	{ENCOUNTER_TARGETS, {{0}}},
-	{ENCOUNTER_FIGHT, {{0, 1, 0}}},
-	{ENCOUNTER_TARGETS, {{0}}},
-	{ENCOUNTER_FIGHT, {{1, 2, 0}}},
-	{ENCOUNTER_TARGETS, {{0}}},
-	{ENCOUNTER_FIGHT, {{2, 3, 0}}},
-	{ENCOUNTER_FIGHT, {{0, 4, 1}}},
+	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_bird_msg, (uint16_t)&cutscene_sinbad_story_bird_msg_bank}}},
+	{.type = ENCOUNTER_TARGETS, {.targets={0}}},
+	{.type = ENCOUNTER_FIGHT, {.fight={0, 1, 0}}},
+	{.type = ENCOUNTER_TARGETS, {.targets={0}}},
+	{.type = ENCOUNTER_FIGHT, {.fight={1, 2, 0}}},
+	{.type = ENCOUNTER_TARGETS, {.targets={0}}},
+	{.type = ENCOUNTER_FIGHT, {.fight={2, 3, 0}}},
+	{.type = ENCOUNTER_FIGHT, {.fight={0, 4, 1}}},
 };
 uint8_t const n_encounters = sizeof(encounters) / sizeof(Encounter);
 
@@ -49,6 +68,10 @@ static uint8_t const INPUT_NEXT = 2;
 ///////////////////////////////////////
 // Utility functions
 ///////////////////////////////////////
+
+static uint8_t screen_bank() {
+	return ptr_lsb(&ARCADE_MODE_SCREEN_BANK);
+}
 
 static uint8_t charset_bank() {
 	return ptr_lsb(&CHARSET_ALPHANUM_BANK_NUMBER);
@@ -105,6 +128,58 @@ static Encounter current_encounter() {
 	return encounters[*arcade_mode_current_encounter];
 }
 
+static void start_cutscene() {
+	// Retrieve cutscene info from distant bank
+	Encounter const encounter = current_encounter();
+	long_memcpy(arcade_mode_bg_mem_buffer, encounter.cutscene.bank, encounter.cutscene.scene, sizeof(Cutscene));
+	Cutscene const* cutscene = (Cutscene*)arcade_mode_bg_mem_buffer;
+
+	// Stop rendering
+	*nmi_processing = NMI_AUDIO;
+	*PPUCTRL = 0x90;
+	*PPUMASK = 0;
+	*ppuctrl_val = 0; //NOTE copying change_global_game_state, may have to be 0x90
+
+	reset_nt_buffers();
+	*scroll_x = 0;
+	*scroll_y = 0;
+
+	particle_handlers_reinit();
+
+	for (uint8_t i = 0; i != 255; ++i) {
+		oam_mirror[i] = 0xfe;
+	}
+
+	// Draw screen
+	long_construct_palettes_nt_buffer(encounter.cutscene.bank, cutscene->palette);
+	long_draw_zipped_nametable(encounter.cutscene.bank, cutscene->nametable);
+	long_draw_zipped_vram(encounter.cutscene.bank, cutscene->nametable_bot, 0x2800);
+	long_cpu_to_ppu_copy_tileset_background(encounter.cutscene.bank, cutscene->bg_tileset);
+	long_place_character_ppu_tiles_direct(0, 0);
+	long_cpu_to_ppu_copy_tileset(encounter.cutscene.bank, cutscene->sprites_tileset, 0);
+
+	// Reactivate rendering
+	*ppuctrl_val = 0x90;
+	*PPUCTRL = 0x90;
+	wait_next_frame();
+	*PPUMASK = 0x1e;
+
+	// Prepare cutscene state
+	cutscene_anims_enabled[0] = 0;
+	cutscene_anims_enabled[1] = 0;
+	cutscene_anims_enabled[2] = 0;
+	cutscene_anims_enabled[3] = 0;
+	*cutscene_autoscroll_h = 0;
+	*cutscene_autoscroll_v = 0;
+
+	// Call cinematic's function
+	wrap_trampoline(encounter.cutscene.bank, code_bank(), cutscene->logic);
+
+	// Change gamestate to ourself, cutscenes are exploited alongside other gamestates
+	++*arcade_mode_current_encounter;
+	wrap_change_global_game_state(GAME_STATE_ARCADE_MODE);
+}
+
 static void previous_screen() {
 	wrap_change_global_game_state(GAME_STATE_TITLE);
 }
@@ -123,12 +198,14 @@ static void next_screen() {
 		*config_player_b_character_palette = current_encounter().fight.skin;
 		*config_player_b_weapon_palette = current_encounter().fight.skin;
 		*config_player_b_character = current_encounter().fight.character;
-	}else {
+	}else if (*arcade_mode_stage_type == ENCOUNTER_TARGETS) {
 		*config_ai_level = 0;
 		*config_selected_stage = ptr_lsb(&stage_arcade_first_index) + current_encounter().targets.stage;
 		*config_player_b_character_palette = 0;
 		*config_player_b_weapon_palette = 0;
 		*config_player_b_character = 0;
+	}else {
+		start_cutscene();
 	}
 
 	wrap_change_global_game_state(GAME_STATE_INGAME);
@@ -172,7 +249,7 @@ static void display_timer() {
 
 void init_arcade_mode_extra() {
 	// Draw screen
-	//long_construct_palettes_nt_buffer(screen_bank(), &menu_mode_selection_palette);
+	long_construct_palettes_nt_buffer(screen_bank(), &arcade_mode_palette);
 	//long_draw_zipped_nametable(screen_bank(), &nametable_mode_selection);
 	//long_cpu_to_ppu_copy_tileset_background(tileset_bank(), &tileset_menu_mode_selection);
 	long_cpu_to_ppu_copy_charset(charset_bank(), &charset_alphanum, 0x1dc0, 1, 3);
@@ -224,29 +301,6 @@ void arcade_mode_tick_extra() {
 	}
 
 	// Story time
-	if (*arcade_mode_current_encounter == 0) {
-		set_text("you find a letter", 13, 4);
-		wait_input();
-		set_text("dear sinbad", 10, 4);
-		set_text("please join our party", 12, 4);
-		set_text("it will be fun   ", 13, 4);
-		yield();
-		set_text("beware of fighters on", 15, 4);
-		set_text("the road", 16, 4);
-		set_text("we have cake", 18, 4);
-		set_text("sincerly", 20, 4);
-		wait_input();
-		set_text("           ", 10, 4);
-		set_text("                     ", 12, 4);
-		set_text("                 ", 13, 4);
-		yield();
-		set_text("                     ", 15, 4);
-		set_text("        ", 16, 4);
-		set_text("            ", 18, 4);
-		set_text("        ", 20, 4);
-		yield();
-	}
-
 	if (*arcade_mode_current_encounter == n_encounters - 1) {
 		set_text("yeah", 12, 4);
 		set_text("here is the party", 13, 4);
@@ -281,23 +335,28 @@ void arcade_mode_tick_extra() {
 	// Display timer
 	display_timer();
 
-	// Display next encounter
-	if (current_encounter().type == ENCOUNTER_FIGHT) {
-		set_text("next encounter", 13, 10);
-		set_text(character_names[current_encounter().fight.character], 14, 12);
-		set_text(difficulty_names[current_encounter().fight.difficulty], 15, 12);
+	// Launch next encounter
+	if (current_encounter().type == ENCOUNTER_CUTSCENE) {
+		next_screen();
 	}else {
-		set_text("reach the exit", 13, 10);
-	}
-
-	// Check if a button is released and trigger correct action
-	while (true) {
-		switch(input()) {
-			case INPUT_BACK:
-				previous_screen(); break;
-			case INPUT_NEXT:
-				next_screen(); break;
+		// Display next encounter
+		if (current_encounter().type == ENCOUNTER_FIGHT) {
+			set_text("next encounter", 13, 10);
+			set_text(character_names[current_encounter().fight.character], 14, 12);
+			set_text(difficulty_names[current_encounter().fight.difficulty], 15, 12);
+		}else {
+			set_text("reach the exit", 13, 10);
 		}
-		yield();
+
+		// Check if a button is released and trigger correct action
+		while (true) {
+			switch(input()) {
+				case INPUT_BACK:
+					previous_screen(); break;
+				case INPUT_NEXT:
+					next_screen(); break;
+			}
+			yield();
+		}
 	}
 }
