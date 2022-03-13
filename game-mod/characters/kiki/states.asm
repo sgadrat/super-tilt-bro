@@ -247,11 +247,11 @@ kiki_netload:
 	lda esp_rx_buffer+14, y
 	sta oam_mirror+4+1, x
 
-	; Update buffer cursor
+	; Save buffer cursor
 	tya
 	clc
 	adc #15
-	tay
+	pha
 
 	; Ensure platform is correctly displayed
 	.(
@@ -275,6 +275,10 @@ kiki_netload:
 
 		end_place_platform:
 	.)
+
+	; Store updated buffer cursor
+	pla
+	tay
 
 	rts
 .)
