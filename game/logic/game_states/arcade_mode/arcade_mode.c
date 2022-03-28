@@ -198,12 +198,16 @@ static void next_screen() {
 		*config_player_b_character_palette = current_encounter().fight.skin;
 		*config_player_b_weapon_palette = current_encounter().fight.skin;
 		*config_player_b_character = current_encounter().fight.character;
+		*config_player_a_damage_visible = true;
+		*config_player_b_damage_visible = true;
 	}else if (*arcade_mode_stage_type == ENCOUNTER_TARGETS) {
 		*config_ai_level = 0;
 		*config_selected_stage = ptr_lsb(&stage_arcade_first_index) + current_encounter().targets.stage;
 		*config_player_b_character_palette = 0;
 		*config_player_b_weapon_palette = 0;
 		*config_player_b_character = 0;
+		*config_player_a_damage_visible = true;
+		*config_player_b_damage_visible = false;
 	}else {
 		start_cutscene();
 	}

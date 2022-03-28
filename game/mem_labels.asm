@@ -669,14 +669,16 @@ config_requested_player_a_palette = $0544
 config_requested_player_b_palette = $0545
 config_ingame_track = $0546
 config_ticks_per_frame = $0547
+config_player_a_damage_visible = $0548
+config_player_b_damage_visible = $0549
 
-current_frame_tick = $0548
+current_frame_tick = $054a
 
-arcade_mode_current_encounter = $0549
-arcade_mode_player_damages = $054a
-arcade_mode_counter_frames = $054b
-arcade_mode_counter_seconds = $054c
-arcade_mode_counter_minutes = $054d
+arcade_mode_current_encounter = $054b
+arcade_mode_player_damages = $054c
+arcade_mode_counter_frames = $054d
+arcade_mode_counter_seconds = $054e
+arcade_mode_counter_minutes = $054f
 
 ;$0580 to $05ff may be used by game states
 

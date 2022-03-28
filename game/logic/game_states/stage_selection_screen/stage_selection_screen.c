@@ -267,6 +267,8 @@ void stage_selection_screen_tick_extra() {
 								wrap_change_global_game_state_lite(GAME_STATE_NETPLAY_LAUNCH, &init_netplay_launch_screen);
 							}else {
 								fade_out();
+								*config_player_a_damage_visible = true;
+								*config_player_b_damage_visible = true;
 								wrap_change_global_game_state(GAME_STATE_INGAME);
 							}
 							break;

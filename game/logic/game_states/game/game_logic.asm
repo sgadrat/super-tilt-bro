@@ -1837,6 +1837,14 @@ write_player_damages:
 	lda player_a_damages, x
 	sta player_a_last_shown_damage, x
 
+	; Do not compute buffers if damage metter is hidden
+	.(
+		lda config_player_a_damage_visible, x
+		bne ok
+			rts
+		ok:
+	.)
+
 	; Save X
 	stx player_number
 
