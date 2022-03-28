@@ -223,6 +223,8 @@ ai_delay = $05d9
 ai_max_delay = $05da
 
 arcade_mode_stage_type = $05db
+arcade_mode_targets_x = $05dc ; $05dc to $05e5
+arcade_mode_targets_y = $05e6 ; $05e6 to $05ef
 
 ;
 ; Stage specific labels

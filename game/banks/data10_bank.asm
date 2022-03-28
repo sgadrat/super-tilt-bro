@@ -10,6 +10,12 @@ bank_data_cutscene_sinbad_story_bird_msg_begin:
 #echo arcade cutscene sinbad story bird size:
 #print *-bank_data_cutscene_sinbad_story_bird_msg_begin
 
+bank_data_stage_arcade_btt01_begin:
+#include "game/data/stages/arcade/btt01/stage_btt01.asm"
+#echo
+#echo stage arcade btt01 size:
+#print *-bank_data_stage_arcade_btt01_begin
+
 bank_data10_end:
 
 #echo

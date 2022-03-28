@@ -101,12 +101,13 @@ class Stage:
 			platform.check()
 
 		# Check targets
+		MAX_TARGETS = 10
+		ensure(len(self.targets) <= MAX_TARGETS, 'Stage has more targets than supported ({} while max is {})'.format(len(self.targets), MAX_TARGETS))
 		for target in self.targets:
 			target.check()
 
 	def serialize(self):
-		self.check()
-		return self.serialize_layout() + '\n' + self.serialize_jump_tables()
+		raise Exception('Obsolete, use stblib.asmformat.stages.stage_to_asm() instead')
 
 	def serialize_layout(self):
 		"""
@@ -131,7 +132,5 @@ class Stage:
 		"""
 		Serialize the jump tables entries for this stage using Super Tilt Bro's assembly format
 		"""
-		serialized = 'stages_init_routine:\nRAW_VECTOR(stage_generic_init) ; {}\n\n'.format(self.description)
-		serialized += 'stages_nametable:\nRAW_VECTOR({}_nametable) ; {}\n\n'.format(self.name, self.description)
-		serialized += 'stages_data:\nRAW_VECTOR({}_data) ; {}\n'.format(self.name, self.description)
-		return serialized
+		# It was unmaintained and actually unusable since jump tables need a list of all stages to be generated correctly
+		raise Exception('Obsolete, no replacement')

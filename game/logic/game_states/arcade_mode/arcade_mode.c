@@ -37,6 +37,9 @@ typedef struct Encounter {
 		} fight;
 		struct {
 			uint8_t stage;
+		} run;
+		struct {
+			uint8_t stage;
 		} targets;
 		struct {
 			uint8_t const* scene;
@@ -46,16 +49,17 @@ typedef struct Encounter {
 } __attribute__((__packed__)) Encounter;
 
 #define ENCOUNTER_FIGHT 0
-#define ENCOUNTER_TARGETS 1
-#define ENCOUNTER_CUTSCENE 2
+#define ENCOUNTER_RUN 1
+#define ENCOUNTER_TARGETS 2
+#define ENCOUNTER_CUTSCENE 3
 
 static Encounter const encounters[] = {
 	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_bird_msg, (uint16_t)&cutscene_sinbad_story_bird_msg_bank}}},
-	{.type = ENCOUNTER_TARGETS, {.targets={0}}},
+	{.type = ENCOUNTER_TARGETS, {.targets={1}}},
 	{.type = ENCOUNTER_FIGHT, {.fight={0, 1, 0}}},
-	{.type = ENCOUNTER_TARGETS, {.targets={0}}},
+	{.type = ENCOUNTER_RUN, {.run={0}}},
 	{.type = ENCOUNTER_FIGHT, {.fight={1, 2, 0}}},
-	{.type = ENCOUNTER_TARGETS, {.targets={0}}},
+	{.type = ENCOUNTER_RUN, {.run={0}}},
 	{.type = ENCOUNTER_FIGHT, {.fight={2, 3, 0}}},
 	{.type = ENCOUNTER_FIGHT, {.fight={0, 4, 1}}},
 };
@@ -200,9 +204,9 @@ static void next_screen() {
 		*config_player_b_character = current_encounter().fight.character;
 		*config_player_a_damage_visible = true;
 		*config_player_b_damage_visible = true;
-	}else if (*arcade_mode_stage_type == ENCOUNTER_TARGETS) {
+	}else if (*arcade_mode_stage_type == ENCOUNTER_RUN || *arcade_mode_stage_type == ENCOUNTER_TARGETS) {
 		*config_ai_level = 0;
-		*config_selected_stage = ptr_lsb(&stage_arcade_first_index) + current_encounter().targets.stage;
+		*config_selected_stage = ptr_lsb(&stage_arcade_first_index) + current_encounter().run.stage;
 		*config_player_b_character_palette = 0;
 		*config_player_b_weapon_palette = 0;
 		*config_player_b_character = 0;
@@ -348,8 +352,10 @@ void arcade_mode_tick_extra() {
 			set_text("next encounter", 13, 10);
 			set_text(character_names[current_encounter().fight.character], 14, 12);
 			set_text(difficulty_names[current_encounter().fight.difficulty], 15, 12);
-		}else {
+		}else if (current_encounter().type == ENCOUNTER_RUN) {
 			set_text("reach the exit", 13, 10);
+		}else {
+			set_text("break the targets", 12, 10);
 		}
 
 		// Check if a button is released and trigger correct action

@@ -1,7 +1,5 @@
 STAGE_ARCADE_TEST01_BANK_NUMBER = CURRENT_BANK_NUMBER
 
-#define ARCADE_EXIT(left,right,top,bot) .byt <left, >left, <right, >right, <top, >top, <bot, >bot
-
 stage_arcade_test01_data_header:
 ARCADE_EXIT(200, 208, 40, 48) ; left, right, top, bot
 stage_arcade_test01_data:
@@ -14,7 +12,7 @@ PLATFORM(232, $ff, $00, $ff) ; left, right, top, bot
 PLATFORM($00, $ff, $c8, $ff) ; left, right, top, bot
 
 ; Stage platforms
-PLATFORM( 64-8,  96, 144-16, $ff) ; left, right, top, bot
+PLATFORM(64-8, 96, 144-16, $ff) ; left, right, top, bot
 SMOOTH_PLATFORM(24-8, 40, 168-16) ; left, right, top
 SMOOTH_PLATFORM(144-8, 200, 176-16) ; left, right, top
 SMOOTH_PLATFORM(184-8, 224, 136-16) ; left, right, top

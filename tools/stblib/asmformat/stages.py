@@ -14,9 +14,10 @@ def stage_to_asm(stage):
 		serialized += '{}_data_header:\n'.format(stage.name)
 		for target in stage.targets:
 			serialized += 'ARCADE_TARGET({}, {})\n'.format(uintasm8(target.left), uintasm8(target.top))
-		serialized += 'ARCADE_NB_TARGETS({})\n'.format(len(stage.targets))
+		for x in range(len(stage.targets), 10):
+			serialized += 'ARCADE_TARGET($fe, $fe)\n'
 
 	# Common stage data
-	serialized += stage.serialize()
+	serialized += stage.serialize_layout()
 
 	return serialized

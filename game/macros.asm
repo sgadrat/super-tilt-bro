@@ -21,6 +21,12 @@
 #include "game/data/stages/stages-macros.asm"
 
 ;
+; Game mode specific macros
+;
+
+#include "game/data/arcade/arcade-macros.asm"
+
+;
 ; PAL to NTSC
 ;
 
