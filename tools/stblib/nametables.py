@@ -67,7 +67,7 @@ class Nametable:
 		self.attributes[line][byte][index] = attribute
 
 	def serialize(self):
-		serialized = 'nametable_{}:\n'.format(self.name)
+		serialized = '{}:\n'.format(self.name)
 
 		compressed = self.get_compressed_tilemap()
 		serialized += '.byt '
@@ -97,31 +97,44 @@ class Nametable:
 				position -= 32
 		serialized += '\n'
 
-		serialized += 'nametable_{}_attributes:\n'.format(self.name)
-		for attributes_line in self.attributes:
-			serialized += '.byt '
-			for attributes_byte in attributes_line:
-				attribute_int = (attributes_byte[0] << 6) + (attributes_byte[1] << 4) + (attributes_byte[2] << 2) + attributes_byte[3]
-				serialized += '{}, '.format(uintasm8(attribute_int))
-			serialized = serialized.rstrip(', ')
-			serialized += '\n'
+		serialized += '; Attributes\n'
+		serialized += '.byt '
+		compressed = self.get_compressed_attributes()
+		for opcode in compressed:
+			serialized += opcode.serialize().rstrip()
+		serialized = serialized.rstrip(', ')
+		serialized += '\n'
 
-		serialized += 'nametable_{}_end:\n.byt ZIPNT_END\n'.format(self.name)
+		serialized += '; End\n.byt ZIPNT_END\n'
 
 		return serialized
 
 	def get_compressed_tilemap(self):
+		uncompressed = []
+		for tile_line in self.tilemap:
+			uncompressed += tile_line
+		return self.get_compressed_bytes(uncompressed)
+
+	def get_compressed_attributes(self):
+		uncompressed = []
+		for attributes_line in self.attributes:
+			for attributes_byte in attributes_line:
+				attribute_int = (attributes_byte[0] << 6) + (attributes_byte[1] << 4) + (attributes_byte[2] << 2) + attributes_byte[3]
+				uncompressed.append(attribute_int)
+		return self.get_compressed_bytes(uncompressed)
+
+	def get_compressed_bytes(self, values):
 		compressed = []
 		nb_zero = 0
-		for tile_line in self.tilemap:
-			for tile in tile_line:
-				if tile == 0:
-					nb_zero += 1
-				else:
-					if nb_zero > 0:
-						compressed.append(Nametable.BytecodeZeros(nb_zero))
-						nb_zero = 0
-					compressed.append(Nametable.BytecodeTile(tile))
+		for value in values:
+			if value == 0:
+				nb_zero += 1
+			else:
+				if nb_zero > 0:
+					compressed.append(Nametable.BytecodeZeros(nb_zero))
+					nb_zero = 0
+				compressed.append(Nametable.BytecodeTile(value))
+
 		if nb_zero > 0:
 			compressed.append(Nametable.BytecodeZeros(nb_zero))
 
