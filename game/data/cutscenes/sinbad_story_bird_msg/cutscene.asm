@@ -479,7 +479,19 @@ play_frames:
 		sta extra_tmpfield4
 		jsr trampoline
 
+		jsr fetch_controllers
 		jsr reset_nt_buffers
+
+		; Stop cutscene if the player presses start
+		lda controller_a_btns
+		bne ok
+			lda controller_a_last_frame_btns
+			cmp #CONTROLLER_BTN_START
+			bne ok
+				pla
+				lda #0
+				rts
+		ok:
 
 		; Loop
 		pla
@@ -489,12 +501,16 @@ play_frames:
 		jmp play_frames_loop
 
 	end:
+	lda #1
 	rts
 .)
 
 #define PLAY_FRAMES(n) .( :\
 	lda #n ;TODO adapt to ntsc/pal :\
 	jsr play_frames :\
+	bne ok :\
+		rts :\
+	ok:\
 .)
 
 set_screen:
