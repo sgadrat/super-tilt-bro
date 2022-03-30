@@ -412,11 +412,15 @@ FIRST_TARGET_SPRITE = 32
 				bpl check_one_target
 
 			no_target_found:
-				; Come back to arcade mode
-				lda #0
-				sta gameover_winner
-				jmp game_mode_arcade_gameover_hook
-				; No return
+				; Start slowdown that will come back to arcade mode after that
+				lda slow_down_counter
+				bne slowdown_already_set
+					lda #0
+					sta gameover_winner
+					lda #SLOWDOWN_TIME
+					sta slow_down_counter
+				slowdown_already_set:
+				;jmp ok ; useless, "found_a_target" does nothing
 
 			found_a_target:
 				; Nothing to do, just continue as usual
