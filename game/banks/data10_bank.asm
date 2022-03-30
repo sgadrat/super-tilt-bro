@@ -16,6 +16,12 @@ bank_data_stage_arcade_btt01_begin:
 #echo stage arcade btt01 size:
 #print *-bank_data_stage_arcade_btt01_begin
 
+bank_data_arcade_btt_sprites_begin:
+#include "game/data/arcade/btt_sprites_tileset.asm"
+#echo
+#echo arcade btt sprites size:
+#print *-bank_data_arcade_btt_sprites_begin
+
 bank_data10_end:
 
 #echo

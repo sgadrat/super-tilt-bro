@@ -1839,7 +1839,7 @@ write_player_damages:
 
 	; Do not compute buffers if damage metter is hidden
 	.(
-		lda config_player_a_damage_visible, x
+		lda config_player_a_present, x
 		bne ok
 			rts
 		ok:
@@ -1996,9 +1996,12 @@ write_player_damages:
 player_effects:
 .(
 	.(
-		jsr blinking
-		jsr particle_directional_indicator_tick
-		jsr particle_death_tick
+		lda config_player_a_present, x
+		beq end
+			jsr blinking
+			jsr particle_directional_indicator_tick
+			jsr particle_death_tick
+		end:
 		rts
 	.)
 

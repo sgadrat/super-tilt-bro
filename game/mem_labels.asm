@@ -671,8 +671,8 @@ config_requested_player_a_palette = $0544
 config_requested_player_b_palette = $0545
 config_ingame_track = $0546
 config_ticks_per_frame = $0547
-config_player_a_damage_visible = $0548
-config_player_b_damage_visible = $0549
+config_player_a_present = $0548 ; 0 - player is absent, and should not impact the screen, 1 - player is there as usual
+config_player_b_present = $0549 ; 0 - player is absent, and should not impact the screen, 1 - player is there as usual
 
 current_frame_tick = $054a
 

@@ -48,10 +48,37 @@ FIRST_TARGET_SPRITE = 32
 
 	common:
 
+	; Restore player's damage
 	lda arcade_mode_player_damages
 	sta player_a_damages
 
-	jmp game_mode_local_init ;HACK local mode only handle AI, and we want AI too
+	; Load Break The Targets spritesheet
+	lda #<arcade_btt_sprites_tileset
+	sta tmpfield1
+	lda #>arcade_btt_sprites_tileset
+	sta tmpfield2
+
+	lda PPUSTATUS
+	lda #$0c
+	sta PPUADDR
+	lda #$00
+	sta PPUADDR
+
+	lda #<cpu_to_ppu_copy_tileset
+	sta extra_tmpfield1
+	lda #>cpu_to_ppu_copy_tileset
+	sta extra_tmpfield2
+	lda #ARCADE_BTT_SPRITES_TILESET_BANK_NUMBER
+	sta extra_tmpfield3
+	lda #CURRENT_BANK_NUMBER
+	sta extra_tmpfield4
+
+	jsr trampoline
+
+	;HACK Call local mode init because it only handles AI, and we want AI too
+	jmp game_mode_local_init
+
+	;rts ; Useless, jump to subroutine
 
 	break_the_targets_init:
 	.(
@@ -88,6 +115,37 @@ FIRST_TARGET_SPRITE = 32
 		ldy #0
 		ldx #N_TARGETS-1
 		jsr trampoline
+
+		; Set tile and attribute bytes of target sprites
+		ldx #N_TARGETS-1
+		ldy #FIRST_TARGET_SPRITE*4
+		init_one_target:
+			lda #TILE_ARCADE_BTT_SPRITES_TILESET_TARGET
+			sta oam_mirror+1, y
+			lda #2
+			sta oam_mirror+2, y
+
+			iny
+			iny
+			iny
+			iny
+
+			dex
+			bpl init_one_target
+
+		; Load targets palette
+		lda PPUSTATUS
+		lda #$3f
+		sta PPUADDR
+		lda #$19
+		sta PPUADDR
+
+		lda #$0f
+		sta PPUDATA
+		lda #$16
+		sta PPUDATA
+		lda #$20
+		sta PPUDATA
 
 		rts
 	.)
