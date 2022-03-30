@@ -15,11 +15,20 @@ class Platform:
 
 	def serialize(self):
 		"""
-		Serialize platform in a string using Super Tilt Bro's assembly format
+		Serialize platform in a string using Super Tilt Bro's assembly format.
 		"""
+		# Convert logical platform coordinates to engine's quirks compatible coordinates
+		left = self.left-8
+		right = self.right+1 # +1 because the last pixel is passable, causing "walled" state
+		top = self.top-16-1 # -1 to compensate for sprites being displayed one pixel bellow their position
+		bottom = self.bottom+1-1 # -1 = passable last pixel // +1 = sprites displayed below their position
+
 		# Hack horizontal values are caped to [1, 254] instead of [0, 255] to avoid a bug in STB engine
 		return 'PLATFORM({}, {}, {}, {}) ; left, right, top, bot\n'.format(
-			uintasm8(max(1, self.left-7)), uintasm8(min(254, self.right)), uintasm8(max(0, self.top-15)), uintasm8(self.bottom)
+			uintasm8(max(1, left)),
+			uintasm8(min(254, right)),
+			uintasm8(max(0, top)),
+			uintasm8(bottom)
 		)
 
 	def check(self):
