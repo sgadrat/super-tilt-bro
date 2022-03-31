@@ -49,6 +49,12 @@ bank_data_arcade_stage_test01_begin:
 #echo arcade stage test01 size:
 #print *-bank_data_arcade_stage_test01_begin
 
+bank_data_arcade_anims_begin:
+#include "game/data/arcade/animations/animations.asm"
+#echo
+#echo arcade animations size:
+#print *-bank_data_arcade_anims_begin
+
 bank_data09_end:
 
 #echo

@@ -7,6 +7,9 @@ ENCOUNTER_CUTSCENE = 3
 N_TARGETS = 10
 FIRST_TARGET_SPRITE = 32
 
+ARCADE_TARGET_BREAK_FIRST_SPRITE = FIRST_TARGET_SPRITE+N_TARGETS
+ARCADE_TARGET_BREAK_LAST_SPRITE = ARCADE_TARGET_BREAK_FIRST_SPRITE+8
+
 &game_mode_arcade_init_hook:
 .(
 	lda arcade_mode_stage_type
@@ -146,6 +149,10 @@ FIRST_TARGET_SPRITE = 32
 		sta PPUDATA
 		lda #$20
 		sta PPUDATA
+
+		; Deactivate target break animation
+		lda #0
+		sta arcade_mode_target_break_animation_timer
 
 		rts
 	.)
@@ -365,10 +372,40 @@ FIRST_TARGET_SPRITE = 32
 				jsr boxes_overlap
 				bne end_collision
 					; Collision between player's hitbox and target's hurtbox, break the target
+
+					; Hide target's sprite
 					ldx current_target
 					lda #$fe
 					sta arcade_mode_targets_y, x
-					;TODO animation and sound
+
+					; Initialize target breaking animation
+					lda #<arcade_mode_target_break_animation
+					sta tmpfield11
+					lda #>arcade_mode_target_break_animation
+					sta tmpfield12
+					lda #<arcade_mode_target_break_anim
+					sta tmpfield13
+					lda #>arcade_mode_target_break_anim
+					sta tmpfield14
+					jsr animation_init_state
+
+					lda #ARCADE_TARGET_BREAK_FIRST_SPRITE
+					sta arcade_mode_target_break_animation+ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM
+					lda #ARCADE_TARGET_BREAK_LAST_SPRITE
+					sta arcade_mode_target_break_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+					lda target_left_pixel
+					sta arcade_mode_target_break_animation+ANIMATION_STATE_OFFSET_X_LSB
+					lda target_top_pixel
+					sta arcade_mode_target_break_animation+ANIMATION_STATE_OFFSET_Y_LSB
+
+					lda #arcade_mode_target_break_anim_dur_pal
+					ldy system_index
+					beq duration_loaded:
+						lda #arcade_mode_target_break_anim_dur_ntsc
+					duration_loaded:
+					sta arcade_mode_target_break_animation_timer
+
+					;TODO Sound effect
 				end_collision:
 
 				; Loop
@@ -424,6 +461,54 @@ FIRST_TARGET_SPRITE = 32
 
 			found_a_target:
 				; Nothing to do, just continue as usual
+		.)
+
+		; Tick target break animation
+		.(
+			lda arcade_mode_target_break_animation_timer
+			beq hide_sprites
+
+				tick_anim:
+					; Update animation's timer
+					dec arcade_mode_target_break_animation_timer
+
+					; Update animation
+					lda #<arcade_mode_target_break_animation
+					sta tmpfield11
+					lda #>arcade_mode_target_break_animation
+					sta tmpfield12
+					lda #0
+					sta player_number
+					TRAMPOLINE(animation_draw, #ARCADE_MODE_ANIMATIONS_BANK, #CURRENT_BANK_NUMBER)
+					TRAMPOLINE(animation_tick, #ARCADE_MODE_ANIMATIONS_BANK, #CURRENT_BANK_NUMBER)
+
+					jmp ok
+
+				hide_sprites:
+					; Change Y position of sprites reserved for the animation to be off-screen
+					ldx #ARCADE_TARGET_BREAK_FIRST_SPRITE
+					txa
+					asl
+					asl
+					tay
+
+					hide_one_sprite:
+						lda #$fe
+						sta oam_mirror+0, y
+
+						cpx #ARCADE_TARGET_BREAK_LAST_SPRITE
+						beq ok
+
+						iny
+						iny
+						iny
+						iny
+
+						inx
+
+						jmp hide_one_sprite
+
+			ok:
 		.)
 
 		rts

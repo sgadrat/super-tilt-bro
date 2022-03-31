@@ -15,6 +15,23 @@
 #define AI_ACTION_END_STEPS .byt AI_STEP_FINAL
 
 ;
+; Utility macros
+;
+
+; Call a routine with another active bank
+#define TRAMPOLINE(routine,call_bank,return_bank) .( :\
+	lda #<routine :\
+	sta extra_tmpfield1 :\
+	lda #>routine :\
+	sta extra_tmpfield2 :\
+	lda call_bank :\
+	sta extra_tmpfield3 :\
+	lda return_bank :\
+	sta extra_tmpfield4 :\
+	jsr trampoline :\
+.)
+
+;
 ; Stage specific macros
 ;
 
