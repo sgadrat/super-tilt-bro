@@ -405,7 +405,9 @@ ARCADE_TARGET_BREAK_LAST_SPRITE = ARCADE_TARGET_BREAK_FIRST_SPRITE+8
 					duration_loaded:
 					sta arcade_mode_target_break_animation_timer
 
-					;TODO Sound effect
+					; Sound effect
+					jsr audio_play_target_break
+
 				end_collision:
 
 				; Loop

@@ -233,3 +233,12 @@ sinbad_audio_play_jab3_land:
 	jmp audio_play_sfx_from_common_bank
 	;rts ; useless, jump to subroutine
 .)
+
+audio_play_target_break:
+.(
+	audio_preserve_x_y
+	ldy #<sfx_target_break
+	ldx #>sfx_target_break
+	jmp audio_play_sfx_from_common_bank
+	;rts ; useless, jump to subroutine
+.)
