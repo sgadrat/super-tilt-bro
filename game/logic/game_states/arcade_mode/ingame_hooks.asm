@@ -10,6 +10,34 @@ FIRST_TARGET_SPRITE = 32
 ARCADE_TARGET_BREAK_FIRST_SPRITE = FIRST_TARGET_SPRITE+N_TARGETS
 ARCADE_TARGET_BREAK_LAST_SPRITE = ARCADE_TARGET_BREAK_FIRST_SPRITE+8
 
+ARCADE_RUN_TELEPORT_FIRST_SPRITE = ARCADE_TARGET_BREAK_FIRST_SPRITE
+ARCADE_RUN_TELEPORT_LAST_SPRITE = ARCADE_TARGET_BREAK_LAST_SPRITE
+ARCADE_RUN_TELEPORT_TIMER_INACTIVE = $ff
+
+hide_player_b:
+.(
+	ldx #1
+	ldy config_player_b_character
+
+	lda #PLAYER_STATE_INNEXISTANT
+	sta player_b_state
+	lda characters_start_routines_table_lsb, y
+	sta tmpfield1
+	lda characters_start_routines_table_msb, y
+	sta tmpfield2
+
+	lda #<player_state_action
+	sta extra_tmpfield1
+	lda #>player_state_action
+	sta extra_tmpfield2
+	lda characters_bank_number, y
+	sta extra_tmpfield3
+	lda #CURRENT_BANK_NUMBER
+	sta extra_tmpfield4
+	jmp trampoline
+	;rts ; useless, jump to subroutine
+.)
+
 &game_mode_arcade_init_hook:
 .(
 	lda arcade_mode_stage_type
@@ -18,31 +46,17 @@ ARCADE_TARGET_BREAK_LAST_SPRITE = ARCADE_TARGET_BREAK_FIRST_SPRITE+8
 	beq reach_the_exit
 
 		break_the_targets:
+			jsr hide_player_b
 			jsr break_the_targets_init
-			;jmp common ; fallthrough to hide the second character
+			jmp common
 
 		reach_the_exit:
 			; Hide second character
-			ldx #1
-			ldy config_player_b_character
+			jsr hide_player_b
 
-			lda #PLAYER_STATE_INNEXISTANT
-			sta player_b_state
-			ldy config_player_b_character
-			lda characters_start_routines_table_lsb, y
-			sta tmpfield1
-			lda characters_start_routines_table_msb, y
-			sta tmpfield2
-
-			lda #<player_state_action
-			sta extra_tmpfield1
-			lda #>player_state_action
-			sta extra_tmpfield2
-			lda characters_bank_number, y
-			sta extra_tmpfield3
-			lda #CURRENT_BANK_NUMBER
-			sta extra_tmpfield4
-			jsr trampoline
+			; Disable teleport timer
+			lda #ARCADE_RUN_TELEPORT_TIMER_INACTIVE
+			sta arcade_mode_run_teleport_timer
 
 			;jmp common ; useless, "fight" is empty
 
@@ -170,7 +184,7 @@ ARCADE_TARGET_BREAK_LAST_SPRITE = ARCADE_TARGET_BREAK_FIRST_SPRITE+8
 			jmp common
 
 		reach_the_exit:
-			jsr is_player_on_exit
+			jsr reach_the_exit_tick
 			;jmp common ; useless, "fight" is empty
 
 		fight:
@@ -204,6 +218,64 @@ ARCADE_TARGET_BREAK_LAST_SPRITE = ARCADE_TARGET_BREAK_FIRST_SPRITE+8
 	;HACK local mode only handle AI, and we want AI too
 	jmp game_mode_local_pre_update
 	;rts ; useless, jump to subroutine
+
+	reach_the_exit_tick:
+	.(
+		; Select routine
+		;   is_player_on_exit - is normal game behaviour
+		;   reach_the_exit_end - display teleport animation before exiting
+		lda arcade_mode_run_teleport_timer
+		cmp #ARCADE_RUN_TELEPORT_TIMER_INACTIVE
+		beq is_player_on_exit
+		;Fallthrough to reach_the_exit_end
+	.)
+
+	reach_the_exit_end:
+	.(
+		; Tick teleport animation
+		lda #<arcade_mode_run_teleport_animation
+		sta tmpfield11
+		lda #>arcade_mode_run_teleport_animation
+		sta tmpfield12
+		lda #0
+		sta player_number
+		TRAMPOLINE(animation_draw, #ARCADE_MODE_ANIMATIONS_BANK, #CURRENT_BANK_NUMBER)
+		TRAMPOLINE(animation_tick, #ARCADE_MODE_ANIMATIONS_BANK, #CURRENT_BANK_NUMBER)
+
+		; Move teleport beam
+		PORTAL_DURATION = 8 ;TODO ntsc/pal compat
+		lda arcade_mode_run_teleport_timer
+		cmp #PORTAL_DURATION
+		bcc move_ok
+			lda arcade_mode_run_teleport_animation+ANIMATION_STATE_OFFSET_Y_LSB
+			sec
+			sbc #5
+			sta arcade_mode_run_teleport_animation+ANIMATION_STATE_OFFSET_Y_LSB
+			lda arcade_mode_run_teleport_animation+ANIMATION_STATE_OFFSET_Y_MSB
+			sbc #0
+			sta arcade_mode_run_teleport_animation+ANIMATION_STATE_OFFSET_Y_MSB
+		move_ok:
+
+		; Inc teleport counter
+		inc arcade_mode_run_teleport_timer
+
+		; Return to arcade mode if teleport beam is over the screen
+		lda arcade_mode_run_teleport_animation+ANIMATION_STATE_OFFSET_Y_MSB
+		bpl still_on_screen
+			lda arcade_mode_run_teleport_animation+ANIMATION_STATE_OFFSET_Y_LSB
+			cmp #230
+			bcs still_on_screen
+
+				; Directly call gameover to come back to arcade state
+				lda #0
+				sta gameover_winner
+				jmp game_mode_arcade_gameover_hook
+				; No return
+
+		still_on_screen:
+
+		rts
+	.)
 
 	is_player_on_exit:
 	.(
@@ -275,11 +347,61 @@ ARCADE_TARGET_BREAK_LAST_SPRITE = ARCADE_TARGET_BREAK_FIRST_SPRITE+8
 		jsr boxes_overlap
 		bne end
 
-			; Directly call gameover to come back to arcade state
-			lda #0
-			sta gameover_winner
-			jmp game_mode_arcade_gameover_hook
-			; No return
+			; Hide player, and replace it by teleport animation
+			.(
+				; Save player's position
+				lda player_a_x
+				pha
+				lda player_a_x_screen
+				pha
+				lda player_a_y
+				pha
+				lda player_a_y_screen
+				pha
+
+				; Change player to inactive state
+				ldx #0
+				ldy config_player_a_character
+
+				lda #PLAYER_STATE_INNEXISTANT
+				sta player_a_state
+				lda characters_start_routines_table_lsb, y
+				sta tmpfield1
+				lda characters_start_routines_table_msb, y
+				sta tmpfield2
+				TRAMPOLINE(player_state_action, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
+
+				; Place teleport animation
+				lda #<arcade_mode_run_teleport_animation
+				sta tmpfield11
+				lda #>arcade_mode_run_teleport_animation
+				sta tmpfield12
+				lda #<arcade_mode_teleport_anim
+				sta tmpfield13
+				lda #>arcade_mode_teleport_anim
+				sta tmpfield14
+				jsr animation_init_state
+
+				lda #ARCADE_RUN_TELEPORT_FIRST_SPRITE
+				sta arcade_mode_run_teleport_animation+ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM
+				lda #ARCADE_RUN_TELEPORT_LAST_SPRITE
+				sta arcade_mode_run_teleport_animation+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM
+				pla
+				sta arcade_mode_run_teleport_animation+ANIMATION_STATE_OFFSET_Y_MSB
+				pla
+				sta arcade_mode_run_teleport_animation+ANIMATION_STATE_OFFSET_Y_LSB
+				pla
+				sta arcade_mode_run_teleport_animation+ANIMATION_STATE_OFFSET_X_MSB
+				pla
+				sta arcade_mode_run_teleport_animation+ANIMATION_STATE_OFFSET_X_LSB
+
+				; Set teleport counter to zero
+				lda #0
+				sta arcade_mode_run_teleport_timer
+
+				; Sound effect
+				jsr audio_play_teleport
+			.)
 
 		end:
 		rts

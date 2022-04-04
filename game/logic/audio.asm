@@ -242,3 +242,12 @@ audio_play_target_break:
 	jmp audio_play_sfx_from_common_bank
 	;rts ; useless, jump to subroutine
 .)
+
+audio_play_teleport:
+.(
+	audio_preserve_x_y
+	ldy #<sfx_teleport
+	ldx #>sfx_teleport
+	jmp audio_play_sfx_from_common_bank
+	;rts ; useless, jump to subroutine
+.)

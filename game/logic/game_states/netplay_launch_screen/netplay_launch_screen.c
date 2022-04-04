@@ -502,8 +502,8 @@ static void got_start_game_msg() {
 	}
 
 	// Go ingame
-	*config_player_a_damage_visible = true;
-	*config_player_b_damage_visible = true;
+	*config_player_a_present = true;
+	*config_player_b_present = true;
 	wrap_change_global_game_state(GAME_STATE_INGAME);
 }
 

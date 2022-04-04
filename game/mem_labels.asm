@@ -223,10 +223,14 @@ ai_delay = $05d9
 ai_max_delay = $05da
 
 arcade_mode_stage_type = $05db
+
 arcade_mode_targets_x = $05dc ; $05dc to $05e5
 arcade_mode_targets_y = $05e6 ; $05e6 to $05ef
 arcade_mode_target_break_animation = $05f0 ; $05f0 to $05fc
 arcade_mode_target_break_animation_timer = $05fd
+
+arcade_mode_run_teleport_animation = $05f0 ; $05f0 to $05fc
+arcade_mode_run_teleport_timer = $05fd
 
 ;
 ; Stage specific labels
