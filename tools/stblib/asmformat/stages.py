@@ -9,15 +9,25 @@ def stage_to_asm(stage):
 	"""
 	serialized = ''
 
-	# Header specific to Break th Target mode
-	if len(stage.targets) != 0:
+	# Header specific to Break the Target mode
+	if len(stage.targets) != 0 or stage.exit is not None:
 		serialized += '{}_data_header:\n'.format(stage.name)
-		for target in stage.targets:
-			serialized += 'ARCADE_TARGET({}, {})\n'.format(uintasm8(target.left), uintasm8(target.top))
-		for x in range(len(stage.targets), 10):
-			serialized += 'ARCADE_TARGET($fe, $fe)\n'
+
+		if len(stage.targets) != 0:
+			for target in stage.targets:
+				serialized += 'ARCADE_TARGET({}, {})\n'.format(uintasm8(target.left), uintasm8(target.top))
+			for x in range(len(stage.targets), 10):
+				serialized += 'ARCADE_TARGET($fe, $fe)\n'
+
+		if stage.exit is not None:
+			serialized += exit_to_asm(stage.exit)
 
 	# Common stage data
 	serialized += stage.serialize_layout()
 
 	return serialized
+
+def exit_to_asm(ex):
+	return 'ARCADE_EXIT({}, {}, {}, {}) ; left, right, top, bot\n'.format(
+		intasm16(ex.left), intasm16(ex.right), intasm16(ex.top), intasm16(ex.bottom)
+	)

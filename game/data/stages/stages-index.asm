@@ -5,7 +5,7 @@ RAW_VECTOR(stage_generic_init) ; Shelf
 RAW_VECTOR(stage_gem_init) ; Gem
 
 stage_arcade_first_index = (* - stages_init_routine) / 2
-RAW_VECTOR(stage_generic_init) ; arcade test01
+RAW_VECTOR(stage_generic_init) ; arcade run01
 RAW_VECTOR(stage_generic_init) ; arcade btt01
 
 stages_tick_routine:
@@ -14,7 +14,7 @@ RAW_VECTOR(stage_pit_tick) ; Pit
 RAW_VECTOR(dummy_routine) ; Shelf
 RAW_VECTOR(stage_gem_tick) ; Gem
 
-RAW_VECTOR(dummy_routine) ; arcade test01
+RAW_VECTOR(dummy_routine) ; arcade run01
 RAW_VECTOR(dummy_routine) ; arcade btt01
 
 stages_freezed_tick_routine_lsb:
@@ -23,7 +23,7 @@ stages_freezed_tick_routine_lsb:
 .byt <dummy_routine ; Shelf
 .byt <stage_gem_freezed_tick ; Gem
 
-.byt <dummy_routine ; arcade test01
+.byt <dummy_routine ; arcade run01
 .byt <dummy_routine ; arcade btt01
 
 stages_freezed_tick_routine_msb:
@@ -32,7 +32,7 @@ stages_freezed_tick_routine_msb:
 .byt >dummy_routine ; Shelf
 .byt >stage_gem_freezed_tick ; Gem
 
-.byt >dummy_routine ; arcade test01
+.byt >dummy_routine ; arcade run01
 .byt >dummy_routine ; arcade btt01
 
 stages_nametable:
@@ -41,7 +41,7 @@ RAW_VECTOR(nametable_stage_pit) ; Pit
 RAW_VECTOR(nametable_stage_shelf) ; Shelf
 RAW_VECTOR(nametable_stage_gem) ; Gem
 
-RAW_VECTOR(stage_arcade_test01_nametable)
+RAW_VECTOR(stage_arcade_run01_nametable)
 RAW_VECTOR(stage_btt01_nametable)
 
 stage_palettes:
@@ -50,7 +50,7 @@ RAW_VECTOR(stage_pit_palette_data) ; Pit
 RAW_VECTOR(stage_shelf_palette_data) ; Shelf
 RAW_VECTOR(stage_gem_palette_data) ; Gem
 
-RAW_VECTOR(stage_arcade_test01_palette_data)
+RAW_VECTOR(stage_arcade_run01_palette_data)
 RAW_VECTOR(stage_btt01_palette_data)
 
 stages_data:
@@ -59,7 +59,7 @@ RAW_VECTOR(stage_pit_data) ; Pit
 RAW_VECTOR(stage_shelf_data) ; Shelf
 RAW_VECTOR(stage_gem_data) ; Gem
 
-RAW_VECTOR(stage_arcade_test01_data)
+RAW_VECTOR(stage_arcade_run01_data)
 RAW_VECTOR(stage_btt01_data)
 
 stages_illustration:
@@ -95,7 +95,7 @@ stages_bank:
 .byt STAGE_SHELF_BANK_NUMBER ; Shelf
 .byt STAGE_GEM_BANK_NUMBER ; Gem
 
-.byt STAGE_ARCADE_TEST01_BANK_NUMBER
+.byt STAGE_ARCADE_RUN01_BANK_NUMBER
 .byt STAGE_BTT01_BANK_NUMBER
 
 stages_tileset_lsb:
@@ -104,7 +104,7 @@ stages_tileset_lsb:
 .byt <tileset_ruins ; Shelf
 .byt <tileset_magma ; Gem
 
-.byt <arcade_test_stage_tileset ; arcade test01
+.byt <arcade_test_stage_tileset ; arcade run01
 .byt <arcade_test_stage_tileset ; arcade btt01
 
 stages_tileset_msb:
@@ -113,7 +113,7 @@ stages_tileset_msb:
 .byt >tileset_ruins ; Shelf
 .byt >tileset_magma ; Gem
 
-.byt >arcade_test_stage_tileset ; arcade test01
+.byt >arcade_test_stage_tileset ; arcade run01
 .byt >arcade_test_stage_tileset ; arcade btt01
 
 stages_tileset_bank:
@@ -122,5 +122,5 @@ stages_tileset_bank:
 .byt TILESET_RUINS_BANK_NUMBER ; Shelf
 .byt TILESET_MAGMA_BANK_NUMBER ; Gem
 
-.byt ARCADE_TEST_STAGE_TILESET_BANK_NUMBER ; arcade test01
+.byt ARCADE_TEST_STAGE_TILESET_BANK_NUMBER ; arcade run01
 .byt ARCADE_TEST_STAGE_TILESET_BANK_NUMBER ; arcade btt01

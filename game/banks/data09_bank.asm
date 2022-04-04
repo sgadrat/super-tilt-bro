@@ -42,12 +42,17 @@ bank_data_arcade_mode_screen_begin:
 #echo arcade mode screen size:
 #print *-bank_data_arcade_mode_screen_begin
 
-bank_data_arcade_stage_test01_begin:
-#include "game/data/stages/arcade/test01/test01.asm"
+bank_data_arcade_stage_run01_begin:
+#include "game/data/stages/arcade/run01/stage_arcade_run01.asm"
+#echo
+#echo arcade stage run01 size:
+#print *-bank_data_arcade_stage_run01_begin
+
+bank_data_arcade_background_begin:
 #include "game/data/stages/arcade/test_tileset.asm"
 #echo
-#echo arcade stage test01 size:
-#print *-bank_data_arcade_stage_test01_begin
+#echo arcade background tileset size:
+#print *-bank_data_arcade_background_begin
 
 bank_data_arcade_anims_begin:
 #include "game/data/arcade/animations/animations.asm"

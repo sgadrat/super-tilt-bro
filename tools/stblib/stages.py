@@ -6,6 +6,25 @@ import stblib
 
 RE_STAGE_NAME = re.compile('^[a-z_][a-z0-9_]*$')
 
+class Exit:
+	def __init__(self, left = 0, right = 8, top = 0, bottom = 8):
+		self.left = left
+		self.right = right
+		self.top = top
+		self.bottom = bottom
+
+	def check(self):
+		coord = '(left={} right={} top={}, bottom={})'.format(self.left, self.right, self.top, self.bottom)
+
+		# Check that rectangle has positive width/height
+		ensure(self.right > self.left, 'invalid exit area {}: thinner than one pixel'.format(coord))
+		ensure(self.bottom > self.top, 'invalid exit area {}: smaller than one pixel'.format(coord))
+
+		# Check that rectange is in the game coordinates
+		for component in ['left', 'right', 'top', 'bottom']:
+			ensure(getattr(self, component) >= -0x8000, 'invalid exit position {}: {} is out of game region'.format(coord, component))
+			ensure(getattr(self, component) <= 0x7fff, 'invalid exit position {}: {} is out of game region'.format(coord, component))
+
 class Platform:
 	def __init__(self, left = 0, right = 16, top = 0, bottom = 16):
 		self.left = left
@@ -109,11 +128,18 @@ class Stage:
 		for platform in self.platforms:
 			platform.check()
 
+		# Check that we don't mix incompatible elements
+		ensure(len(self.targets) == 0 or self.exit is None, 'Impossible stage configuration: exit and targets cannot be in the same stage')
+
 		# Check targets
 		MAX_TARGETS = 10
 		ensure(len(self.targets) <= MAX_TARGETS, 'Stage has more targets than supported ({} while max is {})'.format(len(self.targets), MAX_TARGETS))
 		for target in self.targets:
 			target.check()
+
+		# Check exit
+		if self.exit is not None:
+			self.exit.check()
 
 	def serialize(self):
 		raise Exception('Obsolete, use stblib.asmformat.stages.stage_to_asm() instead')
