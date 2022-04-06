@@ -7,11 +7,13 @@
 extern uint8_t const arcade_mode_palette;
 extern uint8_t const charset_alphanum;
 extern uint8_t const cutscene_sinbad_story_bird_msg;
+extern uint8_t const cutscene_sinbad_story_kiki_encounter;
 
 // Labels, use their address or the associated function
 extern uint8_t const ARCADE_MODE_SCREEN_BANK; // screen_bank()
 extern uint8_t const CHARSET_ALPHANUM_BANK_NUMBER; // charset_bank()
 extern uint8_t const cutscene_sinbad_story_bird_msg_bank;
+extern uint8_t const cutscene_sinbad_story_kiki_encounter_bank;
 extern uint8_t const stage_arcade_first_index;
 
 ///////////////////////////////////////
@@ -25,6 +27,7 @@ typedef struct Cutscene {
 	uint8_t const* bg_tileset;
 	uint8_t const* sprites_tileset;
 	void(*logic)();
+	void(*init)();
 } __attribute__((__packed__)) Cutscene;
 
 typedef struct Encounter {
@@ -58,6 +61,7 @@ static Encounter const encounters[] = {
 	{.type = ENCOUNTER_TARGETS, {.targets={1}}},
 	{.type = ENCOUNTER_FIGHT, {.fight={0, 1, 0}}},
 	{.type = ENCOUNTER_RUN, {.run={0}}},
+	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_kiki_encounter, (uint16_t)&cutscene_sinbad_story_kiki_encounter_bank}}},
 	{.type = ENCOUNTER_FIGHT, {.fight={1, 2, 0}}},
 	{.type = ENCOUNTER_RUN, {.run={0}}},
 	{.type = ENCOUNTER_FIGHT, {.fight={2, 3, 0}}},
@@ -162,6 +166,9 @@ static void start_cutscene() {
 	long_place_character_ppu_tiles_direct(0, 0);
 	long_cpu_to_ppu_copy_tileset(encounter.cutscene.bank, cutscene->sprites_tileset, 0);
 
+	// Call cutscene initialization routine
+	wrap_trampoline(encounter.cutscene.bank, code_bank(), cutscene->init);
+
 	// Reactivate rendering
 	*ppuctrl_val = 0x90;
 	*PPUCTRL = 0x90;
@@ -176,7 +183,7 @@ static void start_cutscene() {
 	*cutscene_autoscroll_h = 0;
 	*cutscene_autoscroll_v = 0;
 
-	// Call cinematic's function
+	// Call cutscene's logic
 	wrap_trampoline(encounter.cutscene.bank, code_bank(), cutscene->logic);
 
 	// Change gamestate to ourself, cutscenes are exploited alongside other gamestates

@@ -31,6 +31,12 @@ bank_data_charset_alphanum_begin:
 #echo Charset alphanum:
 #print *-bank_data_charset_alphanum_begin
 
+bank_data_charset_symbols_begin:
+#include "game/data/charsets/symbols.asm"
+#echo
+#echo Charset symbols
+#print *-bank_data_charset_symbols_begin
+
 bank_data03_end:
 
 #echo
