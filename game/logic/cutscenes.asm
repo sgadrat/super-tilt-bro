@@ -540,9 +540,12 @@ load_animation_addr:
 	extended_byte = tmpfield1
 	animation_addr = tmpfield11
 
-	play_frames_loop:
-		pha
+	; Store parameters in easily reachable location
+	; TODO should be parameters at the end of routine call, not in registers
+	sta cutscene_frame_count
+	stx cutscene_frames_skippable
 
+	play_frames_loop:
 		; Update animations
 		.(
 			ldx #CUTSCENE_NB_ANIMATIONS-1
@@ -619,15 +622,7 @@ load_animation_addr:
 				tax
 				pha
 
-				lda #<animation_tick
-				sta extra_tmpfield1
-				lda #>animation_tick
-				sta extra_tmpfield2
-				lda cutscene_anims_bank, x
-				sta extra_tmpfield3
-				lda #CURRENT_BANK_NUMBER
-				sta extra_tmpfield4
-				jsr trampoline
+				TRAMPOLINE(animation_tick, cutscene_anims_bank COMMA x, #CURRENT_BANK_NUMBER)
 
 				pla
 				tax
@@ -667,21 +662,29 @@ load_animation_addr:
 		jsr fetch_controllers
 		jsr reset_nt_buffers
 
-		; Stop cutscene if the player presses start
+		; Handle inputs
 		lda controller_a_btns
 		bne ok
+			; Stop cutscene if the player presses start
 			lda controller_a_last_frame_btns
 			cmp #CONTROLLER_BTN_START
-			bne ok
-				pla
+			bne not_start
 				lda #0
 				rts
+			not_start:
+
+			; Stop playing frames if the player presses A (and frames are skippable)
+			cmp #CONTROLLER_BTN_A
+			bne not_a
+				lda cutscene_frames_skippable
+				beq not_a
+					lda #1
+					rts
+			not_a:
 		ok:
 
 		; Loop
-		pla
-		sec
-		sbc #1
+		dec cutscene_frame_count
 		beq end
 		jmp play_frames_loop
 
@@ -692,6 +695,16 @@ load_animation_addr:
 
 #define PLAY_FRAMES(n) .( :\
 	lda #n ;TODO adapt to ntsc/pal :\
+	ldx #0 :\
+	jsr cutscene_play_frames :\
+	bne ok :\
+		rts :\
+	ok:\
+.)
+
+#define SKIPPABLE_FRAMES(n) .( :\
+	lda #n ;TODO adapt to ntsc/pal :\
+	ldx #1 :\
 	jsr cutscene_play_frames :\
 	bne ok :\
 		rts :\

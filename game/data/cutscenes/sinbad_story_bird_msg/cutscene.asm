@@ -19,7 +19,7 @@ cutscene_sinbad_story_bird_msg_logic:
 	; Birb going to Sinbad
 	INIT_ANIM(0, sinbad_anim_idle, SINBAD_BANK_NUMBER, DIRECTION_RIGHT2, 146, 127, 0, 0) ; index, anim, bank, direction, x, y, velocity_h, velocity_v
 	INIT_ANIM(1, cutscene_sinbad_story_bird_msg_anim_bird, cutscene_sinbad_story_bird_msg_bank, DIRECTION_LEFT2, 200, 80, -$0040, $0040) ; index, anim, bank, direction, x, y, velocity_h, velocity_v
-	PLAY_FRAMES(220) ; n_frames
+	SKIPPABLE_FRAMES(200) ; n_frames
 
 	; Showing letter
 	CLEAR_ANIM(0)
@@ -29,7 +29,7 @@ cutscene_sinbad_story_bird_msg_logic:
 	SET_PALETTE(2, $27, $37, $19)
 	SET_PALETTE(3, $27, $37, $11)
 	SET_SCREEN(2)
-	PLAY_FRAMES(220)
+	SKIPPABLE_FRAMES(220)
 
 	; Sinbad going to adventure
 	INIT_ANIM(0, sinbad_anim_idle, SINBAD_BANK_NUMBER, DIRECTION_RIGHT2, 146, 127, $0100, 0) ; index, anim, bank, direction, x, y, velocity_h, velocity_v

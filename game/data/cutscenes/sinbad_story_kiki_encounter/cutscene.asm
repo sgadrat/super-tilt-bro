@@ -52,12 +52,12 @@ cutscene_sinbad_story_kiki_encounter_init:
 
 cutscene_sinbad_story_kiki_encounter_logic:
 .(
-	PLAY_FRAMES(25)
+	SKIPPABLE_FRAMES(25)
 	TEXT(15, 19, "Saluton amiko!")
-	PLAY_FRAMES(50)
+	SKIPPABLE_FRAMES(100)
 	TEXT(3, 21, "Maybe a")
 	TEXT(3, 22, "weird private joke.")
-	PLAY_FRAMES(50)
+	SKIPPABLE_FRAMES(100)
 	TEXT(15, 18, "Saluton amiko!")
 	TEXT(3, 20, "Maybe a")
 	TEXT(3, 21, "weird private joke.")
@@ -72,7 +72,7 @@ cutscene_sinbad_story_kiki_encounter_logic:
 	TEXT(3, 21, "                   ")
 	TEXT(3, 22, "No time for that")
 	TEXT(3, 23, "I'll force the way!")
-	PLAY_FRAMES(75)
+	SKIPPABLE_FRAMES(150)
 	rts
 .)
 .)
