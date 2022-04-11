@@ -122,7 +122,7 @@ cutscene_sinbad_story_sinbad_encounter_logic:
 	PLAY_FRAMES(1)
 	TEXT(3, 21, "             diet!        ")
 	TEXT(3, 22, "I need this               ")
-	TEXT(3, 23, "cake!                     ")
+	TEXT(3, 23, "cake.                     ")
 	PLAY_FRAMES(1)
 
 	TEXT(3, 18, "                          ")
@@ -130,7 +130,7 @@ cutscene_sinbad_story_sinbad_encounter_logic:
 	TEXT(3, 20, "             diet!        ")
 	PLAY_FRAMES(1)
 	TEXT(3, 21, "I need this               ")
-	TEXT(3, 22, "cake!                     ")
+	TEXT(3, 22, "cake.                     ")
 	TEXT(3, 23, "                          ")
 	SKIPPABLE_FRAMES(100)
 
@@ -138,14 +138,14 @@ cutscene_sinbad_story_sinbad_encounter_logic:
 	TEXT(3, 19, "             diet!        ")
 	TEXT(3, 20, "I need this               ")
 	PLAY_FRAMES(1)
-	TEXT(3, 21, "cake!                     ")
+	TEXT(3, 21, "cake.                     ")
 	TEXT(3, 22, "                          ")
 	TEXT(3, 23, "let me go,                ")
 	PLAY_FRAMES(1)
 
 	TEXT(3, 18, "             diet!        ")
 	TEXT(3, 19, "I need this               ")
-	TEXT(3, 20, "cake!                     ")
+	TEXT(3, 20, "cake.                     ")
 	PLAY_FRAMES(1)
 	TEXT(3, 21, "                          ")
 	TEXT(3, 22, "let me go,                ")
@@ -153,7 +153,7 @@ cutscene_sinbad_story_sinbad_encounter_logic:
 	PLAY_FRAMES(1)
 
 	TEXT(3, 18, "I need this               ")
-	TEXT(3, 19, "cake!                     ")
+	TEXT(3, 19, "cake.                     ")
 	TEXT(3, 20, "                          ")
 	PLAY_FRAMES(1)
 	TEXT(3, 21, "let me go,                ")
