@@ -1,11 +1,11 @@
-cutscene_sinbad_story_bird_msg_bank = CURRENT_BANK_NUMBER
++cutscene_sinbad_story_bird_msg_bank = CURRENT_BANK_NUMBER
 
 #include "game/data/cutscenes/sinbad_story_bird_msg/screen.asm"
 #include "game/data/cutscenes/sinbad_story_bird_msg/tilesets.asm"
 #include "game/data/cutscenes/sinbad_story_bird_msg/anims.asm"
 
 .(
-&cutscene_sinbad_story_bird_msg:
++cutscene_sinbad_story_bird_msg:
 .word cutscene_sinbad_story_bird_msg_palette
 .word cutscene_sinbad_story_bird_msg_nametable
 .word cutscene_sinbad_story_bird_msg_nametable2

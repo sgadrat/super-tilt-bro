@@ -1,6 +1,6 @@
-STAGE_BTT01_BANK_NUMBER = CURRENT_BANK_NUMBER
++STAGE_BTT01_BANK_NUMBER = CURRENT_BANK_NUMBER
 
-stage_btt01_data_header:
+; Break-the-target specific header
 ARCADE_TARGET($9c, $82)
 ARCADE_TARGET($60, $50)
 ARCADE_TARGET($18, $20)
@@ -11,7 +11,7 @@ ARCADE_TARGET($fe, $fe)
 ARCADE_TARGET($fe, $fe)
 ARCADE_TARGET($fe, $fe)
 ARCADE_TARGET($fe, $fe)
-stage_btt01_data:
++stage_btt01_data:
 STAGE_HEADER($5000, $8000, $afff, $8000, $8000, $8000) ; player_a_x, player_b_x, player_a_y, player_b_y, respawn_x, respawn_y
 stage_btt01_platforms:
 PLATFORM($40, $80, $00, $17) ; left, right, top, bot

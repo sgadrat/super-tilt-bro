@@ -8,12 +8,14 @@ extern uint8_t const arcade_mode_palette;
 extern uint8_t const charset_alphanum;
 extern uint8_t const cutscene_sinbad_story_bird_msg;
 extern uint8_t const cutscene_sinbad_story_kiki_encounter;
+extern uint8_t const cutscene_sinbad_story_sinbad_encounter;
 
 // Labels, use their address or the associated function
 extern uint8_t const ARCADE_MODE_SCREEN_BANK; // screen_bank()
 extern uint8_t const CHARSET_ALPHANUM_BANK_NUMBER; // charset_bank()
 extern uint8_t const cutscene_sinbad_story_bird_msg_bank;
 extern uint8_t const cutscene_sinbad_story_kiki_encounter_bank;
+extern uint8_t const cutscene_sinbad_story_sinbad_encounter_bank;
 extern uint8_t const stage_arcade_first_index;
 
 ///////////////////////////////////////
@@ -59,6 +61,7 @@ typedef struct Encounter {
 static Encounter const encounters[] = {
 	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_bird_msg, (uint16_t)&cutscene_sinbad_story_bird_msg_bank}}},
 	{.type = ENCOUNTER_TARGETS, {.targets={1}}},
+	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_sinbad_encounter, (uint16_t)&cutscene_sinbad_story_sinbad_encounter_bank}}},
 	{.type = ENCOUNTER_FIGHT, {.fight={0, 1, 0}}},
 	{.type = ENCOUNTER_RUN, {.run={0}}},
 	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_kiki_encounter, (uint16_t)&cutscene_sinbad_story_kiki_encounter_bank}}},

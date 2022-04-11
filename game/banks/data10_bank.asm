@@ -1,3 +1,4 @@
+.(
 #echo
 #echo ====== DATA-10-BANK =====
 * = $8000
@@ -48,3 +49,4 @@ bank_data10_end:
 #else
 .dsb $c000-*, CURRENT_BANK_NUMBER
 #endif
+.)

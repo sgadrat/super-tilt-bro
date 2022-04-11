@@ -1,10 +1,10 @@
-cutscene_sinbad_story_kiki_encounter_bank = CURRENT_BANK_NUMBER
++cutscene_sinbad_story_kiki_encounter_bank = CURRENT_BANK_NUMBER
 
 #include "game/data/cutscenes/sinbad_story_kiki_encounter/screen.asm"
 #include "game/data/cutscenes/sinbad_story_kiki_encounter/tilesets.asm"
 
 .(
-&cutscene_sinbad_story_kiki_encounter:
++cutscene_sinbad_story_kiki_encounter:
 .word cutscene_sinbad_story_kiki_encounter_palette ; palettes
 .word cutscene_sinbad_story_kiki_encounter_nametable ; top nametable
 .word cutscene_sinbad_story_kiki_encounter_nametable ; bottom nametable
