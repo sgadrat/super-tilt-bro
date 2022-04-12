@@ -8,6 +8,7 @@ extern uint8_t const arcade_mode_palette;
 extern uint8_t const charset_alphanum;
 extern uint8_t const cutscene_sinbad_story_bird_msg;
 extern uint8_t const cutscene_sinbad_story_kiki_encounter;
+extern uint8_t const cutscene_sinbad_story_meteor;
 extern uint8_t const cutscene_sinbad_story_pepper_encounter;
 extern uint8_t const cutscene_sinbad_story_sinbad_encounter;
 
@@ -16,6 +17,7 @@ extern uint8_t const ARCADE_MODE_SCREEN_BANK; // screen_bank()
 extern uint8_t const CHARSET_ALPHANUM_BANK_NUMBER; // charset_bank()
 extern uint8_t const cutscene_sinbad_story_bird_msg_bank;
 extern uint8_t const cutscene_sinbad_story_kiki_encounter_bank;
+extern uint8_t const cutscene_sinbad_story_meteor_bank;
 extern uint8_t const cutscene_sinbad_story_pepper_encounter_bank;
 extern uint8_t const cutscene_sinbad_story_sinbad_encounter_bank;
 extern uint8_t const stage_arcade_first_index;
@@ -71,6 +73,7 @@ static Encounter const encounters[] = {
 	{.type = ENCOUNTER_RUN, {.run={0}}},
 	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_pepper_encounter, (uint16_t)&cutscene_sinbad_story_pepper_encounter_bank}}},
 	{.type = ENCOUNTER_FIGHT, {.fight={2, 3, 0}}},
+	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_meteor, (uint16_t)&cutscene_sinbad_story_meteor_bank}}},
 	{.type = ENCOUNTER_FIGHT, {.fight={0, 4, 1}}},
 };
 uint8_t const n_encounters = sizeof(encounters) / sizeof(Encounter);
@@ -167,10 +170,14 @@ static void start_cutscene() {
 	// Draw screen
 	long_construct_palettes_nt_buffer(encounter.cutscene.bank, cutscene->palette);
 	long_draw_zipped_nametable(encounter.cutscene.bank, cutscene->nametable);
-	long_draw_zipped_vram(encounter.cutscene.bank, cutscene->nametable_bot, 0x2800);
+	if (cutscene->nametable_bot != (void*)0xffff) {
+		long_draw_zipped_vram(encounter.cutscene.bank, cutscene->nametable_bot, 0x2800);
+	}
 	long_cpu_to_ppu_copy_tileset_background(encounter.cutscene.bank, cutscene->bg_tileset);
 	long_place_character_ppu_tiles_direct(0, 0);
-	long_cpu_to_ppu_copy_tileset(encounter.cutscene.bank, cutscene->sprites_tileset, 0);
+	if (cutscene->sprites_tileset != (void*)0xffff) {
+		long_cpu_to_ppu_copy_tileset(encounter.cutscene.bank, cutscene->sprites_tileset, 0);
+	}
 
 	// Call cutscene initialization routine
 	wrap_trampoline(encounter.cutscene.bank, code_bank(), cutscene->init);
@@ -319,31 +326,6 @@ void arcade_mode_tick_extra() {
 		set_text("gameover", 13, 11);
 		wait_input();
 		previous_screen();
-	}
-
-	// Story time
-	if (*arcade_mode_current_encounter == n_encounters - 1) {
-		set_text("yeah", 12, 4);
-		set_text("here is the party", 13, 4);
-		wait_input();
-		set_text("wait", 15, 4);
-		wait_input();
-		set_text("what", 16, 4);
-		wait_input();
-		set_text("    ", 15, 4);
-		set_text("    ", 16, 4);
-		yield();
-		set_text("booooommmmm", 12, 4);
-		set_text("                 ", 13, 4);
-		set_text("a big meteor crash", 14, 4);
-		wait_input();
-		set_text("evil sinbad comes", 12, 4);
-		set_text("and laugh at you", 13, 4);
-		set_text("                  ", 14, 4);
-		wait_input();
-		set_text("                 ", 12, 4);
-		set_text("                ", 13, 4);
-		yield();
 	}
 
 	if (*arcade_mode_current_encounter == n_encounters) {

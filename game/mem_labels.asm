@@ -438,10 +438,11 @@ cutscene_anims_velocity_v_subpixel = $05c4 ; to $05c7
 cutscene_anims_pos_x_subpixel = $05c8 ; to $05cb
 cutscene_anims_pos_y_subpixel = $05cc ; to $05cf
 cutscene_anims_bank = $05d0 ; to $05d3
-cutscene_autoscroll_h = $05d4
-cutscene_autoscroll_v = $05d5
-cutscene_frame_count = $05d6
-cutscene_frames_skippable = $05d7
+cutscene_anims_player = $05d4 ; to $05d7
+cutscene_autoscroll_h = $05d8
+cutscene_autoscroll_v = $05d9
+cutscene_frame_count = $05da
+cutscene_frames_skippable = $05db
 
 ;
 ; DONATION labels

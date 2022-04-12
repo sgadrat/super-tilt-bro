@@ -176,6 +176,10 @@ load_animation_addr:
 	lda (parameter_addr), y
 	sta cutscene_anims_velocity_v_pixel, x
 
+	ldy #13 ; player_number
+	lda (parameter_addr), y
+	sta cutscene_anims_player, x
+
 	ldy #3 ; bank
 	lda (parameter_addr), y
 	sta cutscene_anims_bank, x
@@ -188,12 +192,26 @@ load_animation_addr:
 	jsr cutscene_init_anim :\
 	.byt index       ; 0 :\
 	.word anim       ; 1 :\
-	.byt bank        ; 3:\
+	.byt bank        ; 3 :\
 	.byt direction   ; 4 :\
 	.word pos_x      ; 5 :\
 	.word pos_y      ; 7 :\
 	.word velocity_h ; 9 ;TODO adapt to pal/ntsc using a lookup table and system_index :\
 	.word velocity_v ;11 ;TODO adapt to pal/ntsc using a lookup table and system_index :\
+	.word 0          ;13 ; player_number :\
+.)
+
+#define INIT_ANIM_FOR_PLAYER(index,anim,bank,direction,pos_x,pos_y,velocity_h,velocity_v,player) .( :\
+	jsr cutscene_init_anim :\
+	.byt index       ; 0 :\
+	.word anim       ; 1 :\
+	.byt bank        ; 3 :\
+	.byt direction   ; 4 :\
+	.word pos_x      ; 5 :\
+	.word pos_y      ; 7 :\
+	.word velocity_h ; 9 ;TODO adapt to pal/ntsc using a lookup table and system_index :\
+	.word velocity_v ;11 ;TODO adapt to pal/ntsc using a lookup table and system_index :\
+	.word player     ;12 :\
 .)
 
 &cutscene_anim_velocity:
@@ -334,6 +352,40 @@ load_animation_addr:
 	.byt color1 :\
 	.byt color2 :\
 	.byt color3 :\
+.)
+
+&cutscene_set_bg_color:
+.(
+	parameter_addr = tmpfield1
+	header_addr = tmpfield1
+	payload_addr = tmpfield3
+
+	; Stack shenaningans to handle parameters being hardcoded after the jsr
+	lda #1
+	jsr inline_parameters
+
+	; Make an nt buffer to overwrite BG color
+	lda parameter_addr
+	sta payload_addr
+	lda parameter_addr+1
+	sta payload_addr+1
+
+	lda #<buff_header
+	sta header_addr
+	lda #>buff_header
+	sta header_addr+1
+
+	jmp construct_nt_buffer
+
+	;rts ; useless, jump to subroutine
+
+	buff_header:
+		.byt $3f, $00, 1
+.)
+
+#define CUTS_SET_BG_COLOR(color) .( :\
+	jsr cutscene_set_bg_color :\
+	.byt color :\
 .)
 
 &cutscene_text:
@@ -614,7 +666,8 @@ load_animation_addr:
 				sta extra_tmpfield3
 				lda #CURRENT_BANK_NUMBER
 				sta extra_tmpfield4
-				ldx #0
+				lda cutscene_anims_player, x
+				tax
 				stx player_number
 				jsr trampoline
 
@@ -638,15 +691,68 @@ load_animation_addr:
 
 		; Auto scroll
 		.(
+			; Apply horizontal scroll
 			lda cutscene_autoscroll_h
 			clc
 			adc scroll_x
 			sta scroll_x
 
+			; Apply vertical scroll
 			lda cutscene_autoscroll_v
 			clc
 			adc scroll_y
 			sta scroll_y
+
+			; Ensure consistence with screen height being 240 pixels
+			;  if (y >= 240)
+			;    * switch nametable nametable
+			;    if (cutscene_autoscroll_v >= 0)
+			;      * y = y - 240
+			;    else
+			;      * y = 240 - (256 - y)
+			.(
+				lda scroll_y
+				cmp #240
+				bcc ok
+
+					; Switch vertical nametable
+					lda ppuctrl_val
+					eor #%00000010
+					sta ppuctrl_val
+
+					; Adjust Y value on the new nametable
+					lda cutscene_autoscroll_v
+					bmi switch_to_top
+
+						switch_to_bottom:
+							lda scroll_y
+							sec
+							sbc #240
+							sta scroll_y
+							jmp ok
+
+						switch_to_top:
+							; Simplified formula
+							;  y = 240 - (256 - y)
+							;  y = 240 - 256 + y
+							;  y = -16 + y
+							;  y = y - 16
+							lda scroll_y
+							sec
+							sbc #16
+							sta scroll_y
+							;jmp ok ; fallthrough
+
+				ok:
+			.)
+		.)
+
+		; Screen shake
+		.(
+			lda screen_shake_counter
+			beq ok
+				jsr shake_screen
+			ok:
 		.)
 
 		; Bank-safe sleep_frame
@@ -732,6 +838,29 @@ load_animation_addr:
 	.byt screen_num :\
 .)
 
+&cutscene_set_scroll:
+.(
+	parameter_addr = tmpfield1
+
+	lda #2
+	jsr inline_parameters
+
+	ldy #0
+	lda (parameter_addr), y
+	sta scroll_x
+	iny
+
+	lda (parameter_addr), y
+	sta scroll_y
+
+	rts
+.)
+
+#define CUTS_SET_SCROLL(h,v) .( :\
+	jsr cutscene_set_scroll :\
+	.byt h, v :\
+.)
+
 &cutscene_auto_scroll:
 .(
 	parameter_addr = tmpfield1
@@ -782,4 +911,32 @@ load_animation_addr:
 	.byt len :\
 	.word data :\
 .)
+
+&cutscene_screen_shake:
+.(
+	parameter_addr = tmpfield1
+
+	lda #3
+	jsr inline_parameters
+
+	ldy #0
+	lda (parameter_addr), y
+	sta screen_shake_counter
+	iny
+
+	lda (parameter_addr), y
+	sta screen_shake_nextval_x
+	iny
+
+	lda (parameter_addr), y
+	sta screen_shake_nextval_y
+
+	rts
+.)
+
+#define CUTS_SCREEN_SHAKE(duration,h,v) .( :\
+	jsr cutscene_screen_shake :\
+	.byt duration, h, v :\
+.)
+
 .)
