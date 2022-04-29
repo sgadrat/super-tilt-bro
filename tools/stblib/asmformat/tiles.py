@@ -1,6 +1,6 @@
 from stblib import ensure
 
-def tile_to_asm(tile):
+def tile_to_asm(tile, visibility=''):
 	# First line: least significant bit of each pixel
 	res = '.byt '
 	for y in range(8):
@@ -22,8 +22,8 @@ def tile_to_asm(tile):
 
 	return res
 
-def tileset_to_asm(tileset):
-	res = f'{tileset.name}:\n'
+def tileset_to_asm(tileset, visibility=''):
+	res = f'{visibility}{tileset.name}:\n'
 	res += '\n'
 	res += "; Tileset's size in tiles (zero means 256)\n"
 	res += '.byt ({name}_end-{name}_tiles)/16\n'.format(name = tileset.name)

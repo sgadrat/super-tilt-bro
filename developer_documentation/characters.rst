@@ -16,11 +16,20 @@ Registers
  * ``X``: output: cannot be modified not restored by check_player_position, used in loop by init_game_state), input: Contains player number
  * ``Y``: output: Can be modified
  * ``player_number``: output: to be checked if can be modified, input: not ensured to be set
+ * ``tmpfields``: Can be modified
+ * ``extra_tmpfields``: To be checked
 
 Constraints on start routines
 =============================
 
 Tick routines constraints generally apply, as start routines are often called from a tick routine
+
+ * ``A``: output: Can be modified
+ * ``X``: output: cannot be modified
+ * ``Y``: output: Can be modified
+ * ``player_number``: output: to be checked, input: to be checked
+ * ``tmpfields``: Can be modified
+ * ``extra_tmpfields``: To be checked
 
 Constraints on input routines
 =============================

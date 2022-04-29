@@ -5,6 +5,8 @@
 ;
 ; Uses particle box number 0 for player A or 1 for player B
 ; Deactivate any particle handler on the same box
+;
+; Overwrites all registers
 particle_directional_indicator_start:
 .(
 	; Initialize handler state

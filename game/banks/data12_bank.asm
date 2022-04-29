@@ -17,6 +17,12 @@ bank_data_cutscene_sinbad_story_meteor_begin:
 #echo arcade cutscene sinbad story meteor size:
 #print *-bank_data_cutscene_sinbad_story_meteor_begin
 
+bank_data_stage_arcade_run02_begin:
+#include "game/data/stages/arcade/run02/stage_arcade_run02.asm"
+#echo
+#echo stage arcade run02 size:
+#print *-bank_data_stage_arcade_run02_begin
+
 bank_data12_end:
 
 #echo

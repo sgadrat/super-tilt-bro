@@ -5,11 +5,11 @@ import stblib.animations
 from stblib.utils import asmint, asmsint8, asmsint16, intasm8, intasm16, uintasm8
 import sys
 
-def animation_to_asm(animation):
+def animation_to_asm(animation, visibility=''):
 	"""
 	Serialize animation to assembly.
 	"""
-	serialized = '{}:\n'.format(animation.name)
+	serialized = '{}{}:\n'.format(visibility, animation.name)
 	frame_num = 1
 	for frame in animation.frames:
 		serialized += '; Frame {}\n'.format(frame_num)
@@ -20,7 +20,7 @@ def animation_to_asm(animation):
 	serialized += '#print {}\n'.format(animation.name)
 	return serialized
 
-def frame_to_asm(frame):
+def frame_to_asm(frame, visibility=''):
 	# Frame begin
 	serialized = 'ANIM_FRAME_BEGIN(%d)\n' % frame.duration
 
@@ -66,7 +66,7 @@ def frame_to_asm(frame):
 
 	return serialized
 
-def sprite_to_asm(sprite):
+def sprite_to_asm(sprite, visibility=''):
 	return 'ANIM_SPRITE(%s, %s, %s, %s)\n' % (
 		intasm8(sprite.y), sprite.tile, uintasm8(sprite.attr), intasm8(sprite.x)
 	)

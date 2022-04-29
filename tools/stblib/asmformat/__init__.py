@@ -1,13 +1,13 @@
 from stblib.asmformat import animations, stages, tiles
 
-def to_asm(obj):
+def to_asm(obj, visibility=''):
 	"""
 	Serialize any (supported) object to assembly format
 	"""
-	parse_function_name = '{}_to_asm'.format(obj.__class__.__name__.lower())
+	serial_function_name = '{}_to_asm'.format(obj.__class__.__name__.lower())
 	candidate_modules = []
 	for module in [animations, stages, tiles]:
-		if hasattr(module, parse_function_name):
+		if hasattr(module, serial_function_name):
 			candidate_modules.append(module)
 
 	if len(candidate_modules) > 1:
@@ -28,4 +28,4 @@ def to_asm(obj):
 		raise Exception(f'No serialization function found for objects of type "{obj.__class__.__name__}"')
 
 	module = candidate_modules[0]
-	return getattr(module, parse_function_name)(obj)
+	return getattr(module, serial_function_name)(obj, visibility=visibility)

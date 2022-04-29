@@ -843,7 +843,7 @@ hurt_player:
 	adc player_a_damages, x ;
 	cmp #200                ;
 	bcs cap_damages         ; Apply damages, capped to 199
-	jmp apply_damages:      ;
+	jmp apply_damages:      ; TODO optimizable use "bcc" instead of "bcs+jmp"
 	cap_damages:            ;
 	lda #199                ;
 	apply_damages:          ;
@@ -876,17 +876,294 @@ hurt_player:
 	rts
 .)
 
-; Apply force in current player's hitbox to it's opponent
+; Throw the player upward off a bumper stage element
+;  register X - Player number
 ;
-; Overwrites every tmpfields except "current_player" and "opponent_player".
-; Overwrites registers A and  X (set to the opponent player's number).
+;  The selected bank must be the correct character's bank.
+;
+;  Overwrites all registers and all tmpfields.
+bump_player_up:
+.(
+	ldy player_a_grounded, x
+	jsr bump_player_common
+
+	; Force vertical velocity to be upward
+	.(
+		lda player_a_velocity_v_low, x
+		eor #%11111111
+		clc
+		adc #1
+		sta player_a_velocity_v_low, x
+		lda player_a_velocity_v, x
+		eor #%11111111
+		adc #0
+		sta player_a_velocity_v, x
+	.)
+
+	; Adapt horizontal velocity to requested direction
+	.(
+		ldy player_a_grounded, x
+		lda stage_data+STAGE_BUMPER_OFFSET_DAMMAGES, y
+		bpl ok
+
+			lda player_a_velocity_h_low, x
+			eor #%11111111
+			clc
+			adc #1
+			sta player_a_velocity_h_low, x
+			lda player_a_velocity_h, x
+			eor #%11111111
+			adc #0
+			sta player_a_velocity_h, x
+
+		ok:
+	.)
+
+	; Set player in thrown state
+	jmp set_thrown_state
+
+	;rts ; useless, jump to subroutine
+.)
+
+; Throw the player downward off a bumper stage element
+;  register X - Player number
+;
+;  The selected bank must be the correct character's bank.
+;
+;  Overwrites all registers and all tmpfields.
+bump_player_down:
+.(
+	ldy player_a_ceiled, x
+	jsr bump_player_common
+
+	; Let vertical velocity downard
+	.(
+		; Nothing to do
+	.)
+
+	; Adapt horizontal velocity to requested direction
+	.(
+		ldy player_a_ceiled, x
+		lda stage_data+STAGE_BUMPER_OFFSET_DAMMAGES, y
+		bpl ok
+
+			lda player_a_velocity_h_low, x
+			eor #%11111111
+			clc
+			adc #1
+			sta player_a_velocity_h_low, x
+			lda player_a_velocity_h, x
+			eor #%11111111
+			adc #0
+			sta player_a_velocity_h, x
+
+		ok:
+	.)
+
+	; Set player in thrown state
+	jmp set_thrown_state
+
+	;rts ; useless, jump to subroutine
+.)
+
+; Throw the player leftward off a bumper stage element
+;  register X - Player number
+;
+;  The selected bank must be the correct character's bank.
+;
+;  Overwrites all registers and all tmpfields.
+bump_player_left:
+.(
+	ldy player_a_walled, x
+	jsr bump_player_common
+
+	; Adapt vertical velocity to requested direction
+	.(
+		ldy player_a_walled, x
+		lda stage_data+STAGE_BUMPER_OFFSET_DAMMAGES, y
+		and #%01000000
+		beq ok
+
+			lda player_a_velocity_v_low, x
+			eor #%11111111
+			clc
+			adc #1
+			sta player_a_velocity_v_low, x
+			lda player_a_velocity_v, x
+			eor #%11111111
+			adc #0
+			sta player_a_velocity_v, x
+
+		ok:
+	.)
+
+	; Force horizontal velocity to be leftward
+	.(
+		lda player_a_velocity_h_low, x
+		eor #%11111111
+		clc
+		adc #1
+		sta player_a_velocity_h_low, x
+		lda player_a_velocity_h, x
+		eor #%11111111
+		adc #0
+		sta player_a_velocity_h, x
+	.)
+
+	; Set player in thrown state
+	jmp set_thrown_state
+
+	;rts ; useless, jump to subroutine
+.)
+
+; Throw the player rightward off a bumper stage element
+;  register X - Player number
+;
+;  The selected bank must be the correct character's bank.
+;
+;  Overwrites all registers and all tmpfields.
+bump_player_right:
+.(
+	ldy player_a_walled, x
+	jsr bump_player_common
+
+	; Adapt vertical velocity to requested direction
+	.(
+		ldy player_a_walled, x
+		lda stage_data+STAGE_BUMPER_OFFSET_DAMMAGES, y
+		and #%01000000
+		beq ok
+
+			lda player_a_velocity_v_low, x
+			eor #%11111111
+			clc
+			adc #1
+			sta player_a_velocity_v_low, x
+			lda player_a_velocity_v, x
+			eor #%11111111
+			adc #0
+			sta player_a_velocity_v, x
+
+		ok:
+	.)
+
+	; Force horizontal velocity to be rightward
+	.(
+		; Nothing to do
+	.)
+
+	; Set player in thrown state
+	;jmp set_thrown_state ; useless, fallthrough
+
+	;rts ; useless, jump to subroutine
+
+	; Fallthrough to set_thrown_state
+.)
+
+; Set player inb thrown state
+;  X - player number
+;
+;  The selected bank must be the correct character's bank.
+;
+;  Overwrites all registers, tmpfield1, and tmpfield2
+;  Note - the start routine itself may modify other tmpfields
+set_thrown_state:
+.(
+	lda #PLAYER_STATE_THROWN
+	sta player_a_state, x
+	ldy config_player_a_character, x
+	lda characters_start_routines_table_lsb, y
+	sta tmpfield1
+	lda characters_start_routines_table_msb, y
+	sta tmpfield2
+
+	jmp player_state_action
+
+	;rts ; useless, jump to subroutine
+.)
+
+; Common code for bumping a player out of a bumper platform
+;  register X - player number
+;  register Y - platform offset from stage-data
+bump_player_common:
+.(
+	; Apply damages
+	.(
+		lda stage_data+STAGE_BUMPER_OFFSET_DAMMAGES, y
+		and #%00001111
+		clc
+		adc player_a_damages, x
+		cmp #200
+		bcc apply_damages
+			lda #199
+		apply_damages:
+		sta player_a_damages, x
+	.)
+
+	; Apply force vector to the opponent
+	.(
+		base_h_low = tmpfield6
+		base_h_high = tmpfield7
+		base_v_low = tmpfield8
+		base_v_high = tmpfield9
+		force_h_high = tmpfield12
+		force_v_high = tmpfield13
+		force_h_low = tmpfield14
+		force_v_low = tmpfield15
+
+		; Vertical knockback
+		.(
+			; Load base knockback
+			lda stage_data+STAGE_BUMPER_OFFSET_BASE_LSB, y
+			sta base_v_low
+			lda stage_data+STAGE_BUMPER_OFFSET_BASE_MSB, y
+			sta base_v_high
+
+			; Load sign-extended force knockback
+			lda stage_data+STAGE_BUMPER_OFFSET_FORCE, y
+			sta force_v_low
+			lda #0
+			sta force_v_high
+		.)
+
+		; Horizontal knockback
+		.(
+			; Load base knockback
+			lda stage_data+STAGE_BUMPER_OFFSET_BASE_LSB, y
+			sta base_h_low
+			lda stage_data+STAGE_BUMPER_OFFSET_BASE_MSB, y
+			sta base_h_high
+
+			; Load sign-extended force knockback
+			lda stage_data+STAGE_BUMPER_OFFSET_FORCE, y
+			sta force_h_low
+			lda #0
+			sta force_h_high
+		.)
+
+		; Apply knockback
+		jsr apply_force_vector_direct
+	.)
+
+	; Play hit sound
+	jsr audio_play_hit
+
+	; Reset fall speed
+	jmp reset_default_gravity
+
+	;rts ; Useless, jump to subroutine
+.)
+
+; Apply force in current player's hitbox to it's opponent
+;   tmpfield10 - striker player number
+;   tmpfield11 - stroke player number
+;
+; Output
+;   register X - stroke player number
+;
+; Overwrites all registers, tmpfield1-tmpfield9, tmpfield12-tmpfield15
 apply_force_vector:
 .(
-	multiplicand_low = tmpfield1
-	multiplicand_high = tmpfield2
-	multiplier = tmpfield3
-	multiply_result_low = tmpfield4
-	multiply_result_high = tmpfield5
 	base_h_low = tmpfield6
 	base_h_high = tmpfield7
 	base_v_low = tmpfield8
@@ -897,10 +1174,6 @@ apply_force_vector:
 	force_v = tmpfield13
 	force_h_low = tmpfield14
 	force_v_low = tmpfield15
-	knockback_h_high = force_h    ; knockback_h reuses force_h memory location
-	knockback_h_low = force_h_low ; it is only writen after the last read of force_h
-	knockback_v_high = force_v     ; knockback_v reuses force_v memory location
-	knockback_v_low = force_v_low  ; it is only writen after the last read of force_v
 
 	; Apply force vector to the opponent
 	ldx current_player
@@ -922,6 +1195,45 @@ apply_force_vector:
 	sta base_v_low                              ;
 
 	ldx opponent_player
+
+	;Fallthrough to apply_force_vector_direct
+.)
+
+; Apply a composite force (base knockup + scaling knockup) to a player
+;   register X - Player number
+;   tmpfield6 - Horizontal base knockup (LSB)
+;   tmpfield7 - Horizontal base knockup (MSB)
+;   tmpfield8 - Vertical base knockup (LSB)
+;   tmpfield9 - Vertical base knockup (MSB)
+;   tmpfield12 - Horizontal scaling knockup (LSB)
+;   tmpfield13 - Horizontal scaling knockup (MSB)
+;   tmpfield14 - Vertical scaling knockup (LSB)
+;   tmpfield15 - Vertical scaling knockup (MSB)
+;
+; Overwrites tmpfield1-tmpfield9, tmpfield12-tmpfield15
+; Overwrites register A, register Y
+apply_force_vector_direct:
+.(
+	multiplicand_low = tmpfield1
+	multiplicand_high = tmpfield2
+	multiplier = tmpfield3
+	multiply_result_low = tmpfield4
+	multiply_result_high = tmpfield5
+	base_h_low = tmpfield6
+	base_h_high = tmpfield7
+	base_v_low = tmpfield8
+	base_v_high = tmpfield9
+	current_player = tmpfield10
+	opponent_player = tmpfield11
+	force_h = tmpfield12
+	force_v = tmpfield13
+	force_h_low = tmpfield14
+	force_v_low = tmpfield15
+	knockback_h_high = force_h    ; knockback_h reuses force_h memory location
+	knockback_h_low = force_h_low ; it is only writen after the last read of force_h
+	knockback_v_high = force_v     ; knockback_v reuses force_v memory location
+	knockback_v_low = force_v_low  ; it is only writen after the last read of force_v
+
 	lda player_a_damages, x ;
 	lsr                     ; Get force multiplier
 	lsr                     ; "damages / 4"
@@ -1065,7 +1377,7 @@ apply_force_vector:
 	; Start directional indicator particles
 	jsr particle_directional_indicator_start
 
-	rts
+	rts ; TODO optimizable by jmp instead of jsr on the routine above. Kept for now as it may help profiling tools.
 
 ;TODO comment usage and put in static bank
 #define TWT(x) (x*4*12)/10
@@ -1091,7 +1403,7 @@ apply_force_vector:
 ;   - tmpfield5 equals to "player_a_x_screen, x"
 ;   - tmpfield7 equals to "player_a_y, x"
 ;   - tmpfield8 equals to "player_a_y_screen, x"
-;   - "player_a_grounded, x", "player_a_walled, x", and "player_a_walled_direction, x" are set according to collisions
+;   - "player_a_grounded, x", "player_a_ceiled, x", "player_a_walled, x", and "player_a_walled_direction, x" are set according to collisions
 ;
 ;  Overwrites register A, regiter Y, and tmpfield1 to tmpfield12
 ;
@@ -1126,7 +1438,7 @@ move_player:
 	vertical:
 	.(
 		; Beware
-		;   Do not use final_y, not even in platform handlers,
+		;   Do not use final_x, not even in platform handlers,
 		;   we care only of moving the character from (orig_x;orig_y) to (orig_x;orig_y+velocity_v)
 
 		; Apply velocity to position
@@ -1143,9 +1455,10 @@ move_player:
 		adc orig_y_screen
 		sta final_y_screen
 
-		; Clear grounded flag (to be set by collision handlers)
+		; Clear grounded/ceiled flags (to be set by collision handlers)
 		lda #0
 		sta player_a_grounded, x
+		sta player_a_ceiled, x
 
 		; Iterate on stage elements
 		.(
@@ -1262,11 +1575,11 @@ move_player_handle_one_platform_left:
 	jmp (platform_specific_handler_lsb)
 	; No return, the handler will rts
 
-	;    unused,         PLATFORM,             SMOOTH,         OOS_PLATFORM,  OOS_SMOOTH
+	;    unused,         PLATFORM,             SMOOTH,         OOS_PLATFORM,  OOS_SMOOTH,     BUMPER
 	platform_specific_handlers_lsb:
-	.byt <dummy_routine, <one_screen_platform, <dummy_routine, <oos_platform, <dummy_routine
+	.byt <dummy_routine, <one_screen_platform, <dummy_routine, <oos_platform, <dummy_routine, <one_screen_platform
 	platform_specific_handlers_msb:
-	.byt >dummy_routine, >one_screen_platform, >dummy_routine, >oos_platform, >dummy_routine
+	.byt >dummy_routine, >one_screen_platform, >dummy_routine, >oos_platform, >dummy_routine, >one_screen_platform
 
 	one_screen_platform:
 	.(
@@ -1368,11 +1681,11 @@ move_player_handle_one_platform_right:
 	jmp (platform_specific_handler_lsb)
 	; No return, the handler will rts
 
-	;    unused,         PLATFORM,             SMOOTH,         OOS_PLATFORM,  OOS_SMOOTH
+	;    unused,         PLATFORM,             SMOOTH,         OOS_PLATFORM,  OOS_SMOOTH,     BUMPER
 	platform_specific_handlers_lsb:
-	.byt <dummy_routine, <one_screen_platform, <dummy_routine, <oos_platform, <dummy_routine
+	.byt <dummy_routine, <one_screen_platform, <dummy_routine, <oos_platform, <dummy_routine, <one_screen_platform
 	platform_specific_handlers_msb:
-	.byt >dummy_routine, >one_screen_platform, >dummy_routine, >oos_platform, >dummy_routine
+	.byt >dummy_routine, >one_screen_platform, >dummy_routine, >oos_platform, >dummy_routine, >one_screen_platform
 
 	one_screen_platform:
 	.(
@@ -1474,11 +1787,11 @@ move_player_handle_one_platform_up:
 	jmp (platform_specific_handler_lsb)
 	; No return, the handler will rts
 
-	;    unused,         PLATFORM,             SMOOTH,         OOS_PLATFORM,  OOS_SMOOTH
+	;    unused,         PLATFORM,             SMOOTH,         OOS_PLATFORM,  OOS_SMOOTH,     BUMPER
 	platform_specific_handlers_lsb:
-	.byt <dummy_routine, <one_screen_platform, <dummy_routine, <oos_platform, <dummy_routine
+	.byt <dummy_routine, <one_screen_platform, <dummy_routine, <oos_platform, <dummy_routine, <one_screen_platform
 	platform_specific_handlers_msb:
-	.byt >dummy_routine, >one_screen_platform, >dummy_routine, >oos_platform, >dummy_routine
+	.byt >dummy_routine, >one_screen_platform, >dummy_routine, >oos_platform, >dummy_routine, >one_screen_platform
 
 	one_screen_platform:
 	.(
@@ -1505,6 +1818,10 @@ move_player_handle_one_platform_up:
 			sta final_y_pixel
 			lda #0
 			sta final_y_screen
+
+			; Set ceiled flag
+			ldx player_number
+			sty player_a_ceiled, x
 
 		no_collision:
 		rts
@@ -1535,6 +1852,10 @@ move_player_handle_one_platform_up:
 			sta final_y_pixel
 			lda stage_data+STAGE_OOS_PLATFORM_OFFSET_BOTTOM_MSB, y
 			sta final_y_screen
+
+			; Set ceiled flag
+			ldx player_number
+			sty player_a_ceiled, x
 
 		no_collision:
 		rts
@@ -1568,11 +1889,11 @@ move_player_handle_one_platform_down:
 	jmp (platform_specific_handler_lsb)
 	; No return, the handler will rts
 
-	;    unused,         PLATFORM,             SMOOTH,               OOS_PLATFORM,  OOS_SMOOTH
+	;    unused,         PLATFORM,             SMOOTH,               OOS_PLATFORM,  OOS_SMOOTH,    BUMPER
 	platform_specific_handlers_lsb:
-	.byt <dummy_routine, <one_screen_platform, <one_screen_platform, <oos_platform, <oos_platform
+	.byt <dummy_routine, <one_screen_platform, <one_screen_platform, <oos_platform, <oos_platform, <one_screen_platform
 	platform_specific_handlers_msb:
-	.byt >dummy_routine, >one_screen_platform, >one_screen_platform, >oos_platform, >oos_platform
+	.byt >dummy_routine, >one_screen_platform, >one_screen_platform, >oos_platform, >oos_platform, >one_screen_platform
 
 	one_screen_platform:
 	.(
@@ -1673,136 +1994,211 @@ check_player_position:
 	SIGNED_CMP(current_y_pixel, current_y_screen, #<STAGE_BLAST_TOP, #>STAGE_BLAST_TOP)
 	bmi set_death_state
 	SIGNED_CMP(#<STAGE_BLAST_BOTTOM, #>STAGE_BLAST_BOTTOM, current_y_pixel, current_y_screen)
-	bmi set_death_state
+	bpl check_collisions
+
+		set_death_state:
+		.(
+			; Play death sound
+			jsr audio_play_death
+
+			; Reset aerial jumps counter
+			lda #$00
+			sta player_a_num_aerial_jumps, x
+
+			; Reset hitstun counter
+			sta player_a_hitstun, x
+
+			; Reset gravity
+			jsr reset_default_gravity
+
+			; Death particles animation
+			;  It takes on-screen unsigned coordinates,
+			;  so we cap actual coordinates to a minimum
+			;  of zero and a maxium of 255
+			.(
+				lda current_x_screen
+				bmi left_edge
+				beq pass_cap_vertical_blast
+					lda #$ff
+					jmp cap_vertical_blast
+				pass_cap_vertical_blast:
+					lda current_x_pixel
+					jmp cap_vertical_blast
+				left_edge:
+					lda #$0
+				cap_vertical_blast:
+					sta capped_x
+				end_cap_vertical_blast:
+			.)
+			.(
+				lda current_y_screen
+				bmi top_edge
+				beq pass_cap_horizontal_blast
+					lda #$ff
+					jmp cap_horizontal_blast
+				pass_cap_horizontal_blast:
+					lda current_y_pixel
+					jmp cap_horizontal_blast
+				top_edge:
+					lda #$0
+				cap_horizontal_blast:
+					sta capped_y
+				end_cap_horizontal_blast:
+			.)
+			jsr particle_death_start
+
+			; Decrement stocks counter and check for gameover
+			dec player_a_stocks, x
+			bmi gameover
+
+				respawn:
+				.(
+					; Set respawn state
+					lda #PLAYER_STATE_RESPAWN
+					sta player_a_state, x
+					ldy config_player_a_character, x
+					lda characters_start_routines_table_lsb, y
+					sta tmpfield1
+					lda characters_start_routines_table_msb, y
+					sta tmpfield2
+					jmp player_state_action
+
+					;rts ; useless, jump to subroutine
+				.)
+
+				gameover:
+				.(
+					; Set the winner for gameover screen
+					lda slow_down_counter
+					bne no_set_winner
+					SWITCH_SELECTED_PLAYER
+					txa
+					sta gameover_winner
+					SWITCH_SELECTED_PLAYER
+					no_set_winner:
+
+					; Do not keep an invalid number of stocks
+					lda #0
+					sta player_a_stocks, x
+
+					; Hide dead player
+					lda #PLAYER_STATE_INNEXISTANT
+					sta player_a_state, x
+					ldy config_player_a_character, x
+					lda characters_start_routines_table_lsb, y
+					sta tmpfield1
+					lda characters_start_routines_table_msb, y
+					sta tmpfield2
+					jsr player_state_action
+
+					; Start slow down (restart it if the second player die to
+					; show that heroic death's animation)
+					lda #SLOWDOWN_TIME
+					sta slow_down_counter
+
+					rts
+				.)
+		.)
+		; No return, all branches had RTS
+
+	check_collisions:
 
 	; Check if on ground
-	lda player_a_grounded, x
-	beq offground
+	.(
+		ldy player_a_grounded, x
+		beq offground
 
-		; On ground
+			; On ground
 
-		; Reset aerial jumps counter
-		lda #$00
-		sta player_a_num_aerial_jumps, x
+			; Reset aerial jumps counter
+			lda #$00
+			sta player_a_num_aerial_jumps, x
 
-		; Reset gravity modifications
-		jsr reset_default_gravity
+			; Reset gravity modifications
+			; TODO optimizable
+			;      storing system-dependent default gravity in RAM would not require modifying Y to fetch it,
+			;      allowing to avoid loading player_a_grounded, x two times
+			jsr reset_default_gravity
 
-		; Fire on-ground event
-		ldy config_player_a_character, x
-		lda characters_onground_routines_table_lsb, y
-		sta tmpfield1
-		lda characters_onground_routines_table_msb, y
-		sta tmpfield2
-		jsr player_state_action
-		jmp end
+			; Act according to platform type
+			.(
+				ldy player_a_grounded, x
+				lda stage_data, y
+				cmp #STAGE_ELEMENT_BUMPER
+				beq bumper_collision
 
-	offground:
-		; Fire off-ground event
-		ldy config_player_a_character, x
-		lda characters_offground_routines_table_lsb, y
-		sta tmpfield1
-		lda characters_offground_routines_table_msb, y
-		sta tmpfield2
-		jsr player_state_action
-		jmp end
+					normal:
+						; Normal platform - fire on-ground event
+						ldy config_player_a_character, x
+						lda characters_onground_routines_table_lsb, y
+						sta tmpfield1
+						lda characters_onground_routines_table_msb, y
+						sta tmpfield2
+						jsr player_state_action
+						jmp ok
 
-	set_death_state:
-		; Play death sound
-		jsr audio_play_death
+					bumper_collision:
+						; Bumper - throw player
+						jsr bump_player_up
+			.)
 
-		; Reset aerial jumps counter
-		lda #$00
-		sta player_a_num_aerial_jumps, x
+			jmp ok
 
-		; Reset hitstun counter
-		sta player_a_hitstun, x
+		offground:
+			; Fire off-ground event
+			ldy config_player_a_character, x
+			lda characters_offground_routines_table_lsb, y
+			sta tmpfield1
+			lda characters_offground_routines_table_msb, y
+			sta tmpfield2
+			jsr player_state_action
 
-		; Reset gravity
-		jsr reset_default_gravity
+		ok:
+	.)
 
-		; Death particles animation
-		;  It takes on-screen unsigned coordinates,
-		;  so we cap actual coordinates to a minimum
-		;  of zero and a maxium of 255
-		.(
-			lda current_x_screen
-			bmi left_edge
-			beq pass_cap_vertical_blast
-				lda #$ff
-				jmp cap_vertical_blast
-			pass_cap_vertical_blast:
-				lda current_x_pixel
-				jmp cap_vertical_blast
-			left_edge:
-				lda #$0
-			cap_vertical_blast:
-				sta capped_x
-			end_cap_vertical_blast:
-		.)
-		.(
-			lda current_y_screen
-			bmi top_edge
-			beq pass_cap_horizontal_blast
-				lda #$ff
-				jmp cap_horizontal_blast
-			pass_cap_horizontal_blast:
-				lda current_y_pixel
-				jmp cap_horizontal_blast
-			top_edge:
-				lda #$0
-			cap_horizontal_blast:
-				sta capped_y
-			end_cap_horizontal_blast:
-		.)
-		jsr particle_death_start
+	; Check if ceiled
+	.(
+		ldy player_a_ceiled, x
+		beq ok
 
-		; Decrement stocks counter and check for gameover
-		dec player_a_stocks, x
-		bmi gameover
+			; Act according to platform type
+			.(
+				lda stage_data, y
+				cmp #STAGE_ELEMENT_BUMPER
+				bne ok
 
-		; Set respawn state
-		lda #PLAYER_STATE_RESPAWN
-		sta player_a_state, x
-		ldy config_player_a_character, x
-		lda characters_start_routines_table_lsb, y
-		sta tmpfield1
-		lda characters_start_routines_table_msb, y
-		sta tmpfield2
-		jsr player_state_action
+					bumper_collision:
+						; Bumper - throw player
+						jsr bump_player_down
+			.)
 
-		jmp end
+		ok:
+	.)
 
-	gameover:
-		; Set the winner for gameover screen
-		lda slow_down_counter
-		bne no_set_winner
-		SWITCH_SELECTED_PLAYER
-		txa
-		sta gameover_winner
-		SWITCH_SELECTED_PLAYER
-		no_set_winner:
+	; Check if walled
+	.(
+		ldy player_a_walled, x
+		beq ok
 
-		; Do not keep an invalid number of stocks
-		lda #0
-		sta player_a_stocks, x
+			; Act according to platform type
+			.(
+				lda stage_data, y
+				cmp #STAGE_ELEMENT_BUMPER
+				bne ok
 
-		; Hide dead player
-		lda #PLAYER_STATE_INNEXISTANT
-		sta player_a_state, x
-		ldy config_player_a_character, x
-		lda characters_start_routines_table_lsb, y
-		sta tmpfield1
-		lda characters_start_routines_table_msb, y
-		sta tmpfield2
-		jsr player_state_action
+					bumper_collision:
+						; Bumper - throw player
+						lda player_a_walled_direction, x
+						beq left
+							jsr bump_player_right
+							jmp ok
+						left:
+							jsr bump_player_left
+			.)
 
-		; Start slow down (restart it if the second player die to
-		; show that heroic death's animation)
-		lda #SLOWDOWN_TIME
-		sta slow_down_counter
+		ok:
+	.)
 
-	end:
 	rts
 .)
 

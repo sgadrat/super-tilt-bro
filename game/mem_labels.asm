@@ -158,30 +158,32 @@ player_a_walled = $54 ; $00 if not touching a wall, else the offset of the platf
 player_b_walled = $55
 player_a_walled_direction = $56 ; DIRECTION_LEFT - player is on the left of the wall
 player_b_walled_direction = $57 ; DIRECTION_RIGHT - player is on the right of the wall
+player_a_ceiled = $58 ; $00 if not touching a ceiling, else the offset of the platform from stage_data
+player_b_ceiled = $59
 
-player_a_hurtbox_left_msb = $58
-player_b_hurtbox_left_msb = $59
-player_a_hurtbox_right_msb = $5a
-player_b_hurtbox_right_msb = $5b
-player_a_hurtbox_top_msb = $5c
-player_b_hurtbox_top_msb = $5d
-player_a_hurtbox_bottom_msb = $5e
-player_b_hurtbox_bottom_msb = $5f
-player_a_hitbox_left_msb = $60
-player_b_hitbox_left_msb = $61
-player_a_hitbox_right_msb = $62
-player_b_hitbox_right_msb = $63
-player_a_hitbox_top_msb = $64
-player_b_hitbox_top_msb = $65
-player_a_hitbox_bottom_msb = $66
-player_b_hitbox_bottom_msb = $67
+player_a_hurtbox_left_msb = $5a
+player_b_hurtbox_left_msb = $5b
+player_a_hurtbox_right_msb = $5c
+player_b_hurtbox_right_msb = $5d
+player_a_hurtbox_top_msb = $5e
+player_b_hurtbox_top_msb = $5f
+player_a_hurtbox_bottom_msb = $60
+player_b_hurtbox_bottom_msb = $61
+player_a_hitbox_left_msb = $62
+player_b_hitbox_left_msb = $63
+player_a_hitbox_right_msb = $64
+player_b_hitbox_right_msb = $65
+player_a_hitbox_top_msb = $66
+player_b_hitbox_top_msb = $67
+player_a_hitbox_bottom_msb = $68
+player_b_hitbox_bottom_msb = $69
 
-player_a_last_shown_damage = $68
-player_b_last_shown_damage = $69
-player_a_last_shown_stocks = $6a
-player_b_last_shown_stocks = $6b
+player_a_last_shown_damage = $6a
+player_b_last_shown_damage = $6b
+player_a_last_shown_stocks = $6c
+player_b_last_shown_stocks = $6d
 
-; $6c-$6f unused
+; $6e-$6f unused
 
 screen_shake_counter = $70
 screen_shake_nextval_x = $71

@@ -294,9 +294,17 @@ network_tick_ingame:
 			.)
 
 			; Copy gamestate
-			GAMESTATE_SIZE = $68
+			GAMESTATE_SIZE = $6a
 			.(
-				ldx #0
+
+				lda esp_rx_buffer+GAMESTATE_OFFSET  ; 4 cycles
+				sta $00                             ; 3 cycles
+
+				lda esp_rx_buffer+GAMESTATE_OFFSET+1  ; 4 cycles
+				sta $00+1                             ; 3 cycles
+
+				ldx #2
+
 				copy_one_byte:
 
 					lda esp_rx_buffer+GAMESTATE_OFFSET, x  ; 4 cycles
@@ -320,9 +328,9 @@ network_tick_ingame:
 			.)
 
 			; Note
-			;  Rolled - (4+4+2+3+3) * 104 = 16 * 104 = 1664
-			;  Unroll - (4+3) * 104 = 7 * 104 = 728
-			;  4x rolled - ((4+4+2)*4 + 3 + 3) * (104/4) = 46 * 26 = 1196
+			;  Rolled - (4+4+2+3+3) * 106 = 16 * 106 = 1696
+			;  Unroll - (4+3) * 106 = 7 * 106 = 742
+			;  4x rolled - (4+3)*2 + ((4+4+2)*4 + 3 + 3) * (104/4) = 14 + 46 * 26 = 1210
 
 			; Copy special state
 			lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE

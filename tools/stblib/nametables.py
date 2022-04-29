@@ -66,8 +66,8 @@ class Nametable:
 		index = ((y+1) % 2) * 2 + (x+1) % 2
 		self.attributes[line][byte][index] = attribute
 
-	def serialize(self):
-		serialized = '{}:\n'.format(self.name)
+	def serialize(self, visibility=''):
+		serialized = '{}{}:\n'.format(visibility, self.name)
 
 		compressed = self.get_compressed_tilemap()
 		serialized += '.byt '

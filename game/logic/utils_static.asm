@@ -624,6 +624,8 @@ check_in_platform:
 		lda stage_data, y
 		cmp #STAGE_ELEMENT_PLATFORM
 		beq simple_platform_handler
+		cmp #STAGE_ELEMENT_BUMPER
+		beq simple_platform_handler
 		cmp #STAGE_ELEMENT_OOS_PLATFORM
 		beq oos_platform_handler
 		rts
