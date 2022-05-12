@@ -448,6 +448,66 @@ fixed_memcpy:
 	rts
 .)
 
+; Change return address and load a pointer to the first inline parameter
+;  A - Size of inline parameters (in bytes)
+;
+; Inline parameters are parameters put directly behind the JSR
+; Example
+;  jsr my_routine
+;  .byt param1, param2
+;
+; my_routine can call "inline_parameters" with "2", to have a pointer to "param1"
+; in tmpfield1, and return after its parameters when calling RTS.
+;
+; Output
+;  tmpfield1,tmpfield2 - address of the first inline parameter
+;
+; Overwrites A, X, tmpfield1 to tmpfield5
+inline_parameters:
+.(
+	parameter_addr = tmpfield1
+	size = tmpfield3
+	caller = tmpfield4
+	caller_msb = tmpfield5
+
+	; Save parameter
+	sta size
+
+	; Save our own return address
+	pla
+	sta caller
+	pla
+	sta caller_msb
+
+	; Get first argument address (from return address)
+	pla
+	clc
+	adc #1
+	sta parameter_addr
+	pla
+	adc #0
+	sta parameter_addr+1
+
+	; Push modified return addr, to skip parameters
+	lda parameter_addr
+	;clc ; useless, previous adc shall not overflow
+	dec size
+	adc size
+	tax
+	lda parameter_addr+1
+	adc #0
+	pha
+	txa
+	pha
+
+	; Return
+	lda caller_msb
+	pha
+	lda caller
+	pha
+	rts
+.)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Super Tilt Bro. specific
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

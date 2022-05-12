@@ -8,6 +8,7 @@ stage_arcade_first_index = (* - stages_init_routine) / 2
 RAW_VECTOR(stage_generic_init) ; arcade run01
 RAW_VECTOR(stage_generic_init) ; arcade btt01
 RAW_VECTOR(stage_generic_init) ; arcade run02
+RAW_VECTOR(stage_arcade_btt02_init) ; arcade btt02
 
 stages_tick_routine:
 RAW_VECTOR(dummy_routine) ; Plateau
@@ -18,6 +19,7 @@ RAW_VECTOR(stage_gem_tick) ; Gem
 RAW_VECTOR(dummy_routine) ; arcade run01
 RAW_VECTOR(dummy_routine) ; arcade btt01
 RAW_VECTOR(dummy_routine) ; arcade run02
+RAW_VECTOR(stage_arcade_btt02_tick) ; arcade btt02
 
 stages_freezed_tick_routine_lsb:
 .byt <dummy_routine ; Plateau
@@ -28,6 +30,7 @@ stages_freezed_tick_routine_lsb:
 .byt <dummy_routine ; arcade run01
 .byt <dummy_routine ; arcade btt01
 .byt <dummy_routine ; arcade run02
+.byt <dummy_routine ; arcade btt02
 
 stages_freezed_tick_routine_msb:
 .byt >dummy_routine ; Plateau
@@ -38,6 +41,7 @@ stages_freezed_tick_routine_msb:
 .byt >dummy_routine ; arcade run01
 .byt >dummy_routine ; arcade btt01
 .byt >dummy_routine ; arcade run02
+.byt >dummy_routine ; arcade btt02
 
 stages_nametable:
 RAW_VECTOR(nametable_flatland) ; Plateau
@@ -48,6 +52,7 @@ RAW_VECTOR(nametable_stage_gem) ; Gem
 RAW_VECTOR(stage_arcade_run01_nametable)
 RAW_VECTOR(stage_btt01_nametable)
 RAW_VECTOR(stage_arcade_run02_nametable)
+RAW_VECTOR(stage_arcade_btt02_nametable)
 
 stage_palettes:
 RAW_VECTOR(stage_plateau_palette_data) ; Plateau
@@ -58,6 +63,7 @@ RAW_VECTOR(stage_gem_palette_data) ; Gem
 RAW_VECTOR(stage_arcade_run01_palette_data)
 RAW_VECTOR(stage_btt01_palette_data)
 RAW_VECTOR(stage_arcade_run02_palette_data)
+RAW_VECTOR(stage_arcade_btt02_palette_data)
 
 stages_data:
 RAW_VECTOR(stage_plateau_data) ; Plateau
@@ -68,6 +74,7 @@ RAW_VECTOR(stage_gem_data) ; Gem
 RAW_VECTOR(stage_arcade_run01_data)
 RAW_VECTOR(stage_btt01_data)
 RAW_VECTOR(stage_arcade_run02_data)
+RAW_VECTOR(stage_arcade_btt02_data)
 
 stages_illustration:
 RAW_VECTOR(stage_plateau_illustration) ; Plateau
@@ -75,6 +82,7 @@ RAW_VECTOR(stage_pit_illustration) ; Pit
 RAW_VECTOR(stage_shelf_illustration) ; Shelf
 RAW_VECTOR(stage_gem_illustration) ; Gem
 
+RAW_VECTOR($0000) ; dummy value, unused for arcade stages
 RAW_VECTOR($0000) ; dummy value, unused for arcade stages
 RAW_VECTOR($0000) ; dummy value, unused for arcade stages
 RAW_VECTOR($0000) ; dummy value, unused for arcade stages
@@ -88,6 +96,7 @@ stages_netload_routine_lsb:
 .byt <dummy_routine
 .byt <dummy_routine
 .byt <dummy_routine
+.byt <dummy_routine
 
 stages_netload_routine_msb:
 .byt >dummy_routine ; Plateau
@@ -95,6 +104,7 @@ stages_netload_routine_msb:
 .byt >dummy_routine ; Shelf
 .byt >stage_gem_netload ; Gem
 
+.byt >dummy_routine
 .byt >dummy_routine
 .byt >dummy_routine
 .byt >dummy_routine
@@ -108,6 +118,7 @@ stages_bank:
 .byt STAGE_ARCADE_RUN01_BANK_NUMBER
 .byt STAGE_BTT01_BANK_NUMBER
 .byt STAGE_ARCADE_RUN02_BANK_NUMBER
+.byt STAGE_ARCADE_BTT02_BANK_NUMBER
 
 stages_tileset_lsb:
 .byt <tileset_ruins ; Plateau
@@ -118,6 +129,7 @@ stages_tileset_lsb:
 .byt <arcade_test_stage_tileset ; arcade run01
 .byt <arcade_test_stage_tileset ; arcade btt01
 .byt <arcade_test_stage_tileset ; arcade run02
+.byt <arcade_test_stage_tileset ; arcade btt02
 
 stages_tileset_msb:
 .byt >tileset_ruins ; Plateau
@@ -128,6 +140,7 @@ stages_tileset_msb:
 .byt >arcade_test_stage_tileset ; arcade run01
 .byt >arcade_test_stage_tileset ; arcade btt01
 .byt >arcade_test_stage_tileset ; arcade run02
+.byt >arcade_test_stage_tileset ; arcade btt02
 
 stages_tileset_bank:
 .byt TILESET_RUINS_BANK_NUMBER ; Plateau
@@ -138,3 +151,4 @@ stages_tileset_bank:
 .byt ARCADE_TEST_STAGE_TILESET_BANK_NUMBER ; arcade run01
 .byt ARCADE_TEST_STAGE_TILESET_BANK_NUMBER ; arcade btt01
 .byt ARCADE_TEST_STAGE_TILESET_BANK_NUMBER ; arcade run02
+.byt ARCADE_TEST_STAGE_TILESET_BANK_NUMBER ; arcade btt02

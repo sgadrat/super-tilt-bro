@@ -157,6 +157,71 @@ class Target:
 		ensure(self.top >= 0, 'invalid target position (left={} top={}): top is before the screen'.format(self.left, self.top))
 		ensure(self.top <= 255, 'invalid target position (left={} top={}): top is below the screen'.format(self.left, self.top))
 
+class Waypoints:
+	"""
+	A list of waypoints
+
+	Each waypoint has a position and a speed the object should have starting from this waypoint.
+	"""
+	def __init__(self, name='', positions=None, speeds=None):
+		self.name = name
+		self.positions = positions if positions is not None else []
+		self.speeds = speeds if speeds is not None else []
+
+	def add_waypoint(self, x, y, horizontal_speed, vertical_speed):
+		self.positions.append({'x': x, 'y': y})
+		self.speeds.append({'h': horizontal_speed, 'v': vertical_speed})
+
+	def check(self):
+		# Check that name conforms to constraints (valid label)
+		ensure(re.match('^[a-z_][a-z0-9_]*$', self.name) is not None, f'waypoint name is not a valid label: "{self.name}"')
+
+		# Check that positions list is well formated
+		ensure(isinstance(self.positions, list), 'positions must be a list of {"x": uint8, "y": uint8}')
+		for pos_index in range(len(self.positions)):
+			pos = self.positions[pos_index]
+			ensure(isinstance(pos, dict), f'position of waypoint #{pos_index} is not a dict: "{pos}"')
+			ensure('x' in pos and 'y' in pos, f'position of waypoint #{pos_index} misses x/y coordinates')
+			x = pos['x']
+			y = pos['y']
+			ensure(isinstance(x, int), f'position of waypoint #{pos_index} has non-integer X component: "{x}"')
+			ensure(isinstance(y, int), f'position of waypoint #{pos_index} has non-integer Y component: "{y}"')
+			ensure(0 <= x and x <= 255, f'X position of waypoint #{pos_index} must be in uint8 range: {x}')
+			ensure(0 <= y and y <= 255, f'Y position of waypoint #{pos_index} must be in uint8 range: {y}')
+
+		# Check that speeds list is well formated
+		ensure(isinstance(self.speeds, list), 'speeds must be a list of {"h": int8, "v": int8}')
+		for speed_index in range(len(self.speeds)):
+			speed = self.speeds[speed_index]
+			ensure(isinstance(speed, dict), f'speed of waypoint #{speed_index} is not a dict: "{speed}"')
+			ensure('h' in speed and 'v' in speed, f'speed of waypoint #{speed_index} misses h/v components')
+			h = speed['h']
+			v = speed['v']
+			ensure(isinstance(h, int), f'speed of waypoint #{speed_index} has non-integer H component: "{h}"')
+			ensure(isinstance(v, int), f'speed of waypoint #{speed_index} has non-integer V component: "{v}"')
+			ensure(-128 <= h and h <= 127, f'H speed of waypoint #{pos_index} must be in int8 range: {h}')
+			ensure(-128 <= v and v <= 127, f'V speed of waypoint #{pos_index} must be in int8 range: {v}')
+
+		# Check consistency between positions and speeds
+		ensure(len(self.positions) == len(self.speeds), f'number of positions mismatch number of speeds ({len(self.positions)} positions for {len(self.speeds)} speeds)')
+
+		# Check that all speeds allow to reach the next waypoint
+		for wp_index in range(len(self.positions)):
+			next_wp_index = (wp_index + 1) % len(self.positions)
+			wp = {'pos': self.positions[wp_index], 'speed': self.speeds[wp_index]}
+			next_wp = {'pos': self.positions[next_wp_index], 'speed': self.speeds[next_wp_index]}
+
+			distance_h = next_wp['pos']['x'] - wp['pos']['x']
+			distance_v = next_wp['pos']['y'] - wp['pos']['y']
+			ensure(
+				(distance_h == 0 and wp['speed']['h'] == 0) or distance_h % wp['speed']['h'] == 0,
+				f'object at waypoint #{wp_index} will miss #{next_wp_index}: horizontal distance is {distance_h}, speed is {wp["speed"]["h"]}'
+			)
+			ensure(
+				(distance_v == 0 and wp['speed']['v'] == 0) or distance_v % wp['speed']['v'] == 0,
+				f'object at waypoint #{wp_index} will miss #{next_wp_index}: vertical distance is {distance_v}, speed is {wp["speed"]["v"]}'
+			)
+
 class Stage:
 	def __init__(self, name = 'stage', description = 'Stage', player_a_position = (32768, 32768), player_b_position = (32768, 32768), respawn_position = (32768, 32768), platforms = None, targets = None):
 		self.name = name
