@@ -50,7 +50,7 @@ RAW_VECTOR(nametable_stage_shelf) ; Shelf
 RAW_VECTOR(nametable_stage_gem) ; Gem
 
 RAW_VECTOR(stage_arcade_run01_nametable)
-RAW_VECTOR(stage_btt01_nametable)
+RAW_VECTOR(stage_arcade_btt01_nametable)
 RAW_VECTOR(stage_arcade_run02_nametable)
 RAW_VECTOR(stage_arcade_btt02_nametable)
 
@@ -61,7 +61,7 @@ RAW_VECTOR(stage_shelf_palette_data) ; Shelf
 RAW_VECTOR(stage_gem_palette_data) ; Gem
 
 RAW_VECTOR(stage_arcade_run01_palette_data)
-RAW_VECTOR(stage_btt01_palette_data)
+RAW_VECTOR(stage_arcade_btt01_palette_data)
 RAW_VECTOR(stage_arcade_run02_palette_data)
 RAW_VECTOR(stage_arcade_btt02_palette_data)
 
@@ -72,7 +72,7 @@ RAW_VECTOR(stage_shelf_data) ; Shelf
 RAW_VECTOR(stage_gem_data) ; Gem
 
 RAW_VECTOR(stage_arcade_run01_data)
-RAW_VECTOR(stage_btt01_data)
+RAW_VECTOR(stage_arcade_btt01_data)
 RAW_VECTOR(stage_arcade_run02_data)
 RAW_VECTOR(stage_arcade_btt02_data)
 
@@ -116,7 +116,7 @@ stages_bank:
 .byt STAGE_GEM_BANK_NUMBER ; Gem
 
 .byt STAGE_ARCADE_RUN01_BANK_NUMBER
-.byt STAGE_BTT01_BANK_NUMBER
+.byt STAGE_ARCADE_BTT01_BANK_NUMBER
 .byt STAGE_ARCADE_RUN02_BANK_NUMBER
 .byt STAGE_ARCADE_BTT02_BANK_NUMBER
 
