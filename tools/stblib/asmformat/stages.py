@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
+import stblib.asmformat
 import stblib.stages
-from stblib.utils import asmint, asmsint8, asmsint16, intasm8, intasm16, uintasm8
+from stblib.utils import asmint, asmsint8, asmsint16, intasm8, intasm16, uintasm8, uintasm16
 
 def stage_to_asm(stage, visibility=''):
 	"""
@@ -24,9 +25,94 @@ def stage_to_asm(stage, visibility=''):
 			serialized += exit_to_asm(stage.exit)
 
 	# Common stage data
-	serialized += stage.serialize_layout(visibility=visibility)
+	serialized += '{}{}_data:\n'.format(visibility, stage.name)
+	serialized += 'STAGE_HEADER({}, {}, {}, {}, {}, {}) ; player_a_x, player_b_x, player_a_y, player_b_y, respawn_x, respawn_y\n'.format(
+		uintasm16(stage.player_a_position[0]), uintasm16(stage.player_b_position[0]),
+		uintasm16(stage.player_a_position[1]), uintasm16(stage.player_b_position[1]),
+		uintasm16(stage.respawn_position[0]), uintasm16(stage.respawn_position[1])
+	)
+
+	serialized += '{}_platforms:\n'.format(stage.name)
+	for platform in stage.platforms:
+		serialized += stblib.asmformat.to_asm(platform)
+
+	serialized += 'END_OF_STAGE\n'
 
 	return serialized
+
+def platform_to_asm(platform, visibility=''):
+	"""
+	Serialize platform in a string using Super Tilt Bro's assembly format.
+	"""
+	# Convert logical platform coordinates to engine's quirks compatible coordinates
+	left = platform.left-8
+	right = platform.right+1 # +1 because the last pixel is passable, causing "walled" state
+	top = platform.top-16-1 # -1 to compensate for sprites being displayed one pixel bellow their position
+	bottom = platform.bottom+1-1 # -1 = passable last pixel // +1 = sprites displayed below their position
+
+	# Hack horizontal values are caped to [1, 254] instead of [0, 255] to avoid a bug in STB engine
+	return 'PLATFORM({}, {}, {}, {}) ; left, right, top, bot\n'.format(
+		uintasm8(max(1, left)),
+		uintasm8(min(254, right)),
+		uintasm8(max(0, top)),
+		uintasm8(bottom)
+	)
+
+def oosplatform_to_asm(platform, visibility=''):
+	"""
+	Serialize platform in a string using Super Tilt Bro's assembly format.
+	"""
+	# Convert logical platform coordinates to engine's quirks compatible coordinates
+	left = platform.left-8
+	right = platform.right+1 # +1 because the last pixel is passable, causing "walled" state
+	top = platform.top-16-1 # -1 to compensate for sprites being displayed one pixel bellow their position
+	bottom = platform.bottom+1-1 # -1 = passable last pixel // +1 = sprites displayed below their position
+
+	return 'PLATFORM({}, {}, {}, {}) ; left, right, top, bot\n'.format(
+		intasm16(left),
+		intasm16(right),
+		intasm16(top),
+		intasm16(bottom)
+	)
+
+def smoothplatform_to_asm(platform, visibility=''):
+	"""
+	Serialize platform in a string using Super Tilt Bro's assembly format
+	"""
+	# Convert logical platform coordinates to engine's quirks compatible coordinates
+	left = platform.left-8
+	right = platform.right+1 # +1 because the last pixel is passable, causing "walled" state
+	top = platform.top-16-1 # -1 to compensate for sprites being displayed one pixel bellow their position
+
+	# Hack horizontal values are caped to [1, 254] instead of [0, 255] to avoid a bug in STB engine
+	return 'SMOOTH_PLATFORM({}, {}, {}) ; left, right, top\n'.format(
+		uintasm8(max(1, left)),
+		uintasm8(min(254, right)),
+		uintasm8(max(0, top))
+	)
+
+def bumper_to_asm(platform, visibility=''):
+	"""
+	Serialize bumper in a string using Super Tilt Bro's assembly format.
+	"""
+	# Convert logical coordinates to engine's quirks compatible coordinates
+	left = platform.left-8
+	right = platform.right+1 # +1 because the last pixel is passable, causing "walled" state
+	top = platform.top-16-1 # -1 to compensate for sprites being displayed one pixel bellow their position
+	bottom = platform.bottom+1-1 # -1 = passable last pixel // +1 = sprites displayed below their position
+
+	# Hack horizontal values are caped to [1, 254] instead of [0, 255] to avoid a bug in STB engine
+	return 'STAGE_BUMPER({}, {}, {}, {}, {}, {}, {}, {}, {}) ; left, right, top, bot, damages, base, force, horizontal_direction, vertical_direction\n'.format(
+		uintasm8(max(1, left)),
+		uintasm8(min(254, right)),
+		uintasm8(max(0, top)),
+		uintasm8(bottom),
+		uintasm8(platform.damages),
+		uintasm16(platform.base),
+		uintasm8(platform.force),
+		uintasm8(0 if platform.horizontal_direction >= 0 else 1), # Serialized data is the sign bit
+		uintasm8(0 if platform.vertical_direction >= 0 else 1), # Serialized data is the sign bit
+	)
 
 def exit_to_asm(ex, visibility=''):
 	return 'ARCADE_EXIT({}, {}, {}, {}) ; left, right, top, bot\n'.format(

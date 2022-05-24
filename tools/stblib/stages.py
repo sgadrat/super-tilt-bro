@@ -32,34 +32,36 @@ class Platform:
 		self.top = top
 		self.bottom = bottom
 
-	def serialize(self):
-		"""
-		Serialize platform in a string using Super Tilt Bro's assembly format.
-		"""
-		# Convert logical platform coordinates to engine's quirks compatible coordinates
-		left = self.left-8
-		right = self.right+1 # +1 because the last pixel is passable, causing "walled" state
-		top = self.top-16-1 # -1 to compensate for sprites being displayed one pixel bellow their position
-		bottom = self.bottom+1-1 # -1 = passable last pixel // +1 = sprites displayed below their position
-
-		# Hack horizontal values are caped to [1, 254] instead of [0, 255] to avoid a bug in STB engine
-		return 'PLATFORM({}, {}, {}, {}) ; left, right, top, bot\n'.format(
-			uintasm8(max(1, left)),
-			uintasm8(min(254, right)),
-			uintasm8(max(0, top)),
-			uintasm8(bottom)
-		)
-
 	def check(self):
 		# Check that platform is in the screen
-		ensure(self.left >= 0, 'invalid platform position (left={} right={} top={} bot={}): left is before screen'.format(self.left, self.right, self.top, self.bottom))
-		ensure(self.left <= 255, 'invalid platform position (left={} right={} top={} bot={}): left is after screen'.format(self.left, self.right, self.top, self.bottom))
-		ensure(self.right >= 0, 'invalid platform position (left={} right={} top={} bot={}): right is before screen'.format(self.left, self.right, self.top, self.bottom))
-		ensure(self.right <= 255, 'invalid platform position (left={} right={} top={} bot={}): right is after screen'.format(self.left, self.right, self.top, self.bottom))
-		ensure(self.top >= 0, 'invalid platform position (left={} right={} top={} bot={}): top is above screen'.format(self.left, self.right, self.top, self.bottom))
-		ensure(self.top <= 255, 'invalid platform position (left={} right={} top={} bot={}): top is below screen'.format(self.left, self.right, self.top, self.bottom))
-		ensure(self.bottom >= 0, 'invalid platform position (left={} right={} top={} bot={}): bottom is above screen'.format(self.left, self.right, self.top, self.bottom))
-		ensure(self.bottom <= 255, 'invalid platform position (left={} right={} top={} bot={}): bottom is below screen'.format(self.left, self.right, self.top, self.bottom))
+		position = f'left={self.left} right={self.right} top={self.top} bot={self.bottom}'
+		ensure(self.left >= 0, 'invalid platform position ({}): left is before screen'.format(position))
+		ensure(self.left <= 255, 'invalid platform position ({}): left is after screen'.format(position))
+		ensure(self.right >= 0, 'invalid platform position ({}): right is before screen'.format(position))
+		ensure(self.right <= 255, 'invalid platform position ({}): right is after screen'.format(position))
+		ensure(self.top >= 0, 'invalid platform position ({}): top is above screen'.format(position))
+		ensure(self.top <= 255, 'invalid platform position ({}): top is below screen'.format(position))
+		ensure(self.bottom >= 0, 'invalid platform position ({}): bottom is above screen'.format(position))
+		ensure(self.bottom <= 255, 'invalid platform position ({}): bottom is below screen'.format(position))
+
+class OosPlatform:
+	def __init__(self, left = 0, right = 16, top = 0, bottom = 16):
+		self.left = left
+		self.right = right
+		self.top = top
+		self.bottom = bottom
+
+	def check(self):
+		# Check that platform is in the gaming area
+		position = f'left={self.left} right={self.right} top={self.top} bot={self.bottom}'
+		ensure(self.left >= -0x8000, 'invalid platform position ({}): left is before area'.format(position))
+		ensure(self.left <= 0x7fff, 'invalid platform position ({}): left is after area'.format(position))
+		ensure(self.right >= -0x8000, 'invalid platform position ({}): right is before area'.format(position))
+		ensure(self.right <= 0x7fff, 'invalid platform position ({}): right is after area'.format(position))
+		ensure(self.top >= -0x8000, 'invalid platform position ({}): top is above area'.format(position))
+		ensure(self.top <= 0x7fff, 'invalid platform position ({}): top is below area'.format(position))
+		ensure(self.bottom >= -0x8000, 'invalid platform position ({}): bottom is above area'.format(position))
+		ensure(self.bottom <= 0x7fff, 'invalid platform position ({}): bottom is below area'.format(position))
 
 class SmoothPlatform:
 	def __init__(self, left = 0, right = 16, top = 0):
@@ -67,30 +69,15 @@ class SmoothPlatform:
 		self.right = right
 		self.top = top
 
-	def serialize(self):
-		"""
-		Serialize platform in a string using Super Tilt Bro's assembly format
-		"""
-		# Convert logical platform coordinates to engine's quirks compatible coordinates
-		left = self.left-8
-		right = self.right+1 # +1 because the last pixel is passable, causing "walled" state
-		top = self.top-16-1 # -1 to compensate for sprites being displayed one pixel bellow their position
-
-		# Hack horizontal values are caped to [1, 254] instead of [0, 255] to avoid a bug in STB engine
-		return 'SMOOTH_PLATFORM({}, {}, {}) ; left, right, top\n'.format(
-			uintasm8(max(1, left)),
-			uintasm8(min(254, right)),
-			uintasm8(max(0, top))
-		)
-
 	def check(self):
 		# Check that platform is in the screen
-		ensure(self.left >= 0, 'invalid smooth platform position (left={} right={} top={}): left is before screen'.format(self.left, self.right, self.top))
-		ensure(self.left <= 255, 'invalid smooth platform position (left={} right={} top={}): left is after screen'.format(self.left, self.right, self.top))
-		ensure(self.right >= 0, 'invalid smooth platform position (left={} right={} top={}): right is before screen'.format(self.left, self.right, self.top))
-		ensure(self.right <= 255, 'invalid smooth platform position (left={} right={} top={}): right is after screen'.format(self.left, self.right, self.top))
-		ensure(self.top >= 0, 'invalid smooth platform position (left={} right={} top={}): top is above screen'.format(self.left, self.right, self.top))
-		ensure(self.top <= 255, 'invalid smooth platform position (left={} right={} top={}): top is below screen'.format(self.left, self.right, self.top))
+		position = f'left={self.left} right={self.right} top={self.top}'
+		ensure(self.left >= 0, 'invalid smooth platform position ({}): left is before screen'.format(position))
+		ensure(self.left <= 255, 'invalid smooth platform position ({}): left is after screen'.format(position))
+		ensure(self.right >= 0, 'invalid smooth platform position ({}): right is before screen'.format(position))
+		ensure(self.right <= 255, 'invalid smooth platform position ({}): right is after screen'.format(position))
+		ensure(self.top >= 0, 'invalid smooth platform position ({}): top is above screen'.format(position))
+		ensure(self.top <= 255, 'invalid smooth platform position ({}): top is below screen'.format(position))
 
 class Bumper:
 	def __init__(self, left=0, right=0, top=0, bottom=0, damages=0, base=0, force=0, horizontal_direction=1, vertical_direction=1):
@@ -103,29 +90,6 @@ class Bumper:
 		self.force = force
 		self.horizontal_direction = horizontal_direction
 		self.vertical_direction = vertical_direction
-
-	def serialize(self):
-		"""
-		Serialize bumper in a string using Super Tilt Bro's assembly format.
-		"""
-		# Convert logical coordinates to engine's quirks compatible coordinates
-		left = self.left-8
-		right = self.right+1 # +1 because the last pixel is passable, causing "walled" state
-		top = self.top-16-1 # -1 to compensate for sprites being displayed one pixel bellow their position
-		bottom = self.bottom+1-1 # -1 = passable last pixel // +1 = sprites displayed below their position
-
-		# Hack horizontal values are caped to [1, 254] instead of [0, 255] to avoid a bug in STB engine
-		return 'STAGE_BUMPER({}, {}, {}, {}, {}, {}, {}, {}, {}) ; left, right, top, bot, damages, base, force, horizontal_direction, vertical_direction\n'.format(
-			uintasm8(max(1, left)),
-			uintasm8(min(254, right)),
-			uintasm8(max(0, top)),
-			uintasm8(bottom),
-			uintasm8(self.damages),
-			uintasm16(self.base),
-			uintasm8(self.force),
-			uintasm8(0 if self.horizontal_direction >= 0 else 1), # Serialized data is the sign bit
-			uintasm8(0 if self.vertical_direction >= 0 else 1), # Serialized data is the sign bit
-		)
 
 	def check(self):
 		# Check that bumper is in the screen
@@ -223,7 +187,7 @@ class Waypoints:
 			)
 
 class Stage:
-	def __init__(self, name = 'stage', description = 'Stage', player_a_position = (32768, 32768), player_b_position = (32768, 32768), respawn_position = (32768, 32768), platforms = None, targets = None):
+	def __init__(self, name = 'stage', description = 'Stage', player_a_position = (32768, 32768), player_b_position = (32768, 32768), respawn_position = (32768, 32768), platforms = None, targets = None, exit_area = None):
 		self.name = name
 		self.description = description
 		self.player_a_position = player_a_position
@@ -231,6 +195,7 @@ class Stage:
 		self.respawn_position = respawn_position
 		self.platforms = platforms if platforms is not None else [] #TODO should be renamed in "elements" or "layout"
 		self.targets = targets if targets is not None else []
+		self.exit = exit_area
 
 	def layout_size(self):
 		"""
@@ -251,8 +216,8 @@ class Stage:
 		# Check that platforms are actual platforms and that hard ones are before smooth ones
 		smooth = False
 		for platform in self.platforms:
-			ensure(platform.__class__.__name__ in ['Platform', 'SmoothPlatform', 'Bumper'], 'Unknown platform object of type "{}"'.format(platform.__class__.__name__))
-			if isinstance(platform, Platform) or isinstance(platform, Bumper):
+			ensure(platform.__class__.__name__ in ['Platform', 'OosPlatform', 'SmoothPlatform', 'Bumper'], 'Unknown platform object of type "{}"'.format(platform.__class__.__name__))
+			if platform.__class__.__name__ in ['Platform', 'OosPlatform', 'Bumper']:
 				ensure(not smooth, 'Hard platform found after a smooth one')
 			elif isinstance(platform, SmoothPlatform):
 				smooth = True
@@ -282,29 +247,3 @@ class Stage:
 
 	def serialize(self):
 		raise Exception('Obsolete, use stblib.asmformat.stages.stage_to_asm() instead')
-
-	def serialize_layout(self, visibility=''):
-		"""
-		Serialize the stage's data in a string using Super Tilt Bro's assembly format
-		"""
-		serialized = '{}{}_data:\n'.format(visibility, self.name)
-		serialized += 'STAGE_HEADER({}, {}, {}, {}, {}, {}) ; player_a_x, player_b_x, player_a_y, player_b_y, respawn_x, respawn_y\n'.format(
-			uintasm16(self.player_a_position[0]), uintasm16(self.player_b_position[0]),
-			uintasm16(self.player_a_position[1]), uintasm16(self.player_b_position[1]),
-			uintasm16(self.respawn_position[0]), uintasm16(self.respawn_position[1])
-		)
-
-		serialized += '{}_platforms:\n'.format(self.name)
-		for platform in self.platforms:
-			serialized += platform.serialize()
-
-		serialized += 'END_OF_STAGE\n'
-
-		return serialized
-
-	def serialize_jump_tables(self):
-		"""
-		Serialize the jump tables entries for this stage using Super Tilt Bro's assembly format
-		"""
-		# It was unmaintained and actually unusable since jump tables need a list of all stages to be generated correctly
-		raise Exception('Obsolete, no replacement')
