@@ -47,6 +47,12 @@ bank_data_stage_plateau_begin:
 #echo Plateau size:
 #print *-bank_data_stage_plateau_begin
 
+bank_data_tileset_common_features_begin:
+#include "game/data/tilesets/common_features.asm"
+#echo
+#echo Tilesets common features:
+#print *-bank_data_tileset_common_features_begin
+
 bank_data_end:
 
 #echo

@@ -107,8 +107,8 @@ class Bumper:
 		ensure(0 <= self.damages and self.damages <= 0b1111, f'invalid bumper damages ({self.damages} does not fit in 4 bits)')
 		ensure(0 <= self.base and self.base < 0x8000, f'invalid bumper base power ({self.base} does not fit in 15 bits)')
 		ensure(0 <= self.force and self.force < 0x80, f'invalid bumper force power ({self.force} does not fit in 7 bits)')
-		ensure(self.horizontal_direction in [-1, 1], f'invalid horizontal direction ({self.horizontal_direction} must be 1, or -1)')
-		ensure(self.vertical_direction in [-1, 1], f'invalid vertical direction ({self.vertical_direction} must be 1, or -1)')
+		ensure(self.horizontal_direction in [-2, -1, 1, 2], f'invalid horizontal direction ({self.horizontal_direction} must be between -2 and +2 (not 0))')
+		ensure(self.vertical_direction in [-2, -1, 1, 2], f'invalid vertical direction ({self.vertical_direction} must be between -2 and +2 (not 0))')
 
 class Target:
 	def __init__(self, left=0, top=0):
@@ -244,6 +244,3 @@ class Stage:
 		# Check that stage fits in is reserved memory area
 		max_size = 0x80
 		ensure(self.layout_size() <= max_size, 'Stage is bigger than allowed by the engine ({} bytes while max is {} bytes)'.format(self.layout_size(), max_size))
-
-	def serialize(self):
-		raise Exception('Obsolete, use stblib.asmformat.stages.stage_to_asm() instead')

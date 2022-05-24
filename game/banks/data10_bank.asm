@@ -35,6 +35,12 @@ bank_data_cutscene_sinbad_story_kiki_encounter_begin:
 #echo arcade cutscene sinbad story kiki encounter size:
 #print *-bank_data_cutscene_sinbad_story_kiki_encounter_begin
 
+bank_data_stage_arcade_boss_begin:
+#include "game/data/stages/arcade/boss/stage_arcade_boss.asm"
+#echo
+#echo arcade stage boss size:
+#print *-bank_data_stage_arcade_boss_begin
+
 bank_data10_end:
 
 #echo

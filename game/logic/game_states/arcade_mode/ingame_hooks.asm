@@ -137,7 +137,7 @@ hide_player_b:
 		ldx #N_TARGETS-1
 		ldy #FIRST_TARGET_SPRITE*4
 		init_one_target:
-			lda #TILE_ARCADE_BTT_SPRITES_TILESET_TARGET
+			lda #ARCADE_FIRST_TILE+TILE_ARCADE_BTT_SPRITES_TILESET_TARGET
 			sta oam_mirror+1, y
 			lda #2
 			sta oam_mirror+2, y

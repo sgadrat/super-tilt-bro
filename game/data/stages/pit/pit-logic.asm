@@ -42,9 +42,6 @@ stage_pit_netload:
 
 stage_pit_init:
 .(
-	; Generic initialization stuff
-	jsr stage_generic_init
-
 	; Set stage's state
 	lda #$ff
 	sta stage_pit_platform1_direction_v

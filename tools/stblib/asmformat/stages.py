@@ -32,7 +32,7 @@ def stage_to_asm(stage, visibility=''):
 		uintasm16(stage.respawn_position[0]), uintasm16(stage.respawn_position[1])
 	)
 
-	serialized += '{}_platforms:\n'.format(stage.name)
+	serialized += '; Platforms\n'
 	for platform in stage.platforms:
 		serialized += stblib.asmformat.to_asm(platform)
 
@@ -68,7 +68,7 @@ def oosplatform_to_asm(platform, visibility=''):
 	top = platform.top-16-1 # -1 to compensate for sprites being displayed one pixel bellow their position
 	bottom = platform.bottom+1-1 # -1 = passable last pixel // +1 = sprites displayed below their position
 
-	return 'PLATFORM({}, {}, {}, {}) ; left, right, top, bot\n'.format(
+	return 'OOS_PLATFORM({}, {}, {}, {}) ; left, right, top, bot\n'.format(
 		intasm16(left),
 		intasm16(right),
 		intasm16(top),
@@ -102,6 +102,16 @@ def bumper_to_asm(platform, visibility=''):
 	bottom = platform.bottom+1-1 # -1 = passable last pixel // +1 = sprites displayed below their position
 
 	# Hack horizontal values are caped to [1, 254] instead of [0, 255] to avoid a bug in STB engine
+	horizontal_direction = 0 if platform.horizontal_direction >= 0 else 1
+	horizontal_nullified = 1 if abs(platform.horizontal_direction) != 1 else 0
+	horizontal_byte = (horizontal_nullified << 1) + horizontal_direction
+
+	vertical_direction = 0 if platform.vertical_direction >= 0 else 1
+	vertical_nullified = 1 if abs(platform.vertical_direction) != 1 else 0
+	vertical_byte = (vertical_nullified << 1) + vertical_direction
+
+	print(f'{platform.vertical_direction} => {vertical_nullified} + {vertical_direction} => {vertical_byte}')
+
 	return 'STAGE_BUMPER({}, {}, {}, {}, {}, {}, {}, {}, {}) ; left, right, top, bot, damages, base, force, horizontal_direction, vertical_direction\n'.format(
 		uintasm8(max(1, left)),
 		uintasm8(min(254, right)),
@@ -110,8 +120,8 @@ def bumper_to_asm(platform, visibility=''):
 		uintasm8(platform.damages),
 		uintasm16(platform.base),
 		uintasm8(platform.force),
-		uintasm8(0 if platform.horizontal_direction >= 0 else 1), # Serialized data is the sign bit
-		uintasm8(0 if platform.vertical_direction >= 0 else 1), # Serialized data is the sign bit
+		uintasm8(horizontal_byte),
+		uintasm8(vertical_byte)
 	)
 
 def exit_to_asm(ex, visibility=''):

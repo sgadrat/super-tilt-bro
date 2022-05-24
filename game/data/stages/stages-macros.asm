@@ -11,15 +11,17 @@
 
 ; base is a 16 bits unsigned value, always under $8000
 ; force is a 8 bits unsigned value, always under $80
-; damages byte layout - HV..DDDD
+; damages byte layout - HVhvDDDD
 ;      H - horizontal knockback sign
 ;      V - vertical knockback sign
+;      h - disable horizontal knockback on top/bottom edges
+;      v - disable vertical knockback on left/right edges
 ;   DDDD - dammages
 #define STAGE_BUMPER(left,right,top,bot,damages,base,force,horiz,vertical) \
 	.byt \
 	STAGE_ELEMENT_BUMPER, \
 	left, right, top, bot, \
-	(horiz << 7) + (vertical << 6) + damages, \
+	((horiz & 1) << 7) + ((vertical & 1) << 6) + (((horiz >> 1) & 1) << 5) + (((vertical >> 1) & 1) << 4) + damages, \
 	<base, >base, force
 
 #define END_OF_STAGE .byt STAGE_ELEMENT_END

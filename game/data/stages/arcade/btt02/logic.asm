@@ -204,17 +204,6 @@ moving_object_tick:
 ;  - No collision if the platform moves over the player
 ;  - Allows the player to move through other walls
 ;  - Hardcodes sprites usage
-;  - "init", cannot be called in "init" section of the stage (cf related TODO)
-;    - Hacky answer is to create a "step 2" init routine for the stage, called on first tick
-;      - This is needed because "stage_generic_init" must be called before
-;        palette hacking in "init_game_state" so it cannot be moved to after game mode
-;        initialization.
-;      - Better change this process to
-;        - Generic initialization done by init_game_state (instead of all stage calling "stage_generic_init" explicitely)
-;        - Call game mode init routine
-;        - Call stage init routine
-;        That way every step can modify what have been done by its predecessors,
-;        and it is cool since steps come from the most generic to the most specific.
 
 ;Example of metasprite, we should actually use an animation frame, or a fully featured animation
 METASPRITE_LENGTH = 0
@@ -286,7 +275,7 @@ stage_actor_platform_mover_init:
 		tay
 		dey
 		init_one_sprite:
-			lda #TILE_ARCADE_BTT_SPRITES_TILESET_TARGET_DARK
+			lda #ARCADE_FIRST_TILE+TILE_ARCADE_BTT_SPRITES_TILESET_TARGET_DARK
 			sta oam_mirror+1, x
 			lda #0
 			sta oam_mirror+2, x
@@ -610,9 +599,6 @@ cursor = stage_state_begin
 
 +stage_arcade_btt02_init:
 .(
-	; Common stuff
-	jsr stage_generic_init
-
 	; Initialize moving targets
 	jsr stage_actor_target_mover_init
 	.word top_target_x, top_target_path

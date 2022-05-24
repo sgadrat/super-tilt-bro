@@ -48,17 +48,10 @@ init_game_state:
 			jsr cpu_to_ppu_copy_tileset_background
 		.)
 
-		; Call stage initialization routine
+		; Call stage generic initialization routine
 		ldx config_selected_stage
 		SWITCH_BANK(stages_bank COMMA x)
-		txa
-		asl
-		tax
-		lda stages_init_routine, x
-		sta tmpfield1
-		lda stages_init_routine+1, x
-		sta tmpfield2
-		jsr call_pointed_subroutine
+		jsr stage_generic_init
 
 		; Reset screen shaking
 		lda #0
@@ -278,6 +271,18 @@ init_game_state:
 		lda game_modes_init_lsb, x
 		sta tmpfield1
 		lda game_modes_init_msb, x
+		sta tmpfield2
+		jsr call_pointed_subroutine
+
+		; Call stage init routine
+		ldx config_selected_stage
+		SWITCH_BANK(stages_bank COMMA x)
+		txa
+		asl
+		tax
+		lda stages_init_routine, x
+		sta tmpfield1
+		lda stages_init_routine+1, x
 		sta tmpfield2
 		jsr call_pointed_subroutine
 
@@ -904,17 +909,29 @@ bump_player_up:
 	.(
 		ldy player_a_grounded, x
 		lda stage_data+STAGE_BUMPER_OFFSET_DAMMAGES, y
+		tay
+		and #%00100000
+		bne nullify
+		tya
 		bpl ok
 
-			lda player_a_velocity_h_low, x
-			eor #%11111111
-			clc
-			adc #1
-			sta player_a_velocity_h_low, x
-			lda player_a_velocity_h, x
-			eor #%11111111
-			adc #0
-			sta player_a_velocity_h, x
+			invert:
+				lda player_a_velocity_h_low, x
+				eor #%11111111
+				clc
+				adc #1
+				sta player_a_velocity_h_low, x
+				lda player_a_velocity_h, x
+				eor #%11111111
+				adc #0
+				sta player_a_velocity_h, x
+
+				jmp ok
+
+			nullify:
+				lda #0
+				sta player_a_velocity_h_low, x
+				sta player_a_velocity_h, x
 
 		ok:
 	.)
@@ -945,17 +962,29 @@ bump_player_down:
 	.(
 		ldy player_a_ceiled, x
 		lda stage_data+STAGE_BUMPER_OFFSET_DAMMAGES, y
+		tay
+		and #%00100000
+		bne nullify
+		tya
 		bpl ok
 
-			lda player_a_velocity_h_low, x
-			eor #%11111111
-			clc
-			adc #1
-			sta player_a_velocity_h_low, x
-			lda player_a_velocity_h, x
-			eor #%11111111
-			adc #0
-			sta player_a_velocity_h, x
+			invert:
+				lda player_a_velocity_h_low, x
+				eor #%11111111
+				clc
+				adc #1
+				sta player_a_velocity_h_low, x
+				lda player_a_velocity_h, x
+				eor #%11111111
+				adc #0
+				sta player_a_velocity_h, x
+
+				jmp ok
+
+			nullify:
+				lda #0
+				sta player_a_velocity_h_low, x
+				sta player_a_velocity_h, x
 
 		ok:
 	.)
@@ -981,18 +1010,30 @@ bump_player_left:
 	.(
 		ldy player_a_walled, x
 		lda stage_data+STAGE_BUMPER_OFFSET_DAMMAGES, y
+		tay
+		and #%00010000
+		bne nullify
+		tya
 		and #%01000000
 		beq ok
 
-			lda player_a_velocity_v_low, x
-			eor #%11111111
-			clc
-			adc #1
-			sta player_a_velocity_v_low, x
-			lda player_a_velocity_v, x
-			eor #%11111111
-			adc #0
-			sta player_a_velocity_v, x
+			invert:
+				lda player_a_velocity_v_low, x
+				eor #%11111111
+				clc
+				adc #1
+				sta player_a_velocity_v_low, x
+				lda player_a_velocity_v, x
+				eor #%11111111
+				adc #0
+				sta player_a_velocity_v, x
+
+				jmp ok
+
+			nullify:
+				lda #0
+				sta player_a_velocity_v_low, x
+				sta player_a_velocity_v, x
 
 		ok:
 	.)
@@ -1031,18 +1072,30 @@ bump_player_right:
 	.(
 		ldy player_a_walled, x
 		lda stage_data+STAGE_BUMPER_OFFSET_DAMMAGES, y
+		tay
+		and #%00010000
+		bne nullify
+		tya
 		and #%01000000
 		beq ok
 
-			lda player_a_velocity_v_low, x
-			eor #%11111111
-			clc
-			adc #1
-			sta player_a_velocity_v_low, x
-			lda player_a_velocity_v, x
-			eor #%11111111
-			adc #0
-			sta player_a_velocity_v, x
+			invert:
+				lda player_a_velocity_v_low, x
+				eor #%11111111
+				clc
+				adc #1
+				sta player_a_velocity_v_low, x
+				lda player_a_velocity_v, x
+				eor #%11111111
+				adc #0
+				sta player_a_velocity_v, x
+
+				jmp ok
+
+			nullify:
+				lda #0
+				sta player_a_velocity_v_low, x
+				sta player_a_velocity_v, x
 
 		ok:
 	.)
@@ -1147,6 +1200,16 @@ bump_player_common:
 
 	; Play hit sound
 	jsr audio_play_hit
+
+	; Lessen hitstun
+	lsr player_a_hitstun, x
+	lsr player_a_hitstun, x
+
+	lda #2
+	cmp screen_shake_counter
+	bcc screen_shake_ok
+		lsr screen_shake_counter
+	screen_shake_ok:
 
 	; Reset fall speed
 	jmp reset_default_gravity
@@ -2349,7 +2412,7 @@ write_player_damages:
 					lda character_icon
 					jmp set_stock_tile
 				empty_stock:
-					lda #TILE_SOLID_0
+					lda #TILE_EMPTY_STOCK_ICON
 			set_stock_tile:
 			sta nametable_buffers+11, x
 

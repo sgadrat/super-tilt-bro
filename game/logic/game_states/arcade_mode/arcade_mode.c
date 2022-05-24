@@ -43,6 +43,7 @@ typedef struct Encounter {
 			uint8_t character;
 			uint8_t difficulty;
 			uint8_t skin;
+			uint8_t stage;
 		} fight;
 		struct {
 			uint8_t stage;
@@ -63,19 +64,21 @@ typedef struct Encounter {
 #define ENCOUNTER_CUTSCENE 3
 
 static Encounter const encounters[] = {
+	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_meteor, (uint16_t)&cutscene_sinbad_story_meteor_bank}}},
+	{.type = ENCOUNTER_FIGHT, {.fight={0, 4, 1, 4}}},
 	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_bird_msg, (uint16_t)&cutscene_sinbad_story_bird_msg_bank}}},
 	{.type = ENCOUNTER_RUN, {.run={0}}},
 	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_sinbad_encounter, (uint16_t)&cutscene_sinbad_story_sinbad_encounter_bank}}},
-	{.type = ENCOUNTER_FIGHT, {.fight={0, 1, 0}}},
+	{.type = ENCOUNTER_FIGHT, {.fight={0, 1, 0, 0}}},
 	{.type = ENCOUNTER_TARGETS, {.targets={1}}},
 	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_kiki_encounter, (uint16_t)&cutscene_sinbad_story_kiki_encounter_bank}}},
-	{.type = ENCOUNTER_FIGHT, {.fight={1, 2, 0}}},
+	{.type = ENCOUNTER_FIGHT, {.fight={1, 2, 0, 1}}},
 	{.type = ENCOUNTER_RUN, {.run={2}}},
 	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_pepper_encounter, (uint16_t)&cutscene_sinbad_story_pepper_encounter_bank}}},
-	{.type = ENCOUNTER_FIGHT, {.fight={2, 3, 0}}},
+	{.type = ENCOUNTER_FIGHT, {.fight={2, 3, 0, 2}}},
 	{.type = ENCOUNTER_TARGETS, {.targets={3}}},
 	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_meteor, (uint16_t)&cutscene_sinbad_story_meteor_bank}}},
-	{.type = ENCOUNTER_FIGHT, {.fight={0, 4, 1}}},
+	{.type = ENCOUNTER_FIGHT, {.fight={0, 4, 1, 4}}},
 };
 uint8_t const n_encounters = sizeof(encounters) / sizeof(Encounter);
 
@@ -219,7 +222,7 @@ static void next_screen() {
 
 	if (*arcade_mode_stage_type == ENCOUNTER_FIGHT) {
 		*config_ai_level = min(current_encounter().fight.difficulty, 3);
-		*config_selected_stage = 0;
+		*config_selected_stage = current_encounter().fight.stage;
 		*config_player_b_character_palette = current_encounter().fight.skin;
 		*config_player_b_weapon_palette = current_encounter().fight.skin;
 		*config_player_b_character = current_encounter().fight.character;

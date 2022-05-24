@@ -941,9 +941,12 @@ sinbad_start_inactive_state:
 		sta player_a_walljump, x
 
 		; Set the appropriate animation
-		lda #<sinbad_anim_respawn
+		;FIXME must be two states, first being invisible, unable to do anything, second being on platform
+		;lda #<sinbad_anim_respawn
+		lda #<anim_invisible
 		sta tmpfield13
-		lda #>sinbad_anim_respawn
+		;lda #>sinbad_anim_respawn
+		lda #>anim_invisible
 		sta tmpfield14
 		jmp set_player_animation
 

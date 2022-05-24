@@ -32,7 +32,7 @@ def tileset_to_asm(tileset, visibility=''):
 
 	ensure(len(tileset.tiles) == len(tileset.tilenames), 'tiles must all be named')
 	for tile_index in range(len(tileset.tiles)):
-		tile_label = f'TILE_{tileset.name.upper()}_{tileset.tilenames[tile_index].upper()}'
+		tile_label = f'{visibility}TILE_{tileset.name.upper()}_{tileset.tilenames[tile_index].upper()}'
 		tile = tileset.tiles[tile_index]
 
 		res += f'{tile_label} = (*-{tileset.name}_tiles)/16\n'

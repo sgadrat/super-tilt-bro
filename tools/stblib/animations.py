@@ -108,6 +108,3 @@ class Animation:
 		ensure(len(self.frames) > 0, 'empty animation')
 		for frame in self.frames:
 			frame.check()
-
-	#TODO obsolete, use stblib.asmformat.animations.animation_to_asm()
-	#def serialize(self):

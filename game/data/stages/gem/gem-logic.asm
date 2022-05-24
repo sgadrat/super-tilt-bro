@@ -48,9 +48,6 @@
 
 stage_gem_init:
 .(
-	; Generic initialization stuff
-	jsr stage_generic_init
-
 	; Copy stage's tiles in VRAM
 	.(
 		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tileset
