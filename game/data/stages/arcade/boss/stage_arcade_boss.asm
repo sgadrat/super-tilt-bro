@@ -106,7 +106,7 @@ cloud_tile:
 
 	TRAMPOLINE(cpu_to_ppu_copy_tileset, #TILESET_COMMON_FEATURES_BANK_NUMBER, #CURRENT_BANK_NUMBER)
 
-#if 1
+#if 0
 	;TODO remove this chunk of code (allows to skip layouts for testing)
 	lda #0
 	sta config_ai_level

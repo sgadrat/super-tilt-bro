@@ -1,33 +1,3 @@
-audio_music_ingame:
-.(
-	; Change selected track, so it varies from game to game
-	dec config_ingame_track
-	bpl ok
-		lda #LAST_INGAME_TRACK
-		sta config_ingame_track
-	ok:
-
-	; Play selected track
-	ldx config_ingame_track
-	ldy ingame_themes_lsb, x
-	lda ingame_themes_bank, x
-	pha
-	lda ingame_themes_msb, x
-	tax
-	pla
-	jmp audio_play_music
-
-	;rts ; useless, jump to a subroutine
-
-	ingame_themes_lsb:
-		.byt <music_perihelium_info, <music_sinbad_info, <music_adventure_info, <music_volcano_info, <music_kiki_info
-	ingame_themes_msb:
-		.byt >music_perihelium_info, >music_sinbad_info, >music_adventure_info, >music_volcano_info, >music_kiki_info
-	ingame_themes_bank:
-		.byt music_perihelium_bank, music_sinbad_bank, music_adventure_bank, music_volcano_bank, music_kiki_bank
-	LAST_INGAME_TRACK = ingame_themes_msb - ingame_themes_lsb - 1
-.)
-
 audio_music_weak:
 .(
 	ldy #<music_title_info

@@ -46,6 +46,7 @@ audio_play_sfx:
 ;  register A - track bank
 ;
 ;  Overwrites all registers, tmpfield1 to tmpfield4
+;  Switch bank
 audio_play_music:
 .(
 	; Set current track
@@ -53,7 +54,12 @@ audio_play_music:
 	stx audio_current_track_msb
 	sta audio_current_track_bank
 
-	jsr switch_bank
+; Play the track pointed by audio_current_track_*
+;  Overwrites all registers, tmpfield1 to tmpfield4
+;  Switch bank
+&audio_play_music_direct:
+
+	SWITCH_BANK(audio_current_track_bank)
 
 	; Store native tempo in zeropage
 	ldy #MUSIC_HEADER_TEMPO

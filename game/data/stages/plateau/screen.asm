@@ -1,8 +1,5 @@
 stage_plateau_palette_data:
-; Background
 .byt $21,$0f,$00,$10, $21,$0f,$00,$31, $21,$09,$19,$31, $21,$07,$17,$27
-; Sprites
-.byt $21,$08,$1a,$20, $21,$08,$10,$37, $21,$08,$16,$10, $21,$08,$28,$37
 
 ; Temporary 3 char alias for tiles
 #define TFP TILE_CHAR_PCT

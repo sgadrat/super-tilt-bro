@@ -2,12 +2,21 @@
 ;  register X - Player number
 ;  config_player_a_character, x - Character number
 ;
-; Overwrites register A, register X, register Y, tmpfield1, tmpfield2 and tmpfield3
+; Overwrites register A, register Y, tmpfield1, tmpfield2 and tmpfield3
 ; May change active bank
 place_character_ppu_tiles:
 .(
 	ldy config_player_a_character, x
 
+; Place sprite tiles for a character in PPU memory
+;  register X - Player number
+;  register Y - Character number
+;  config_player_a_character, x - Character number
+;
+; Overwrites register A, register Y, tmpfield1, tmpfield2 and tmpfield3
+; May change active bank
+;
+; This variant does not read selected character selected in configuration
 &place_character_ppu_tiles_direct:
 	SWITCH_BANK(characters_bank_number COMMA y)
 

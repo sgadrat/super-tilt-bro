@@ -1,8 +1,5 @@
 +stage_arcade_btt01_palette_data:
-; Background
 .byt $21,$0f,$17,$00, $21,$0f,$00,$31, $21,$0f,$19,$10, $21,$00,$00,$00
-; Sprites
-.byt $21,$00,$00,$00, $21,$00,$00,$00, $21,$16,$20,$00, $21,$00,$00,$00
 
 +stage_arcade_btt01_nametable:
 .byt $00,$49

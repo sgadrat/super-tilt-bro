@@ -36,6 +36,14 @@ bank_data_charset_alphanum_fg0_bg2_begin:
 #echo Charset alphanum (fg=0 bg=2):
 #print *-bank_data_charset_alphanum_fg0_bg2_begin
 
+.(
+bank_data_extra_game_logic:
+#include "game/logic/game_states/game/game_extra_logic.asm"
+#echo
+#echo Extra game logic:
+#print *-bank_data_extra_game_logic
+.)
+
 bank_data01_end:
 
 #echo

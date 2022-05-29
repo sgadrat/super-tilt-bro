@@ -5,10 +5,7 @@ OOS_PLATFORM($ffd0, $0128, $0070, $0140) ; left, right, top, bot
 END_OF_STAGE
 
 +stage_arcade_boss_space_palette_data:
-; Background
 .byt $0f,$07,$16,$27, $0f,$00,$10,$20, $0f,$00,$10,$20, $0f,$00,$10,$20
-; Sprites
-.byt $0f,$08,$1a,$20, $0f,$08,$10,$37, $0f,$08,$16,$10, $0f,$08,$28,$37
 
 +stage_arcade_boss_space_nametable:
 .byt $00,$ff, $00,$f8

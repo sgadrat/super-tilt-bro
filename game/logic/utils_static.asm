@@ -194,6 +194,29 @@ trampoline:
 		;rts ; useless, jump to subroutine
 .)
 
+; Read a byte in another bank
+;  A - Bank to read
+;  tmpfield1,tmpfield2 - Pointer to data to read
+;  Y - Offset of data
+;
+; Output
+;  A - Byte read
+;
+; Overwrites A, X
+;
+; Think of it as a far equivalent to "lda (tmpfield1), y" in another bank
+far_lda_tmpfield1_y:
+.(
+	ldx current_bank
+	jsr switch_bank
+	lda (tmpfield1), y
+	pha
+	txa
+	jsr switch_bank
+	pla
+	rts
+.)
+
 ; Copy a tileset from CPU memory to PPU memory
 ;  tmpfield1, tmpfield2 - Address of the tileset in CPU memory
 ;
@@ -291,28 +314,87 @@ cpu_to_ppu_copy_tiles:
 	rts
 .)
 
+; Copy data from CPU memory to PPU memory
+;  tmpfield1, tmpfield2 - Address of CPU data to be copied
+;  tmpfield3 - number of bytes to copy (zero means 255)
+;
+; PPUADDR must be set to the destination address
+; PPUCTRL's I bit should not be set (if set, writes every 32 bytes)
+;
+; Overwrites register A, register Y
+cpu_to_ppu_copy_bytes:
+.(
+	prg_vector = tmpfield1
+	; prg_vector_msb = tmpfield2
+	count = tmpfield3
+
+	ldy #0
+	copy_one_byte:
+		lda (prg_vector), y
+		sta PPUDATA
+
+		iny
+		cpy count
+		bne copy_one_byte
+
+	rts
+.)
+
 ; Copy a charset from CPU memory to PPU memory
 ;  tmpfield3, tmpfield4 - Address of the charset in CPU memory
 ;  register X - Charset colors
 ;
-; Charset colors is binary: zzzz ffbb
+; Charset colors is binary - zzzz ffbb
 ;  zzzz - Must be zeros
 ;  ff   - Foreground color
 ;  bb   - Background color
+; charset_color (upper case) macro can help to construct it
 ;
 ; PPUADDR must be set to the destination address
 ; PPUCTRL's I bit should not be set (if set, writes every 32 bytes)
+;
+; After this call, PPUADDR points to the first byte of the next character
 ;
 ; Overwrites register A, register X, register Y, and tmpfield1 to tmpfield7
 cpu_to_ppu_copy_charset:
 .(
 	jump_addr = tmpfield1     ; Not movable, parameters of call_pointed_subroutine
 	jump_addr_msb = tmpfield2 ;
-	prg_vector = tmpfield3
-	prg_vector_msb = tmpfield4
-	chars_counter = tmpfield5
-	first_line_modifier = tmpfield6
-	second_line_modifier = tmpfield7
+	prg_vector = tmpfield3           ; Not movable, parameters of cpu_to_ppu_copy_char
+	prg_vector_msb = tmpfield4       ;
+	first_line_modifier = tmpfield5  ;
+	second_line_modifier = tmpfield6 ;
+	chars_counter = tmpfield7
+
+	; Fetch charset size
+	ldy #0
+	lda (prg_vector), y
+	sta chars_counter
+
+	; Compute first character's address
+	inc prg_vector
+	bne inc_ok
+		inc prg_vector_msb
+	inc_ok:
+
+; Copy a charset from CPU memory to PPU memory
+;  tmpfield3, tmpfield4 - Address of the charset in CPU memory
+;  tmpfield7 - Number of characters to copy
+;  register X - Charset colors
+;
+; Charset colors is binary - zzzz ffbb
+;  zzzz - Must be zeros
+;  ff   - Foreground color
+;  bb   - Background color
+; charset_color (upper case) macro can help to construct it
+;
+; PPUADDR must be set to the destination address
+; PPUCTRL's I bit should not be set (if set, writes every 32 bytes)
+;
+; After this call, PPUADDR points to the first byte of the next character
+;
+; Overwrites register A, register X, register Y, and tmpfield1 to tmpfield7
+&cpu_to_ppu_copy_charset_raw:
 
 	; Compute byte modifiers index
 	;  First line modifier index is low bit of each color
@@ -340,17 +422,6 @@ cpu_to_ppu_copy_charset:
 	ora second_line_modifier
 	sta second_line_modifier
 
-	; Fetch charset size
-	ldy #0
-	lda (prg_vector), y
-	sta chars_counter
-
-	; Compute first character's address
-	inc prg_vector
-	bne inc_ok
-		inc prg_vector_msb
-	inc_ok:
-
 	copy_one_char:
 		; First bits line
 		ldx first_line_modifier
@@ -359,7 +430,6 @@ cpu_to_ppu_copy_charset:
 		; Second bits line
 		ldx second_line_modifier
 		jsr copy_one_line
-
 
 		; Place data pointer on next character
 		lda prg_vector

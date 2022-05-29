@@ -1,6 +1,6 @@
 cursed:
 .(
-	; Do nothing, still reserve 3 bytes, so it can be changed by a JMP to do soimething without changing address
+	; Do nothing, still reserve 3 bytes, so it can be changed by a JMP to do something without changing address
 	rti
 	nop
 	nop
@@ -179,6 +179,7 @@ forever:
 		jsr fetch_controllers
 
 		; Tick current game state
+		;TODO optimizable split game_states_tick is msb/lsb tables to avoid the asl
 		lda global_game_state
 		asl
 		tax

@@ -18,6 +18,12 @@
 ; Utility macros
 ;
 
+; Compute color parameter for "cpu_to_ppu_copy_charset"
+#define CHARSET_COLOR(fg,bg) (fg<<2)+bg
+
+; Convenience macro for utility routine "far_lda_tmpfield1_y"
+#define FAR_LDA_TMPFIELD1_Y(bank) stx extra_tmpfield1 : lda bank : jsr far_lda_tmpfield1_y : ldx extra_tmpfield1
+
 ; Call a routine with another active bank
 #define TRAMPOLINE(routine,call_bank,return_bank) .( :\
 	lda #<routine :\

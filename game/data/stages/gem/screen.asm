@@ -1,8 +1,5 @@
 stage_gem_palette_data:
-; Background
 .byt $0f,$07,$16,$27, $0f,$11,$21,$20, $0f,$07,$17,$28, $0f,$04,$14,$24
-; Sprites
-.byt $0f,$08,$1a,$20, $0f,$08,$10,$37, $0f,$08,$16,$10, $0f,$08,$28,$37
 
 nametable_stage_gem:
 .byt $00,$9d
