@@ -5,7 +5,21 @@ OOS_PLATFORM($ffd0, $0128, $0070, $0140) ; left, right, top, bot
 END_OF_STAGE
 
 +stage_arcade_boss_space_palette_data:
-.byt $0f,$07,$16,$27, $0f,$00,$10,$20, $0f,$00,$10,$20, $0f,$00,$10,$20
+;    ground,          unused,          animated lava,   unused
+.byt $0f,$07,$16,$27, $0f,$07,$16,$27, $0f,$00,$10,$20, $0f,$00,$10,$20
+
+animated_lava_cycle:
+.byt $3f, $05, $03, $21, $16, $27
+.byt $3f, $05, $03, $27, $27, $16
+.byt $3f, $05, $03, $16, $16, $27
+.byt $3f, $05, $03, $07, $27, $16
+.byt $3f, $05, $03, $16, $16, $27
+.byt $3f, $05, $03, $27, $27, $16
+animated_lava_cycle_nt_buff_lsb:
+.byt <animated_lava_cycle, <(animated_lava_cycle+6), <(animated_lava_cycle+6*2), <(animated_lava_cycle+6*3), <(animated_lava_cycle+6*4), <(animated_lava_cycle+6*5)
+animated_lava_cycle_nt_buff_msb:
+.byt >animated_lava_cycle, >(animated_lava_cycle+6), >(animated_lava_cycle+6*2), >(animated_lava_cycle+6*3), >(animated_lava_cycle+6*4), >(animated_lava_cycle+6*5)
+animated_lava_cycle_length = * - animated_lava_cycle_nt_buff_msb
 
 +stage_arcade_boss_space_nametable:
 .byt $00,$ff, $00,$f8

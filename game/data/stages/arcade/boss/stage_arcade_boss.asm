@@ -11,6 +11,10 @@ cursor = stage_state_begin
 &current_layout = cursor : -cursor += 1
 &transition = cursor : -cursor += 1
 &transition_step = cursor : -cursor += 1
+&speed_buff_cnt = cursor : -cursor += 1
+
+&layout_impact_lava_step = cursor : -cursor += 1
+&layout_impact_lava_delay = cursor : -cursor += 1
 
 #if cursor - stage_state_begin >= $10
 #error arcade stage BTT02 uses to much memory
@@ -21,6 +25,9 @@ FIRST_STAR_SPRITE = 32
 NB_STAR_SPRITES = 16
 
 NB_LAYOUTS = 3
+
+SPEED_BUFF_COOLDOWN_EASY = 4
+SPEED_BUFF_COOLDOWN_HARD = 3
 
 FIRST_TILE_CLOUD = ARCADE_FIRST_TILE+(arcade_btt_sprites_tileset_end-arcade_btt_sprites_tileset_tiles)/16
 
@@ -62,10 +69,22 @@ cloud_tile:
 
 +stage_arcade_boss_init:
 .(
+	; Force boss music
+	lda #<music_volcano_info
+	sta audio_current_track_lsb
+	lda #>music_volcano_info
+	sta audio_current_track_msb
+	lda #music_volcano_bank
+	sta audio_current_track_bank
+	TRAMPOLINE(audio_play_music_direct, #0, #CURRENT_BANK_NUMBER)
+
 	; Initialize stage state
 	lda #0
 	sta current_layout
 	sta transition
+
+	lda #SPEED_BUFF_COOLDOWN_EASY
+	sta speed_buff_cnt
 
 	; Set the number of boss lives to cover all layouts
 	lda #NB_LAYOUTS - 1
@@ -233,7 +252,15 @@ tick_sky:
 	speed_table_v = tmpfield3
 	tiles_table = tmpfield5
 
-	; Move star background
+	; Give the boss extra speed
+	dec speed_buff_cnt
+	bne no_speed_buff
+		jsr player_b_extra_tick
+		lda #SPEED_BUFF_COOLDOWN_EASY
+		sta speed_buff_cnt
+	no_speed_buff:
+
+	; Move clouds background
 	lda #<speed_h
 	sta speed_table_h
 	lda #>speed_h
@@ -267,11 +294,43 @@ tick_sky:
 
 init_impact:
 .(
+	lda #0
+	sta layout_impact_lava_step
+	sta layout_impact_lava_delay
 	rts
 .)
 
 tick_impact:
 .(
+	; Give the boss extra speed
+	dec speed_buff_cnt
+	bne no_speed_buff
+		jsr player_b_extra_tick
+		lda #SPEED_BUFF_COOLDOWN_HARD
+		sta speed_buff_cnt
+	no_speed_buff:
+
+	; Animate lava
+	inc layout_impact_lava_delay
+	lda layout_impact_lava_delay
+	and #%00000111
+	bne skip_lava_step_inc
+		inc layout_impact_lava_step
+		lda layout_impact_lava_step
+		cmp #animated_lava_cycle_length
+		bcc lava_step_inc_ok
+			lda #0
+			sta layout_impact_lava_step
+		lava_step_inc_ok:
+	skip_lava_step_inc:
+
+	ldx layout_impact_lava_step
+
+	lda animated_lava_cycle_nt_buff_lsb, x
+	ldy animated_lava_cycle_nt_buff_msb, x
+	jsr push_nt_buffer
+
+	; Move clouds
 	jmp tick_sky
 	;rts ; useless, jump to subroutine
 .)
@@ -448,7 +507,7 @@ tick_impact:
 			; Next step
 			inc transition_step
 			lda transition_step
-			cmp #30
+			cmp #30+2 ; 30 tiles lines + 2*32 bytes of attributes
 			bne end
 				jsr next_transition_routine
 
@@ -572,7 +631,7 @@ tick_impact:
 			step_palettes:
 			.byt $36,$27,$20,$20, $36,$00,$10,$20, $36,$00,$10,$20, $36,$00,$10,$20
 			.byt $31,$17,$26,$20, $31,$00,$10,$20, $31,$00,$10,$20, $31,$00,$10,$20
-			.byt $31,$07,$16,$27, $21,$00,$10,$20, $21,$00,$10,$20, $21,$00,$10,$20
+			.byt $21,$07,$16,$27, $21,$07,$16,$27, $21,$00,$10,$20, $21,$00,$10,$20
 
 			nt_palette_header:
 			.byt $3f, $00, $10
@@ -662,6 +721,79 @@ tick_current_layout:
 		jmp transition_tick
 
 	end:
+	rts
+.)
+
+player_b_extra_tick:
+.(
+	; No extra tick when the game is freezed
+	.(
+		lda screen_shake_counter
+		beq ok
+			rts
+		ok:
+	.)
+
+	; No extra tick in slowdown
+	;TODO investigate if it is easy to avoid extra tick only on frames skipped by slowdown
+	.(
+		lda slow_down_counter
+		beq ok
+			rts
+		ok:
+	.)
+
+	; Do like "update_players" routine, but just for player B
+	.(
+		; Decrement hitstun counters
+		lda player_b_hitstun
+		beq hitstun_ok
+			dec player_b_hitstun
+		hitstun_ok:
+
+		; Check hitbox collisions
+		ldx #$01
+		TRAMPOLINE(check_player_hit, #0, #CURRENT_BANK_NUMBER)
+
+		; Call the state update routine
+		ldx #$01
+		ldy config_player_a_character, x
+		lda characters_update_routines_table_lsb, y
+		sta tmpfield1
+		lda characters_update_routines_table_msb, y
+		sta tmpfield2
+		TRAMPOLINE(player_state_action, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
+
+		; Call the state input routine if input changed
+		lda controller_a_btns, x
+		cmp controller_a_last_frame_btns, x
+		beq end_input_event
+			ldy config_player_a_character, x
+			lda characters_input_routines_table_lsb, y
+			sta tmpfield1
+			lda characters_input_routines_table_msb, y
+			sta tmpfield2
+			TRAMPOLINE(player_state_action, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
+		end_input_event:
+
+		; Call generic update routines
+		txa
+		sta player_number
+		jsr move_player
+		ldy config_player_b_character
+		TRAMPOLINE(check_player_position, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
+	.)
+
+	; Tick AI
+	.(
+		lda config_ai_level
+		beq end_ai
+		lda network_rollback_mode
+		bne end_ai
+			TRAMPOLINE(ai_tick, #0, #CURRENT_BANK_NUMBER)
+		end_ai:
+	.)
+
 	rts
 .)
 .)
