@@ -196,7 +196,7 @@ class Character:
 		ensure(isinstance(self.sourcecode, str))
 
 		self.tileset.check()
-		ensure(len(self.tileset.tiles) <= 96)
+		ensure(len(self.tileset.tiles) <= 96, f'character "{self.name}" tileset has too many tiles: {len(self.tileset.tiles)} while max is 96')
 
 		ensure(isinstance(self.victory_animation, stblib.animations.Animation))
 		self.victory_animation.check()

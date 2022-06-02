@@ -104,4 +104,4 @@ class Tileset:
 			ensure(isinstance(tilename, str))
 			ensure(len(tilename) > 0)
 
-		ensure(len(self.tilenames) == len(self.tiles))
+		ensure(len(self.tilenames) == len(self.tiles), f'tileset has {len(self.tilenames)} names for {len(self.tiles)} tiles')
