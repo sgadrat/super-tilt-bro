@@ -622,14 +622,20 @@ hide_player_b:
 
 &game_mode_arcade_gameover_hook:
 .(
-	lda gameover_winner
-	sta arcade_mode_last_game_winner
-
+	; Update persistant character state
 	lda player_a_damages
 	sta arcade_mode_player_damages
 
-	inc arcade_mode_current_encounter
+	lda gameover_winner
+	sta arcade_mode_last_game_winner
 
+	; Change arcade step, only if this one is a success
+	;lda gameover_winner ; useless, done above
+	bne encounter_updated
+		inc arcade_mode_current_encounter
+	encounter_updated:
+
+	; Come back to arcade menu
 	lda #GAME_STATE_ARCADE_MODE
 	jmp change_global_game_state
 .)

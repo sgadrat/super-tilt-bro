@@ -256,14 +256,12 @@ static uint8_t input() {
 	return INPUT_NONE;
 }
 
-static void wait_input() {
+static uint8_t wait_input() {
 	while (true) {
-		switch(input()) {
-			case INPUT_BACK:
-				previous_screen(); break;
-			case INPUT_NEXT:
-				yield(); //HACK without it next input read will read the same thing
-				return;
+		uint8_t const value = input();
+		if (value != INPUT_NONE) {
+			yield(); //HACK without it next input read will read the same thing
+			return value;
 		}
 		yield();
 	}
@@ -275,6 +273,11 @@ static void display_timer() {
 	set_num(*arcade_mode_counter_seconds, 5, 12);
 	set_text("seconds", 5, 16);
 	yield();
+}
+
+static void reinit_player_state() {
+	*arcade_mode_last_game_winner = 0;
+	*arcade_mode_player_damages = 0;
 }
 
 void init_arcade_mode_extra() {
@@ -296,8 +299,7 @@ void init_arcade_mode_extra() {
 	//NOTE arcade_mode_current_encounter must be initialized before change_global_game_state,
 	//     we expect to preserve their values while going to ingame state
 	if (*arcade_mode_current_encounter == 0) {
-		*arcade_mode_last_game_winner = 0;
-		*arcade_mode_player_damages = 0;
+		reinit_player_state();
 		*arcade_mode_counter_frames = 0;
 		*arcade_mode_counter_seconds = 0;
 		*arcade_mode_counter_minutes = 0;
@@ -311,8 +313,13 @@ void arcade_mode_tick_extra() {
 	if (*arcade_mode_last_game_winner != 0) {
 		display_timer();
 		set_text("gameover", 13, 11);
-		wait_input();
-		previous_screen();
+		set_text("continue", 15, 11);
+		set_text("yes  start", 16, 13);
+		set_text("no   b", 17, 13);
+		if (wait_input() == INPUT_BACK) {
+			previous_screen();
+		}
+		reinit_player_state();
 	}
 
 	if (*arcade_mode_current_encounter == n_encounters) {
