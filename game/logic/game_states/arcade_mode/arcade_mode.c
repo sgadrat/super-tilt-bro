@@ -64,8 +64,6 @@ typedef struct Encounter {
 #define ENCOUNTER_CUTSCENE 3
 
 static Encounter const encounters[] = {
-	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_meteor, (uint16_t)&cutscene_sinbad_story_meteor_bank}}},
-	{.type = ENCOUNTER_FIGHT, {.fight={0, 4, 1, 4}}},
 	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_bird_msg, (uint16_t)&cutscene_sinbad_story_bird_msg_bank}}},
 	{.type = ENCOUNTER_RUN, {.run={0}}},
 	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_sinbad_encounter, (uint16_t)&cutscene_sinbad_story_sinbad_encounter_bank}}},
@@ -309,21 +307,6 @@ void init_arcade_mode_extra() {
 void arcade_mode_tick_extra() {
 	reset_nt_buffers();
 
-	//FIXME should use data from characters
-	static char const* const character_names[] = {
-		"sinbad",
-		"kiki",
-		"pepper"
-	};
-
-	static char const* const difficulty_names[] = {
-		"human",
-		"easy",
-		"fair",
-		"hard",
-		"evil"
-	};
-
 	// Gameover handling
 	if (*arcade_mode_last_game_winner != 0) {
 		display_timer();
@@ -343,29 +326,5 @@ void arcade_mode_tick_extra() {
 	display_timer();
 
 	// Launch next encounter
-	if (current_encounter().type == ENCOUNTER_CUTSCENE) {
-		next_screen();
-	}else {
-		// Display next encounter
-		if (current_encounter().type == ENCOUNTER_FIGHT) {
-			set_text("next encounter", 13, 10);
-			set_text(character_names[current_encounter().fight.character], 14, 12);
-			set_text(difficulty_names[current_encounter().fight.difficulty], 15, 12);
-		}else if (current_encounter().type == ENCOUNTER_RUN) {
-			set_text("reach the exit", 13, 10);
-		}else {
-			set_text("break the targets", 12, 10);
-		}
-
-		// Check if a button is released and trigger correct action
-		while (true) {
-			switch(input()) {
-				case INPUT_BACK:
-					previous_screen(); break;
-				case INPUT_NEXT:
-					next_screen(); break;
-			}
-			yield();
-		}
-	}
+	next_screen();
 }
