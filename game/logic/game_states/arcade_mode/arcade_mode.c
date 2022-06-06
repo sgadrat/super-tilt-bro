@@ -4,6 +4,8 @@
 // Global labels from the ASM codebase
 ///////////////////////////////////////
 
+void arcade_mode_display_counter();
+
 extern uint8_t const arcade_mode_palette;
 extern uint8_t const charset_alphanum;
 extern uint8_t const cutscene_sinbad_story_bird_msg;
@@ -13,6 +15,7 @@ extern uint8_t const cutscene_sinbad_story_pepper_encounter;
 extern uint8_t const cutscene_sinbad_story_sinbad_encounter;
 
 // Labels, use their address or the associated function
+extern uint8_t const ARCADE_MODE_EXTRA_BANK_NUMBER; // arcade_bank()
 extern uint8_t const ARCADE_MODE_SCREEN_BANK; // screen_bank()
 extern uint8_t const CHARSET_ALPHANUM_BANK_NUMBER; // charset_bank()
 extern uint8_t const cutscene_sinbad_story_bird_msg_bank;
@@ -88,6 +91,10 @@ static uint8_t const INPUT_NEXT = 2;
 // Utility functions
 ///////////////////////////////////////
 
+static uint8_t arcade_bank() {
+	return ptr_lsb(&ARCADE_MODE_EXTRA_BANK_NUMBER);
+}
+
 static uint8_t screen_bank() {
 	return ptr_lsb(&ARCADE_MODE_SCREEN_BANK);
 }
@@ -127,16 +134,6 @@ static void set_text(char const* text, uint8_t line, uint8_t col) {
 		arcade_mode_bg_mem_buffer[3+tile] = alpha_tile(text[tile]);
 	}
 	wrap_push_nt_buffer(arcade_mode_bg_mem_buffer);
-}
-
-static void set_num(uint8_t num, uint8_t line, uint8_t col) {
-	arcade_mode_bg_mem_buffer[6+0] = '0'+(num/100);
-	num %= 100;
-	arcade_mode_bg_mem_buffer[6+1] = '0'+(num/10);
-	num %= 10;
-	arcade_mode_bg_mem_buffer[6+2] = '0'+(num);
-	arcade_mode_bg_mem_buffer[6+3] = 0;
-	set_text((char*)arcade_mode_bg_mem_buffer+6, line, col);
 }
 
 ///////////////////////////////////////
@@ -268,10 +265,31 @@ static uint8_t wait_input() {
 }
 
 static void display_timer() {
-	set_num(*arcade_mode_counter_minutes, 5, 4);
-	set_text("min", 5, 8);
-	set_num(*arcade_mode_counter_seconds, 5, 12);
-	set_text("seconds", 5, 16);
+	// Display time
+	wrap_trampoline(arcade_bank(), code_bank(), &arcade_mode_display_counter);
+
+	// Display credits
+	if (*arcade_mode_nb_credits_used != 0) {
+		uint8_t const credits_used = min(*arcade_mode_nb_credits_used, 10);
+
+		uint8_t const position_y = 4;
+		uint8_t const position_x = 3;
+		uint16_t const ppu_addr = 0x2000 + position_y * 32 + position_x;
+
+		uint8_t i = wrap_last_nt_buffer();
+		nametable_buffers[i] = 1;
+		nametable_buffers[i+1] = u16_msb(ppu_addr);
+		nametable_buffers[i+2] = u16_lsb(ppu_addr);
+		nametable_buffers[i+3] = credits_used;
+
+		for (uint8_t credit_num = 0; credit_num < credits_used; ++credit_num) {
+			nametable_buffers[i+4+credit_num] = 0xd0; //TODO name the stock tile (and actually use a specific tile for credits)
+		}
+
+		nametable_buffers[i+4+credits_used] = 0;
+	}
+
+	// Pass a frame to process nt buffers
 	yield();
 }
 
@@ -303,6 +321,7 @@ void init_arcade_mode_extra() {
 		*arcade_mode_counter_frames = 0;
 		*arcade_mode_counter_seconds = 0;
 		*arcade_mode_counter_minutes = 0;
+		*arcade_mode_nb_credits_used = 0;
 	}
 }
 
@@ -319,6 +338,7 @@ void arcade_mode_tick_extra() {
 		if (wait_input() == INPUT_BACK) {
 			previous_screen();
 		}
+		++*arcade_mode_nb_credits_used;
 		reinit_player_state();
 	}
 
@@ -328,9 +348,6 @@ void arcade_mode_tick_extra() {
 		wait_input();
 		previous_screen();
 	}
-
-	// Display timer
-	display_timer();
 
 	// Launch next encounter
 	next_screen();

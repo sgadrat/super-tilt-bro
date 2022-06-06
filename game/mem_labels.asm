@@ -692,6 +692,7 @@ arcade_mode_player_damages = $054c
 arcade_mode_counter_frames = $054d
 arcade_mode_counter_seconds = $054e
 arcade_mode_counter_minutes = $054f
+arcade_mode_nb_credits_used = $0550
 
 ;$0580 to $05ff may be used by game states
 
