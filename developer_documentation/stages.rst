@@ -15,6 +15,14 @@ Sprites allocation in game
  * ``42`` -> ``49``: Target-break animation in BTT stage // Available for the stage in versus
  * ``50`` -> ``63``: Particles
 
+Helpful constants:
+
+ * ``INGAME_PLAYER_A_FIRST_SPRITE``
+ * ``INGAME_PLAYER_A_LAST_SPRITE``
+ * ``INGAME_PLAYER_B_FIRST_SPRITE``
+ * ``INGAME_PLAYER_B_LAST_SPRITE``
+ * ``PARTICLE_FIRST_SPRITE``
+
 Tile allocation in game
 =======================
 

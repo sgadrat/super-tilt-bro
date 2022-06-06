@@ -192,28 +192,9 @@ hide_player_b:
 
 	common:
 
-	; Increment counter
-	.(
-		inc arcade_mode_counter_frames
-		lda arcade_mode_counter_frames
-		cmp #60
-		bne ok
-
-			lda #0
-			sta arcade_mode_counter_frames
-
-			inc arcade_mode_counter_seconds
-			lda arcade_mode_counter_seconds
-			cmp #60
-			bne ok
-
-				lda #0
-				sta arcade_mode_counter_seconds
-
-				inc arcade_mode_counter_minutes
-
-		ok:
-	.)
+	; Update counter
+	jsr arcade_mode_inc_counter
+	jsr arcade_mode_display_counter
 
 	;HACK local mode only handle AI, and we want AI too
 	jmp game_mode_local_pre_update
