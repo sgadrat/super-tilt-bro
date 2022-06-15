@@ -942,11 +942,9 @@ sinbad_start_inactive_state:
 
 		; Set the appropriate animation
 		;FIXME must be two states, first being invisible, unable to do anything, second being on platform
-		;lda #<sinbad_anim_respawn
-		lda #<anim_invisible
+		lda #<sinbad_anim_respawn
 		sta tmpfield13
-		;lda #>sinbad_anim_respawn
-		lda #>anim_invisible
+		lda #>sinbad_anim_respawn
 		sta tmpfield14
 		jmp set_player_animation
 

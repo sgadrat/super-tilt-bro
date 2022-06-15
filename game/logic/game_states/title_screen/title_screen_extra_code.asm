@@ -223,13 +223,7 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 
 			next_screen:
 				jsr title_screen_restore_music_state
-#if 0
 				lda #GAME_STATE_MODE_SELECTION
-#else
-				lda #0
-				sta arcade_mode_current_encounter
-				lda #GAME_STATE_ARCADE_MODE ;FIXME just for test purpose, should be available through menus
-#endif
 				jsr change_global_game_state
 
 		end:
