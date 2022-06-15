@@ -2,12 +2,12 @@
 ; States index
 ;
 
-PEPPER_STATE_THROWN = 0
-PEPPER_STATE_RESPAWN = 1
-PEPPER_STATE_INNEXISTANT = 2
-PEPPER_STATE_SPAWN = 3
-PEPPER_STATE_IDLE = 4
-PEPPER_STATE_RUNNING = 5
+PEPPER_STATE_THROWN = PLAYER_STATE_THROWN
+PEPPER_STATE_RESPAWN_INVISIBLE = PLAYER_STATE_RESPAWN
+PEPPER_STATE_INNEXISTANT = PLAYER_STATE_INNEXISTANT
+PEPPER_STATE_SPAWN = PLAYER_STATE_SPAWN
+PEPPER_STATE_IDLE = PLAYER_STATE_STANDING
+PEPPER_STATE_RUNNING = PLAYER_STATE_RUNNING
 PEPPER_STATE_FALLING = CUSTOM_PLAYER_STATES_BEGIN + 0
 PEPPER_STATE_LANDING = CUSTOM_PLAYER_STATES_BEGIN + 1
 PEPPER_STATE_CRASHING = CUSTOM_PLAYER_STATES_BEGIN + 2
@@ -32,6 +32,7 @@ PEPPER_STATE_TELEPORT = CUSTOM_PLAYER_STATES_BEGIN + 20
 PEPPER_STATE_WRENCH_GRAB = CUSTOM_PLAYER_STATES_BEGIN + 21
 PEPPER_STATE_DZZZ_CHARGE = CUSTOM_PLAYER_STATES_BEGIN + 22
 PEPPER_STATE_DZZZ_STRIKE = CUSTOM_PLAYER_STATES_BEGIN + 23
+PEPPER_STATE_RESPAWN_PLATFORM = CUSTOM_PLAYER_STATES_BEGIN + 24
 
 ;
 ; Gameplay constants
@@ -380,91 +381,7 @@ pepper_global_tick:
 !include "std_aerial_input.asm"
 !include "std_crashing.asm"
 !include "std_thrown.asm"
-
-;
-; Respawn
-;
-
-.(
-	&pepper_start_respawn:
-	.(
-		; Set the player's state
-		lda #PEPPER_STATE_RESPAWN
-		sta player_a_state, x
-
-		; Place player to the respawn spot
-		lda stage_data+STAGE_HEADER_OFFSET_RESPAWNX_HIGH
-		sta player_a_x, x
-		lda stage_data+STAGE_HEADER_OFFSET_RESPAWNX_LOW
-		sta player_a_x_low, x
-		lda stage_data+STAGE_HEADER_OFFSET_RESPAWNY_HIGH
-		sta player_a_y, x
-		lda stage_data+STAGE_HEADER_OFFSET_RESPAWNY_LOW
-		sta player_a_y_low, x
-		lda #$00
-		sta player_a_x_screen, x
-		sta player_a_y_screen, x
-		sta player_a_velocity_h, x
-		sta player_a_velocity_h_low, x
-		sta player_a_velocity_v, x
-		sta player_a_velocity_v_low, x
-		sta player_a_damages, x
-
-		; Initialise state's timer
-		ldy system_index
-		lda player_respawn_max_duration, y
-		sta player_a_state_field1, x
-
-		; Reinitialize walljump counter
-		lda #PEPPER_MAX_WALLJUMPS
-		sta player_a_walljump, x
-
-		; Set the appropriate animation
-		lda #<pepper_anim_respawn
-		sta tmpfield13
-		lda #>pepper_anim_respawn
-		sta tmpfield14
-		jsr set_player_animation
-
-		rts
-	.)
-
-	&pepper_tick_respawn:
-	.(
-		jsr pepper_global_tick
-
-		; Check for timeout
-		dec player_a_state_field1, x
-		bne end
-			jmp pepper_start_falling
-			; No return, jump to subroutine
-
-		end:
-		rts
-	.)
-
-	&pepper_input_respawn:
-	.(
-		; Avoid doing anything until controller has returned to neutral since after
-		; death the player can release buttons without expecting to take action
-		lda controller_a_last_frame_btns, x
-		bne end
-
-			; Call pepper_check_aerial_inputs
-			;  If it does not change the player state, go to falling state
-			;  so that any button press makes the player falls from revival
-			;  platform
-			jsr pepper_check_aerial_inputs
-			lda player_a_state, x
-			cmp #PEPPER_STATE_RESPAWN
-			bne end
-				jmp pepper_start_falling
-				; No return, jump to subroutine
-
-		end:
-		rts
-	.)
-.)
+!include "std_respawn.asm"
 
 ;
 ; Innexistant

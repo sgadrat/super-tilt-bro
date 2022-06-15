@@ -46,6 +46,7 @@ PLAYER_STATE_RUNNING = $05
 ; End of standard player states, from this index characters are free to define custom states
 CUSTOM_PLAYER_STATES_BEGIN = $06
 
+PLAYER_RESPAWN_INVISIBLE_DURATION = 35
 PLAYER_RESPAWN_MAX_DURATION = 200 ; Beware max is 212 (ntsc counterpart would overflow above that)
 PLAYER_DOWN_TAP_MAX_DURATION = 9
 

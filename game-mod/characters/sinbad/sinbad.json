@@ -498,14 +498,14 @@
 			"update_routine": "sinbad_tick_thrown"
 		},
 		{
-			"input_routine": "sinbad_input_respawn",
-			"name": "SINBAD_STATE_RESPAWN",
+			"input_routine": "dummy_routine",
+			"name": "SINBAD_STATE_RESPAWN_INVISIBLE",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "sinbad_global_onground",
 			"onhurt_routine": "dummy_routine",
-			"start_routine": "sinbad_start_respawn",
+			"start_routine": "sinbad_start_respawn_invisible",
 			"type": "character_state",
-			"update_routine": "sinbad_tick_respawn"
+			"update_routine": "sinbad_tick_respawn_invisible"
 		},
 		{
 			"input_routine": "dummy_routine",
@@ -786,6 +786,16 @@
 			"start_routine": null,
 			"type": "character_state",
 			"update_routine": "sinbad_tick_jab3"
+		},
+		{
+			"input_routine": "sinbad_input_respawn_platform",
+			"name": "SINBAD_STATE_RESPAWN_PLATFORM",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "sinbad_global_onground",
+			"onhurt_routine": "dummy_routine",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "sinbad_tick_respawn_platform"
 		}
 	],
 	"tileset": {

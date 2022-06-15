@@ -578,14 +578,14 @@
 			"update_routine": "pepper_tick_thrown"
 		},
 		{
-			"input_routine": "pepper_input_respawn",
-			"name": "PEPPER_STATE_RESPAWN",
+			"input_routine": "dummy_routine",
+			"name": "PEPPER_STATE_RESPAWN_INVISIBLE",
 			"offground_routine": "dummy_routine",
 			"onground_routine": "pepper_global_onground",
 			"onhurt_routine": "dummy_routine",
-			"start_routine": "pepper_start_respawn",
+			"start_routine": "pepper_start_respawn_invisible",
 			"type": "character_state",
-			"update_routine": "pepper_tick_respawn"
+			"update_routine": "pepper_tick_respawn_invisible"
 		},
 		{
 			"input_routine": "dummy_routine",
@@ -866,6 +866,16 @@
 			"start_routine": null,
 			"type": "character_state",
 			"update_routine": "pepper_tick_dzzz_strike"
+		},
+		{
+			"input_routine": "pepper_input_respawn_platform",
+			"name": "PEPPER_STATE_RESPAWN_PLATFORM",
+			"offground_routine": "dummy_routine",
+			"onground_routine": "pepper_global_onground",
+			"onhurt_routine": "dummy_routine",
+			"start_routine": null,
+			"type": "character_state",
+			"update_routine": "pepper_tick_respawn_platform"
 		}
 	],
 	"tileset": {
