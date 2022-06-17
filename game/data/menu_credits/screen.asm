@@ -4,7 +4,7 @@ MENU_CREDITS_SCREEN_BANK = CURRENT_BANK_NUMBER
 &menu_credits_palette:
 ; Background
 ;    0-title,         1-fade,          2-illustration,  3-illustration
-.byt $31,$0f,$21,$28, $31,$11,$21,$3c, $31,$00,$00,$00, $31,$00,$00,$00
+.byt $31,$0f,$21,$28, $31,$11,$21,$3c, $31,$07,$28,$32, $31,$00,$00,$00
 ; Sprites
 ;    0-cursor+bubble, 1-unused,        2-unused,        3-unused
 .byt $31,$08,$28,$31, $31,$00,$00,$00, $31,$00,$00,$00, $31,$00,$00,$00

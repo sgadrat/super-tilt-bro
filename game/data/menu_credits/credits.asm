@@ -8,8 +8,8 @@ MENU_CREDITS_CREDITS_BANK = CURRENT_BANK_NUMBER
 	.byt >menu_credits_illustration_graphics,       >menu_credits_illustration_music,          >menu_credits_illustration_characters
 	.byt >menu_credits_illustration_special_thanks, >menu_credits_illustration_special_thanks, >menu_credits_illustration_author
 &menu_credits_pages_illustration_bank:
-	.byt MENU_CREDITS_ILLUSTRATION_GRAPHICS_BANK,       MENU_CREDITS_ILLUSTRATION_MUSIC_BANK,          MENU_CREDITS_ILLUSTRATION_CHARACTERS_BANK
-	.byt MENU_CREDITS_ILLUSTRATION_SPECIAL_THANKS_BANK, MENU_CREDITS_ILLUSTRATION_SPECIAL_THANKS_BANK, MENU_CREDITS_ILLUSTRATION_AUTHOR_BANK
+	.byt MENU_CREDITS_ILLUSTRATION_GRAPHICS_BANK_NUMBER,       MENU_CREDITS_ILLUSTRATION_MUSIC_BANK_NUMBER,          MENU_CREDITS_ILLUSTRATION_CHARACTERS_BANK_NUMBER
+	.byt MENU_CREDITS_ILLUSTRATION_SPECIAL_THANKS_BANK_NUMBER, MENU_CREDITS_ILLUSTRATION_SPECIAL_THANKS_BANK_NUMBER, MENU_CREDITS_ILLUSTRATION_AUTHOR_BANK_NUMBER
 &menu_credits_pages_text_lsb:
 	.byt <text_graphics,        <text_musics,          <text_characters
 	.byt <text_special_thanks1, <text_special_thanks2, <text_author
