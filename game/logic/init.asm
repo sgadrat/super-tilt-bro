@@ -48,5 +48,9 @@ global_init:
 	sta network_logged
 #endif
 
+	; Initialize menus to a default state
+	lda #0
+	sta menu_state_mode_selection_current_option
+
 	rts
 .)

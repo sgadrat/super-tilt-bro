@@ -57,25 +57,25 @@ static void yield() {
 static void go_up() {
 	audio_play_interface_click();
 	static uint8_t const dest_option[] = {3, 4, 0, 2, 2};
-	*mode_selection_current_option = dest_option[*mode_selection_current_option];
+	*menu_state_mode_selection_current_option = dest_option[*menu_state_mode_selection_current_option];
 }
 
 static void go_down() {
 	audio_play_interface_click();
 	static uint8_t const dest_option[] = {2, 2, 3, 0, 1};
-	*mode_selection_current_option = dest_option[*mode_selection_current_option];
+	*menu_state_mode_selection_current_option = dest_option[*menu_state_mode_selection_current_option];
 }
 
 static void go_left() {
 	audio_play_interface_click();
 	static uint8_t const dest_option[] = {1, 0, 0, 4, 3};
-	*mode_selection_current_option = dest_option[*mode_selection_current_option];
+	*menu_state_mode_selection_current_option = dest_option[*menu_state_mode_selection_current_option];
 }
 
 static void go_right() {
 	audio_play_interface_click();
 	static uint8_t const dest_option[] = {1, 0, 1, 4, 3};
-	*mode_selection_current_option = dest_option[*mode_selection_current_option];
+	*menu_state_mode_selection_current_option = dest_option[*menu_state_mode_selection_current_option];
 }
 
 static void previous_screen() {
@@ -93,21 +93,21 @@ static void next_screen() {
 	};
 
 	if (no_network()) {
-		if (*mode_selection_current_option == OPTION_ONLINE) {
+		if (*menu_state_mode_selection_current_option == OPTION_ONLINE) {
 			return;
 		}
 	}
 
 	audio_play_interface_click();
-	if (*mode_selection_current_option == OPTION_LOCAL || *mode_selection_current_option == OPTION_ONLINE) {
+	if (*menu_state_mode_selection_current_option == OPTION_LOCAL || *menu_state_mode_selection_current_option == OPTION_ONLINE) {
 		_Static_assert(OPTION_LOCAL == GAME_MODE_LOCAL, "Code bellow expects options number on the screen to mirror game mode numbers");
 		_Static_assert(OPTION_ONLINE == GAME_MODE_ONLINE, "Code bellow expects options number on the screen to mirror game mode numbers");
-		*config_game_mode = *mode_selection_current_option;
+		*config_game_mode = *menu_state_mode_selection_current_option;
 	}
-	if (*mode_selection_current_option == OPTION_ARCADE) {
+	if (*menu_state_mode_selection_current_option == OPTION_ARCADE) {
 		*arcade_mode_current_encounter = 0;
 	}
-	wrap_change_global_game_state(option_to_game_state[*mode_selection_current_option]);
+	wrap_change_global_game_state(option_to_game_state[*menu_state_mode_selection_current_option]);
 }
 
 static void show_selected_option(uint8_t shine) {
@@ -131,7 +131,7 @@ static void show_selected_option(uint8_t shine) {
 	static uint8_t const boxes_attributes_nb_rows_per_option[] = {2, 2, 1, 2, 2};
 	static uint8_t const boxes_attributes_buff_header[] = {0x23, 0xd1, sizeof(boxes_attributes_no_highlight)};
 
-	uint8_t const disabled_option = (no_network() && *mode_selection_current_option == OPTION_ONLINE);
+	uint8_t const disabled_option = (no_network() && *menu_state_mode_selection_current_option == OPTION_ONLINE);
 	uint8_t const active_attribute_value = (disabled_option ? ATT(3,3,3,3) : ATT(1,1,1,1));
 	uint8_t const shiny_attribute_value = ATT(2,2,2,2);
 
@@ -141,9 +141,9 @@ static void show_selected_option(uint8_t shine) {
 		no_network() ? boxes_attributes_no_highlight_no_network : boxes_attributes_no_highlight,
 		sizeof(boxes_attributes_no_highlight)
 	);
-	uint8_t const first_attribute = boxes_attributes_first_attribute_per_option[*mode_selection_current_option];
-	uint8_t const nb_columns = boxes_attributes_nb_columns_per_option[*mode_selection_current_option];
-	uint8_t const nb_rows = boxes_attributes_nb_rows_per_option[*mode_selection_current_option];
+	uint8_t const first_attribute = boxes_attributes_first_attribute_per_option[*menu_state_mode_selection_current_option];
+	uint8_t const nb_columns = boxes_attributes_nb_columns_per_option[*menu_state_mode_selection_current_option];
+	uint8_t const nb_rows = boxes_attributes_nb_rows_per_option[*menu_state_mode_selection_current_option];
 	for (uint8_t x = 0; x < nb_columns; ++x) {
 		for (uint8_t y = 0; y < nb_rows; ++y) {
 			uint8_t const attribute_index = y * 8 + x + first_attribute;
@@ -173,7 +173,6 @@ void init_mode_selection_screen_extra() {
 	re_init_menu();
 
 	// Initialize state
-	*mode_selection_current_option = *config_game_mode;
 	show_selected_option(0);
 }
 
@@ -184,7 +183,7 @@ void mode_selection_screen_tick_extra() {
 	tick_menu();
 
 	// Check if a button is released and trigger correct action
-	uint8_t original_option = *mode_selection_current_option;
+	uint8_t original_option = *menu_state_mode_selection_current_option;
 	for (uint8_t controller = 0; controller < 2; ++controller) {
 		if (*(controller_a_btns + controller) == 0) {
 			switch (*(controller_a_last_frame_btns + controller)) {
@@ -205,7 +204,7 @@ void mode_selection_screen_tick_extra() {
 		}
 	}
 
-	if (*mode_selection_current_option != original_option) {
+	if (*menu_state_mode_selection_current_option != original_option) {
 		show_selected_option(1);
 	}
 }
