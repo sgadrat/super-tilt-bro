@@ -27,8 +27,8 @@
 
 		; Copy common tileset
 		;  - An empty, solid 0 tile
-		;  - Numerics (fg=1 bg=3)
 		;  - "%"
+		;  - Numerics (fg=1 bg=3)
 		lda PPUSTATUS
 		lda #>($1000+(TILE_EMPTY_STOCK_ICON*16))
 		sta PPUADDR
@@ -39,15 +39,6 @@
 		lda #0
 		jsr ppu_fill
 
-		lda #<charset_alphanum_tiles
-		sta tmpfield3
-		lda #>charset_alphanum_tiles
-		sta tmpfield4
-		lda #10
-		sta tmpfield7
-		ldx #CHARSET_COLOR(1,3)
-		TRAMPOLINE(cpu_to_ppu_copy_charset_raw, #CHARSET_ALPHANUM_BANK_NUMBER, #CURRENT_BANK_NUMBER)
-
 		lda #<char_pct
 		sta tmpfield3
 		lda #>char_pct
@@ -56,6 +47,15 @@
 		sta tmpfield7
 		ldx #CHARSET_COLOR(1,3)
 		TRAMPOLINE(cpu_to_ppu_copy_charset_raw, #CHARSET_SYMBOLS_BANK_NUMBER, #CURRENT_BANK_NUMBER)
+
+		lda #<charset_alphanum_tiles
+		sta tmpfield3
+		lda #>charset_alphanum_tiles
+		sta tmpfield4
+		lda #10
+		sta tmpfield7
+		ldx #CHARSET_COLOR(1,3)
+		TRAMPOLINE(cpu_to_ppu_copy_charset_raw, #CHARSET_ALPHANUM_BANK_NUMBER, #CURRENT_BANK_NUMBER)
 
 		; Copy stage's tileset
 		.(
