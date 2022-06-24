@@ -139,6 +139,6 @@
 			"type": "animation_frame"
 		}
 	],
-	"name": "sinbad_anim_jumping",
+	"name": "sinbad_anim_jump",
 	"type": "animation"
 }

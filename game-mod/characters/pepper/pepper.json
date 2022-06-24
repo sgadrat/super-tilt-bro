@@ -180,6 +180,10 @@
 	},
 	"animations": [
 		{
+			"src": "characters/pepper/animations/pepper_anim_aerial_jump.json",
+			"type": "import"
+		},
+		{
 			"src": "characters/pepper/animations/pepper_anim_aerial_wrench.json",
 			"type": "import"
 		},

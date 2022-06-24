@@ -99,13 +99,13 @@ cutscene_sinbad_story_meteor_logic:
 	SET_PALETTE(1, $27, $0f, $20)
 
 	; Player's Sinbad jump to the meteor
-	INIT_ANIM(0, sinbad_anim_aerial_jumping, SINBAD_BANK_NUMBER, DIRECTION_RIGHT2, 172, 111, 0, 0) ; index, anim, bank, direction, x, y, velocity_h, velocity_v
+	INIT_ANIM(0, sinbad_anim_aerial_jump, SINBAD_BANK_NUMBER, DIRECTION_RIGHT2, 172, 111, 0, 0) ; index, anim, bank, direction, x, y, velocity_h, velocity_v
 	INIT_ANIM_FOR_PLAYER(1, sinbad_anim_idle, SINBAD_BANK_NUMBER, DIRECTION_LEFT2, 196, 111, 0, 0, 1)
 	SKIPPABLE_FRAMES(7)
 	ANIM_VELOCITY(0, 0, -$0700) ; index, velocity_h, velocity_v
 
 	; Evil Sinbad follows
-	INIT_ANIM_FOR_PLAYER(1, sinbad_anim_jumping, SINBAD_BANK_NUMBER, DIRECTION_LEFT2, 196, 111, 0, 0, 1)
+	INIT_ANIM_FOR_PLAYER(1, sinbad_anim_jump, SINBAD_BANK_NUMBER, DIRECTION_LEFT2, 196, 111, 0, 0, 1)
 	SKIPPABLE_FRAMES(7)
 	ANIM_VELOCITY(1, 0, -$0700)
 	SKIPPABLE_FRAMES(50)

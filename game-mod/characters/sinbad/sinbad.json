@@ -96,7 +96,7 @@
 			"type": "import"
 		},
 		{
-			"src": "characters/sinbad/animations/sinbad_anim_aerial_jumping.json",
+			"src": "characters/sinbad/animations/sinbad_anim_aerial_jump.json",
 			"type": "import"
 		},
 		{
@@ -148,7 +148,7 @@
 			"type": "import"
 		},
 		{
-			"src": "characters/sinbad/animations/sinbad_anim_jumping.json",
+			"src": "characters/sinbad/animations/sinbad_anim_jump.json",
 			"type": "import"
 		},
 		{
@@ -164,19 +164,19 @@
 			"type": "import"
 		},
 		{
-			"src": "characters/sinbad/animations/sinbad_anim_shielding_full.json",
+			"src": "characters/sinbad/animations/sinbad_anim_shield_full.json",
 			"type": "import"
 		},
 		{
-			"src": "characters/sinbad/animations/sinbad_anim_shielding_limit.json",
+			"src": "characters/sinbad/animations/sinbad_anim_shield_limit.json",
 			"type": "import"
 		},
 		{
-			"src": "characters/sinbad/animations/sinbad_anim_shielding_partial.json",
+			"src": "characters/sinbad/animations/sinbad_anim_shield_partial.json",
 			"type": "import"
 		},
 		{
-			"src": "characters/sinbad/animations/sinbad_anim_shielding_remove.json",
+			"src": "characters/sinbad/animations/sinbad_anim_shield_remove.json",
 			"type": "import"
 		},
 		{
@@ -528,14 +528,14 @@
 			"update_routine": "sinbad_tick_spawn"
 		},
 		{
-			"input_routine": "sinbad_input_standing",
-			"name": "SINBAD_STATE_STANDING",
+			"input_routine": "sinbad_input_idle",
+			"name": "SINBAD_STATE_IDLE",
 			"offground_routine": "sinbad_start_falling",
 			"onground_routine": "sinbad_global_onground",
 			"onhurt_routine": "hurt_player",
 			"start_routine": null,
 			"type": "character_state",
-			"update_routine": "sinbad_tick_standing"
+			"update_routine": "sinbad_tick_idle"
 		},
 		{
 			"input_routine": "sinbad_input_running",
