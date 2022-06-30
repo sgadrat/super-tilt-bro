@@ -1,3 +1,6 @@
+!define "char_name" {sinbad}
+!define "char_name_upper" {SINBAD}
+
 ;
 ; States index
 ;

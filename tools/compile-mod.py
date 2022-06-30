@@ -47,14 +47,21 @@ def compute_anim_duration_ntsc(anim):
 	return raw_dur + int(raw_dur / 5)
 
 def expand_macros(source, game_dir, char):
+	# State
 	expanded_source_code = source
+	defined = {}
 
+	# Valid macros
 	re_include = re.compile('!include "(?P<src>[^"]+)"')
 	re_define = re.compile('!define "(?P<name>[^"]+)" {(?P<value>[^}]+)}', flags=re.MULTILINE)
 	re_place = re.compile('!place "(?P<name>[^"]+)"')
+	re_place2 = re.compile('\{(?P<name>[a-z_]+)\}')
 
-	# Resolve includes, recursively
+	# Helper functions
 	def include_replacement(m):
+		"""
+		Get the contents of the file referenced by an !include match
+		"""
 		rel_templates_dir = 'tools/compile-mod'
 		templates_dir = '{}/{}'.format(game_dir, rel_templates_dir)
 		template_path = '{}/{}'.format(templates_dir, m.group('src'))
@@ -62,26 +69,41 @@ def expand_macros(source, game_dir, char):
 		with open(template_path, 'r') as template_file:
 			return template_file.read()
 
-	while re_include.search(expanded_source_code) is not None:
-		expanded_source_code = re_include.sub(include_replacement, expanded_source_code)
+	def place_tpl_values(orig):
+		"""
+		Replace {place} patterns in a string by their value
+		"""
+		for name in defined:
+			orig = orig.replace('{%s}' % (name,), defined[name])
+		return orig
 
-	# Scan all defines, they are global
-	defined = {}
-	m = re_define.search(expanded_source_code)
-	while m is not None:
-		defined[m.group('name')] = m.group('value')
-		expanded_source_code = expanded_source_code[:m.start()] + expanded_source_code[m.end():]
-		m = re_define.search(expanded_source_code)
-
-	# Substitute template variables
-	expanded_source_code = expanded_source_code.replace('{char_name}', char.name).replace('{char_name_upper}', char.name.upper())
-
-	# Honorate places
-	def place_replacement(m):
-		ensure(m.group('name') in defined, 'unknown value to !place "{}"'.format(m.group('name')))
-		return defined[m.group('name')]
-	while re_place.search(expanded_source_code) is not None:
-		expanded_source_code = re_place.sub(place_replacement, expanded_source_code)
+	# Scan the source to expand macros
+	pos = 0
+	while pos < len(expanded_source_code):
+		if expanded_source_code[pos] == '{':
+			m = re_place2.search(expanded_source_code, pos)
+			if m is None or m.start() != pos:
+				pos += 1
+			else:
+				ensure(m.group('name') in defined, 'unknown value to place: {%s}' % (m.group('name'),))
+				expanded_source_code = expanded_source_code[:m.start()] + defined[m.group('name')] + expanded_source_code[m.end():]
+		elif expanded_source_code[pos:pos+len('!include')] == '!include':
+			m = re_include.search(expanded_source_code, pos)
+			ensure(m is not None and m.start() == pos, 'unparsable include: {} ...'.format(expanded_source_code[pos:pos+20]))
+			expanded_source_code = expanded_source_code[:m.start()] + include_replacement(m) + expanded_source_code[m.end():]
+		elif expanded_source_code[pos:pos+len('!define')] == '!define':
+			m = re_define.search(expanded_source_code, pos)
+			ensure(m is not None and m.start() == pos, 'unparsable define: {} ...'.format(expanded_source_code[pos:pos+20]))
+			defined[m.group('name')] = m.group('value')
+			expanded_source_code = expanded_source_code[:m.start()] + expanded_source_code[m.end():]
+		elif expanded_source_code[pos:pos+len('!place')] == '!place':
+			m = re_place.search(expanded_source_code, pos)
+			ensure(m is not None and m.start() == pos, 'unparsable define: {} ...'.format(expanded_source_code[pos:pos+20]))
+			name = place_tpl_values(m.group('name'))
+			ensure(name in defined, 'unknown value to !place "{}" (resolved: "{}")'.format(m.group('name'), name))
+			expanded_source_code = expanded_source_code[:m.start()] + defined[name] + expanded_source_code[m.end():]
+		else:
+			pos += 1
 
 	return expanded_source_code
 

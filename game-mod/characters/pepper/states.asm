@@ -1,3 +1,6 @@
+!define "char_name" {pepper}
+!define "char_name_upper" {PEPPER}
+
 ;
 ; States index
 ;

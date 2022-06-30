@@ -1,3 +1,6 @@
+!define "char_name" {kiki}
+!define "char_name_upper" {KIKI}
+
 ;
 ; States index
 ;
