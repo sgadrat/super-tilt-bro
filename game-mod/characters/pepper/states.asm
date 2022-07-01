@@ -641,53 +641,10 @@ pepper_global_tick:
 	.)
 .)
 
-.(
-	pepper_anim_dtilt_dur:
-		.byt pepper_anim_dtilt_dur_pal, pepper_anim_dtilt_dur_ntsc
-
-	&pepper_start_down_tilt:
-	.(
-		; Set state
-		lda #PEPPER_STATE_DTILT
-		sta player_a_state, x
-
-		; Reset clock
-		ldy system_index
-		lda pepper_anim_dtilt_dur, y
-		sta player_a_state_clock, x
-
-		; Set the appropriate animation
-		lda #<pepper_anim_dtilt
-		sta tmpfield13
-		lda #>pepper_anim_dtilt
-		sta tmpfield14
-		jmp set_player_animation
-
-		;rts ; useless, jump to subroutine
-	.)
-
-	&pepper_tick_down_tilt:
-	&pepper_tick_side_tilt:
-	&pepper_tick_up_tilt:
-	&pepper_tick_flash_potion:
-	&pepper_tick_hyperspeed_crashing:
-	&pepper_tick_wrench_grab:
-	.(
-		jsr pepper_global_tick
-
-		; After move's time is out, go to standing state
-		dec player_a_state_clock, x
-		bne do_tick
-			jmp pepper_start_idle
-			; No return, jump to subroutine
-		do_tick:
-
-		; Do not move, velocity tends toward vector (0,0)
-		jmp pepper_apply_ground_friction
-
-		;rts ; useless, jump to subroutine
-	.)
-.)
+!define "anim" {pepper_anim_dtilt}
+!define "state" {PEPPER_STATE_DTILT}
+!define "routine" {down_tilt}
+!include "tpl_grounded_attack.asm"
 
 .(
 	STILT_DURATION = 20
@@ -713,59 +670,19 @@ pepper_global_tick:
 
 		;rts ; useless, jump to subroutine
 	.)
+
+	&pepper_tick_side_tilt = pepper_std_grounded_tick
 .)
 
-.(
-	pepper_anim_up_tilt_dur:
-		.byt pepper_anim_up_tilt_dur_pal, pepper_anim_up_tilt_dur_ntsc
+!define "anim" {pepper_anim_up_tilt}
+!define "state" {PEPPER_STATE_UTILT}
+!define "routine" {up_tilt}
+!include "tpl_grounded_attack.asm"
 
-	&pepper_start_up_tilt:
-	.(
-		; Set state
-		lda #PEPPER_STATE_UTILT
-		sta player_a_state, x
-
-		; Reset clock
-		ldy system_index
-		lda pepper_anim_up_tilt_dur, y
-		sta player_a_state_clock, x
-
-		; Set the appropriate animation
-		lda #<pepper_anim_up_tilt
-		sta tmpfield13
-		lda #>pepper_anim_up_tilt
-		sta tmpfield14
-		jmp set_player_animation
-
-		;rts ; useless, jump to subroutine
-	.)
-.)
-
-.(
-	pepper_anim_flash_potion_dur:
-		.byt pepper_anim_flash_potion_dur_pal, pepper_anim_flash_potion_dur_ntsc
-
-	&pepper_start_flash_potion:
-	.(
-		; Set state
-		lda #PEPPER_STATE_FLASH_POTION
-		sta player_a_state, x
-
-		; Reset clock
-		ldy system_index
-		lda pepper_anim_flash_potion_dur, y
-		sta player_a_state_clock, x
-
-		; Set the appropriate animation
-		lda #<pepper_anim_flash_potion
-		sta tmpfield13
-		lda #>pepper_anim_flash_potion
-		sta tmpfield14
-		jmp set_player_animation
-
-		;rts ; useless, jump to subroutine
-	.)
-.)
+!define "anim" {pepper_anim_flash_potion}
+!define "state" {PEPPER_STATE_FLASH_POTION}
+!define "routine" {flash_potion}
+!include "tpl_grounded_attack.asm"
 
 .(
 	HIT_TIME_PAL = 6
@@ -976,6 +893,8 @@ pepper_global_tick:
 
 		;rts ; useless, jump to subroutine
 	.)
+
+	&pepper_tick_hyperspeed_crashing = pepper_std_grounded_tick
 .)
 
 ;
@@ -1354,31 +1273,10 @@ pepper_global_tick:
 	.)
 .)
 
-.(
-	pepper_anim_wrench_grab_dur:
-		.byt pepper_anim_wrench_grab_dur_pal, pepper_anim_wrench_grab_dur_ntsc
-
-	&pepper_start_wrench_grab:
-	.(
-		; Set state
-		lda #PEPPER_STATE_WRENCH_GRAB
-		sta player_a_state, x
-
-		; Reset clock
-		ldy system_index
-		lda pepper_anim_wrench_grab_dur, y
-		sta player_a_state_clock, x
-
-		; Set the appropriate animation
-		lda #<pepper_anim_wrench_grab
-		sta tmpfield13
-		lda #>pepper_anim_wrench_grab
-		sta tmpfield14
-		jmp set_player_animation
-
-		;rts ; useless, jump to subroutine
-	.)
-.)
+!define "anim" {pepper_anim_wrench_grab}
+!define "state" {PEPPER_STATE_WRENCH_GRAB}
+!define "routine" {wrench_grab}
+!include "tpl_grounded_attack.asm"
 
 ;
 ; Dzzz
