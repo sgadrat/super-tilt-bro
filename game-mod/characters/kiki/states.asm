@@ -625,11 +625,17 @@ kiki_global_onground:
 !include "std_shielding.asm"
 !include "std_walljumping.asm"
 
-.(
-	kiki_anim_strike_duration:
-		.byt kiki_anim_strike_dur_pal, kiki_anim_strike_dur_ntsc
+;
+; Side Tilt
+;
 
-	&kiki_start_side_tilt_right:
+.(
+	!define "anim" {kiki_anim_strike}
+	!define "state" {KIKI_STATE_SIDE_TILT}
+	!define "routine" {side_tilt}
+	!include "tpl_grounded_attack.asm"
+
+	+kiki_start_side_tilt_right:
 	.(
 		lda DIRECTION_RIGHT
 		sta player_a_direction, x
@@ -637,55 +643,18 @@ kiki_global_onground:
 		; rts ; useless - kiki_start_side_tilt is a routine
 	.)
 
-	&kiki_start_side_tilt_left:
+	+kiki_start_side_tilt_left:
 	.(
 		lda DIRECTION_LEFT
 		sta player_a_direction, x
-		; jmp kiki_start_side_tilt ; useless - fallthrough
+		jmp kiki_start_side_tilt
 		; rts ; useless - kiki_start_side_tilt is a routine
 	.)
-
-	&kiki_start_side_tilt:
-	.(
-		; Set the appropriate animation
-		lda #<kiki_anim_strike
-		sta tmpfield13
-		lda #>kiki_anim_strike
-		sta tmpfield14
-		jsr set_player_animation
-
-		; Set the player's state
-		lda #KIKI_STATE_SIDE_TILT
-		sta player_a_state, x
-
-		; Initialize the clock
-		lda #0
-		sta player_a_state_clock,x
-
-		rts
-	.)
-
-	&kiki_tick_side_tilt:
-	.(
-		jsr kiki_global_tick
-
-		inc player_a_state_clock, x
-
-		ldy system_index
-		lda player_a_state_clock, x
-		cmp kiki_anim_strike_duration, y
-		bne update_velocity
-
-			jmp kiki_start_idle
-			; No return, jump to subroutine
-
-		update_velocity:
-			jmp kiki_apply_ground_friction
-			; No return, jump to subroutine
-
-		;rts ; useless, no branch return
-	.)
 .)
+
+;
+; Side special
+;
 
 .(
 	KIKI_WALL_WHIFF = 0
@@ -921,7 +890,6 @@ kiki_global_onground:
 		lda kiki_a_wall_drawn, x
 		bne skip_gravity
 			jsr kiki_apply_friction_lite
-			jsr apply_player_gravity
 		skip_gravity:
 
 		; Return to inactive state after animation's duration
@@ -1351,7 +1319,6 @@ kiki_global_onground:
 		lda kiki_a_wall_drawn, x
 		bne skip_gravity
 			jsr kiki_apply_friction_lite
-			jsr apply_player_gravity
 		skip_gravity:
 
 		; Return to inactive state after animation's duration
@@ -1369,53 +1336,10 @@ kiki_global_onground:
 	.)
 .)
 
-.(
-	kiki_anim_strike_up_dur:
-		.byt kiki_anim_strike_up_dur_pal, kiki_anim_strike_up_dur_ntsc
-
-	&kiki_start_up_tilt:
-	.(
-		; Set the appropriate animation
-		lda #<kiki_anim_strike_up
-		sta tmpfield13
-		lda #>kiki_anim_strike_up
-		sta tmpfield14
-		jsr set_player_animation
-
-		; Set the player's state
-		lda #KIKI_STATE_UP_TILT
-		sta player_a_state, x
-
-		; Initialize the clock
-		lda #0
-		sta player_a_state_clock,x
-
-		rts
-	.)
-
-	&kiki_tick_up_tilt:
-	.(
-		jsr kiki_global_tick
-
-		inc player_a_state_clock, x
-
-		ldy system_index
-		lda player_a_state_clock, x
-		cmp kiki_anim_strike_up_dur, y
-		bne update_velocity
-
-			jmp kiki_start_inactive_state
-			; No return, jump to subroutine
-
-		update_velocity:
-			; Do not move, velocity tends toward vector (0,0)
-			jmp kiki_apply_ground_friction
-			; No return, jump to subroutine
-
-		end:
-		rts
-	.)
-.)
+!define "anim" {kiki_anim_strike_up}
+!define "state" {KIKI_STATE_UP_TILT}
+!define "routine" {up_tilt}
+!include "tpl_grounded_attack.asm"
 
 .(
 	kiki_anim_aerial_up_dur:
@@ -1461,52 +1385,10 @@ kiki_global_onground:
 	.)
 .)
 
-.(
-	kiki_anim_strike_down_dur:
-		.byt kiki_anim_strike_down_dur_pal, kiki_anim_strike_down_dur_ntsc
-
-	&kiki_start_down_tilt:
-	.(
-		; Set the appropriate animation
-		lda #<kiki_anim_strike_down
-		sta tmpfield13
-		lda #>kiki_anim_strike_down
-		sta tmpfield14
-		jsr set_player_animation
-
-		; Set the player's state
-		lda #KIKI_STATE_DOWN_TILT
-		sta player_a_state, x
-
-		; Initialize the clock
-		lda #0
-		sta player_a_state_clock,x
-
-		rts
-	.)
-
-	&kiki_tick_down_tilt:
-	.(
-		jsr kiki_global_tick
-
-		inc player_a_state_clock, x
-
-		ldy system_index
-		lda player_a_state_clock, x
-		cmp kiki_anim_strike_down_dur, y
-		bne update_velocity
-
-			jmp kiki_start_inactive_state
-			; No return, jump to subroutine
-
-		update_velocity:
-			; Do not move, velocity tends toward vector (0,0)
-			jmp kiki_apply_ground_friction
-			; No return, jump to subroutine
-
-		;rts ; useless, unreachable
-	.)
-.)
+!define "anims" {kiki_anim_strike_down}
+!define "state" {KIKI_STATE_DOWN_TILT}
+!define "routine" {down_tilt}
+!include "tpl_grounded_attack.asm"
 
 .(
 	kiki_anim_aerial_down_dur:
@@ -1612,52 +1494,15 @@ kiki_global_onground:
 	.)
 .)
 
+;
+; Jab
+;
+
 .(
-	kiki_anim_jab_dur:
-		.byt kiki_anim_jab_dur_pal, kiki_anim_jab_dur_ntsc
-
-	&kiki_start_jabbing:
-	.(
-		; Set the appropriate animation
-		lda #<kiki_anim_jab
-		sta tmpfield13
-		lda #>kiki_anim_jab
-		sta tmpfield14
-		jsr set_player_animation
-
-		; Set the player's state
-		lda #KIKI_STATE_JABBING
-		sta player_a_state, x
-
-		; Initialize the clock
-		lda #0
-		sta player_a_state_clock,x
-
-		rts
-	.)
-
-	&kiki_tick_jabbing:
-	.(
-		jsr kiki_global_tick
-
-		inc player_a_state_clock, x
-
-		ldy system_index
-		lda player_a_state_clock, x
-		cmp kiki_anim_jab_dur, y
-		bne update_velocity
-
-			jsr kiki_start_idle
-			jmp end
-
-		update_velocity:
-			; Do not move, velocity tends toward vector (0,0)
-			jmp kiki_apply_ground_friction
-			; No return, jump to subroutine
-
-		end:
-		rts
-	.)
+	!define "anim" {kiki_anim_jab}
+	!define "state" {KIKI_STATE_JABBING}
+	!define "routine" {jabbing}
+	!include "tpl_grounded_attack.asm"
 
 	&kiki_input_jabbing:
 	.(
