@@ -55,3 +55,7 @@
 #endif
 
 +{char_name}_tick_{routine} = {char_name}_std_grounded_tick
+
+!undef "anim"
+!undef "state"
+!undef "routine"

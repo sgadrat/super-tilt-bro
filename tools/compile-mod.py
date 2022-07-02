@@ -53,7 +53,9 @@ def expand_macros(source, game_dir, char):
 
 	# Valid macros
 	re_include = re.compile('!include "(?P<src>[^"]+)"')
+	re_return_include = re.compile('!return-include')
 	re_define = re.compile('!define "(?P<name>[^"]+)" {(?P<value>[^}]+)}', flags=re.MULTILINE)
+	re_undef = re.compile('!undef "(?P<name>[^"]+)"')
 	re_place = re.compile('!place "(?P<name>[^"]+)"')
 	re_place2 = re.compile('\{(?P<name>[a-z_]+)\}')
 
@@ -77,32 +79,57 @@ def expand_macros(source, game_dir, char):
 			orig = orig.replace('{%s}' % (name,), defined[name])
 		return orig
 
+	def show_backtrace(backtrace):
+		str_bt = ''
+		for frame in backtrace:
+			if str_bt != '':
+				str_bt += '-'
+			str_bt += '{}:{}'.format(frame['file'], frame['line'])
+		return str_bt
+
 	# Scan the source to expand macros
 	pos = 0
+	source_pos = [{'file': '{}/states.asm'.format(char.name), 'line': 1}]
 	while pos < len(expanded_source_code):
 		if expanded_source_code[pos] == '{':
 			m = re_place2.search(expanded_source_code, pos)
 			if m is None or m.start() != pos:
 				pos += 1
 			else:
-				ensure(m.group('name') in defined, 'unknown value to place: {%s}' % (m.group('name'),))
+				ensure(m.group('name') in defined, '[%s] unknown value to place: {%s}' % (show_backtrace(source_pos), m.group('name'),))
 				expanded_source_code = expanded_source_code[:m.start()] + defined[m.group('name')] + expanded_source_code[m.end():]
 		elif expanded_source_code[pos:pos+len('!include')] == '!include':
 			m = re_include.search(expanded_source_code, pos)
-			ensure(m is not None and m.start() == pos, 'unparsable include: {} ...'.format(expanded_source_code[pos:pos+20]))
-			expanded_source_code = expanded_source_code[:m.start()] + include_replacement(m) + expanded_source_code[m.end():]
+			ensure(m is not None and m.start() == pos, '[{}] unparsable include: {} ...'.format(show_backtrace(source_pos), expanded_source_code[pos:pos+20]))
+			source_pos.append({'file': m.group('src'), 'line': 1})
+			expanded_source_code = expanded_source_code[:m.start()] + include_replacement(m) + '!return-include' + expanded_source_code[m.end():]
+		elif expanded_source_code[pos:pos+len('!return-include')] == '!return-include':
+			m = re_return_include.search(expanded_source_code, pos)
+			ensure(m is not None and m.start() == pos, '[{}] unparsable return-include: {} ...'.format(show_backtrace(source_pos), expanded_source_code[pos:pos+20]))
+			del source_pos[-1]
+			expanded_source_code = expanded_source_code[:m.start()] + expanded_source_code[m.end():]
 		elif expanded_source_code[pos:pos+len('!define')] == '!define':
 			m = re_define.search(expanded_source_code, pos)
-			ensure(m is not None and m.start() == pos, 'unparsable define: {} ...'.format(expanded_source_code[pos:pos+20]))
+			ensure(m is not None and m.start() == pos, '[{}] unparsable define: {} ...'.format(show_backtrace(source_pos), expanded_source_code[pos:pos+20]))
+			ensure(m.group('name') not in defined, '[{}] defining an already defined value: "{}"'.format(show_backtrace(source_pos), m.group('name')))
 			defined[m.group('name')] = m.group('value')
+			source_pos[-1]['line'] += m.group('value').count('\n')
+			expanded_source_code = expanded_source_code[:m.start()] + expanded_source_code[m.end():]
+		elif expanded_source_code[pos:pos+len('!undef')] == '!undef':
+			m = re_undef.search(expanded_source_code, pos)
+			ensure(m is not None and m.start() == pos, '[{}] unparsable undef: {} ...'.format(show_backtrace(source_pos), expanded_source_code[pos:pos+20]))
+			ensure(m.group('name') in defined, '[{}] !undef on a value not already defined: {} ...'.format(show_backtrace(source_pos), expanded_source_code[pos:pos+20]))
+			del defined[m.group('name')]
 			expanded_source_code = expanded_source_code[:m.start()] + expanded_source_code[m.end():]
 		elif expanded_source_code[pos:pos+len('!place')] == '!place':
 			m = re_place.search(expanded_source_code, pos)
-			ensure(m is not None and m.start() == pos, 'unparsable define: {} ...'.format(expanded_source_code[pos:pos+20]))
+			ensure(m is not None and m.start() == pos, '[{}] unparsable place: {} ...'.format(show_backtrace(source_pos), expanded_source_code[pos:pos+20]))
 			name = place_tpl_values(m.group('name'))
-			ensure(name in defined, 'unknown value to !place "{}" (resolved: "{}")'.format(m.group('name'), name))
+			ensure(name in defined, '[{}] unknown value to !place "{}" (resolved: "{}")'.format(show_backtrace(source_pos), m.group('name'), name))
 			expanded_source_code = expanded_source_code[:m.start()] + defined[name] + expanded_source_code[m.end():]
 		else:
+			if expanded_source_code[pos] == '\n':
+				source_pos[-1]['line'] += 1
 			pos += 1
 
 	return expanded_source_code

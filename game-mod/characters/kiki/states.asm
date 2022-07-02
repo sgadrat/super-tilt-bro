@@ -1385,7 +1385,7 @@ kiki_global_onground:
 	.)
 .)
 
-!define "anims" {kiki_anim_strike_down}
+!define "anim" {kiki_anim_strike_down}
 !define "state" {KIKI_STATE_DOWN_TILT}
 !define "routine" {down_tilt}
 !include "tpl_grounded_attack.asm"
