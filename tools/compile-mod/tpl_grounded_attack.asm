@@ -43,7 +43,7 @@
 	; After move's time is out, go to standing state
 	dec player_a_state_clock, x
 	bne do_tick
-		jmp {char_name}_start_idle
+		jmp {char_name}_start_inactive_state
 		; No return, jump to subroutine
 	do_tick:
 

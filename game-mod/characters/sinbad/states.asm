@@ -795,50 +795,10 @@ sinbad_global_onground:
 ; Down tilt
 ;
 
-.(
-	down_tilt_duration:
-		.byt sinbad_anim_down_tilt_dur_pal, sinbad_anim_down_tilt_dur_ntsc
-
-	&sinbad_start_down_tilt:
-	.(
-		; Set state
-		lda #SINBAD_STATE_DOWN_TILT
-		sta player_a_state, x
-
-		; Reset clock
-		ldy system_index
-		lda down_tilt_duration, y
-		sta player_a_state_clock, x
-
-		; Fallthrough to set the animation
-	.)
-	set_down_tilt_animation:
-	.(
-		; Set the appropriate animation
-		lda #<sinbad_anim_down_tilt
-		sta tmpfield13
-		lda #>sinbad_anim_down_tilt
-		sta tmpfield14
-		jmp set_player_animation
-
-		;rts ; useless, jump to subroutine
-	.)
-
-	&sinbad_tick_down_tilt:
-	.(
-		; After move's time is out, go to idle state
-		dec player_a_state_clock, x
-		bne tick
-			jmp sinbad_start_inactive_state
-			; No return, jump to subroutine
-		tick:
-
-		; Do not move, velocity tends toward vector (0,0)
-		jmp sinbad_apply_ground_friction
-
-		;rts ; useless, jump to subroutine
-	.)
-.)
+!define "anim" {sinbad_anim_down_tilt}
+!define "state" {SINBAD_STATE_DOWN_TILT}
+!define "routine" {down_tilt}
+!include "tpl_grounded_attack.asm"
 
 ;
 ; Aerial side
@@ -1271,47 +1231,9 @@ sinbad_global_onground:
 	.)
 .)
 
-.(
-	uptilt_duration:
-		.byt sinbad_anim_up_tilt_dur_pal, sinbad_anim_up_tilt_dur_ntsc
-
-	&sinbad_start_up_tilt:
-	.(
-		; Set state
-		lda #SINBAD_STATE_UP_TILT
-		sta player_a_state, x
-
-		; Reset clock
-		ldy system_index
-		lda uptilt_duration, y
-		sta player_a_state_clock, x
-
-		; Fallthrough to set the animation
-	.)
-	set_up_tilt_animation:
-	.(
-		; Set the appropriate animation
-		lda #<sinbad_anim_up_tilt
-		sta tmpfield13
-		lda #>sinbad_anim_up_tilt
-		sta tmpfield14
-		jsr set_player_animation
-
-		rts
-	.)
-
-	&sinbad_tick_up_tilt:
-	.(
-		dec player_a_state_clock, x
-		bne tick
-			jmp sinbad_start_inactive_state
-			; No return, jump to subroutine
-		tick:
-
-		; Do not move, velocity tends toward vector (0,0)
-		jmp sinbad_apply_ground_friction
-		;rts ; useless, jump to subroutine
-	.)
-.)
+!define "anim" {sinbad_anim_up_tilt}
+!define "state" {SINBAD_STATE_UP_TILT}
+!define "routine" {up_tilt}
+!include "tpl_grounded_attack.asm"
 
 !include "std_friction_routines.asm"
