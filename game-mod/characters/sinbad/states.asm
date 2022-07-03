@@ -804,181 +804,41 @@ sinbad_global_onground:
 ; Aerial side
 ;
 
-.(
-	aerial_side_duration:
-		.byt sinbad_anim_aerial_side_dur_pal, sinbad_anim_aerial_side_dur_ntsc
-
-	&sinbad_start_aerial_side:
-	.(
-		; Set state
-		lda #SINBAD_STATE_AERIAL_SIDE
-		sta player_a_state, x
-
-		; Reset clock
-		ldy system_index
-		lda aerial_side_duration, y
-		sta player_a_state_clock, x
-
-		; Fallthrough to set the animation
-	.)
-	set_aerial_side_animation:
-	.(
-		; Set the appropriate animation
-		lda #<sinbad_anim_aerial_side
-		sta tmpfield13
-		lda #>sinbad_anim_aerial_side
-		sta tmpfield14
-		jmp set_player_animation
-
-		;rts ; useless, jump to subroutine
-	.)
-
-	&sinbad_tick_aerial_side:
-	.(
-		dec player_a_state_clock, x
-		bne tick
-			jmp sinbad_start_falling
-			; No return, jump to subroutine
-		tick:
-		jmp apply_player_gravity
-		;rts ; useless, jump to subroutine
-	.)
-.)
+!define "anim" {sinbad_anim_aerial_side}
+!define "state" {SINBAD_STATE_AERIAL_SIDE}
+!define "routine" {aerial_side}
+!include "tpl_aerial_attack.asm"
 
 ;
 ; Aerial down
 ;
 
-.(
-	aerial_down_duration:
-		.byt sinbad_anim_aerial_down_dur_pal, sinbad_anim_aerial_down_dur_ntsc
-
-	&sinbad_start_aerial_down:
-	.(
-		; Set state
-		lda #SINBAD_STATE_AERIAL_DOWN
-		sta player_a_state, x
-
-		; Reset clock
-		ldy system_index
-		lda aerial_down_duration, y
-		sta player_a_state_clock, x
-
-		; Fallthrough to set the animation
-	.)
-	set_aerial_down_animation:
-	.(
-		; Set the appropriate animation
-		lda #<sinbad_anim_aerial_down
-		sta tmpfield13
-		lda #>sinbad_anim_aerial_down
-		sta tmpfield14
-		jmp set_player_animation
-
-		;rts ; useless, jump to subroutine
-	.)
-
-	&sinbad_tick_aerial_down:
-	.(
-		dec player_a_state_clock, x
-		bne tick
-			jmp sinbad_start_falling
-			; No return, jump to subroutine
-		tick:
-		jmp apply_player_gravity
-		;rts ; useless, jump to subroutine
-	.)
-.)
+!define "anim" {sinbad_anim_aerial_down}
+!define "state" {SINBAD_STATE_AERIAL_DOWN}
+!define "routine" {aerial_down}
+!include "tpl_aerial_attack.asm"
 
 ;
 ; Aerial up
 ;
 
-.(
-	aerial_up_duration:
-		.byt sinbad_anim_aerial_up_dur_pal, sinbad_anim_aerial_up_dur_ntsc
-
-	&sinbad_start_aerial_up:
-	.(
-		; Set state
-		lda #SINBAD_STATE_AERIAL_UP
-		sta player_a_state, x
-
-		; Reset clock
-		ldy system_index
-		lda aerial_up_duration, y
-		sta player_a_state_clock, x
-
-		; Fallthrough to set the animation
-	.)
-	set_aerial_up_animation:
-	.(
-		; Set the appropriate animation
-		lda #<sinbad_anim_aerial_up
-		sta tmpfield13
-		lda #>sinbad_anim_aerial_up
-		sta tmpfield14
-		jmp set_player_animation
-
-		;rts ; useless, jump to subroutine
-	.)
-
-	&sinbad_tick_aerial_up:
-	.(
-		dec player_a_state_clock, x
-		bne tick
-			jmp sinbad_start_falling
-			; No return, jump to subroutine
-		tick:
-		jmp apply_player_gravity
-		;rts ; useless, jump to subroutine
-	.)
-.)
+!define "anim" {sinbad_anim_aerial_up}
+!define "state" {SINBAD_STATE_AERIAL_UP}
+!define "routine" {aerial_up}
+!include "tpl_aerial_attack.asm"
 
 ;
 ; Aerial neutral
 ;
 
-.(
-	aerial_neutral_duration:
-		.byt sinbad_anim_aerial_neutral_dur_pal, sinbad_anim_aerial_neutral_dur_ntsc
+!define "anim" {sinbad_anim_aerial_neutral}
+!define "state" {SINBAD_STATE_AERIAL_NEUTRAL}
+!define "routine" {aerial_neutral}
+!include "tpl_aerial_attack.asm"
 
-	&sinbad_start_aerial_neutral:
-	.(
-		; Set state
-		lda #SINBAD_STATE_AERIAL_NEUTRAL
-		sta player_a_state, x
-
-		; Reset clock
-		ldy system_index
-		lda aerial_neutral_duration, y
-		sta player_a_state_clock, x
-
-		; Fallthrough to set the animation
-	.)
-	set_aerial_neutral_animation:
-	.(
-		; Set the appropriate animation
-		lda #<sinbad_anim_aerial_neutral
-		sta tmpfield13
-		lda #>sinbad_anim_aerial_neutral
-		sta tmpfield14
-		jmp set_player_animation
-
-		;rts ; useless, jump to subroutine
-	.)
-
-	&sinbad_tick_aerial_neutral:
-	.(
-		dec player_a_state_clock, x
-		bne tick
-			jmp sinbad_start_falling
-			; No return, jump to subroutine
-		tick:
-		jmp apply_player_gravity
-		;rts ; useless, jump to subroutine
-	.)
-.)
+;
+; Aerial special
+;
 
 .(
 	FALL_SPEED = $0100

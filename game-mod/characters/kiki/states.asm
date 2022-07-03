@@ -1341,101 +1341,26 @@ kiki_global_onground:
 !define "routine" {up_tilt}
 !include "tpl_grounded_attack.asm"
 
-.(
-	kiki_anim_aerial_up_dur:
-		.byt kiki_anim_strike_up_dur_pal, kiki_anim_strike_up_dur_ntsc
-
-	&kiki_start_up_aerial:
-	.(
-		; Set the appropriate animation
-		lda #<kiki_anim_strike_up
-		sta tmpfield13
-		lda #>kiki_anim_strike_up
-		sta tmpfield14
-		jsr set_player_animation
-
-		; Set the player's state
-		lda #KIKI_STATE_UP_AERIAL
-		sta player_a_state, x
-
-		; Initialize the clock
-		lda #0
-		sta player_a_state_clock,x
-
-		rts
-	.)
-
-	&kiki_tick_up_aerial:
-	.(
-		jsr kiki_global_tick
-
-		KIKI_STATE_UP_AERIAL_DURATION = 16
-
-		jsr apply_player_gravity
-
-		ldy system_index
-		inc player_a_state_clock, x
-		lda player_a_state_clock, x
-		cmp kiki_anim_aerial_up_dur, y
-		bne end
-			jsr kiki_start_falling
-
-		end:
-		rts
-	.)
-.)
+!define "anim" {kiki_anim_strike_up}
+!define "state" {KIKI_STATE_UP_AERIAL}
+!define "routine" {up_aerial}
+!include "tpl_aerial_attack.asm"
 
 !define "anim" {kiki_anim_strike_down}
 !define "state" {KIKI_STATE_DOWN_TILT}
 !define "routine" {down_tilt}
 !include "tpl_grounded_attack.asm"
 
-.(
-	kiki_anim_aerial_down_dur:
-		.byt kiki_anim_strike_down_dur_pal, kiki_anim_strike_down_dur_ntsc
-
-	&kiki_start_down_aerial:
-	.(
-		; Set the appropriate animation
-		lda #<kiki_anim_strike_down
-		sta tmpfield13
-		lda #>kiki_anim_strike_down
-		sta tmpfield14
-		jsr set_player_animation
-
-		; Set the player's state
-		lda #KIKI_STATE_DOWN_AERIAL
-		sta player_a_state, x
-
-		; Initialize the clock
-		lda #0
-		sta player_a_state_clock,x
-
-		rts
-	.)
-
-	&kiki_tick_down_aerial:
-	.(
-		jsr kiki_global_tick
-
-		jsr apply_player_gravity
-
-		ldy system_index
-		inc player_a_state_clock, x
-		lda player_a_state_clock, x
-		cmp kiki_anim_aerial_down_dur, y
-		bne end
-			jmp kiki_start_falling
-			; No return, jump to subroutine
-
-		end:
-		rts
-	.)
-.)
+!define "anim" {kiki_anim_strike_down}
+!define "state" {KIKI_STATE_DOWN_AERIAL}
+!define "routine" {down_aerial}
+!include "tpl_aerial_attack.asm"
 
 .(
-	kiki_anim_aerial_strike_dur:
-		.byt kiki_anim_strike_dur_pal, kiki_anim_strike_dur_ntsc
+	!define "anim" {kiki_anim_strike}
+	!define "state" {KIKI_STATE_SIDE_AERIAL}
+	!define "routine" {side_aerial}
+	!include "tpl_aerial_attack.asm"
 
 	&kiki_start_side_aerial_right:
 	.(
@@ -1449,48 +1374,8 @@ kiki_global_onground:
 	.(
 		lda DIRECTION_LEFT
 		sta player_a_direction, x
-		; jmp kiki_start_side_aerial ; useless - fallthrough
+		jmp kiki_start_side_aerial
 		; rts ; useless - kiki_start_side_aerial is a routine
-	.)
-
-	&kiki_start_side_aerial:
-	.(
-		; Set the appropriate animation
-		lda #<kiki_anim_strike
-		sta tmpfield13
-		lda #>kiki_anim_strike
-		sta tmpfield14
-		jsr set_player_animation
-
-		; Set the player's state
-		lda #KIKI_STATE_SIDE_AERIAL
-		sta player_a_state, x
-
-		; Initialize the clock
-		lda #0
-		sta player_a_state_clock,x
-
-		rts
-	.)
-
-	&kiki_tick_side_aerial:
-	.(
-		jsr kiki_global_tick
-
-		KIKI_STATE_SIDE_AERIAL_DURATION = 16
-
-		jsr apply_player_gravity
-
-		ldy system_index
-		inc player_a_state_clock, x
-		lda player_a_state_clock, x
-		cmp kiki_anim_aerial_strike_dur, y
-		bne end
-			jmp kiki_start_falling
-			; No return, jump to subroutine
-
-		end:
-		rts
 	.)
 .)
 
@@ -1517,47 +1402,10 @@ kiki_global_onground:
 	.)
 .)
 
-.(
-	kiki_anim_aerial_neutral_dur:
-		.byt kiki_anim_aerial_neutral_dur_pal, kiki_anim_aerial_neutral_dur_ntsc
-
-	&kiki_start_neutral_aerial:
-	.(
-		; Set the appropriate animation
-		lda #<kiki_anim_aerial_neutral
-		sta tmpfield13
-		lda #>kiki_anim_aerial_neutral
-		sta tmpfield14
-		jsr set_player_animation
-
-		; Set the player's state
-		lda #KIKI_STATE_NEUTRAL_AERIAL
-		sta player_a_state, x
-
-		; Initialize the clock
-		lda #0
-		sta player_a_state_clock,x
-
-		rts
-	.)
-
-	&kiki_tick_neutral_aerial:
-	.(
-		jsr kiki_global_tick
-
-		jsr apply_player_gravity
-
-		ldy system_index
-		inc player_a_state_clock, x
-		lda player_a_state_clock, x
-		cmp kiki_anim_aerial_neutral_dur, y
-		bne end
-			jsr kiki_start_falling
-
-		end:
-		rts
-	.)
-.)
+!define "anim" {kiki_anim_aerial_neutral}
+!define "state" {KIKI_STATE_NEUTRAL_AERIAL}
+!define "routine" {neutral_aerial}
+!include "tpl_aerial_attack.asm"
 
 .(
 	COUNTER_GUARD_ACTIVE_DURATION = 18
