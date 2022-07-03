@@ -68,7 +68,7 @@ KIKI_WALL_JUMP_VELOCITY_H = $0080
 ; Constants data
 ;
 
-!include "std_constant_tables.asm"
+!include "characters/std_constant_tables.asm"
 
 duration_table(KIKI_PLATFORM_DURATION, kiki_platform_duration)
 
@@ -594,19 +594,19 @@ kiki_global_onground:
 	.)
 }
 
-!include "std_aerial_input.asm"
-!include "std_crashing.asm"
-!include "std_thrown.asm"
-!include "std_respawn.asm"
-!include "std_innexistant.asm"
-!include "std_spawn.asm"
-!include "std_idle.asm"
-!include "std_running.asm"
-!include "std_jumping.asm"
-!include "std_landing.asm"
-!include "std_helpless.asm"
-!include "std_shielding.asm"
-!include "std_walljumping.asm"
+!include "characters/std_aerial_input.asm"
+!include "characters/std_crashing.asm"
+!include "characters/std_thrown.asm"
+!include "characters/std_respawn.asm"
+!include "characters/std_innexistant.asm"
+!include "characters/std_spawn.asm"
+!include "characters/std_idle.asm"
+!include "characters/std_running.asm"
+!include "characters/std_jumping.asm"
+!include "characters/std_landing.asm"
+!include "characters/std_helpless.asm"
+!include "characters/std_shielding.asm"
+!include "characters/std_walljumping.asm"
 
 ;
 ; Side Tilt
@@ -616,7 +616,7 @@ kiki_global_onground:
 	!define "anim" {kiki_anim_strike}
 	!define "state" {KIKI_STATE_SIDE_TILT}
 	!define "routine" {side_tilt}
-	!include "tpl_grounded_attack.asm"
+	!include "characters/tpl_grounded_attack.asm"
 
 	+kiki_start_side_tilt_right:
 	.(
@@ -1322,17 +1322,17 @@ kiki_global_onground:
 !define "anim" {kiki_anim_strike_up}
 !define "state" {KIKI_STATE_UP_TILT}
 !define "routine" {up_tilt}
-!include "tpl_grounded_attack.asm"
+!include "characters/tpl_grounded_attack.asm"
 
 !define "anim" {kiki_anim_strike_up}
 !define "state" {KIKI_STATE_UP_AERIAL}
 !define "routine" {up_aerial}
-!include "tpl_aerial_attack.asm"
+!include "characters/tpl_aerial_attack.asm"
 
 !define "anim" {kiki_anim_strike_down}
 !define "state" {KIKI_STATE_DOWN_TILT}
 !define "routine" {down_tilt}
-!include "tpl_grounded_attack.asm"
+!include "characters/tpl_grounded_attack.asm"
 
 ;HACK aerial-down is not cancellable, but don't use the "tpl_aerial_attack_uncancellable.asm"
 ;  - we don't get any friction on ground, allowing for great landing slide
@@ -1340,13 +1340,13 @@ kiki_global_onground:
 !define "anim" {kiki_anim_strike_down}
 !define "state" {KIKI_STATE_DOWN_AERIAL}
 !define "routine" {down_aerial}
-!include "tpl_aerial_attack.asm"
+!include "characters/tpl_aerial_attack.asm"
 
 .(
 	!define "anim" {kiki_anim_strike}
 	!define "state" {KIKI_STATE_SIDE_AERIAL}
 	!define "routine" {side_aerial}
-	!include "tpl_aerial_attack.asm"
+	!include "characters/tpl_aerial_attack.asm"
 
 	&kiki_start_side_aerial_right:
 	.(
@@ -1373,7 +1373,7 @@ kiki_global_onground:
 	!define "anim" {kiki_anim_jab}
 	!define "state" {KIKI_STATE_JABBING}
 	!define "routine" {jabbing}
-	!include "tpl_grounded_attack.asm"
+	!include "characters/tpl_grounded_attack.asm"
 
 	&kiki_input_jabbing:
 	.(
@@ -1391,7 +1391,7 @@ kiki_global_onground:
 !define "anim" {kiki_anim_aerial_neutral}
 !define "state" {KIKI_STATE_NEUTRAL_AERIAL}
 !define "routine" {neutral_aerial}
-!include "tpl_aerial_attack.asm"
+!include "characters/tpl_aerial_attack.asm"
 
 .(
 	COUNTER_GUARD_ACTIVE_DURATION = 18
@@ -1554,4 +1554,4 @@ kiki_global_onground:
 	.)
 .)
 
-!include "std_friction_routines.asm"
+!include "characters/std_friction_routines.asm"

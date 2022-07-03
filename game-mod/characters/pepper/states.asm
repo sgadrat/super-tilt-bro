@@ -69,7 +69,7 @@ PEPPER_CARROT_NOT_PLACED = $80
 ; Constants data
 ;
 
-!include "std_constant_tables.asm"
+!include "characters/std_constant_tables.asm"
 
 ; Offset of 12 bytes reserved in player's object data for storing carrot's animation state
 pepper_carrot_anim_per_player:
@@ -498,19 +498,19 @@ pepper_global_tick:
 	.)
 }
 
-!include "std_aerial_input.asm"
-!include "std_crashing.asm"
-!include "std_thrown.asm"
-!include "std_respawn.asm"
-!include "std_innexistant.asm"
-!include "std_spawn.asm"
-!include "std_idle.asm"
-!include "std_running.asm"
-!include "std_jumping.asm"
-!include "std_landing.asm"
-!include "std_helpless.asm"
-!include "std_shielding.asm"
-!include "std_walljumping.asm"
+!include "characters/std_aerial_input.asm"
+!include "characters/std_crashing.asm"
+!include "characters/std_thrown.asm"
+!include "characters/std_respawn.asm"
+!include "characters/std_innexistant.asm"
+!include "characters/std_spawn.asm"
+!include "characters/std_idle.asm"
+!include "characters/std_running.asm"
+!include "characters/std_jumping.asm"
+!include "characters/std_landing.asm"
+!include "characters/std_helpless.asm"
+!include "characters/std_shielding.asm"
+!include "characters/std_walljumping.asm"
 
 ;
 ; Aerial wrench grab
@@ -628,7 +628,7 @@ pepper_global_tick:
 !define "anim" {pepper_anim_dtilt}
 !define "state" {PEPPER_STATE_DTILT}
 !define "routine" {down_tilt}
-!include "tpl_grounded_attack.asm"
+!include "characters/tpl_grounded_attack.asm"
 
 .(
 	STILT_DURATION = 20
@@ -661,12 +661,12 @@ pepper_global_tick:
 !define "anim" {pepper_anim_up_tilt}
 !define "state" {PEPPER_STATE_UTILT}
 !define "routine" {up_tilt}
-!include "tpl_grounded_attack.asm"
+!include "characters/tpl_grounded_attack.asm"
 
 !define "anim" {pepper_anim_flash_potion}
 !define "state" {PEPPER_STATE_FLASH_POTION}
 !define "routine" {flash_potion}
-!include "tpl_grounded_attack.asm"
+!include "characters/tpl_grounded_attack.asm"
 
 .(
 	HIT_TIME_PAL = 6
@@ -1262,7 +1262,7 @@ pepper_global_tick:
 !define "anim" {pepper_anim_wrench_grab}
 !define "state" {PEPPER_STATE_WRENCH_GRAB}
 !define "routine" {wrench_grab}
-!include "tpl_grounded_attack.asm"
+!include "characters/tpl_grounded_attack.asm"
 
 ;
 ; Dzzz
@@ -1384,4 +1384,4 @@ pepper_global_tick:
 	.)
 .)
 
-!include "std_friction_routines.asm"
+!include "characters/std_friction_routines.asm"

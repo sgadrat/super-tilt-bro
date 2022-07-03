@@ -93,7 +93,7 @@ done
 log
 say "Compile game mod ..."
 log "===================="
-PYTHONPATH="${root_dir}/tools:$PYTHONPATH" cmd "${root_dir}/tools/compile-mod.py" "${root_dir}/game-mod/mod.json" "${root_dir}"
+PYTHONPATH="${root_dir}/tools:$PYTHONPATH" cmd "${root_dir}/tools/compile-mod.py" --tpl-dir "${root_dir}/game/templates" "${root_dir}/game-mod/mod.json" "${root_dir}"
 
 # Compile C files
 if [ $skip_c -eq 0 ]; then

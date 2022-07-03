@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from stblib import ensure
+import argparse
 import json
 import math
 import os
@@ -46,7 +47,7 @@ def compute_anim_duration_ntsc(anim):
 	raw_dur = compute_anim_duration_raw(anim)
 	return raw_dur + int(raw_dur / 5)
 
-def expand_macros(source, game_dir, char):
+def expand_macros(source, game_dir, char, templates_dir):
 	# State
 	expanded_source_code = source # Source code with macros expanded
 	defined = {} # Defined macro values
@@ -89,8 +90,6 @@ def expand_macros(source, game_dir, char):
 			nonlocal source_pos
 			source_pos.append({'file': m.group('src'), 'line': 1})
 
-			rel_templates_dir = 'tools/compile-mod'
-			templates_dir = '{}/{}'.format(game_dir, rel_templates_dir)
 			template_path = '{}/{}'.format(templates_dir, m.group('src'))
 			ensure(os.path.isfile(template_path), 'character {}\'s logic includes an non-existent template "{}"'.format(char.name, m.group('src')))
 			with open(template_path, 'r') as template_file:
@@ -182,7 +181,7 @@ def expand_macros(source, game_dir, char):
 
 	return expanded_source_code
 
-def generate_character(char, game_dir):
+def generate_character(char, game_dir, templates_dir):
 	name_upper = char.name.upper()
 
 	# Create destination directories
@@ -358,7 +357,7 @@ def generate_character(char, game_dir):
 			state_events_file.write('\n')
 
 	# Character's logic
-	expanded_source_code = expand_macros(char.sourcecode, game_dir, char)
+	expanded_source_code = expand_macros(char.sourcecode, game_dir, char, templates_dir)
 	player_states_file_path = '{}/player_states.asm'.format(char_dir)
 	with open(player_states_file_path, 'w') as player_states_file:
 		player_states_file.write(expanded_source_code)
@@ -688,22 +687,26 @@ def generate_banks(char_to_bank, tileset_to_bank, game_dir):
 
 def main():
 	# Parse command line
-	if len(sys.argv) < 3 or sys.argv[1] == '-h' or sys.argv[1] == '--help':
-		print('Compile a game mod stored in JSON format to Super Tilt Bro. source files')
-		print('')
-		print('usage: {} game-mod-path super-tilt-bro-path')
-		print('')
-		return 1
+	parser = argparse.ArgumentParser(description='Process some integers.')
+	parser.add_argument('game-mod-path', help='Path to game\' mod directory')
+	parser.add_argument('super-tilt-bro-path', help='Path to game\'s source')
+	parser.add_argument('--tpl-dir', default='.', help='Base dir for includes in templates')
 
-	mod_file = sys.argv[1]
+	args = parser.parse_args()
+
+	mod_file = getattr(args, 'game-mod-path')
 	ensure(os.path.isfile(mod_file), 'file not found: "{}"'.format(mod_file))
 
-	game_dir = sys.argv[2]
+	game_dir = getattr(args, 'super-tilt-bro-path')
 	ensure(os.path.isdir(game_dir), 'directory not found: "{}"'.format(game_dir))
 	game_dir = os.path.abspath(game_dir)
 	if os.path.basename(game_dir) == 'game':
 		gamedir = os.path.dirname(gamedir)
 	ensure(os.path.isdir('{}/game'.format(game_dir)), '"game/" folder not found in source directory "{}"'.format(game_dir))
+
+	templates_dir = args.tpl_dir
+	ensure(os.path.isdir(templates_dir), 'directory not found: "{}"'.format(templates_dir))
+	templates_dir = os.path.abspath(templates_dir)
 
 	# Parse mod
 	with open(mod_file, 'r') as f:
@@ -719,7 +722,7 @@ def main():
 			char_to_bank[character.name] = current_bank
 			current_bank += 1
 
-		generate_character(character, game_dir)
+		generate_character(character, game_dir, templates_dir)
 
 	# Generate shared character files
 	generate_characters_index(mod.characters, game_dir)

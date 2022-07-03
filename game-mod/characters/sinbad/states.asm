@@ -67,7 +67,7 @@ SINBAD_WALL_JUMP_VELOCITY_H = $0100
 ; Constants data
 ;
 
-!include "std_constant_tables.asm"
+!include "characters/std_constant_tables.asm"
 
 ;
 ; Implementation
@@ -260,19 +260,19 @@ sinbad_global_onground:
 	.)
 }
 
-!include "std_aerial_input.asm"
-!include "std_crashing.asm"
-!include "std_thrown.asm"
-!include "std_respawn.asm"
-!include "std_innexistant.asm"
-!include "std_spawn.asm"
-!include "std_idle.asm"
-!include "std_running.asm"
-!include "std_jumping.asm"
-!include "std_landing.asm"
-!include "std_helpless.asm"
-!include "std_shielding.asm"
-!include "std_walljumping.asm"
+!include "characters/std_aerial_input.asm"
+!include "characters/std_crashing.asm"
+!include "characters/std_thrown.asm"
+!include "characters/std_respawn.asm"
+!include "characters/std_innexistant.asm"
+!include "characters/std_spawn.asm"
+!include "characters/std_idle.asm"
+!include "characters/std_running.asm"
+!include "characters/std_jumping.asm"
+!include "characters/std_landing.asm"
+!include "characters/std_helpless.asm"
+!include "characters/std_shielding.asm"
+!include "characters/std_walljumping.asm"
 
 ;
 ; Jab
@@ -781,7 +781,7 @@ sinbad_global_onground:
 !define "anim" {sinbad_anim_down_tilt}
 !define "state" {SINBAD_STATE_DOWN_TILT}
 !define "routine" {down_tilt}
-!include "tpl_grounded_attack.asm"
+!include "characters/tpl_grounded_attack.asm"
 
 ;
 ; Aerial side
@@ -790,7 +790,7 @@ sinbad_global_onground:
 !define "anim" {sinbad_anim_aerial_side}
 !define "state" {SINBAD_STATE_AERIAL_SIDE}
 !define "routine" {aerial_side}
-!include "tpl_aerial_attack.asm"
+!include "characters/tpl_aerial_attack.asm"
 
 ;
 ; Aerial down
@@ -799,7 +799,7 @@ sinbad_global_onground:
 !define "anim" {sinbad_anim_aerial_down}
 !define "state" {SINBAD_STATE_AERIAL_DOWN}
 !define "routine" {aerial_down}
-!include "tpl_aerial_attack.asm"
+!include "characters/tpl_aerial_attack.asm"
 
 ;
 ; Aerial up
@@ -808,7 +808,7 @@ sinbad_global_onground:
 !define "anim" {sinbad_anim_aerial_up}
 !define "state" {SINBAD_STATE_AERIAL_UP}
 !define "routine" {aerial_up}
-!include "tpl_aerial_attack.asm"
+!include "characters/tpl_aerial_attack.asm"
 
 ;
 ; Aerial neutral
@@ -817,7 +817,7 @@ sinbad_global_onground:
 !define "anim" {sinbad_anim_aerial_neutral}
 !define "state" {SINBAD_STATE_AERIAL_NEUTRAL}
 !define "routine" {aerial_neutral}
-!include "tpl_aerial_attack.asm"
+!include "characters/tpl_aerial_attack.asm"
 
 ;
 ; Aerial special
@@ -1012,11 +1012,11 @@ sinbad_global_onground:
 !define "anim" {sinbad_anim_spe_down}
 !define "state" {SINBAD_STATE_SPE_DOWN}
 !define "routine" {spe_down}
-!include "tpl_aerial_attack_uncancellable.asm"
+!include "characters/tpl_aerial_attack_uncancellable.asm"
 
 !define "anim" {sinbad_anim_up_tilt}
 !define "state" {SINBAD_STATE_UP_TILT}
 !define "routine" {up_tilt}
-!include "tpl_grounded_attack.asm"
+!include "characters/tpl_grounded_attack.asm"
 
-!include "std_friction_routines.asm"
+!include "characters/std_friction_routines.asm"
