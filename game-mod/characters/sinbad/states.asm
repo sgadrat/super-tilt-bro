@@ -67,24 +67,7 @@ SINBAD_WALL_JUMP_VELOCITY_H = $0100
 ; Constants data
 ;
 
-velocity_table(SINBAD_AERIAL_SPEED, sinbad_aerial_speed_msb, sinbad_aerial_speed_lsb)
-velocity_table(-SINBAD_AERIAL_SPEED, sinbad_aerial_neg_speed_msb, sinbad_aerial_neg_speed_lsb)
-acceleration_table(SINBAD_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH, sinbad_aerial_directional_influence_strength)
-acceleration_table(SINBAD_AIR_FRICTION_STRENGTH, sinbad_air_friction_strength)
-velocity_table(SINBAD_FASTFALL_SPEED, sinbad_fastfall_speed_msb, sinbad_fastfall_speed_lsb)
-acceleration_table(SINBAD_GROUND_FRICTION_STRENGTH, sinbad_ground_friction_strength)
-acceleration_table(SINBAD_GROUND_FRICTION_STRENGTH/3, sinbad_ground_friction_strength_weak)
-acceleration_table(SINBAD_GROUND_FRICTION_STRENGTH*3, sinbad_ground_friction_strength_strong)
-velocity_table(SINBAD_TECH_SPEED, sinbad_tech_speed_msb, sinbad_tech_speed_lsb)
-velocity_table(-SINBAD_TECH_SPEED, sinbad_tech_speed_neg_msb, sinbad_tech_speed_neg_lsb)
-velocity_table(-SINBAD_JUMP_POWER, sinbad_jump_velocity_msb, sinbad_jump_velocity_lsb)
-velocity_table(-SINBAD_JUMP_SHORT_HOP_POWER, sinbad_jump_short_hop_velocity_msb, sinbad_jump_short_hop_velocity_lsb)
-
-sinbad_jumpsquat_duration:
-	.byt SINBAD_JUMP_SQUAT_DURATION_PAL, SINBAD_JUMP_SQUAT_DURATION_NTSC
-
-sinbad_short_hop_time:
-	.byt SINBAD_JUMP_SQUAT_DURATION_PAL + SINBAD_JUMP_SHORT_HOP_EXTRA_TIME_PAL, SINBAD_JUMP_SQUAT_DURATION_NTSC + SINBAD_JUMP_SHORT_HOP_EXTRA_TIME_NTSC
+!include "std_constant_tables.asm"
 
 ;
 ; Implementation

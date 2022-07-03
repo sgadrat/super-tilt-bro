@@ -68,26 +68,9 @@ KIKI_WALL_JUMP_VELOCITY_H = $0080
 ; Constants data
 ;
 
-velocity_table(KIKI_AERIAL_SPEED, kiki_aerial_speed_msb, kiki_aerial_speed_lsb)
-velocity_table(-KIKI_AERIAL_SPEED, kiki_aerial_neg_speed_msb, kiki_aerial_neg_speed_lsb)
-acceleration_table(KIKI_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH, kiki_aerial_directional_influence_strength)
-acceleration_table(KIKI_AIR_FRICTION_STRENGTH, kiki_air_friction_strength)
-velocity_table(KIKI_FASTFALL_SPEED, kiki_fastfall_speed_msb, kiki_fastfall_speed_lsb)
-acceleration_table(KIKI_GROUND_FRICTION_STRENGTH, kiki_ground_friction_strength)
-acceleration_table(KIKI_GROUND_FRICTION_STRENGTH/3, kiki_ground_friction_strength_weak)
-acceleration_table(KIKI_GROUND_FRICTION_STRENGTH*3, kiki_ground_friction_strength_strong)
-velocity_table(KIKI_TECH_SPEED, kiki_tech_speed_msb, kiki_tech_speed_lsb)
-velocity_table(-KIKI_TECH_SPEED, kiki_tech_speed_neg_msb, kiki_tech_speed_neg_lsb)
-velocity_table(-KIKI_JUMP_POWER, kiki_jump_velocity_msb, kiki_jump_velocity_lsb)
-velocity_table(-KIKI_JUMP_SHORT_HOP_POWER, kiki_jump_short_hop_velocity_msb, kiki_jump_short_hop_velocity_lsb)
+!include "std_constant_tables.asm"
 
 duration_table(KIKI_PLATFORM_DURATION, kiki_platform_duration)
-
-kiki_jumpsquat_duration:
-	.byt KIKI_JUMP_SQUAT_DURATION_PAL, KIKI_JUMP_SQUAT_DURATION_NTSC
-
-kiki_short_hop_time:
-	.byt KIKI_JUMP_SQUAT_DURATION_PAL + KIKI_JUMP_SHORT_HOP_EXTRA_TIME_PAL, KIKI_JUMP_SQUAT_DURATION_NTSC + KIKI_JUMP_SHORT_HOP_EXTRA_TIME_NTSC
 
 kiki_wall_attributes_per_player:
 .byt 1, 3

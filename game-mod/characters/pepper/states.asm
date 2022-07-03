@@ -69,24 +69,7 @@ PEPPER_CARROT_NOT_PLACED = $80
 ; Constants data
 ;
 
-velocity_table(PEPPER_AERIAL_SPEED, pepper_aerial_speed_msb, pepper_aerial_speed_lsb)
-velocity_table(-PEPPER_AERIAL_SPEED, pepper_aerial_neg_speed_msb, pepper_aerial_neg_speed_lsb)
-acceleration_table(PEPPER_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH, pepper_aerial_directional_influence_strength)
-acceleration_table(PEPPER_AIR_FRICTION_STRENGTH, pepper_air_friction_strength)
-velocity_table(PEPPER_FASTFALL_SPEED, pepper_fastfall_speed_msb, pepper_fastfall_speed_lsb)
-acceleration_table(PEPPER_GROUND_FRICTION_STRENGTH, pepper_ground_friction_strength)
-acceleration_table(PEPPER_GROUND_FRICTION_STRENGTH/3, pepper_ground_friction_strength_weak)
-acceleration_table(PEPPER_GROUND_FRICTION_STRENGTH*3, pepper_ground_friction_strength_strong)
-velocity_table(PEPPER_TECH_SPEED, pepper_tech_speed_msb, pepper_tech_speed_lsb)
-velocity_table(-PEPPER_TECH_SPEED, pepper_tech_speed_neg_msb, pepper_tech_speed_neg_lsb)
-velocity_table(-PEPPER_JUMP_POWER, pepper_jump_velocity_msb, pepper_jump_velocity_lsb)
-velocity_table(-PEPPER_JUMP_SHORT_HOP_POWER, pepper_jump_short_hop_velocity_msb, pepper_jump_short_hop_velocity_lsb)
-
-pepper_jumpsquat_duration:
-	.byt PEPPER_JUMP_SQUAT_DURATION_PAL, PEPPER_JUMP_SQUAT_DURATION_NTSC
-
-pepper_short_hop_time:
-	.byt PEPPER_JUMP_SQUAT_DURATION_PAL + PEPPER_JUMP_SHORT_HOP_EXTRA_TIME_PAL, PEPPER_JUMP_SQUAT_DURATION_NTSC + PEPPER_JUMP_SHORT_HOP_EXTRA_TIME_NTSC
+!include "std_constant_tables.asm"
 
 ; Offset of 12 bytes reserved in player's object data for storing carrot's animation state
 pepper_carrot_anim_per_player:
