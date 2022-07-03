@@ -533,6 +533,7 @@ pepper_global_tick:
 ; Aerial wrench grab
 ;
 
+;TODO could use tpl_aerial_attack if there was a way to add extra code to init
 .(
 	pepper_anim_aerial_wrench_grab_dur:
 		.byt pepper_anim_aerial_wrench_grab_dur_pal, pepper_anim_aerial_wrench_grab_dur_ntsc
@@ -740,12 +741,13 @@ pepper_global_tick:
 			; No return, jump to subroutine
 		do_tick:
 
-		jsr pepper_aerial_directional_influence
+		jsr pepper_aerial_directional_influence ;NOTE this line makes it not like other aerial attacks which do not allow influence (maybe others should be changed)
 		jmp apply_player_gravity
 		;rts ; useless, jump to subroutine
 	.)
 .)
 
+;TODO could be "tpl_aerial_move" if aerial moves could have aerial_directional_influence (se NOTE above)
 .(
 	pepper_anim_firework_dur:
 		.byt pepper_anim_firework_dur_pal, pepper_anim_firework_dur_ntsc
@@ -866,6 +868,7 @@ pepper_global_tick:
 	.)
 .)
 
+;TODO could be "tpl_grounded_attack" if there was a way to play audio sound (not sure it should be, it is definitely not a standard attack)
 .(
 	pepper_anim_hyperspeed_crash_dur:
 		.byt pepper_anim_hyperspeed_crash_dur_pal, pepper_anim_hyperspeed_crash_dur_ntsc

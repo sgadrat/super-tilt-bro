@@ -1351,6 +1351,9 @@ kiki_global_onground:
 !define "routine" {down_tilt}
 !include "tpl_grounded_attack.asm"
 
+;HACK aerial-down is not cancellable, but don't use the "tpl_aerial_attack_uncancellable.asm"
+;  - we don't get any friction on ground, allowing for great landing slide
+;  - TODO change it to uncancellable template, may need to rework Kiki's ground friction (or allow special case in the tamplate)
 !define "anim" {kiki_anim_strike_down}
 !define "state" {KIKI_STATE_DOWN_AERIAL}
 !define "routine" {down_aerial}

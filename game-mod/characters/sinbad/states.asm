@@ -1026,70 +1026,10 @@ sinbad_global_onground:
 	.)
 .)
 
-.(
-	spe_down_duration:
-		.byt sinbad_anim_spe_down_dur_pal, sinbad_anim_spe_down_dur_ntsc
-
-	&sinbad_start_spe_down:
-	.(
-		; Set state
-		lda #SINBAD_STATE_SPE_DOWN
-		sta player_a_state, x
-
-		; Reset clock
-		lda #0
-		sta player_a_state_clock, x
-
-		; Fallthrough to set the animation
-	.)
-	set_spe_down_animation:
-	.(
-		; Set the appropriate animation
-		lda #<sinbad_anim_spe_down
-		sta tmpfield13
-		lda #>sinbad_anim_spe_down
-		sta tmpfield14
-		jsr set_player_animation
-
-		rts
-	.)
-
-	&sinbad_tick_spe_down:
-	.(
-		lda player_a_grounded, x
-		beq air_friction
-			ground_friction:
-				lda #$00
-				sta tmpfield4
-				sta tmpfield3
-				sta tmpfield2
-				sta tmpfield1
-				ldy system_index
-				lda sinbad_ground_friction_strength_weak, y
-				sta tmpfield5
-				jsr merge_to_player_velocity
-				jmp end_friction
-			air_friction:
-				jsr sinbad_apply_air_friction
-				jsr apply_player_gravity
-				; Fallthrough
-		end_friction:
-
-		; Wait for move's timeout
-		ldy system_index
-		inc player_a_state_clock, x
-		lda player_a_state_clock, x
-		cmp spe_down_duration, y
-		bne end
-
-		; Return to falling or idle
-		jmp sinbad_start_inactive_state
-		; No return, jump to subroutine
-
-		end:
-		rts
-	.)
-.)
+!define "anim" {sinbad_anim_spe_down}
+!define "state" {SINBAD_STATE_SPE_DOWN}
+!define "routine" {spe_down}
+!include "tpl_aerial_attack_uncancellable.asm"
 
 !define "anim" {sinbad_anim_up_tilt}
 !define "state" {SINBAD_STATE_UP_TILT}
