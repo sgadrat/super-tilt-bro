@@ -13,13 +13,13 @@ class State:
 		self.onhurt_routine = onhurt_routine
 
 	def check(self):
-		ensure(len(self.name) > 0)
-		ensure(self.start_routine is None or len(self.start_routine) > 0)
-		ensure(len(self.update_routine) > 0)
-		ensure(len(self.offground_routine) > 0)
-		ensure(len(self.onground_routine) > 0)
-		ensure(len(self.input_routine) > 0)
-		ensure(len(self.onhurt_routine) > 0)
+		ensure(len(self.name) > 0, 'player state must have a non-empty name')
+		ensure(self.start_routine is None or len(self.start_routine) > 0, 'start routine of state "{}" is empty (must be None or non-empty string)'.format(self.name))
+		ensure(len(self.update_routine) > 0, 'state "{}": update routine is empty'.format(self.name))
+		ensure(len(self.offground_routine) > 0, 'state "{}": offground routine is empty'.format(self.name))
+		ensure(len(self.onground_routine) > 0, 'state "{}": onground routine is empty'.format(self.name))
+		ensure(len(self.input_routine) > 0, 'state "{}": input routine is empty'.format(self.name))
+		ensure(len(self.onhurt_routine) > 0, 'state "{}": onhurt routine is empty'.format(self.name))
 
 class Palette:
 	def __init__(self, colors=None):

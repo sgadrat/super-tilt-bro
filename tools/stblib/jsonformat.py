@@ -271,18 +271,24 @@ def _handle_import(obj, base_path):
 
 def _handle_character(obj, base_path):
 	if obj.get('sourcecode_file') is not None:
-		with open('{}/{}'.format(base_path, obj['sourcecode_file']), 'r') as f:
+		ensure('sourcecode' not in obj, 'both sourcecode and sourcecode_file are present in character {}'.format(obj.get('name')))
+		source_path = '{}/{}'.format(base_path, obj['sourcecode_file'])
+		ensure(os.path.exists(source_path), 'sourcecode_file "{}" not found in character {}'.format(source_path, obj.get('name')))
+
+		with open(source_path) as f:
 			obj['sourcecode'] = f.read()
 		del obj['sourcecode_file']
 	return obj
 
 def _handle_character_ai(obj, base_path):
-	if obj.get('sourcecode_file') is None:
-		obj['sourcecode'] = ''
-	else:
-		with open('{}/{}'.format(base_path, obj['sourcecode_file']), 'r') as f:
+	if obj.get('sourcecode_file') is not None:
+		ensure('sourcecode' not in obj, 'both sourcecode and sourcecode_file are present in character AI')
+		source_path = '{}/{}'.format(base_path, obj['sourcecode_file'])
+		ensure(os.path.exists(source_path), 'sourcecode_file "{}" not found in character AI'.format(source_path))
+
+		with open(source_path) as f:
 			obj['sourcecode'] = f.read()
-	del obj['sourcecode_file']
+		del obj['sourcecode_file']
 	return obj
 
 def _handle_tileset(obj, base_path):
