@@ -30,10 +30,6 @@
 		set_high_byte:
 		sta player_a_velocity_h, x
 
-		; Fallthrough to set animation
-	.)
-	{char_name}_set_running_animation:
-	.(
 		; Set the appropriate animation
 		lda #<{char_name}_anim_run
 		sta tmpfield13
@@ -107,7 +103,7 @@
 			cmp player_a_direction, x
 			beq end_changing_direction
 				sta player_a_direction, x
-				jmp {char_name}_set_running_animation
+				jmp {char_name}_start_running
 				; No return, jump to subroutine
 			end_changing_direction:
 			rts
@@ -119,7 +115,7 @@
 			cmp player_a_direction, x
 			beq end_changing_direction
 				sta player_a_direction, x
-				jmp {char_name}_set_running_animation
+				jmp {char_name}_start_running
 				; No return, jump to subroutine
 			end_changing_direction:
 			rts

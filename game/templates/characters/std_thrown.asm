@@ -48,12 +48,18 @@
 
 		; Update velocity
 		lda player_a_hitstun, x
-		bne gravity
-			jsr {char_name}_aerial_directional_influence
-		gravity:
-		jmp apply_player_gravity
+		bne no_control
+			controllable:
+				jsr {char_name}_aerial_directional_influence
+				jmp apply_player_gravity
+				; No return, jump to subroutine
 
-		;rts ; useless, jump to subroutine
+			no_control:
+				jsr {char_name}_apply_air_friction
+				jmp apply_player_gravity
+				; No return, jump to subroutine
+
+		;rts ; useless, no branch return
 	.)
 
 	&{char_name}_input_thrown:
