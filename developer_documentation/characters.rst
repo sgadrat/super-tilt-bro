@@ -27,7 +27,7 @@ Tick routines constraints generally apply, as start routines are often called fr
  * ``A``: output: Can be modified
  * ``X``: output: cannot be modified
  * ``Y``: output: Can be modified
- * ``player_number``: output: to be checked, input: to be checked
+ * ``player_number``: output: to be checked, input: not ensured to be set
  * ``tmpfields``: Can be modified
  * ``extra_tmpfields``: To be checked
 

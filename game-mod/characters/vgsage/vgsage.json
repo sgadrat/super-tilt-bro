@@ -15195,6 +15195,56 @@
       "start_routine": null,
       "type": "character_state",
       "update_routine": "vgsage_tick_aerial_side"
+    },
+    {
+      "input_routine": "keep_input_dirty",
+      "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_0",
+      "offground_routine": "dummy_routine",
+      "onground_routine": "vgsage_global_onground",
+      "onhurt_routine": "dummy_routine",
+      "start_routine": null,
+      "type": "character_state",
+      "update_routine": "vgsage_tick_special"
+    },
+    {
+      "input_routine": "keep_input_dirty",
+      "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_1",
+      "offground_routine": "dummy_routine",
+      "onground_routine": "vgsage_global_onground",
+      "onhurt_routine": "dummy_routine",
+      "start_routine": null,
+      "type": "character_state",
+      "update_routine": "vgsage_tick_special_neutral_go_bottom_screen"
+    },
+    {
+      "input_routine": "keep_input_dirty",
+      "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_2",
+      "offground_routine": "dummy_routine",
+      "onground_routine": "vgsage_global_onground",
+      "onhurt_routine": "dummy_routine",
+      "start_routine": null,
+      "type": "character_state",
+      "update_routine": "vgsage_tick_special_draw_warrior"
+    },
+    {
+      "input_routine": "keep_input_dirty",
+      "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_3",
+      "offground_routine": "dummy_routine",
+      "onground_routine": "vgsage_global_onground",
+      "onhurt_routine": "dummy_routine",
+      "start_routine": null,
+      "type": "character_state",
+      "update_routine": "vgsage_tick_special_show_warrior"
+    },
+    {
+      "input_routine": "keep_input_dirty",
+      "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_4",
+      "offground_routine": "dummy_routine",
+      "onground_routine": "vgsage_global_onground",
+      "onhurt_routine": "dummy_routine",
+      "start_routine": null,
+      "type": "character_state",
+      "update_routine": "vgsage_tick_special_draw_slash"
     }
   ],
   "tileset": {
