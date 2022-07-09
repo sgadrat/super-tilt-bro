@@ -21,47 +21,62 @@
 		; No return, jump to a subroutine
 
 	go_left:
+	.(
 		; Go to the left
 		ldy system_index
 
-		SIGNED_CMP({char_name}_aerial_neg_speed_lsb COMMA y, {char_name}_aerial_neg_speed_msb COMMA y, player_a_velocity_h_low COMMA x, player_a_velocity_h COMMA x)
-		bpl end
+		lda player_a_velocity_v_low, x
+		sta merged_v_low
+		lda player_a_velocity_v, x
+		sta merged_v_high
+		lda {char_name}_aerial_neg_speed_lsb, y
+		sta merged_h_low
+		lda {char_name}_aerial_neg_speed_msb, y
+		sta merged_h_high
 
-			lda player_a_velocity_v_low, x
-			sta merged_v_low
-			lda player_a_velocity_v, x
-			sta merged_v_high
-			lda {char_name}_aerial_neg_speed_lsb, y
-			sta merged_h_low
-			lda {char_name}_aerial_neg_speed_msb, y
-			sta merged_h_high
-			lda {char_name}_aerial_directional_influence_strength, y
-			sta merge_step
-			jmp merge_to_player_velocity
-			; No return, jump to a subroutine
+		SIGNED_CMP({char_name}_aerial_neg_speed_lsb COMMA y, {char_name}_aerial_neg_speed_msb COMMA y, player_a_velocity_h_low COMMA x, player_a_velocity_h COMMA x)
+		bpl friction
+			influence:
+				lda {char_name}_aerial_directional_influence_strength, y
+				sta merge_step
+				jmp merge_to_player_velocity
+				; No return, jump to a subroutine
+			friction:
+				lda {char_name}_air_friction_strength, y
+				sta merge_step
+				jmp merge_to_player_velocity
+				; No return, jump to a subroutine
+	.)
 
 	go_right:
+	.(
 		; Go to the right
 		ldy system_index
 
+		lda player_a_velocity_v_low, x
+		sta merged_v_low
+		lda player_a_velocity_v, x
+		sta merged_v_high
+		lda {char_name}_aerial_speed_lsb, y
+		sta merged_h_low
+		lda {char_name}_aerial_speed_msb, y
+		sta merged_h_high
+
 		SIGNED_CMP(player_a_velocity_h_low COMMA x, player_a_velocity_h COMMA x, {char_name}_aerial_speed_lsb COMMA y, {char_name}_aerial_speed_msb COMMA y)
-		bpl end
+		bpl friction
+			influence:
+				lda {char_name}_aerial_directional_influence_strength, y
+				sta merge_step
+				jmp merge_to_player_velocity
+				; No return, jump to a subroutine
+			friction:
+				lda {char_name}_air_friction_strength, y
+				sta merge_step
+				jmp merge_to_player_velocity
+				; No return, jump to a subroutine
+	.)
 
-			lda player_a_velocity_v_low, x
-			sta merged_v_low
-			lda player_a_velocity_v, x
-			sta merged_v_high
-			lda {char_name}_aerial_speed_lsb, y
-			sta merged_h_low
-			lda {char_name}_aerial_speed_msb, y
-			sta merged_h_high
-			lda {char_name}_aerial_directional_influence_strength, y
-			sta merge_step
-			jmp merge_to_player_velocity
-			; No return, jump to a subroutine
-
-	end:
-	rts
+	;rts ; useless, no branch return
 .)
 
 ; Change the player's state if an aerial move is input on the controller
