@@ -15027,14 +15027,14 @@
       "update_routine": "vgsage_tick_running"
     },
     {
-      "input_routine": "vgsage_check_aerial_inputs",
-      "name": "VGSAGE_STATE_FALLING",
-      "offground_routine": "dummy_routine",
-      "onground_routine": "vgsage_start_landing",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
       "type": "character_state",
-      "update_routine": "vgsage_tick_falling"
+      "name": "VGSAGE_STATE_RESPAWN_PLATFORM",
+      "start_routine": null,
+      "update_routine": "vgsage_tick_respawn_platform",
+      "input_routine": "vgsage_input_respawn_platform",
+      "onground_routine": "vgsage_global_onground",
+      "offground_routine": "dummy_routine",
+      "onhurt_routine": "dummy_routine"
     },
     {
       "input_routine": "vgsage_input_jumping",
@@ -15047,54 +15047,24 @@
       "update_routine": "vgsage_tick_jumping"
     },
     {
-      "input_routine": "vgsage_input_jabbing1",
-      "name": "VGSAGE_STATE_JABBING_1",
-      "offground_routine": "vgsage_start_falling",
-      "onground_routine": "vgsage_global_onground",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
-      "type": "character_state",
-      "update_routine": "vgsage_tick_jabbing"
-    },
-    {
-      "input_routine": "keep_input_dirty",
-      "name": "VGSAGE_STATE_SIDE_TILT",
+      "input_routine": "vgsage_input_walljumping",
+      "name": "VGSAGE_STATE_WALJUMPING",
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_global_onground",
       "onhurt_routine": "hurt_player",
       "start_routine": null,
       "type": "character_state",
-      "update_routine": "vgsage_tick_side_tilt"
+      "update_routine": "vgsage_tick_walljumping"
     },
     {
-      "input_routine": "dummy_routine",
-      "name": "VGSAGE_STATE_SPECIAL_CHARGE",
+      "input_routine": "vgsage_check_aerial_inputs",
+      "name": "VGSAGE_STATE_FALLING",
       "offground_routine": "dummy_routine",
-      "onground_routine": "vgsage_global_onground",
+      "onground_routine": "vgsage_start_landing",
       "onhurt_routine": "hurt_player",
       "start_routine": null,
       "type": "character_state",
-      "update_routine": "vgsage_tick_special_charge"
-    },
-    {
-      "input_routine": "dummy_routine",
-      "name": "VGSAGE_STATE_SPECIAL_STRIKE",
-      "offground_routine": "dummy_routine",
-      "onground_routine": "vgsage_global_onground",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
-      "type": "character_state",
-      "update_routine": "vgsage_tick_special_strike"
-    },
-    {
-      "input_routine": "dummy_routine",
-      "name": "VGSAGE_STATE_SIDE_SPECIAL",
-      "offground_routine": "dummy_routine",
-      "onground_routine": "vgsage_global_onground",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
-      "type": "character_state",
-      "update_routine": "vgsage_tick_side_special"
+      "update_routine": "vgsage_tick_falling"
     },
     {
       "input_routine": "vgsage_input_helpless",
@@ -15127,96 +15097,6 @@
       "update_routine": "vgsage_tick_crashing"
     },
     {
-      "input_routine": "keep_input_dirty",
-      "name": "VGSAGE_STATE_DOWN_TILT",
-      "offground_routine": "dummy_routine",
-      "onground_routine": "vgsage_global_onground",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
-      "type": "character_state",
-      "update_routine": "vgsage_tick_down_tilt"
-    },
-    {
-      "input_routine": "keep_input_dirty",
-      "name": "VGSAGE_STATE_AERIAL_SIDE",
-      "offground_routine": "dummy_routine",
-      "onground_routine": "vgsage_start_landing",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
-      "type": "character_state",
-      "update_routine": "vgsage_tick_aerial_side"
-    },
-    {
-      "input_routine": "keep_input_dirty",
-      "name": "VGSAGE_STATE_AERIAL_DOWN",
-      "offground_routine": "dummy_routine",
-      "onground_routine": "vgsage_start_landing",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
-      "type": "character_state",
-      "update_routine": "vgsage_tick_aerial_down"
-    },
-    {
-      "input_routine": "keep_input_dirty",
-      "name": "VGSAGE_STATE_AERIAL_UP",
-      "offground_routine": "dummy_routine",
-      "onground_routine": "vgsage_start_landing",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
-      "type": "character_state",
-      "update_routine": "vgsage_tick_aerial_up"
-    },
-    {
-      "input_routine": "keep_input_dirty",
-      "name": "VGSAGE_STATE_AERIAL_NEUTRAL",
-      "offground_routine": "dummy_routine",
-      "onground_routine": "vgsage_start_landing",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
-      "type": "character_state",
-      "update_routine": "vgsage_tick_aerial_neutral"
-    },
-    {
-      "input_routine": "vgsage_input_aerial_spe",
-      "name": "VGSAGE_STATE_AERIAL_SPE_NEUTRAL",
-      "offground_routine": "dummy_routine",
-      "onground_routine": "vgsage_start_landing",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
-      "type": "character_state",
-      "update_routine": "vgsage_tick_aerial_spe"
-    },
-    {
-      "input_routine": "dummy_routine",
-      "name": "VGSAGE_STATE_SPE_UP",
-      "offground_routine": "dummy_routine",
-      "onground_routine": "vgsage_global_onground",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
-      "type": "character_state",
-      "update_routine": "vgsage_tick_spe_up"
-    },
-    {
-      "input_routine": "keep_input_dirty",
-      "name": "VGSAGE_STATE_SPE_DOWN",
-      "offground_routine": "dummy_routine",
-      "onground_routine": "vgsage_global_onground",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
-      "type": "character_state",
-      "update_routine": "vgsage_tick_spe_down"
-    },
-    {
-      "input_routine": "keep_input_dirty",
-      "name": "VGSAGE_STATE_UP_TILT",
-      "offground_routine": "dummy_routine",
-      "onground_routine": "vgsage_global_onground",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
-      "type": "character_state",
-      "update_routine": "vgsage_tick_up_tilt"
-    },
-    {
       "input_routine": "vgsage_input_shielding",
       "name": "VGSAGE_STATE_SHIELDING",
       "offground_routine": "vgsage_start_falling",
@@ -15237,18 +15117,8 @@
       "update_routine": "vgsage_tick_shieldlag"
     },
     {
-      "input_routine": "vgsage_input_walljumping",
-      "name": "VGSAGE_STATE_WALJUMPING",
-      "offground_routine": "dummy_routine",
-      "onground_routine": "vgsage_global_onground",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
-      "type": "character_state",
-      "update_routine": "vgsage_tick_walljumping"
-    },
-    {
-      "input_routine": "vgsage_input_jabbing2",
-      "name": "VGSAGE_STATE_JABBING_2",
+      "input_routine": "keep_input_dirty",
+      "name": "VGSAGE_STATE_JABBING",
       "offground_routine": "vgsage_start_falling",
       "onground_routine": "vgsage_global_onground",
       "onhurt_routine": "hurt_player",
@@ -15258,23 +15128,73 @@
     },
     {
       "input_routine": "keep_input_dirty",
-      "name": "VGSAGE_STATE_JABBING_3",
-      "offground_routine": "vgsage_start_falling",
+      "name": "VGSAGE_STATE_UP_TILT",
+      "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_global_onground",
       "onhurt_routine": "hurt_player",
       "start_routine": null,
       "type": "character_state",
-      "update_routine": "vgsage_tick_jab3"
+      "update_routine": "vgsage_tick_up_tilt"
     },
     {
-      "type": "character_state",
-      "name": "VGSAGE_STATE_RESPAWN_PLATFORM",
-      "start_routine": null,
-      "update_routine": "vgsage_tick_respawn_platform",
-      "input_routine": "vgsage_input_respawn_platform",
-      "onground_routine": "vgsage_global_onground",
+      "input_routine": "keep_input_dirty",
+      "name": "VGSAGE_STATE_DOWN_TILT",
       "offground_routine": "dummy_routine",
-      "onhurt_routine": "dummy_routine"
+      "onground_routine": "vgsage_global_onground",
+      "onhurt_routine": "hurt_player",
+      "start_routine": null,
+      "type": "character_state",
+      "update_routine": "vgsage_tick_down_tilt"
+    },
+    {
+      "input_routine": "keep_input_dirty",
+      "name": "VGSAGE_STATE_SIDE_TILT",
+      "offground_routine": "dummy_routine",
+      "onground_routine": "vgsage_global_onground",
+      "onhurt_routine": "hurt_player",
+      "start_routine": null,
+      "type": "character_state",
+      "update_routine": "vgsage_tick_side_tilt"
+    },
+    {
+      "input_routine": "keep_input_dirty",
+      "name": "VGSAGE_STATE_AERIAL_NEUTRAL",
+      "offground_routine": "dummy_routine",
+      "onground_routine": "vgsage_start_landing",
+      "onhurt_routine": "hurt_player",
+      "start_routine": null,
+      "type": "character_state",
+      "update_routine": "vgsage_tick_aerial_neutral"
+    },
+    {
+      "input_routine": "keep_input_dirty",
+      "name": "VGSAGE_STATE_AERIAL_UP",
+      "offground_routine": "dummy_routine",
+      "onground_routine": "vgsage_start_landing",
+      "onhurt_routine": "hurt_player",
+      "start_routine": null,
+      "type": "character_state",
+      "update_routine": "vgsage_tick_aerial_up"
+    },
+    {
+      "input_routine": "keep_input_dirty",
+      "name": "VGSAGE_STATE_AERIAL_DOWN",
+      "offground_routine": "dummy_routine",
+      "onground_routine": "vgsage_start_landing",
+      "onhurt_routine": "hurt_player",
+      "start_routine": null,
+      "type": "character_state",
+      "update_routine": "vgsage_tick_aerial_down"
+    },
+    {
+      "input_routine": "keep_input_dirty",
+      "name": "VGSAGE_STATE_AERIAL_SIDE",
+      "offground_routine": "dummy_routine",
+      "onground_routine": "vgsage_start_landing",
+      "onhurt_routine": "hurt_player",
+      "start_routine": null,
+      "type": "character_state",
+      "update_routine": "vgsage_tick_aerial_side"
     }
   ],
   "tileset": {
