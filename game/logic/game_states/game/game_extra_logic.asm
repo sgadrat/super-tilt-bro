@@ -45,7 +45,7 @@
 		sta tmpfield4
 		lda #1
 		sta tmpfield7
-		ldx #CHARSET_COLOR(1,3)
+		ldx #CHARSET_COLOR(0,3)
 		TRAMPOLINE(cpu_to_ppu_copy_charset_raw, #CHARSET_SYMBOLS_BANK_NUMBER, #CURRENT_BANK_NUMBER)
 
 		lda #<charset_alphanum_tiles
@@ -54,7 +54,7 @@
 		sta tmpfield4
 		lda #10
 		sta tmpfield7
-		ldx #CHARSET_COLOR(1,3)
+		ldx #CHARSET_COLOR(0,3)
 		TRAMPOLINE(cpu_to_ppu_copy_charset_raw, #CHARSET_ALPHANUM_BANK_NUMBER, #CURRENT_BANK_NUMBER)
 
 		; Copy stage's tileset

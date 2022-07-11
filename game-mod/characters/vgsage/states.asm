@@ -32,7 +32,6 @@ VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_0 = CUSTOM_PLAYER_STATES_BEGIN + 17 ; 17
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_1 = CUSTOM_PLAYER_STATES_BEGIN + 18 ; 18
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_2 = CUSTOM_PLAYER_STATES_BEGIN + 19 ; 19
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_3 = CUSTOM_PLAYER_STATES_BEGIN + 20 ; 1a
-VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_4 = CUSTOM_PLAYER_STATES_BEGIN + 21 ; 1b
 
 ;
 ; Gameplay constants
@@ -383,10 +382,7 @@ vgsage_global_onground:
 ;
 
 .(
-	step0_ppu_addr_lsb = player_a_state_field1
-	step0_ppu_addr_msb = player_a_state_field2
-
-	; Step 0 - fadeout
+	; Step - fadeout
 	.(
 		+vgsage_start_special:
 		.(
@@ -448,7 +444,7 @@ vgsage_global_onground:
 			; Tick clock
 			dec player_a_state_clock, x
 			bpl end
-				jmp vgsage_start_special_neutral_go_bottom_screen
+				jmp vgsage_start_special_draw_warrior
 				;No return
 
 			end:
@@ -457,13 +453,13 @@ vgsage_global_onground:
 			;FIXME hardcoded for flatland, call a stage routine to do the repaint in dedicated logic
 			palette1:
 			.byt $3f, $00, $10
-			.byt $11,$0f,$00,$00, $11,$0f,$00,$21, $11,$09,$09,$21, $11,$07,$07,$17
+			.byt $0f,$11,$00,$00, $0f,$11,$00,$21, $0f,$11,$09,$21, $0f,$00,$00,$00
 			palette2:
 			.byt $3f, $00, $10
-			.byt $01,$0f,$0f,$0f, $01,$0f,$0f,$11, $01,$0f,$0f,$11, $01,$0f,$0f,$07
+			.byt $0f,$01,$0f,$0f, $0f,$01,$0f,$11, $0f,$01,$0f,$11, $0f,$00,$00,$00
 			palette3:
 			.byt $3f, $00, $10
-			.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$01, $0f,$0f,$0f,$01, $01,$0f,$0f,$0f
+			.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$01, $0f,$0f,$0f,$01, $0f,$00,$00,$00
 			palette_black:
 			.byt $3f, $00, $10
 			.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f
@@ -475,90 +471,11 @@ vgsage_global_onground:
 		.)
 	.)
 
-	; Step XXX - prepare bottom screen for illustrations
-	.(
-		+vgsage_start_special_neutral_go_bottom_screen:
-		.(
-			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_1
-			sta player_a_state, x
-
-			; Scroll to bottom screen
-			lda ppuctrl_val
-			and #%11111100
-			ora #%00000010
-			sta ppuctrl_val
-
-			; Init bottom screen fill state
-			lda #30 ; Number of lines to fill
-			sta player_a_state_clock, x
-
-			lda #$00 ; PPU address
-			sta step0_ppu_addr_lsb
-			lda #$28
-			sta step0_ppu_addr_msb
-
-			rts
-		.)
-
-		+vgsage_tick_special_neutral_go_bottom_screen:
-		.(
-			; Fill a row with solid1 tiles
-			stx player_number
-
-			lda step0_ppu_addr_lsb, x
-			sta tmpfield1
-			lda step0_ppu_addr_msb, x
-			sta tmpfield2
-
-			jsr last_nt_buffer
-			lda #$01
-			sta nametable_buffers+0, x
-			lda tmpfield2
-			sta nametable_buffers+1, x
-			lda tmpfield1
-			sta nametable_buffers+2, x
-			lda #$20
-			sta nametable_buffers+3, x
-
-			ldy #$20
-			lda #$62 ;FIXME hardcoded value to a leftover of illustrations, need an actually ensured SOLID_1 tile
-			fill_bytes:
-				sta nametable_buffers+4, x
-				inx
-
-				dey
-				bne fill_bytes
-
-			lda #0
-			sta nametable_buffers+4, x
-
-			ldx player_number
-
-			; Update row address
-			lda #$20
-			clc
-			adc tmpfield1
-			sta step0_ppu_addr_lsb, x
-			bcc ok
-				inc step0_ppu_addr_msb, x
-			ok:
-
-			; End state once all rows have been filled
-			dec player_a_state_clock, x
-			bne end
-				jmp vgsage_start_special_draw_warrior
-				; No return, jump to subroutine
-
-			end:
-			rts
-		.)
-	.)
-
-	; Step1 - draw warrior
+	; Step - draw warrior
 	.(
 		&vgsage_start_special_draw_warrior:
 		.(
-			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_2
+			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_1
 			sta player_a_state, x
 
 			lda #5
@@ -596,13 +513,17 @@ vgsage_global_onground:
 
 #define ATT(br,bl,tr,tl) ((br << 6) + (bl << 4) + (tr << 2) + tl)
 			illustration_palette:
-			.byt $0f,$0f,$0f,$0f, $0f,$03,$0f,$0f, $0f,$32,$0f,$0f, $0f,$20,$0f,$0f
+			.byt $0f,$0f,$0f,$0f, $0f,$03,$03,$13, $0f,$32,$32,$20, $0f,$20,$20,$20
+			; more opaque version
+			;.byt $0f,$0f,$0f,$0f, $0f,$03,$03,$03, $0f,$32,$32,$32, $0f,$20,$20,$20
+			; lighter version, seeing more of the stage, less of the illustration
+			;.byt $0f,$21,$00,$10, $0f,$03,$03,$13, $0f,$32,$32,$20, $0f,$20,$20,$20
 			illustration_palette_fadein_1:
-			.byt $0f,$0f,$0f,$0f, $0f,$03,$0f,$0f, $0f,$22,$0f,$0f, $0f,$10,$0f,$0f
+			.byt $0f,$0f,$0f,$0f, $0f,$03,$03,$13, $0f,$22,$22,$32, $0f,$10,$10,$20
 			illustration_palette_fadein_2:
-			.byt $0f,$0f,$0f,$0f, $0f,$03,$0f,$0f, $0f,$12,$0f,$0f, $0f,$00,$0f,$0f
+			.byt $0f,$0f,$0f,$0f, $0f,$03,$0f,$03, $0f,$12,$12,$22, $0f,$00,$00,$10
 			illustration_palette_fadein_3:
-			.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$02,$0f,$0f, $0f,$0f,$0f,$0f
+			.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$02,$02,$0f, $0f,$0f,$0f,$00
 			illustration_top:
 			.byt ATT(0,0,1,1), ATT(1,0,0,0), ATT(2,2,1,1), ATT(2,2,1,1), ATT(0,1,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0)
 			.byt ATT(0,0,0,0), ATT(2,1,2,1), ATT(2,2,2,2), ATT(2,1,3,1), ATT(3,3,1,3), ATT(1,2,0,1), ATT(0,0,0,0), ATT(0,0,0,0)
@@ -626,9 +547,9 @@ vgsage_global_onground:
 			illustration_palette_header:
 			.byt $3f, $00, $10
 			illustration_top_header:
-			.byt $2b, $c0, $20
+			.byt $23, $c0, $20
 			illustration_bot_header:
-			.byt $2b, $e0, $20
+			.byt $23, $e0, $20
 
 			illustration_header_lsb:
 			.byt <illustration_palette_header
@@ -641,14 +562,14 @@ vgsage_global_onground:
 		.)
 	.)
 
-	; Step 3 - wait a bit to show the warrior
+	; Step - wait a bit to show the warrior
 	.(
 		&vgsage_start_special_show_warrior:
 		.(
-			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_3
+			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_2
 			sta player_a_state, x
 
-			lda #50 ;TODO ntsc
+			lda #25 ;TODO ntsc
 			sta player_a_state_clock, x
 
 			jmp audio_play_title_screen_subtitle
@@ -666,11 +587,11 @@ vgsage_global_onground:
 		.)
 	.)
 
-	; Step 4 - Slash animation
+	; Step - Slash animation
 	.(
 		&vgsage_start_special_draw_slash:
 		.(
-			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_4
+			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_3
 			sta player_a_state, x
 
 			lda #(NUM_ANIM_STEPS-1)*2
@@ -762,41 +683,52 @@ vgsage_global_onground:
 #undef ATT
 			NOOP = 255
 			anim_frames_lsb:
+			.byt <hack_flatland_attributes, <(hack_flatland_attributes+4*8), <hack_flatland_palette
 			.byt <anim_7, <anim_6, NOOP, <anim_3, <anim_2, <anim_1, <anim_5, <anim_4
 			anim_frames_msb:
+			.byt >hack_flatland_attributes, >(hack_flatland_attributes+4*8), >hack_flatland_palette
 			.byt >anim_7, >anim_6, NOOP, >anim_3, >anim_2, >anim_1, >anim_5, >anim_4
 
+			illustration_palette_header:
+			.byt $3f, $00, $10
 			top_header:
-			.byt $2b, $c0, $20
+			.byt $23, $c0, $20
 			bot_header:
-			.byt $2b, $e0, $20
+			.byt $23, $e0, $20
 
 			anim_headers_lsb:
+			.byt <top_header, <bot_header, <illustration_palette_header
 			.byt <top_header, <bot_header, NOOP, <top_header, <bot_header, <bot_header, <top_header, <bot_header
 			anim_headers_msb:
+			.byt >top_header, >bot_header, >illustration_palette_header
 			.byt >top_header, >bot_header, NOOP, >top_header, >bot_header, >bot_header, >top_header, >bot_header
 
 			&NUM_ANIM_STEPS = anim_headers_msb - anim_headers_lsb
+
+			;FIXME hardcoded for flatland, call a stage routine to do the repaint in dedicated logic
+			hack_flatland_palette:
+			.byt $0f,$21,$00,$10, $0f,$21,$00,$31, $0f,$21,$19,$31, $0f,$00,$00,$00
+
+			hack_flatland_attributes:
+			.byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
+			.byt %00000000, %00000000, %01010101, %00000000, %00000000, %01010101, %01010101, %01010101
+			.byt %01010101, %01010101, %00000000, %00000000, %00000000, %00000000, %01010101, %01010101
+			.byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
+			.byt %00000000, %00001000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
+			.byt %01010000, %00010001, %00000000, %00000000, %00000000, %00000000, %01000100, %01010000
+			.byt %01010101, %00010001, %00000000, %00000000, %00000000, %00000000, %01000100, %01010101
+			.byt %01010101, %00010001, %00000000, %00000000, %00000000, %00000000, %01000100, %01010101
 		.)
 	.)
 
 	resume_game:
 	.(
+#if 0
 		; Come back to top screen
 		lda ppuctrl_val
 		and #%11111100
 		sta ppuctrl_val
-
-		; Restore stage's palettes
-		;FIXME hardcoded for flatland, call a stage routine to do the repaint in dedicated logic
-		txa
-		sta player_number ;TODO investigate don't really know if we can write player_number safely here (update the doc if known for sure)
-
-		lda #<hack_flatland_palette
-		ldy #>hack_flatland_palette
-		jsr push_nt_buffer
-
-		ldx player_number
+#endif
 
 		; Hurt opponent
 		;  optimisable - avoid hurt_player routine, call apply_force_vector_direct to not setup the hitbox just to read it in tmpfields
@@ -829,10 +761,6 @@ vgsage_global_onground:
 		jmp vgsage_start_inactive_state
 
 		;rts ; useless, jump to subroutine
-
-		hack_flatland_palette:
-		.byt $3f, $00, $10
-		.byt $21,$0f,$00,$10, $21,$0f,$00,$31, $21,$09,$19,$31, $21,$07,$17,$27
 	.)
 .)
 

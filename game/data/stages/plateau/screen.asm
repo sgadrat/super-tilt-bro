@@ -1,5 +1,5 @@
 stage_plateau_palette_data:
-.byt $21,$0f,$00,$10, $21,$0f,$00,$31, $21,$09,$19,$31, $21,$07,$17,$27
+.byt $0f,$21,$00,$10, $0f,$21,$00,$31, $0f,$21,$19,$31, $0f,$00,$00,$00
 
 ; Temporary 3 char alias for tiles
 #define TFP TILE_CHAR_PCT
