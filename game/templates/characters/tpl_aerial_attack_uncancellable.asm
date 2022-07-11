@@ -10,7 +10,7 @@
 	duration:
 		.byt {anim}_dur_pal, {anim}_dur_ntsc
 
-	&{char_name}_start_{routine}:
+	+{char_name}_start_{routine}:
 	.(
 		; Set state
 		lda #{state}
@@ -31,7 +31,7 @@
 		;rts ; useless, jump to subroutine
 	.)
 
-	&{char_name}_tick_{routine}:
+	+{char_name}_tick_{routine}:
 	.(
 #ifldef {char_name}_global_tick
 		jsr {char_name}_global_tick

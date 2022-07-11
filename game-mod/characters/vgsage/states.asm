@@ -32,6 +32,7 @@ VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_0 = CUSTOM_PLAYER_STATES_BEGIN + 17 ; 17
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_1 = CUSTOM_PLAYER_STATES_BEGIN + 18 ; 18
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_2 = CUSTOM_PLAYER_STATES_BEGIN + 19 ; 19
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_3 = CUSTOM_PLAYER_STATES_BEGIN + 20 ; 1a
+VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_4 = CUSTOM_PLAYER_STATES_BEGIN + 21 ; 1b
 
 ;
 ; Gameplay constants
@@ -382,11 +383,76 @@ vgsage_global_onground:
 ;
 
 .(
+	; Step - charge
+	!define "anim" {vgsage_anim_special}
+	!define "state" {VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_0}
+	!define "routine" {special}
+	;almost like "characters/tpl_aerial_attack_uncancellable.asm" (just need a custom exit routine, and custom duration, and sfx)
+	.(
+		duration:
+			.byt {anim}_dur_pal*2, {anim}_dur_ntsc*2
+
+		+{char_name}_start_{routine}:
+		.(
+			; Set state
+			lda #{state}
+			sta player_a_state, x
+
+			; Reset clock
+			ldy system_index
+			lda duration, y
+			sta player_a_state_clock, x
+
+			; Play sfx
+			jsr audio_play_land
+
+			; Set the appropriate animation
+			lda #<{anim}
+			sta tmpfield13
+			lda #>{anim}
+			sta tmpfield14
+			jmp set_player_animation
+
+			;rts ; useless, jump to subroutine
+		.)
+
+		+{char_name}_tick_{routine}:
+		.(
+#ifldef {char_name}_global_tick
+			jsr {char_name}_global_tick
+#endif
+
+			jsr {char_name}_apply_friction_lite
+
+			; Play the sfx a second time mid-animation
+			ldy system_index
+			lda duration, y
+			lsr
+			cmp player_a_state_clock, x
+			;;lda player_a_state_clock, x
+			;;and #%00000011
+
+			bne sfx_ok
+				jsr audio_play_land
+			sfx_ok:
+
+			dec player_a_state_clock, x
+			bne end
+				jmp {char_name}_start_special_fadeout
+				; No return, jump to subroutine
+			end:
+			rts
+		.)
+	.)
+	!undef "anim"
+	!undef "state"
+	!undef "routine"
+
 	; Step - fadeout
 	.(
-		+vgsage_start_special:
+		+vgsage_start_special_fadeout:
 		.(
-			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_0
+			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_1
 			sta player_a_state, x
 
 			; Set the appropriate animation
@@ -416,7 +482,7 @@ vgsage_global_onground:
 			rts
 		.)
 
-		+vgsage_tick_special:
+		+vgsage_tick_special_fadeout:
 		.(
 			; Every four ticks, advance one step of the fadeout
 			.(
@@ -475,7 +541,7 @@ vgsage_global_onground:
 	.(
 		&vgsage_start_special_draw_warrior:
 		.(
-			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_1
+			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_2
 			sta player_a_state, x
 
 			lda #5
@@ -566,7 +632,7 @@ vgsage_global_onground:
 	.(
 		&vgsage_start_special_show_warrior:
 		.(
-			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_2
+			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_3
 			sta player_a_state, x
 
 			lda #25 ;TODO ntsc
@@ -591,7 +657,7 @@ vgsage_global_onground:
 	.(
 		&vgsage_start_special_draw_slash:
 		.(
-			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_3
+			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_4
 			sta player_a_state, x
 
 			lda #(NUM_ANIM_STEPS-1)*2

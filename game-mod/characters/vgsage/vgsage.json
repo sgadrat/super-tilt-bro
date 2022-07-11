@@ -15201,7 +15201,7 @@
       "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_0",
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_global_onground",
-      "onhurt_routine": "dummy_routine",
+      "onhurt_routine": "hurt_player",
       "start_routine": null,
       "type": "character_state",
       "update_routine": "vgsage_tick_special"
@@ -15214,7 +15214,7 @@
       "onhurt_routine": "dummy_routine",
       "start_routine": null,
       "type": "character_state",
-      "update_routine": "vgsage_tick_special_draw_warrior"
+      "update_routine": "vgsage_tick_special_fadeout"
     },
     {
       "input_routine": "keep_input_dirty",
@@ -15224,11 +15224,21 @@
       "onhurt_routine": "dummy_routine",
       "start_routine": null,
       "type": "character_state",
-      "update_routine": "vgsage_tick_special_show_warrior"
+      "update_routine": "vgsage_tick_special_draw_warrior"
     },
     {
       "input_routine": "keep_input_dirty",
       "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_3",
+      "offground_routine": "dummy_routine",
+      "onground_routine": "vgsage_global_onground",
+      "onhurt_routine": "dummy_routine",
+      "start_routine": null,
+      "type": "character_state",
+      "update_routine": "vgsage_tick_special_show_warrior"
+    },
+    {
+      "input_routine": "keep_input_dirty",
+      "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_4",
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_global_onground",
       "onhurt_routine": "dummy_routine",
