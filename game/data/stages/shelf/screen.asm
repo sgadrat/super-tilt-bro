@@ -1,5 +1,9 @@
+;TODO graphic research
+;     using $0b instead of $0f as universal color here makes the background less prohiminent and grass more natural
+;     Maybe need to get $0f for platforms edges to make it pop out more and avoid the overall BG to be too dull
 stage_shelf_palette_data:
-.byt $21,$0f,$00,$10, $21,$0f,$00,$31, $21,$09,$19,$31, $21,$07,$17,$27
+;    stone            cloud            plants           unused
+.byt $0f,$21,$00,$10, $0f,$21,$00,$31, $0f,$21,$19,$31, $0f,$21,$17,$27
 
 nametable_stage_shelf:
 .byt $00,$59

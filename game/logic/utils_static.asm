@@ -496,6 +496,8 @@ cpu_to_ppu_copy_charset:
 ;  A - Value to fill with
 ;  X - Number of bytes to fill
 ;
+; Overwrites register X
+;
 ; PPUADDR must be set to the destination address
 ; PPUCTRL's I bit should not be set (if set, writes every 32 bytes)
 ppu_fill:

@@ -26,7 +26,7 @@
 			bne zero_game_state
 
 		; Copy common tileset
-		;  - An empty, solid 0 tile
+		;  - An empty, solid 1 tile
 		;  - "%"
 		;  - Numerics (fg=1 bg=3)
 		lda PPUSTATUS
@@ -35,8 +35,11 @@
 		lda #<($1000+(TILE_EMPTY_STOCK_ICON*16))
 		sta PPUADDR
 
-		ldx #16
-		lda #0
+		ldx #8
+		lda #%11111111
+		jsr ppu_fill
+		ldx #8
+		lda #%00000000
 		jsr ppu_fill
 
 		lda #<char_pct
