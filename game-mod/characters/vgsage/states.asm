@@ -816,11 +816,11 @@ vgsage_global_onground:
 		sta player_a_hitbox_base_knock_up_h_high, x
 
 		txa:pha
-		ldy config_player_a_character
 		stx tmpfield10
 		SWITCH_SELECTED_PLAYER
 		stx tmpfield11
-		TRAMPOLINE(hurt_player, characters_bank_number COMMA x, #CURRENT_BANK_NUMBER)
+		ldy config_player_a_character, x
+		TRAMPOLINE(hurt_player, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
 		pla:tax
 
 		; Come back to a playable state
