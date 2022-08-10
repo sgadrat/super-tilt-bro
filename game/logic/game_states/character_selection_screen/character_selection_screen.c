@@ -760,15 +760,6 @@ void init_character_selection_screen_extra() {
 		// Copy portrait in RAM
 		copy_character_portrait(character_idx);
 
-		// Fix portrait color indexes
-		for (uint8_t tile_idx = 0; tile_idx < 5; ++tile_idx) {
-			uint8_t* byte = character_selection_mem_buffer + (16 * tile_idx);
-			for (uint8_t line_idx = 0; line_idx < 8; ++line_idx) {
-				*byte = ~*byte;
-				++byte;
-			}
-		}
-
 		// Flip portrait if on the right column
 		if (character_idx & 1) {
 			for (uint8_t tile_idx = 0; tile_idx < 5; ++tile_idx) {

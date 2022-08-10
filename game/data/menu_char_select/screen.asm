@@ -1,7 +1,9 @@
 char_selection_palette:
 ; Background
-.byt $0f,$21,$2d,$3d, $0f,$3d,$3c,$37, $0f,$21,$3c,$37, $0f,$0f,$0f,$0f
-; Sprites
+;    statues          protraits        clouds/logo      unused
+.byt $0f,$21,$2d,$3d, $0f,$3d,$37,$3c, $0f,$21,$3c,$37, $0f,$0f,$0f,$0f
+; Sprites (note - will be overwriten when chars sprites load)
+;    player1 builders                  player2 builders
 .byt $0f,$0f,$3d,$0f, $0f,$00,$00,$00, $0f,$0f,$3d,$0f, $0f,$00,$00,$00
 
 #define A (tileset_menu_char_select_end-tileset_menu_char_select_tiles)/16+4*CHARACTERS_NUMBER
