@@ -527,7 +527,6 @@ vgsage_global_onground:
 			lda #5
 			sta player_a_state_clock, x
 
-			;TODO
 			rts
 		.)
 
