@@ -30,7 +30,7 @@ C_X = C_A + 23
 C_Y = C_A + 24
 C_Z = C_A + 25
 
-&stage_plateau_illustration:
+&stage_flatland_illustration:
 .byt BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC
 .byt BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC
 .byt BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC

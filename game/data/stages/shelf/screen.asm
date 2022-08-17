@@ -1,11 +1,28 @@
 ;TODO graphic research
 ;     using $0b instead of $0f as universal color here makes the background less prohiminent and grass more natural
 ;     Maybe need to get $0f for platforms edges to make it pop out more and avoid the overall BG to be too dull
-stage_shelf_palette_data:
+stage_skyride_palette:
 ;    stone            cloud            plants           unused
 .byt $0f,$21,$00,$10, $0f,$21,$00,$31, $0f,$21,$19,$31, $0f,$21,$17,$27
 
-nametable_stage_shelf:
+stage_skyride_palette_fadeout1:
+.byt $0f,$11,$00,$00, $0f,$11,$00,$21, $0f,$11,$09,$21, $0f,$00,$00,$00
+
+stage_skyride_palette_fadeout2:
+.byt $0f,$01,$0f,$0f, $0f,$01,$0f,$11, $0f,$01,$0f,$11, $0f,$00,$00,$00
+
+stage_skyride_palette_fadeout3:
+.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$01, $0f,$0f,$0f,$01, $0f,$00,$00,$00
+
+stage_skyride_palette_black:
+.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f
+
+stage_skyride_fadeout_lsb:
+.byt <stage_skyride_palette_black, <stage_skyride_palette_fadeout3, <stage_skyride_palette_fadeout2, <stage_skyride_palette_fadeout1, <stage_skyride_palette
+stage_skyride_fadeout_msb:
+.byt >stage_skyride_palette_black, >stage_skyride_palette_fadeout3, >stage_skyride_palette_fadeout2, >stage_skyride_palette_fadeout1, >stage_skyride_palette
+
+nametable_stage_skyride:
 .byt $00,$59
 .byt
 .byt                                                                                                                                    $01, $02, $00,$1e
@@ -43,7 +60,7 @@ nametable_stage_shelf:
 ;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
 .byt $3a, $3a, $3a, $3a,  $3a, $3a, $33, $3a,  $3a, $3a, $38, $39,  $3a, $3a, $3e, $3a,  $3a, $3a, $3a, $3a,  $3a, $44, $45, $3a,  $3c, $36, $3a, $3a,  $3a, $3a, $3a, $3a
 .byt $3a, $3a, $3a, $3a,  $3a, $3a, $37, $3a,  $3a, $3a, $3c, $3d,  $3a, $3a, $3a, $3e,  $3a, $3a, $3a, $3a,  $38, $39, $3a, $3a,  $3a, $3b, $3a, $3a,  $3a, $3a, $3a, $3a
-nametable_stage_shelf_attributes:
+; Attributes
 .byt ZIPNT_ZEROS(6),                                                   %01010000
 .byt ZIPNT_ZEROS(1+8+1)
 .byt            %00000101, %10000000, ZIPZ,      %10000000, %10100000
@@ -54,5 +71,5 @@ nametable_stage_shelf_attributes:
 .byt ZIPNT_ZEROS(2)
 .byt %01010000, %00010000, ZIPNT_ZEROS(4),                             %01000000, %01010000
 .byt %00000101, %00000001, ZIPNT_ZEROS(4),                             %00000100, %00000101
-nametablei_stage_shelf_end:
+; End
 .byt ZIPNT_END

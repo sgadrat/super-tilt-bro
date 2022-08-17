@@ -2,9 +2,9 @@
 ; Standard stage data
 ;
 
-stage_gem_data:
+stage_thehunt_data:
 	STAGE_HEADER($5000, $a800, $a000, $a000, $7800, $7800) ; player_a_x, player_b_x, player_a_y, player_b_y, respawn_x, respawn_y
-stage_gem_elements:
+stage_thehunt_elements:
 	PLATFORM($28, $d0, $a0, $ff) ; left, right, top, bot
 	SMOOTH_PLATFORM($20, $50, $82) ; left, right, top
 	SMOOTH_PLATFORM($b0, $e0, $72) ; left, right, top
@@ -155,17 +155,3 @@ gem_buff_frame_8:
 	ANIM_SPRITE_FOREGROUND_COUNT(2)
 	ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_2, $01, $f9) ; Y, tile, attr, X
 	ANIM_SPRITE($08, TILE_POWER_FLAMES_LARGE_2, $41, $07)
-
-lava_bg_frame_0:
-	.byt $01, $3f, $02, $02, $16, $27, $00
-
-lava_bg_frame_1:
-	.byt $01, $3f, $02, $02, $27, $16, $00
-
-lava_bg_frames_lsb:
-	.byt <lava_bg_frame_0, <lava_bg_frame_1
-
-lava_bg_frames_msb:
-	.byt >lava_bg_frame_0, >lava_bg_frame_1
-
-LAVA_TILE_ANIM_BUFF_LEN = lava_bg_frame_1 - lava_bg_frame_0

@@ -1,7 +1,24 @@
-stage_gem_palette_data:
-.byt $07,$0f,$16,$27, $07,$0f,$21,$20, $07,$0f,$17,$28, $07,$0f,$14,$24
+stage_thehunt_palette:
+.byt $07,$0f,$16,$27, $07,$0f,$21,$20, $07,$0f,$17,$28, $07,$00,$00,$00
 
-nametable_stage_gem:
+stage_thehunt_palette_fadeout1:
+.byt $07,$0f,$06,$17, $07,$0f,$11,$10, $07,$0f,$07,$18, $07,$00,$00,$00
+
+stage_thehunt_palette_fadeout2:
+.byt $07,$0f,$06,$07, $07,$0f,$01,$10, $07,$0f,$07,$18, $07,$00,$00,$00
+
+stage_thehunt_palette_fadeout3:
+.byt $07,$0f,$0f,$07, $07,$0f,$0f,$00, $07,$0f,$0f,$08, $07,$00,$00,$00
+
+stage_thehunt_palette_black:
+.byt $07,$0f,$0f,$0f, $07,$0f,$0f,$0f, $07,$0f,$0f,$0f, $07,$0f,$0f,$0f
+
+stage_thehunt_fadeout_lsb:
+.byt <stage_thehunt_palette_black, <stage_thehunt_palette_fadeout3, <stage_thehunt_palette_fadeout2, <stage_thehunt_palette_fadeout1, <stage_thehunt_palette
+stage_thehunt_fadeout_msb:
+.byt >stage_thehunt_palette_black, >stage_thehunt_palette_fadeout3, >stage_thehunt_palette_fadeout2, >stage_thehunt_palette_fadeout1, >stage_thehunt_palette
+
+nametable_stage_thehunt:
 .byt $00,$9d
 .byt
 .byt
@@ -39,7 +56,7 @@ nametable_stage_gem:
 ;    -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------  -------------------
 .byt $2d, $2d, $2d, $2d,  $2d, $2d, $21, $30,  $31, $2c, $29, $2a,  $29, $1e, $25, $26,  $2c, $30, $31, $25,  $2c, $2a, $2c, $2a,  $29, $27, $2d, $2d,  $2d, $2d, $2d, $2d
 .byt $2d, $2d, $2d, $2d,  $2d, $2d, $1b, $1e,  $26, $1e, $23, $24,  $25, $26, $2a, $2b,  $23, $26, $25, $29,  $1e, $25, $1e, $25,  $26, $1f, $2d, $2d,  $2d, $2d, $2d, $2d
-nametable_stage_gem_attributes:
+; Attributes
 .byt ZIPNT_ZEROS(8)
 .byt ZIPNT_ZEROS(8)
 .byt ZIPNT_ZEROS(8)
@@ -51,5 +68,5 @@ nametable_stage_gem_attributes:
 .byt ZIPNT_ZEROS(1)
 .byt %10100010, %10101010, %10101010, %10101010, %10101010, %10101010, %10101010, %10101000
 .byt %10101010, %10101010, %10101010, %10101010, %10101010, %10101010, %10101010, %10101010
-nametable_stage_gem_end:
+; End
 .byt ZIPNT_END

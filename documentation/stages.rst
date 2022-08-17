@@ -6,6 +6,27 @@ Constraints on netload routines
  * ``Y``: output: Can be modified
  * ``player_number``: output: Can be modified
 
+Constraints on fadeout routines
+===============================
+
+The fadeout routine is called to set a variant of the stage's background palette. There must be five variants::
+
+ * 0: Full black
+ * 1: Darkest visible palette
+ * 2: Dark palette
+ * 3: Slightly darkened palette
+ * 4: Normal palette
+
+The routine must set the palette and ensure stage's special effects continue to work (ex: palette-swap based animations shall continue while darkened.)
+
+Output contraints::
+
+ * ``A``: output: Can be modified
+ * ``X``: output: Can be modified
+ * ``Y``: output: Can be modified
+ * ``player_number``: output: Cannot be modified
+ * ``tmpfields``: output: Can be modified
+
 Sprites allocation in game
 ==========================
 

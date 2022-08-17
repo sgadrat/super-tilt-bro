@@ -37,6 +37,19 @@
 	jsr trampoline :\
 .)
 
+; Call a routine with another active bank
+#define TRAMPOLINE_POINTED(routine_lsb,routine_msb,call_bank,return_bank) .( :\
+	lda routine_lsb :\
+	sta extra_tmpfield1 :\
+	lda routine_msb :\
+	sta extra_tmpfield2 :\
+	lda call_bank :\
+	sta extra_tmpfield3 :\
+	lda return_bank :\
+	sta extra_tmpfield4 :\
+	jsr trampoline :\
+.)
+
 ;
 ; Stage specific macros
 ;

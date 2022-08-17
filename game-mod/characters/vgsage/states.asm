@@ -498,9 +498,8 @@ vgsage_global_onground:
 					lsr
 					tax
 
-					lda fadeout_lsb, x
-					ldy fadeout_msb, x
-					jsr push_nt_buffer
+					ldy config_selected_stage
+					TRAMPOLINE_POINTED(stage_routine_fadeout_lsb COMMA y, stage_routine_fadeout_msb COMMA y, stages_bank COMMA y, #CURRENT_BANK_NUMBER)
 
 					ldx player_number
 
@@ -515,25 +514,6 @@ vgsage_global_onground:
 
 			end:
 			rts
-
-			;FIXME hardcoded for flatland, call a stage routine to do the repaint in dedicated logic
-			palette1:
-			.byt $3f, $00, $10
-			.byt $0f,$11,$00,$00, $0f,$11,$00,$21, $0f,$11,$09,$21, $0f,$00,$00,$00
-			palette2:
-			.byt $3f, $00, $10
-			.byt $0f,$01,$0f,$0f, $0f,$01,$0f,$11, $0f,$01,$0f,$11, $0f,$00,$00,$00
-			palette3:
-			.byt $3f, $00, $10
-			.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$01, $0f,$0f,$0f,$01, $0f,$00,$00,$00
-			palette_black:
-			.byt $3f, $00, $10
-			.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f
-
-			fadeout_lsb:
-			.byt <palette_black, <palette3, <palette2, <palette1
-			fadeout_msb:
-			.byt >palette_black, >palette3, >palette2, >palette1
 		.)
 	.)
 

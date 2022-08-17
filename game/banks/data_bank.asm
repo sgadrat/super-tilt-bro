@@ -41,11 +41,11 @@ bank_data_mode_selection_screen_logic_begin:
 #echo Menu mode selection logic:
 #print *-bank_data_mode_selection_screen_logic_begin
 
-bank_data_stage_plateau_begin:
+bank_data_stage_flatland_begin:
 #include "game/data/stages/plateau/plateau.asm"
 #echo
-#echo Plateau size:
-#print *-bank_data_stage_plateau_begin
+#echo Stage Flatland size:
+#print *-bank_data_stage_flatland_begin
 
 bank_data_tileset_common_features_begin:
 #include "game/data/tilesets/common_features.asm"

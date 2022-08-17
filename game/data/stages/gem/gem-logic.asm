@@ -1,52 +1,52 @@
-#define STAGE_GEM_STAGE_SPRITES $20
-#define STAGE_GEM_NB_STAGE_SPRITES 8
-#define STAGE_GEM_FIRST_SPRITE_OAM_OFFSET STAGE_GEM_STAGE_SPRITES*4
-#define STAGE_GEM_LAST_SPRITE_OAM_OFFSET (STAGE_GEM_STAGE_SPRITES+STAGE_GEM_NB_STAGE_SPRITES-1)*4
-#define STAGE_GEM_GEM_SPRITE STAGE_GEM_STAGE_SPRITES
+#define STAGE_THEHUNT_STAGE_SPRITES $20
+#define STAGE_THEHUNT_NB_STAGE_SPRITES 8
+#define STAGE_THEHUNT_FIRST_SPRITE_OAM_OFFSET STAGE_THEHUNT_STAGE_SPRITES*4
+#define STAGE_THEHUNT_LAST_SPRITE_OAM_OFFSET (STAGE_THEHUNT_STAGE_SPRITES+STAGE_THEHUNT_NB_STAGE_SPRITES-1)*4
+#define STAGE_THEHUNT_GEM_SPRITE STAGE_THEHUNT_STAGE_SPRITES
 
-#define STAGE_GEM_GEM_SPRITE_OAM oam_mirror+STAGE_GEM_GEM_SPRITE*4
+#define STAGE_THEHUNT_GEM_SPRITE_OAM oam_mirror+STAGE_THEHUNT_GEM_SPRITE*4
 
-#define STAGE_GEM_GEM_SPAWN_X $80
-#define STAGE_GEM_GEM_SPAWN_Y $30
-#define STAGE_GEM_GEM_MAX_VELOCITY 2
-#define STAGE_GEM_GEM_MIN_VELOCITY $fe
+#define STAGE_THEHUNT_GEM_SPAWN_X $80
+#define STAGE_THEHUNT_GEM_SPAWN_Y $30
+#define STAGE_THEHUNT_GEM_MAX_VELOCITY 2
+#define STAGE_THEHUNT_GEM_MIN_VELOCITY $fe
 
-#define STAGE_GEM_GEM_HURTBOX_WIDTH 7
-#define STAGE_GEM_GEM_HURTBOX_HEIGHT 7
+#define STAGE_THEHUNT_GEM_HURTBOX_WIDTH 7
+#define STAGE_THEHUNT_GEM_HURTBOX_HEIGHT 7
 
-#define STAGE_GEM_GEM_COOLDOWN_LSB 0
-#define STAGE_GEM_GEM_COOLDOWN_MSB 2
-#define STAGE_GEM_BREAK_DURATION 40
-#define STAGE_GEM_BUFF_DURATION_LSB 0
-#define STAGE_GEM_BUFF_DURATION_MSB 2
-#define STAGE_GEM_BUFF_SCREEN_SHAKE_DURATION 20
+#define STAGE_THEHUNT_GEM_COOLDOWN_LSB 0
+#define STAGE_THEHUNT_GEM_COOLDOWN_MSB 2
+#define STAGE_THEHUNT_BREAK_DURATION 40
+#define STAGE_THEHUNT_BUFF_DURATION_LSB 0
+#define STAGE_THEHUNT_BUFF_DURATION_MSB 2
+#define STAGE_THEHUNT_BUFF_SCREEN_SHAKE_DURATION 20
 
-#define STAGE_GEM_BUFF_DAMAGES 20
+#define STAGE_THEHUNT_BUFF_DAMAGES 20
 
-#define STAGE_GEM_GEM_STATE_COOLDOWN 0
-#define STAGE_GEM_GEM_STATE_ACTIVE 1
-#define STAGE_GEM_GEM_STATE_BREAKING 2
-#define STAGE_GEM_GEM_STATE_BUFF 3
+#define STAGE_THEHUNT_GEM_STATE_COOLDOWN 0
+#define STAGE_THEHUNT_GEM_STATE_ACTIVE 1
+#define STAGE_THEHUNT_GEM_STATE_BREAKING 2
+#define STAGE_THEHUNT_GEM_STATE_BUFF 3
 
-#define STAGE_GEM_HIDE_SPRITES .( :\
+#define STAGE_THEHUNT_HIDE_SPRITES .( :\
 	lda #$fe :\
-	ldx #STAGE_GEM_FIRST_SPRITE_OAM_OFFSET :\
+	ldx #STAGE_THEHUNT_FIRST_SPRITE_OAM_OFFSET :\
 	hide_one_sprite:\
 		sta oam_mirror, x :\
 		inx :\
 		inx :\
 		inx :\
 		inx :\
-		cpx #(STAGE_GEM_LAST_SPRITE_OAM_OFFSET)+4 :\
+		cpx #(STAGE_THEHUNT_LAST_SPRITE_OAM_OFFSET)+4 :\
 		bne hide_one_sprite :\
 .)
 
 ; Pause music, avoid audio_mute_music which changes the configuration ;TODO This is hacky as fuck (and may break with new audio engine)
-#define STAGE_GEM_PAUSE_MUSIC lda #%00001000 : sta APU_STATUS
+#define STAGE_THEHUNT_PAUSE_MUSIC lda #%00001000 : sta APU_STATUS
 ; Play music, avoid audio_unmute_music which changes the configuration
-#define STAGE_GEM_RESUME_MUSIC lda #%00001111 : sta APU_STATUS
+#define STAGE_THEHUNT_RESUME_MUSIC lda #%00001111 : sta APU_STATUS
 
-stage_gem_init:
+stage_thehunt_init:
 .(
 	; Copy stage's tiles in VRAM
 	.(
@@ -69,20 +69,22 @@ stage_gem_init:
 	.)
 
 	; Put the gem in its initial state
-	jsr stage_gem_set_state_cooldown
+	jsr stage_thehunt_set_state_cooldown
 
 	; Init background animation
+	lda #FADE_LEVEL_NORMAL
+	sta stage_thehunt_fade_level
 	lda #0
-	sta stage_gem_frame_cnt
+	sta stage_thehunt_frame_cnt
 
 	rts
 .)
 
-stage_gem_netload:
+stage_thehunt_netload:
 .(
 	; Load gem's state
 	ldy esp_rx_buffer+0, x
-	sty stage_gem_gem_state
+	sty stage_thehunt_gem_state
 
 	; Load fields for the new state
 	lda gem_state_netload_routines_lsb, y
@@ -95,12 +97,12 @@ stage_gem_netload:
 	.(
 		; Load state's variables
 		lda esp_rx_buffer+1, x
-		sta stage_gem_gem_cooldown_low
+		sta stage_thehunt_gem_cooldown_low
 		lda esp_rx_buffer+2, x
-		sta stage_gem_gem_cooldown_high
+		sta stage_thehunt_gem_cooldown_high
 
 		; Ensure sprites consistency
-		STAGE_GEM_HIDE_SPRITES
+		STAGE_THEHUNT_HIDE_SPRITES
 
 		rts
 	.)
@@ -109,30 +111,30 @@ stage_gem_netload:
 	.(
 		; Load state's variables
 		lda esp_rx_buffer+1, x
-		sta stage_gem_gem_position_x_low
+		sta stage_thehunt_gem_position_x_low
 		lda esp_rx_buffer+2, x
-		sta stage_gem_gem_position_x_high
+		sta stage_thehunt_gem_position_x_high
 		lda esp_rx_buffer+3, x
-		sta stage_gem_gem_position_y_low
+		sta stage_thehunt_gem_position_y_low
 		lda esp_rx_buffer+4, x
-		sta stage_gem_gem_position_y_high
+		sta stage_thehunt_gem_position_y_high
 		lda esp_rx_buffer+5, x
-		sta stage_gem_gem_velocity_h_low
+		sta stage_thehunt_gem_velocity_h_low
 		lda esp_rx_buffer+6, x
-		sta stage_gem_gem_velocity_h_high
+		sta stage_thehunt_gem_velocity_h_high
 		lda esp_rx_buffer+7, x
-		sta stage_gem_gem_velocity_v_low
+		sta stage_thehunt_gem_velocity_v_low
 		lda esp_rx_buffer+8, x
-		sta stage_gem_gem_velocity_v_high
+		sta stage_thehunt_gem_velocity_v_high
 
 		; Ensure sprites consistency
-		STAGE_GEM_HIDE_SPRITES ; Note, just in case we were in "buff" state previously (should be really rare)
+		STAGE_THEHUNT_HIDE_SPRITES ; Note, just in case we were in "buff" state previously (should be really rare)
 
 		;FIXME set X/Y position, else it won't show if in screen shake
 		lda #TILE_GEM
-		sta STAGE_GEM_GEM_SPRITE_OAM+1 ; Tile number
+		sta STAGE_THEHUNT_GEM_SPRITE_OAM+1 ; Tile number
 		lda #3
-		sta STAGE_GEM_GEM_SPRITE_OAM+2 ; Attributes
+		sta STAGE_THEHUNT_GEM_SPRITE_OAM+2 ; Attributes
 
 		rts
 	.)
@@ -141,13 +143,13 @@ stage_gem_netload:
 	.(
 		; Load state's variables
 		lda esp_rx_buffer+1, x
-		sta stage_gem_buffed_player
+		sta stage_thehunt_buffed_player
 
 		; Ensure sprites consistency
 		;  Nothing to do, animation code is called each frame
 
 		; Ensure music is paused
-		STAGE_GEM_PAUSE_MUSIC
+		STAGE_THEHUNT_PAUSE_MUSIC
 
 		rts
 	.)
@@ -156,20 +158,20 @@ stage_gem_netload:
 	.(
 		; Load state's variables
 		lda esp_rx_buffer+1, x
-		sta stage_gem_gem_cooldown_low
+		sta stage_thehunt_gem_cooldown_low
 		lda esp_rx_buffer+2, x
-		sta stage_gem_gem_cooldown_high
+		sta stage_thehunt_gem_cooldown_high
 		lda esp_rx_buffer+3, x
-		sta stage_gem_last_opponent_state
+		sta stage_thehunt_last_opponent_state
 		lda esp_rx_buffer+4, x
-		sta stage_gem_buffed_player
+		sta stage_thehunt_buffed_player
 
 		; Ensure sprites consistency
 		;  Nothing to do, animation code is called each frame
 
 		; Ensure music is running
 		;  Note - This is fragile, if a game in "breaking" state loads to something else than "buff" state, the music will stay paused
-		STAGE_GEM_RESUME_MUSIC
+		STAGE_THEHUNT_RESUME_MUSIC
 
 		rts
 	.)
@@ -180,32 +182,62 @@ stage_gem_netload:
 	.byt >gem_netload_cooldown, >gem_netload_active, >gem_netload_breaking, >gem_netload_buff
 .)
 
-stage_gem_freezed_tick:
++stage_thehunt_fadeout:
+.(
+	header = tmpfield1 ; construct_nt_buffer parameter
+	payload = tmpfield3 ; construct_nt_buffer parameter
+
+	; Store new fade level
+	stx stage_thehunt_fade_level
+
+	; Change palette
+	lda #<palette_header
+	sta header
+	lda #>palette_header
+	sta header+1
+
+	lda stage_thehunt_fadeout_lsb, x
+	sta payload
+	lda stage_thehunt_fadeout_msb, x
+	sta payload+1
+
+	jmp construct_nt_buffer
+
+	;rts ; useless, jump to subroutine
+
+	palette_header:
+	.byt $3f, $00, $10
+.)
+
+stage_thehunt_freezed_tick:
 .(
 	; Update gem breaking state if it is the cause of the freeze
-	lda stage_gem_gem_state
-	cmp #STAGE_GEM_GEM_STATE_BREAKING
+	lda stage_thehunt_gem_state
+	cmp #STAGE_THEHUNT_GEM_STATE_BREAKING
 	bne end
 
-		jmp stage_gem_tick_state_breaking
+		jmp stage_thehunt_tick_state_breaking
 		; No return, jump to subroutine
 
 	end:
 	rts
 .)
 
-stage_gem_tick:
+stage_thehunt_tick:
 .(
 	.(
 		; Update lava tiles
-		;  NOTE - despite its name, stage_gem_frame_cnt is only used for one purpose, animating lava.
+		;  NOTE - despite its name, stage_thehunt_frame_cnt is only used for one purpose, animating lava.
 		;         If this change, the "inc" should certainly be done even in rollback mode.
 		lda network_rollback_mode
 		bne lava_tiles_ok
 
-			inc stage_gem_frame_cnt
+			; Update frame counter
+			inc stage_thehunt_frame_cnt
+
+			; Compute current animation frame frome counter
 			lda #%0010000
-			bit stage_gem_frame_cnt
+			bit stage_thehunt_frame_cnt
 			beq even_frame
 				ldx #1
 				jmp x_ok
@@ -213,58 +245,102 @@ stage_gem_tick:
 				ldx #0
 			x_ok:
 
+			; Get animation frame pointer
 			lda lava_bg_frames_lsb, x
 			sta tmpfield1
 			lda lava_bg_frames_msb, x
 			sta tmpfield2
 
-			jsr last_nt_buffer
-			ldy #0
-			copy_one_byte:
-				lda (tmpfield1), y
+			; Write nametable buffer
+			.(
+				; X points to last nametable buffer
+				jsr last_nt_buffer
+
+				; Write buffer's header
+				lda #1 ; Continuation byte
 				sta nametable_buffers, x
-				inx
+
+				lda #$3f ; VRAM address MSB
+				sta nametable_buffers+1, x
+
+				lda #$02 ; VRAM address LSB
+				sta nametable_buffers+2, x
+
+				lda #$02 ; Payload size
+				sta nametable_buffers+3, x
+
+				; Y = offset in the frame of colors for the current fade level
+				lda stage_thehunt_fade_level
+				asl
+				tay
+
+				; Write buffer's payload
+				lda (tmpfield1), y
+				sta nametable_buffers+4, x
 				iny
-				cpy #LAVA_TILE_ANIM_BUFF_LEN
-				bne copy_one_byte
+
+				lda (tmpfield1), y
+				sta nametable_buffers+5, x
+
+				; Write stop byte
+				lda #0
+				sta nametable_buffers+6, x
+			.)
 
 		lava_tiles_ok:
 
 		; Call the correct tick routine according to gem's state
-		ldx stage_gem_gem_state
-		lda stage_gem_tick_state_routines_lsb, x
+		ldx stage_thehunt_gem_state
+		lda stage_thehunt_tick_state_routines_lsb, x
 		sta tmpfield1
-		lda stage_gem_tick_state_routines_msb, x
+		lda stage_thehunt_tick_state_routines_msb, x
 		sta tmpfield2
 		jsr call_pointed_subroutine
 		rts
 
 		; gem state tick routines
-		stage_gem_tick_state_routines_lsb:
-			.byt <stage_gem_tick_state_cooldown, <stage_gem_tick_state_active, <stage_gem_tick_state_breaking, <stage_gem_tick_state_buff
-		stage_gem_tick_state_routines_msb:
-			.byt >stage_gem_tick_state_cooldown, >stage_gem_tick_state_active, >stage_gem_tick_state_breaking, >stage_gem_tick_state_buff
+		stage_thehunt_tick_state_routines_lsb:
+			.byt <stage_thehunt_tick_state_cooldown, <stage_thehunt_tick_state_active, <stage_thehunt_tick_state_breaking, <stage_thehunt_tick_state_buff
+		stage_thehunt_tick_state_routines_msb:
+			.byt >stage_thehunt_tick_state_cooldown, >stage_thehunt_tick_state_active, >stage_thehunt_tick_state_breaking, >stage_thehunt_tick_state_buff
+
+		lava_color_frame0:
+			.byt $0f, $0f ; black
+			.byt $0f, $07 ; darkest
+			.byt $06, $07 ; darker
+			.byt $06, $17 ; dark
+			.byt $17, $27 ; normal
+		lava_color_frame1:
+			.byt $0f, $0f ; black
+			.byt $07, $0f ; darkest
+			.byt $07, $06 ; darker
+			.byt $17, $06 ; dark
+			.byt $27, $17 ; normal
+		lava_bg_frames_lsb:
+			.byt <lava_color_frame0, <lava_color_frame1
+		lava_bg_frames_msb:
+			.byt >lava_color_frame0, >lava_color_frame1
 	.)
 
-	stage_gem_tick_state_cooldown:
+	stage_thehunt_tick_state_cooldown:
 	.(
 		; If cooldown reaches zero, activate the gem
 		jsr dec_cooldown
 		bne end
 
-			jsr stage_gem_set_state_active
+			jsr stage_thehunt_set_state_active
 
 		end:
 		rts
 	.)
 
-	stage_gem_tick_state_active:
+	stage_thehunt_tick_state_active:
 	.(
 		jsr move_gem
 
 		lda network_rollback_mode
 		bne end_place_gem
-			jsr stage_gem_place_gem
+			jsr stage_thehunt_place_gem
 		end_place_gem:
 
 		jmp check_gem_hit
@@ -272,7 +348,7 @@ stage_gem_tick:
 		;rts ; useless, jump to subroutine
 	.)
 
-	&stage_gem_tick_state_breaking:
+	&stage_thehunt_tick_state_breaking:
 	.(
 		lda screen_shake_counter
 		bne update_anim
@@ -281,9 +357,9 @@ stage_gem_tick:
 			.(
 				lda audio_music_enabled
 				beq music_ok
-					STAGE_GEM_RESUME_MUSIC
+					STAGE_THEHUNT_RESUME_MUSIC
 				music_ok:
-				jmp stage_gem_set_state_buff
+				jmp stage_thehunt_set_state_buff
 				;rts ; useless, jump to subroutine
 			.)
 
@@ -297,7 +373,7 @@ stage_gem_tick:
 					bne end_draw_anim
 
 						; Search the current frame number
-						lda #STAGE_GEM_BREAK_DURATION
+						lda #STAGE_THEHUNT_BREAK_DURATION
 						sec
 						sbc screen_shake_counter
 						lsr
@@ -334,9 +410,9 @@ stage_gem_tick:
 							lda gem_explosion_frames_addr_msb, x
 							sta frame_vector_msb
 
-							lda stage_gem_gem_position_x_high
+							lda stage_thehunt_gem_position_x_high
 							sta animation_position_x
-							lda stage_gem_gem_position_y_high
+							lda stage_thehunt_gem_position_y_high
 							sta animation_position_y
 
 							lda #0
@@ -346,14 +422,14 @@ stage_gem_tick:
 
 							ldx #1
 
-							jsr stage_gem_draw_anim_frame
+							jsr stage_thehunt_draw_anim_frame
 						.)
 
 					end_draw_anim:
 				.)
 
 				; Audio effect
-				lda #STAGE_GEM_BREAK_DURATION
+				lda #STAGE_THEHUNT_BREAK_DURATION
 				sec
 				sbc screen_shake_counter
 				tax
@@ -363,13 +439,13 @@ stage_gem_tick:
 			.)
 	.)
 
-	stage_gem_tick_state_buff:
+	stage_thehunt_tick_state_buff:
 	.(
 		; Update buff animation
 		lda network_rollback_mode
 		bne end_update_anim
 
-			lda stage_gem_gem_cooldown_low ; Compute current frame number (the animation must have exactly 8 frames)
+			lda stage_thehunt_gem_cooldown_low ; Compute current frame number (the animation must have exactly 8 frames)
 			lsr
 			lsr
 			and #%00000111
@@ -397,7 +473,7 @@ stage_gem_tick:
 			lda gem_buff_frames_addr_msb, x
 			sta frame_vector_msb
 
-			ldx stage_gem_buffed_player
+			ldx stage_thehunt_buffed_player
 			lda player_a_x, x
 			sta animation_position_x
 			lda player_a_y, x
@@ -410,21 +486,21 @@ stage_gem_tick:
 			lda #0
 			sta animation_direction
 
-			jsr stage_gem_draw_anim_frame
+			jsr stage_thehunt_draw_anim_frame
 
 		end_update_anim:
 
 		; Detect if the opponent just got thrown
-		ldx stage_gem_buffed_player
+		ldx stage_thehunt_buffed_player
 		SWITCH_SELECTED_PLAYER
 		lda player_a_state, x
-		cmp stage_gem_last_opponent_state
+		cmp stage_thehunt_last_opponent_state
 		beq end_throw_handling
 		cmp #PLAYER_STATE_THROWN
 		bne end_throw_handling
 
 			; Deal bonus damages
-			lda #STAGE_GEM_BUFF_DAMAGES ; TODO Factorize with hurt_player subroutine code
+			lda #STAGE_THEHUNT_BUFF_DAMAGES ; TODO Factorize with hurt_player subroutine code
 			clc
 			adc player_a_damages, x
 			cmp #200
@@ -443,26 +519,26 @@ stage_gem_tick:
 			asl player_a_hitstun, x
 
 			; Augment screen shaking
-			lda #STAGE_GEM_BUFF_SCREEN_SHAKE_DURATION
+			lda #STAGE_THEHUNT_BUFF_SCREEN_SHAKE_DURATION
 			sta screen_shake_counter
 
 			; Remove the gem's buff
 			lda #0 ; Tricky - set the cooldown to 1 so that the buff will disapear gracefully at the end of this subroutine
-			sta stage_gem_gem_cooldown_high
+			sta stage_thehunt_gem_cooldown_high
 			lda #1
-			sta stage_gem_gem_cooldown_low
+			sta stage_thehunt_gem_cooldown_low
 
 		end_throw_handling:
 
 			; Save new opponent state
 			lda player_a_state, x
-			sta stage_gem_last_opponent_state
+			sta stage_thehunt_last_opponent_state
 
 		; If cooldown reaches zero, return to gem cooldown
 		jsr dec_cooldown
 		bne end_cd_check
 
-			jmp stage_gem_set_state_cooldown
+			jmp stage_thehunt_set_state_cooldown
 			; No return, jump to subroutine
 
 		end_cd_check:
@@ -475,16 +551,16 @@ stage_gem_tick:
 	dec_cooldown:
 	.(
 		; Decrement cooldown
-		lda stage_gem_gem_cooldown_low
+		lda stage_thehunt_gem_cooldown_low
 		bne no_carry
 			carry:
-				dec stage_gem_gem_cooldown_high
+				dec stage_thehunt_gem_cooldown_high
 			no_carry:
-				dec stage_gem_gem_cooldown_low
+				dec stage_thehunt_gem_cooldown_low
 
-		; Z flag = (stage_gem_gem_cooldown_low == 0 && stage_gem_gem_cooldown_high == 0)
+		; Z flag = (stage_thehunt_gem_cooldown_low == 0 && stage_thehunt_gem_cooldown_high == 0)
 		bne end
-		lda stage_gem_gem_cooldown_high
+		lda stage_thehunt_gem_cooldown_high
 
 		end:
 		rts
@@ -494,15 +570,15 @@ stage_gem_tick:
 	check_gem_hit:
 	.(
 		; box_1 = gem's bounding box
-		lda stage_gem_gem_position_x_high
+		lda stage_thehunt_gem_position_x_high
 		sta tmpfield1
 		clc
-		adc #STAGE_GEM_GEM_HURTBOX_WIDTH
+		adc #STAGE_THEHUNT_GEM_HURTBOX_WIDTH
 		sta tmpfield2
-		lda stage_gem_gem_position_y_high
+		lda stage_thehunt_gem_position_y_high
 		sta tmpfield3
 		clc
-		adc #STAGE_GEM_GEM_HURTBOX_HEIGHT
+		adc #STAGE_THEHUNT_GEM_HURTBOX_HEIGHT
 		sta tmpfield4
 		lda #0
 		sta tmpfield9
@@ -552,10 +628,10 @@ stage_gem_tick:
 		; The gem got hit, emphasis the breaking animation
 		gem_hit:
 			; Save buffed player number
-			stx stage_gem_buffed_player
+			stx stage_thehunt_buffed_player
 
 			; Set gem in breaking state
-			jsr stage_gem_set_state_breaking
+			jsr stage_thehunt_set_state_breaking
 
 		end:
 			rts
@@ -613,60 +689,60 @@ stage_gem_tick:
 		; Cap to max velocity
 		; If velocity_h >= MAX_VELOCITY
 		;    velocity_h = MAX_VELOCITY
-		SIGNED_CMP(stage_gem_gem_velocity_h_low, stage_gem_gem_velocity_h_high, #0, #STAGE_GEM_GEM_MAX_VELOCITY)
+		SIGNED_CMP(stage_thehunt_gem_velocity_h_low, stage_thehunt_gem_velocity_h_high, #0, #STAGE_THEHUNT_GEM_MAX_VELOCITY)
 		bmi vel_h_max_ok
-		lda #STAGE_GEM_GEM_MAX_VELOCITY
-		sta stage_gem_gem_velocity_h_high
+		lda #STAGE_THEHUNT_GEM_MAX_VELOCITY
+		sta stage_thehunt_gem_velocity_h_high
 		lda #0
-		sta stage_gem_gem_velocity_h_low
+		sta stage_thehunt_gem_velocity_h_low
 		vel_h_max_ok:
 
 		; If MIN_VELOCITY >= velocity_h
 		;    velocity_h = -MIN_VELOCITY
-		SIGNED_CMP(#0, #STAGE_GEM_GEM_MIN_VELOCITY, stage_gem_gem_velocity_h_low, stage_gem_gem_velocity_h_high)
+		SIGNED_CMP(#0, #STAGE_THEHUNT_GEM_MIN_VELOCITY, stage_thehunt_gem_velocity_h_low, stage_thehunt_gem_velocity_h_high)
 		bmi vel_h_min_ok:
-		lda #STAGE_GEM_GEM_MIN_VELOCITY
-		sta stage_gem_gem_velocity_h_high
+		lda #STAGE_THEHUNT_GEM_MIN_VELOCITY
+		sta stage_thehunt_gem_velocity_h_high
 		lda #0
-		sta stage_gem_gem_velocity_h_low
+		sta stage_thehunt_gem_velocity_h_low
 		vel_h_min_ok:
 
 		; If velocity_v >= MAX_VELOCITY
 		;    velocity_v = MAX_VELOCITY
-		SIGNED_CMP(stage_gem_gem_velocity_v_low, stage_gem_gem_velocity_v_high, #0, #STAGE_GEM_GEM_MAX_VELOCITY)
+		SIGNED_CMP(stage_thehunt_gem_velocity_v_low, stage_thehunt_gem_velocity_v_high, #0, #STAGE_THEHUNT_GEM_MAX_VELOCITY)
 		bmi vel_v_max_ok
-		lda #STAGE_GEM_GEM_MAX_VELOCITY
-		sta stage_gem_gem_velocity_v_high
+		lda #STAGE_THEHUNT_GEM_MAX_VELOCITY
+		sta stage_thehunt_gem_velocity_v_high
 		lda #0
-		sta stage_gem_gem_velocity_v_low
+		sta stage_thehunt_gem_velocity_v_low
 		vel_v_max_ok:
 
 		; If MIN_VELOCITY >= velocity_v
 		;    velocity_v = -MIN_VELOCITY
-		SIGNED_CMP(#0, #STAGE_GEM_GEM_MIN_VELOCITY, stage_gem_gem_velocity_v_low, stage_gem_gem_velocity_v_high)
+		SIGNED_CMP(#0, #STAGE_THEHUNT_GEM_MIN_VELOCITY, stage_thehunt_gem_velocity_v_low, stage_thehunt_gem_velocity_v_high)
 		bmi vel_v_min_ok:
-		lda #STAGE_GEM_GEM_MIN_VELOCITY
-		sta stage_gem_gem_velocity_v_high
+		lda #STAGE_THEHUNT_GEM_MIN_VELOCITY
+		sta stage_thehunt_gem_velocity_v_high
 		lda #0
-		sta stage_gem_gem_velocity_v_low
+		sta stage_thehunt_gem_velocity_v_low
 		vel_v_min_ok:
 
 		; Apply velocity to position
-		lda stage_gem_gem_velocity_h_low
+		lda stage_thehunt_gem_velocity_h_low
 		clc
-		adc stage_gem_gem_position_x_low
-		sta stage_gem_gem_position_x_low
-		lda stage_gem_gem_velocity_h_high
-		adc stage_gem_gem_position_x_high
-		sta stage_gem_gem_position_x_high
+		adc stage_thehunt_gem_position_x_low
+		sta stage_thehunt_gem_position_x_low
+		lda stage_thehunt_gem_velocity_h_high
+		adc stage_thehunt_gem_position_x_high
+		sta stage_thehunt_gem_position_x_high
 
-		lda stage_gem_gem_velocity_v_low
+		lda stage_thehunt_gem_velocity_v_low
 		clc
-		adc stage_gem_gem_position_y_low
-		sta stage_gem_gem_position_y_low
-		lda stage_gem_gem_velocity_v_high
-		adc stage_gem_gem_position_y_high
-		sta stage_gem_gem_position_y_high
+		adc stage_thehunt_gem_position_y_low
+		sta stage_thehunt_gem_position_y_low
+		lda stage_thehunt_gem_velocity_v_high
+		adc stage_thehunt_gem_position_y_high
+		sta stage_thehunt_gem_position_y_high
 
 		rts
 	.)
@@ -744,7 +820,7 @@ stage_gem_tick:
 
 		lda target_position_x ; XY = Target - G
 		sec
-		sbc stage_gem_gem_position_x_high
+		sbc stage_thehunt_gem_position_x_high
 		tax
 		lda #0
 		sbc #0
@@ -752,15 +828,15 @@ stage_gem_tick:
 
 		txa ; Add to gem's velocity
 		clc
-		adc stage_gem_gem_velocity_h_low
-		sta stage_gem_gem_velocity_h_low
+		adc stage_thehunt_gem_velocity_h_low
+		sta stage_thehunt_gem_velocity_h_low
 		tya
-		adc stage_gem_gem_velocity_h_high
-		sta stage_gem_gem_velocity_h_high
+		adc stage_thehunt_gem_velocity_h_high
+		sta stage_thehunt_gem_velocity_h_high
 
 		lda target_position_y ; XY = Target - G
 		sec
-		sbc stage_gem_gem_position_y_high
+		sbc stage_thehunt_gem_position_y_high
 		tax
 		lda #0
 		sbc #0
@@ -768,60 +844,60 @@ stage_gem_tick:
 
 		txa ; Add to gem's velocity
 		clc
-		adc stage_gem_gem_velocity_v_low
-		sta stage_gem_gem_velocity_v_low
+		adc stage_thehunt_gem_velocity_v_low
+		sta stage_thehunt_gem_velocity_v_low
 		tya
-		adc stage_gem_gem_velocity_v_high
-		sta stage_gem_gem_velocity_v_high
+		adc stage_thehunt_gem_velocity_v_high
+		sta stage_thehunt_gem_velocity_v_high
 
 		rts
 	.)
 .)
 
 ; Puts the gem in cooldown
-stage_gem_set_state_cooldown:
+stage_thehunt_set_state_cooldown:
 .(
 	; Set the state
-	lda #STAGE_GEM_GEM_STATE_COOLDOWN
-	sta stage_gem_gem_state
+	lda #STAGE_THEHUNT_GEM_STATE_COOLDOWN
+	sta stage_thehunt_gem_state
 
 	; Hide all stage's sprites
-	STAGE_GEM_HIDE_SPRITES
+	STAGE_THEHUNT_HIDE_SPRITES
 
 	; Reset cooldown
-	lda #STAGE_GEM_GEM_COOLDOWN_LSB
-	sta stage_gem_gem_cooldown_low
-	lda #STAGE_GEM_GEM_COOLDOWN_MSB
-	sta stage_gem_gem_cooldown_high
+	lda #STAGE_THEHUNT_GEM_COOLDOWN_LSB
+	sta stage_thehunt_gem_cooldown_low
+	lda #STAGE_THEHUNT_GEM_COOLDOWN_MSB
+	sta stage_thehunt_gem_cooldown_high
 
 	rts
 .)
 
 ; Activate the gem
-stage_gem_set_state_active:
+stage_thehunt_set_state_active:
 .(
 	; Set the state
-	lda #STAGE_GEM_GEM_STATE_ACTIVE
-	sta stage_gem_gem_state
+	lda #STAGE_THEHUNT_GEM_STATE_ACTIVE
+	sta stage_thehunt_gem_state
 
 	; Set gem's initial position and velocity
-	lda #STAGE_GEM_GEM_SPAWN_X
-	sta stage_gem_gem_position_x_high
-	lda #STAGE_GEM_GEM_SPAWN_Y
-	sta stage_gem_gem_position_y_high
+	lda #STAGE_THEHUNT_GEM_SPAWN_X
+	sta stage_thehunt_gem_position_x_high
+	lda #STAGE_THEHUNT_GEM_SPAWN_Y
+	sta stage_thehunt_gem_position_y_high
 	lda #0
-	sta stage_gem_gem_position_x_low
-	sta stage_gem_gem_position_y_low
-	sta stage_gem_gem_velocity_h_low
-	sta stage_gem_gem_velocity_h_high
-	sta stage_gem_gem_velocity_v_low
-	sta stage_gem_gem_velocity_v_high
+	sta stage_thehunt_gem_position_x_low
+	sta stage_thehunt_gem_position_y_low
+	sta stage_thehunt_gem_velocity_h_low
+	sta stage_thehunt_gem_velocity_h_high
+	sta stage_thehunt_gem_velocity_v_low
+	sta stage_thehunt_gem_velocity_v_high
 
 	; Prepare gem sprite
 	lda #TILE_GEM
-	sta STAGE_GEM_GEM_SPRITE_OAM+1 ; Tile number
+	sta STAGE_THEHUNT_GEM_SPRITE_OAM+1 ; Tile number
 	lda #3
-	sta STAGE_GEM_GEM_SPRITE_OAM+2 ; Attributes
+	sta STAGE_THEHUNT_GEM_SPRITE_OAM+2 ; Attributes
 
 	; Show gem
 	.(
@@ -829,7 +905,7 @@ stage_gem_set_state_active:
 		beq show_gem
 			rts
 		show_gem:
-			jmp stage_gem_place_gem
+			jmp stage_thehunt_place_gem
 			; No return, jump to subroutine
 	.)
 
@@ -837,55 +913,55 @@ stage_gem_set_state_active:
 .)
 
 ; Puts the gem in breaking state
-stage_gem_set_state_breaking:
+stage_thehunt_set_state_breaking:
 .(
 	; Set the state
-	lda #STAGE_GEM_GEM_STATE_BREAKING
-	sta stage_gem_gem_state
+	lda #STAGE_THEHUNT_GEM_STATE_BREAKING
+	sta stage_thehunt_gem_state
 
 	; Freeze the screen for the duration of the breaking animation
 	lda #0
 	sta screen_shake_nextval_x
 	sta screen_shake_nextval_y
-	lda #STAGE_GEM_BREAK_DURATION
+	lda #STAGE_THEHUNT_BREAK_DURATION
 	sta screen_shake_counter
 
 	; Pause music
-	STAGE_GEM_PAUSE_MUSIC
+	STAGE_THEHUNT_PAUSE_MUSIC
 
 	rts
 .)
 
 ; Buff the player
-;  stage_gem_buffed_player shall already be set correctly
-stage_gem_set_state_buff:
+;  stage_thehunt_buffed_player shall already be set correctly
+stage_thehunt_set_state_buff:
 .(
 	; Set the state
-	lda #STAGE_GEM_GEM_STATE_BUFF
-	sta stage_gem_gem_state
+	lda #STAGE_THEHUNT_GEM_STATE_BUFF
+	sta stage_thehunt_gem_state
 
 	; Reset cooldown
-	lda #STAGE_GEM_BUFF_DURATION_LSB
-	sta stage_gem_gem_cooldown_low
-	lda #STAGE_GEM_BUFF_DURATION_MSB
-	sta stage_gem_gem_cooldown_high
+	lda #STAGE_THEHUNT_BUFF_DURATION_LSB
+	sta stage_thehunt_gem_cooldown_low
+	lda #STAGE_THEHUNT_BUFF_DURATION_MSB
+	sta stage_thehunt_gem_cooldown_high
 
 	; Store initial opponent state
-	ldx stage_gem_buffed_player
+	ldx stage_thehunt_buffed_player
 	SWITCH_SELECTED_PLAYER
 	lda player_a_state, x
-	sta stage_gem_last_opponent_state
+	sta stage_thehunt_last_opponent_state
 
 	rts
 .)
 
 ; Place the OAM gem's sprite according to gem's position
-stage_gem_place_gem:
+stage_thehunt_place_gem:
 .(
-	lda stage_gem_gem_position_y_high
-	sta STAGE_GEM_GEM_SPRITE_OAM
-	lda stage_gem_gem_position_x_high
-	sta STAGE_GEM_GEM_SPRITE_OAM+3
+	lda stage_thehunt_gem_position_y_high
+	sta STAGE_THEHUNT_GEM_SPRITE_OAM
+	lda stage_thehunt_gem_position_x_high
+	sta STAGE_THEHUNT_GEM_SPRITE_OAM+3
 	rts
 .)
 
@@ -899,7 +975,7 @@ stage_gem_place_gem:
 ;  X - player number, and attributes modifier
 ;
 ; Overwrites all registers, sign_extension_byte, sprite_count, attributes_modifier, player_number, sprite_direction
-stage_gem_draw_anim_frame:
+stage_thehunt_draw_anim_frame:
 .(
 	; animation_handle_sprites parameters
 	animation_position_x = tmpfield1
@@ -931,7 +1007,7 @@ stage_gem_draw_anim_frame:
 		lda #4
 		sta sprite_direction
 
-		ldx #STAGE_GEM_STAGE_SPRITES*4
+		ldx #STAGE_THEHUNT_STAGE_SPRITES*4
 
 		; Call sprite placing routine
 		jsr animation_handle_sprites
@@ -942,7 +1018,7 @@ stage_gem_draw_anim_frame:
 		; X = offset of the first unused sprite
 		pla
 		clc
-		adc #STAGE_GEM_STAGE_SPRITES
+		adc #STAGE_THEHUNT_STAGE_SPRITES
 		asl
 		asl
 		tax
@@ -950,7 +1026,7 @@ stage_gem_draw_anim_frame:
 		; Clear sprites until the last reserved
 		lda #$fe
 		loop:
-			cpx #4*(STAGE_GEM_STAGE_SPRITES+STAGE_GEM_NB_STAGE_SPRITES)
+			cpx #4*(STAGE_THEHUNT_STAGE_SPRITES+STAGE_THEHUNT_NB_STAGE_SPRITES)
 			beq end_loop
 
 				sta oam_mirror, x

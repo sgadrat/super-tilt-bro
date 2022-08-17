@@ -1,5 +1,22 @@
-stage_plateau_palette_data:
+stage_flatland_palette:
 .byt $0f,$21,$00,$10, $0f,$21,$00,$31, $0f,$21,$19,$31, $0f,$00,$00,$00
+
+stage_flatland_palette_fadeout1:
+.byt $0f,$11,$00,$00, $0f,$11,$00,$21, $0f,$11,$09,$21, $0f,$00,$00,$00
+
+stage_flatland_palette_fadeout2:
+.byt $0f,$01,$0f,$0f, $0f,$01,$0f,$11, $0f,$01,$0f,$11, $0f,$00,$00,$00
+
+stage_flatland_palette_fadeout3:
+.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$01, $0f,$0f,$0f,$01, $0f,$00,$00,$00
+
+stage_flatland_palette_black:
+.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f
+
+stage_flatland_fadeout_lsb:
+.byt <stage_flatland_palette_black, <stage_flatland_palette_fadeout3, <stage_flatland_palette_fadeout2, <stage_flatland_palette_fadeout1, <stage_flatland_palette
+stage_flatland_fadeout_msb:
+.byt >stage_flatland_palette_black, >stage_flatland_palette_fadeout3, >stage_flatland_palette_fadeout2, >stage_flatland_palette_fadeout1, >stage_flatland_palette
 
 ; Temporary 3 char alias for tiles
 #define TFP TILE_CHAR_PCT

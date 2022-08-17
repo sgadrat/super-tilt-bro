@@ -3,9 +3,6 @@
 * = $8000
 
 bank_data04_begin:
-bank_data04_stage_pit_begin:
-#include "game/data/stages/pit/pit.asm"
-bank_data04_stage_pit_end:
 
 bank_data04_stage_shelf_begin:
 #include "game/data/stages/shelf/shelf.asm"
@@ -48,9 +45,6 @@ bank_data04_end:
 #echo
 #echo DATA04-bank data size:
 #print bank_data04_end-bank_data04_begin
-#echo
-#echo DATA04-bank Pit size:
-#print bank_data04_stage_pit_end-bank_data04_stage_pit_begin
 #echo
 #echo DATA04-bank Shelf size:
 #print bank_data04_stage_shelf_end-bank_data04_stage_shelf_begin

@@ -1,5 +1,22 @@
-stage_pit_palette_data:
+stage_pit_palette:
 .byt $08,$09,$18,$28, $08,$09,$1a,$28, $08,$09,$16,$25, $08,$09,$11,$21
+
+stage_pit_palette_fadeout1:
+.byt $08,$09,$08,$18, $08,$09,$1a,$18, $08,$09,$06,$15, $08,$09,$01,$11
+
+stage_pit_palette_fadeout2:
+.byt $08,$0f,$08,$08, $08,$0f,$0a,$08, $08,$0f,$06,$05, $08,$0f,$01,$01
+
+stage_pit_palette_fadeout3:
+.byt $08,$0f,$0f,$08, $08,$0f,$0f,$08, $08,$0f,$0f,$05, $08,$0f,$0f,$01
+
+stage_pit_palette_black:
+.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f
+
+stage_pit_fadeout_lsb:
+.byt <stage_pit_palette_black, <stage_pit_palette_fadeout3, <stage_pit_palette_fadeout2, <stage_pit_palette_fadeout1, <stage_pit_palette
+stage_pit_fadeout_msb:
+.byt >stage_pit_palette_black, >stage_pit_palette_fadeout3, >stage_pit_palette_fadeout2, >stage_pit_palette_fadeout1, >stage_pit_palette
 
 nametable_stage_pit:
 .byt $00,$26

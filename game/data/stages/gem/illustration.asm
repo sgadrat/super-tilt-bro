@@ -30,7 +30,7 @@ C_X = C_A + 23
 C_Y = C_A + 24
 C_Z = C_A + 25
 
-&stage_gem_illustration:
+&stage_thehunt_illustration:
 .byt BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC
 .byt BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC
 .byt BAC, BAC, BAC, BAC, BAC, SMO, BAC, BAC, BAC, BAC, BAC, BAC

@@ -29,6 +29,12 @@ bank_data_theme_adventure_begin:
 #echo Theme adventure size:
 #print *-bank_data_theme_adventure_begin
 
+bank_data_stage_pit_begin:
+#include "game/data/stages/pit/pit.asm"
+#echo
+#echo Stage The Pit size:
+#print *-bank_data_stage_pit_begin
+
 bank_data05_end:
 
 #echo

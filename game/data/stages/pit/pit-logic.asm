@@ -4,13 +4,12 @@ STAGE_PIT_MOVING_PLATFORM_2_OFFSET = STAGE_PIT_MOVING_PLATFORM_1_OFFSET + STAGE_
 #define STAGE_PIT_MOVING_PLATFORM_SPRITES $20
 #define STAGE_PIT_NB_MOVING_PLATFORM_SPRITES 8
 
-
 #define STAGE_PIT_PLATFORM_MAX_HEIGHT 88
 #define STAGE_PIT_PLATFORM_MIN_HEIGHT 162
 #define STAGE_PIT_PLATFORM_LEFTMOST 73
 #define STAGE_PIT_PLATFORM_RIGHTMOST 137
 
-stage_pit_netload:
++stage_pit_netload:
 .(
 	lda esp_rx_buffer+0, x
 	sta stage_pit_platform1_direction_v
@@ -40,7 +39,30 @@ stage_pit_netload:
 	rts
 .)
 
-stage_pit_init:
++stage_pit_fadeout:
+.(
+	header = tmpfield1 ; construct_nt_buffer parameter
+	payload = tmpfield3 ; construct_nt_buffer parameter
+
+	lda #<palette_header
+	sta header
+	lda #>palette_header
+	sta header+1
+
+	lda stage_pit_fadeout_lsb, x
+	sta payload
+	lda stage_pit_fadeout_msb, x
+	sta payload+1
+
+	jmp construct_nt_buffer
+
+	;rts ; useless, jump to subroutine
+
+	palette_header:
+	.byt $3f, $00, $10
+.)
+
++stage_pit_init:
 .(
 	; Set stage's state
 	lda #$ff
@@ -124,7 +146,7 @@ stage_pit_place_platform_sprites:
 	rts
 .)
 
-stage_pit_tick:
++stage_pit_tick:
 .(
 	.(
 		; Change platforms direction
