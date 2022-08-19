@@ -77,6 +77,10 @@ stage_thehunt_init:
 	lda #0
 	sta stage_thehunt_frame_cnt
 
+	; Disable screen restoration
+	lda #$ff
+	sta stage_restore_screen_step
+
 	rts
 .)
 
@@ -211,6 +215,9 @@ stage_thehunt_netload:
 
 stage_thehunt_freezed_tick:
 .(
+	; Restore screen if requested
+	jsr stage_thehunt_restore_screen
+
 	; Update gem breaking state if it is the cause of the freeze
 	lda stage_thehunt_gem_state
 	cmp #STAGE_THEHUNT_GEM_STATE_BREAKING
@@ -226,11 +233,28 @@ stage_thehunt_freezed_tick:
 stage_thehunt_tick:
 .(
 	.(
-		; Update lava tiles
-		;  NOTE - despite its name, stage_thehunt_frame_cnt is only used for one purpose, animating lava.
-		;         If this change, the "inc" should certainly be done even in rollback mode.
+		; Call the correct tick routine according to gem's state
+		ldx stage_thehunt_gem_state
+		lda stage_thehunt_tick_state_routines_lsb, x
+		sta tmpfield1
+		lda stage_thehunt_tick_state_routines_msb, x
+		sta tmpfield2
+		jsr call_pointed_subroutine
+
+		; Update background (restore screen if requested, else animate lava)
 		lda network_rollback_mode
-		bne lava_tiles_ok
+		bne bg_update_ok
+		lda stage_restore_screen_step
+		bmi update_lava
+
+		update_screen_restore:
+			jsr stage_thehunt_restore_screen
+			jmp bg_update_ok ; optimizable - jump to previous routine as there is only a RTS after bg_update_ok
+
+		update_lava:
+
+			;  NOTE - despite its name, stage_thehunt_frame_cnt is only used for one purpose, animating lava.
+			;         If this change, the "inc" should certainly be done even in rollback mode.
 
 			; Update frame counter
 			inc stage_thehunt_frame_cnt
@@ -287,15 +311,7 @@ stage_thehunt_tick:
 				sta nametable_buffers+6, x
 			.)
 
-		lava_tiles_ok:
-
-		; Call the correct tick routine according to gem's state
-		ldx stage_thehunt_gem_state
-		lda stage_thehunt_tick_state_routines_lsb, x
-		sta tmpfield1
-		lda stage_thehunt_tick_state_routines_msb, x
-		sta tmpfield2
-		jsr call_pointed_subroutine
+		bg_update_ok:
 		rts
 
 		; gem state tick routines
@@ -852,6 +868,72 @@ stage_thehunt_tick:
 
 		rts
 	.)
+.)
+
+stage_thehunt_restore_screen:
+.(
+	; Do nothing when rollbacking - optimizable, could be checked by caller (already done on one call)
+	.(
+		lda network_rollback_mode
+		beq ok
+			rts
+		ok:
+	.)
+
+	; Do noting if there is no restore operation running - optimizable, could have X loaded by caller (one call already checks for bpl)
+	.(
+		ldx stage_restore_screen_step
+		bpl ok
+			rts
+		ok:
+	.)
+
+	; Write NT buffer corresponding to current step
+	.(
+		;ldx stage_restore_screen_step ; useless, done above
+		beq set_fade_level
+			apply_nt_buffer:
+				lda steps_buffers_lsb, x
+				ldy steps_buffers_msb, x
+				jsr push_nt_buffer
+				jmp ok
+			set_fade_level:
+				ldx #FADE_LEVEL_NORMAL
+				jsr stage_thehunt_fadeout
+		ok:
+	.)
+
+	; Increment step
+	.(
+		inc stage_restore_screen_step
+		lda stage_restore_screen_step
+		cmp #NUM_RESTORE_STEPS
+		bne ok
+			lda #$ff
+			sta stage_restore_screen_step
+		ok:
+	.)
+
+	rts
+
+	top_attributes:
+	.byt $23, $c0, $20
+	.byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
+	.byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
+	.byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
+	.byt %00000000, %00000000, %00000000, %00000000, %00000000, %10000000, %01101010, %00000000
+	bot_attributes:
+	.byt $23, $e0, $20
+	.byt %00000000, %10101010, %00100001, %00000000, %00000000, %10001000, %10101010, %00000000
+	.byt %00000000, %10101010, %10101010, %10101010, %10100101, %10101010, %10101010, %00000000
+	.byt %10100010, %10101010, %10101010, %10101010, %10101010, %10101010, %10101010, %10101000
+	.byt %10101010, %10101010, %10101010, %10101010, %10101010, %10101010, %10101010, %10101010
+
+	steps_buffers_lsb:
+		.byt 0, <top_attributes, <bot_attributes
+	steps_buffers_msb:
+		.byt 0, >top_attributes, >bot_attributes
+	NUM_RESTORE_STEPS = *-steps_buffers_msb
 .)
 
 ; Puts the gem in cooldown

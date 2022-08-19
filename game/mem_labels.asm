@@ -183,7 +183,9 @@ player_b_last_shown_damage = $6b
 player_a_last_shown_stocks = $6c
 player_b_last_shown_stocks = $6d
 
-; $6e-$6f unused
+stage_restore_screen_step = $6e ; Set to zero to start asynchrone restoration of the screen by stage's logic
+
+; $6f unused
 
 screen_shake_counter = $70
 screen_shake_nextval_x = $71

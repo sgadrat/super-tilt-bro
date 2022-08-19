@@ -1,7 +1,7 @@
 stages_init_routine:
-RAW_VECTOR(dummy_routine) ; Flatland
+RAW_VECTOR(stage_flatland_init) ; Flatland
 RAW_VECTOR(stage_pit_init) ; Pit
-RAW_VECTOR(dummy_routine) ; Skyride
+RAW_VECTOR(stage_skyride_init) ; Skyride
 RAW_VECTOR(stage_thehunt_init) ; The Hunt
 
 stage_versus_end_index = (* - stages_init_routine) / 2
@@ -14,9 +14,9 @@ RAW_VECTOR(dummy_routine) ; arcade run02
 RAW_VECTOR(stage_arcade_btt02_init) ; arcade btt02
 
 stages_tick_routine:
-RAW_VECTOR(dummy_routine) ; Flatland
+RAW_VECTOR(stage_flatland_tick) ; Flatland
 RAW_VECTOR(stage_pit_tick) ; Pit
-RAW_VECTOR(dummy_routine) ; Skyride
+RAW_VECTOR(stage_skyride_tick) ; Skyride
 RAW_VECTOR(stage_thehunt_tick) ; The Hunt
 
 RAW_VECTOR(stage_arcade_boss_tick) ; arcade boss

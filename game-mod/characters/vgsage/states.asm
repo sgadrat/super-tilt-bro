@@ -33,6 +33,7 @@ VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_1 = CUSTOM_PLAYER_STATES_BEGIN + 18 ; 18
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_2 = CUSTOM_PLAYER_STATES_BEGIN + 19 ; 19
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_3 = CUSTOM_PLAYER_STATES_BEGIN + 20 ; 1a
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_4 = CUSTOM_PLAYER_STATES_BEGIN + 21 ; 1b
+VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_5 = CUSTOM_PLAYER_STATES_BEGIN + 22 ; 1c
 
 ;
 ; Gameplay constants
@@ -683,7 +684,7 @@ vgsage_global_onground:
 			; Tick clock
 			dec player_a_state_clock, x
 			bpl end
-				jmp resume_game
+				jmp vgsage_start_restore_screen
 				; No return, jump to subroutine
 
 			end:
@@ -728,53 +729,45 @@ vgsage_global_onground:
 #undef ATT
 			NOOP = 255
 			anim_frames_lsb:
-			.byt <hack_flatland_attributes, <(hack_flatland_attributes+4*8), <hack_flatland_palette
 			.byt <anim_7, <anim_6, NOOP, <anim_3, <anim_2, <anim_1, <anim_5, <anim_4
 			anim_frames_msb:
-			.byt >hack_flatland_attributes, >(hack_flatland_attributes+4*8), >hack_flatland_palette
 			.byt >anim_7, >anim_6, NOOP, >anim_3, >anim_2, >anim_1, >anim_5, >anim_4
 
-			illustration_palette_header:
-			.byt $3f, $00, $10
 			top_header:
 			.byt $23, $c0, $20
 			bot_header:
 			.byt $23, $e0, $20
 
 			anim_headers_lsb:
-			.byt <top_header, <bot_header, <illustration_palette_header
 			.byt <top_header, <bot_header, NOOP, <top_header, <bot_header, <bot_header, <top_header, <bot_header
 			anim_headers_msb:
-			.byt >top_header, >bot_header, >illustration_palette_header
 			.byt >top_header, >bot_header, NOOP, >top_header, >bot_header, >bot_header, >top_header, >bot_header
 
 			&NUM_ANIM_STEPS = anim_headers_msb - anim_headers_lsb
+		.)
+	.)
 
-			;FIXME hardcoded for flatland, call a stage routine to do the repaint in dedicated logic
-			hack_flatland_palette:
-			.byt $0f,$21,$00,$10, $0f,$21,$00,$31, $0f,$21,$19,$31, $0f,$00,$00,$00
+	; Step - Restore screen
+	;TODO investigate - may not deserve its own state, if setting stage_restore_screen_step has no impact until next frame, it could be done at the end of knight animation step
+	.(
+		&vgsage_start_restore_screen:
+		.(
+			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_5
+			sta player_a_state, x
+			rts
+		.)
 
-			hack_flatland_attributes:
-			.byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
-			.byt %00000000, %00000000, %01010101, %00000000, %00000000, %01010101, %01010101, %01010101
-			.byt %01010101, %01010101, %00000000, %00000000, %00000000, %00000000, %01010101, %01010101
-			.byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
-			.byt %00000000, %00001000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
-			.byt %01010000, %00010001, %00000000, %00000000, %00000000, %00000000, %01000100, %01010000
-			.byt %01010101, %00010001, %00000000, %00000000, %00000000, %00000000, %01000100, %01010101
-			.byt %01010101, %00010001, %00000000, %00000000, %00000000, %00000000, %01000100, %01010101
+		+vgsage_tick_special_restore_screen:
+		.(
+			lda #0
+			sta stage_restore_screen_step
+			jmp resume_game
+			;rts ; useless, jump to subroutine
 		.)
 	.)
 
 	resume_game:
 	.(
-#if 0
-		; Come back to top screen
-		lda ppuctrl_val
-		and #%11111100
-		sta ppuctrl_val
-#endif
-
 		; Hurt opponent
 		;  optimisable - avoid hurt_player routine, call apply_force_vector_direct to not setup the hitbox just to read it in tmpfields
 		;  could also be better to use a hitbox in the animation (just ensure it connects someway)

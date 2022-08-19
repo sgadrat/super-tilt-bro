@@ -1,3 +1,5 @@
+stage_flatland_palette_ntbuffer:
+.byt $3f, $00, $10
 stage_flatland_palette:
 .byt $0f,$21,$00,$10, $0f,$21,$00,$31, $0f,$21,$19,$31, $0f,$00,$00,$00
 

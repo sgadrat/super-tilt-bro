@@ -15245,6 +15245,16 @@
       "start_routine": null,
       "type": "character_state",
       "update_routine": "vgsage_tick_special_draw_slash"
+    },
+    {
+      "type": "character_state",
+      "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_5",
+      "start_routine": null,
+      "update_routine": "vgsage_tick_special_restore_screen",
+      "input_routine": "keep_input_dirty",
+      "onground_routine": "vgsage_global_onground",
+      "offground_routine": "dummy_routine",
+      "onhurt_routine": "dummy_routine"
     }
   ],
   "tileset": {
