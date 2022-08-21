@@ -91,7 +91,7 @@
 		lda DIRECTION_RIGHT
 		sta player_a_direction
 
-		lda HITBOX_DISABLED
+		lda #HITBOX_DISABLED
 		sta player_a_hitbox_enabled
 		sta player_b_hitbox_enabled
 

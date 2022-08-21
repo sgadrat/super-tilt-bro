@@ -178,6 +178,8 @@ switch_bank:
 ;  extra_tmpfield4 - number of the PRG-BANK to return to
 ;
 ; Overwrites register A
+;
+; Note - Called routine can override parameters without affecting trampoline's behaviour (it is notably safe to modify extra_tmpfield4)
 trampoline:
 .(
 	lda extra_tmpfield4

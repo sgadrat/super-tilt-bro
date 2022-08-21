@@ -314,8 +314,8 @@ stb_animation_draw:
 			lda first_tick_on_this_frame
 			bne ignore_enabled
 				lda (frame_vector), y
-				ora player_a_hitbox_enabled, x
-				sta player_a_hitbox_enabled, x
+				beq ignore_enabled
+					sta player_a_hitbox_enabled, x
 			ignore_enabled:
 			iny
 

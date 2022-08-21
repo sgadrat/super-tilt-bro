@@ -756,6 +756,7 @@ player_b_extra_tick:
 		TRAMPOLINE(player_state_action, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
 
 		; Call the state input routine if input changed
+		;ldx #$01 ; useless, done above (and character update routine is not allowed to alter it)
 		lda controller_a_btns, x
 		cmp controller_a_last_frame_btns, x
 		beq end_input_event

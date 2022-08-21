@@ -13,9 +13,9 @@ Registers
 ---------
 
  * ``A``: output: Can be modified
- * ``X``: output: cannot be modified not restored by check_player_position, used in loop by init_game_state), input: Contains player number
+ * ``X``: output: Cannot be modified, input: Contains player number
  * ``Y``: output: Can be modified
- * ``player_number``: output: to be checked if can be modified, input: not ensured to be set
+ * ``player_number``: output: Can be modified, input: not ensured to be set
  * ``tmpfields``: Can be modified
  * ``extra_tmpfields``: To be checked
 
@@ -34,6 +34,13 @@ Tick routines constraints generally apply, as start routines are often called fr
 Constraints on input routines
 =============================
 
+ * ``A``: output: Can be modified
+ * ``X``: output: Cannot be modified, input: Contains player number
+ * ``Y``: output: Can be modified
+ * ``player_number``: output: Can be modified, input: not ensured to be set
+ * ``tmpfields``: Can be modified
+ * ``extra_tmpfields``: To be checked
+
 Constraints on onhurt routines
 ==============================
 
@@ -48,9 +55,24 @@ Registers
  * ``tmpfield11``: output: cannot be modified, input: Player number of the stroke (equal to register X)
  * ``other tmpfields``: output: can be modified, input garbage
 
-
 Constraints on onground routines
 ================================
 
 Constraints on offground routines
 =================================
+
+Custom hitboxes
+===============
+
+Most of the time you'd want to use direct hitbox, containing knockback and damage info to be handled automatically by the engine.
+
+In some case, you may need more flexibility and here comes the custom hitbox. It is defined by setting hitbox enabled byte to ``2`` (instead of ``1`` for direct hitboxes), and a routine pointer in place of knockback parameters.
+
+Constraints on the callback
+---------------------------
+
+ * ``A``: output: Can be modified, input: Garbage
+ * ``X``: output: Can be modified, input: Player number
+ * ``Y``: output: Can be modified, input: Type of the collided object (HITBOX or HURTBOX defined in global constants)
+ * ``player_number``: output: Can be modified, input: Not ensured to be set
+ * ``tmpfields``: output: can be modified, input: Garbage

@@ -1493,7 +1493,7 @@ kiki_global_onground:
 		bcc hurt
 
 			ldy striker_player
-			lda HITBOX_DISABLED
+			lda #HITBOX_DISABLED
 			sta player_a_hitbox_enabled, y
 
 			jsr reset_default_gravity
