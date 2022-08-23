@@ -2,6 +2,7 @@
 
 import re
 import stblib.animations
+import stblib.asmformat
 from stblib.utils import asmint, asmsint8, asmsint16, intasm8, intasm16, uintasm8
 import sys
 
@@ -37,18 +38,7 @@ def frame_to_asm(frame, visibility=''):
 
 	# Hitbox
 	if frame.hitbox is not None:
-		serialized += 'ANIM_HITBOX(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)\n' % (
-			'$01' if frame.hitbox.enabled else '$00',
-			uintasm8(frame.hitbox.damages),
-			intasm16(frame.hitbox.base_h),
-			intasm16(frame.hitbox.base_v),
-			intasm16(frame.hitbox.force_h),
-			intasm16(frame.hitbox.force_v),
-			intasm8(frame.hitbox.left),
-			intasm8(frame.hitbox.right),
-			intasm8(frame.hitbox.top),
-			intasm8(frame.hitbox.bottom)
-		)
+		serialized += stblib.asmformat.to_asm(frame.hitbox)
 	else:
 		serialized += 'ANIM_NULL_HITBOX\n'
 
@@ -65,6 +55,30 @@ def frame_to_asm(frame, visibility=''):
 		serialized += sprite_to_asm(sprite)
 
 	return serialized
+
+def directhitbox_to_asm(hitbox, visibility=''):
+	return 'ANIM_DIRECT_HITBOX(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)\n' % (
+		'$01' if hitbox.enabled else '$00',
+		uintasm8(hitbox.damages),
+		intasm16(hitbox.base_h),
+		intasm16(hitbox.base_v),
+		intasm16(hitbox.force_h),
+		intasm16(hitbox.force_v),
+		intasm8(hitbox.left),
+		intasm8(hitbox.right),
+		intasm8(hitbox.top),
+		intasm8(hitbox.bottom)
+	)
+
+def customhitbox_to_asm(hitbox, visibility=''):
+	return 'ANIM_CUSTOM_HITBOX(%s, %s, %s, %s, %s, %s)\n' % (
+		'$02' if hitbox.enabled else '$00',
+		intasm8(hitbox.left),
+		intasm8(hitbox.right),
+		intasm8(hitbox.top),
+		intasm8(hitbox.bottom),
+		hitbox.routine
+	)
 
 def sprite_to_asm(sprite, visibility=''):
 	return 'ANIM_SPRITE(%s, %s, %s, %s)\n' % (

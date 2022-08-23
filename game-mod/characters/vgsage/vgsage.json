@@ -5657,7 +5657,7 @@
             }
           ],
           "hitbox": {
-            "type": "animation_hitbox",
+            "type": "animation_direct_hitbox",
             "left": -10,
             "top": 0,
             "right": -2,
@@ -5781,7 +5781,7 @@
             }
           ],
           "hitbox": {
-            "type": "animation_hitbox",
+            "type": "animation_direct_hitbox",
             "left": 6,
             "top": 2,
             "right": 14,

@@ -1,3 +1,4 @@
+import re
 import struct
 
 def intasm8(i):
@@ -90,3 +91,12 @@ def str_to_tile_index(s, index_of_a = 0xe6, index_of_zero = 0xdb, special_cases 
 			res.append(index)
 
 	return res
+
+def valid_routine_name(routine):
+	"""
+	Return True if the name can be used as a routine label.
+
+	Params:
+		routine: name to check
+	"""
+	return re.match('^[a-z_]([a-z0-9_]*)', routine) is not None

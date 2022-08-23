@@ -317,7 +317,7 @@ def ora_to_character(image_file, char_name):
 						'hitbox', remove_qs(frame_child['name'])
 					)
 
-					hitbox = stblib.animations.Hitbox(
+					hitbox = stblib.animations.DirectHitbox(
 						enabled = hitbox_params.get('enabled', 'false') == 'true',
 						damages = int(hitbox_params.get('damages', '0')),
 						base_h = int(hitbox_params.get('base_h', '0')),

@@ -1,4 +1,4 @@
-from stblib import ensure
+from stblib import ensure, utils
 
 class Hurtbox:
 	def __init__(self, left=0, right=0, top=0, bottom=0):
@@ -15,18 +15,18 @@ class Hurtbox:
 		ensure(self.left <= self.right)
 		ensure(self.top <= self.bottom)
 
-class Hitbox:
+class DirectHitbox:
 	def __init__(self, enabled=False, damages=0, base_h=0, base_v=0, force_h=0, force_v=0, left=0, right=0, top=0, bottom=0):
 		self.enabled = enabled
+		self.left = left
+		self.right = right
+		self.top = top
+		self.bottom = bottom
 		self.damages = damages
 		self.base_h = base_h
 		self.base_v = base_v
 		self.force_h = force_h
 		self.force_v = force_v
-		self.left = left
-		self.right = right
-		self.top = top
-		self.bottom = bottom
 
 	def check(self):
 		ensure(-128 <= self.left and self.left <= 127)
@@ -35,6 +35,24 @@ class Hitbox:
 		ensure(-128 <= self.bottom and self.bottom <= 127)
 		ensure(self.left <= self.right)
 		ensure(self.top <= self.bottom)
+
+class CustomHitbox:
+	def __init__(self, enabled=False, left=0, right=0, top=0, bottom=0, routine=''):
+		self.enabled = enabled
+		self.left = left
+		self.right = right
+		self.top = top
+		self.bottom = bottom
+		self.routine = routine
+
+	def check(self):
+		ensure(-128 <= self.left and self.left <= 127)
+		ensure(-128 <= self.right and self.right <= 127)
+		ensure(-128 <= self.top and self.top <= 127)
+		ensure(-128 <= self.bottom and self.bottom <= 127)
+		ensure(self.left <= self.right)
+		ensure(self.top <= self.bottom)
+		ensure(utils.valid_routine_name(self.routine))
 
 class Sprite:
 	def __init__(self, y=0, tile='', attr=0, x=0, foreground=False):

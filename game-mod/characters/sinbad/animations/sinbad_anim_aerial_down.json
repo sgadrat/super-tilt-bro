@@ -67,7 +67,7 @@
 				"left": -15,
 				"right": -4,
 				"top": 10,
-				"type": "animation_hitbox"
+				"type": "animation_direct_hitbox"
 			},
 			"hurtbox": {
 				"bottom": 15,
@@ -133,7 +133,7 @@
 				"left": -12,
 				"right": 4,
 				"top": 8,
-				"type": "animation_hitbox"
+				"type": "animation_direct_hitbox"
 			},
 			"hurtbox": {
 				"bottom": 13,
@@ -191,7 +191,7 @@
 				"left": -5,
 				"right": 13,
 				"top": 15,
-				"type": "animation_hitbox"
+				"type": "animation_direct_hitbox"
 			},
 			"hurtbox": {
 				"bottom": 15,
@@ -249,7 +249,7 @@
 				"left": 4,
 				"right": 17,
 				"top": 6,
-				"type": "animation_hitbox"
+				"type": "animation_direct_hitbox"
 			},
 			"hurtbox": {
 				"bottom": 13,
@@ -307,7 +307,7 @@
 				"left": 12,
 				"right": 23,
 				"top": 10,
-				"type": "animation_hitbox"
+				"type": "animation_direct_hitbox"
 			},
 			"hurtbox": {
 				"bottom": 15,

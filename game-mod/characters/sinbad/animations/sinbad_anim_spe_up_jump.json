@@ -13,7 +13,7 @@
 				"left": -12,
 				"right": -1,
 				"top": 2,
-				"type": "animation_hitbox"
+				"type": "animation_direct_hitbox"
 			},
 			"hurtbox": {
 				"bottom": 15,

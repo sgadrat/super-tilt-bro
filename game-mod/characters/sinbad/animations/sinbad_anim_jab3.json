@@ -121,7 +121,7 @@
 				"left": -9,
 				"right": -1,
 				"top": -6,
-				"type": "animation_hitbox"
+				"type": "animation_direct_hitbox"
 			},
 			"hurtbox": {
 				"bottom": 12,
@@ -187,7 +187,7 @@
 				"left": -5,
 				"right": -2,
 				"top": 21,
-				"type": "animation_hitbox"
+				"type": "animation_direct_hitbox"
 			},
 			"hurtbox": {
 				"bottom": 16,
@@ -261,7 +261,7 @@
 				"left": -6,
 				"right": 2,
 				"top": 2,
-				"type": "animation_hitbox"
+				"type": "animation_direct_hitbox"
 			},
 			"hurtbox": {
 				"bottom": 16,

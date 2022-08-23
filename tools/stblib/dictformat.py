@@ -10,12 +10,18 @@ def import_from_dict(source):
 		return None
 	if 'type' not in source:
 		raise Exception('object not explicitely typed: {}'.format(source))
-	return globals()['parse_{}'.format(source['type'])](source)
+	parser = 'parse_{}'.format(source['type'])
+	if parser not in globals():
+		raise Exception('Object type "{}" unknown by dictformat parsers: problematic object = {}'.format(source['type'], source))
+	return globals()[parser](source)
 
 def export_to_dict(obj):
 	if obj is None or type(obj) in [int, str, float, bool]:
 		return obj
-	return globals()['serialize_{}'.format(_mangle(type(obj)))](obj)
+	serializer = 'serialize_{}'.format(_mangle(type(obj)))
+	if serializer not in globals():
+		raise Exception('Object type "{}" unknown by dictformat serializers: problematic object = {}'.format(_mangle(type(obj)), obj))
+	return globals()[serializer](obj)
 
 def mandatory_get(source, field, typename=None):
 	if field in source:
@@ -45,16 +51,18 @@ def parse_animation(source):
 		frames = _import_list(mandatory_get(source, 'frames'))
 	)
 
-def parse_animation_frame(source):
-	return stblib.animations.Frame(
-		duration = mandatory_get(source, 'duration'),
-		hurtbox = import_from_dict(mandatory_get(source, 'hurtbox')),
-		hitbox = import_from_dict(mandatory_get(source, 'hitbox')),
-		sprites = _import_list(mandatory_get(source, 'sprites'))
+def parse_animation_custom_hitbox(source):
+	return stblib.animations.CustomHitbox(
+		enabled = mandatory_get(source, 'enabled'),
+		left = mandatory_get(source, 'left'),
+		right = mandatory_get(source, 'right'),
+		top = mandatory_get(source, 'top'),
+		bottom = mandatory_get(source, 'bottom'),
+		routine = mandatory_get(source, 'routine')
 	)
 
-def parse_animation_hitbox(source):
-	return stblib.animations.Hitbox(
+def parse_animation_direct_hitbox(source):
+	return stblib.animations.DirectHitbox(
 		enabled = mandatory_get(source, 'enabled'),
 		damages = mandatory_get(source, 'damages'),
 		base_h = mandatory_get(source, 'base_h'),
@@ -65,6 +73,14 @@ def parse_animation_hitbox(source):
 		right = mandatory_get(source, 'right'),
 		top = mandatory_get(source, 'top'),
 		bottom = mandatory_get(source, 'bottom')
+	)
+
+def parse_animation_frame(source):
+	return stblib.animations.Frame(
+		duration = mandatory_get(source, 'duration'),
+		hurtbox = import_from_dict(mandatory_get(source, 'hurtbox')),
+		hitbox = import_from_dict(mandatory_get(source, 'hitbox')),
+		sprites = _import_list(mandatory_get(source, 'sprites'))
 	)
 
 def parse_animation_hurtbox(source):
@@ -237,11 +253,14 @@ def _serialize_object(obj_type, obj):
 def serialize_stblib_animations_animation(obj):
 	return _serialize_object('animation', obj)
 
+def serialize_stblib_animations_customhitbox(obj):
+	return _serialize_object('animation_custom_hitbox', obj)
+
+def serialize_stblib_animations_directhitbox(obj):
+	return _serialize_object('animation_direct_hitbox', obj)
+
 def serialize_stblib_animations_frame(obj):
 	return _serialize_object('animation_frame', obj)
-
-def serialize_stblib_animations_hitbox(obj):
-	return _serialize_object('animation_hitbox', obj)
 
 def serialize_stblib_animations_hurtbox(obj):
 	return _serialize_object('animation_hurtbox', obj)
