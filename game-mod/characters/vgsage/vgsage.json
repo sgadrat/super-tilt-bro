@@ -8114,7 +8114,15 @@
               "y": 6
             }
           ],
-          "hitbox": null,
+          "hitbox": {
+            "type": "animation_custom_hitbox",
+            "left": -28,
+            "top": 6,
+            "right": -2,
+            "bottom": 12,
+            "enabled": true,
+            "routine": "vgsage_special_hit"
+          },
           "hurtbox": null
         },
         {
@@ -15221,8 +15229,8 @@
       "update_routine": "vgsage_tick_aerial_side"
     },
     {
-      "input_routine": "keep_input_dirty",
-      "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_0",
+      "input_routine": "dummy_routine",
+      "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_CHARGE",
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_global_onground",
       "onhurt_routine": "hurt_player",
@@ -15279,6 +15287,16 @@
       "onground_routine": "vgsage_global_onground",
       "offground_routine": "dummy_routine",
       "onhurt_routine": "dummy_routine"
+    },
+    {
+      "type": "character_state",
+      "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_PUNCH",
+      "start_routine": null,
+      "update_routine": "vgsage_tick_special_punch",
+      "input_routine": "keep_input_dirty",
+      "onground_routine": "vgsage_global_onground",
+      "offground_routine": "dummy_routine",
+      "onhurt_routine": "hurt_player"
     }
   ],
   "tileset": {

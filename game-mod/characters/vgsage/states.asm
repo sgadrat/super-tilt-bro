@@ -28,12 +28,13 @@ VGSAGE_STATE_AERIAL_NEUTRAL = CUSTOM_PLAYER_STATES_BEGIN + 13         ; 13
 VGSAGE_STATE_AERIAL_UP = CUSTOM_PLAYER_STATES_BEGIN + 14              ; 14
 VGSAGE_STATE_AERIAL_DOWN = CUSTOM_PLAYER_STATES_BEGIN + 15            ; 15
 VGSAGE_STATE_AERIAL_SIDE = CUSTOM_PLAYER_STATES_BEGIN + 16            ; 16
-VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_0 = CUSTOM_PLAYER_STATES_BEGIN + 17 ; 17
+VGSAGE_STATE_SPECIAL_NEUTRAL_CHARGE = CUSTOM_PLAYER_STATES_BEGIN + 17 ; 17
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_1 = CUSTOM_PLAYER_STATES_BEGIN + 18 ; 18
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_2 = CUSTOM_PLAYER_STATES_BEGIN + 19 ; 19
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_3 = CUSTOM_PLAYER_STATES_BEGIN + 20 ; 1a
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_4 = CUSTOM_PLAYER_STATES_BEGIN + 21 ; 1b
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_5 = CUSTOM_PLAYER_STATES_BEGIN + 22 ; 1c
+VGSAGE_STATE_SPECIAL_NEUTRAL_PUNCH = CUSTOM_PLAYER_STATES_BEGIN + 23  ; 1d
 
 ;
 ; Gameplay constants
@@ -386,7 +387,7 @@ vgsage_global_onground:
 .(
 	; Step - charge
 	!define "anim" {vgsage_anim_special_charge}
-	!define "state" {VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_0}
+	!define "state" {VGSAGE_STATE_SPECIAL_NEUTRAL_CHARGE}
 	!define "routine" {special}
 	;almost like "characters/tpl_aerial_attack_uncancellable.asm" (just need a custom exit routine, and custom duration, and sfx)
 	.(
@@ -439,7 +440,8 @@ vgsage_global_onground:
 
 			dec player_a_state_clock, x
 			bne end
-				jmp {char_name}_start_special_fadeout
+				jmp {char_name}_start_special_punch
+
 				; No return, jump to subroutine
 			end:
 			rts
@@ -449,19 +451,18 @@ vgsage_global_onground:
 	!undef "state"
 	!undef "routine"
 
-	; Step - fadeout
+	; Punch animation
 	.(
-		+vgsage_start_special_fadeout:
-		.(
-			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_1
-			sta player_a_state, x
+		duration:
+			.byt vgsage_anim_side_special_jump_dur_pal*2, vgsage_anim_side_special_jump_dur_ntsc*2
 
-			; Set the appropriate animation
-			lda #<vgsage_anim_side_special_jump
-			sta tmpfield13
-			lda #>vgsage_anim_side_special_jump
-			sta tmpfield14
-			jsr set_player_animation
+		&strong_hitbox_threshold:
+			.byt vgsage_anim_side_special_jump_dur_pal*2-4, vgsage_anim_side_special_jump_dur_ntsc*2-4
+
+		&vgsage_start_special_punch:
+		.(
+			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_PUNCH
+			sta player_a_state, x
 
 			; Stop any momentum
 			lda #0
@@ -469,6 +470,69 @@ vgsage_global_onground:
 			sta player_a_velocity_h, x
 			sta player_a_velocity_v_low, x
 			sta player_a_velocity_h_low, x
+
+			; Init clock
+			ldy system_index
+			lda duration, y
+			sta player_a_state_clock, x
+
+			; Set the appropriate animation
+			lda #<vgsage_anim_side_special_jump
+			sta tmpfield13
+			lda #>vgsage_anim_side_special_jump
+			sta tmpfield14
+			jmp set_player_animation
+		.)
+
+		;Note - pasted from tpl_aerial_attack_uncancellable
+		+vgsage_tick_special_punch:
+		.(
+#ifldef {char_name}_global_tick
+			jsr {char_name}_global_tick
+#endif
+
+			jsr {char_name}_apply_friction_lite
+
+			dec player_a_state_clock, x
+			bne end
+				jmp {char_name}_start_inactive_state
+				; No return, jump to subroutine
+			end:
+			rts
+		.)
+	.)
+
+	; Step - fadeout
+	.(
+		+vgsage_special_hit:
+		.(
+			; Choose action
+			;  - Do nothing if not in the "punch" state (sage's animation continue during knight animation, but must be inactive)
+			;  - Strong hit if connects in the first frames of the move
+			;  - Weak hit if connects late
+			lda player_a_state, x
+			cmp #VGSAGE_STATE_SPECIAL_NEUTRAL_PUNCH
+			bne skip
+			ldy system_index
+			lda player_a_state_clock, x
+			cmp strong_hitbox_threshold, y
+			bcs strong_hit
+
+				weak_hit:
+					;TODO maybe a kind of windbox
+					rts
+
+				skip:
+					rts
+
+				strong_hit:
+					; Fallthrough to vgsage_start_special_fadeout
+		.)
+
+		+vgsage_start_special_fadeout:
+		.(
+			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_1
+			sta player_a_state, x
 
 			; Set clock
 			lda #3*2
