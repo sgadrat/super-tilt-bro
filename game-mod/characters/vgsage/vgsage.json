@@ -5656,7 +5656,19 @@
               "y": 8
             }
           ],
-          "hitbox": null,
+          "hitbox": {
+            "type": "animation_hitbox",
+            "left": -10,
+            "top": 0,
+            "right": -2,
+            "bottom": 14,
+            "base_h": -500,
+            "base_v": 0,
+            "force_h": 0,
+            "force_v": 0,
+            "damages": 1,
+            "enabled": true
+          },
           "hurtbox": null
         },
         {
@@ -5768,7 +5780,19 @@
               "y": 0
             }
           ],
-          "hitbox": null,
+          "hitbox": {
+            "type": "animation_hitbox",
+            "left": 6,
+            "top": 2,
+            "right": 14,
+            "bottom": 16,
+            "base_h": -500,
+            "base_v": -500,
+            "force_h": 0,
+            "force_v": 0,
+            "damages": 1,
+            "enabled": true
+          },
           "hurtbox": null
         },
         {
@@ -5828,7 +5852,7 @@
           "hurtbox": null
         }
       ],
-      "name": "vgsage_anim_special",
+      "name": "vgsage_anim_special_charge",
       "type": "animation"
     },
     {
@@ -9594,7 +9618,7 @@
           "hurtbox": null
         }
       ],
-      "name": "vgsage_anim_special_charge",
+      "name": "vgsage_todo_find_use_01",
       "type": "animation"
     },
     {

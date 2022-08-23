@@ -385,7 +385,7 @@ vgsage_global_onground:
 
 .(
 	; Step - charge
-	!define "anim" {vgsage_anim_special}
+	!define "anim" {vgsage_anim_special_charge}
 	!define "state" {VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_0}
 	!define "routine" {special}
 	;almost like "characters/tpl_aerial_attack_uncancellable.asm" (just need a custom exit routine, and custom duration, and sfx)
