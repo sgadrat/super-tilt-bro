@@ -8121,7 +8121,12 @@
             "right": -2,
             "bottom": 12,
             "enabled": true,
-            "routine": "vgsage_special_hit"
+            "routine": "vgsage_special_hit",
+            "directional1": -1024,
+            "directional2": 0,
+            "value1": 0,
+            "value2": 0,
+            "value3": 0
           },
           "hurtbox": null
         },
@@ -8178,7 +8183,20 @@
               "y": 6
             }
           ],
-          "hitbox": null,
+          "hitbox": {
+            "type": "animation_custom_hitbox",
+            "left": -28,
+            "top": 6,
+            "right": -2,
+            "bottom": 12,
+            "enabled": false,
+            "routine": "vgsage_special_hit",
+            "directional1": -1024,
+            "directional2": 0,
+            "value1": 0,
+            "value2": 0,
+            "value3": 0
+          },
           "hurtbox": null
         }
       ],

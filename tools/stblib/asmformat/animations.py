@@ -71,13 +71,18 @@ def directhitbox_to_asm(hitbox, visibility=''):
 	)
 
 def customhitbox_to_asm(hitbox, visibility=''):
-	return 'ANIM_CUSTOM_HITBOX(%s, %s, %s, %s, %s, %s)\n' % (
+	return 'ANIM_CUSTOM_HITBOX(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)\n' % (
 		'$02' if hitbox.enabled else '$00',
 		intasm8(hitbox.left),
 		intasm8(hitbox.right),
 		intasm8(hitbox.top),
 		intasm8(hitbox.bottom),
-		hitbox.routine
+		hitbox.routine,
+		intasm16(hitbox.directional1),
+		intasm16(hitbox.directional2),
+		uintasm8(hitbox.value1),
+		uintasm8(hitbox.value2),
+		uintasm8(hitbox.value3)
 	)
 
 def sprite_to_asm(sprite, visibility=''):

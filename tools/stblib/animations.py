@@ -37,13 +37,18 @@ class DirectHitbox:
 		ensure(self.top <= self.bottom)
 
 class CustomHitbox:
-	def __init__(self, enabled=False, left=0, right=0, top=0, bottom=0, routine=''):
+	def __init__(self, enabled=False, left=0, right=0, top=0, bottom=0, routine='', directional1=0, directional2=0, value1=0, value2=0, value3=0):
 		self.enabled = enabled
 		self.left = left
 		self.right = right
 		self.top = top
 		self.bottom = bottom
 		self.routine = routine
+		self.directional1 = directional1
+		self.directional2 = directional2
+		self.value1 = value1
+		self.value2 = value2
+		self.value3 = value3
 
 	def check(self):
 		ensure(-128 <= self.left and self.left <= 127)
@@ -53,6 +58,11 @@ class CustomHitbox:
 		ensure(self.left <= self.right)
 		ensure(self.top <= self.bottom)
 		ensure(utils.valid_routine_name(self.routine))
+		ensure(-32768 <= self.directional1 and self.directional1 <= 32767, 'directional1 value of {} is out of int16 bounds'.format(self.directional1))
+		ensure(-32768 <= self.directional2 and self.directional2 <= 32767, 'directional2 value of {} is out of int16 bounds'.format(self.directional2))
+		ensure(0 <= self.value1 and self.value1 <= 255, 'value1 ({}) is out of uint8 bounds'.format(self.value1))
+		ensure(0 <= self.value2 and self.value2 <= 255, 'value2 ({}) is out of uint8 bounds'.format(self.value1))
+		ensure(0 <= self.value3 and self.value3 <= 255, 'value3 ({}) is out of uint8 bounds'.format(self.value1))
 
 class Sprite:
 	def __init__(self, y=0, tile='', attr=0, x=0, foreground=False):

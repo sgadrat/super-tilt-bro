@@ -329,9 +329,9 @@ check_player_hit:
 							ldy config_player_a_character, x
 							SWITCH_BANK(characters_bank_number COMMA y)
 							ldy #HITBOX
-							lda player_a_hitbox_hit_lsb, x
+							lda player_a_custom_hitbox_routine_lsb, x
 							sta tmpfield1
-							lda player_a_hitbox_hit_msb, x
+							lda player_a_custom_hitbox_routine_msb, x
 							sta tmpfield2
 							jsr call_pointed_subroutine
 							jmp end
@@ -411,9 +411,9 @@ check_player_hit:
 						ldy config_player_a_character, x
 						SWITCH_BANK(characters_bank_number COMMA y)
 						ldy #HURTBOX
-						lda player_a_hitbox_hit_lsb, x
+						lda player_a_custom_hitbox_routine_lsb, x
 						sta tmpfield1
-						lda player_a_hitbox_hit_msb, x
+						lda player_a_custom_hitbox_routine_msb, x
 						sta tmpfield2
 						jsr call_pointed_subroutine
 						jmp end

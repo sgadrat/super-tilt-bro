@@ -385,6 +385,8 @@ vgsage_global_onground:
 ;
 
 .(
+	windbox_enabled = player_a_state_field1
+
 	; Step - charge
 	!define "anim" {vgsage_anim_special_charge}
 	!define "state" {VGSAGE_STATE_SPECIAL_NEUTRAL_CHARGE}
@@ -457,7 +459,7 @@ vgsage_global_onground:
 			.byt vgsage_anim_side_special_jump_dur_pal*2, vgsage_anim_side_special_jump_dur_ntsc*2
 
 		&strong_hitbox_threshold:
-			.byt vgsage_anim_side_special_jump_dur_pal*2-4, vgsage_anim_side_special_jump_dur_ntsc*2-4
+			.byt vgsage_anim_side_special_jump_dur_pal*2-1, vgsage_anim_side_special_jump_dur_ntsc*2-1
 
 		&vgsage_start_special_punch:
 		.(
@@ -470,6 +472,10 @@ vgsage_global_onground:
 			sta player_a_velocity_h, x
 			sta player_a_velocity_v_low, x
 			sta player_a_velocity_h_low, x
+
+			; Enable windbox (zero is enabled to save a LDA)
+			;lda #0 ; useless, done above
+			sta windbox_enabled, x
 
 			; Init clock
 			ldy system_index
@@ -518,9 +524,45 @@ vgsage_global_onground:
 			cmp strong_hitbox_threshold, y
 			bcs strong_hit
 
+				; Weak hit is a windbox
 				weak_hit:
-					;TODO maybe a kind of windbox
+				.(
+					player_a_force_h_lsb = player_a_custom_hitbox_directional1_lsb
+					player_a_force_h_msb = player_a_custom_hitbox_directional1_msb
+					force_h_lsb = tmpfield1
+					force_h_msb = tmpfield2
+
+					; Do nothing if windbox already hit
+					lda windbox_enabled, x
+					bne end_windbox
+
+						; Store wind power at fixed location
+						lda player_a_force_h_lsb, x
+						sta force_h_lsb
+						lda player_a_force_h_msb, x
+						sta force_h_msb
+
+						; Add wind force to opponent's velocity
+						stx player_number
+						SWITCH_SELECTED_PLAYER
+
+						lda player_a_velocity_h_low, x
+						clc
+						adc force_h_lsb
+						sta player_a_velocity_h_low, x
+						lda player_a_velocity_h, x
+						adc force_h_msb
+						sta player_a_velocity_h, x
+
+						ldx player_number
+
+						; Disable windbox
+						lda #1
+						sta windbox_enabled, x
+
+					end_windbox:
 					rts
+				.)
 
 				skip:
 					rts

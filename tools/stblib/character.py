@@ -83,7 +83,7 @@ class AiAttack:
 	def __init__(self, action='', hitbox=None, constraints=0):
 		self.action = action
 		self.constraints = constraints
-		self.hitbox = hitbox if hitbox is not None else AiHitbox
+		self.hitbox = hitbox if hitbox is not None else AiHitbox()
 
 	def constraint_set(self, constraint):
 		return self.constraints & constraint != 0

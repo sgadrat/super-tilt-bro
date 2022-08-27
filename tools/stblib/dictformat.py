@@ -1,3 +1,4 @@
+from stblib import ensure
 import stblib.animations
 import stblib.character
 import stblib.gamemod
@@ -45,81 +46,59 @@ def _import_list(source):
 		res.append(import_from_dict(item))
 	return res
 
+def _parse_object(obj_class, source):
+	# Create object of the parsed type, and get its attributes list
+	parsed = obj_class()
+	attributes = [att for att in dir(parsed) if att[0] != '_' and not callable(getattr(parsed, att))]
+
+	# Check that source dict contains all attributes
+	for att in attributes:
+		ensure(att in source, 'missing attribute "{}" when parsing a {}: {}'.format(att, parsed.__class__.__name__, source))
+	for att in source:
+		ensure(att == 'type' or att in attributes, 'unknown attribute "{}" when parsing a {}: {}'.format(att, parsed.__class__.__name__, source))
+
+	# Copy attributes in parsed object
+	for att in attributes:
+		att_value = source[att]
+		parsed_att = None
+		if isinstance(att_value, dict):
+			parsed_att = import_from_dict(att_value)
+		elif isinstance(att_value, list):
+			parsed_att = _import_list(att_value)
+		else:
+			ensure(
+				att_value.__class__.__name__ in ['bool', 'float', 'int', 'NoneType', 'str'],
+				'unparsable attribute "{}" of source type "{}": {}'.format(att, att_value.__class__.__name__, source)
+			)
+			parsed_att = att_value
+
+		setattr(parsed, att, parsed_att)
+
+	return parsed
+
 def parse_animation(source):
-	return stblib.animations.Animation(
-		name = mandatory_get(source, 'name'),
-		frames = _import_list(mandatory_get(source, 'frames'))
-	)
+	return _parse_object(stblib.animations.Animation, source)
 
 def parse_animation_custom_hitbox(source):
-	return stblib.animations.CustomHitbox(
-		enabled = mandatory_get(source, 'enabled'),
-		left = mandatory_get(source, 'left'),
-		right = mandatory_get(source, 'right'),
-		top = mandatory_get(source, 'top'),
-		bottom = mandatory_get(source, 'bottom'),
-		routine = mandatory_get(source, 'routine')
-	)
+	return _parse_object(stblib.animations.CustomHitbox, source)
 
 def parse_animation_direct_hitbox(source):
-	return stblib.animations.DirectHitbox(
-		enabled = mandatory_get(source, 'enabled'),
-		damages = mandatory_get(source, 'damages'),
-		base_h = mandatory_get(source, 'base_h'),
-		base_v = mandatory_get(source, 'base_v'),
-		force_h = mandatory_get(source, 'force_h'),
-		force_v = mandatory_get(source, 'force_v'),
-		left = mandatory_get(source, 'left'),
-		right = mandatory_get(source, 'right'),
-		top = mandatory_get(source, 'top'),
-		bottom = mandatory_get(source, 'bottom')
-	)
+	return _parse_object(stblib.animations.DirectHitbox, source)
 
 def parse_animation_frame(source):
-	return stblib.animations.Frame(
-		duration = mandatory_get(source, 'duration'),
-		hurtbox = import_from_dict(mandatory_get(source, 'hurtbox')),
-		hitbox = import_from_dict(mandatory_get(source, 'hitbox')),
-		sprites = _import_list(mandatory_get(source, 'sprites'))
-	)
+	return _parse_object(stblib.animations.Frame, source)
 
 def parse_animation_hurtbox(source):
-	return stblib.animations.Hurtbox(
-		left = mandatory_get(source, 'left'),
-		right = mandatory_get(source, 'right'),
-		top = mandatory_get(source, 'top'),
-		bottom = mandatory_get(source, 'bottom')
-	)
+	return _parse_object(stblib.animations.Hurtbox, source)
 
 def parse_animation_sprite(source):
-	return stblib.animations.Sprite(
-		y = mandatory_get(source, 'y'),
-		tile = mandatory_get(source, 'tile'),
-		attr = source['attr'] if isinstance(source['attr'], int) else import_from_dict(source['attr']),
-		x = mandatory_get(source, 'x'),
-		foreground = mandatory_get(source, 'foreground')
-	)
+	return _parse_object(stblib.animations.Sprite, source)
 
 def parse_bg_metatile(source):
-	return stblib.stages.BackgroundMetaTile(x = source['x'], y = source['y'], tile_name = source['tile'])
+	return _parse_object(stblib.stages.BackgroundMetaTile, source)
 
 def parse_character(source):
-	return stblib.character.Character(
-		name = mandatory_get(source, 'name'),
-		sourcecode = mandatory_get(source, 'sourcecode'),
-		tileset = import_from_dict(mandatory_get(source, 'tileset')),
-		victory_animation = import_from_dict(mandatory_get(source, 'victory_animation')),
-		defeat_animation = import_from_dict(mandatory_get(source, 'defeat_animation')),
-		menu_select_animation = import_from_dict(mandatory_get(source, 'menu_select_animation')),
-		animations = _import_list(mandatory_get(source, 'animations')),
-		color_swaps = import_from_dict(mandatory_get(source, 'color_swaps')),
-		states = _import_list(mandatory_get(source, 'states')),
-		illustration_large = import_from_dict(mandatory_get(source, 'illustration_large')),
-		illustration_small = import_from_dict(mandatory_get(source, 'illustration_small')),
-		illustration_token = import_from_dict(mandatory_get(source, 'illustration_token')),
-		ai = import_from_dict(mandatory_get(source, 'ai')),
-		netload_routine = mandatory_get(source, 'netload_routine')
-	)
+	return _parse_object(stblib.character.Character, source)
 
 def parse_character_ai(source):
 	return stblib.character.Ai(
@@ -130,71 +109,37 @@ def parse_character_ai(source):
 	)
 
 def parse_character_ai_action(source):
-	return stblib.character.AiAction(
-		name = mandatory_get(source, 'name'),
-		steps = _import_list(mandatory_get(source, 'steps'))
-	)
+	return _parse_object(stblib.character.AiAction, source)
 
 def parse_character_ai_action_step(source):
-	return stblib.character.AiActionStep(
-		input = mandatory_get(source, 'input'),
-		duration = mandatory_get(source, 'duration')
-	)
+	return _parse_object(stblib.character.AiActionStep, source)
 
 def parse_character_ai_attack(source):
-	return stblib.character.AiAttack(
-		action = mandatory_get(source, 'action'),
-		hitbox = import_from_dict(mandatory_get(source, 'hitbox')),
-		constraints = mandatory_get(source, 'constraints')
-	)
+	return _parse_object(stblib.character.AiAttack, source)
 
 def parse_character_ai_hitbox(source):
-	return stblib.character.AiHitbox(
-		left = mandatory_get(source, 'left'),
-		right = mandatory_get(source, 'right'),
-		top = mandatory_get(source, 'top'),
-		bottom = mandatory_get(source, 'bottom')
-	)
+	return _parse_object(stblib.character.AiHitbox, source)
 
 def parse_character_colors(source):
-	return stblib.character.Colorswaps(
-		primary_colors = _import_list(mandatory_get(source, 'primary_colors')),
-		alternate_colors = _import_list(mandatory_get(source, 'alternate_colors')),
-		secondary_colors = _import_list(mandatory_get(source, 'secondary_colors'))
-	)
+	return _parse_object(stblib.character.Colorswaps, source)
 
 def parse_character_state(source):
-	return stblib.character.State(
-		name = mandatory_get(source, 'name'),
-		start_routine = source.get('start_routine'),
-		update_routine = mandatory_get(source, 'update_routine'),
-		offground_routine = mandatory_get(source, 'offground_routine'),
-		onground_routine = mandatory_get(source, 'onground_routine'),
-		input_routine = mandatory_get(source, 'input_routine'),
-		onhurt_routine = mandatory_get(source, 'onhurt_routine')
-	)
+	return _parse_object(stblib.character.State, source)
 
 def parse_gamemod(source):
-	return stblib.gamemod.GameMod(
-		characters = _import_list(mandatory_get(source, 'characters')),
-		tilesets = _import_list(mandatory_get(source, 'tilesets'))
-	)
+	return _parse_object(stblib.gamemod.GameMod, source)
 
 def parse_nametable(source):
-	return stblib.nametables.Nametable(name = source['name'], tilemap = source['tilemap'], attributes = source['attributes'])
+	return _parse_object(stblib.nametables.Nametable, source)
 
 def parse_palette(source):
 	return stblib.character.Palette(colors = mandatory_get(source, 'colors'))
 
 def parse_platform(source):
-	return stblib.stages.Platform(
-		left = source['left'], right = source['right'], top = source['top'], bottom = source['bottom']
-	)
+	return _parse_object(stblib.stages.Platform, source)
 
 def parse_smooth_platform(source):
-	return stblib.stages.SmoothPlatform(
-		left = source['left'], right = source['right'], top = source['top']
-	)
+	return _parse_object(stblib.stages.SmoothPlatform, source)
 
 def parse_sprite_attributes(source):
 	int_attributes = 0

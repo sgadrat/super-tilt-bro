@@ -5,9 +5,12 @@
 ; Hitbox format
 ;  | 0        | 1    | 2     | 3 .. 6                      | 7   | 8      | 9 .. 13              | 14      |
 ;  | presence | left | right | values negated by direction | top | bottom | values carbon copied | enabled |
-#define ANIM_DIRECT_HITBOX(enabled,damages,base_h,base_v,force_h,force_v,left,right,top,bottom) .byt $01, left, right, <base_h, >base_h, <force_h, >force_h, top, bottom, <base_v, >base_v, <force_v, >force_v, damages, enabled
-#define ANIM_CUSTOM_HITBOX(enabled,left,right,top,bottom,routine) .byt $01, left, right, 0, 0, 0, 0, top, bottom, <routine, >routine, 0, 0, 0, enabled
-#define ANIM_NULL_HITBOX .byt $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+#define ANIM_DIRECT_HITBOX(enabled,damages,base_h,base_v,force_h,force_v,left,right,top,bottom) \
+	.byt $01, left, right, <base_h, >base_h, <force_h, >force_h, top, bottom, <base_v, >base_v, <force_v, >force_v, damages, enabled
+#define ANIM_CUSTOM_HITBOX(enabled,left,right,top,bottom,routine,directional1,directional2,val1,val2,val3) \
+	.byt $01, left, right, <directional1, >directional1, <directional2, >directional2, top, bottom, <routine, >routine, val1, val2, val3, enabled
+#define ANIM_NULL_HITBOX \
+	.byt $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
 #define ANIM_HURTBOX(left,right,top,bottom) .byt left, right, top, bottom
 #define ANIM_NULL_HURTBOX .byt $00, $00, $00, $00
