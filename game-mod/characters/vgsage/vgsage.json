@@ -15257,6 +15257,16 @@
       "update_routine": "vgsage_tick_special"
     },
     {
+      "type": "character_state",
+      "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_PUNCH",
+      "start_routine": null,
+      "update_routine": "vgsage_tick_special_punch",
+      "input_routine": "keep_input_dirty",
+      "onground_routine": "vgsage_global_onground",
+      "offground_routine": "dummy_routine",
+      "onhurt_routine": "hurt_player"
+    },
+    {
       "input_routine": "keep_input_dirty",
       "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_1",
       "offground_routine": "dummy_routine",
@@ -15305,16 +15315,6 @@
       "onground_routine": "vgsage_global_onground",
       "offground_routine": "dummy_routine",
       "onhurt_routine": "dummy_routine"
-    },
-    {
-      "type": "character_state",
-      "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_PUNCH",
-      "start_routine": null,
-      "update_routine": "vgsage_tick_special_punch",
-      "input_routine": "keep_input_dirty",
-      "onground_routine": "vgsage_global_onground",
-      "offground_routine": "dummy_routine",
-      "onhurt_routine": "hurt_player"
     }
   ],
   "tileset": {
