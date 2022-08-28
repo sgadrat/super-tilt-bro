@@ -456,10 +456,10 @@ vgsage_global_onground:
 	; Punch animation
 	.(
 		duration:
-			.byt vgsage_anim_side_special_jump_dur_pal*2, vgsage_anim_side_special_jump_dur_ntsc*2
+			.byt vgsage_anim_special_punch_dur_pal*2, vgsage_anim_special_punch_dur_ntsc*2
 
 		&strong_hitbox_threshold:
-			.byt vgsage_anim_side_special_jump_dur_pal*2-1, vgsage_anim_side_special_jump_dur_ntsc*2-1
+			.byt vgsage_anim_special_punch_dur_pal*2-1, vgsage_anim_special_punch_dur_ntsc*2-1
 
 		&vgsage_start_special_punch:
 		.(
@@ -483,9 +483,9 @@ vgsage_global_onground:
 			sta player_a_state_clock, x
 
 			; Set the appropriate animation
-			lda #<vgsage_anim_side_special_jump
+			lda #<vgsage_anim_special_punch
 			sta tmpfield13
-			lda #>vgsage_anim_side_special_jump
+			lda #>vgsage_anim_special_punch
 			sta tmpfield14
 			jmp set_player_animation
 		.)
