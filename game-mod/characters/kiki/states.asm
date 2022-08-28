@@ -9,6 +9,7 @@ KIKI_STATE_THROWN = PLAYER_STATE_THROWN
 KIKI_STATE_RESPAWN_INVISIBLE = PLAYER_STATE_RESPAWN
 KIKI_STATE_INNEXISTANT = PLAYER_STATE_INNEXISTANT
 KIKI_STATE_SPAWN = PLAYER_STATE_SPAWN
+KIKI_STATE_OWNED = PLAYER_STATE_OWNED
 KIKI_STATE_IDLE = PLAYER_STATE_STANDING
 KIKI_STATE_RUNNING = PLAYER_STATE_RUNNING
 KIKI_STATE_FALLING = CUSTOM_PLAYER_STATES_BEGIN + 0
@@ -607,6 +608,7 @@ kiki_global_onground:
 !include "characters/std_helpless.asm"
 !include "characters/std_shielding.asm"
 !include "characters/std_walljumping.asm"
+!include "characters/std_owned.asm"
 
 ;
 ; Side Tilt

@@ -184,6 +184,10 @@
 			"type": "import"
 		},
 		{
+			"src": "characters/kiki/animations/kiki_anim_owned.json",
+			"type": "import"
+		},
+		{
 			"src": "characters/kiki/animations/kiki_anim_paint_down.json",
 			"type": "import"
 		},
@@ -544,6 +548,16 @@
 			"update_routine": "kiki_tick_spawn"
 		},
 		{
+			"type": "character_state",
+			"name": "KIKI_STATE_OWNED",
+			"start_routine": "kiki_start_owned",
+			"update_routine": "dummy_routine",
+			"input_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"offground_routine": "dummy_routine",
+			"onhurt_routine": "dummy_routine"
+		},
+		{
 			"input_routine": "kiki_input_idle",
 			"name": "KIKI_STATE_IDLE",
 			"offground_routine": "kiki_start_falling",
@@ -861,7 +875,11 @@
 			"KIKI_TILE_70",
 			"KIKI_TILE_71",
 			"KIKI_TILE_72",
-			"KIKI_TILE_73"
+			"KIKI_TILE_73",
+			"KIKI_TILE_74",
+			"KIKI_TILE_75",
+			"KIKI_TILE_76",
+			"KIKI_TILE_77"
 		],
 		"type": "tileset"
 	},

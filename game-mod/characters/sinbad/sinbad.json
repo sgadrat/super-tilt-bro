@@ -156,6 +156,10 @@
 			"type": "import"
 		},
 		{
+			"src": "characters/sinbad/animations/sinbad_anim_owned.json",
+			"type": "import"
+		},
+		{
 			"src": "characters/sinbad/animations/sinbad_anim_respawn.json",
 			"type": "import"
 		},
@@ -526,6 +530,16 @@
 			"start_routine": "sinbad_start_spawn",
 			"type": "character_state",
 			"update_routine": "sinbad_tick_spawn"
+		},
+		{
+			"type": "character_state",
+			"name": "SINBAD_STATE_OWNED",
+			"start_routine": "sinbad_start_owned",
+			"update_routine": "dummy_routine",
+			"input_routine": "dummy_routine",
+			"onground_routine": "dummy_routine",
+			"offground_routine": "dummy_routine",
+			"onhurt_routine": "dummy_routine"
 		},
 		{
 			"input_routine": "sinbad_input_idle",

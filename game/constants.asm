@@ -35,16 +35,17 @@ GAME_MODE_LOCAL = $00
 GAME_MODE_ONLINE = $01
 GAME_MODE_ARCADE = $02
 
-; States used by the game engine, they must have a referenced start_routine
+; States that may be started by external code, they must have a referenced start_routine
 PLAYER_STATE_THROWN = $00
 PLAYER_STATE_RESPAWN = $01
 PLAYER_STATE_INNEXISTANT = $02
 PLAYER_STATE_SPAWN = $03
+PLAYER_STATE_OWNED = $04
 ; States used by generic AI to check player's state, no need for a referenced start_routine
-PLAYER_STATE_STANDING = $04
-PLAYER_STATE_RUNNING = $05
+PLAYER_STATE_STANDING = $05
+PLAYER_STATE_RUNNING = $06
 ; End of standard player states, from this index characters are free to define custom states
-CUSTOM_PLAYER_STATES_BEGIN = $06
+CUSTOM_PLAYER_STATES_BEGIN = $07
 
 PLAYER_RESPAWN_INVISIBLE_DURATION = 35
 PLAYER_RESPAWN_MAX_DURATION = 200 ; Beware max is 212 (ntsc counterpart would overflow above that)
