@@ -510,69 +510,91 @@ vgsage_global_onground:
 		.)
 	.)
 
+	+vgsage_special_hit:
+	.(
+		; Choose action
+		;  - Do nothing if not in the "punch" state (sage's animation continue during knight animation, but must be inactive)
+		;  - Strong hit if connects in the first frames of the move
+		;  - Weak hit if connects late
+		lda player_a_state, x
+		cmp #VGSAGE_STATE_SPECIAL_NEUTRAL_PUNCH
+		bne skip
+		ldy system_index
+		lda player_a_state_clock, x
+		cmp strong_hitbox_threshold, y
+		bcs strong_hit
+
+			; Weak hit is a windbox
+			weak_hit:
+			.(
+				player_a_force_h_lsb = player_a_custom_hitbox_directional1_lsb
+				player_a_force_h_msb = player_a_custom_hitbox_directional1_msb
+				force_h_lsb = tmpfield1
+				force_h_msb = tmpfield2
+
+				; Do nothing if windbox already hit
+				lda windbox_enabled, x
+				bne end_windbox
+
+					; Store wind power at fixed location
+					lda player_a_force_h_lsb, x
+					sta force_h_lsb
+					lda player_a_force_h_msb, x
+					sta force_h_msb
+
+					; Add wind force to opponent's velocity
+					stx player_number
+					SWITCH_SELECTED_PLAYER
+
+					lda player_a_velocity_h_low, x
+					clc
+					adc force_h_lsb
+					sta player_a_velocity_h_low, x
+					lda player_a_velocity_h, x
+					adc force_h_msb
+					sta player_a_velocity_h, x
+
+					ldx player_number
+
+					; Disable windbox
+					lda #1
+					sta windbox_enabled, x
+
+				end_windbox:
+				rts
+			.)
+
+			skip:
+				rts
+
+			strong_hit:
+			.(
+				; Put opponent in owned state
+				SWITCH_SELECTED_PLAYER
+				lda #PLAYER_STATE_OWNED
+				sta player_a_state, x
+				ldy config_player_a_character, x
+				lda characters_start_routines_table_lsb, y
+				sta tmpfield1
+				lda characters_start_routines_table_msb, y
+				sta tmpfield2
+				TRAMPOLINE(player_state_action, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
+
+				; Cancel any opponent's momentum
+				lda #0
+				sta player_a_velocity_v_low, x
+				sta player_a_velocity_v, x
+				sta player_a_velocity_h_low, x
+				sta player_a_velocity_h, x
+
+				; Start knight's animation
+				SWITCH_SELECTED_PLAYER
+				;jmp vgsage_start_special_fadeout ; useless, fallthrough
+			.)
+	.)
+
 	; Step - fadeout
 	.(
-		+vgsage_special_hit:
-		.(
-			; Choose action
-			;  - Do nothing if not in the "punch" state (sage's animation continue during knight animation, but must be inactive)
-			;  - Strong hit if connects in the first frames of the move
-			;  - Weak hit if connects late
-			lda player_a_state, x
-			cmp #VGSAGE_STATE_SPECIAL_NEUTRAL_PUNCH
-			bne skip
-			ldy system_index
-			lda player_a_state_clock, x
-			cmp strong_hitbox_threshold, y
-			bcs strong_hit
-
-				; Weak hit is a windbox
-				weak_hit:
-				.(
-					player_a_force_h_lsb = player_a_custom_hitbox_directional1_lsb
-					player_a_force_h_msb = player_a_custom_hitbox_directional1_msb
-					force_h_lsb = tmpfield1
-					force_h_msb = tmpfield2
-
-					; Do nothing if windbox already hit
-					lda windbox_enabled, x
-					bne end_windbox
-
-						; Store wind power at fixed location
-						lda player_a_force_h_lsb, x
-						sta force_h_lsb
-						lda player_a_force_h_msb, x
-						sta force_h_msb
-
-						; Add wind force to opponent's velocity
-						stx player_number
-						SWITCH_SELECTED_PLAYER
-
-						lda player_a_velocity_h_low, x
-						clc
-						adc force_h_lsb
-						sta player_a_velocity_h_low, x
-						lda player_a_velocity_h, x
-						adc force_h_msb
-						sta player_a_velocity_h, x
-
-						ldx player_number
-
-						; Disable windbox
-						lda #1
-						sta windbox_enabled, x
-
-					end_windbox:
-					rts
-				.)
-
-				skip:
-					rts
-
-				strong_hit:
-					; Fallthrough to vgsage_start_special_fadeout
-		.)
-
 		+vgsage_start_special_fadeout:
 		.(
 			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_1
