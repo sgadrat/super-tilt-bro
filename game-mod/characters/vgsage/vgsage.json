@@ -147,7 +147,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 8,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -203,7 +209,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_idle",
@@ -281,7 +293,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 8,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -353,7 +371,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 8,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_respawn",
@@ -415,7 +439,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 3,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -471,7 +501,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -527,7 +563,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_landing",
@@ -589,7 +631,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -645,7 +693,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 8,
+            "bottom": 17
+          }
         },
         {
           "type": "animation_frame",
@@ -701,7 +755,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 17
+          }
         },
         {
           "type": "animation_frame",
@@ -757,7 +817,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -813,7 +879,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -869,7 +941,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_aerial_down",
@@ -915,7 +993,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -955,7 +1039,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -995,7 +1085,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -1035,7 +1131,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -1075,7 +1177,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -1115,7 +1223,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_shield_full",
@@ -1161,7 +1275,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -1201,7 +1321,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -1241,7 +1367,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -1281,7 +1413,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -1321,7 +1459,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -1361,7 +1505,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_shield_partial",
@@ -1407,7 +1557,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -1447,7 +1603,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -1487,7 +1649,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -1527,7 +1695,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -1567,7 +1741,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -1607,7 +1787,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_shield_limit",
@@ -1669,7 +1855,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -2,
+            "top": 2,
+            "right": 9,
+            "bottom": 18
+          }
         },
         {
           "type": "animation_frame",
@@ -1725,7 +1917,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 3,
+            "right": 9,
+            "bottom": 18
+          }
         },
         {
           "type": "animation_frame",
@@ -1781,7 +1979,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 4,
+            "right": 9,
+            "bottom": 18
+          }
         },
         {
           "type": "animation_frame",
@@ -1837,7 +2041,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -2,
+            "top": 2,
+            "right": 9,
+            "bottom": 18
+          }
         },
         {
           "type": "animation_frame",
@@ -1893,7 +2103,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 3,
+            "right": 9,
+            "bottom": 18
+          }
         },
         {
           "type": "animation_frame",
@@ -1949,7 +2165,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 4,
+            "right": 10,
+            "bottom": 18
+          }
         }
       ],
       "name": "vgsage_anim_aerial_neutral",
@@ -2011,7 +2233,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -2,
+            "top": 0,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -2067,7 +2295,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 0,
+            "right": 9,
+            "bottom": 15
+          }
         },
         {
           "type": "animation_frame",
@@ -2115,7 +2349,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 10,
+            "bottom": 15
+          }
         },
         {
           "type": "animation_frame",
@@ -2171,7 +2411,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 10,
+            "bottom": 17
+          }
         },
         {
           "type": "animation_frame",
@@ -2227,7 +2473,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 3,
+            "right": 9,
+            "bottom": 17
+          }
         }
       ],
       "name": "vgsage_anim_aerial_up",
@@ -2289,7 +2541,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -2,
+            "top": 0,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -2345,7 +2603,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 0,
+            "right": 9,
+            "bottom": 15
+          }
         },
         {
           "type": "animation_frame",
@@ -2401,7 +2665,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 0,
+            "right": 10,
+            "bottom": 14
+          }
         },
         {
           "type": "animation_frame",
@@ -2457,7 +2727,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 10,
+            "bottom": 15
+          }
         },
         {
           "type": "animation_frame",
@@ -2513,7 +2789,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 10,
+            "bottom": 17
+          }
         },
         {
           "type": "animation_frame",
@@ -2569,7 +2851,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 3,
+            "right": 9,
+            "bottom": 17
+          }
         }
       ],
       "name": "vgsage_anim_up_tilt",
@@ -2631,7 +2919,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -2,
+            "top": 0,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -2687,7 +2981,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -2743,7 +3043,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 3,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -2799,7 +3105,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 5,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -2855,7 +3167,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -2911,7 +3229,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -2967,7 +3291,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 2,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -3023,7 +3353,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_jab1",
@@ -3085,7 +3421,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -3149,7 +3491,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 0,
+            "right": 8,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -3213,7 +3561,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 1,
+            "right": 8,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -3277,7 +3631,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -3333,7 +3693,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 5,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -3389,7 +3755,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -3445,7 +3817,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -3501,7 +3879,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_side_tilt",
@@ -3563,7 +3947,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -3619,7 +4009,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 5,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -3675,7 +4071,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -3731,7 +4133,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -3787,7 +4195,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -2,
+            "top": -1,
+            "right": 9,
+            "bottom": 15
+          }
         },
         {
           "type": "animation_frame",
@@ -3843,7 +4257,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 0,
+            "right": 9,
+            "bottom": 15
+          }
         },
         {
           "type": "animation_frame",
@@ -3899,7 +4319,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 3,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -3955,7 +4381,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_down_tilt",
@@ -4017,7 +4449,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 3,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -4073,7 +4511,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -6,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -4129,7 +4573,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -4177,7 +4627,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 1,
+            "right": 8,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -4233,7 +4689,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 2,
+            "right": 8,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -4289,7 +4751,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 3,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -4345,7 +4813,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -4401,7 +4875,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_jab2",
@@ -4455,7 +4935,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 3,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -4511,7 +4997,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -4567,7 +5059,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -4623,7 +5121,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 8,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -4679,7 +5183,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -4735,7 +5245,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 3,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -4791,7 +5307,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -4847,7 +5369,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_spe_down",
@@ -4893,7 +5421,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -4941,7 +5475,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -4989,7 +5529,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 1,
+            "right": 8,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -5037,7 +5583,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -5093,7 +5645,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -5149,7 +5707,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -2,
+            "top": 1,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_shield_remove",
@@ -5211,7 +5775,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 2,
+            "right": 8,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -5267,7 +5837,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -5315,7 +5891,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 1,
+            "right": 7,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -5371,7 +5953,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 2,
+            "right": 8,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -5427,7 +6015,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -5483,7 +6077,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -5539,7 +6139,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -2,
+            "top": 0,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -5595,7 +6201,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_aerial_side",
@@ -5669,7 +6281,13 @@
             "damages": 1,
             "enabled": true
           },
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -5725,7 +6343,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -5793,7 +6417,13 @@
             "damages": 1,
             "enabled": true
           },
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 1,
+            "right": 8,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -5849,7 +6479,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_special_charge",
@@ -5911,7 +6547,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": -14,
+            "right": 9,
+            "bottom": 1
+          }
         },
         {
           "type": "animation_frame",
@@ -5967,7 +6609,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": -10,
+            "right": 10,
+            "bottom": 3
+          }
         },
         {
           "type": "animation_frame",
@@ -6023,7 +6671,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -6087,7 +6741,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 5,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -6151,7 +6811,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 5,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -6207,7 +6873,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -6263,7 +6935,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -6319,7 +6997,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -6375,7 +7059,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_jab3",
@@ -6421,7 +7111,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -8,
+            "top": 8,
+            "right": 12,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -6461,7 +7157,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -8,
+            "top": 8,
+            "right": 12,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -6501,7 +7203,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -8,
+            "top": 9,
+            "right": 12,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -6525,7 +7233,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -6,
+            "top": 9,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -6581,7 +7295,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -6637,7 +7357,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_crash",
@@ -6699,7 +7425,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -6755,7 +7487,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 3,
+            "right": 10,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_falling",
@@ -6833,7 +7571,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 10,
+            "bottom": 17
+          }
         },
         {
           "type": "animation_frame",
@@ -6905,7 +7649,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 5,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -6977,7 +7727,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 4,
+            "right": 10,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_spe_up_prepare",
@@ -7039,7 +7795,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -7095,7 +7857,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 3,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -7151,7 +7919,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -7207,7 +7981,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 3,
+            "right": 10,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_aerial_spe",
@@ -7269,7 +8049,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 3,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -7325,7 +8111,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -7381,7 +8173,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -2,
+            "top": 0,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -7437,7 +8235,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_jump",
@@ -7499,7 +8303,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -2,
+            "top": 0,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -7555,7 +8365,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_spe_up_jump",
@@ -7731,7 +8547,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 3,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -7803,7 +8625,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 2,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -7859,7 +8687,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -2,
+            "top": 0,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -7915,7 +8749,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_aerial_jump",
@@ -7977,7 +8817,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 2,
+            "right": 10,
+            "bottom": 15
+          }
         }
       ],
       "name": "vgsage_anim_helpless",
@@ -8039,7 +8885,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -6,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -8095,7 +8947,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -8151,7 +9009,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 2,
+            "right": 8,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_run",
@@ -8226,7 +9090,13 @@
             "value2": 0,
             "value3": 0
           },
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -8295,7 +9165,13 @@
             "value2": 0,
             "value3": 0
           },
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 8,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_special_punch",
@@ -8373,7 +9249,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -6,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -8429,7 +9311,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -8485,7 +9373,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -6,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -8557,279 +9451,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
-        },
-        {
-          "type": "animation_frame",
-          "duration": 7,
-          "sprites": [
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_9",
-              "attr": 1,
-              "foreground": false,
-              "x": -11,
-              "y": -4
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_10",
-              "attr": 0,
-              "foreground": false,
-              "x": -11,
-              "y": 0
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_27",
-              "attr": 0,
-              "foreground": false,
-              "x": -6,
-              "y": 8
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_28",
-              "attr": 0,
-              "foreground": false,
-              "x": 2,
-              "y": 8
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_26",
-              "attr": 0,
-              "foreground": false,
-              "x": -1,
-              "y": 0
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_25",
-              "attr": 0,
-              "foreground": false,
-              "x": -9,
-              "y": 0
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_66",
-              "attr": 1,
-              "foreground": false,
-              "x": -8,
-              "y": 8
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_66",
-              "attr": 65,
-              "foreground": false,
-              "x": 4,
-              "y": 8
-            }
-          ],
-          "hitbox": null,
-          "hurtbox": null
-        },
-        {
-          "type": "animation_frame",
-          "duration": 7,
-          "sprites": [
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_9",
-              "attr": 1,
-              "foreground": false,
-              "x": -10,
-              "y": -4
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_10",
-              "attr": 0,
-              "foreground": false,
-              "x": -10,
-              "y": 0
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_54",
-              "attr": 0,
-              "foreground": false,
-              "x": -6,
-              "y": 8
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_55",
-              "attr": 0,
-              "foreground": false,
-              "x": 2,
-              "y": 8
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_56",
-              "attr": 0,
-              "foreground": false,
-              "x": -7,
-              "y": 0
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_59",
-              "attr": 0,
-              "foreground": false,
-              "x": 1,
-              "y": 0
-            }
-          ],
-          "hitbox": null,
-          "hurtbox": null
-        },
-        {
-          "type": "animation_frame",
-          "duration": 7,
-          "sprites": [
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_9",
-              "attr": 1,
-              "foreground": false,
-              "x": -11,
-              "y": -4
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_10",
-              "attr": 0,
-              "foreground": false,
-              "x": -11,
-              "y": 0
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_27",
-              "attr": 0,
-              "foreground": false,
-              "x": -6,
-              "y": 8
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_28",
-              "attr": 0,
-              "foreground": false,
-              "x": 2,
-              "y": 8
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_26",
-              "attr": 0,
-              "foreground": false,
-              "x": -1,
-              "y": 0
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_25",
-              "attr": 0,
-              "foreground": false,
-              "x": -9,
-              "y": 0
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_64",
-              "attr": 1,
-              "foreground": false,
-              "x": -8,
-              "y": 8
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_64",
-              "attr": 65,
-              "foreground": false,
-              "x": 4,
-              "y": 8
-            }
-          ],
-          "hitbox": null,
-          "hurtbox": null
-        },
-        {
-          "type": "animation_frame",
-          "duration": 7,
-          "sprites": [
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_9",
-              "attr": 1,
-              "foreground": false,
-              "x": -10,
-              "y": -4
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_10",
-              "attr": 0,
-              "foreground": false,
-              "x": -10,
-              "y": 0
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_54",
-              "attr": 0,
-              "foreground": false,
-              "x": -6,
-              "y": 8
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_55",
-              "attr": 0,
-              "foreground": false,
-              "x": 2,
-              "y": 8
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_56",
-              "attr": 0,
-              "foreground": false,
-              "x": -7,
-              "y": 0
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_59",
-              "attr": 0,
-              "foreground": false,
-              "x": 1,
-              "y": 0
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_65",
-              "attr": 1,
-              "foreground": false,
-              "x": -8,
-              "y": 8
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_65",
-              "attr": 65,
-              "foreground": false,
-              "x": 4,
-              "y": 8
-            }
-          ],
-          "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -8901,7 +9529,309 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -6,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
+        },
+        {
+          "type": "animation_frame",
+          "duration": 7,
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_9",
+              "attr": 1,
+              "foreground": false,
+              "x": -10,
+              "y": -4
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_10",
+              "attr": 0,
+              "foreground": false,
+              "x": -10,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_54",
+              "attr": 0,
+              "foreground": false,
+              "x": -6,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_55",
+              "attr": 0,
+              "foreground": false,
+              "x": 2,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_56",
+              "attr": 0,
+              "foreground": false,
+              "x": -7,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_59",
+              "attr": 0,
+              "foreground": false,
+              "x": 1,
+              "y": 0
+            }
+          ],
+          "hitbox": null,
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
+        },
+        {
+          "type": "animation_frame",
+          "duration": 7,
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_9",
+              "attr": 1,
+              "foreground": false,
+              "x": -11,
+              "y": -4
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_10",
+              "attr": 0,
+              "foreground": false,
+              "x": -11,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_27",
+              "attr": 0,
+              "foreground": false,
+              "x": -6,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_28",
+              "attr": 0,
+              "foreground": false,
+              "x": 2,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_26",
+              "attr": 0,
+              "foreground": false,
+              "x": -1,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_25",
+              "attr": 0,
+              "foreground": false,
+              "x": -9,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_64",
+              "attr": 1,
+              "foreground": false,
+              "x": -8,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_64",
+              "attr": 65,
+              "foreground": false,
+              "x": 4,
+              "y": 8
+            }
+          ],
+          "hitbox": null,
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -6,
+            "top": 3,
+            "right": 8,
+            "bottom": 16
+          }
+        },
+        {
+          "type": "animation_frame",
+          "duration": 7,
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_9",
+              "attr": 1,
+              "foreground": false,
+              "x": -10,
+              "y": -4
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_10",
+              "attr": 0,
+              "foreground": false,
+              "x": -10,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_54",
+              "attr": 0,
+              "foreground": false,
+              "x": -6,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_55",
+              "attr": 0,
+              "foreground": false,
+              "x": 2,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_56",
+              "attr": 0,
+              "foreground": false,
+              "x": -7,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_59",
+              "attr": 0,
+              "foreground": false,
+              "x": 1,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_65",
+              "attr": 1,
+              "foreground": false,
+              "x": -8,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_65",
+              "attr": 65,
+              "foreground": false,
+              "x": 4,
+              "y": 8
+            }
+          ],
+          "hitbox": null,
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
+        },
+        {
+          "type": "animation_frame",
+          "duration": 7,
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_9",
+              "attr": 1,
+              "foreground": false,
+              "x": -11,
+              "y": -4
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_10",
+              "attr": 0,
+              "foreground": false,
+              "x": -11,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_27",
+              "attr": 0,
+              "foreground": false,
+              "x": -6,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_28",
+              "attr": 0,
+              "foreground": false,
+              "x": 2,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_26",
+              "attr": 0,
+              "foreground": false,
+              "x": -1,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_25",
+              "attr": 0,
+              "foreground": false,
+              "x": -9,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_66",
+              "attr": 1,
+              "foreground": false,
+              "x": -8,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_66",
+              "attr": 65,
+              "foreground": false,
+              "x": 4,
+              "y": 8
+            }
+          ],
+          "hitbox": null,
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -6,
+            "top": 3,
+            "right": 10,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -8973,7 +9903,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -9045,7 +9981,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -9117,7 +10059,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         }
       ],
       "name": "vgsage_anim_side_special_charge",
@@ -9195,7 +10143,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -6,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -9267,7 +10221,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -9323,7 +10283,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -6,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -9395,7 +10361,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -9467,7 +10439,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -6,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -9539,7 +10517,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -9611,7 +10595,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 1,
+            "right": 9,
+            "bottom": 16
+          }
         },
         {
           "type": "animation_frame",
@@ -9683,7 +10673,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -2,
+            "top": -2,
+            "right": 9,
+            "bottom": 14
+          }
         },
         {
           "type": "animation_frame",
@@ -9739,7 +10735,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": -7,
+            "right": 9,
+            "bottom": 8
+          }
         }
       ],
       "name": "vgsage_todo_find_use_01",
@@ -9774,7 +10776,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": 0,
+            "top": 0,
+            "right": 7,
+            "bottom": 15
+          }
         },
         {
           "type": "animation_frame",
@@ -9790,7 +10798,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": 0,
+            "top": 0,
+            "right": 7,
+            "bottom": 15
+          }
         },
         {
           "type": "animation_frame",
@@ -9830,7 +10844,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": 0,
+            "top": 0,
+            "right": 7,
+            "bottom": 15
+          }
         },
         {
           "type": "animation_frame",
@@ -9870,7 +10890,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": 0,
+            "top": 0,
+            "right": 7,
+            "bottom": 15
+          }
         },
         {
           "type": "animation_frame",
@@ -9910,7 +10936,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": 0,
+            "top": 0,
+            "right": 7,
+            "bottom": 15
+          }
         },
         {
           "type": "animation_frame",
@@ -9966,7 +10998,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": 0,
+            "top": 0,
+            "right": 7,
+            "bottom": 15
+          }
         },
         {
           "type": "animation_frame",
@@ -10022,7 +11060,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": 0,
+            "top": 0,
+            "right": 7,
+            "bottom": 15
+          }
         }
       ],
       "name": "vgsage_anim_spawn",
@@ -10076,7 +11120,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -6,
+            "top": 1,
+            "right": 8,
+            "bottom": 15
+          }
         },
         {
           "type": "animation_frame",
@@ -10124,7 +11174,13 @@
             }
           ],
           "hitbox": null,
-          "hurtbox": null
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -6,
+            "top": 1,
+            "right": 9,
+            "bottom": 15
+          }
         }
       ],
       "name": "vgsage_anim_thrown",
