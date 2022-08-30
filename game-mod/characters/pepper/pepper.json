@@ -616,14 +616,14 @@
 			"update_routine": "pepper_tick_spawn"
 		},
 		{
-			"type": "character_state",
-			"name": "PEPPER_STATE_OWNED",
-			"start_routine": "pepper_start_owned",
-			"update_routine": "dummy_routine",
 			"input_routine": "dummy_routine",
-			"onground_routine": "dummy_routine",
+			"name": "PEPPER_STATE_OWNED",
 			"offground_routine": "dummy_routine",
-			"onhurt_routine": "dummy_routine"
+			"onground_routine": "dummy_routine",
+			"onhurt_routine": "dummy_routine",
+			"start_routine": "pepper_start_owned",
+			"type": "character_state",
+			"update_routine": "dummy_routine"
 		},
 		{
 			"input_routine": "pepper_input_idle",
@@ -982,7 +982,9 @@
 			"PEPPER_TILE_79",
 			"PEPPER_TILE_80",
 			"PEPPER_TILE_81",
-			"PEPPER_TILE_82"
+			"PEPPER_TILE_82",
+			"PEPPER_TILE_83",
+			"PEPPER_TILE_84"
 		],
 		"type": "tileset"
 	},

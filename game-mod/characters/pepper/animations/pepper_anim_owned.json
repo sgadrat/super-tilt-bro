@@ -1,7 +1,7 @@
 {
 	"frames": [
 		{
-			"duration": 4,
+			"duration": 7,
 			"hitbox": null,
 			"hurtbox": {
 				"bottom": 16,
@@ -23,6 +23,36 @@
 					"attr": 0,
 					"foreground": false,
 					"tile": "PEPPER_TILE_82",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 8
+				}
+			],
+			"type": "animation_frame"
+		},
+		{
+			"duration": 7,
+			"hitbox": null,
+			"hurtbox": {
+				"bottom": 16,
+				"left": 0,
+				"right": 8,
+				"top": 0,
+				"type": "animation_hurtbox"
+			},
+			"sprites": [
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_83",
+					"type": "animation_sprite",
+					"x": 0,
+					"y": 0
+				},
+				{
+					"attr": 0,
+					"foreground": false,
+					"tile": "PEPPER_TILE_84",
 					"type": "animation_sprite",
 					"x": 0,
 					"y": 8
