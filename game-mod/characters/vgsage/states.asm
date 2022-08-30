@@ -937,11 +937,7 @@ vgsage_global_onground:
 ;
 
 .(
-	+vgsage_start_aerial_spe:
-	.(
-		;TODO
-		rts
-	.)
+	+vgsage_start_aerial_spe = vgsage_start_special
 .)
 
 ;
