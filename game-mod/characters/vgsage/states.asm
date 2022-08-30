@@ -281,16 +281,52 @@ vgsage_global_onground:
 ;
 
 .(
-	+vgsage_start_jabbing:
-	.(
-		;TODO
-		rts
-	.)
+	!define "anim" {vgsage_anim_jab}
+	!define "state" {VGSAGE_STATE_JABBING}
+	!define "routine" {jabbing}
+	!include "characters/tpl_grounded_attack.asm"
 
-	+vgsage_tick_jabbing:
+	; Points of interest in the animation (in PAL frames)
+	CUT_POINT = 16 ; Point in time when we can cancel the move
+
+	; NTSC equivalent to PAL timings (computed according to formula in anim duration tables from macros)
+	CUT_POINT_NTSC = (CUT_POINT)+((((CUT_POINT)*10)/5)+9)/10
+
+	; System-specific table for points of interest in the animation
+	;  Unlike constants, values in this table are coomputed to match clock going in reverse
+	cut_point:
+		.byt vgsage_anim_jab_dur_pal-CUT_POINT, vgsage_anim_jab_dur_ntsc-CUT_POINT_NTSC
+
+	&vgsage_input_jabbing:
 	.(
-		;TODO
-		rts
+		; Cut animation if we are above cut point, and pressing jab input
+		ldy system_index ; useless, done above
+		lda player_a_state_clock, x ; useless, done above
+		cmp cut_point, y
+		bcs ignore_input
+		lda controller_a_btns, x
+		cmp #CONTROLLER_INPUT_JAB
+		bne ignore_input
+
+			cut_animation:
+				jmp vgsage_start_jabbing
+				;No return
+
+			ignore_input:
+				; Ignore input, except for CONTROLLER_INPUT_NONE (zero)
+				;  It allows to spam A to spam jabs,
+				;  without this exception A would be stored as the original value since it is the input pressed to start the move
+				;  (Alternative option would be to have a former time point when we consume inputs, but requires better timing from player
+				;   and more code in ROM)
+				lda controller_a_btns, x
+				beq consume_input
+					jmp keep_input_dirty
+					;No return
+
+			consume_input:
+				rts
+
+		;rts ; useless, no branch return
 	.)
 .)
 

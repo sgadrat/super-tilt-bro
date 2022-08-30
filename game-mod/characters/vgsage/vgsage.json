@@ -3192,7 +3192,93 @@
               "y": -1
             }
           ],
-          "hitbox": null,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": 2,
+            "top": -6,
+            "right": 10,
+            "bottom": 0,
+            "base_h": -128,
+            "base_v": -512,
+            "force_h": 0,
+            "force_v": 0,
+            "damages": 1,
+            "enabled": true
+          },
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -3,
+            "top": 0,
+            "right": 9,
+            "bottom": 15
+          }
+        },
+        {
+          "type": "animation_frame",
+          "duration": 6,
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_60",
+              "attr": 193,
+              "foreground": false,
+              "x": 1,
+              "y": -4
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_90",
+              "attr": 129,
+              "foreground": false,
+              "x": -5,
+              "y": -7
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_33",
+              "attr": 0,
+              "foreground": false,
+              "x": -6,
+              "y": 7
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_34",
+              "attr": 0,
+              "foreground": false,
+              "x": 2,
+              "y": 7
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_35",
+              "attr": 0,
+              "foreground": false,
+              "x": -6,
+              "y": -1
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_36",
+              "attr": 0,
+              "foreground": false,
+              "x": 2,
+              "y": -1
+            }
+          ],
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -4,
+            "top": -5,
+            "right": 4,
+            "bottom": 1,
+            "base_h": 128,
+            "base_v": -512,
+            "force_h": 0,
+            "force_v": 0,
+            "damages": 1,
+            "enabled": true
+          },
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -3,
@@ -3254,7 +3340,19 @@
               "y": -1
             }
           ],
-          "hitbox": null,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -5,
+            "top": -6,
+            "right": 10,
+            "bottom": 0,
+            "base_h": 0,
+            "base_v": -1500,
+            "force_h": 0,
+            "force_v": -50,
+            "damages": 4,
+            "enabled": true
+          },
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -3,
@@ -3316,7 +3414,19 @@
               "y": 0
             }
           ],
-          "hitbox": null,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -5,
+            "top": -6,
+            "right": 10,
+            "bottom": 1,
+            "base_h": 0,
+            "base_v": -1500,
+            "force_h": 0,
+            "force_v": -50,
+            "damages": 4,
+            "enabled": false
+          },
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -3,
@@ -3647,6 +3757,68 @@
           "sprites": [
             {
               "type": "animation_sprite",
+              "tile": "SAGE_TILE_60",
+              "attr": 1,
+              "foreground": false,
+              "x": -12,
+              "y": 4
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_77",
+              "attr": 0,
+              "foreground": true,
+              "x": -12,
+              "y": 4
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_73",
+              "attr": 0,
+              "foreground": false,
+              "x": -6,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_74",
+              "attr": 0,
+              "foreground": false,
+              "x": 2,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_75",
+              "attr": 0,
+              "foreground": false,
+              "x": -8,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_76",
+              "attr": 0,
+              "foreground": false,
+              "x": 0,
+              "y": 0
+            }
+          ],
+          "hitbox": null,
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 5,
+            "right": 9,
+            "bottom": 16
+          }
+        },
+        {
+          "type": "animation_frame",
+          "duration": 4,
+          "sprites": [
+            {
+              "type": "animation_sprite",
               "tile": "SAGE_TILE_77",
               "attr": 0,
               "foreground": false,
@@ -3690,11 +3862,23 @@
               "tile": "SAGE_TILE_60",
               "attr": 1,
               "foreground": false,
-              "x": -17,
+              "x": -21,
               "y": 4
             }
           ],
-          "hitbox": null,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -21,
+            "top": 6,
+            "right": -2,
+            "bottom": 12,
+            "base_h": -500,
+            "base_v": -500,
+            "force_h": -5,
+            "force_v": -5,
+            "damages": 4,
+            "enabled": true
+          },
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -5,
@@ -3752,7 +3936,7 @@
               "tile": "SAGE_TILE_60",
               "attr": 193,
               "foreground": false,
-              "x": -15,
+              "x": -18,
               "y": 5
             }
           ],
@@ -3888,71 +4072,9 @@
             "right": 10,
             "bottom": 16
           }
-        },
-        {
-          "type": "animation_frame",
-          "duration": 3,
-          "sprites": [
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_9",
-              "attr": 1,
-              "foreground": false,
-              "x": -10,
-              "y": -4
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_10",
-              "attr": 0,
-              "foreground": false,
-              "x": -10,
-              "y": 0
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_11",
-              "attr": 0,
-              "foreground": false,
-              "x": -6,
-              "y": 8
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_12",
-              "attr": 0,
-              "foreground": false,
-              "x": 2,
-              "y": 8
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_13",
-              "attr": 0,
-              "foreground": false,
-              "x": -6,
-              "y": 0
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_14",
-              "attr": 0,
-              "foreground": false,
-              "x": 2,
-              "y": 0
-            }
-          ],
-          "hitbox": null,
-          "hurtbox": {
-            "type": "animation_hurtbox",
-            "left": -3,
-            "top": 1,
-            "right": 9,
-            "bottom": 16
-          }
         }
       ],
-      "name": "vgsage_anim_jab1",
+      "name": "vgsage_anim_jab",
       "type": "animation"
     },
     {
@@ -4478,7 +4600,7 @@
           }
         }
       ],
-      "name": "vgsage_anim_side_tilt",
+      "name": "vgsage_anim_todo_find_use_04",
       "type": "animation"
     },
     {
@@ -4609,15 +4731,23 @@
         },
         {
           "type": "animation_frame",
-          "duration": 2,
+          "duration": 4,
           "sprites": [
             {
               "type": "animation_sprite",
-              "tile": "SAGE_TILE_10",
-              "attr": 128,
+              "tile": "SAGE_TILE_60",
+              "attr": 193,
               "foreground": false,
-              "x": -9,
-              "y": 9
+              "x": -11,
+              "y": 13
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_90",
+              "attr": 129,
+              "foreground": false,
+              "x": -16,
+              "y": 10
             },
             {
               "type": "animation_sprite",
@@ -4650,17 +4780,157 @@
               "foreground": false,
               "x": 1,
               "y": 0
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_60",
-              "attr": 193,
-              "foreground": false,
-              "x": -13,
-              "y": 12
             }
           ],
           "hitbox": null,
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
+        },
+        {
+          "type": "animation_frame",
+          "duration": 7,
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_90",
+              "attr": 129,
+              "foreground": false,
+              "x": -19,
+              "y": 10
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_91",
+              "attr": 129,
+              "foreground": false,
+              "x": -11,
+              "y": 10
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_43",
+              "attr": 0,
+              "foreground": false,
+              "x": -6,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_44",
+              "attr": 0,
+              "foreground": false,
+              "x": 2,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_56",
+              "attr": 0,
+              "foreground": false,
+              "x": -7,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_59",
+              "attr": 0,
+              "foreground": false,
+              "x": 1,
+              "y": 0
+            }
+          ],
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -18,
+            "top": 12,
+            "right": -3,
+            "bottom": 18,
+            "base_h": -1000,
+            "base_v": -1000,
+            "force_h": -2,
+            "force_v": -30,
+            "damages": 3,
+            "enabled": true
+          },
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -4,
+            "top": 4,
+            "right": 9,
+            "bottom": 16
+          }
+        },
+        {
+          "type": "animation_frame",
+          "duration": 3,
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_93",
+              "attr": 193,
+              "foreground": false,
+              "x": -19,
+              "y": 10
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_92",
+              "attr": 193,
+              "foreground": false,
+              "x": -11,
+              "y": 10
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_43",
+              "attr": 0,
+              "foreground": false,
+              "x": -6,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_55",
+              "attr": 0,
+              "foreground": false,
+              "x": 2,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_56",
+              "attr": 0,
+              "foreground": false,
+              "x": -7,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_59",
+              "attr": 0,
+              "foreground": false,
+              "x": 1,
+              "y": 0
+            }
+          ],
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -19,
+            "top": 11,
+            "right": -4,
+            "bottom": 18,
+            "base_h": -1000,
+            "base_v": -1000,
+            "force_h": -2,
+            "force_v": -30,
+            "damages": 1,
+            "enabled": false
+          },
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -4,
@@ -4675,11 +4945,19 @@
           "sprites": [
             {
               "type": "animation_sprite",
-              "tile": "SAGE_TILE_10",
-              "attr": 0,
-              "foreground": false,
-              "x": -10,
-              "y": 4
+              "tile": "SAGE_TILE_63",
+              "attr": 193,
+              "foreground": true,
+              "x": -11,
+              "y": 5
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_88",
+              "attr": 65,
+              "foreground": true,
+              "x": -14,
+              "y": 8
             },
             {
               "type": "animation_sprite",
@@ -4712,14 +4990,6 @@
               "foreground": false,
               "x": 2,
               "y": 0
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_63",
-              "attr": 193,
-              "foreground": false,
-              "x": -11,
-              "y": 5
             }
           ],
           "hitbox": null,
@@ -6239,68 +6509,6 @@
             "type": "animation_hurtbox",
             "left": -3,
             "top": 2,
-            "right": 9,
-            "bottom": 16
-          }
-        },
-        {
-          "type": "animation_frame",
-          "duration": 3,
-          "sprites": [
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_9",
-              "attr": 1,
-              "foreground": false,
-              "x": -10,
-              "y": -4
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_10",
-              "attr": 0,
-              "foreground": false,
-              "x": -10,
-              "y": 0
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_11",
-              "attr": 0,
-              "foreground": false,
-              "x": -6,
-              "y": 8
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_12",
-              "attr": 0,
-              "foreground": false,
-              "x": 2,
-              "y": 8
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_13",
-              "attr": 0,
-              "foreground": false,
-              "x": -6,
-              "y": 0
-            },
-            {
-              "type": "animation_sprite",
-              "tile": "SAGE_TILE_14",
-              "attr": 0,
-              "foreground": false,
-              "x": 2,
-              "y": 0
-            }
-          ],
-          "hitbox": null,
-          "hurtbox": {
-            "type": "animation_hurtbox",
-            "left": -2,
-            "top": 1,
             "right": 9,
             "bottom": 16
           }
@@ -17017,7 +17225,7 @@
       "update_routine": "vgsage_tick_shieldlag"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "vgsage_input_jabbing",
       "name": "VGSAGE_STATE_JABBING",
       "offground_routine": "vgsage_start_falling",
       "onground_routine": "vgsage_global_onground",

@@ -1383,7 +1383,8 @@ kiki_global_onground:
 		lda controller_a_btns, x
 		cmp #CONTROLLER_INPUT_JAB
 		bne end
-			jsr kiki_start_jabbing
+			jmp kiki_start_jabbing
+			;No return
 
 		end:
 		rts
