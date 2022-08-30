@@ -317,6 +317,9 @@ vgsage_global_onground:
 ;
 
 .(
+	anim_dur:
+		.byt vgsage_anim_roll_dur_pal, vgsage_anim_roll_dur_ntsc
+
 	+vgsage_start_side_tilt_left:
 	.(
 		lda DIRECTION_LEFT
@@ -335,14 +338,37 @@ vgsage_global_onground:
 
 	+vgsage_start_side_tilt:
 	.(
-		;TODO
-		rts
+		; Set player's state
+		lda #VGSAGE_STATE_SIDE_TILT
+		sta player_a_state, x
+
+		; Reset clock
+		ldy system_index
+		lda anim_dur, y
+		sta player_a_state_clock, x
+
+		; Set the appropriate animation
+		lda #<vgsage_anim_roll
+		sta tmpfield13
+		lda #>vgsage_anim_roll
+		sta tmpfield14
+		jmp set_player_animation
+
+		;rts ; useless, jump to subroutine
 	.)
 
 	+vgsage_tick_side_tilt:
 	.(
-		;TODO
-		rts
+		; Tick clock
+		dec player_a_state_clock, x
+		bne do_tick
+			jmp vgsage_start_inactive_state
+			; No return, jump to subroutine
+		do_tick:
+
+		; Update velocity
+		jmp vgsage_tick_running ;HACK expect tick_running to only update velocity and call global_tick
+		;rts ; useless, jump to subroutine
 	.)
 .)
 
