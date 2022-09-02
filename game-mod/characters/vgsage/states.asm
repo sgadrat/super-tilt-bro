@@ -36,6 +36,8 @@ VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_2 = CUSTOM_PLAYER_STATES_BEGIN + 20 ; 1b
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_3 = CUSTOM_PLAYER_STATES_BEGIN + 21 ; 1c
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_4 = CUSTOM_PLAYER_STATES_BEGIN + 22 ; 1d
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_5 = CUSTOM_PLAYER_STATES_BEGIN + 23 ; 1e
+VGSAGE_STATE_SPECIAL_UP_CHARGE = CUSTOM_PLAYER_STATES_BEGIN + 24      ; 1f
+VGSAGE_STATE_SPECIAL_UP_JUMP = CUSTOM_PLAYER_STATES_BEGIN + 25        ; 20
 
 ;
 ; Gameplay constants
@@ -313,18 +315,9 @@ vgsage_global_onground:
 				;No return
 
 			ignore_input:
-				; Ignore input, except for CONTROLLER_INPUT_NONE (zero)
-				;  It allows to spam A to spam jabs,
-				;  without this exception A would be stored as the original value since it is the input pressed to start the move
-				;  (Alternative option would be to have a former time point when we consume inputs, but requires better timing from player
-				;   and more code in ROM)
-				lda controller_a_btns, x
-				beq consume_input
-					jmp keep_input_dirty
-					;No return
-
-			consume_input:
-				rts
+				; Ignore input, except for CONTROLLER_INPUT_NONE
+				;  It allows to spam A to spam jabs
+				jmp smart_keep_input_dirty
 
 		;rts ; useless, no branch return
 	.)
@@ -1007,10 +1000,166 @@ vgsage_global_onground:
 ;
 
 .(
+	CHARGE_DURATION = 10
+	JUMP_INITIAL_VELOCITY_V = -$500
+	JUMP_INITIAL_VELOCITY_H = $200
+
+	anim_duration_table(CHARGE_DURATION, charge_duration)
+	velocity_table(JUMP_INITIAL_VELOCITY_V, jump_initial_velocity_v_msb, jump_initial_velocity_v_lsb)
+	velocity_table(JUMP_INITIAL_VELOCITY_H, jump_initial_velocity_h_msb, jump_initial_velocity_h_lsb)
+	velocity_table(-JUMP_INITIAL_VELOCITY_H, jump_initial_velocity_h_neg_msb, jump_initial_velocity_h_neg_lsb)
+
 	+vgsage_start_spe_up:
 	.(
-		;TODO
+		; Set state
+		lda #VGSAGE_STATE_SPECIAL_UP_CHARGE
+		sta player_a_state, x
+
+		; Reset clock
+		ldy system_index
+		lda charge_duration, y
+		sta player_a_state_clock, x
+
+		; Cancel momentum
+		lda #0
+		sta player_a_velocity_v_low, x
+		sta player_a_velocity_v, x
+		sta player_a_velocity_h_low, x
+		sta player_a_velocity_h, x
+
+		; Set animation
+		lda #<vgsage_anim_spe_up_charge
+		sta tmpfield13
+		lda #>vgsage_anim_spe_up_charge
+		sta tmpfield14
+		jmp set_player_animation
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	+vgsage_tick_spe_up_charge:
+	.(
+#ifldef {char_name}_global_tick
+		jsr {char_name}_global_tick
+#endif
+
+		jsr {char_name}_apply_friction_lite
+
+		dec player_a_state_clock, x
+		bne end
+			jmp {char_name}_start_spe_up_jump
+			; No return, jump to subroutine
+		end:
 		rts
+	.)
+
+	+vgsage_start_spe_up_jump:
+	.(
+		; Set state
+		lda #VGSAGE_STATE_SPECIAL_UP_JUMP
+		sta player_a_state, x
+
+		; Set momentum
+		.(
+			; Set Y to reference velocity tables
+			ldy system_index
+
+			; Chose direction
+			lda controller_a_btns, x
+			and #CONTROLLER_BTN_LEFT
+			bne left_direction
+			lda controller_a_btns, x
+			and #CONTROLLER_BTN_RIGHT
+			bne right_direction
+
+				neutral_direction:
+					lda #0
+					sta player_a_velocity_h_low, x
+					sta player_a_velocity_h, x
+
+					jmp direction_ok
+
+				left_direction:
+					lda #DIRECTION_LEFT2
+					sta player_a_direction, x
+
+					;ldy system_index ; useless, done above
+					lda jump_initial_velocity_h_neg_lsb, y
+					sta player_a_velocity_h_low, x
+					lda jump_initial_velocity_h_neg_msb, y
+					sta player_a_velocity_h, x
+
+					jmp direction_ok
+
+				right_direction:
+					lda #DIRECTION_RIGHT2
+					sta player_a_direction, x
+
+					;ldy system_index ; useless, done above
+					lda jump_initial_velocity_h_lsb, y
+					sta player_a_velocity_h_low, x
+					lda jump_initial_velocity_h_msb, y
+					sta player_a_velocity_h, x
+
+					;jmp direction_ok ; useless, fallthrough
+
+			direction_ok:
+
+			; Set upward valocity
+			;ldy system_index ; useless, done above
+			lda jump_initial_velocity_v_lsb, y
+			sta player_a_velocity_v_low, x
+			lda jump_initial_velocity_v_msb, y
+			sta player_a_velocity_v, x
+		.)
+
+		; Set animation
+		lda #<vgsage_anim_spe_up_jump
+		sta tmpfield13
+		lda #>vgsage_anim_spe_up_jump
+		sta tmpfield14
+		jmp set_player_animation
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	+vgsage_tick_spe_up_jump:
+	.(
+#ifldef {char_name}_global_tick
+		jsr {char_name}_global_tick
+#endif
+
+		lda player_a_velocity_v, x
+		bmi tick
+			jmp vgsage_start_helpless
+			; No return, jump to subroutine
+		tick:
+
+		jsr vgsage_aerial_directional_influence
+		jmp vgsage_apply_player_gravity_reduced
+		;rts ; useless, jump to subroutine
+	.)
+
+	; Like apply_player_gravity, but with reduced impact
+	;TODO generalisable, it is same code, just another step value
+	vgsage_apply_player_gravity_reduced:
+	.(
+		lda player_a_velocity_h_low, x
+		sta tmpfield2
+		lda player_a_velocity_h, x
+		sta tmpfield4
+		lda player_a_gravity_lsb, x
+		sta tmpfield1
+		lda player_a_gravity_msb, x
+		sta tmpfield3
+		ldy system_index
+		lda gravity_step, y
+		sta tmpfield5
+		jsr merge_to_player_velocity
+
+		rts
+
+		acceleration_table($30, gravity_step)
 	.)
 .)
 

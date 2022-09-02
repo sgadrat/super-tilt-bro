@@ -29,7 +29,7 @@
 				sta player_a_direction, x
 				jmp {char_name}_start_walljumping
 			no_jump:
-				jmp keep_input_dirty
+				jmp keep_input_dirty ; Beware - changing this call to "smart_keep_input_dirty" may change walljump behaviour (which was performed if the player released buttons after entring helpless), it may be desirable though.
 		;rts ; useless, both branches jump to a subroutine
 	.)
 .)

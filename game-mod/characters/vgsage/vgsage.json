@@ -2346,7 +2346,19 @@
               "y": 12
             }
           ],
-          "hitbox": null,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -7,
+            "top": 2,
+            "right": 5,
+            "bottom": 14,
+            "base_h": -500,
+            "base_v": -1000,
+            "force_h": -5,
+            "force_v": -10,
+            "damages": 2,
+            "enabled": true
+          },
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -2,
@@ -2408,7 +2420,19 @@
               "y": 3
             }
           ],
-          "hitbox": null,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": 1,
+            "top": 8,
+            "right": 13,
+            "bottom": 19,
+            "base_h": -500,
+            "base_v": -1000,
+            "force_h": -5,
+            "force_v": -10,
+            "damages": 2,
+            "enabled": true
+          },
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -3,
@@ -2470,7 +2494,19 @@
               "y": 2
             }
           ],
-          "hitbox": null,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -7,
+            "top": 2,
+            "right": 5,
+            "bottom": 14,
+            "base_h": -500,
+            "base_v": -1000,
+            "force_h": -5,
+            "force_v": -10,
+            "damages": 2,
+            "enabled": true
+          },
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -3,
@@ -2532,7 +2568,19 @@
               "y": 12
             }
           ],
-          "hitbox": null,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": 1,
+            "top": 8,
+            "right": 13,
+            "bottom": 19,
+            "base_h": -500,
+            "base_v": -1000,
+            "force_h": -5,
+            "force_v": -10,
+            "damages": 2,
+            "enabled": true
+          },
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -2,
@@ -2594,7 +2642,19 @@
               "y": 3
             }
           ],
-          "hitbox": null,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -7,
+            "top": 2,
+            "right": 5,
+            "bottom": 14,
+            "base_h": -500,
+            "base_v": -1000,
+            "force_h": -5,
+            "force_v": -10,
+            "damages": 2,
+            "enabled": true
+          },
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -3,
@@ -2656,7 +2716,19 @@
               "y": 2
             }
           ],
-          "hitbox": null,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": 1,
+            "top": 8,
+            "right": 13,
+            "bottom": 19,
+            "base_h": -500,
+            "base_v": -1000,
+            "force_h": -5,
+            "force_v": -10,
+            "damages": 2,
+            "enabled": true
+          },
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -3,
@@ -2666,7 +2738,7 @@
           }
         }
       ],
-      "name": "vgsage_anim_todo_find_use_03",
+      "name": "vgsage_anim_spe_up_jump",
       "type": "animation"
     },
     {
@@ -8582,7 +8654,7 @@
           }
         }
       ],
-      "name": "vgsage_anim_spe_up_prepare",
+      "name": "vgsage_anim_spe_up_charge",
       "type": "animation"
     },
     {
@@ -9268,7 +9340,7 @@
           }
         }
       ],
-      "name": "vgsage_anim_spe_up_jump",
+      "name": "vgsage_anim_todo_find_use_05",
       "type": "animation"
     },
     {
@@ -17373,6 +17445,26 @@
       "onground_routine": "vgsage_global_onground",
       "offground_routine": "dummy_routine",
       "onhurt_routine": "dummy_routine"
+    },
+    {
+      "type": "character_state",
+      "name": "VGSAGE_STATE_SPECIAL_UP_CHARGE",
+      "start_routine": null,
+      "update_routine": "vgsage_tick_spe_up_charge",
+      "input_routine": "smart_keep_input_dirty",
+      "onground_routine": "vgsage_global_onground",
+      "offground_routine": "dummy_routine",
+      "onhurt_routine": "hurt_player"
+    },
+    {
+      "type": "character_state",
+      "name": "VGSAGE_STATE_SPECIAL_UP_JUMP",
+      "start_routine": null,
+      "update_routine": "vgsage_tick_spe_up_jump",
+      "input_routine": "smart_keep_input_dirty",
+      "onground_routine": "vgsage_global_onground",
+      "offground_routine": "dummy_routine",
+      "onhurt_routine": "hurt_player"
     }
   ],
   "tileset": {
