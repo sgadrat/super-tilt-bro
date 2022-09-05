@@ -41,6 +41,9 @@ VGSAGE_STATE_SPECIAL_UP_JUMP = CUSTOM_PLAYER_STATES_BEGIN + 25        ; 20
 VGSAGE_STATE_SPECIAL_UP_HELPLESS = CUSTOM_PLAYER_STATES_BEGIN + 26    ; 21
 VGSAGE_STATE_SPECIAL_DOWN_ROLL = CUSTOM_PLAYER_STATES_BEGIN + 27      ; 22
 VGSAGE_STATE_SPECIAL_DOWN_FALL = CUSTOM_PLAYER_STATES_BEGIN + 28      ; 23
+VGSAGE_STATE_SPECIAL_SIDE_CHARGE = CUSTOM_PLAYER_STATES_BEGIN + 29    ; 24
+VGSAGE_STATE_SPECIAL_SIDE_MOVE = CUSTOM_PLAYER_STATES_BEGIN + 30      ; 25
+VGSAGE_STATE_SPECIAL_SIDE_LAND = CUSTOM_PLAYER_STATES_BEGIN + 31      ; 26
 
 ;
 ; Gameplay constants
@@ -107,8 +110,8 @@ vgsage_global_onground:
 		.byt CONTROLLER_INPUT_ATTACK_DOWN_RIGHT,  CONTROLLER_INPUT_ATTACK_DOWN_LEFT
 		.byt CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT, CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
 		controller_callbacks_lo:
-		.byt <fast_fall,                   <vgsage_start_side_special
-		.byt <vgsage_start_side_special,   <jump
+		.byt <fast_fall,                   <vgsage_start_spe_side
+		.byt <vgsage_start_spe_side,       <jump
 		.byt <jump,                        <jump
 		.byt <vgsage_start_aerial_side,    <vgsage_start_aerial_side
 		.byt <vgsage_start_aerial_down,    <vgsage_start_aerial_up
@@ -119,8 +122,8 @@ vgsage_global_onground:
 		.byt <vgsage_start_aerial_down,    <vgsage_start_aerial_down
 		.byt <vgsage_start_spe_down,       <vgsage_start_spe_down
 		controller_callbacks_hi:
-		.byt >fast_fall,                   >vgsage_start_side_special
-		.byt >vgsage_start_side_special,   >jump
+		.byt >fast_fall,                   >vgsage_start_spe_side
+		.byt >vgsage_start_spe_side,       >jump
 		.byt >jump,                        >jump
 		.byt >vgsage_start_aerial_side,    >vgsage_start_aerial_side
 		.byt >vgsage_start_aerial_down,    >vgsage_start_aerial_up
@@ -161,33 +164,33 @@ vgsage_global_onground:
 		.byt CONTROLLER_INPUT_SPECIAL_DOWN_LEFT, CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
 		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,  CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
 		controller_callbacks_lo:
-		.byt <input_idle_left,                <input_idle_right
-		.byt <vgsage_start_jumping,           <input_idle_jump_right
-		.byt <input_idle_jump_left,           <vgsage_start_jabbing
-		.byt <input_idle_tilt_left,           <input_idle_tilt_right
-		.byt <vgsage_start_special,           <vgsage_start_side_special_right
-		.byt <vgsage_start_side_special_left, <vgsage_start_down_tilt
-		.byt <vgsage_start_spe_up,            <vgsage_start_spe_down
-		.byt <vgsage_start_up_tilt,           <vgsage_start_shielding
-		.byt <vgsage_start_shielding,         <vgsage_start_shielding
-		.byt <vgsage_start_spe_up,            <vgsage_start_spe_up
-		.byt <vgsage_start_up_tilt,           <vgsage_start_up_tilt
-		.byt <vgsage_start_spe_down,          <vgsage_start_spe_down
-		.byt <vgsage_start_down_tilt,         <vgsage_start_down_tilt
+		.byt <input_idle_left,            <input_idle_right
+		.byt <vgsage_start_jumping,       <input_idle_jump_right
+		.byt <input_idle_jump_left,       <vgsage_start_jabbing
+		.byt <input_idle_tilt_left,       <input_idle_tilt_right
+		.byt <vgsage_start_special,       <vgsage_start_spe_side_right
+		.byt <vgsage_start_spe_side_left, <vgsage_start_down_tilt
+		.byt <vgsage_start_spe_up,        <vgsage_start_spe_down
+		.byt <vgsage_start_up_tilt,       <vgsage_start_shielding
+		.byt <vgsage_start_shielding,     <vgsage_start_shielding
+		.byt <vgsage_start_spe_up,        <vgsage_start_spe_up
+		.byt <vgsage_start_up_tilt,       <vgsage_start_up_tilt
+		.byt <vgsage_start_spe_down,      <vgsage_start_spe_down
+		.byt <vgsage_start_down_tilt,     <vgsage_start_down_tilt
 		controller_callbacks_hi:
-		.byt >input_idle_left,                >input_idle_right
-		.byt >vgsage_start_jumping,           >input_idle_jump_right
-		.byt >input_idle_jump_left,           >vgsage_start_jabbing
-		.byt >input_idle_tilt_left,           >input_idle_tilt_right
-		.byt >vgsage_start_special,           >vgsage_start_side_special_right
-		.byt >vgsage_start_side_special_left, >vgsage_start_down_tilt
-		.byt >vgsage_start_spe_up,            >vgsage_start_spe_down
-		.byt >vgsage_start_up_tilt,           >vgsage_start_shielding
-		.byt >vgsage_start_shielding,         >vgsage_start_shielding
-		.byt >vgsage_start_spe_up,            >vgsage_start_spe_up
-		.byt >vgsage_start_up_tilt,           >vgsage_start_up_tilt
-		.byt >vgsage_start_spe_down,          >vgsage_start_spe_down
-		.byt >vgsage_start_down_tilt,         >vgsage_start_down_tilt
+		.byt >input_idle_left,            >input_idle_right
+		.byt >vgsage_start_jumping,       >input_idle_jump_right
+		.byt >input_idle_jump_left,       >vgsage_start_jabbing
+		.byt >input_idle_tilt_left,       >input_idle_tilt_right
+		.byt >vgsage_start_special,       >vgsage_start_spe_side_right
+		.byt >vgsage_start_spe_side_left, >vgsage_start_down_tilt
+		.byt >vgsage_start_spe_up,        >vgsage_start_spe_down
+		.byt >vgsage_start_up_tilt,       >vgsage_start_shielding
+		.byt >vgsage_start_shielding,     >vgsage_start_shielding
+		.byt >vgsage_start_spe_up,        >vgsage_start_spe_up
+		.byt >vgsage_start_up_tilt,       >vgsage_start_up_tilt
+		.byt >vgsage_start_spe_down,      >vgsage_start_spe_down
+		.byt >vgsage_start_down_tilt,     >vgsage_start_down_tilt
 		controller_default_callback:
 		.word no_input
 		&INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
@@ -217,7 +220,7 @@ vgsage_global_onground:
 		.byt <vgsage_start_jumping,         <vgsage_start_jumping
 		.byt <vgsage_start_jumping,         <vgsage_start_side_tilt_left
 		.byt <vgsage_start_side_tilt_right, <vgsage_start_special
-		.byt <vgsage_start_side_special,    <vgsage_start_side_special
+		.byt <vgsage_start_spe_side,        <vgsage_start_spe_side
 		.byt <vgsage_start_spe_up,          <vgsage_start_spe_down
 		.byt <vgsage_start_shielding,       <vgsage_start_shielding
 		.byt <vgsage_start_spe_up,          <vgsage_start_spe_up
@@ -230,7 +233,7 @@ vgsage_global_onground:
 		.byt >vgsage_start_jumping,         >vgsage_start_jumping
 		.byt >vgsage_start_jumping,         >vgsage_start_side_tilt_left
 		.byt >vgsage_start_side_tilt_right, >vgsage_start_special
-		.byt >vgsage_start_side_special,    >vgsage_start_side_special
+		.byt >vgsage_start_spe_side,        >vgsage_start_spe_side
 		.byt >vgsage_start_spe_up,          >vgsage_start_spe_down
 		.byt >vgsage_start_shielding,       >vgsage_start_shielding
 		.byt >vgsage_start_spe_up,          >vgsage_start_spe_up
@@ -1314,26 +1317,176 @@ vgsage_global_onground:
 ;
 
 .(
-	+vgsage_start_side_special_left:
+	MOVE_DURATION = 5
+	MOVE_SPEED = $600
+	LAND_SPEED = $200
+
+	charge_duration:
+		.byt vgsage_anim_spe_side_charge_dur_pal, vgsage_anim_spe_side_charge_dur_ntsc
+	land_duration:
+		.byt vgsage_anim_spe_side_land_dur_pal, vgsage_anim_spe_side_land_dur_ntsc
+	duration_table(MOVE_DURATION, move_duration)
+	velocity_table(-MOVE_SPEED, move_speed_left_msb, move_speed_left_lsb)
+	velocity_table(MOVE_SPEED, move_speed_right_msb, move_speed_right_lsb)
+	velocity_table(-LAND_SPEED, land_speed_left_msb, land_speed_left_lsb)
+	velocity_table(LAND_SPEED, land_speed_right_msb, land_speed_right_lsb)
+
+	&vgsage_start_spe_side_left:
 	.(
 		lda DIRECTION_LEFT
 		sta player_a_direction, x
-		jmp vgsage_start_side_special
+		jmp vgsage_start_spe_side
 		;rts ; useless, jump to subroutine
 	.)
 
-	+vgsage_start_side_special_right:
+	&vgsage_start_spe_side_right:
 	.(
 		lda DIRECTION_RIGHT
 		sta player_a_direction, x
-		;jmp vgsage_start_side_special ; useless, fallthrough
-		; Falltrhough to vgsage_start_side_special
+		;jmp vgsage_start_spe_side ; useless, fallthrough
+		; Falltrhough to vgsage_start_spe_side
 	.)
 
-	+vgsage_start_side_special:
+	&vgsage_start_spe_side:
 	.(
-		;TODO
+		; Set state
+		lda #VGSAGE_STATE_SPECIAL_SIDE_CHARGE
+		sta player_a_state, x
+
+		; Reset clock
+		ldy system_index
+		lda charge_duration, y
+		sta player_a_state_clock, x
+
+		; Cancel momentum
+		lda #0
+		sta player_a_velocity_v_low, x
+		sta player_a_velocity_v, x
+		sta player_a_velocity_h_low, x
+		sta player_a_velocity_h, x
+
+		; Set animation
+		lda #<vgsage_anim_spe_side_charge
+		sta tmpfield13
+		lda #>vgsage_anim_spe_side_charge
+		sta tmpfield14
+		jmp set_player_animation
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	+vgsage_tick_spe_side_charge:
+	.(
+		dec player_a_state_clock, x
+		bne do_tick:
+			jmp vgsage_start_spe_side_move
+		do_tick:
 		rts
+	.)
+
+	vgsage_start_spe_side_move:
+	.(
+		lda #VGSAGE_STATE_SPECIAL_SIDE_MOVE
+		sta player_a_state, x
+
+		; Reset clock
+		ldy system_index
+		lda move_duration, y
+		sta player_a_state_clock, x
+
+		; Set momentum
+		.(
+			;ldy system_index ; useless, done above
+			lda player_a_direction, x
+			bne right
+
+				left:
+					lda move_speed_left_lsb, y
+					sta player_a_velocity_h_low, x
+					lda move_speed_left_msb, y
+					sta player_a_velocity_h, x
+					jmp ok
+
+				right:
+					lda move_speed_right_lsb, y
+					sta player_a_velocity_h_low, x
+					lda move_speed_right_msb, y
+					sta player_a_velocity_h, x
+
+			ok:
+		.)
+
+		; Set animation
+		lda #<vgsage_anim_spe_side_move
+		sta tmpfield13
+		lda #>vgsage_anim_spe_side_move
+		sta tmpfield14
+		jmp set_player_animation
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	+vgsage_tick_spe_side_move:
+	.(
+		dec player_a_state_clock, x
+		bne do_tick:
+			jmp vgsage_start_spe_side_land
+		do_tick:
+		rts
+	.)
+
+	vgsage_start_spe_side_land:
+	.(
+		; Set state
+		lda #VGSAGE_STATE_SPECIAL_SIDE_LAND
+		sta player_a_state, x
+
+		; Reset clock
+		ldy system_index
+		lda land_duration, y
+		sta player_a_state_clock, x
+
+		; Set momentum
+		.(
+			;ldy system_index ; useless, done above
+			lda player_a_direction, x
+			bne right
+
+				left:
+					lda land_speed_left_lsb, y
+					sta player_a_velocity_h_low, x
+					lda land_speed_left_msb, y
+					sta player_a_velocity_h, x
+					jmp ok
+
+				right:
+					lda land_speed_right_lsb, y
+					sta player_a_velocity_h_low, x
+					lda land_speed_right_msb, y
+					sta player_a_velocity_h, x
+
+			ok:
+		.)
+
+		; Set animation
+		lda #<vgsage_anim_spe_side_land
+		sta tmpfield13
+		lda #>vgsage_anim_spe_side_land
+		sta tmpfield14
+		jmp set_player_animation
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	+vgsage_tick_spe_side_land:
+	.(
+		dec player_a_state_clock, x
+		bne do_tick:
+			jmp vgsage_start_helpless
+		do_tick:
+
+		jmp vgsage_apply_friction_lite
+		;rts ; useless, jump to subroutine
 	.)
 .)
 
