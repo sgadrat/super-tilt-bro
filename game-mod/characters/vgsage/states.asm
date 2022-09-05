@@ -445,8 +445,6 @@ vgsage_global_onground:
 ;
 
 .(
-	windbox_enabled = player_a_state_field1
-
 	; Step - charge
 	!define "anim" {vgsage_anim_special_charge}
 	!define "state" {VGSAGE_STATE_SPECIAL_NEUTRAL_CHARGE}
@@ -516,10 +514,7 @@ vgsage_global_onground:
 	; Punch animation
 	.(
 		duration:
-			.byt vgsage_anim_special_punch_dur_pal*2, vgsage_anim_special_punch_dur_ntsc*2
-
-		&strong_hitbox_threshold:
-			.byt vgsage_anim_special_punch_dur_pal*2-1, vgsage_anim_special_punch_dur_ntsc*2-1
+			.byt vgsage_anim_special_punch_dur_pal, vgsage_anim_special_punch_dur_ntsc
 
 		&vgsage_start_special_punch:
 		.(
@@ -532,10 +527,6 @@ vgsage_global_onground:
 			sta player_a_velocity_h, x
 			sta player_a_velocity_v_low, x
 			sta player_a_velocity_h_low, x
-
-			; Enable windbox (zero is enabled to save a LDA)
-			;lda #0 ; useless, done above
-			sta windbox_enabled, x
 
 			; Init clock
 			ldy system_index
@@ -570,17 +561,21 @@ vgsage_global_onground:
 
 	+vgsage_special_hit:
 	.(
+		is_punch_box = player_a_custom_hitbox_value1
+
+		; Disable hitbox
+		lda #HITBOX_DISABLED
+		sta player_a_hitbox_enabled, x
+
 		; Choose action
 		;  - Do nothing if not in the "punch" state (sage's animation continue during knight animation, but must be inactive)
-		;  - Strong hit if connects in the first frames of the move
-		;  - Weak hit if connects late
+		;  - Strong hit if connects with the punch-box
+		;  - Weak hit if connects with the wind-box
 		lda player_a_state, x
 		cmp #VGSAGE_STATE_SPECIAL_NEUTRAL_PUNCH
 		bne skip
-		ldy system_index
-		lda player_a_state_clock, x
-		cmp strong_hitbox_threshold, y
-		bcs strong_hit
+		lda is_punch_box, x
+		bne strong_hit
 
 			; Weak hit is a windbox
 			weak_hit:
@@ -590,35 +585,26 @@ vgsage_global_onground:
 				force_h_lsb = tmpfield1
 				force_h_msb = tmpfield2
 
-				; Do nothing if windbox already hit
-				lda windbox_enabled, x
-				bne end_windbox
+				; Store wind power at fixed location
+				lda player_a_force_h_lsb, x
+				sta force_h_lsb
+				lda player_a_force_h_msb, x
+				sta force_h_msb
 
-					; Store wind power at fixed location
-					lda player_a_force_h_lsb, x
-					sta force_h_lsb
-					lda player_a_force_h_msb, x
-					sta force_h_msb
+				; Add wind force to opponent's velocity
+				stx player_number
+				SWITCH_SELECTED_PLAYER
 
-					; Add wind force to opponent's velocity
-					stx player_number
-					SWITCH_SELECTED_PLAYER
+				lda player_a_velocity_h_low, x
+				clc
+				adc force_h_lsb
+				sta player_a_velocity_h_low, x
+				lda player_a_velocity_h, x
+				adc force_h_msb
+				sta player_a_velocity_h, x
 
-					lda player_a_velocity_h_low, x
-					clc
-					adc force_h_lsb
-					sta player_a_velocity_h_low, x
-					lda player_a_velocity_h, x
-					adc force_h_msb
-					sta player_a_velocity_h, x
+				ldx player_number
 
-					ldx player_number
-
-					; Disable windbox
-					lda #1
-					sta windbox_enabled, x
-
-				end_windbox:
 				rts
 			.)
 
