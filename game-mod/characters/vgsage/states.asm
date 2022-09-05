@@ -38,6 +38,9 @@ VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_4 = CUSTOM_PLAYER_STATES_BEGIN + 22 ; 1d
 VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_5 = CUSTOM_PLAYER_STATES_BEGIN + 23 ; 1e
 VGSAGE_STATE_SPECIAL_UP_CHARGE = CUSTOM_PLAYER_STATES_BEGIN + 24      ; 1f
 VGSAGE_STATE_SPECIAL_UP_JUMP = CUSTOM_PLAYER_STATES_BEGIN + 25        ; 20
+VGSAGE_STATE_SPECIAL_UP_HELPLESS = CUSTOM_PLAYER_STATES_BEGIN + 26    ; 21
+VGSAGE_STATE_SPECIAL_DOWN_ROLL = CUSTOM_PLAYER_STATES_BEGIN + 27      ; 22
+VGSAGE_STATE_SPECIAL_DOWN_FALL = CUSTOM_PLAYER_STATES_BEGIN + 28      ; 23
 
 ;
 ; Gameplay constants
@@ -1001,10 +1004,12 @@ vgsage_global_onground:
 
 .(
 	CHARGE_DURATION = 10
+	FALL_CANCEL_COYOTE_DURATION = 15
 	JUMP_INITIAL_VELOCITY_V = -$500
 	JUMP_INITIAL_VELOCITY_H = $200
 
 	anim_duration_table(CHARGE_DURATION, charge_duration)
+	duration_table(FALL_CANCEL_COYOTE_DURATION, fall_cancel_coyote_duration)
 	velocity_table(JUMP_INITIAL_VELOCITY_V, jump_initial_velocity_v_msb, jump_initial_velocity_v_lsb)
 	velocity_table(JUMP_INITIAL_VELOCITY_H, jump_initial_velocity_h_msb, jump_initial_velocity_h_lsb)
 	velocity_table(-JUMP_INITIAL_VELOCITY_H, jump_initial_velocity_h_neg_msb, jump_initial_velocity_h_neg_lsb)
@@ -1105,7 +1110,7 @@ vgsage_global_onground:
 
 			direction_ok:
 
-			; Set upward valocity
+			; Set upward velocity
 			;ldy system_index ; useless, done above
 			lda jump_initial_velocity_v_lsb, y
 			sta player_a_velocity_v_low, x
@@ -1131,7 +1136,7 @@ vgsage_global_onground:
 
 		lda player_a_velocity_v, x
 		bmi tick
-			jmp vgsage_start_helpless
+			jmp vgsage_start_spe_up_helpless
 			; No return, jump to subroutine
 		tick:
 
@@ -1161,6 +1166,54 @@ vgsage_global_onground:
 
 		acceleration_table($30, gravity_step)
 	.)
+
+	+vgsage_input_spe_up_jump:
+	.(
+		; Spe-up jump can be canceled into spe-down
+		lda controller_a_btns, x
+		cmp #CONTROLLER_INPUT_SPECIAL_DOWN
+		beq vgsage_start_spe_down
+		cmp #CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
+		beq vgsage_start_spe_down
+		cmp #CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
+		beq vgsage_start_spe_down
+		rts
+	.)
+
+	vgsage_start_spe_up_helpless:
+	.(
+		; Set state
+		lda #VGSAGE_STATE_SPECIAL_UP_HELPLESS
+		sta player_a_state, x
+
+		; Reset clock
+		ldy system_index
+		lda fall_cancel_coyote_duration, y
+		sta player_a_state_clock, x
+
+		; Set the appropriate animation
+		lda #<{char_name}_anim_helpless
+		sta tmpfield13
+		lda #>{char_name}_anim_helpless
+		sta tmpfield14
+		jmp set_player_animation
+
+		; rts ; useless, jump to subroutine
+	.)
+
+	+vgsage_tick_spe_up_helpless:
+	.(
+		dec player_a_state_clock, x
+		bne do_tick:
+			jmp vgsage_start_helpless
+			; No return, jump to subroutine
+		do_tick:
+
+		jmp vgsage_tick_helpless
+		;rts ; useless, jump to subroutine
+	.)
+
+	+vgsage_input_spe_up_helpless = vgsage_input_spe_up_jump
 .)
 
 ;
@@ -1168,10 +1221,105 @@ vgsage_global_onground:
 ;
 
 .(
-	+vgsage_start_spe_down:
+	charge_duration:
+		.byt vgsage_anim_spe_down_roll_dur_pal, vgsage_anim_spe_down_roll_dur_ntsc
+
+	velocity_table($400, fall_velocity_v_msb, fall_velocity_v_lsb)
+	velocity_table(-$400, roll_velocity_v_msb, roll_velocity_v_lsb)
+
+	&vgsage_start_spe_down:
 	.(
-		;TODO
-		rts
+		; Set state
+		lda #VGSAGE_STATE_SPECIAL_DOWN_ROLL
+		sta player_a_state, x
+
+		; Reset clock
+		ldy system_index
+		lda charge_duration, y
+		sta player_a_state_clock, x
+
+		; Cancel momentum
+		;ldy system_index ; useless, done above
+		lda roll_velocity_v_lsb, y
+		sta player_a_velocity_v_low, x
+		lda roll_velocity_v_msb, y
+		sta player_a_velocity_v, x
+		lda #0
+		sta player_a_velocity_h_low, x
+		sta player_a_velocity_h, x
+
+		; Set animation
+		lda #<vgsage_anim_spe_down_roll
+		sta tmpfield13
+		lda #>vgsage_anim_spe_down_roll
+		sta tmpfield14
+		jmp set_player_animation
+
+		;rts ; useless, jump to subroutine
+	.)
+
+	+vgsage_tick_spe_down_roll:
+	.(
+		dec player_a_state_clock, x
+		bne do_tick
+			jmp vgsage_start_spe_down_fall
+		do_tick:
+
+		jmp apply_player_gravity
+		;rts ; useless, jump to subroutine
+	.)
+
+	vgsage_start_spe_down_fall:
+	.(
+		; Set state
+		lda #VGSAGE_STATE_SPECIAL_DOWN_FALL
+		sta player_a_state, x
+
+		; Set velocity
+		ldy system_index
+		lda fall_velocity_v_lsb, y
+		sta player_a_velocity_v_low, x
+		lda fall_velocity_v_msb, y
+		sta player_a_velocity_v, x
+
+		; Set animation
+		lda #<vgsage_anim_spe_down_fall
+		sta tmpfield13
+		lda #>vgsage_anim_spe_down_fall
+		sta tmpfield14
+		jmp set_player_animation
+
+		;rts ; useless, jump to subroutine
+	.)
+
+#ifldef {char_name}_global_tick
+	+vgsage_tick_spe_down_fall:
+	.(
+		jsr {char_name}_global_tick
+		jmp vgsage_aerial_directional_influence
+		;rts ; useless, jump to subroutine
+	.)
+#else
+	+vgsage_tick_spe_down_fall = vgsage_aerial_directional_influence
+#endif
+
+	+vgsage_input_spe_down_fall:
+	.(
+		lda controller_a_btns, x
+		cmp #CONTROLLER_INPUT_JUMP
+		beq cancel
+		cmp #CONTROLLER_INPUT_JUMP_LEFT
+		beq cancel
+		cmp #CONTROLLER_INPUT_JUMP_RIGHT
+		beq cancel
+
+			ignore:
+				jmp keep_input_dirty
+
+			cancel:
+				jmp vgsage_start_helpless
+
+		;rts ; useless, no branch return
 	.)
 .)
 
