@@ -12,13 +12,166 @@
         "name": "special_side",
         "steps": [
           {
-            "duration": 60,
+            "duration": 1,
             "input": "CONTROLLER_INPUT_SPECIAL",
             "type": "character_ai_action_step"
           },
           {
-            "duration": 9,
-            "input": 0,
+            "duration": 5,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "left_roll",
+        "steps": [
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 3,
+            "input": "CONTROLLER_INPUT_LEFT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_ATTACK_LEFT",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "right_roll",
+        "steps": [
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 3,
+            "input": "CONTROLLER_INPUT_RIGHT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_ATTACK_RIGHT",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "left_special_up_combo",
+        "steps": [
+          {
+            "duration": 15,
+            "input": "CONTROLLER_INPUT_SPECIAL_UP_LEFT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 20,
+            "input": "CONTROLLER_INPUT_SPECIAL_DOWN",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_JUMP",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "aerial_down",
+        "steps": [
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_DOWN_TILT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "aerial_up",
+        "steps": [
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_ATTACK_UP",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "aerial_left",
+        "steps": [
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_ATTACK_LEFT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "aerial_right",
+        "steps": [
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_ATTACK_RIGHT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "aerial_neutral",
+        "steps": [
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_JAB",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
             "type": "character_ai_action_step"
           }
         ],
@@ -27,61 +180,133 @@
     ],
     "attacks": [
       {
-        "action": "ai_action_left_tilt",
-        "constraints": 0,
+        "action": "vgsage_ai_action_aerial_up",
+        "constraints": 8,
         "hitbox": {
-          "bottom": 12,
-          "left": -32,
-          "right": -12,
-          "top": -12,
-          "type": "character_ai_hitbox"
-        },
-        "type": "character_ai_attack"
-      },
-      {
-        "action": "ai_action_right_tilt",
-        "constraints": 0,
-        "hitbox": {
-          "bottom": 12,
-          "left": 19,
-          "right": 39,
-          "top": -12,
+          "bottom": 2,
+          "left": -4,
+          "right": 10,
+          "top": -13,
           "type": "character_ai_hitbox"
         },
         "type": "character_ai_attack"
       },
       {
         "action": "ai_action_down_tilt",
-        "constraints": 1,
+        "constraints": 9,
         "hitbox": {
-          "bottom": 15,
+          "bottom": 18,
+          "left": -18,
+          "right": -5,
+          "top": 6,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "ai_action_down_tilt",
+        "constraints": 10,
+        "hitbox": {
+          "bottom": 18,
+          "left": 12,
+          "right": 25,
+          "top": 6,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "vgsage_ai_action_left_roll",
+        "constraints": 8,
+        "hitbox": {
+          "bottom": 16,
+          "left": -41,
+          "right": -14,
+          "top": 0,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "vgsage_ai_action_right_roll",
+        "constraints": 8,
+        "hitbox": {
+          "bottom": 16,
+          "left": 7,
+          "right": 34,
+          "top": 0,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "vgsage_ai_action_left_special_up_combo",
+        "constraints": 9,
+        "hitbox": {
+          "bottom": 14,
+          "left": 2,
+          "right": 3,
+          "top": 10,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "vgsage_ai_action_aerial_down",
+        "constraints": 4,
+        "hitbox": {
+          "bottom": 35,
+          "left": -4,
+          "right": 9,
+          "top": 15,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "vgsage_ai_action_aerial_up",
+        "constraints": 4,
+        "hitbox": {
+          "bottom": 3,
+          "left": -7,
+          "right": 9,
+          "top": -8,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "vgsage_ai_action_aerial_left",
+        "constraints": 5,
+        "hitbox": {
+          "bottom": 9,
+          "left": -7,
+          "right": 7,
+          "top": 5,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "vgsage_ai_action_aerial_right",
+        "constraints": 6,
+        "hitbox": {
+          "bottom": 9,
+          "left": -7,
+          "right": 7,
+          "top": 5,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "vgsage_ai_action_aerial_neutral",
+        "constraints": 4,
+        "hitbox": {
+          "bottom": 17,
           "left": -5,
-          "right": -1,
-          "top": 8,
-          "type": "character_ai_hitbox"
-        },
-        "type": "character_ai_attack"
-      },
-      {
-        "action": "ai_action_down_tilt",
-        "constraints": 2,
-        "hitbox": {
-          "bottom": 15,
-          "left": 3,
-          "right": 13,
-          "top": 8,
-          "type": "character_ai_hitbox"
-        },
-        "type": "character_ai_attack"
-      },
-      {
-        "action": "ai_action_special_up",
-        "constraints": 0,
-        "hitbox": {
-          "bottom": 8,
-          "left": -15,
-          "right": 23,
-          "top": -48,
+          "right": 9,
+          "top": 3,
           "type": "character_ai_hitbox"
         },
         "type": "character_ai_attack"
