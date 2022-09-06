@@ -687,7 +687,7 @@ vgsage_global_onground:
 			; Tick clock
 			dec player_a_state_clock, x
 			bpl end
-				jmp vgsage_start_special_draw_warrior
+				jmp vgsage_start_special_draw_knight
 				;No return
 
 			end:
@@ -695,9 +695,9 @@ vgsage_global_onground:
 		.)
 	.)
 
-	; Step - draw warrior
+	; Step - draw knight
 	.(
-		&vgsage_start_special_draw_warrior:
+		&vgsage_start_special_draw_knight:
 		.(
 			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_2
 			sta player_a_state, x
@@ -708,7 +708,7 @@ vgsage_global_onground:
 			rts
 		.)
 
-		+vgsage_tick_special_draw_warrior:
+		+vgsage_tick_special_draw_knight:
 		.(
 			stx player_number
 
@@ -728,7 +728,7 @@ vgsage_global_onground:
 
 			dec player_a_state_clock, x
 			bpl end
-				jmp vgsage_start_special_show_warrior
+				jmp vgsage_start_special_show_knight
 				; No return, jump to subroutine
 
 			end:
@@ -785,14 +785,18 @@ vgsage_global_onground:
 		.)
 	.)
 
-	; Step - wait a bit to show the warrior
+	; Step - wait a bit to show the knight
 	.(
-		&vgsage_start_special_show_warrior:
+		KNIGHT_DISPLAY_DURATION = 25
+		duration_table(KNIGHT_DISPLAY_DURATION, knight_display_duration)
+
+		&vgsage_start_special_show_knight:
 		.(
 			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_3
 			sta player_a_state, x
 
-			lda #25 ;TODO ntsc
+			ldy system_index
+			lda knight_display_duration, y
 			sta player_a_state_clock, x
 
 			jmp audio_play_title_screen_subtitle
@@ -800,7 +804,7 @@ vgsage_global_onground:
 			;rts
 		.)
 
-		+vgsage_tick_special_show_warrior:
+		+vgsage_tick_special_show_knight:
 		.(
 			dec player_a_state_clock, x
 			bne end
@@ -925,7 +929,11 @@ vgsage_global_onground:
 	.)
 
 	; Step - Restore screen
-	;TODO investigate - may not deserve its own state, if setting stage_restore_screen_step has no impact until next frame, it could be done at the end of knight animation step
+	;  NOTE - character's logic being called after stage logic,
+	;         it should be safe to reset stage_restore_screen_step at the end of previous step,
+	;         saving one step.
+	;         It is so indirect (calling code that may change) and a meager gain (one frame and some bytes),
+	;         better go the safest route and keep that step.
 	.(
 		&vgsage_start_restore_screen:
 		.(
@@ -1136,6 +1144,7 @@ vgsage_global_onground:
 
 	; Like apply_player_gravity, but with reduced impact
 	;TODO generalisable, it is same code, just another step value
+	;     or better, this value should be in zero-page per character, would be more flexible and save cycles in apply_player_gravity
 	vgsage_apply_player_gravity_reduced:
 	.(
 		lda player_a_velocity_h_low, x
