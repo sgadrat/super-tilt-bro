@@ -245,6 +245,8 @@ ai_current_action_modifier = $05d8
 ai_delay = $05d9
 ai_max_delay = $05da
 
+game_mode_state_begin = $05db
+
 arcade_mode_stage_type = $05db
 
 arcade_mode_targets_x = $05dc ; $05dc to $05e5
@@ -716,6 +718,9 @@ arcade_mode_nb_credits_used = $0550
 
 ; Menu state variable that must persist between screens
 menu_state_mode_selection_current_option = $0551
+
+; Nine-gine variables
+nt_buffers_begin = $0552
 
 ;$0580 to $05ff may be used by game states
 

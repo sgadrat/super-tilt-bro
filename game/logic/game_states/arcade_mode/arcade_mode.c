@@ -278,15 +278,15 @@ static void display_timer() {
 
 		uint8_t i = wrap_last_nt_buffer();
 		nametable_buffers[i] = 1;
-		nametable_buffers[i+1] = u16_msb(ppu_addr);
-		nametable_buffers[i+2] = u16_lsb(ppu_addr);
-		nametable_buffers[i+3] = credits_used;
+		nametable_buffers[(i+1) % 256] = u16_msb(ppu_addr);
+		nametable_buffers[(i+2) % 256] = u16_lsb(ppu_addr);
+		nametable_buffers[(i+3) % 256] = credits_used;
 
 		for (uint8_t credit_num = 0; credit_num < credits_used; ++credit_num) {
-			nametable_buffers[i+4+credit_num] = 0xd0; //TODO name the stock tile (and actually use a specific tile for credits)
+			nametable_buffers[(i+4+credit_num) % 256] = 0xd0; //TODO name the stock tile (and actually use a specific tile for credits)
 		}
 
-		nametable_buffers[i+4+credits_used] = 0;
+		nametable_buffers[(i+4+credits_used) % 256] = 0;
 	}
 
 	// Pass a frame to process nt buffers

@@ -266,10 +266,10 @@ load_animation_addr:
 
 	lda #1
 	sta nametable_buffers, x
+	inx
 	lda #$3f
-	sta nametable_buffers+1, x
-	lda #3
-	sta nametable_buffers+3, x
+	sta nametable_buffers, x
+	inx
 
 	ldy #0
 	lda (parameter_addr), y
@@ -277,19 +277,25 @@ load_animation_addr:
 	asl
 	clc
 	adc #1
-	sta nametable_buffers+2, x
+	sta nametable_buffers, x
+	inx
+
+	lda #3
+	sta nametable_buffers, x
+	inx
 
 	copy_colors:
 		iny
 		lda (parameter_addr), y
-		sta nametable_buffers+4, x
+		sta nametable_buffers, x
 		inx
 
 		cpy #3
 		bne copy_colors
 
 	lda #0
-	sta nametable_buffers+4, x
+	sta nametable_buffers, x
+	inx
 
 	rts
 .)
@@ -372,13 +378,18 @@ load_animation_addr:
 		; Continuation byte
 		lda #1
 		sta nametable_buffers, x
+		inx
 
 		; PPU address
-		lda (parameter_addr), y
-		sta nametable_buffers+2, x
 		iny
 		lda (parameter_addr), y
-		sta nametable_buffers+1, x
+		sta nametable_buffers, x
+		inx
+		dey
+		lda (parameter_addr), y
+		sta nametable_buffers, x
+		inx
+		iny
 		iny
 
 		; Save buffer's begining
@@ -389,6 +400,7 @@ load_animation_addr:
 		lda #0
 		sta data_length
 
+		inx
 		.(
 			copy_one_char:
 				lda (parameter_addr), y
@@ -400,7 +412,7 @@ load_animation_addr:
 				ldx tmp_x_store
 				ldy tmp_y_store
 
-				sta nametable_buffers+4, x
+				sta nametable_buffers, x
 
 				inc data_length
 				inx
@@ -412,13 +424,13 @@ load_animation_addr:
 
 		; Stop byte
 		lda #0
-		sta nametable_buffers+4, x
+		sta nametable_buffers, x
 
 		; Data length
 		pla
 		tax
 		lda data_length
-		sta nametable_buffers+3, x
+		sta nametable_buffers, x
 	.)
 
 	; Return after parameters

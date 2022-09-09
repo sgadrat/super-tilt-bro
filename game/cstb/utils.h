@@ -92,12 +92,13 @@ static uint8_t strnlen8(char const* s, uint8_t maxlen) {
  * @brief Reset background color to sky-blue, for use when leaving a screen that uses another color.
  *
  * Force sky-blue as background color to avoid a flash during transition from a screen using another color.
- * Voluntary side effect: cancels any remaining nt buffer to not risk to have nmi longer than vblank.
+ * Voluntary side effect: cancels any remaining nt buffer.
  */
 static void reset_bg_color() {
 	static uint8_t const palette_buffer[] = {0x01, 0x3f, 0x00, 0x01, 0x21, 0x00};
-	for (uint8_t i = 0; i < sizeof(palette_buffer); ++i) {
-		nametable_buffers[i] = palette_buffer[i];
+	uint8_t nt_offset = *nt_buffers_begin;
+	for (uint8_t i = 0; i < sizeof(palette_buffer); ++i, ++nt_offset) {
+		nametable_buffers[nt_offset] = palette_buffer[i];
 	}
 }
 

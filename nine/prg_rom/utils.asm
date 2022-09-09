@@ -10,9 +10,10 @@
 ; NOTE as a part of the NMI handler, avoid using tmpfields. They must be preserved by interruption handlers.
 process_nt_buffers:
 .(
-	lda PPUSTATUS ; reset PPUADDR state
+	; Reset PPUADDR state
+	lda PPUSTATUS
 
-	ldx #$00
+	ldx nt_buffers_begin
 	handle_nt_buffer:
 
 		; Check continuation byte
@@ -41,7 +42,12 @@ process_nt_buffers:
 			inx
 			dey
 			bne write_one_tile
-			jmp handle_nt_buffer
+
+		; Point the next buffer as first buffer
+		stx nt_buffers_begin
+
+		; Loop
+		jmp handle_nt_buffer
 
 	end_buffers:
 	rts

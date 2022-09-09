@@ -1936,12 +1936,16 @@ write_player_damages:
 		jsr last_nt_buffer
 		lda #$01                    ; Continuation byte
 		sta nametable_buffers, x
+		inx
 		lda #$23                    ; PPU address MSB
-		sta nametable_buffers+1, x
+		sta nametable_buffers, x
+		inx
 		lda damages_ppu_position, y ; PPU address LSB
-		sta nametable_buffers+2, x
+		sta nametable_buffers, x
+		inx
 		lda #$03                    ; Tiles count
-		sta nametable_buffers+3, x
+		sta nametable_buffers, x
+		inx
 
 		; Tiles, decimal representation of the value (value is capped at 199)
 		.(
@@ -1951,14 +1955,16 @@ write_player_damages:
 				less_than_one_hundred:
 					sta damage_tmp
 					lda #TILE_CHAR_0
-					sta nametable_buffers+4, x
+					sta nametable_buffers, x
+					inx
 					jmp ok
 				one_hundred:
 					;sec ; Ensured by bcs
 					sbc #100
 					sta damage_tmp
 					lda #TILE_CHAR_1
-					sta nametable_buffers+4, x
+					sta nametable_buffers, x
+					inx
 			ok:
 		.)
 		.(
@@ -1977,20 +1983,22 @@ write_player_damages:
 			less_than_fifty:
 
 			lda damage_tmp
-			.( : cmp #10 : bcc ok : sbc #10 : inc tile_construct : ok : .)
+			.( : cmp #10 : bcc ok : sbc #10 : inc tile_construct : ok : .) ;TODO optimizable, put "ok" label after all four subtracts
 			.( : cmp #10 : bcc ok : sbc #10 : inc tile_construct : ok : .)
 			.( : cmp #10 : bcc ok : sbc #10 : inc tile_construct : ok : .)
 			.( : cmp #10 : bcc ok : sbc #10 : inc tile_construct : ok : .)
 
 			sta damage_tmp
 			lda tile_construct
-			sta nametable_buffers+5, x
+			sta nametable_buffers, x
+			inx
 		.)
 		.(
 			lda damage_tmp
 			clc
 			adc #TILE_CHAR_0
-			sta nametable_buffers+6, x
+			sta nametable_buffers, x
+			inx
 		.)
 	.)
 
@@ -2016,13 +2024,17 @@ write_player_damages:
 		stocks_buffer:
 			; Buffer header
 			lda #$01                   ; Continuation byte
-			sta nametable_buffers+7, x ;
+			sta nametable_buffers, x ;
+			inx
 			lda #$23                   ; PPU address MSB
-			sta nametable_buffers+8, x ;
+			sta nametable_buffers, x ;
+			inx
 			lda stocks_ppu_position, y ; PPU address LSB
-			sta nametable_buffers+9, x ;
+			sta nametable_buffers, x ;
+			inx
 			lda #$01                    ; Tiles count
-			sta nametable_buffers+10, x ;
+			sta nametable_buffers, x ;
+			inx
 
 			; Set stock tile depending of the stock's availability
 			lda buffer_count
@@ -2034,25 +2046,21 @@ write_player_damages:
 				empty_stock:
 					lda #TILE_EMPTY_STOCK_ICON
 			set_stock_tile:
-			sta nametable_buffers+11, x
+			sta nametable_buffers, x
+			inx
 
 			; Loop for each stock to print
 			iny
 
 			dec buffer_count
-			bmi end_loop
-				txa
-				clc
-				adc #5
-				tax
-
-				jmp stocks_buffer
+			bpl stocks_buffer
 			end_loop:
 	.)
 
 	; Next continuation byte to 0
 	lda #$00
-	sta nametable_buffers+12, x
+	sta nametable_buffers, x
+	inx
 
 	; Restore X
 	ldx player_number

@@ -73,3 +73,10 @@ Background tiles
  * ``208`` -> ``218``: Characters stocks graphics
  * ``219`` -> ``229``: Numeric (plus "%") font for damage metter
  * ``230`` -> ``255``: Alpha font (unused? maybe important for gameover screen?)
+
+Memory allocation
+=================
+
+ * ``$80`` -> ``$8f``: Available for the stage
+ * ``$05db`` -> ``$05ff``: Available for stage and game mode
+ * ``$0400`` -> ``$0480``: Must begin with stage layout, after that it is freely usable by the stage

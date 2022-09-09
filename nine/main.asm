@@ -152,6 +152,11 @@ reset:
 		pal:
 	.)
 
+	; Init NT buffers state
+	lda #0
+	sta nt_buffers_begin
+	sta nametable_buffers
+
 	; Prepare to start the game
 	lda #0
 	sta audio_vframe_cnt

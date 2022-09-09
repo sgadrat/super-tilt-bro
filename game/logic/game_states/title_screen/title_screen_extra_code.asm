@@ -644,22 +644,36 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 				jsr last_nt_buffer
 				lda #1
 				sta nametable_buffers, x
-				sta nametable_buffers+5, x
+				inx
 				lda #$3f
-				sta nametable_buffers+1, x
-				sta nametable_buffers+6, x
+				sta nametable_buffers, x
+				inx
 				lda #$0d
-				sta nametable_buffers+2, x
-				lda #$11
-				sta nametable_buffers+7, x
+				sta nametable_buffers, x
+				inx
 				lda #1
-				sta nametable_buffers+3, x
-				sta nametable_buffers+8, x
+				sta nametable_buffers, x
+				inx
 				lda text_colors, y
-				sta nametable_buffers+4, x
-				sta nametable_buffers+9, x
+				sta nametable_buffers, x
+				inx
+				lda #1
+				sta nametable_buffers, x
+				inx
+				lda #$3f
+				sta nametable_buffers, x
+				inx
+				lda #$11
+				sta nametable_buffers, x
+				inx
+				lda #1
+				sta nametable_buffers, x
+				inx
+				lda text_colors, y
+				sta nametable_buffers, x
+				inx
 				lda #0
-				sta nametable_buffers+10, x
+				sta nametable_buffers, x
 
 				jmp end
 

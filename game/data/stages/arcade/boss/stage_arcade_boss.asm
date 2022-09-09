@@ -16,8 +16,16 @@ cursor = stage_state_begin
 &layout_impact_lava_step = cursor : -cursor += 1
 &layout_impact_lava_delay = cursor : -cursor += 1
 
-#if cursor - stage_state_begin >= $10
-#error arcade stage BTT02 uses to much memory
+#if cursor - stage_state_begin > $10
+#error arcade stage BOSS uses to much memory
+#endif
+
+-cursor = game_mode_state_begin + 5 ; Keep 5 free bytes just in case game mode would use it (normally, not)
+
+&mem_buffer = cursor : -cursor += 32
+
+#if cursor - game_mode_state_begin > $25
+#error arcade stage BOSS uses to much memory
 #endif
 .)
 
@@ -438,7 +446,7 @@ tick_impact:
 			zipped_nt_addr = tmpfield1
 			unzipped_data_offset = tmpfield3
 			unzipped_data_count = tmpfield5
-			nt_buffer_addr = tmpfield6
+			unzip_dest = tmpfield6
 
 			; Compute useful values
 			lda #0
@@ -461,28 +469,35 @@ tick_impact:
 
 			lda #1 ; Continuation byte
 			sta nametable_buffers, x
+			inx
 
-			lda unzipped_data_offset ; PPU address "$2000 + unzipped_data_offset"
-			sta nametable_buffers+2, x
-			lda unzipped_data_offset+1
+			lda unzipped_data_offset+1 ; PPU address "$2000 + unzipped_data_offset"
 			clc
 			adc #$20
-			sta nametable_buffers+1, x
+			sta nametable_buffers, x
+			inx
+			lda unzipped_data_offset
+			sta nametable_buffers, x
+			inx
 
-			lda #32
-			sta nametable_buffers+3, x
+			lda #32 ; Payload length
+			sta nametable_buffers, x
+			inx
 
-			lda #0 ; Stop byte
-			sta nametable_buffers+4+32, x
+			txa ; Save nt buffer's payload address
+			pha
 
-			; Fill nametable buffer's data with tiles from the nametable
-			txa
-			clc
-			adc #<(nametable_buffers+4)
-			sta nt_buffer_addr
+			clc ; Stop byte, 32 bytes further
+			adc #32
+			tax
 			lda #0
-			adc #>(nametable_buffers+4)
-			sta nt_buffer_addr+1
+			sta nametable_buffers, x
+
+			; Unzip tiles from the nametable
+			lda #<mem_buffer
+			sta unzip_dest
+			lda #>mem_buffer
+			sta unzip_dest+1
 
 			lda #32
 			sta unzipped_data_count
@@ -494,6 +509,20 @@ tick_impact:
 			sta zipped_nt_addr+1
 
 			jsr get_unzipped_bytes
+
+			; Fill nametable buffer's data with tiles from the nametable
+			pla
+			tax
+
+			ldy #0
+			copy_one_byte:
+				lda mem_buffer, y
+				sta nametable_buffers, x
+
+				iny
+				inx
+				cpy #32
+				bne copy_one_byte
 
 			; Next step
 			inc transition_step

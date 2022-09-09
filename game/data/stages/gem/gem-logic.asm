@@ -283,15 +283,19 @@ stage_thehunt_tick:
 				; Write buffer's header
 				lda #1 ; Continuation byte
 				sta nametable_buffers, x
+				inx
 
 				lda #$3f ; VRAM address MSB
-				sta nametable_buffers+1, x
+				sta nametable_buffers, x
+				inx
 
 				lda #$02 ; VRAM address LSB
-				sta nametable_buffers+2, x
+				sta nametable_buffers, x
+				inx
 
 				lda #$02 ; Payload size
-				sta nametable_buffers+3, x
+				sta nametable_buffers, x
+				inx
 
 				; Y = offset in the frame of colors for the current fade level
 				lda stage_thehunt_fade_level
@@ -300,15 +304,17 @@ stage_thehunt_tick:
 
 				; Write buffer's payload
 				lda (tmpfield1), y
-				sta nametable_buffers+4, x
+				sta nametable_buffers, x
+				inx
 				iny
 
 				lda (tmpfield1), y
-				sta nametable_buffers+5, x
+				sta nametable_buffers, x
+				inx
 
 				; Write stop byte
 				lda #0
-				sta nametable_buffers+6, x
+				sta nametable_buffers, x
 			.)
 
 		bg_update_ok:

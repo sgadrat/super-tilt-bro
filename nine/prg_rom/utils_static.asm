@@ -153,10 +153,12 @@ multiply:
 ; Set register X to the offset of the continuation byte of the first empty
 ; nametable buffer
 ;
+; TODO optimizable - maintain a nt_buffers_end variable and use it directly
+;
 ; Overwrites register A
 last_nt_buffer:
 .(
-	ldx #$00
+	ldx nt_buffers_begin
 
 	handle_buff:
 		; Check continuation byte
@@ -183,10 +185,9 @@ last_nt_buffer:
 .)
 
 ; Empty the list of nametable buffers
+;TODO remove all calls to that
 reset_nt_buffers:
 .(
-	lda #$00
-	sta nametable_buffers
 	rts
 .)
 

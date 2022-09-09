@@ -12,29 +12,37 @@ construct_palettes_nt_buffer:
 
 	jsr last_nt_buffer
 
-	lda #1                   ; Continuation byte
-	sta nametable_buffers, x ;
+	; Continuation byte
+	lda #1
+	sta nametable_buffers, x
+	inx
 
-	lda #$3f                   ;
-	sta nametable_buffers+1, x ; PPU address
-	lda #$00                   ;
-	sta nametable_buffers+2, x ;
+	; PPU address
+	lda #$3f
+	sta nametable_buffers, x
+	inx
+	lda #$00
+	sta nametable_buffers, x
+	inx
 
-	lda #32                    ; Tiles count
-	sta nametable_buffers+3, x ;
+	; Tiles count
+	lda #32
+	sta nametable_buffers, x
+	inx
 
-	ldy #0                         ;
-	copy_one_byte:                 ;
-		lda (palettes_data), y     ;
-		sta nametable_buffers+4, x ;
-								   ; Palettes data
-		inx                        ;
-		iny                        ;
-		cpy #32                    ;
-		bne copy_one_byte          ;
+	; Palettes data
+	ldy #0
+	copy_one_byte:
+		lda (palettes_data), y
+		sta nametable_buffers, x
 
-	lda #0                     ; Next continuation byte
-	sta nametable_buffers+4, x ;
+		inx
+		iny
+		cpy #32
+		bne copy_one_byte
+
+	lda #0
+	sta nametable_buffers, x
 
 	rts
 .)

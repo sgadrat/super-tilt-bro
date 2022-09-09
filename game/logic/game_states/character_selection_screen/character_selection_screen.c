@@ -220,18 +220,47 @@ static void copy_character_portrait(uint8_t character) {
 }
 
 static void copy_to_nt_buffer(uint16_t ppu_addr, uint8_t n_bytes, uint8_t bank, uint8_t const* prg_addr) {
+	// Get buffer position
 	uint8_t ntbuf_index = wrap_last_nt_buffer();
+
+	// Nt buffer's header
 	nametable_buffers[ntbuf_index] = 1;
-	nametable_buffers[ntbuf_index+1] = u16_msb(ppu_addr);
-	nametable_buffers[ntbuf_index+2] = u16_lsb(ppu_addr);
-	nametable_buffers[ntbuf_index+3] = n_bytes;
-	long_memcpy(
-		nametable_buffers + ntbuf_index + 4,
-		bank,
-		prg_addr,
-		n_bytes
-	);
-	nametable_buffers[ntbuf_index+4+n_bytes] = 0;
+	nametable_buffers[(ntbuf_index+1) % 256] = u16_msb(ppu_addr);
+	nametable_buffers[(ntbuf_index+2) % 256] = u16_lsb(ppu_addr);
+	nametable_buffers[(ntbuf_index+3) % 256] = n_bytes;
+
+	// Payload
+	uint8_t const payload_begin_offset = (ntbuf_index + 4) % 256;
+	uint8_t const payload_end_offset = (payload_begin_offset + n_bytes - 1) % 256;
+	uint8_t* const payload_begin = nametable_buffers + payload_begin_offset;
+	uint8_t* const payload_end = nametable_buffers + payload_end_offset;
+	if (payload_end > payload_begin) {
+		// No wrap on page, write it in one go
+		long_memcpy(
+			payload_begin,
+			bank,
+			prg_addr,
+			n_bytes
+		);
+	}else {
+		// Wrapping around nametable buffers' page, write it in two times
+		uint8_t const first_part_length = 256 - payload_begin_offset;
+		long_memcpy(
+			payload_begin,
+			bank,
+			prg_addr,
+			first_part_length
+		);
+		long_memcpy(
+			nametable_buffers,
+			bank,
+			prg_addr + first_part_length,
+			n_bytes - first_part_length
+		);
+	}
+
+	// Stop byte
+	nametable_buffers[(ntbuf_index+4+n_bytes) % 256] = 0;
 }
 
 static void copy_to_nt_buffer_from_char(uint8_t character, uint16_t ppu_addr, uint8_t n_bytes, uint8_t const* prg_addr) {
