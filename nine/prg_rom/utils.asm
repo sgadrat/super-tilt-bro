@@ -1,13 +1,21 @@
 ; Copy nametable buffers to PPU nametable
 ; A nametable buffer has the following pattern:
-;   continuation (1 byte), address (2 bytes), number of tiles (1 byte), tiles (N bytes)
-;   continuation - 1 there is a buffer, 0 work done
-;   address - address where to write in PPU address space (big endian)
-;   number of tiles - Number of tiles in this buffer
-;   tiles - One byte per tile, representing the tile number
+;   continuation (1 byte), payload (depends on buffer's type)
+:
+;   continuation - buffer's type, or zero at the end of the list (see NT_BUFFER_* constants)
+;
+;   NT_BUFFER_BASIC
+;     continuation (1 byte), address (2 bytes), number of tiles (1 byte), tiles (N bytes)
+;       address         - Address where to write in PPU address space (big endian)
+;       number of tiles - Number of tiles in this buffer
+;       tiles           - One byte per tile, representing the tile number
+;
+;   NT_BUFFER_ATTRIBUTES
+;     continuation (1 byte), attributes (64 bytes)
+;       attributes - attribute values to write on top-left nametable
 ;
 ; Overwrites all registers
-; NOTE as a part of the NMI handler, avoid using tmpfields. They must be preserved by interruption handlers.
+; NOTE as a part of the NMI handler, tmpfields must be preserved.
 process_nt_buffers:
 .(
 	; Save modified tmpfields
@@ -51,18 +59,6 @@ process_nt_buffers:
 	;   - without updating nt_buffers_begin
 	;   - within ~50 cycles from being called (TODO should figure more precise max cycles for aborting)
 	;
-
-	end_buffers:
-	.(
-		; Restore modified tmppfields
-		;  14 cycles (38)
-		pla : sta tmpfield2
-		pla : sta tmpfield1
-
-		; Stop processing buffers
-		;  6 cycles (44)
-		rts
-	.)
 
 	basic_buffer:
 	.(
@@ -127,10 +123,82 @@ process_nt_buffers:
 		jmp handle_nt_buffer
 	.)
 
+	end_buffers:
+	.(
+		; Restore modified tmppfields
+		;  14 cycles (38)
+		pla : sta tmpfield2
+		pla : sta tmpfield1
+
+		; Stop processing buffers
+		;  6 cycles (44)
+		rts
+	.)
+
+	attributes_buffer:
+	.(
+		; Compute cost of this buffer
+		;  2+2+3+2+3 = 12 cycles
+		;   (cost = 2.5 for per-buffer common code + 0.08 per cycle in the handler)
+		;   2.5 + 0.08*(common cycles + NB_STEPS * cycles per step)
+		;   2.5 + 0.08*(33 + 16 * 46)
+		;   64.02
+		lda #65
+		clc
+		adc nt_buffer_timer
+		bmi end_buffers
+		sta nt_buffer_timer
+
+		; Set PPU address
+		;  2+4+2+4 = 12 cycles (24)
+		lda #$23
+		sta PPUADDR
+		lda #$c0
+		sta PPUADDR
+
+		; Copy 64 bytes from the buffer
+		;  2 cycles (26)
+		STEP_SIZE = 4
+		NB_STEPS = 64 / STEP_SIZE
+
+		ldy #NB_STEPS
+		one_step:
+			; Copy data
+			; 	4*(4+4+2) = 40 cycles
+			lda nametable_buffers, x
+			sta PPUDATA
+			inx
+
+			lda nametable_buffers, x
+			sta PPUDATA
+			inx
+
+			lda nametable_buffers, x
+			sta PPUDATA
+			inx
+
+			lda nametable_buffers, x
+			sta PPUDATA
+			inx
+
+			; Loop
+			;  2 + 4 = 6 cycles (46)
+			dey
+			bne one_step
+
+		; Point the next buffer as first buffer
+		;  4 cycles (30)
+		stx nt_buffers_begin
+
+		; Process next buffer
+		;  3 cycles (33)
+		jmp handle_nt_buffer
+	.)
+
 	buffer_handlers_lsb:
-		.byt <end_buffers, <basic_buffer
+		.byt <end_buffers, <basic_buffer, <attributes_buffer
 	buffer_handlers_msb:
-		.byt >end_buffers, >basic_buffer
+		.byt >end_buffers, >basic_buffer, >attributes_buffer
 .)
 
 ; Consume input only if it is "all buttons released"

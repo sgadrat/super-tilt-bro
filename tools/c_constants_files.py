@@ -39,7 +39,7 @@ for paths in [
 				processed = re.sub(';', '//', processed)
 
 				# Convert known line formats to C++
-				m = re.match(r'^(?P<lbl>[a-zA-Z0-9_]+) = (?P<val>[0-9a-f$%]+)(?P<cmt> //.*)?$', processed)
+				m = re.match(r'^(?P<lbl>[a-zA-Z0-9_]+) = (?P<val>[0-9a-f$%]+)(?P<cmt>( +)//.*)?$', processed)
 				if m is not None:
 					processed = 'static uint16_t const {} = {};{}'.format(
 						m.group('lbl'), asmint(m.group('val')), '' if m.group('cmt') is None else m.group('cmt')

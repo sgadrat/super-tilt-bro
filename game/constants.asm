@@ -241,6 +241,12 @@ ANIMATION_STATE_LENGTH = 13
 #define MENU_COMMON_NB_SPRITE_PER_CLOUD 5
 #define MENU_COMMON_FIRST_CLOUD_SPRITE (64 - MENU_COMMON_NB_SPRITE_PER_CLOUD * MENU_COMMON_NB_CLOUDS)
 
+; Nametable buffers types, for use in continuation byte
+NT_BUFFER_END = 0        ; NOTE this one is expected not to change, hardcoded for zero everywhere and it is fine
+NT_BUFFER_BASIC = 1      ; NOTE this one is hardcoded as one almost everywhere (could be changed, just legacy stuff)
+NT_BUFFER_ATTRIBUTES = 2
+
+; Notes frequencies
 NOTE_PAL_O0_C = $7ff
 NOTE_PAL_O0_Cs = $7ff
 NOTE_PAL_O0_D = $7ff
