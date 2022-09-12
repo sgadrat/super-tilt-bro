@@ -9,6 +9,7 @@ cursed:
 nmi:
 .(
 	; Save CPU registers
+	;  13 cycles
 	pha
 	txa
 	pha
@@ -20,19 +21,25 @@ nmi:
 #endif
 
 	; Do not draw anything if not ready
+	;  5 cycles (18)
 	lda nmi_processing
 	bne special_processing
 
 		; Reload PPU OAM (Objects Attributes Memory) with fresh data from cpu memory
-		lda #$00
+		;  10 cycles (28)
+		;lda #$00 ; Useless, ensured by BNE above
 		sta OAMADDR
 		lda #$02
 		sta OAMDMA
 
+		; 514 cycles of DMA (542)
+
 		; Rewrite nametable based on nt_buffers
+		;  6 cycles (548)
 		jsr process_nt_buffers
 
 		; Scroll
+		;  3 + 4 + 4 + 3 + 4 + 3 + 4 = 25 cycles (573)
 		lda ppuctrl_val
 		sta PPUCTRL
 		lda PPUSTATUS
@@ -40,6 +47,8 @@ nmi:
 		sta PPUSCROLL
 		lda scroll_y
 		sta PPUSCROLL
+
+		; NOTE from there, it is no more critical to be in v-blank
 
 		; Inform that NMI is handled
 		lda #NMI_SKIP

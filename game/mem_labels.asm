@@ -639,6 +639,7 @@ config_player_b_character = $e1
 config_game_mode = $e2
 
 current_bank = $e3
+nt_buffer_timer = $e4
 
 ;
 ; Zero-page constants

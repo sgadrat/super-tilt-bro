@@ -10,18 +10,66 @@
 ; NOTE as a part of the NMI handler, avoid using tmpfields. They must be preserved by interruption handlers.
 process_nt_buffers:
 .(
+	; Save modified tmpfields
+	;  12 cycles
+	lda tmpfield1 : pha
+	lda tmpfield2 : pha
+
 	; Reset PPUADDR state
+	;  4 cycles (16)
 	lda PPUSTATUS
 
+	; Reset timer
+	;  5 cycles (21)
+	lda #0
+	sta nt_buffer_timer
+
+	; Get nametables buffers begining
+	;  3 cycles (24)
 	ldx nt_buffers_begin
 	handle_nt_buffer:
 
-		; Check continuation byte
-		lda nametable_buffers, x
-		beq end_buffers
+		; Call handler for that continuation byte's value
+		;  4+2+(4+1)+3+(4+0)+3+5 = 26 cycles per buffer
+		ldy nametable_buffers, x
 		inx
 
+		lda buffer_handlers_lsb, y
+		sta tmpfield1
+		lda buffer_handlers_msb, y
+		sta tmpfield2
+		jmp (tmpfield1)
+
+	;
+	; Handlers
+	;  Can modify A, Y, tmpfield1 and tmpfield2
+	;  Must update X to next continuation byte
+	;  Must update nt_buffers_begin to next continuation byte
+	;  Must update timer (timer += 2.5 for per-buffer common code + 0.08 per cycle in the handler)
+	;  If timer becomes more than 128
+	;   - the handler shall abort
+	;   - without updating nt_buffers_begin
+	;   - within ~50 cycles from being called (TODO should figure more precise max cycles for aborting)
+	;
+
+	end_buffers:
+	.(
+		; Restore modified tmppfields
+		;  14 cycles (38)
+		pla : sta tmpfield2
+		pla : sta tmpfield1
+
+		; Stop processing buffers
+		;  6 cycles (44)
+		rts
+	.)
+
+	basic_buffer:
+	.(
+		tmp_val = tmpfield1
+
 		; Set PPU destination address
+		;  4+4+2+4+4+2 = 20 cycles
 		lda nametable_buffers, x
 		sta PPUADDR
 		inx
@@ -30,27 +78,59 @@ process_nt_buffers:
 		inx
 
 		; Read tiles counter
+		;  4+2 cycles (26)
 		ldy nametable_buffers, x
 		inx
 
+		; Compute cost of this buffer
+		;   (cost = 2.5 for per-buffer common code + 0.08 per cycle in the handler)
+		;   2.5 + 0.08*(common cycles) + 0.08*(cycles per tile)
+		;   2.5 + 0.08*(33 + cycles for this segment) + nb_tiles*0.08*(cycles per tile)
+		;   2.5 + 0.08*(33 + 22) + nb_tiles*0.08*16
+		;   2.5 + 0.08*55 + nb_tiles*1.28
+		;   7 + nb_tiles*1.5 (roughly)
+		.(
+			; nb_tiles * 1.5
+			;  2+3+2+2+3 = 12 cycles
+			tya
+			sta tmp_val
+			lsr
+			clc
+			adc tmp_val
+
+			; Add time common for all tiles
+			;  2+2+3+3 = 10 cycles (22)
+			adc #7
+			adc nt_buffer_timer
+			bmi end_buffers
+			sta nt_buffer_timer
+		.)
+
 		write_one_tile:
 			; Write current tile to PPU
+			;  4+4 = 8 cycles per tile
 			lda nametable_buffers, x
 			sta PPUDATA
 
 			; Next tile
+			;  2+2+4 = 8 cycles tile (or less if not misaligned)
 			inx
 			dey
 			bne write_one_tile
 
 		; Point the next buffer as first buffer
+		;  4 cycles
 		stx nt_buffers_begin
 
-		; Loop
+		; Process next buffer
+		;  3 cycles
 		jmp handle_nt_buffer
+	.)
 
-	end_buffers:
-	rts
+	buffer_handlers_lsb:
+		.byt <end_buffers, <basic_buffer
+	buffer_handlers_msb:
+		.byt >end_buffers, >basic_buffer
 .)
 
 ; Consume input only if it is "all buttons released"
