@@ -165,20 +165,32 @@ last_nt_buffer:
 		lda nametable_buffers, x
 		beq end
 
-		; Point to the tiles counter
-		inx
-		inx
-		inx
+		; Skip buffer
+		cmp #NT_BUFFER_ATTRIBUTES
+		beq attributes_buffer
 
-		; Add tile counts to X (effectively points on the last tile)
-		txa
-		clc
-		adc nametable_buffers, x
-		tax
+			basic_buffer:
+				; Point to the tiles counter
+				inx
+				inx
+				inx
 
-		; Next
-		inx
-		jmp handle_buff
+				; Add tile counts to X (effectively points on the last tile)
+				txa
+				clc
+				adc nametable_buffers, x
+				tax
+
+				; Next
+				inx
+				jmp handle_buff
+
+			attributes_buffer:
+				txa
+				clc
+				adc #1+64
+				tax
+				jmp handle_buff
 
 	end:
 	rts

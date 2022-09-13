@@ -662,27 +662,33 @@ vgsage_global_onground:
 
 		+vgsage_tick_special_fadeout:
 		.(
-			; Every four ticks, advance one step of the fadeout
-			.(
-				lda player_a_state_clock, x
-				and #%00000001
-				bne ok
+			; Avoid creating nt buffers on rollback
+			;TODO investigate - may be nice to keep the tick on "clock == 0" to ensure black palette to be set
+			lda network_rollback_mode
+			bne end_fadeout
 
-					; Set pallettes to current fadaout step
-					stx player_number
-
+				; Every two ticks, advance one step of the fadeout
+				.(
 					lda player_a_state_clock, x
-					lsr
-					lsr
-					tax
+					and #%00000001
+					bne ok
 
-					ldy config_selected_stage
-					TRAMPOLINE_POINTED(stage_routine_fadeout_lsb COMMA y, stage_routine_fadeout_msb COMMA y, stages_bank COMMA y, #CURRENT_BANK_NUMBER)
+						; Set pallettes to current fadeout step
+						stx player_number
 
-					ldx player_number
+						lda player_a_state_clock, x
+						lsr
+						tax
 
-				ok:
-			.)
+						ldy config_selected_stage
+						TRAMPOLINE_POINTED(stage_routine_fadeout_lsb COMMA y, stage_routine_fadeout_msb COMMA y, stages_bank COMMA y, #CURRENT_BANK_NUMBER)
+
+						ldx player_number
+
+					ok:
+				.)
+
+			end_fadeout:
 
 			; Tick clock
 			dec player_a_state_clock, x
@@ -695,32 +701,130 @@ vgsage_global_onground:
 		.)
 	.)
 
-	; Step - draw knight
+	; Step - draw knight, and fadein to it
 	.(
 		&vgsage_start_special_draw_knight:
 		.(
+			; Set step
 			lda #VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_2
 			sta player_a_state, x
 
-			lda #5
+			; Set clock
+			lda #LAST_STEP
 			sta player_a_state_clock, x
 
+			; Avoid drawing knight on rollback
+			lda network_rollback_mode
+			beq do_it
+				rts
+			do_it:
+
+			; Draw knight
+			;  TODO investigate (it saves so much cycles/risk not drawing in in rollback) - Even in rollback - We don't want to miss drawing it
+			;  In the "start" routine - It whould work well with the palette buffer writen in last tick of the fadeout step
+			;  FIXME do not draw if it would overflow nametable buffers
+			.(
+				; Save player_number
+				stx player_number
+
+				; Copy illustration buffer
+				jsr last_nt_buffer
+
+#if 1
+				ldy #0
+				copy_one_byte:
+					lda illustation_buffer, y
+					iny
+					sta nametable_buffers, x
+					inx
+
+					cpy #illustration_buffer_end-illustation_buffer
+					bne copy_one_byte
+#else
+				; Rolled loop is 2+66*(12+5) = 1124 cycles
+				; This version is 2+2+11*(10*4+6+5) = 576 cycles
+				ldy #0
+				clc ;NOTE - beware not setting the carry flag in the loop
+				copy_one_byte:
+					lda illustation_buffer, y
+					sta nametable_buffers, x
+					inx
+
+					lda illustation_buffer+1, y
+					sta nametable_buffers, x
+					inx
+
+					lda illustation_buffer+2, y
+					sta nametable_buffers, x
+					inx
+
+					lda illustation_buffer+3, y
+					sta nametable_buffers, x
+					inx
+
+					lda illustation_buffer+4, y
+					sta nametable_buffers, x
+					inx
+
+					lda illustation_buffer+5, y
+					sta nametable_buffers, x
+					inx
+
+					tya
+					adc #6 ; Will never set carry flag (we stop at 66)
+					tay
+
+					cpy #illustration_buffer_end-illustation_buffer ; Does not set carry flag until we leave the loop
+					bne copy_one_byte
+
+#endif
+
+				; Restore X
+				ldx player_number
+			.)
+
 			rts
+
+#define ATT(br,bl,tr,tl) ((br << 6) + (bl << 4) + (tr << 2) + tl)
+			illustation_buffer:
+			.byt NT_BUFFER_ATTRIBUTES
+			illustration:
+			.byt ATT(0,0,1,1), ATT(1,0,0,0), ATT(2,2,1,1), ATT(2,2,1,1), ATT(0,1,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0)
+			.byt ATT(0,0,0,0), ATT(2,1,2,1), ATT(2,2,2,2), ATT(2,1,3,1), ATT(3,3,1,3), ATT(1,2,0,1), ATT(0,0,0,0), ATT(0,0,0,0)
+			.byt ATT(1,0,1,0), ATT(2,2,2,2), ATT(2,2,2,2), ATT(2,2,1,2), ATT(2,1,3,2), ATT(3,3,2,3), ATT(1,3,0,1), ATT(0,0,0,0)
+			.byt ATT(2,1,2,1), ATT(2,2,2,2), ATT(2,2,2,2), ATT(2,2,2,2), ATT(2,2,2,1), ATT(3,2,3,2), ATT(3,3,3,3), ATT(1,2,0,1)
+			.byt ATT(1,0,2,1), ATT(1,2,0,1), ATT(0,0,0,0), ATT(3,3,2,0), ATT(0,0,2,2), ATT(3,3,0,0), ATT(1,0,0,0), ATT(1,2,1,1)
+			.byt ATT(0,0,0,0), ATT(1,0,2,1), ATT(2,2,0,2), ATT(1,2,0,0), ATT(0,0,0,0), ATT(2,1,0,0), ATT(1,2,2,2), ATT(0,0,0,1)
+			.byt ATT(1,1,0,0), ATT(0,0,0,0), ATT(0,0,1,1), ATT(1,0,2,1), ATT(1,1,2,2), ATT(0,1,1,2), ATT(0,0,0,1), ATT(0,0,0,0)
+			.byt ATT(2,2,2,2), ATT(2,2,1,1), ATT(1,1,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(1,0,0,0), ATT(2,2,1,1)
+			stop_byte:
+			.byt NT_BUFFER_END
+			illustration_buffer_end:
+#undef ATT
 		.)
 
 		+vgsage_tick_special_draw_knight:
 		.(
+			; Avoid to write the buffer in rollback (except the last as it is expected by next steps)
+			lda network_rollback_mode
+			beq do_it
+				lda player_a_state_clock, x
+				beq do_it
+					rts
+			do_it:
+
+			; Change palette to fade into the knight's illustration
 			stx player_number
 
 			ldy player_a_state_clock, x
 
-			lda illustration_header_lsb, y
+			lda #<fadein_palette_header
 			sta tmpfield1
-			lda illustration_header_msb, y
+			lda #>fadein_palette_header
 			sta tmpfield2
-			lda illustration_lsb, y
+			lda fadein_lsb, y
 			sta tmpfield3
-			lda illustration_msb, y
+			lda fadein_msb, y
 			sta tmpfield4
 			jsr construct_nt_buffer
 
@@ -734,54 +838,29 @@ vgsage_global_onground:
 			end:
 			rts
 
-#define ATT(br,bl,tr,tl) ((br << 6) + (bl << 4) + (tr << 2) + tl)
-			illustration_palette:
+			fadein_palette:
 			.byt $0f,$0f,$0f,$0f, $0f,$03,$03,$13, $0f,$32,$32,$20, $0f,$20,$20,$20
 			; more opaque version
 			;.byt $0f,$0f,$0f,$0f, $0f,$03,$03,$03, $0f,$32,$32,$32, $0f,$20,$20,$20
-			; lighter version, seeing more of the stage, less of the illustration
+			; lighter version, seeing more of the stage, less of the fadein
 			;.byt $0f,$21,$00,$10, $0f,$03,$03,$13, $0f,$32,$32,$20, $0f,$20,$20,$20
-			illustration_palette_fadein_1:
+			fadein_palette_1:
 			.byt $0f,$0f,$0f,$0f, $0f,$03,$03,$13, $0f,$22,$22,$32, $0f,$10,$10,$20
-			illustration_palette_fadein_2:
+			fadein_palette_2:
 			.byt $0f,$0f,$0f,$0f, $0f,$03,$0f,$03, $0f,$12,$12,$22, $0f,$00,$00,$10
-			illustration_palette_fadein_3:
+			fadein_palette_3:
 			.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$02,$02,$0f, $0f,$0f,$0f,$00
-			illustration_top:
-			.byt ATT(0,0,1,1), ATT(1,0,0,0), ATT(2,2,1,1), ATT(2,2,1,1), ATT(0,1,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0)
-			.byt ATT(0,0,0,0), ATT(2,1,2,1), ATT(2,2,2,2), ATT(2,1,3,1), ATT(3,3,1,3), ATT(1,2,0,1), ATT(0,0,0,0), ATT(0,0,0,0)
-			.byt ATT(1,0,1,0), ATT(2,2,2,2), ATT(2,2,2,2), ATT(2,2,1,2), ATT(2,1,3,2), ATT(3,3,2,3), ATT(1,3,0,1), ATT(0,0,0,0)
-			.byt ATT(2,1,2,1), ATT(2,2,2,2), ATT(2,2,2,2), ATT(2,2,2,2), ATT(2,2,2,1), ATT(3,2,3,2), ATT(3,3,3,3), ATT(1,2,0,1)
-			illustration_bot:
-			.byt ATT(1,0,2,1), ATT(1,2,0,1), ATT(0,0,0,0), ATT(3,3,2,0), ATT(0,0,2,2), ATT(3,3,0,0), ATT(1,0,0,0), ATT(1,2,1,1)
-			.byt ATT(0,0,0,0), ATT(1,0,2,1), ATT(2,2,0,2), ATT(1,2,0,0), ATT(0,0,0,0), ATT(2,1,0,0), ATT(1,2,2,2), ATT(0,0,0,1)
-			.byt ATT(1,1,0,0), ATT(0,0,0,0), ATT(0,0,1,1), ATT(1,0,2,1), ATT(1,1,2,2), ATT(0,1,1,2), ATT(0,0,0,1), ATT(0,0,0,0)
-			.byt ATT(2,2,2,2), ATT(2,2,1,1), ATT(1,1,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(1,0,0,0), ATT(2,2,1,1)
-#undef ATT
-			illustration_lsb:
-			.byt <illustration_palette
-			.byt <illustration_palette_fadein_1, <illustration_palette_fadein_2, <illustration_palette_fadein_3
-			.byt <illustration_top, <illustration_bot
-			illustration_msb:
-			.byt >illustration_palette
-			.byt >illustration_palette_fadein_1, >illustration_palette_fadein_2, >illustration_palette_fadein_3
-			.byt >illustration_top, >illustration_bot
+			fadein_lsb:
+			.byt <fadein_palette
+			.byt <fadein_palette_1, <fadein_palette_2, <fadein_palette_3
+			fadein_msb:
+			.byt >fadein_palette
+			.byt >fadein_palette_1, >fadein_palette_2, >fadein_palette_3
 
-			illustration_palette_header:
+			fadein_palette_header:
 			.byt $3f, $00, $10
-			illustration_top_header:
-			.byt $23, $c0, $20
-			illustration_bot_header:
-			.byt $23, $e0, $20
 
-			illustration_header_lsb:
-			.byt <illustration_palette_header
-			.byt <illustration_palette_header, <illustration_palette_header, <illustration_palette_header
-			.byt <illustration_top_header, <illustration_bot_header
-			illustration_header_msb:
-			.byt >illustration_palette_header
-			.byt >illustration_palette_header, >illustration_palette_header, >illustration_palette_header
-			.byt >illustration_top_header, >illustration_bot_header
+			&LAST_STEP = fadein_msb - fadein_lsb - 1
 		.)
 	.)
 
@@ -831,36 +910,42 @@ vgsage_global_onground:
 
 		+vgsage_tick_special_draw_slash:
 		.(
-			; Step the animation
-			.(
-				lda player_a_state_clock, x
-				and #%00000001
-				bne ok
+			; Avoid to create nt buffers in rollback mode
+			lda network_rollback_mode
+			bne end_animating
 
-					stx player_number
-
+				; Step the animation
+				.(
 					lda player_a_state_clock, x
-					lsr
-					tay
+					and #%00000001
+					bne ok
 
-					lda anim_headers_lsb, y
-					cmp #NOOP
-					beq skip
+						stx player_number
 
-						sta tmpfield1
-						lda anim_headers_msb, y
-						sta tmpfield2
-						lda anim_frames_lsb, y
-						sta tmpfield3
-						lda anim_frames_msb, y
-						sta tmpfield4
-						jsr construct_nt_buffer
+						lda player_a_state_clock, x
+						lsr
+						tay
 
-					skip:
-					ldx player_number
+						lda anim_headers_lsb, y
+						cmp #NOOP
+						beq skip
 
-				ok:
-			.)
+							sta tmpfield1
+							lda anim_headers_msb, y
+							sta tmpfield2
+							lda anim_frames_lsb, y
+							sta tmpfield3
+							lda anim_frames_msb, y
+							sta tmpfield4
+							jsr construct_nt_buffer
+
+						skip:
+						ldx player_number
+
+					ok:
+				.)
+
+			end_animating:
 
 			; Tick clock
 			dec player_a_state_clock, x

@@ -894,6 +894,8 @@ stage_thehunt_restore_screen:
 		ok:
 	.)
 
+	; FIXME do not do it if there is not enough space in nametable buffers
+
 	; Write NT buffer corresponding to current step
 	.(
 		;ldx stage_restore_screen_step ; useless, done above
