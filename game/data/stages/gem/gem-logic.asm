@@ -80,14 +80,32 @@ stage_thehunt_init:
 	; Disable screen restoration
 	lda #$ff
 	sta stage_restore_screen_step
+	sta stage_restore_screen_count
 
 	rts
 .)
 
 stage_thehunt_netload:
 .(
+	rx_buffer_fade_level = esp_rx_buffer+0
+	rx_buffer_gem_state_value = esp_rx_buffer+1
+	rx_buffer_gem_state_details = esp_rx_buffer+2
+
+	; Load fade level
+	txa:pha
+
+	lda rx_buffer_fade_level, x
+	cmp stage_thehunt_fade_level
+	beq fade_ok
+
+		tax
+		jsr stage_thehunt_fadeout
+
+	fade_ok:
+	pla:tax
+
 	; Load gem's state
-	ldy esp_rx_buffer+0, x
+	ldy rx_buffer_gem_state_value, x
 	sty stage_thehunt_gem_state
 
 	; Load fields for the new state
@@ -100,9 +118,9 @@ stage_thehunt_netload:
 	gem_netload_cooldown:
 	.(
 		; Load state's variables
-		lda esp_rx_buffer+1, x
+		lda rx_buffer_gem_state_details+0, x
 		sta stage_thehunt_gem_cooldown_low
-		lda esp_rx_buffer+2, x
+		lda rx_buffer_gem_state_details+1, x
 		sta stage_thehunt_gem_cooldown_high
 
 		; Ensure sprites consistency
@@ -114,21 +132,21 @@ stage_thehunt_netload:
 	gem_netload_active:
 	.(
 		; Load state's variables
-		lda esp_rx_buffer+1, x
+		lda rx_buffer_gem_state_details+0, x
 		sta stage_thehunt_gem_position_x_low
-		lda esp_rx_buffer+2, x
+		lda rx_buffer_gem_state_details+1, x
 		sta stage_thehunt_gem_position_x_high
-		lda esp_rx_buffer+3, x
+		lda rx_buffer_gem_state_details+2, x
 		sta stage_thehunt_gem_position_y_low
-		lda esp_rx_buffer+4, x
+		lda rx_buffer_gem_state_details+3, x
 		sta stage_thehunt_gem_position_y_high
-		lda esp_rx_buffer+5, x
+		lda rx_buffer_gem_state_details+4, x
 		sta stage_thehunt_gem_velocity_h_low
-		lda esp_rx_buffer+6, x
+		lda rx_buffer_gem_state_details+5, x
 		sta stage_thehunt_gem_velocity_h_high
-		lda esp_rx_buffer+7, x
+		lda rx_buffer_gem_state_details+6, x
 		sta stage_thehunt_gem_velocity_v_low
-		lda esp_rx_buffer+8, x
+		lda rx_buffer_gem_state_details+7, x
 		sta stage_thehunt_gem_velocity_v_high
 
 		; Ensure sprites consistency
@@ -146,7 +164,7 @@ stage_thehunt_netload:
 	gem_netload_breaking:
 	.(
 		; Load state's variables
-		lda esp_rx_buffer+1, x
+		lda rx_buffer_gem_state_details+0, x
 		sta stage_thehunt_buffed_player
 
 		; Ensure sprites consistency
@@ -161,13 +179,13 @@ stage_thehunt_netload:
 	gem_netload_buff:
 	.(
 		; Load state's variables
-		lda esp_rx_buffer+1, x
+		lda rx_buffer_gem_state_details+0, x
 		sta stage_thehunt_gem_cooldown_low
-		lda esp_rx_buffer+2, x
+		lda rx_buffer_gem_state_details+1, x
 		sta stage_thehunt_gem_cooldown_high
-		lda esp_rx_buffer+3, x
+		lda rx_buffer_gem_state_details+2, x
 		sta stage_thehunt_last_opponent_state
-		lda esp_rx_buffer+4, x
+		lda rx_buffer_gem_state_details+3, x
 		sta stage_thehunt_buffed_player
 
 		; Ensure sprites consistency
@@ -880,9 +898,9 @@ stage_thehunt_restore_screen:
 .(
 	; Do nothing when rollbacking - optimizable, could be checked by caller (already done on one call)
 	.(
-		lda network_rollback_mode
-		beq ok
-			rts
+		lda network_rollback_mode ; 2 bytes
+		beq ok ; 2 bytes
+			rts ; 1 byte
 		ok:
 	.)
 

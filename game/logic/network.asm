@@ -19,7 +19,7 @@ network_init_stage:
 		cpx #32
 		bne clear_one_input
 
-	sta network_last_known_remote_input ;TODO could be init at $80 to be marked as "unknown, predict it", it would change nothing though predicting expects at least one known input
+	sta network_last_known_remote_input ;NOTE could be init at $80 to be marked as "unknown, predict it", it would change nothing though predicting expects at least one known input
 
 	; Reinit frame counter
 	lda #$00
@@ -333,19 +333,32 @@ network_tick_ingame:
 			;  4x rolled - (4+3)*2 + ((4+4+2)*4 + 3 + 3) * (104/4) = 14 + 46 * 26 = 1210
 
 			; Copy special state
-			lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE
-			sta screen_shake_counter
-			bne screen_shake_updated
-				; Received a "no screen shake", ensure that scrolling is reset
-				;lda #$00 ; useless - ensured by bne
-				sta scroll_y
-				sta scroll_x
-				lda #%10010000
-				sta ppuctrl_val
-			screen_shake_updated:
+			.(
+				; Screen shaking
+				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE
+				sta screen_shake_counter
+				bne screen_shake_updated
+					; Received a "no screen shake", ensure that scrolling is reset
+					;lda #$00 ; useless - ensured by bne
+					sta scroll_y
+					sta scroll_x
+					lda #%10010000
+					sta ppuctrl_val
+				screen_shake_updated:
+
+				; Screen restore
+				;  If the server restored more (or less) than us, restore to resync
+				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE+1
+				cmp stage_restore_screen_count
+				beq restore_screen_updated
+					sta stage_restore_screen_count
+					lda #0
+					sta stage_restore_screen_step
+				restore_screen_updated:
+			.)
 
 			; Copy controllers state
-			CONTROLLERS_STATE_OFFSET = GAMESTATE_OFFSET+GAMESTATE_SIZE+1
+			CONTROLLERS_STATE_OFFSET = GAMESTATE_OFFSET+GAMESTATE_SIZE+2
 			lda esp_rx_buffer+CONTROLLERS_STATE_OFFSET+0
 			sta controller_a_btns
 			lda esp_rx_buffer+CONTROLLERS_STATE_OFFSET+1

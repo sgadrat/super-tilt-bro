@@ -67,6 +67,7 @@ STAGE_PIT_MOVING_PLATFORM_2_OFFSET = STAGE_PIT_MOVING_PLATFORM_1_OFFSET + STAGE_
 	; Disable screen restore
 	lda #$ff
 	sta stage_restore_screen_step
+	sta stage_restore_screen_count
 
 	; Set stage's state
 	lda #$ff

@@ -807,29 +807,31 @@ vgsage_global_onground:
 		.(
 			; Avoid to write the buffer in rollback (except the last as it is expected by next steps)
 			lda network_rollback_mode
-			beq do_it
-				lda player_a_state_clock, x
-				beq do_it
-					rts
-			do_it:
+			beq do_fade_in
+			lda player_a_state_clock, x
+			bne skip_fade_in
 
-			; Change palette to fade into the knight's illustration
-			stx player_number
+				do_fade_in:
+					; Change palette to fade into the knight's illustration
+					stx player_number
 
-			ldy player_a_state_clock, x
+					ldy player_a_state_clock, x
 
-			lda #<fadein_palette_header
-			sta tmpfield1
-			lda #>fadein_palette_header
-			sta tmpfield2
-			lda fadein_lsb, y
-			sta tmpfield3
-			lda fadein_msb, y
-			sta tmpfield4
-			jsr construct_nt_buffer
+					lda #<fadein_palette_header
+					sta tmpfield1
+					lda #>fadein_palette_header
+					sta tmpfield2
+					lda fadein_lsb, y
+					sta tmpfield3
+					lda fadein_msb, y
+					sta tmpfield4
+					jsr construct_nt_buffer
 
-			ldx player_number
+					ldx player_number
 
+			skip_fade_in:
+
+			; Update clock
 			dec player_a_state_clock, x
 			bpl end
 				jmp vgsage_start_special_show_knight
@@ -1031,6 +1033,7 @@ vgsage_global_onground:
 		.(
 			lda #0
 			sta stage_restore_screen_step
+			inc stage_restore_screen_count
 			jmp resume_game
 			;rts ; useless, jump to subroutine
 		.)

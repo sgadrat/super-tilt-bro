@@ -203,8 +203,7 @@ player_a_last_shown_stocks = $6c
 player_b_last_shown_stocks = $6d
 
 stage_restore_screen_step = $6e ; Set to zero to start asynchrone restoration of the screen by stage's logic
-
-; $6f unused
+stage_restore_screen_count = $6f ; Increment each time you reset stage_restore_screen_step (used by netcode)
 
 screen_shake_counter = $70
 screen_shake_nextval_x = $71
@@ -718,10 +717,11 @@ arcade_mode_counter_minutes = $054f
 arcade_mode_nb_credits_used = $0550
 
 ; Menu state variable that must persist between screens
-menu_state_mode_selection_current_option = $0551
+menu_state_mode_selection_current_option = $0552
 
 ; Nine-gine variables
-nt_buffers_begin = $0552
+nt_buffers_begin = $0553
+;TODO nt_buffers_end = $0554 (would save cycles, and allow for quick check for free space)
 
 ;$0580 to $05ff may be used by game states
 

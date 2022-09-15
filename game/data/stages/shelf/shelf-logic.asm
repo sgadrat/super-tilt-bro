@@ -26,6 +26,7 @@
 	; Disable screen restore
 	lda #$ff
 	sta stage_restore_screen_step
+	sta stage_restore_screen_count
 	rts
 .)
 
