@@ -265,7 +265,7 @@ change_global_game_state:
 		sta ppuctrl_val ;TODO investigate, ppuctr_val != PPUCTRL, it may be a bug, certainly non-impacting since we are in audio mode
 
 		; Clear not processed drawings
-		jsr reset_nt_buffers
+		jsr clear_nt_buffers
 
 		; Reset scrolling
 		lda #$00

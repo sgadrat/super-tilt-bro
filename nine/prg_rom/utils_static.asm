@@ -197,9 +197,18 @@ last_nt_buffer:
 .)
 
 ; Empty the list of nametable buffers
-;TODO remove all calls to that
-reset_nt_buffers:
+;TODO remove/rename all calls to reset_nt_buffers
+reset_nt_buffers: ; Old name was used to clear processed buffers (mainly), or clear even unprocessed buffers (rarely)
 .(
+	;Deactivated, no need to remove processed buffers explicitely now
+	rts
+.)
+;  Overwrites A and X
+clear_nt_buffers: ; New name to make it clear, calling it cancel any unprocessed buffer
+.(
+	ldx nt_buffers_begin
+	lda #NT_BUFFER_END
+	sta nametable_buffers, x
 	rts
 .)
 
