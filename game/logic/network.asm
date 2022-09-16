@@ -346,19 +346,21 @@ network_tick_ingame:
 					sta ppuctrl_val
 				screen_shake_updated:
 
-				; Screen restore
-				;  If the server restored more (or less) than us, restore to resync
+				; Screen state
 				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE+1
-				cmp stage_restore_screen_count
-				beq restore_screen_updated
-					sta stage_restore_screen_count
+				sta stage_fade_level
+
+				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE+2
+				sta stage_screen_effect
+				beq screen_effect_ok
+					; Some screen effects are playing, the screen will need to be restored
 					lda #0
 					sta stage_restore_screen_step
-				restore_screen_updated:
+				screen_effect_ok:
 			.)
 
 			; Copy controllers state
-			CONTROLLERS_STATE_OFFSET = GAMESTATE_OFFSET+GAMESTATE_SIZE+2
+			CONTROLLERS_STATE_OFFSET = GAMESTATE_OFFSET+GAMESTATE_SIZE+3
 			lda esp_rx_buffer+CONTROLLERS_STATE_OFFSET+0
 			sta controller_a_btns
 			lda esp_rx_buffer+CONTROLLERS_STATE_OFFSET+1

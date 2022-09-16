@@ -1,5 +1,3 @@
-stage_pit_palette_ntbuffer:
-.byt $3f, $00, $10
 stage_pit_palette:
 .byt $08,$09,$18,$28, $08,$09,$1a,$28, $08,$09,$16,$25, $08,$09,$11,$21
 

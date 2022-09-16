@@ -39,11 +39,37 @@ STAGE_PIT_MOVING_PLATFORM_2_OFFSET = STAGE_PIT_MOVING_PLATFORM_1_OFFSET + STAGE_
 	rts
 .)
 
+; Sets fadeout level
+;  register X - fadeout level
+;
+; Overwrites registers, tmpfield1 to tmpfield4
 +stage_pit_fadeout:
+.(
+	; Set ideal fade level
+	stx stage_fade_level
+
+	; If not in rollback, apply it immediately
+	lda network_rollback_mode
+	beq apply_fadeout
+		rts
+
+	apply_fadeout:
+	;Fallthrough to stage_pit_fadeout_update
+.)
+
+; Rewrite palettes to match fadeout level
+;  register X - fadeout level
+;
+; Overwrites registers, tmpfield1 to tmpfield4
+stage_pit_fadeout_update:
 .(
 	header = tmpfield1 ; construct_nt_buffer parameter
 	payload = tmpfield3 ; construct_nt_buffer parameter
 
+	; Set actual fade level
+	stx stage_current_fade_level
+
+	; Change palette
 	lda #<palette_header
 	sta header
 	lda #>palette_header
@@ -67,7 +93,9 @@ STAGE_PIT_MOVING_PLATFORM_2_OFFSET = STAGE_PIT_MOVING_PLATFORM_1_OFFSET + STAGE_
 	; Disable screen restore
 	lda #$ff
 	sta stage_restore_screen_step
-	sta stage_restore_screen_count
+	lda #FADE_LEVEL_NORMAL
+	sta stage_fade_level
+	sta stage_current_fade_level
 
 	; Set stage's state
 	lda #$ff
@@ -151,9 +179,17 @@ stage_pit_place_platform_sprites:
 	rts
 .)
 
-stage_pit_restore_screen:
+; Redraw the stage background (one step per call)
+;  network_rollback_mode - set to inhibit any repair operation
+;  stage_screen_effect - set to inhibit any repair operation
+;  stage_fade_level - Desired fade level
+;  stage_current_fade_level - Currently applied fade level
+;  stage_restore_screen_step - Attributes restoration step (>= $80 to inhibit attributes restoration)
+;
+; Overwrites all registers, tmpfield1 to tmpfield4
+stage_pit_repair_screen:
 .(
-	; Do nothing when rollbacking - optimizable, could be checked by caller (already done on one call)
+	; Do nothing in rollback mode
 	.(
 		lda network_rollback_mode
 		beq ok
@@ -161,33 +197,55 @@ stage_pit_restore_screen:
 		ok:
 	.)
 
-	; Do noting if there is no restore operation running - optimizable, could have X loaded by caller (one call already checks for bpl)
+	; Do nothing if a fullscreen animation is running
 	.(
-		ldx stage_restore_screen_step
-		bpl ok
+		lda stage_screen_effect
+		beq ok
 			rts
 		ok:
 	.)
 
-	; FIXME do not do it if there is not enough space in nametable buffers
-
-	; Write NT buffer corresponding to current step
+	; Fix fadeout if needed
+	;NOTE does not return if action is taken (to avoid flooding nametable buffers)
 	.(
-		;ldx stage_restore_screen_step ; useless, done above
-		lda steps_buffers_lsb, x
-		ldy steps_buffers_msb, x
-		jsr push_nt_buffer
+		ldx stage_fade_level
+		cpx stage_current_fade_level
+		beq ok
+			jmp stage_pit_fadeout_update
+			;No return, jump to subroutine
+		ok:
 	.)
 
-	; Increment step
+	; Fix attributes if needed
 	.(
-		inc stage_restore_screen_step
-		lda stage_restore_screen_step
-		cmp #NUM_RESTORE_STEPS
-		bne ok
-			lda #$ff
-			sta stage_restore_screen_step
-		ok:
+		; Do noting if there is no restore operation running
+		.(
+			ldx stage_restore_screen_step
+			bpl ok
+				rts
+			ok:
+		.)
+
+		; FIXME do not do it if there is not enough space in nametable buffers
+
+		; Write NT buffer corresponding to current step
+		.(
+			;ldx stage_restore_screen_step ; useless, done above
+			lda steps_buffers_lsb, x
+			ldy steps_buffers_msb, x
+			jsr push_nt_buffer
+		.)
+
+		; Increment step
+		.(
+			inc stage_restore_screen_step
+			lda stage_restore_screen_step
+			cmp #NUM_RESTORE_STEPS
+			bne ok
+				lda #$ff
+				sta stage_restore_screen_step
+			ok:
+		.)
 	.)
 
 	rts
@@ -206,16 +264,16 @@ stage_pit_restore_screen:
 	.byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
 
 	steps_buffers_lsb:
-	.byt <stage_pit_palette_ntbuffer, <top_attributes, <bot_attibutes
+	.byt <top_attributes, <bot_attibutes
 	steps_buffers_msb:
-	.byt >stage_pit_palette_ntbuffer, >top_attributes, >bot_attibutes
+	.byt >top_attributes, >bot_attibutes
 	NUM_RESTORE_STEPS = *-steps_buffers_msb
 .)
 
 +stage_pit_tick:
 .(
 	; Update background
-	jsr stage_pit_restore_screen
+	jsr stage_pit_repair_screen
 
 	; Move platforms
 	.(

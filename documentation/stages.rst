@@ -17,15 +17,22 @@ The fadeout routine is called to set a variant of the stage's background palette
  * 3: Slightly darkened palette
  * 4: Normal palette
 
-The routine must set the palette and ensure stage's special effects continue to work (ex: palette-swap based animations shall continue while darkened.)
+The routine must not create a nametable buffer if called during rollback (applying changes on next non-rollback tick is acceptable.)
+
+The stage's special effects must continue to work (ex: palette-swap based animations shall continue while darkened.)
+
+Input::
+
+ * ``X``: requested fade level
 
 Output contraints::
 
- * ``A``: output: Can be modified
- * ``X``: output: Can be modified
- * ``Y``: output: Can be modified
- * ``player_number``: output: Cannot be modified
- * ``tmpfields``: output: Can be modified
+ * ``A``: Can be modified
+ * ``X``: Can be modified
+ * ``Y``: Can be modified
+ * ``player_number``: Cannot be modified
+ * ``tmpfields``: Can be modified
+ * ``stage_fade_level``: must be set to requested level
 
 Sprites allocation in game
 ==========================

@@ -202,8 +202,8 @@ player_b_last_shown_damage = $6b
 player_a_last_shown_stocks = $6c
 player_b_last_shown_stocks = $6d
 
-stage_restore_screen_step = $6e ; Set to zero to start asynchrone restoration of the screen by stage's logic
-stage_restore_screen_count = $6f ; Increment each time you reset stage_restore_screen_step (used by netcode)
+stage_fade_level = $6e
+stage_screen_effect = $6f ; 0 - The screen is clean from effects, any other - There are effects at play (inc when starting an effect, dec on end)
 
 screen_shake_counter = $70
 screen_shake_nextval_x = $71
@@ -281,7 +281,6 @@ stage_thehunt_gem_state = $8a ; one of STAGE_GEM_GEM_STATE_*
 stage_thehunt_buffed_player = $8b
 stage_thehunt_last_opponent_state = $8c
 stage_thehunt_frame_cnt = $8d
-stage_thehunt_fade_level = $8e
 
 ;Note - $90 to $af are used by DI particles
 
@@ -722,6 +721,10 @@ menu_state_mode_selection_current_option = $0552
 ; Nine-gine variables
 nt_buffers_begin = $0553
 ;TODO nt_buffers_end = $0554 (would save cycles, and allow for quick check for free space)
+
+; Stages common variables
+stage_restore_screen_step = $0555 ; Set to zero to start asynchrone restoration of the screen by stage's logic
+stage_current_fade_level = $0556
 
 ;$0580 to $05ff may be used by game states
 

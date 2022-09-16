@@ -48,3 +48,62 @@ tick {
 	//NOTE: after returning, game_tick() will be executed
 }
 
+Special case of the screen state
+================================
+
+Some visual effects may impact the screen in ways that we cannot fix at will. Notably by writing in the nametable.
+
+Such effects conflict with rollback, as we want to display the screen as it should be, even if we missed the frame where nametable have been modified.
+
+Goals::
+
+ * No nt_buffer generated during rollback
+ * Server can run in rollback mode without special code handling that it is the server
+ * The screen always ends up being in the expected state
+
+Idea::
+
+ * We have in memory the "ideal" screen state and the "actual" screen state
+ * When both missmatch, actions have to be taken to "repair" screen
+ * As actions may be heavy and require multiple frames, "actual screen state" may be more than just a mirror of "ideal"
+
+Ideal screen state
+------------------
+
+Definition: How the screen should be.
+
+ * Present in NewGameState STNP messages
+ * Modified as usual in rollback mode
+
+stage_fade_level => 0 (darkest) to 4 (normal)
+stage_screen_effect => 0 (screen is as usual), anything else (screen effect playing)
+
+Current screen state
+--------------------
+
+Definition: How the screen actually is
+
+ * Not in NewGameState STNP messages
+ * Not modified on rollback
+ * Actions about it are done asynchronously in tick routines
+
+``stage_current_fade_level``
+ * directly like fade_level
+ * if current_fade_level != fade_level and stage_screen_effect == 0, we must update palette
+``stage_restore_screen_step``
+ * set to zero each time stage_screen_effect is set to >= 1 (even by netcode)
+ * Stage code is responsible to repair screen if it has been set to 0, and stage_screen_effect is 0
+ * Keep it to zero as long as stage_screen_effect is >= 1
+
+Responsibilities of code doing screen effects
+---------------------------------------------
+
+Must::
+* Increment stage_screen_effect on start (even in rollback mode)
+* Decrement stage_screen_effect on end (even in rollback mode)
+* Set stage_restore_screen_step to zero on start (even in rollback mode)
+
+Should::
+* Do not generate nametable buffers in rollback mode
+* Show clean animation, even if frames are skipped (or at least not too visible artifacts)
+  * It may imply to redraw the full effect (including palettes) regularily

@@ -72,37 +72,23 @@ stage_thehunt_init:
 	jsr stage_thehunt_set_state_cooldown
 
 	; Init background animation
-	lda #FADE_LEVEL_NORMAL
-	sta stage_thehunt_fade_level
 	lda #0
 	sta stage_thehunt_frame_cnt
 
 	; Disable screen restoration
 	lda #$ff
 	sta stage_restore_screen_step
-	sta stage_restore_screen_count
+	lda #FADE_LEVEL_NORMAL
+	sta stage_fade_level
+	sta stage_current_fade_level
 
 	rts
 .)
 
 stage_thehunt_netload:
 .(
-	rx_buffer_fade_level = esp_rx_buffer+0
-	rx_buffer_gem_state_value = esp_rx_buffer+1
-	rx_buffer_gem_state_details = esp_rx_buffer+2
-
-	; Load fade level
-	txa:pha
-
-	lda rx_buffer_fade_level, x
-	cmp stage_thehunt_fade_level
-	beq fade_ok
-
-		tax
-		jsr stage_thehunt_fadeout
-
-	fade_ok:
-	pla:tax
+	rx_buffer_gem_state_value = esp_rx_buffer+0
+	rx_buffer_gem_state_details = esp_rx_buffer+1
 
 	; Load gem's state
 	ldy rx_buffer_gem_state_value, x
@@ -204,13 +190,35 @@ stage_thehunt_netload:
 	.byt >gem_netload_cooldown, >gem_netload_active, >gem_netload_breaking, >gem_netload_buff
 .)
 
+; Sets fadeout level
+;  register X - fadeout level
+;
+; Overwrites registers, tmpfield1 to tmpfield4
 +stage_thehunt_fadeout:
+.(
+	; Set ideal fade level
+	stx stage_fade_level
+
+	; If not in rollback, apply it immediately
+	lda network_rollback_mode
+	beq apply_fadeout
+		rts
+
+	apply_fadeout:
+	;Fallthrough to stage_thehunt_fadeout_update
+.)
+
+; Rewrite palettes to match fadeout level
+;  register X - fadeout level
+;
+; Overwrites registers, tmpfield1 to tmpfield4
+stage_thehunt_fadeout_update:
 .(
 	header = tmpfield1 ; construct_nt_buffer parameter
 	payload = tmpfield3 ; construct_nt_buffer parameter
 
-	; Store new fade level
-	stx stage_thehunt_fade_level
+	; Set actual fade level
+	stx stage_current_fade_level
 
 	; Change palette
 	lda #<palette_header
@@ -224,8 +232,7 @@ stage_thehunt_netload:
 	sta payload+1
 
 	jmp construct_nt_buffer
-
-	;rts ; useless, jump to subroutine
+	;No return, jump to subroutine
 
 	palette_header:
 	.byt $3f, $00, $10
@@ -234,7 +241,10 @@ stage_thehunt_netload:
 stage_thehunt_freezed_tick:
 .(
 	; Restore screen if requested
-	jsr stage_thehunt_restore_screen
+	lda network_rollback_mode
+	bne bg_update_ok
+		jsr stage_thehunt_repair_screen
+	bg_update_ok:
 
 	; Update gem breaking state if it is the cause of the freeze
 	lda stage_thehunt_gem_state
@@ -259,80 +269,83 @@ stage_thehunt_tick:
 		sta tmpfield2
 		jsr call_pointed_subroutine
 
-		; Update background (restore screen if requested, else animate lava)
+		; Update background (apply an asynchrone change if requested, else animate lava)
 		lda network_rollback_mode
 		bne bg_update_ok
-		lda stage_restore_screen_step
-		bmi update_lava
-
-		update_screen_restore:
-			jsr stage_thehunt_restore_screen
-			jmp bg_update_ok ; optimizable - jump to previous routine as there is only a RTS after bg_update_ok
-
-		update_lava:
-
-			;  NOTE - despite its name, stage_thehunt_frame_cnt is only used for one purpose, animating lava.
-			;         If this change, the "inc" should certainly be done even in rollback mode.
-
-			; Update frame counter
-			inc stage_thehunt_frame_cnt
-
-			; Compute current animation frame frome counter
-			lda #%0010000
-			bit stage_thehunt_frame_cnt
-			beq even_frame
-				ldx #1
-				jmp x_ok
-			even_frame:
-				ldx #0
-			x_ok:
-
-			; Get animation frame pointer
-			lda lava_bg_frames_lsb, x
-			sta tmpfield1
-			lda lava_bg_frames_msb, x
-			sta tmpfield2
-
-			; Write nametable buffer
+			; Apply repair operation (and stop there if it had work to do)
 			.(
-				; X points to last nametable buffer
-				jsr last_nt_buffer
+				lda #1
+				sta tmpfield5
+				jsr stage_thehunt_repair_screen
+				lda tmpfield5
+				beq bg_update_ok
+			.)
 
-				; Write buffer's header
-				lda #1 ; Continuation byte
-				sta nametable_buffers, x
-				inx
+			; Update lava
+			.(
+				;  NOTE - despite its name, stage_thehunt_frame_cnt is only used for one purpose, animating lava.
+				;         If this change, the "inc" should certainly be done even in rollback mode.
 
-				lda #$3f ; VRAM address MSB
-				sta nametable_buffers, x
-				inx
+				; Update frame counter
+				inc stage_thehunt_frame_cnt
 
-				lda #$02 ; VRAM address LSB
-				sta nametable_buffers, x
-				inx
+				; Compute current animation frame frome counter
+				lda #%0010000
+				bit stage_thehunt_frame_cnt
+				beq even_frame
+					ldx #1
+					jmp x_ok
+				even_frame:
+					ldx #0
+				x_ok:
 
-				lda #$02 ; Payload size
-				sta nametable_buffers, x
-				inx
+				; Get animation frame pointer
+				lda lava_bg_frames_lsb, x
+				sta tmpfield1
+				lda lava_bg_frames_msb, x
+				sta tmpfield2
 
-				; Y = offset in the frame of colors for the current fade level
-				lda stage_thehunt_fade_level
-				asl
-				tay
+				; Write nametable buffer
+				.(
+					; X points to last nametable buffer
+					jsr last_nt_buffer
 
-				; Write buffer's payload
-				lda (tmpfield1), y
-				sta nametable_buffers, x
-				inx
-				iny
+					; Write buffer's header
+					lda #1 ; Continuation byte
+					sta nametable_buffers, x
+					inx
 
-				lda (tmpfield1), y
-				sta nametable_buffers, x
-				inx
+					lda #$3f ; VRAM address MSB
+					sta nametable_buffers, x
+					inx
 
-				; Write stop byte
-				lda #0
-				sta nametable_buffers, x
+					lda #$02 ; VRAM address LSB
+					sta nametable_buffers, x
+					inx
+
+					lda #$02 ; Payload size
+					sta nametable_buffers, x
+					inx
+
+					; Y = offset in the frame of colors for the current fade level
+					lda stage_fade_level
+					asl
+					tay
+
+					; Write buffer's payload
+					lda (tmpfield1), y
+					sta nametable_buffers, x
+					inx
+					iny
+
+					lda (tmpfield1), y
+					sta nametable_buffers, x
+					inx
+
+					; Write stop byte
+					lda #0
+					sta nametable_buffers, x
+				.)
 			.)
 
 		bg_update_ok:
@@ -894,50 +907,78 @@ stage_thehunt_tick:
 	.)
 .)
 
-stage_thehunt_restore_screen:
+; Redraw the stage background (one step per call)
+;  stage_screen_effect - set to inhibit any repair operation
+;  stage_fade_level - Desired fade level
+;  stage_current_fade_level - Currently applied fade level
+;  stage_restore_screen_step - Attributes restoration step (>= $80 to inhibit attributes restoration)
+;
+; Output
+;  tmpfield5 - Set to zero if a nametable buffer has been produced (untouched otherwise)
+;
+; Overwrites all registers, tmpfield1 to tmpfield5
+;
+;NOTE - not your typical repair screen routine
+; - Expects rollback mode to be off (will not check it)
+; - Sets tmpfield5 to zero if actually did something (don't touch it if nothing to do)
+stage_thehunt_repair_screen:
 .(
-	; Do nothing when rollbacking - optimizable, could be checked by caller (already done on one call)
-	.(
-		lda network_rollback_mode ; 2 bytes
-		beq ok ; 2 bytes
-			rts ; 1 byte
-		ok:
-	.)
+	result = tmpfield5
 
-	; Do noting if there is no restore operation running - optimizable, could have X loaded by caller (one call already checks for bpl)
+	; Do nothing if a fullscreen animation is running
 	.(
-		ldx stage_restore_screen_step
-		bpl ok
+		lda stage_screen_effect
+		beq ok
 			rts
 		ok:
 	.)
 
-	; FIXME do not do it if there is not enough space in nametable buffers
-
-	; Write NT buffer corresponding to current step
+	; Fix fadeout if needed
+	;NOTE does not return if action is taken (to avoid flooding nametable buffers)
 	.(
-		;ldx stage_restore_screen_step ; useless, done above
-		beq set_fade_level
-			apply_nt_buffer:
-				lda steps_buffers_lsb, x
-				ldy steps_buffers_msb, x
-				jsr push_nt_buffer
-				jmp ok
-			set_fade_level:
-				ldx #FADE_LEVEL_NORMAL
-				jsr stage_thehunt_fadeout
+		ldx stage_fade_level
+		cpx stage_current_fade_level
+		beq ok
+			lda #0
+			sta result
+			jmp stage_thehunt_fadeout_update
+			;No return, jump to subroutine
 		ok:
 	.)
 
-	; Increment step
+	; Fix attributes if needed
 	.(
-		inc stage_restore_screen_step
-		lda stage_restore_screen_step
-		cmp #NUM_RESTORE_STEPS
-		bne ok
-			lda #$ff
-			sta stage_restore_screen_step
-		ok:
+		; Do noting if there is no restore operation running
+		.(
+			ldx stage_restore_screen_step
+			bpl ok
+				rts
+			ok:
+		.)
+
+		; FIXME do not do it if there is not enough space in nametable buffers
+
+		; Write NT buffer corresponding to current step
+		.(
+			;ldx stage_restore_screen_step ; useless, done above
+			lda steps_buffers_lsb, x
+			ldy steps_buffers_msb, x
+			jsr push_nt_buffer
+
+			lda #0
+			sta result
+		.)
+
+		; Increment step
+		.(
+			inc stage_restore_screen_step
+			lda stage_restore_screen_step
+			cmp #NUM_RESTORE_STEPS
+			bne ok
+				lda #$ff
+				sta stage_restore_screen_step
+			ok:
+		.)
 	.)
 
 	rts
@@ -956,9 +997,9 @@ stage_thehunt_restore_screen:
 	.byt %10101010, %10101010, %10101010, %10101010, %10101010, %10101010, %10101010, %10101010
 
 	steps_buffers_lsb:
-		.byt 0, <top_attributes, <bot_attributes
+		.byt <top_attributes, <bot_attributes
 	steps_buffers_msb:
-		.byt 0, >top_attributes, >bot_attributes
+		.byt >top_attributes, >bot_attributes
 	NUM_RESTORE_STEPS = *-steps_buffers_msb
 .)
 

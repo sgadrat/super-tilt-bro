@@ -662,33 +662,26 @@ vgsage_global_onground:
 
 		+vgsage_tick_special_fadeout:
 		.(
-			; Avoid creating nt buffers on rollback
-			;TODO investigate - may be nice to keep the tick on "clock == 0" to ensure black palette to be set
-			lda network_rollback_mode
-			bne end_fadeout
+			; Every two ticks, advance one step of the fadeout
+			.(
+				lda player_a_state_clock, x
+				and #%00000001
+				bne ok
 
-				; Every two ticks, advance one step of the fadeout
-				.(
+					; Set pallettes to current fadeout step
+					stx player_number
+
 					lda player_a_state_clock, x
-					and #%00000001
-					bne ok
+					lsr
+					tax
 
-						; Set pallettes to current fadeout step
-						stx player_number
+					ldy config_selected_stage
+					TRAMPOLINE_POINTED(stage_routine_fadeout_lsb COMMA y, stage_routine_fadeout_msb COMMA y, stages_bank COMMA y, #CURRENT_BANK_NUMBER)
 
-						lda player_a_state_clock, x
-						lsr
-						tax
+					ldx player_number
 
-						ldy config_selected_stage
-						TRAMPOLINE_POINTED(stage_routine_fadeout_lsb COMMA y, stage_routine_fadeout_msb COMMA y, stages_bank COMMA y, #CURRENT_BANK_NUMBER)
-
-						ldx player_number
-
-					ok:
-				.)
-
-			end_fadeout:
+				ok:
+			.)
 
 			; Tick clock
 			dec player_a_state_clock, x
@@ -713,6 +706,11 @@ vgsage_global_onground:
 			lda #LAST_STEP
 			sta player_a_state_clock, x
 
+			; Notify we are going dirty with the screen
+			inc stage_screen_effect
+			lda #0
+			sta stage_restore_screen_step
+
 			; Avoid drawing knight on rollback
 			lda network_rollback_mode
 			beq do_it
@@ -720,7 +718,7 @@ vgsage_global_onground:
 			do_it:
 
 			; Draw knight
-			;  TODO investigate (it saves so much cycles/risk not drawing in in rollback) - Even in rollback - We don't want to miss drawing it
+			;  Not in rollback - Better redraw it regularily (in vgsage_tick_special_show_knight) if it cause troubles in rollback situations
 			;  In the "start" routine - It whould work well with the palette buffer writen in last tick of the fadeout step
 			;  FIXME do not draw if it would overflow nametable buffers
 			.(
@@ -805,10 +803,8 @@ vgsage_global_onground:
 
 		+vgsage_tick_special_draw_knight:
 		.(
-			; Avoid to write the buffer in rollback (except the last as it is expected by next steps)
+			; Avoid to write the buffer in rollback
 			lda network_rollback_mode
-			beq do_fade_in
-			lda player_a_state_clock, x
 			bne skip_fade_in
 
 				do_fade_in:
@@ -839,31 +835,31 @@ vgsage_global_onground:
 
 			end:
 			rts
-
-			fadein_palette:
-			.byt $0f,$0f,$0f,$0f, $0f,$03,$03,$13, $0f,$32,$32,$20, $0f,$20,$20,$20
-			; more opaque version
-			;.byt $0f,$0f,$0f,$0f, $0f,$03,$03,$03, $0f,$32,$32,$32, $0f,$20,$20,$20
-			; lighter version, seeing more of the stage, less of the fadein
-			;.byt $0f,$21,$00,$10, $0f,$03,$03,$13, $0f,$32,$32,$20, $0f,$20,$20,$20
-			fadein_palette_1:
-			.byt $0f,$0f,$0f,$0f, $0f,$03,$03,$13, $0f,$22,$22,$32, $0f,$10,$10,$20
-			fadein_palette_2:
-			.byt $0f,$0f,$0f,$0f, $0f,$03,$0f,$03, $0f,$12,$12,$22, $0f,$00,$00,$10
-			fadein_palette_3:
-			.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$02,$02,$0f, $0f,$0f,$0f,$00
-			fadein_lsb:
-			.byt <fadein_palette
-			.byt <fadein_palette_1, <fadein_palette_2, <fadein_palette_3
-			fadein_msb:
-			.byt >fadein_palette
-			.byt >fadein_palette_1, >fadein_palette_2, >fadein_palette_3
-
-			fadein_palette_header:
-			.byt $3f, $00, $10
-
-			&LAST_STEP = fadein_msb - fadein_lsb - 1
 		.)
+
+		&fadein_palette:
+		.byt $0f,$0f,$0f,$0f, $0f,$03,$03,$13, $0f,$32,$32,$20, $0f,$20,$20,$20
+		; more opaque version
+		;.byt $0f,$0f,$0f,$0f, $0f,$03,$03,$03, $0f,$32,$32,$32, $0f,$20,$20,$20
+		; lighter version, seeing more of the stage, less of the fadein
+		;.byt $0f,$21,$00,$10, $0f,$03,$03,$13, $0f,$32,$32,$20, $0f,$20,$20,$20
+		fadein_palette_1:
+		.byt $0f,$0f,$0f,$0f, $0f,$03,$03,$13, $0f,$22,$22,$32, $0f,$10,$10,$20
+		fadein_palette_2:
+		.byt $0f,$0f,$0f,$0f, $0f,$03,$0f,$03, $0f,$12,$12,$22, $0f,$00,$00,$10
+		fadein_palette_3:
+		.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$02,$02,$0f, $0f,$0f,$0f,$00
+		fadein_lsb:
+		.byt <fadein_palette
+		.byt <fadein_palette_1, <fadein_palette_2, <fadein_palette_3
+		fadein_msb:
+		.byt >fadein_palette
+		.byt >fadein_palette_1, >fadein_palette_2, >fadein_palette_3
+
+		&fadein_palette_header:
+		.byt $3f, $00, $10
+
+		LAST_STEP = fadein_msb - fadein_lsb - 1
 	.)
 
 	; Step - wait a bit to show the knight
@@ -888,8 +884,28 @@ vgsage_global_onground:
 		+vgsage_tick_special_show_knight:
 		.(
 			dec player_a_state_clock, x
-			bne end
+			bne do_tick
 				jmp vgsage_start_special_draw_slash
+			do_tick:
+
+			; Rewrite knigth's palette, in case rollback put us here
+			lda network_rollback_mode
+			bne end
+
+				stx player_number
+
+				lda #<fadein_palette_header
+				sta tmpfield1
+				lda #>fadein_palette_header
+				sta tmpfield2
+				lda #<fadein_palette
+				sta tmpfield3
+				lda #>fadein_palette
+				sta tmpfield4
+				jsr construct_nt_buffer
+
+				ldx player_number
+
 			end:
 			rts
 		.)
@@ -1017,7 +1033,7 @@ vgsage_global_onground:
 
 	; Step - Restore screen
 	;  NOTE - character's logic being called after stage logic,
-	;         it should be safe to reset stage_restore_screen_step at the end of previous step,
+	;         it should be safe to notify end of effect (triggering screen repair) at the end of previous step,
 	;         saving one step.
 	;         It is so indirect (calling code that may change) and a meager gain (one frame and some bytes),
 	;         better go the safest route and keep that step.
@@ -1031,9 +1047,9 @@ vgsage_global_onground:
 
 		+vgsage_tick_special_restore_screen:
 		.(
-			lda #0
-			sta stage_restore_screen_step
-			inc stage_restore_screen_count
+			lda #FADE_LEVEL_NORMAL
+			sta stage_fade_level
+			dec stage_screen_effect
 			jmp resume_game
 			;rts ; useless, jump to subroutine
 		.)
