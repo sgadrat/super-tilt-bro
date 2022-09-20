@@ -357,6 +357,10 @@ duration
 ; Utility macros
 ;
 
+; Set register X to the offset of the continuation byte of the first empty
+; nametable buffer
+#define LAST_NT_BUFFER ldx nt_buffers_end
+
 ; Perform multibyte signed comparison
 ;
 ; Output - N flag set if "a < b", unset otherwise

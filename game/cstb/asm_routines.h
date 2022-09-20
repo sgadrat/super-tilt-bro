@@ -321,19 +321,6 @@ static void long_get_unzipped_bytes(uint8_t bank, uint8_t* dest, uint8_t const* 
 	wrap_trampoline(bank, code_bank(), &get_unzipped_bytes);
 }
 
-void last_nt_buffer();
-static uint8_t wrap_last_nt_buffer() {
-	uint8_t index;
-	asm(
-		"jsr last_nt_buffer\n\t"
-		"stx %0"
-		: "=r"(index)
-		:
-		: "a", "x"
-	);
-	return index;
-}
-
 void place_character_ppu_tiles_direct();
 static void wrap_place_character_ppu_tiles_direct(uint8_t player_num, uint8_t char_num) {
 	asm(

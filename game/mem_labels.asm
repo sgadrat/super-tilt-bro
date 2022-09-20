@@ -244,17 +244,21 @@ ai_current_action_modifier = $05d8
 ai_delay = $05d9
 ai_max_delay = $05da
 
-game_mode_state_begin = $05db
+game_winner = $05db ; Set to winner's player number after the game is finished
 
-arcade_mode_stage_type = $05db
+game_mode_state_begin = $05dc
 
-arcade_mode_targets_x = $05dc ; $05dc to $05e5
-arcade_mode_targets_y = $05e6 ; $05e6 to $05ef
-arcade_mode_target_break_animation = $05f0 ; $05f0 to $05fc
-arcade_mode_target_break_animation_timer = $05fd
+arcade_mode_stage_type = $05dc
 
-arcade_mode_run_teleport_animation = $05f0 ; $05f0 to $05fc
-arcade_mode_run_teleport_timer = $05fd
+arcade_mode_targets_x = $05dd ; $05dd to $05e6
+arcade_mode_targets_y = $05e7 ; $05e7 to $05f0
+arcade_mode_target_break_animation = $05f1 ; $05f1 to $05fd
+arcade_mode_target_break_animation_timer = $05fe
+
+arcade_mode_run_teleport_animation = $05f1 ; $05f1 to $05fd
+arcade_mode_run_teleport_timer = $05fe
+
+game_mode_state_end = $05ff ; Inclusive (game mode can safely write here)
 
 ;
 ; Stage specific labels
@@ -544,7 +548,7 @@ gameover_random = $4d
 gameover_gamepads_ready_a = $4e
 gameover_gamepads_ready_b = $4f
 
-gameover_winner = $0580
+gameover_winner = game_winner
 
 ;
 ; Audio engine labels
@@ -720,7 +724,7 @@ menu_state_mode_selection_current_option = $0552
 
 ; Nine-gine variables
 nt_buffers_begin = $0553
-;TODO nt_buffers_end = $0554 (would save cycles, and allow for quick check for free space)
+nt_buffers_end = $0554
 
 ; Stages common variables
 stage_restore_screen_step = $0555 ; Set to zero to start asynchrone restoration of the screen by stage's logic
@@ -728,7 +732,8 @@ stage_current_fade_level = $0556
 
 ;$0580 to $05ff may be used by game states
 
-;$06xx may be used by audio engine, see "Audio engine labels"
+;$0600 to $067f may be used by audio engine, see "Audio engine labels"
+;$0680 to $06ff may be used by game states
 
 virtual_frame_cnt = $0700
 network_last_known_remote_input = $07bf

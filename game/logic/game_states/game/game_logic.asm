@@ -1756,7 +1756,7 @@ check_player_position:
 					bne no_set_winner
 					SWITCH_SELECTED_PLAYER
 					txa
-					sta gameover_winner
+					sta game_winner
 					SWITCH_SELECTED_PLAYER
 					no_set_winner:
 
@@ -1891,8 +1891,6 @@ check_player_position:
 ; Overwrites A, Y, player_number, tmpfield1 to tmpfield5
 write_player_damages:
 .(
-	;TODO optimizable - could remove call to jsr last_nt_buffer and absolute,x indexing
-	;     rationale - stage/char code modifying background could be called after write_player_damages (ensuring X is zero in current implem)
 	;TODO optimizable - inverse X and Y for referencing player and ntbuffer index, allowing to use "zp,x" addressing mode
 
 	damage_tmp = tmpfield1
@@ -1933,7 +1931,7 @@ write_player_damages:
 		ldy player_number
 
 		; Buffer header
-		jsr last_nt_buffer
+		LAST_NT_BUFFER
 		lda #$01                    ; Continuation byte
 		sta nametable_buffers, x
 		inx
@@ -2060,7 +2058,7 @@ write_player_damages:
 	; Next continuation byte to 0
 	lda #$00
 	sta nametable_buffers, x
-	inx
+	stx nt_buffers_end
 
 	; Restore X
 	ldx player_number
@@ -2144,10 +2142,10 @@ player_effects:
 		player_one:
 
 		; Copy pointed palette to a nametable buffer
-		txa                ;
-		pha                ; Initialize working values
-		jsr last_nt_buffer ; X = destination's offset (from nametable_buffers)
-		ldy #0             ; Y = source's offset (from (palette_buffer) origin)
+		txa            ;
+		pha            ; Initialize working values
+		LAST_NT_BUFFER ; X = destination's offset (from nametable_buffers)
+		ldy #0         ; Y = source's offset (from (palette_buffer) origin)
 
 		copy_one_byte:
 			lda (palette_buffer), y  ; Copy a byte
@@ -2157,6 +2155,9 @@ player_effects:
 			iny                               ; Prepare next byte
 			cpy #PLAYER_EFFECTS_PALLETTE_SIZE ;
 			bne copy_one_byte                 ;
+
+		dex                ; Update last buffer pointer
+		stx nt_buffers_end ;
 
 		pla ; Restore X
 		tax ;

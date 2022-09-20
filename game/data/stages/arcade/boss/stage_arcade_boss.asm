@@ -20,11 +20,13 @@ cursor = stage_state_begin
 #error arcade stage BOSS uses to much memory
 #endif
 
--cursor = game_mode_state_begin + 5 ; Keep 5 free bytes just in case game mode would use it (normally, not)
+-cursor = game_mode_state_begin
 
 &mem_buffer = cursor : -cursor += 32
 
-#if cursor - game_mode_state_begin > $25
+#if cursor > game_mode_state_end
+#print cursor
+#print game_mode_state_end
 #error arcade stage BOSS uses to much memory
 #endif
 .)
@@ -465,7 +467,7 @@ tick_impact:
 			sta unzipped_data_offset
 
 			; Construct nametable buffer for current line
-			jsr last_nt_buffer
+			LAST_NT_BUFFER
 
 			lda #1 ; Continuation byte
 			sta nametable_buffers, x
@@ -492,6 +494,7 @@ tick_impact:
 			tax
 			lda #0
 			sta nametable_buffers, x
+			stx nt_buffers_end
 
 			; Unzip tiles from the nametable
 			lda #<mem_buffer

@@ -641,7 +641,7 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 			beq finish
 
 				; Change text color
-				jsr last_nt_buffer
+				LAST_NT_BUFFER
 				lda #1
 				sta nametable_buffers, x
 				inx
@@ -674,6 +674,7 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 				inx
 				lda #0
 				sta nametable_buffers, x
+				stx nt_buffers_end
 
 				jmp end
 

@@ -56,7 +56,7 @@
 	FIRST_DIGIT_PPU_ADDR = $2000+POSITION_Y*32+POSITION_X
 
 	; Write buffer header
-	jsr last_nt_buffer
+	LAST_NT_BUFFER
 
 	lda #1 ; continuation byte
 	sta nametable_buffers, x
@@ -99,6 +99,7 @@
 	; Buffer stop byte
 	lda #0
 	sta nametable_buffers, x
+	stx nt_buffers_end
 
 	rts
 

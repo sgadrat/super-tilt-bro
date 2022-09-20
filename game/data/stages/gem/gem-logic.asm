@@ -308,7 +308,7 @@ stage_thehunt_tick:
 				; Write nametable buffer
 				.(
 					; X points to last nametable buffer
-					jsr last_nt_buffer
+					LAST_NT_BUFFER
 
 					; Write buffer's header
 					lda #1 ; Continuation byte
@@ -345,6 +345,7 @@ stage_thehunt_tick:
 					; Write stop byte
 					lda #0
 					sta nametable_buffers, x
+					stx nt_buffers_end
 				.)
 			.)
 

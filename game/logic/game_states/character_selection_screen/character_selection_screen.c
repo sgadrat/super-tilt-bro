@@ -221,7 +221,7 @@ static void copy_character_portrait(uint8_t character) {
 
 static void copy_to_nt_buffer(uint16_t ppu_addr, uint8_t n_bytes, uint8_t bank, uint8_t const* prg_addr) {
 	// Get buffer position
-	uint8_t ntbuf_index = wrap_last_nt_buffer();
+	uint8_t ntbuf_index = get_last_nt_buffer();
 
 	// Nt buffer's header
 	nametable_buffers[ntbuf_index] = 1;
@@ -260,7 +260,9 @@ static void copy_to_nt_buffer(uint16_t ppu_addr, uint8_t n_bytes, uint8_t bank, 
 	}
 
 	// Stop byte
-	nametable_buffers[(ntbuf_index+4+n_bytes) % 256] = 0;
+	uint8_t const end_offset = (ntbuf_index+4+n_bytes) % 256;
+	nametable_buffers[end_offset] = 0;
+	set_last_nt_buffer(end_offset);
 }
 
 static void copy_to_nt_buffer_from_char(uint8_t character, uint16_t ppu_addr, uint8_t n_bytes, uint8_t const* prg_addr) {

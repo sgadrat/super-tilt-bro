@@ -162,9 +162,7 @@ reset:
 	.)
 
 	; Init NT buffers state
-	lda #0
-	sta nt_buffers_begin
-	sta nametable_buffers
+	jsr clear_nt_buffers
 
 	; Prepare to start the game
 	lda #0

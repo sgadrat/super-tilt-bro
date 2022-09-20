@@ -150,52 +150,6 @@ multiply:
 	rts
 .)
 
-; Set register X to the offset of the continuation byte of the first empty
-; nametable buffer
-;
-; TODO optimizable - maintain a nt_buffers_end variable and use it directly
-;
-; Overwrites register A
-last_nt_buffer:
-.(
-	ldx nt_buffers_begin
-
-	handle_buff:
-		; Check continuation byte
-		lda nametable_buffers, x
-		beq end
-
-		; Skip buffer
-		cmp #NT_BUFFER_ATTRIBUTES
-		beq attributes_buffer
-
-			basic_buffer:
-				; Point to the tiles counter
-				inx
-				inx
-				inx
-
-				; Add tile counts to X (effectively points on the last tile)
-				txa
-				clc
-				adc nametable_buffers, x
-				tax
-
-				; Next
-				inx
-				jmp handle_buff
-
-			attributes_buffer:
-				txa
-				clc
-				adc #1+64
-				tax
-				jmp handle_buff
-
-	end:
-	rts
-.)
-
 ; Empty the list of nametable buffers
 ;TODO remove/rename all calls to reset_nt_buffers
 reset_nt_buffers: ; Old name was used to clear processed buffers (mainly), or clear even unprocessed buffers (rarely)
@@ -206,9 +160,10 @@ reset_nt_buffers: ; Old name was used to clear processed buffers (mainly), or cl
 ;  Overwrites A and X
 clear_nt_buffers: ; New name to make it clear, calling it cancel any unprocessed buffer
 .(
-	ldx nt_buffers_begin
-	lda #NT_BUFFER_END
-	sta nametable_buffers, x
+	lda #0
+	sta nt_buffers_begin
+	sta nt_buffers_end
+	sta nametable_buffers
 	rts
 .)
 

@@ -10,7 +10,7 @@ construct_palettes_nt_buffer:
 .(
 	palettes_data = tmpfield1
 
-	jsr last_nt_buffer
+	LAST_NT_BUFFER
 
 	; Continuation byte
 	lda #1
@@ -43,6 +43,7 @@ construct_palettes_nt_buffer:
 
 	lda #0
 	sta nametable_buffers, x
+	stx nt_buffers_end
 
 	rts
 .)
@@ -76,7 +77,7 @@ construct_nt_buffer:
 	payload = tmpfield3
 	payload_size = tmpfield1
 
-	jsr last_nt_buffer
+	LAST_NT_BUFFER
 
 	; Continuation byte
 	lda #$01
@@ -107,6 +108,7 @@ construct_nt_buffer:
 	; Stop Byte
 	lda #$00
 	sta nametable_buffers, x
+	stx nt_buffers_end
 
 	rts
 .)

@@ -100,12 +100,23 @@ static void reset_bg_color() {
 	for (uint8_t i = 0; i < sizeof(palette_buffer); ++i, ++nt_offset) {
 		nametable_buffers[nt_offset] = palette_buffer[i];
 	}
+	*nt_buffers_end = nt_offset - 1;
 }
 
 extern uint8_t const CURRENT_BANK_NUMBER; // Actually an ASM macro, use its address or "code_bank()"
 /** Return the bank in which the calling code is stored */
 static uint8_t code_bank() {
 	return ptr_lsb(&CURRENT_BANK_NUMBER);
+}
+
+/** Return the offset of the last nametable buffer in nametable_buffers array */
+static uint8_t get_last_nt_buffer() {
+	return *nt_buffers_end;
+}
+
+/** Set the offset of the last nametable buffer in nametable_buffers array */
+static void set_last_nt_buffer(uint8_t offset) {
+	*nt_buffers_end = offset;
 }
 
 #define CONST_HUNDREDS(val) ((((val) % 1000) / 100))

@@ -262,7 +262,7 @@ load_animation_addr:
 	jsr inline_parameters
 
 	; Construct a nametable buffer from parameters
-	jsr last_nt_buffer
+	LAST_NT_BUFFER
 
 	lda #1
 	sta nametable_buffers, x
@@ -295,6 +295,7 @@ load_animation_addr:
 
 	lda #0
 	sta nametable_buffers, x
+	stx nt_buffers_end
 	inx
 
 	rts
@@ -373,7 +374,7 @@ load_animation_addr:
 	; Construct nametable buffer
 	.(
 		; X = begining of the buffer
-		jsr last_nt_buffer
+		LAST_NT_BUFFER
 
 		; Continuation byte
 		lda #1
@@ -425,6 +426,7 @@ load_animation_addr:
 		; Stop byte
 		lda #0
 		sta nametable_buffers, x
+		stx nt_buffers_end
 
 		; Data length
 		pla

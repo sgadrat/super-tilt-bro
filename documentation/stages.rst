@@ -85,5 +85,6 @@ Memory allocation
 =================
 
  * ``$80`` -> ``$8f``: Available for the stage
- * ``$05db`` -> ``$05ff``: Available for stage and game mode
+ * ``$05dc`` -> ``$05ff``: Available for stage and game mode
  * ``$0400`` -> ``$0480``: Must begin with stage layout, after that it is freely usable by the stage
+ * ``$0680`` -> ``$06ff``: Currently unused ingame it seems

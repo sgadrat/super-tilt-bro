@@ -726,7 +726,7 @@ vgsage_global_onground:
 				stx player_number
 
 				; Copy illustration buffer
-				jsr last_nt_buffer
+				LAST_NT_BUFFER
 
 #if 1
 				ldy #0
@@ -738,9 +738,13 @@ vgsage_global_onground:
 
 					cpy #illustration_buffer_end-illustation_buffer
 					bne copy_one_byte
+
+				dex
+				stx nt_buffers_end
 #else
-				; Rolled loop is 2+66*(12+5) = 1124 cycles
-				; This version is 2+2+11*(10*4+6+5) = 576 cycles
+				; Rolled loop is 2+66*(12+5)        = 1124 cycles /  14 bytes
+				; This version is 2+2+11*(6*10+6+5) =  785 cycles /  54 bytes
+				; Fully unrolled is 66*10           =  660 cycles / 462 bytes
 				ldy #0
 				clc ;NOTE - beware not setting the carry flag in the loop
 				copy_one_byte:
@@ -775,6 +779,8 @@ vgsage_global_onground:
 					cpy #illustration_buffer_end-illustation_buffer ; Does not set carry flag until we leave the loop
 					bne copy_one_byte
 
+				dex
+				stx nt_buffers_end
 #endif
 
 				; Restore X

@@ -249,7 +249,7 @@ hide_player_b:
 
 				; Directly call gameover to come back to arcade state
 				lda #0
-				sta gameover_winner
+				sta game_winner
 				jmp game_mode_arcade_gameover_hook
 				; No return
 
@@ -558,7 +558,7 @@ hide_player_b:
 				lda slow_down_counter
 				bne slowdown_already_set
 					lda #0
-					sta gameover_winner
+					sta game_winner
 					lda #SLOWDOWN_TIME
 					sta slow_down_counter
 				slowdown_already_set:
@@ -626,11 +626,11 @@ hide_player_b:
 	lda player_a_damages
 	sta arcade_mode_player_damages
 
-	lda gameover_winner
+	lda game_winner
 	sta arcade_mode_last_game_winner
 
 	; Change arcade step, only if this one is a success
-	;lda gameover_winner ; useless, done above
+	;lda game_winner ; useless, done above
 	bne encounter_updated
 		inc arcade_mode_current_encounter
 	encounter_updated:

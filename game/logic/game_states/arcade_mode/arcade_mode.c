@@ -276,7 +276,7 @@ static void display_timer() {
 		uint8_t const position_x = 3;
 		uint16_t const ppu_addr = 0x2000 + position_y * 32 + position_x;
 
-		uint8_t i = wrap_last_nt_buffer();
+		uint8_t const i = get_last_nt_buffer();
 		nametable_buffers[i] = 1;
 		nametable_buffers[(i+1) % 256] = u16_msb(ppu_addr);
 		nametable_buffers[(i+2) % 256] = u16_lsb(ppu_addr);
@@ -286,7 +286,9 @@ static void display_timer() {
 			nametable_buffers[(i+4+credit_num) % 256] = 0xd0; //TODO name the stock tile (and actually use a specific tile for credits)
 		}
 
-		nametable_buffers[(i+4+credits_used) % 256] = 0;
+		uint8_t const end_offset = (i+4+credits_used) % 256;
+		nametable_buffers[end_offset] = 0;
+		set_last_nt_buffer(end_offset);
 	}
 
 	// Pass a frame to process nt buffers
