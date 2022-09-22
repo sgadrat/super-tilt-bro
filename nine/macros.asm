@@ -361,6 +361,50 @@ duration
 ; nametable buffer
 #define LAST_NT_BUFFER ldx nt_buffers_end
 
+; Check space in nametable buffers, jump to label if there is enough space
+;  This is the space free to be write, incluing continuation byte and stop byte
+;
+; NOTE name it LT (Lower Than) as it match logical code construction (not condition to jump to label)
+;  IF_NT_BUFFERS_FREE_SPACE_LT(#30, else_lbl)
+;    ; There are less than 30 bytes free
+;  else_lbl
+;    ; There are at least 30 bytes free
+#define IF_NT_BUFFERS_FREE_SPACE_LT(space, label) .(:\
+	; "Begin - End" is the size of the buffer we can write (including continuation byte and stop byte):\
+	lda nt_buffers_begin:\
+	sec:\
+	sbc nt_buffers_end:\
+:\
+	; 0 means empty buffers list:\
+	beq label:\
+:\
+		cmp space:\
+		bcs label:\
+.)
+
+; Check space in nametable buffers, jump to label if there is less than specified space
+;  This is the space free to be write, incluing continuation byte and stop byte
+;
+; NOTE name it GE (Greater or Equal) as it match logical code construction (not condition to jump to label)
+;  IF_NT_BUFFERS_FREE_SPACE_GE(#30, else_lbl)
+;    ; There are at least 30 bytes free
+;  else_lbl
+;    ; There are less than 30 bytes free
+#define IF_NT_BUFFERS_FREE_SPACE_GE(space, label) .(:\
+	; "Begin - End" is the size of the buffer we can write (including continuation byte and stop byte):\
+	lda nt_buffers_begin:\
+	sec:\
+	sbc nt_buffers_end:\
+:\
+	; 0 means empty buffers list:\
+	beq space_available:\
+:\
+		cmp space:\
+		bcc label:\
+:\
+	space_available:\
+.)
+
 ; Perform multibyte signed comparison
 ;
 ; Output - N flag set if "a < b", unset otherwise

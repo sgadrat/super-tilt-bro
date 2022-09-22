@@ -217,6 +217,13 @@ stage_thehunt_fadeout_update:
 	header = tmpfield1 ; construct_nt_buffer parameter
 	payload = tmpfield3 ; construct_nt_buffer parameter
 
+	; Do nothing if there is not enough space in the buffer
+	.(
+		IF_NT_BUFFERS_FREE_SPACE_LT(#1+3+16+1, ok)
+			rts
+		ok:
+	.)
+
 	; Set actual fade level
 	stx stage_current_fade_level
 
@@ -281,73 +288,76 @@ stage_thehunt_tick:
 				beq bg_update_ok
 			.)
 
-			; Update lava
-			.(
-				;  NOTE - despite its name, stage_thehunt_frame_cnt is only used for one purpose, animating lava.
-				;         If this change, the "inc" should certainly be done even in rollback mode.
+			; Do nothing if there is not enough space for lava tiles
+			IF_NT_BUFFERS_FREE_SPACE_GE(#1+3+2+1, bg_update_ok)
 
-				; Update frame counter
-				inc stage_thehunt_frame_cnt
-
-				; Compute current animation frame frome counter
-				lda #%0010000
-				bit stage_thehunt_frame_cnt
-				beq even_frame
-					ldx #1
-					jmp x_ok
-				even_frame:
-					ldx #0
-				x_ok:
-
-				; Get animation frame pointer
-				lda lava_bg_frames_lsb, x
-				sta tmpfield1
-				lda lava_bg_frames_msb, x
-				sta tmpfield2
-
-				; Write nametable buffer
+				; Update lava
 				.(
-					; X points to last nametable buffer
-					LAST_NT_BUFFER
+					;  NOTE - despite its name, stage_thehunt_frame_cnt is only used for one purpose, animating lava.
+					;         If this change, the "inc" should certainly be done even in rollback mode.
 
-					; Write buffer's header
-					lda #1 ; Continuation byte
-					sta nametable_buffers, x
-					inx
+					; Update frame counter
+					inc stage_thehunt_frame_cnt
 
-					lda #$3f ; VRAM address MSB
-					sta nametable_buffers, x
-					inx
+					; Compute current animation frame frome counter
+					lda #%0010000
+					bit stage_thehunt_frame_cnt
+					beq even_frame
+						ldx #1
+						jmp x_ok
+					even_frame:
+						ldx #0
+					x_ok:
 
-					lda #$02 ; VRAM address LSB
-					sta nametable_buffers, x
-					inx
+					; Get animation frame pointer
+					lda lava_bg_frames_lsb, x
+					sta tmpfield1
+					lda lava_bg_frames_msb, x
+					sta tmpfield2
 
-					lda #$02 ; Payload size
-					sta nametable_buffers, x
-					inx
+					; Write nametable buffer
+					.(
+						; X points to last nametable buffer
+						LAST_NT_BUFFER
 
-					; Y = offset in the frame of colors for the current fade level
-					lda stage_fade_level
-					asl
-					tay
+						; Write buffer's header
+						lda #1 ; Continuation byte
+						sta nametable_buffers, x
+						inx
 
-					; Write buffer's payload
-					lda (tmpfield1), y
-					sta nametable_buffers, x
-					inx
-					iny
+						lda #$3f ; VRAM address MSB
+						sta nametable_buffers, x
+						inx
 
-					lda (tmpfield1), y
-					sta nametable_buffers, x
-					inx
+						lda #$02 ; VRAM address LSB
+						sta nametable_buffers, x
+						inx
 
-					; Write stop byte
-					lda #0
-					sta nametable_buffers, x
-					stx nt_buffers_end
+						lda #$02 ; Payload size
+						sta nametable_buffers, x
+						inx
+
+						; Y = offset in the frame of colors for the current fade level
+						lda stage_fade_level
+						asl
+						tay
+
+						; Write buffer's payload
+						lda (tmpfield1), y
+						sta nametable_buffers, x
+						inx
+						iny
+
+						lda (tmpfield1), y
+						sta nametable_buffers, x
+						inx
+
+						; Write stop byte
+						lda #0
+						sta nametable_buffers, x
+						stx nt_buffers_end
+					.)
 				.)
-			.)
 
 		bg_update_ok:
 		rts
@@ -957,7 +967,12 @@ stage_thehunt_repair_screen:
 			ok:
 		.)
 
-		; FIXME do not do it if there is not enough space in nametable buffers
+		; Do nothing if there lack space for the nametable buffers
+		.(
+			IF_NT_BUFFERS_FREE_SPACE_LT(#1+3+32+1, ok)
+				rts
+			ok:
+		.)
 
 		; Write NT buffer corresponding to current step
 		.(

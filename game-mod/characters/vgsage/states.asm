@@ -711,17 +711,25 @@ vgsage_global_onground:
 			lda #0
 			sta stage_restore_screen_step
 
-			; Avoid drawing knight on rollback
-			lda network_rollback_mode
-			beq do_it
-				rts
-			do_it:
-
 			; Draw knight
 			;  Not in rollback - Better redraw it regularily (in vgsage_tick_special_show_knight) if it cause troubles in rollback situations
 			;  In the "start" routine - It whould work well with the palette buffer writen in last tick of the fadeout step
-			;  FIXME do not draw if it would overflow nametable buffers
 			.(
+				; Avoid drawing knight on rollback
+				.(
+					lda network_rollback_mode
+					beq do_it
+						rts
+					do_it:
+				.)
+
+				; Avoid drawing knight if there is not enough space in nametable buffers
+				.(
+					IF_NT_BUFFERS_FREE_SPACE_LT(#illustration_buffer_end-illustration_buffer, do_it)
+						rts
+					do_it:
+				.)
+
 				; Save player_number
 				stx player_number
 
@@ -731,12 +739,12 @@ vgsage_global_onground:
 #if 1
 				ldy #0
 				copy_one_byte:
-					lda illustation_buffer, y
+					lda illustration_buffer, y
 					iny
 					sta nametable_buffers, x
 					inx
 
-					cpy #illustration_buffer_end-illustation_buffer
+					cpy #illustration_buffer_end-illustration_buffer
 					bne copy_one_byte
 
 				dex
@@ -748,27 +756,27 @@ vgsage_global_onground:
 				ldy #0
 				clc ;NOTE - beware not setting the carry flag in the loop
 				copy_one_byte:
-					lda illustation_buffer, y
+					lda illustration_buffer, y
 					sta nametable_buffers, x
 					inx
 
-					lda illustation_buffer+1, y
+					lda illustration_buffer+1, y
 					sta nametable_buffers, x
 					inx
 
-					lda illustation_buffer+2, y
+					lda illustration_buffer+2, y
 					sta nametable_buffers, x
 					inx
 
-					lda illustation_buffer+3, y
+					lda illustration_buffer+3, y
 					sta nametable_buffers, x
 					inx
 
-					lda illustation_buffer+4, y
+					lda illustration_buffer+4, y
 					sta nametable_buffers, x
 					inx
 
-					lda illustation_buffer+5, y
+					lda illustration_buffer+5, y
 					sta nametable_buffers, x
 					inx
 
@@ -776,7 +784,7 @@ vgsage_global_onground:
 					adc #6 ; Will never set carry flag (we stop at 66)
 					tay
 
-					cpy #illustration_buffer_end-illustation_buffer ; Does not set carry flag until we leave the loop
+					cpy #illustration_buffer_end-illustration_buffer ; Does not set carry flag until we leave the loop
 					bne copy_one_byte
 
 				dex
@@ -786,11 +794,12 @@ vgsage_global_onground:
 				; Restore X
 				ldx player_number
 			.)
+			;NOTE this block does not always return
 
 			rts
 
 #define ATT(br,bl,tr,tl) ((br << 6) + (bl << 4) + (tr << 2) + tl)
-			illustation_buffer:
+			illustration_buffer:
 			.byt NT_BUFFER_ATTRIBUTES
 			illustration:
 			.byt ATT(0,0,1,1), ATT(1,0,0,0), ATT(2,2,1,1), ATT(2,2,1,1), ATT(0,1,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0)
@@ -812,6 +821,9 @@ vgsage_global_onground:
 			; Avoid to write the buffer in rollback
 			lda network_rollback_mode
 			bne skip_fade_in
+
+			; Avoid to write the buffer if no space left
+			IF_NT_BUFFERS_FREE_SPACE_GE(#1+3+16+1, skip_fade_in)
 
 				do_fade_in:
 					; Change palette to fade into the knight's illustration
@@ -934,9 +946,12 @@ vgsage_global_onground:
 
 		+vgsage_tick_special_draw_slash:
 		.(
-			; Avoid to create nt buffers in rollback mode
+			; Avoid to create nt buffer in rollback mode
 			lda network_rollback_mode
 			bne end_animating
+
+			; Avoid to create nt buffer if there is no space for it
+			IF_NT_BUFFERS_FREE_SPACE_GE(#1+3+32+1, end_animating)
 
 				; Step the animation
 				.(

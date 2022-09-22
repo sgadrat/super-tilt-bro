@@ -25,6 +25,13 @@ stage_skyride_fadeout_update:
 	header = tmpfield1 ; construct_nt_buffer parameter
 	payload = tmpfield3 ; construct_nt_buffer parameter
 
+	; Do nothing if there is not enough space in the buffer
+	.(
+		IF_NT_BUFFERS_FREE_SPACE_LT(#1+3+16+1, ok)
+			rts
+		ok:
+	.)
+
 	; Set actual fade level
 	stx stage_current_fade_level
 
@@ -107,7 +114,12 @@ stage_skyride_repair_screen:
 			ok:
 		.)
 
-		; FIXME do not do it if there is not enough space in nametable buffers
+		; Do nothing if there lack space for the nametable buffers
+		.(
+			IF_NT_BUFFERS_FREE_SPACE_LT(#1+3+32+1, ok)
+				rts
+			ok:
+		.)
 
 		; Write NT buffer corresponding to current step
 		.(
