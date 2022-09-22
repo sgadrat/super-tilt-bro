@@ -14,7 +14,7 @@ ARCADE_TARGET($fe, $fe)
 ARCADE_TARGET($fe, $fe)
 +stage_arcade_btt02_data:
 STAGE_HEADER($2000, $8000, $6fff, $8000, $8000, $8000) ; player_a_x, player_b_x, player_a_y, player_b_y, respawn_x, respawn_y
-stage_arcade_btt02_platforms:
+; Platforms
 STAGE_BUMPER($58, $78, $2f, $57, $06, $0200, $00, $01, $01) ; left, right, top, bot, damages, base, force, horizontal_direction, vertical_direction
 PLATFORM($80, $b8, $47, $5f) ; left, right, top, bot
 PLATFORM($d0, $e8, $47, $9f) ; left, right, top, bot

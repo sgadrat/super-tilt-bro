@@ -111,7 +111,7 @@ cloud_tile:
 		lda star_sprites_pos_y, x
 		sta oam_mirror+0, y
 
-		lda #%00100000 + 3 ; Behind baground + Evil Sinbad's waypon palette
+		lda #%00000000 + 3 ; Above baground + Evil Sinbad's weapon palette
 		sta oam_mirror+2, y
 
 		lda star_tile, x
@@ -148,6 +148,7 @@ move_bg_sprites:
 	speed_table_h = tmpfield1
 	speed_table_v = tmpfield3
 	tiles_table = tmpfield5
+	invisible_below = tmpfield7
 
 	ldy #NB_STAR_SPRITES-1
 	ldx #FIRST_STAR_SPRITE * 4
@@ -163,9 +164,9 @@ move_bg_sprites:
 		adc (speed_table_v), y
 		sta oam_mirror+0, x
 
-		; Select an invisible sprite if below ground (to not appear through black pixels)
+		; Select an invisible sprite if the sprite below its threshold
 		.(
-			cmp #180
+			cmp (invisible_below), y
 			bcc visible
 				invisible:
 					lda #ARCADE_FIRST_TILE+TILE_ARCADE_BTT_SPRITES_TILESET_FULL_BACKDROP
@@ -189,6 +190,7 @@ tick_space:
 	speed_table_h = tmpfield1
 	speed_table_v = tmpfield3
 	tiles_table = tmpfield5
+	invisible_below = tmpfield7
 
 	; Move star background
 	lda #<star_speed_h
@@ -206,6 +208,11 @@ tick_space:
 	lda #>star_tile
 	sta tiles_table+1
 
+	lda #<y_visibility
+	sta invisible_below
+	lda #>y_visibility
+	sta invisible_below+1
+
 	jmp move_bg_sprites
 
 	;rts ; useless, jump to subroutine
@@ -214,6 +221,11 @@ tick_space:
 	.byt $fa, $fa, $fc, $fc, $fc, $fc, $fe, $fe, $fe, $fe, $fe, $fe, $fe, $fe, $fe, $fe
 	star_speed_v:
 	.byt $fd, $fd, $fe, $fe, $fe, $fe, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff
+	y_visibility:
+	.byt $7c, $7c, $7c, $7c
+	.byt $7c, $7c, $7c, $7c
+	.byt $7c, $7c, $7c, $7c
+	.byt $7c, $7c, $7c, $7c
 .)
 
 init_sky:
@@ -229,7 +241,7 @@ init_sky:
 		lda cloud_sprites_pos_y, x
 		sta oam_mirror+0, y
 
-		lda #%00100000 + 3 ; Behind baground + Evil Sinbad's waypon palette
+		lda #%00000000 + 3 ; Above baground + Evil Sinbad's waypon palette
 		sta oam_mirror+2, y
 
 		lda cloud_tile, x
@@ -249,9 +261,7 @@ init_sky:
 
 tick_sky:
 .(
-	speed_table_h = tmpfield1
-	speed_table_v = tmpfield3
-	tiles_table = tmpfield5
+	invisible_below = tmpfield7
 
 	; Give the boss extra speed
 	dec speed_buff_cnt
@@ -260,6 +270,28 @@ tick_sky:
 		lda #SPEED_BUFF_COOLDOWN_EASY
 		sta speed_buff_cnt
 	no_speed_buff:
+
+	lda #<y_visibility
+	sta invisible_below
+	lda #>y_visibility
+	sta invisible_below+1
+
+	jmp sky_move_clouds
+	;rts useless, jump to subroutine
+
+	y_visibility:
+	.byt $7a, $7a, $7a, $7a
+	.byt $7a, $7a, $7a, $7a
+	.byt $f0, $f0, $f0, $f0
+	.byt $7a, $7a, $7a, $7a
+.)
+
+sky_move_clouds:
+.(
+	speed_table_h = tmpfield1
+	speed_table_v = tmpfield3
+	tiles_table = tmpfield5
+	invisible_below = tmpfield7
 
 	; Move clouds background
 	lda #<speed_h
@@ -303,6 +335,8 @@ init_impact:
 
 tick_impact:
 .(
+	invisible_below = tmpfield7
+
 	; Give the boss extra speed
 	dec speed_buff_cnt
 	bne no_speed_buff
@@ -332,8 +366,20 @@ tick_impact:
 	jsr push_nt_buffer
 
 	; Move clouds
-	jmp tick_sky
+	lda #<y_visibility
+	sta invisible_below
+	lda #>y_visibility
+	sta invisible_below+1
+
+	jmp sky_move_clouds
+
 	;rts ; useless, jump to subroutine
+
+	y_visibility:
+	.byt $aa, $aa, $aa, $aa
+	.byt $aa, $aa, $aa, $aa
+	.byt $f0, $f0, $f0, $f0
+	.byt $aa, $aa, $aa, $aa
 .)
 
 .(
@@ -431,8 +477,8 @@ tick_impact:
 			rts
 
 			step_palettes:
-			.byt $16,$17,$26,$20, $16,$00,$10,$20, $16,$00,$10,$20, $16,$00,$10,$20
-			.byt $26,$27,$20,$20, $26,$00,$10,$20, $26,$00,$10,$20, $26,$00,$10,$20
+			.byt $17,$16,$26,$20, $17,$16,$10,$20, $17,$16,$10,$20, $17,$16,$10,$20
+			.byt $27,$26,$20,$20, $27,$26,$10,$20, $27,$26,$10,$20, $27,$26,$10,$20
 			.byt $20,$20,$20,$20, $20,$20,$20,$20, $20,$20,$20,$20, $20,$20,$20,$20
 
 			nt_palette_header:
@@ -652,9 +698,9 @@ tick_impact:
 			rts
 
 			step_palettes:
-			.byt $36,$27,$20,$20, $36,$00,$10,$20, $36,$00,$10,$20, $36,$00,$10,$20
-			.byt $31,$17,$26,$20, $31,$00,$10,$20, $31,$00,$10,$20, $31,$00,$10,$20
-			.byt $21,$07,$16,$27, $21,$07,$16,$27, $21,$00,$10,$20, $21,$00,$10,$20
+			.byt $27,$36,$20,$20, $27,$36,$10,$20, $27,$36,$10,$20, $27,$36,$10,$20
+			.byt $17,$31,$26,$20, $17,$31,$10,$20, $17,$31,$10,$20, $17,$31,$10,$20
+			.byt $07,$21,$16,$27, $07,$21,$16,$27, $07,$21,$10,$20, $07,$21,$10,$20
 
 			nt_palette_header:
 			.byt $3f, $00, $10

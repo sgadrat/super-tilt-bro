@@ -5,7 +5,7 @@
 ARCADE_EXIT($00ee, $010b, $0011, $0038) ; left, right, top, bot
 +stage_arcade_run01_data:
 STAGE_HEADER($2800, $8000, $c7ff, $8000, $8000, $8000) ; player_a_x, player_b_x, player_a_y, player_b_y, respawn_x, respawn_y
-stage_arcade_run01_platforms:
+; Platforms
 PLATFORM($01, $fe, $00, $17) ; left, right, top, bot
 PLATFORM($01, $18, $07, $ef) ; left, right, top, bot
 PLATFORM($e0, $fe, $27, $ef) ; left, right, top, bot

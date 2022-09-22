@@ -14,7 +14,7 @@ ARCADE_TARGET($fe, $fe)
 ARCADE_TARGET($fe, $fe)
 +stage_arcade_btt01_data:
 STAGE_HEADER($5000, $8000, $afff, $8000, $8000, $8000) ; player_a_x, player_b_x, player_a_y, player_b_y, respawn_x, respawn_y
-stage_arcade_btt01_platforms:
+; Platforms
 PLATFORM($40, $80, $00, $17) ; left, right, top, bot
 PLATFORM($70, $80, $07, $47) ; left, right, top, bot
 PLATFORM($48, $68, $1f, $47) ; left, right, top, bot

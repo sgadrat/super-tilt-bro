@@ -5,7 +5,7 @@
 ARCADE_EXIT($00ec, $0103, $0028, $0057) ; left, right, top, bot
 +stage_arcade_run02_data:
 STAGE_HEADER($1800, $8000, $afff, $8000, $8000, $8000) ; player_a_x, player_b_x, player_a_y, player_b_y, respawn_x, respawn_y
-stage_arcade_run02_platforms:
+; Platforms
 PLATFORM($01, $fe, $00, $1f) ; left, right, top, bot
 PLATFORM($01, $08, $0f, $cf) ; left, right, top, bot
 STAGE_BUMPER($90, $a0, $0f, $2f, $06, $0200, $00, $01, $01) ; left, right, top, bot, damages, base, force, horizontal_direction, vertical_direction

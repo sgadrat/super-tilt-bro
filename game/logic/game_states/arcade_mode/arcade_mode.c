@@ -304,7 +304,7 @@ void init_arcade_mode_extra() {
 	long_construct_palettes_nt_buffer(screen_bank(), &arcade_mode_palette);
 	//long_draw_zipped_nametable(screen_bank(), &nametable_mode_selection);
 	//long_cpu_to_ppu_copy_tileset_background(tileset_bank(), &tileset_menu_mode_selection);
-	long_cpu_to_ppu_copy_charset(charset_bank(), &charset_alphanum, 0x1dc0, 1, 3);
+	long_cpu_to_ppu_copy_charset(charset_bank(), &charset_alphanum, 0x1dc0, 0, 1);
 
 	//TODO have a variant of clear_bg_bot_left that takes parameters and call that
 	*PPUSTATUS;
@@ -343,7 +343,7 @@ void arcade_mode_tick_extra() {
 
 	if (*arcade_mode_current_encounter == n_encounters) {
 		display_timer();
-		set_text("congratulation", 15, 10);
+		set_text("congratulations", 13, 10);
 		wait_input();
 		previous_screen();
 	}

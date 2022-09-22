@@ -110,8 +110,6 @@ def bumper_to_asm(platform, visibility=''):
 	vertical_nullified = 1 if abs(platform.vertical_direction) != 1 else 0
 	vertical_byte = (vertical_nullified << 1) + vertical_direction
 
-	print(f'{platform.vertical_direction} => {vertical_nullified} + {vertical_direction} => {vertical_byte}')
-
 	return 'STAGE_BUMPER({}, {}, {}, {}, {}, {}, {}, {}, {}) ; left, right, top, bot, damages, base, force, horizontal_direction, vertical_direction\n'.format(
 		uintasm8(max(1, left)),
 		uintasm8(min(254, right)),

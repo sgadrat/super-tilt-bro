@@ -1,5 +1,6 @@
 +stage_arcade_run02_palette_data:
-.byt $21,$0f,$17,$00, $21,$0f,$00,$31, $21,$0f,$19,$10, $21,$00,$00,$00
+; Background
+.byt $0f,$21,$17,$00, $0f,$21,$00,$31, $0f,$21,$19,$10, $0f,$00,$00,$00
 
 +stage_arcade_run02_nametable:
 .byt $00,$20
