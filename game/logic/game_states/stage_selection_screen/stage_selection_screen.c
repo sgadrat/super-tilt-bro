@@ -78,7 +78,6 @@ static void nt_buffers_vertical() {
 
 static void skip_frame() {
 	wrap_trampoline(code_bank(), code_bank(), &sleep_frame);
-	reset_nt_buffers();
 }
 
 static void change_screen_cleaning() {
@@ -216,7 +215,6 @@ void init_stage_selection_screen_extra() {
 
 void stage_selection_screen_tick_extra() {
 	// Tick BG task
-	reset_nt_buffers();
 	tick_bg_task();
 
 	// Draw animations

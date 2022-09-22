@@ -511,7 +511,6 @@ void init_wifi_settings_screen_extra() {
 }
 
 void wifi_settings_screen_tick_extra() {
-	reset_nt_buffers();
 	vars()->global_input = 1;
 
 	// Get a message from ESP

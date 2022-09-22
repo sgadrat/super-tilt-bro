@@ -140,8 +140,6 @@ support_screen_draw_contents:
 
 support_screen_tick:
 .(
-	jsr reset_nt_buffers
-
 	; Play common menus effects
 	jsr tick_menu
 

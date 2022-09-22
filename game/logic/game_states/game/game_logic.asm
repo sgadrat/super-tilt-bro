@@ -7,9 +7,6 @@ init_game_state:
 
 game_tick:
 .(
-	; Remove processed nametable buffers
-	jsr reset_nt_buffers
-
 	; Tick game mode
 	ldx config_game_mode
 	lda game_modes_pre_update_lsb, x

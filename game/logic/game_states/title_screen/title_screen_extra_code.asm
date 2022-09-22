@@ -174,8 +174,6 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 &title_screen_tick_extra:
 .(
 	.(
-		jsr reset_nt_buffers
-
 		; Play title screen animation
 		jsr tick_title_animation
 

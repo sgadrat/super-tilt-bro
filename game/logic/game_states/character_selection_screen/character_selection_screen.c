@@ -303,13 +303,11 @@ static void next_screen() {
 	)
 	{
 		wait_next_frame();
-		reset_nt_buffers();
 		tick_bg_tasks();
 	}
 	wait_next_frame();
 
 	// Change state (without change_global_game_state(), we do not want transition)
-	reset_nt_buffers();
 	character_selection_change_global_game_state_lite();
 }
 
@@ -873,7 +871,7 @@ void init_character_selection_screen_extra() {
 
 void character_selection_reinit() {
 	// Initialize state's memory
-	reset_nt_buffers();
+	clear_nt_buffers();
 	init_character_selection_screen_common();
 
 	// Start special background task that redraw screen over stage selection's leftovers
@@ -882,7 +880,6 @@ void character_selection_reinit() {
 
 void character_selection_screen_tick_extra() {
 	// Update background tasks
-	reset_nt_buffers();
 	tick_bg_tasks();
 
 	// Update random numbers (frame counter until a player is ready)

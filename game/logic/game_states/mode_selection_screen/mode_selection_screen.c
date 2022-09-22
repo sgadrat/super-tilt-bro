@@ -47,7 +47,6 @@ static uint8_t tileset_bank() {
 static void yield() {
 	wrap_trampoline(code_bank(), code_bank(), &sleep_frame);
 	fetch_controllers();
-	reset_nt_buffers();
 }
 
 ///////////////////////////////////////
@@ -177,8 +176,6 @@ void init_mode_selection_screen_extra() {
 }
 
 void mode_selection_screen_tick_extra() {
-	reset_nt_buffers();
-
 	// Play common menus effects
 	tick_menu();
 

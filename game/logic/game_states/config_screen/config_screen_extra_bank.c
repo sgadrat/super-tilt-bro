@@ -237,8 +237,9 @@ void init_config_screen_extra() {
 	update_screen();
 
 	// Process the batch of nt buffers immediately (while the PPU is disabled)
-	process_nt_buffers();
-	reset_nt_buffers();
+	while (*nt_buffers_begin != *nt_buffers_end) {
+		process_nt_buffers();
+	}
 
 	// Construct palettes buffer
 	//  NOTE - after batch processing of nt-buffers, this one will produce a glitch if done outside of vblank
@@ -266,9 +267,6 @@ void init_config_screen_extra() {
 }
 
 void config_screen_tick_extra() {
-	// Clear already written buffers
-	reset_nt_buffers();
-
 	// Play common menus effects
 	tick_menu();
 

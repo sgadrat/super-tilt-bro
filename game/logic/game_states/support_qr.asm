@@ -41,8 +41,6 @@ init_support_qr_screen:
 
 support_qr_screen_tick:
 .(
-	jsr reset_nt_buffers
-
 	; Play common menus effects
 	jsr tick_menu
 

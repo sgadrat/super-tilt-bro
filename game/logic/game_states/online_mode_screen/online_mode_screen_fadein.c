@@ -35,7 +35,6 @@ void online_mode_screen_fadein_extra() {
 	*ppuctrl_val = 0x92;
 	*PPUCTRL = *ppuctrl_val;
 	long_sleep_frame();
-	reset_nt_buffers();
 
 	// Change palettes, to have transition colors from "sky" to "space banner"
 	*PPUADDR = 0x3f;
@@ -60,7 +59,7 @@ void online_mode_screen_fadein_extra() {
 	wrap_construct_nt_buffer(header, buff);\
 }
 #define SET_SCROLL(nametable, y) *ppuctrl_val = 0x90 + (nametable); *scroll_y = y;
-#define FRAME for (uint8_t i =0; i < 1 ; ++i) {long_sleep_frame(); reset_nt_buffers();}
+#define FRAME for (uint8_t i =0; i < 1 ; ++i) {long_sleep_frame();}
 
 	// Cut sky to create space banner
 	NT_BUFF(

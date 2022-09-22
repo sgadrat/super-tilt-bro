@@ -115,7 +115,6 @@ static void tick_bg_task();
 static void skip_frame() {
 	long_sleep_frame();
 	fetch_controllers();
-	reset_nt_buffers();
 	tick_bg_task();
 }
 
@@ -956,7 +955,6 @@ void init_netplay_launch_screen_extra() {
 }
 
 void netplay_launch_screen_tick_extra() {
-	reset_nt_buffers();
 	tick_bg_task(); // Passive task, like drawing things on the nametable
 	tick_fg_task(); // Active task, controling what should happen and reacting to user inputs
 }

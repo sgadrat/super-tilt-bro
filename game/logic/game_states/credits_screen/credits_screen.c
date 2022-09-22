@@ -75,7 +75,6 @@ static uint8_t tileset_bank() {
 static void yield() {
 	wrap_trampoline(code_bank(), code_bank(), &sleep_frame);
 	fetch_controllers();
-	reset_nt_buffers();
 	tick_animations();
 }
 
@@ -412,8 +411,6 @@ void init_credits_screen_extra() {
 }
 
 void credits_screen_tick_extra() {
-	reset_nt_buffers();
-
 	// Tick animations
 	tick_animations();
 

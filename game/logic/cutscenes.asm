@@ -728,7 +728,6 @@ load_animation_addr:
 		jsr trampoline
 
 		jsr fetch_controllers
-		jsr reset_nt_buffers
 
 		; Handle inputs
 		lda controller_a_btns

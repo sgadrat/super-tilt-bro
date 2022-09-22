@@ -259,7 +259,6 @@ static uint8_t charset_bank() {
 static void yield() {
 	wrap_trampoline(code_bank(), code_bank(), &sleep_frame);
 	fetch_controllers();
-	reset_nt_buffers();
 }
 
 static void draw_dialog_attributes() {
@@ -1643,7 +1642,6 @@ void init_online_mode_screen_extra() {
 }
 
 void online_mode_screen_tick_extra() {
-	reset_nt_buffers();
 	++*online_mode_frame_count;
 
 	tick_ship();

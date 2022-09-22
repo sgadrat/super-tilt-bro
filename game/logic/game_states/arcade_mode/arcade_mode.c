@@ -107,7 +107,6 @@ static uint8_t charset_bank() {
 static void yield() {
 	long_sleep_frame();
 	fetch_controllers();
-	reset_nt_buffers();
 }
 
 //TODO put it in cstb utils and use it in netplay_menu (if still used in the final arcade mode)
@@ -156,7 +155,7 @@ static void start_cutscene() {
 	*PPUMASK = 0;
 	*ppuctrl_val = 0; //NOTE copying change_global_game_state, may have to be 0x90
 
-	reset_nt_buffers();
+	clear_nt_buffers();
 	*scroll_x = 0;
 	*scroll_y = 0;
 
@@ -328,8 +327,6 @@ void init_arcade_mode_extra() {
 }
 
 void arcade_mode_tick_extra() {
-	reset_nt_buffers();
-
 	// Gameover handling
 	if (*arcade_mode_last_game_winner != 0) {
 		display_timer();
