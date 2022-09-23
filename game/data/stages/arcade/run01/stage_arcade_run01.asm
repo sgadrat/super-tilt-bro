@@ -20,4 +20,5 @@ SMOOTH_PLATFORM($80, $c0, $a7) ; left, right, top
 END_OF_STAGE
 
 #include "game/data/stages/arcade/run01/screen.asm"
+#include "game/data/stages/arcade/run01/logic.asm"
 .)

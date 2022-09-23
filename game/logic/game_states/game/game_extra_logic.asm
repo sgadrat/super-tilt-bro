@@ -84,6 +84,13 @@
 		lda #0
 		sta screen_shake_counter
 
+		; Disable deathplosion
+		lda #$ff
+		sta deathplosion_step
+		lda #0
+		sta deathplosion_pos
+		sta deathplosion_origin
+
 		; Setup logical game state to the game startup configuration
 		lda DIRECTION_LEFT
 		sta player_b_direction
@@ -559,4 +566,377 @@ audio_music_ingame:
 	ingame_themes_bank:
 		.byt music_perihelium_bank, music_sinbad_bank, music_adventure_bank, music_volcano_bank, music_kiki_bank
 	LAST_INGAME_TRACK = ingame_themes_msb - ingame_themes_lsb - 1
+.)
+
+; Tick deathplosion animation
+;  deathplosion_step - Current frame of the animation (begins at DEATHPLOSION_FRAME_COUNT-1)
+;  deathplosion_pos - Offset of the animation from top-left corner
+;  deathplosion_origin - Blastline in which the deathplosion hapened
+;
+; NOTE - deathplosion_pos value depends on deathplosion_origin
+;  Vertical   - set deathplosion_pos to the offset from screen's left edge
+;  Horizontal - set deathplosion_pos to 8 * the offset from screen's top edge
+;
+; Overwrites all registers, tmpfield1 to tmpfield3
++vfx_deathplosion:
+.(
+	; Do nothing if inactive
+	.(
+		ldy deathplosion_step
+		bpl ok
+			rts
+		ok:
+	.)
+
+	; Do not draw buffers in rollback
+	.(
+		lda network_rollback_mode
+		beq ok
+			jmp end_draw
+		ok:
+	.)
+
+		; Draw current step
+		.(
+			ldx nt_buffers_end
+
+			lda #NT_BUFFER_STEP
+			sta nametable_buffers, x
+			inx
+
+			lda anim_width, y
+			sta nametable_buffers, x
+			inx
+
+			sta tmpfield3
+
+			;ldy deathplosion_step ; useless, done above
+			lda #$23
+			sta nametable_buffers, x
+			inx
+
+			.(
+				lda deathplosion_origin
+				beq bottom
+				bpl top
+				and #%01000000
+				beq right
+					left:
+						lda anim_left_pos, y
+						jmp ok
+					right:
+						lda anim_right_pos, y
+						jmp ok
+					top:
+						lda anim_top_pos, y
+						jmp ok
+					bottom:
+						lda anim_bottom_pos, y
+				ok:
+			.)
+			clc
+			adc deathplosion_pos
+			sta nametable_buffers, x
+			inx
+
+			.(
+				bit deathplosion_origin
+				bpl vertical
+					horizontal:
+						lda #1
+						jmp ok
+					vertical:
+						lda #8
+				ok:
+				sta nametable_buffers, x
+				inx
+			.)
+
+			lda anim_payload_lsb, y
+			sta tmpfield1
+			lda anim_payload_msb, y
+			sta tmpfield2
+
+			.(
+				bit deathplosion_origin
+				bvs mirrored
+
+					natural:
+					.(
+						ldy #0
+						copy_one_byte:
+							lda (tmpfield1), y
+							sta nametable_buffers, x
+							inx
+							iny
+
+							cpy tmpfield3
+							bne copy_one_byte
+
+						jmp payload_ok
+					.)
+
+					mirrored:
+					.(
+						ldy tmpfield3
+						copy_one_byte:
+							dey
+							lda (tmpfield1), y
+							sta nametable_buffers, x
+							inx
+
+							cpy #0
+							bne copy_one_byte
+					.)
+			.)
+			payload_ok:
+
+			lda #NT_BUFFER_END
+			sta nametable_buffers, x
+			stx nt_buffers_end
+		.)
+
+	end_draw:
+
+	; Next step (and repair screen if it was the last)
+	.(
+		dec deathplosion_step
+		bpl ok
+			dec stage_screen_effect
+		ok:
+	.)
+
+	rts
+
+	; Addresses of the content of animation's frame, one per frame (last frame listed first)
+	anim_payload_lsb:
+		.byt <anim_frame15
+		.byt <anim_frame14
+		.byt <anim_frame13
+		.byt <anim_frame12
+		.byt <anim_frame11
+		.byt <anim_frame10
+		.byt <anim_frame9
+		.byt <anim_frame8
+		.byt <anim_frame7
+		.byt <anim_frame6
+		.byt <anim_frame5
+		.byt <anim_frame4
+		.byt <anim_frame3
+		.byt <anim_frame2
+		.byt <anim_frame1
+	anim_payload_msb:
+		.byt >anim_frame15
+		.byt >anim_frame14
+		.byt >anim_frame13
+		.byt >anim_frame12
+		.byt >anim_frame11
+		.byt >anim_frame10
+		.byt >anim_frame9
+		.byt >anim_frame8
+		.byt >anim_frame7
+		.byt >anim_frame6
+		.byt >anim_frame5
+		.byt >anim_frame4
+		.byt >anim_frame3
+		.byt >anim_frame2
+		.byt >anim_frame1
+
+	; Frame's content size
+	anim_width:
+		.byt anim_frame15_width
+		.byt anim_frame14_width
+		.byt anim_frame13_width
+		.byt anim_frame12_width
+		.byt anim_frame11_width
+		.byt anim_frame10_width
+		.byt anim_frame9_width
+		.byt anim_frame8_width
+		.byt anim_frame7_width
+		.byt anim_frame6_width
+		.byt anim_frame5_width
+		.byt anim_frame4_width
+		.byt anim_frame3_width
+		.byt anim_frame2_width
+		.byt anim_frame1_width
+
+	+DEATHPLOSION_FRAME_COUNT = *-anim_width
+
+	; Position of the animation
+	anim_right_pos:
+		.byt $c0+anim_frame15_right_pos
+		.byt $c0+anim_frame14_right_pos
+		.byt $c0+anim_frame13_right_pos
+		.byt $c0+anim_frame12_right_pos
+		.byt $c0+anim_frame11_right_pos
+		.byt $c0+anim_frame10_right_pos
+		.byt $c0+anim_frame9_right_pos
+		.byt $c0+anim_frame8_right_pos
+		.byt $c0+anim_frame7_right_pos
+		.byt $c0+anim_frame6_right_pos
+		.byt $c0+anim_frame5_right_pos
+		.byt $c0+anim_frame4_right_pos
+		.byt $c0+anim_frame3_right_pos
+		.byt $c0+anim_frame2_right_pos
+		.byt $c0+anim_frame1_right_pos
+	anim_left_pos:
+		.byt $c0+anim_frame15_left_pos
+		.byt $c0+anim_frame14_left_pos
+		.byt $c0+anim_frame13_left_pos
+		.byt $c0+anim_frame12_left_pos
+		.byt $c0+anim_frame11_left_pos
+		.byt $c0+anim_frame10_left_pos
+		.byt $c0+anim_frame9_left_pos
+		.byt $c0+anim_frame8_left_pos
+		.byt $c0+anim_frame7_left_pos
+		.byt $c0+anim_frame6_left_pos
+		.byt $c0+anim_frame5_left_pos
+		.byt $c0+anim_frame4_left_pos
+		.byt $c0+anim_frame3_left_pos
+		.byt $c0+anim_frame2_left_pos
+		.byt $c0+anim_frame1_left_pos
+	anim_top_pos:
+		.byt $c0+anim_frame15_top_pos
+		.byt $c0+anim_frame14_top_pos
+		.byt $c0+anim_frame13_top_pos
+		.byt $c0+anim_frame12_top_pos
+		.byt $c0+anim_frame11_top_pos
+		.byt $c0+anim_frame10_top_pos
+		.byt $c0+anim_frame9_top_pos
+		.byt $c0+anim_frame8_top_pos
+		.byt $c0+anim_frame7_top_pos
+		.byt $c0+anim_frame6_top_pos
+		.byt $c0+anim_frame5_top_pos
+		.byt $c0+anim_frame4_top_pos
+		.byt $c0+anim_frame3_top_pos
+		.byt $c0+anim_frame2_top_pos
+		.byt $c0+anim_frame1_top_pos
+	anim_bottom_pos:
+		.byt $c0+anim_frame15_bottom_pos
+		.byt $c0+anim_frame14_bottom_pos
+		.byt $c0+anim_frame13_bottom_pos
+		.byt $c0+anim_frame12_bottom_pos
+		.byt $c0+anim_frame11_bottom_pos
+		.byt $c0+anim_frame10_bottom_pos
+		.byt $c0+anim_frame9_bottom_pos
+		.byt $c0+anim_frame8_bottom_pos
+		.byt $c0+anim_frame7_bottom_pos
+		.byt $c0+anim_frame6_bottom_pos
+		.byt $c0+anim_frame5_bottom_pos
+		.byt $c0+anim_frame4_bottom_pos
+		.byt $c0+anim_frame3_bottom_pos
+		.byt $c0+anim_frame2_bottom_pos
+		.byt $c0+anim_frame1_bottom_pos
+
+#define ATT(br,bl,tr,tl) ((br << 6) + (bl << 4) + (tr << 2) + tl)
+	anim_frame1:
+		.byt                             ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3)
+		anim_frame1_width = *-anim_frame1
+		anim_frame1_right_pos = 8*1+(8-(*-anim_frame1))
+		anim_frame1_left_pos = 8*1
+		anim_frame1_top_pos = 1
+		anim_frame1_bottom_pos = 1+8*(8-(*-anim_frame1))
+	anim_frame2:
+		.byt ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3)
+		anim_frame2_width = *-anim_frame2
+		anim_frame2_right_pos = 8*1+(8-(*-anim_frame2))
+		anim_frame2_left_pos = 8*1
+		anim_frame2_top_pos = 1
+		anim_frame2_bottom_pos = 1+8*(8-(*-anim_frame2))
+	anim_frame3:
+		.byt               ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3)
+		anim_frame3_width = *-anim_frame3
+		anim_frame3_right_pos = 8*2+(8-(*-anim_frame3))
+		anim_frame3_left_pos = 8*2
+		anim_frame3_top_pos = 2
+		anim_frame3_bottom_pos = 2+8*(8-(*-anim_frame3))
+
+	anim_frame4:
+		.byt ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(0,3,0,0), ATT(0,0,0,0)
+		anim_frame4_width = *-anim_frame4
+		anim_frame4_right_pos = 8*1+(8-(*-anim_frame4))
+		anim_frame4_left_pos = 8*1
+		anim_frame4_top_pos = 1
+		anim_frame4_bottom_pos = 1+8*(8-(*-anim_frame4))
+	anim_frame5:
+		.byt ATT(3,0,0,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(0,0,0,0)
+		anim_frame5_width = *-anim_frame5
+		anim_frame5_right_pos = 8*0+(8-(*-anim_frame5))
+		anim_frame5_left_pos = 8*0
+		anim_frame5_top_pos = 0
+		anim_frame5_bottom_pos = 0+8*(8-(*-anim_frame5))
+	anim_frame6:
+		.byt ATT(0,0,3,3), ATT(3,0,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3)
+		anim_frame6_width = *-anim_frame6
+		anim_frame6_right_pos = 8*2+(8-(*-anim_frame6))
+		anim_frame6_left_pos = 8*2
+		anim_frame6_top_pos = 2
+		anim_frame6_bottom_pos = 2+8*(8-(*-anim_frame6))
+
+	anim_frame7:
+		.byt ATT(0,3,3,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0)
+		anim_frame7_width = *-anim_frame7
+		anim_frame7_right_pos = 8*1+(8-(*-anim_frame7))
+		anim_frame7_left_pos = 8*1
+		anim_frame7_top_pos = 1
+		anim_frame7_bottom_pos = 1+8*(8-(*-anim_frame7))
+	anim_frame8:
+		.byt ATT(0,0,0,0), ATT(0,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,0,0,3), ATT(0,0,0,3), ATT(0,0,0,0)
+		anim_frame8_width = *-anim_frame8
+		anim_frame8_right_pos = 8*0+(8-(*-anim_frame8))
+		anim_frame8_left_pos = 8*0
+		anim_frame8_top_pos = 0
+		anim_frame8_bottom_pos = 0+8*(8-(*-anim_frame8))
+	anim_frame9:
+		.byt ATT(0,0,3,3), ATT(3,0,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(0,0,3,0), ATT(3,0,0,0), ATT(0,0,0,0)
+		anim_frame9_width = *-anim_frame9
+		anim_frame9_right_pos = 8*2+(8-(*-anim_frame9))
+		anim_frame9_left_pos = 8*2
+		anim_frame9_top_pos = 2
+		anim_frame9_bottom_pos = 2+8*(8-(*-anim_frame9))
+
+	anim_frame10:
+		.byt ATT(3,0,0,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0)
+		anim_frame10_width = *-anim_frame10
+		anim_frame10_right_pos = 8*1+(8-(*-anim_frame10))
+		anim_frame10_left_pos = 8*1
+		anim_frame10_top_pos = 1
+		anim_frame10_bottom_pos = 1+8*(8-(*-anim_frame10))
+	anim_frame11:
+		.byt ATT(0,0,0,0), ATT(3,0,0,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(0,0,3,0), ATT(0,0,0,0), ATT(0,0,0,0)
+		anim_frame11_width = *-anim_frame11
+		anim_frame11_right_pos = 8*0+(8-(*-anim_frame11))
+		anim_frame11_left_pos = 8*0
+		anim_frame11_top_pos = 0
+		anim_frame11_bottom_pos = 0+8*(8-(*-anim_frame11))
+	anim_frame12:
+		.byt ATT(3,0,0,3), ATT(0,3,3,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(0,3,0,0), ATT(0,0,0,0), ATT(0,0,0,0)
+		anim_frame12_width = *-anim_frame12
+		anim_frame12_right_pos = 8*2+(8-(*-anim_frame12))
+		anim_frame12_left_pos = 8*2
+		anim_frame12_top_pos = 2
+		anim_frame12_bottom_pos = 2+8*(8-(*-anim_frame12))
+
+	anim_frame13:
+		.byt ATT(0,3,3,0), ATT(3,3,3,3), ATT(0,3,3,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0)
+		anim_frame13_width = *-anim_frame13
+		anim_frame13_right_pos = 8*1+(8-(*-anim_frame13))
+		anim_frame13_left_pos = 8*1
+		anim_frame13_top_pos = 1
+		anim_frame13_bottom_pos = 1+8*(8-(*-anim_frame13))
+	anim_frame14:
+		.byt ATT(0,0,0,0), ATT(0,3,0,0), ATT(0,3,0,3), ATT(0,0,0,3), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0)
+		anim_frame14_width = *-anim_frame14
+		anim_frame14_right_pos = 8*0+(8-(*-anim_frame14))
+		anim_frame14_left_pos = 8*0
+		anim_frame14_top_pos = 0
+		anim_frame14_bottom_pos = 0+8*(8-(*-anim_frame14))
+	anim_frame15:
+		.byt ATT(0,3,3,0), ATT(0,3,3,0), ATT(3,0,3,0), ATT(0,3,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0)
+		anim_frame15_width = *-anim_frame15
+		anim_frame15_right_pos = 8*2+(8-(*-anim_frame15))
+		anim_frame15_left_pos = 8*2
+		anim_frame15_top_pos = 2
+		anim_frame15_bottom_pos = 2+8*(8-(*-anim_frame15))
+#undef ATT
 .)

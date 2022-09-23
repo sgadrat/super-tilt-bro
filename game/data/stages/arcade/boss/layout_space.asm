@@ -4,9 +4,24 @@ STAGE_HEADER($2e00, $ca00, $70ff, $70ff, $7c00, $4fff) ; player_a_x, player_b_x,
 OOS_PLATFORM($ffd0, $0128, $0070, $0140) ; left, right, top, bot
 END_OF_STAGE
 
-+stage_arcade_boss_space_palette_data:
-;    ground,          unused,          animated lava,   unused
-.byt $07,$0f,$16,$27, $07,$0f,$16,$27, $07,$0f,$10,$20, $07,$00,$10,$20
++stage_arcade_boss_space_palette:
+;    ground,          animated lava,   unused,          deathplosion
+.byt $07,$0f,$16,$27, $07,$0f,$16,$27, $07,$0f,$10,$20, $07,$20,$26,$16
+
+stage_arcade_boss_palette_fadeout1:
+.byt $07,$0f,$06,$17, $07,$0f,$06,$17, $07,$0f,$00,$10, $07,$20,$26,$16
+stage_arcade_boss_palette_fadeout2:
+.byt $0f,$0f,$06,$07, $0f,$0f,$06,$07, $0f,$0f,$00,$00, $0f,$20,$26,$16
+stage_arcade_boss_palette_fadeout3:
+.byt $0f,$0f,$0f,$07, $0f,$0f,$0f,$07, $0f,$0f,$0f,$00, $0f,$20,$26,$16
+
+stage_arcade_boss_palette_black:
+.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f
+
+stage_arcade_boss_fadeout_lsb:
+.byt <stage_arcade_boss_palette_black, <stage_arcade_boss_palette_fadeout3, <stage_arcade_boss_palette_fadeout2, <stage_arcade_boss_palette_fadeout1, <stage_arcade_boss_space_palette
+stage_arcade_boss_fadeout_msb:
+.byt >stage_arcade_boss_palette_black, >stage_arcade_boss_palette_fadeout3, >stage_arcade_boss_palette_fadeout2, >stage_arcade_boss_palette_fadeout1, >stage_arcade_boss_space_palette
 
 ;NOTE - This is the leftover of what was once a nice color cycle. It could be cool to adapt tileset and palette to bring it back.
 animated_lava_cycle:

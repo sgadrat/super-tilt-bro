@@ -1,6 +1,20 @@
-+stage_arcade_run02_palette_data:
++stage_arcade_run02_palette:
 ; Background
-.byt $0f,$21,$17,$00, $0f,$21,$00,$31, $0f,$21,$19,$10, $0f,$00,$00,$00
+.byt $0f,$21,$17,$00, $0f,$21,$00,$31, $0f,$21,$19,$10, $0f,$20,$26,$16
+
+stage_arcade_run02_palette_fadeout1:
+.byt $0f,$11,$07,$00, $0f,$11,$00,$21, $0f,$11,$09,$00, $0f,$20,$26,$16
+stage_arcade_run02_palette_fadeout2:
+.byt $0f,$01,$07,$0f, $0f,$01,$00,$11, $0f,$01,$09,$0f, $0f,$20,$26,$16
+stage_arcade_run02_palette_fadeout3:
+.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$01, $0f,$0f,$0f,$0f, $0f,$20,$26,$16
+stage_arcade_run02_palette_black:
+.byt $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f, $0f,$0f,$0f,$0f
+
+stage_arcade_run02_fadeout_lsb:
+.byt <stage_arcade_run02_palette_black, <stage_arcade_run02_palette_fadeout3, <stage_arcade_run02_palette_fadeout2, <stage_arcade_run02_palette_fadeout1, <stage_arcade_run02_palette
+stage_arcade_run02_fadeout_msb:
+.byt >stage_arcade_run02_palette_black, >stage_arcade_run02_palette_fadeout3, >stage_arcade_run02_palette_fadeout2, >stage_arcade_run02_palette_fadeout1, >stage_arcade_run02_palette
 
 +stage_arcade_run02_nametable:
 .byt $00,$20

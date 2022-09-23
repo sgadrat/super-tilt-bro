@@ -81,7 +81,10 @@ game_tick:
 	jsr update_players
 
 	; Update screen
-	jmp update_sprites
+	SWITCH_BANK(#GAMESTATE_GAME_EXTRA_BANK)
+	jsr vfx_deathplosion
+
+	jmp update_sprites ;NOTE update_sprites is called only there, could be in extra bank (or optimizable, falled-through)
 
 	;rts ; useless, jump to subroutine
 .)
@@ -1674,7 +1677,8 @@ check_player_position:
 	SIGNED_CMP(current_y_pixel, current_y_screen, #<STAGE_BLAST_TOP, #>STAGE_BLAST_TOP)
 	bmi set_death_state
 	SIGNED_CMP(#<STAGE_BLAST_BOTTOM, #>STAGE_BLAST_BOTTOM, current_y_pixel, current_y_screen)
-	bpl check_collisions
+	bmi set_death_state
+	jmp check_collisions
 
 		set_death_state:
 		.(
@@ -1708,7 +1712,7 @@ check_player_position:
 					lda #$0
 				cap_vertical_blast:
 					sta capped_x
-				end_cap_vertical_blast:
+					pha ; NOTE store for future use by deathplosion
 			.)
 			.(
 				lda current_y_screen
@@ -1723,9 +1727,15 @@ check_player_position:
 					lda #$0
 				cap_horizontal_blast:
 					sta capped_y
-				end_cap_horizontal_blast:
+					pha ; NOTE store for future use by deathplosion
 			.)
+
 			jsr particle_death_start
+
+			; Deathplosion attributes table animation
+			pla:sta capped_y
+			pla:sta capped_x
+			jsr deathplosion_start
 
 			; Decrement stocks counter and check for gameover
 			dec player_a_stocks, x
@@ -1878,6 +1888,124 @@ check_player_position:
 
 		ok:
 	.)
+
+	rts
+.)
+
+; Start the deathplosion animation on attributes table
+;  X - player number of the KO'ed player
+;  tmpfield1 - player's current X pixel (capped between 0 and 255)
+;  tmpfield2 - player's current Y pixel (capped between 0 and 255)
+;
+; Overwrite A, tmpfield3
+deathplosion_start:
+.(
+	; Shortcut, set by move_player, equal to "player_a_x, x" and friends
+	capped_x = tmpfield1
+	capped_y = tmpfield2
+
+	; Notify we are going to dirty the screen
+	.(
+		; If deathplosion was already running, don't increment screen_effect we'll just replace it
+		lda deathplosion_step
+		bpl ok
+			inc stage_screen_effect
+			lda #0
+			sta stage_restore_screen_step
+		ok:
+	.)
+
+	; Place the animation
+	.(
+		lda player_a_x_screen, x
+		bne horizontal
+			vertical:
+			.(
+				; Position = (capped_x / 32) - 1
+				;  /32 -> change from 256 values to 8
+				;  -1 -> we want to place the center of the explosion on the character
+				lda capped_x
+				lsr
+				lsr
+				lsr
+				lsr
+				lsr
+
+				sec
+				sbc #1
+
+				; Ensure position is between 0 and 5 (to avoid writing out of attributes table bounds)
+				bpl check_upper
+					lda #0
+				check_upper:
+				cmp #6
+				bcc pos_ok
+					lda #5
+				pos_ok:
+
+				; Set position
+				sta deathplosion_pos
+
+				lda player_a_y_screen, x
+				bmi top
+					bottom:
+						lda #DEATHPLOSION_ORIGIN_BOTTOM
+						jmp set_origin
+					top:
+						lda #DEATHPLOSION_ORIGIN_TOP
+				set_origin:
+				sta deathplosion_origin
+
+				jmp anim_placed
+			.)
+
+			horizontal:
+			.(
+				; Position = (capped_y / 32) - 1
+				;  /32 -> change from 256 values to 8
+				;  -1 -> we want to place the center of the explosion on the character
+				lda capped_y
+				lsr
+				lsr
+				lsr
+				lsr
+				lsr
+
+				sec
+				sbc #1
+
+				; Ensure position is between 0 and 5 (to avoid writing out of attributes table bounds)
+				bpl check_upper
+					lda #0
+				check_upper:
+				cmp #6
+				bcc pos_ok
+					lda #5
+				pos_ok:
+
+				; Set position (multiplied by 8 as required by deathplosion API)
+				asl
+				asl
+				asl
+				sta deathplosion_pos
+
+				lda player_a_x_screen, x
+				bmi left
+					right:
+						lda #DEATHPLOSION_ORIGIN_RIGHT
+						jmp set_origin
+					left:
+						lda #DEATHPLOSION_ORIGIN_LEFT
+				set_origin:
+				sta deathplosion_origin
+			.)
+
+		anim_placed:
+	.)
+
+	; Reset animation counter
+	lda #DEATHPLOSION_FRAME_COUNT-1
+	sta deathplosion_step
 
 	rts
 .)
@@ -2075,6 +2203,8 @@ write_player_damages:
 
 ; Update comestic effects on the player
 ;  register X must contain the player number
+;
+;  Overwrites A, Y, tmpfield1 to tmpfield2 (and certainly other tmpfields, to be checked)
 player_effects:
 .(
 	.(

@@ -219,16 +219,28 @@ directional_indicator_player_a_direction_y_high = $79
 directional_indicator_player_b_direction_y_high = $7a
 directional_indicator_player_a_direction_y_low = $7b
 directional_indicator_player_b_direction_y_low = $7c
+
+death_particles_player_a_counter = $7d
+death_particles_player_b_counter = $7e
+
+slow_down_counter = $7f
+
 ; particles lo position tables
 ;  | byte 0 | bytes 1 to 7       | byte 8 | bytes 9 to 15      |
 ;  | unused | player A particles | unused | player B particles |
 directional_indicator_player_a_position_x_low = $90 ; $90 to $9f - unused $90 and $98
 directional_indicator_player_a_position_y_low = $a0 ; $a0 to $af - unused $a0 and $a8
 
-death_particles_player_a_counter = $7d
-death_particles_player_b_counter = $7e
+; Stages common variables
+stage_restore_screen_step = $0560 ; Set to zero to start asynchrone restoration of the screen by stage's logic
+stage_current_fade_level = $0561
 
-slow_down_counter = $7f
+; Deathplosion
+deathplosion_step = $0562
+deathplosion_pos = $0563
+deathplosion_origin = $0564
+
+;$0565-$057f unused
 
 players_palettes = $0580 ; $0580 to $059f - 4 nametable buffers (8 bytes each) containing avatars palettes in normal and alternate mode
 player_a_animation = $05a0 ; $05a0 to $05ac - player a's animation state
@@ -726,11 +738,7 @@ menu_state_mode_selection_current_option = $0552
 nt_buffers_begin = $0553
 nt_buffers_end = $0554
 
-; Stages common variables
-stage_restore_screen_step = $0555 ; Set to zero to start asynchrone restoration of the screen by stage's logic
-stage_current_fade_level = $0556
-
-;$0580 to $05ff may be used by game states
+;$0560 to $05ff may be used by game states
 
 ;$0600 to $067f may be used by audio engine, see "Audio engine labels"
 ;$0680 to $06ff may be used by game states

@@ -29,4 +29,5 @@ PLATFORM($48, $a8, $bf, $d7) ; left, right, top, bot
 END_OF_STAGE
 
 #include "game/data/stages/arcade/btt01/screen.asm"
+#include "game/data/stages/arcade/btt01/logic.asm"
 .)

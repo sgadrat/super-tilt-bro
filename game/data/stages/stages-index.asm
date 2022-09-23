@@ -8,9 +8,9 @@ stage_versus_end_index = (* - stages_init_routine) / 2
 RAW_VECTOR(stage_arcade_boss_init) ; arcade boss
 
 stage_arcade_first_index = (* - stages_init_routine) / 2
-RAW_VECTOR(dummy_routine) ; arcade run01
-RAW_VECTOR(dummy_routine) ; arcade btt01
-RAW_VECTOR(dummy_routine) ; arcade run02
+RAW_VECTOR(stage_arcade_run01_init) ; arcade run01
+RAW_VECTOR(stage_arcade_btt01_init) ; arcade btt01
+RAW_VECTOR(stage_arcade_run02_init) ; arcade run02
 RAW_VECTOR(stage_arcade_btt02_init) ; arcade btt02
 
 stages_tick_routine:
@@ -21,9 +21,9 @@ RAW_VECTOR(stage_thehunt_tick) ; The Hunt
 
 RAW_VECTOR(stage_arcade_boss_tick) ; arcade boss
 
-RAW_VECTOR(dummy_routine) ; arcade run01
-RAW_VECTOR(dummy_routine) ; arcade btt01
-RAW_VECTOR(dummy_routine) ; arcade run02
+RAW_VECTOR(stage_arcade_run01_tick) ; arcade run01
+RAW_VECTOR(stage_arcade_btt01_tick) ; arcade btt01
+RAW_VECTOR(stage_arcade_run02_tick) ; arcade run02
 RAW_VECTOR(stage_arcade_btt02_tick) ; arcade btt02
 
 stages_freezed_tick_routine_lsb:
@@ -71,12 +71,12 @@ RAW_VECTOR(stage_pit_palette) ; Pit
 RAW_VECTOR(stage_skyride_palette) ; Skyride
 RAW_VECTOR(stage_thehunt_palette) ; The Hunt
 
-RAW_VECTOR(stage_arcade_boss_space_palette_data) ; arcade boss
+RAW_VECTOR(stage_arcade_boss_space_palette) ; arcade boss
 
-RAW_VECTOR(stage_arcade_run01_palette_data)
-RAW_VECTOR(stage_arcade_btt01_palette_data)
-RAW_VECTOR(stage_arcade_run02_palette_data)
-RAW_VECTOR(stage_arcade_btt02_palette_data)
+RAW_VECTOR(stage_arcade_run01_palette)
+RAW_VECTOR(stage_arcade_btt01_palette)
+RAW_VECTOR(stage_arcade_run02_palette)
+RAW_VECTOR(stage_arcade_btt02_palette)
 
 stage_routine_fadeout_lsb:
 .byt <stage_flatland_fadeout ; Flatland
