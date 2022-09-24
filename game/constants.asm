@@ -245,6 +245,8 @@ ANIMATION_STATE_LENGTH = 13
 NT_BUFFER_END = 0        ; NOTE this one is expected not to change, hardcoded for zero everywhere and it is fine
 NT_BUFFER_BASIC = 1      ; NOTE this one is hardcoded as one almost everywhere (could be changed, just legacy stuff)
 NT_BUFFER_ATTRIBUTES = 2
+NT_BUFFER_HORIZONTAL = 3
+NT_BUFFER_VERTICAL = 4
 
 ; Notes frequencies
 NOTE_PAL_O0_C = $7ff

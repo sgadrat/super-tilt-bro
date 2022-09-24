@@ -60,6 +60,40 @@ process_nt_buffers:
 	;   - within ~50 cycles from being called (TODO should figure more precise max cycles for aborting)
 	;
 
+	vertical_buffer:
+	.(
+		; Set PPU increment to vertical
+		;  3 + 2 + 4 = 9 cycles
+		lda ppuctrl_val
+		ora #%00000100
+		sta PPUCTRL
+
+		; Add extra cost to nt buffer timer (as basic_buffer will only count its own cost)
+		;  5 cycles
+		;  total, 9 + 5 + 3 = 19 cycles = 1.52 point (rounded down as basic_buffer rounds up by a large amount)
+		inc nt_buffer_timer
+
+		; Handle it as a basic_buffer
+		;  3 cycles
+		jmp basic_buffer
+	.)
+
+	horizontal_buffer:
+	.(
+		; Set PPU increment to horizontal
+		;  3 + 2 + 4 = 9 cycles
+		lda ppuctrl_val
+		and #%11111011
+		sta PPUCTRL
+
+		; Add extra cost to nt buffer timer (as basic_buffer will only count its own cost)
+		;  5 cycles
+		;  total, 9 + 5 = 16 cycles = 1.28 point (rounded down as basic_buffer rounds up by a large amount)
+		inc nt_buffer_timer
+
+		; Fallthourgh to basic_buffer
+	.)
+
 	basic_buffer:
 	.(
 		tmp_val = tmpfield1
@@ -141,23 +175,29 @@ process_nt_buffers:
 		;  2+2+3+2+3 = 12 cycles
 		;   (cost = 2.5 for per-buffer common code + 0.08 per cycle in the handler)
 		;   2.5 + 0.08*(common cycles + NB_STEPS * cycles per step)
-		;   2.5 + 0.08*(33 + 16 * 46)
-		;   64.02
+		;   2.5 + 0.08*(42 + 16 * 46)
+		;   64.74
 		lda #65
 		clc
 		adc nt_buffer_timer
 		bmi end_buffers
 		sta nt_buffer_timer
 
+		; Set PPU increment to horizontal
+		;  3 + 2 + 4 = 9 cycles (21)
+		lda ppuctrl_val
+		and #%11111011
+		sta PPUCTRL
+
 		; Set PPU address
-		;  2+4+2+4 = 12 cycles (24)
+		;  2+4+2+4 = 12 cycles (33)
 		lda #$23
 		sta PPUADDR
 		lda #$c0
 		sta PPUADDR
 
 		; Copy 64 bytes from the buffer
-		;  2 cycles (26)
+		;  2 cycles (35)
 		STEP_SIZE = 4
 		NB_STEPS = 64 / STEP_SIZE
 
@@ -187,18 +227,18 @@ process_nt_buffers:
 			bne one_step
 
 		; Point the next buffer as first buffer
-		;  4 cycles (30)
+		;  4 cycles (39)
 		stx nt_buffers_begin
 
 		; Process next buffer
-		;  3 cycles (33)
+		;  3 cycles (42)
 		jmp handle_nt_buffer
 	.)
 
 	buffer_handlers_lsb:
-		.byt <end_buffers, <basic_buffer, <attributes_buffer
+		.byt <end_buffers, <basic_buffer, <attributes_buffer, <horizontal_buffer, <vertical_buffer
 	buffer_handlers_msb:
-		.byt >end_buffers, >basic_buffer, >attributes_buffer
+		.byt >end_buffers, >basic_buffer, >attributes_buffer, >horizontal_buffer, >vertical_buffer
 .)
 
 ; Consume input only if it is "all buttons released"
