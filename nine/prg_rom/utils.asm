@@ -235,10 +235,111 @@ process_nt_buffers:
 		jmp handle_nt_buffer
 	.)
 
+	; Buffer with customizable steps between PPU writes
+	;  Layout
+	;   | size | address (big endian) | step | payload |
+	;   size    - number of bytes in payload
+	;   address - Adress of the first PPU write (big endian)
+	;   step    - VRAM address increment between writes
+	;   payload - VRAM bytes to write
+	step_buffer:
+	.(
+		addr_lsb = tmpfield1
+		addr_msb = tmpfield2
+		step = tmpfield3
+
+		; Read tiles counter
+		;  4+2 = 6 cycles
+		ldy nametable_buffers, x
+		inx
+
+		; Compute cost of this buffer
+		;   (cost = 2.5 for per-buffer common code + 0.08 per cycle in the handler)
+		;   2.5 + 0.08*(common cycles) + 0.08*(cycles per tile)
+		;   2.5 + 0.08*(61 + cycles for this segment) + nb_tiles*0.08*(cycles per tile)
+		;   2.5 + 0.08*(61 + 28) + nb_tiles*0.08*46
+		;   2.5 + 0.08*89 + nb_tiles*3.68
+		;   10 + nb_tiles*4 (roughly)
+		.(
+			; nb_tiles * 1.5
+			;  2+2+2 = 6 cycles
+			tya
+			asl
+			asl
+
+			; Add time common for all tiles
+			;  2+2+3+3 = 10 cycles (22)
+			adc #10
+			adc nt_buffer_timer
+			bmi end_buffers
+			sta nt_buffer_timer
+		.)
+
+		; Save overwritten memory
+		;  3+3 = 6 cycles (12)
+		lda step
+		pha
+
+		; Set PPU destination address
+		;  4+3+4+2+4+3+4+2 = 26 cycles (38)
+		lda nametable_buffers, x
+		sta addr_msb
+		sta PPUADDR
+		inx
+		lda nametable_buffers, x
+		sta addr_lsb
+		sta PPUADDR
+		inx
+
+		; Read step size
+		;  4+3+2 = 9 cycles (47)
+		lda nametable_buffers, x
+		sta step
+		inx
+
+		write_one_tile:
+			; Write current tile to PPU
+			;  4+4 = 8 cycles per tile
+			lda nametable_buffers, x
+			sta PPUDATA
+
+			; Skip 7 bytes of VRAM
+			; 3+2+3+3+3+2+3+4+3+4 = 30 cycles
+			lda addr_lsb
+			clc
+			adc step
+			sta addr_lsb
+			lda addr_msb
+			adc #0
+			sta addr_msb
+			sta PPUADDR
+			lda addr_lsb
+			sta PPUADDR
+
+			; Next tile
+			;  2+2+4 = 8 cycles tile (or less if not misaligned)
+			inx
+			dey
+			bne write_one_tile
+
+		; Point the next buffer as first buffer
+		;  4 cycles (51)
+		stx nt_buffers_begin
+
+		; Restore overwritten memory
+		;  4+3 = 7 cycles (58)
+		pla
+		sta step
+
+		; Process next buffer
+		;  3 cycles (61)
+		jmp handle_nt_buffer
+	.)
+
 	buffer_handlers_lsb:
-		.byt <end_buffers, <basic_buffer, <attributes_buffer, <horizontal_buffer, <vertical_buffer
+		.byt <end_buffers, <basic_buffer, <attributes_buffer, <horizontal_buffer, <vertical_buffer, <step_buffer
 	buffer_handlers_msb:
-		.byt >end_buffers, >basic_buffer, >attributes_buffer, >horizontal_buffer, >vertical_buffer
+		.byt >end_buffers, >basic_buffer, >attributes_buffer, >horizontal_buffer, >vertical_buffer, >step_buffer
 .)
 
 ; Consume input only if it is "all buttons released"

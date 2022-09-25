@@ -247,6 +247,7 @@ NT_BUFFER_BASIC = 1      ; NOTE this one is hardcoded as one almost everywhere (
 NT_BUFFER_ATTRIBUTES = 2
 NT_BUFFER_HORIZONTAL = 3
 NT_BUFFER_VERTICAL = 4
+NT_BUFFER_STEP = 5
 
 ; Notes frequencies
 NOTE_PAL_O0_C = $7ff
