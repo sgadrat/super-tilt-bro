@@ -539,7 +539,17 @@ static void connecting_wifi_query() {
 
 static void connecting_wifi_wait() {
 	if (esp_rx_message_ready()) {
-		//TODO check message type, and just wait for the next if it is not a wifi status message (may happen if a message from login server took very long)
+		// Check that message type is a wifi status message (the answer to our query)
+		if ((&esp_rx_buffer)[ESP_MSG_TYPE] != FROMESP_MSG_WIFI_STATUS) {
+			// Possibilities for this to happen
+			//  1. message from login server took very long: would be strange
+			//  2. message from the last game that is not finished, but our client though it was: happens on laggy connections with tons of rollback
+			// We could just ignore "1.", but this seems improbable.
+			// We certainly don't want to start a game in case "2.", mixed messages from two games would do no good.
+			Task(netplay_launch_fg_task)->step = ERROR_STATE_CRAZY_MESSAGE;
+			esp_rx_message_acknowledge();
+			return;
+		}
 
 		// Read Wi-Fi status and adapt step accordingly
 		switch((&esp_rx_buffer)[ESP_MSG_PAYLOAD]) {
@@ -579,6 +589,18 @@ static void select_server_query_settings() {
 static void select_server_draw() {
 	// Wait for server settings
 	if (esp_rx_message_ready()) {
+		// Check that message type is a server setting (the answer to our query)
+		if ((&esp_rx_buffer)[ESP_MSG_TYPE] != FROMESP_MSG_SERVER_SETTINGS) {
+			// Possibilities for this to happen
+			//  1. message from login server took very long: would be strange
+			//  2. message from the last game that is not finished, but our client though it was: happens on laggy connections with tons of rollback
+			// We could just ignore "1.", but this seems improbable.
+			// We certainly don't want to start a game in case "2.", mixed messages from two games would do no good.
+			Task(netplay_launch_fg_task)->step = ERROR_STATE_CRAZY_MESSAGE;
+			esp_rx_message_acknowledge();
+			return;
+		}
+
 		// Compute number of servers to display
 		if ((&esp_rx_buffer)[ESP_MSG_SIZE] == 1) {
 			*netplay_launch_nb_servers = NB_KNOWN_SERVERS;
