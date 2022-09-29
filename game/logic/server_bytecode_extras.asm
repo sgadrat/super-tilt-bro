@@ -26,6 +26,13 @@ server_bytecode_init:
 	lda video_system
 	sta system_index
 
+	;FIXME character_*_present should be set
+	;  it actually works without because
+	;   - memory is set to zero before calling server_bytecode_init (thus character_*_present are unset)
+	;   - character_*_present are unsed only on branches not executed in rollback mode (so no impact on having the wrong value)
+
+	;FIXME should explicetely set nt_buffers_end and nt_buffers_begin to zero
+
 	lda #3
 	sta config_initial_stocks
 

@@ -1,5 +1,9 @@
 TILESET_COMMON_BANK_NUMBER = CURRENT_BANK_NUMBER
 
+;
+;NOTE deprecated, see comment in "copy_common_tileset" routine
+;
+
 tileset_common:
 
 ; Tileset's size in tiles (zero means 256)

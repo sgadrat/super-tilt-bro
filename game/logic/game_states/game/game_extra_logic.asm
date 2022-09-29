@@ -60,6 +60,20 @@
 		ldx #CHARSET_COLOR(0,3)
 		TRAMPOLINE(cpu_to_ppu_copy_charset_raw, #CHARSET_ALPHANUM_BANK_NUMBER, #CURRENT_BANK_NUMBER)
 
+		; Copy common sprites
+		lda #<tileset_common_ingame_sprites
+		sta tmpfield1
+		lda #>tileset_common_ingame_sprites
+		sta tmpfield2
+
+		lda PPUSTATUS
+		lda #>INGAME_COMMON_FIRST_SPRITE_TILE_OFFSET
+		sta PPUADDR
+		lda #<INGAME_COMMON_FIRST_SPRITE_TILE_OFFSET
+		sta PPUADDR
+
+		TRAMPOLINE(cpu_to_ppu_copy_tileset, #TILESET_COMMON_INGAME_SPRITES_BANK_NUMBER, #CURRENT_BANK_NUMBER)
+
 		; Copy stage's tileset
 		.(
 			tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tiles

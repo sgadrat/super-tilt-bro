@@ -3,6 +3,10 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 .(
 &init_title_screen_extra:
 .(
+	; Initialize CHR-RAM
+	;TODO to be removed once we successfuly got rid of CHR-BANK
+	TRAMPOLINE(init_chr_ram, #CHR_BANK_NUMBER, #CURRENT_BANK_NUMBER)
+
 	; Clear background of nametable 2
 	jsr clear_bg_bot_left
 

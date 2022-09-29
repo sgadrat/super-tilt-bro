@@ -1,9 +1,35 @@
 global_init:
 .(
+	; Set data bank
+	;TODO check if still necessary (seems to be a leftover of NROM to UNROM512 conversion)
+	lda #DATA_BANK_NUMBER
+	jsr switch_bank
+
+	; Initialize configuration
+	jsr default_config
+
+	; Disable music
+	lda #$00
+	sta audio_music_enabled
+
+	; Network config
+#ifndef NO_NETWORK
+	lda #0 ; LOGIN_UNLOGGED
+	sta network_logged
+#endif
+
+	; Initialize menus to a default state
+	lda #0
+	sta menu_state_mode_selection_current_option
+
+	rts
+.)
+
+; TODO to be removed once we successfuly got rid of CHR-BANK
+init_chr_ram:
+.(
 	prg_vector = tmpfield1
 
-	; Initialize CHR-RAM
-	; TODO to be removed once we successfuly got rid of CHR-BANK
 	lda #CHR_BANK_NUMBER
 	jsr switch_bank
 
@@ -29,28 +55,6 @@ global_init:
 		lda prg_vector+1
 		cmp #$a0
 		bne copy_one_page
-
-	; Set data bank
-	;TODO check if still necessary (seems to be a leftover of NROM to UNROM512 conversion)
-	lda #DATA_BANK_NUMBER
-	jsr switch_bank
-
-	; Initialize configuration
-	jsr default_config
-
-	; Disable music
-	lda #$00
-	sta audio_music_enabled
-
-	; Network config
-#ifndef NO_NETWORK
-	lda #0 ; LOGIN_UNLOGGED
-	sta network_logged
-#endif
-
-	; Initialize menus to a default state
-	lda #0
-	sta menu_state_mode_selection_current_option
 
 	rts
 .)

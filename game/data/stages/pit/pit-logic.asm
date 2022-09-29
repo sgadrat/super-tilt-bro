@@ -1,7 +1,7 @@
 STAGE_PIT_MOVING_PLATFORM_1_OFFSET = STAGE_ELEMENT_SIZE * 2
 STAGE_PIT_MOVING_PLATFORM_2_OFFSET = STAGE_PIT_MOVING_PLATFORM_1_OFFSET + STAGE_ELEMENT_SIZE
 
-#define STAGE_PIT_MOVING_PLATFORM_SPRITES $20
+#define STAGE_PIT_MOVING_PLATFORM_SPRITES INGAME_STAGE_FIRST_SPRITE
 #define STAGE_PIT_NB_MOVING_PLATFORM_SPRITES 8
 
 #define STAGE_PIT_PLATFORM_MAX_HEIGHT 88
@@ -97,6 +97,26 @@ stage_pit_fadeout_update:
 
 +stage_pit_init:
 .(
+	; Copy stage's tiles in VRAM
+	.(
+		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tileset
+		;tileset_addr_msb = tmpfield2 ; Not movable, used by cpu_to_ppu_copy_tileset
+		tiles_count = tmpfield3 ; Not movable, used by cpu_to_ppu_copy_tileset
+
+		lda #<tileset_stage_pit_sprites
+		sta tileset_addr
+		lda #>tileset_stage_pit_sprites
+		sta tileset_addr+1
+
+		lda PPUSTATUS
+		lda #>STAGE_FIRST_SPRITE_TILE_OFFSET
+		sta PPUADDR
+		lda #<STAGE_FIRST_SPRITE_TILE_OFFSET
+		sta PPUADDR
+
+		jsr cpu_to_ppu_copy_tileset
+	.)
+
 	; Disable screen restore
 	lda #$ff
 	sta stage_restore_screen_step

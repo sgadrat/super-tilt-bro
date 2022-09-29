@@ -38,7 +38,7 @@ for paths in [
 				# Common transformation
 				processed = re.sub(';', '//', processed)
 
-				# Convert known line formats to C++
+				# Convert known line formats to C
 				m = re.match(r'^(?P<lbl>[a-zA-Z0-9_]+) = (?P<val>[0-9a-f$%]+)(?P<cmt>( +)//.*)?$', processed)
 				if m is not None:
 					processed = 'static uint16_t const {} = {};{}'.format(

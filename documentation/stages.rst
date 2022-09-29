@@ -40,7 +40,7 @@ Sprites allocation in game
  * ``0`` -> ``15``: Player A's character animation
  * ``16`` -> ``31``: Player B's character animation
  * ``32`` -> ``41``: Targets in BTT stages // Available for the stage in versus
- * ``42`` -> ``49``: Target-break animation in BTT stage // Available for the stage in versus
+ * ``42`` -> ``49``: Target-break animation in BTT stage // Character's portrait in versus
  * ``50`` -> ``63``: Particles
 
 Helpful constants:
@@ -49,6 +49,8 @@ Helpful constants:
  * ``INGAME_PLAYER_A_LAST_SPRITE``
  * ``INGAME_PLAYER_B_FIRST_SPRITE``
  * ``INGAME_PLAYER_B_LAST_SPRITE``
+ * ``INGAME_STAGE_FIRST_SPRITE``
+ * ``INGAME_PORTRAIT_FIRST_SPRITE``
  * ``PARTICLE_FIRST_SPRITE``
 
 Tile allocation in game
@@ -59,7 +61,10 @@ Sprite tiles
 
  * ``0`` -> ``95``: Player A's character graphics
  * ``96`` -> ``191``: Player B's character graphics
- * ``192`` -> ``255``: Available for the stage and game mode
+ * ``192`` -> ``240``: Available for the stage and game mode
+ * ``241`` -> ``247``: Common sprites (particles, out of screen bubble, ...)
+ * ``248`` -> ``251``: Player A's portrait
+ * ``252`` -> ``255``: Player B's portrait
 
 Beware, deprecated tileset in ``game/banks/chr_data.asm`` still copy stuff in "free" space, leaving ``192`` -> ``218`` blank, and initializing the ``219`` -> ``255`` to values that may be used (particles graphics, oos indicator, ...)
 
@@ -72,6 +77,13 @@ Helpful constants:
  * ``CHARACTERS_CHARACTER_B_TILES_OFFSET``
  * ``CHARACTERS_END_TILES``
  * ``CHARACTERS_END_TILES_OFFSET``
+ * ``STAGE_FIRST_SPRITE_TILE``
+ * ``STAGE_FIRST_SPRITE_TILE_OFFSET``
+ * ``STAGE_NUM_SPRITE_TILES``
+ * ``INGAME_COMMON_FIRST_SPRITE_TILE``
+ * ``INGAME_COMMON_FIRST_SPRITE_TILE_OFFSET``
+ * ``INGAME_CHARACTER_A_PORTRAIT_FIRST_SPRITE_TILE``
+ * ``INGAME_CHARACTER_B_PORTRAIT_FIRST_SPRITE_TILE``
 
 Background tiles
 ----------------

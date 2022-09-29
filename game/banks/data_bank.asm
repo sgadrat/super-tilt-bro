@@ -53,6 +53,12 @@ bank_data_tileset_common_features_begin:
 #echo Tilesets common features:
 #print *-bank_data_tileset_common_features_begin
 
+bank_data_common_ingame_sprites_begin:
+#include "game/data/tilesets/common_ingame_sprites.asm"
+#echo
+#echo Tileset common ingame sprites:
+#print *-bank_data_common_ingame_sprites_begin
+
 bank_data_end:
 
 #echo
