@@ -16,6 +16,18 @@ ARCADE_RUN_TELEPORT_TIMER_INACTIVE = $ff
 
 hide_player_b:
 .(
+	; Hide portrait's sprites
+	ldx #(INGAME_PORTRAIT_FIRST_SPRITE+4)*4
+	ldy #4
+	lda #$fe
+	hide_one_portrait_sprite:
+		sta oam_mirror+0, x
+
+		inx:inx:inx:inx
+		dey
+		bne hide_one_portrait_sprite
+
+	; Force player in "innexistant" state
 	ldx #1
 	ldy config_player_b_character
 

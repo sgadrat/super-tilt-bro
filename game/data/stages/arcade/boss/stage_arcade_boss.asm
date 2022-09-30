@@ -88,6 +88,17 @@ cloud_tile:
 	sta audio_current_track_bank
 	TRAMPOLINE(audio_play_music_direct, #0, #CURRENT_BANK_NUMBER)
 
+	; Hide portrait's sprites (we need sprites for stars/clouds)
+	ldx #INGAME_PORTRAIT_FIRST_SPRITE*4
+	ldy #8
+	lda #$fe
+	hide_one_portrait_sprite:
+		sta oam_mirror+0, x
+
+		inx:inx:inx:inx
+		dey
+		bne hide_one_portrait_sprite
+
 	; Initialize stage state
 	lda #0
 	sta current_layout
