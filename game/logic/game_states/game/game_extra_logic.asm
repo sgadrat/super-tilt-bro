@@ -8,10 +8,29 @@
 
 		; Store characters' tiles in CHR
 		.(
-			ldx #1
+			ldx #3
 			loop:
 				jsr place_character_ppu_illustrations
 				TRAMPOLINE(place_character_ppu_tiles, #0, #CURRENT_BANK_NUMBER)
+				dex
+				bpl loop
+		.)
+
+		; Place characters' portraits sprites
+		.(
+			ldy #INGAME_PORTRAIT_LAST_SPRITE*4
+			ldx #7
+			loop:
+				lda portrait_sprite_y, x
+				sta oam_mirror+0, y
+				lda portrait_sprite_tile, x
+				sta oam_mirror+1, y
+				lda portrait_sprite_attr, x
+				sta oam_mirror+2, y
+				lda portrait_sprite_x, x
+				sta oam_mirror+3, y
+
+				dey:dey:dey:dey
 				dex
 				bpl loop
 		.)
@@ -438,20 +457,39 @@
 		rts
 	.)
 
+	; Place characters illustrations in CHR RAM
+	;  X - illustation number (0-player A background, 1-player B background, 2-player A sprites, 3-player B sprites)
+	;  token + small in background tiles
+	;  small in sprite tiles
+	;
+	; NOTE deserve 2 routines, one for bg, one for sprites
 	place_character_ppu_illustrations:
 	.(
 		illustration_addr = tmpfield1
 		illustration_size = tmpfield3
 		illustration_addr_tmp = tmpfield4
 		char_bank = tmpfield6
+		bitmask = tmpfield7
 
+		; Save X
+		txa:pha
+
+		; Place PPU on the tiles to write
 		lda PPUSTATUS
 		lda illustrations_addr_msb, x
 		sta PPUADDR
 		lda illustrations_addr_lsb, x
 		sta PPUADDR
 
+		; Read character info
+		txa
+		pha
+		and #%00000001
+		tax
 		ldy config_player_a_character, x
+		pla
+		tax
+
 		lda characters_properties_lsb, y
 		sta tmpfield1
 		lda characters_properties_msb, y
@@ -467,27 +505,134 @@
 		FAR_LDA_TMPFIELD1_Y(char_bank)
 		sta illustration_addr_tmp+1
 
-		lda illustration_addr_tmp
-		sta illustration_addr
-		lda illustration_addr_tmp+1
-		sta illustration_addr+1
-		lda #5
-		sta illustration_size
+		; For sprites, skip token illustration
+		.(
+			cpx #2
+			bcc copy_background_tiles
+				copy_sprite_tiles:
+					; Skip TOKEN illustration
+					;NOTE it is important to store result in "illustration_addr", far fetching expects it to be tmpfield1
+					lda illustration_addr_tmp
+					clc
+					adc #CHARACTERS_ILLUSTRATION_SMALL_OFFSET*16
+					sta illustration_addr
+					lda illustration_addr_tmp+1
+					adc #0
+					sta illustration_addr+1
 
-		TRAMPOLINE(cpu_to_ppu_copy_tiles, char_bank, #CURRENT_BANK_NUMBER)
+					; Copy illustration tiles
+					lda illustrations_size, x
+					tax
+					copy_one_tile:
+						.(
+							; Save X
+							txa:pha
+
+							; Copy the lines LSBs
+							;  We want to swap colors 0 and 1
+							;  so, when a bit in the second byte of a line is 0, the equivalent bit in first line must be swapped
+							ldx #8-1
+							copy_line_lsb:
+							.(
+								; Swap bits as necessary
+								ldy #8
+								FAR_LDA_TMPFIELD1_Y(char_bank)
+								eor #%11111111
+								sta bitmask
+
+								ldy #0
+								FAR_LDA_TMPFIELD1_Y(char_bank)
+								eor bitmask
+
+								; Write VRAM
+								sta PPUDATA
+
+								; Loop
+								inc illustration_addr
+								bne inc_done
+									inc illustration_addr+1
+								inc_done:
+
+								dex
+								bpl copy_line_lsb
+							.)
+
+							; Copy the line MSBs
+							ldx #8-1 ;FIXME dbg, should be 8
+							ldy #0
+							copy_line_msb:
+							.(
+								; Read byte
+								FAR_LDA_TMPFIELD1_Y(char_bank)
+
+								; Write VRAM
+								sta PPUDATA
+
+								; Loop
+								inc illustration_addr
+								bne inc_done
+									inc illustration_addr+1
+								inc_done:
+
+								dex
+								bpl copy_line_msb
+							.)
+
+							; Restore X
+							pla:tax
+						.)
+
+						dex
+						bne copy_one_tile
+
+					jmp ok
+
+				copy_background_tiles:
+					lda illustration_addr_tmp
+					sta illustration_addr
+					lda illustration_addr_tmp+1
+					sta illustration_addr+1
+					lda illustrations_size, x
+					sta illustration_size
+
+					TRAMPOLINE(cpu_to_ppu_copy_tiles, char_bank, #CURRENT_BANK_NUMBER)
+
+			ok:
+		.)
+
+		; Restore X
+		pla
+		tax
 
 		rts
 
 		illustrations_addr_msb:
-		.byt $1d, $1d
+		.byt $1d, $1d ; Background
+		.byt $0f, $0f ; Sprites
 		illustrations_addr_lsb:
-		.byt $00, $50
+		.byt $00, $50 ; Background
+		.byt $80, $c0 ; Sprites
+		illustrations_size:
+		.byt $05, $05 ; Background - we want token + small = 5 tiles
+		.byt $04, $04 ; Sprites - we want only small = 4 tiles
 	.)
 
 	header_player_a:
 	.byt $01, $3f, $11, $03
 	header_player_b:
 	.byt $01, $3f, $19, $03
+
+	.(
+		T = INGAME_CHARACTER_A_PORTRAIT_FIRST_SPRITE_TILE
+		&portrait_sprite_y:
+			.byt $bf,$bf,$c7,$c7, $bf,$bf,$c7,$c7
+		&portrait_sprite_tile:
+			.byt T+0,T+1,T+2,T+3, T+4,T+5,T+6,T+7
+		&portrait_sprite_attr:
+			.byt $00,$00,$00,$00, $02,$02,$02,$02
+		&portrait_sprite_x:
+			.byt $48,$50,$48,$50, $a8,$b0,$a8,$b0
+	.)
 .)
 
 ; Code common to most stage initialization
