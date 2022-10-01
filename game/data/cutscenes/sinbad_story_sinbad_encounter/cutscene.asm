@@ -56,7 +56,7 @@ cutscene_sinbad_story_sinbad_encounter_logic:
 	TEXT(3, 18, "                          ")
 	TEXT(3, 19, "             Hey! Sinbad! ")
 	TEXT(3, 20, "                          ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "                          ")
 	TEXT(3, 22, "                          ")
 	TEXT(3, 23, "                          ")
@@ -65,7 +65,7 @@ cutscene_sinbad_story_sinbad_encounter_logic:
 	TEXT(3, 18, "                          ")
 	TEXT(3, 19, "             Hey! Sinbad! ")
 	TEXT(3, 20, "Hmm. Me?                  ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "                          ")
 	TEXT(3, 22, "                          ")
 	TEXT(3, 23, "                          ")
@@ -74,7 +74,7 @@ cutscene_sinbad_story_sinbad_encounter_logic:
 	TEXT(3, 18, "                          ")
 	TEXT(3, 19, "             Hey! Sinbad! ")
 	TEXT(3, 20, "Hmm. Me?                  ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "             I am your    ")
 	TEXT(3, 22, "             conscience...")
 	TEXT(3, 23, "                          ")
@@ -83,25 +83,25 @@ cutscene_sinbad_story_sinbad_encounter_logic:
 	TEXT(3, 18, "             Hey! Sinbad! ")
 	TEXT(3, 19, "Hmm. Me?                  ")
 	TEXT(3, 20, "             I am your    ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "             conscience...")
 	TEXT(3, 22, "                          ")
 	TEXT(3, 23, "             You are on   ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 
 	TEXT(3, 18, "Hmm. Me?                  ")
 	TEXT(3, 19, "             I am your    ")
 	TEXT(3, 20, "             conscience...")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "                          ")
 	TEXT(3, 22, "             You are on   ")
 	TEXT(3, 23, "             diet!        ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 
 	TEXT(3, 18, "             I am your    ")
 	TEXT(3, 19, "             conscience...")
 	TEXT(3, 20, "                          ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "             You are on   ")
 	TEXT(3, 22, "             diet!        ")
 	TEXT(3, 23, "                          ")
@@ -110,25 +110,25 @@ cutscene_sinbad_story_sinbad_encounter_logic:
 	TEXT(3, 18, "             I am your    ")
 	TEXT(3, 19, "             conscience...")
 	TEXT(3, 20, "                          ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "             You are on   ")
 	TEXT(3, 22, "             diet!        ")
 	TEXT(3, 23, "I need this               ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 
 	TEXT(3, 18, "             conscience...")
 	TEXT(3, 19, "                          ")
 	TEXT(3, 20, "             You are on   ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "             diet!        ")
 	TEXT(3, 22, "I need this               ")
 	TEXT(3, 23, "cake.                     ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 
 	TEXT(3, 18, "                          ")
 	TEXT(3, 19, "             You are on   ")
 	TEXT(3, 20, "             diet!        ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "I need this               ")
 	TEXT(3, 22, "cake.                     ")
 	TEXT(3, 23, "                          ")
@@ -137,25 +137,25 @@ cutscene_sinbad_story_sinbad_encounter_logic:
 	TEXT(3, 18, "             You are on   ")
 	TEXT(3, 19, "             diet!        ")
 	TEXT(3, 20, "I need this               ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "cake.                     ")
 	TEXT(3, 22, "                          ")
 	TEXT(3, 23, "let me go,                ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 
 	TEXT(3, 18, "             diet!        ")
 	TEXT(3, 19, "I need this               ")
 	TEXT(3, 20, "cake.                     ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "                          ")
 	TEXT(3, 22, "let me go,                ")
 	TEXT(3, 23, "ghost-me!                 ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 
 	TEXT(3, 18, "I need this               ")
 	TEXT(3, 19, "cake.                     ")
 	TEXT(3, 20, "                          ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "let me go,                ")
 	TEXT(3, 22, "ghost-me!                 ")
 	TEXT(3, 23, "                          ")

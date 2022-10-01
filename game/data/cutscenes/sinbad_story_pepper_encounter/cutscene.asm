@@ -56,89 +56,94 @@ cutscene_sinbad_story_pepper_encounter_logic:
 	TEXT(3, 18, "                          ")
 	TEXT(3, 19, "                  YOU     ")
 	TEXT(3, 20, "                          ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "                          ")
 	TEXT(3, 22, "                          ")
 	TEXT(3, 23, "                          ")
+	DRAW_BUFFERS
 	SKIPPABLE_FRAMES(25)
 	TEXT(3, 18, "                          ")
 	TEXT(3, 19, "                  YOU     ")
 	TEXT(3, 20, "                 SHALL    ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "                          ")
 	TEXT(3, 22, "                          ")
 	TEXT(3, 23, "                          ")
+	DRAW_BUFFERS
 	SKIPPABLE_FRAMES(25)
 	TEXT(3, 18, "                          ")
 	TEXT(3, 19, "                  YOU     ")
 	TEXT(3, 20, "                 SHALL    ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "                  NOT     ")
 	TEXT(3, 22, "                          ")
 	TEXT(3, 23, "                          ")
+	DRAW_BUFFERS
 	SKIPPABLE_FRAMES(25)
 	TEXT(3, 18, "                          ")
 	TEXT(3, 19, "                  YOU     ")
 	TEXT(3, 20, "                 SHALL    ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "                  NOT     ")
 	TEXT(3, 22, "                 PASS!!!  ")
 	TEXT(3, 23, "                          ")
+	DRAW_BUFFERS
 	SKIPPABLE_FRAMES(100)
 
 	TEXT(3, 18, "                          ")
 	TEXT(3, 19, "                  YOU     ")
 	TEXT(3, 20, "                 SHALL    ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "                  NOT     ")
 	TEXT(3, 22, "                 PASS!!!  ")
 	TEXT(3, 23, "Hey! that's not           ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 
 	TEXT(3, 18, "                  YOU     ")
 	TEXT(3, 19, "                 SHALL    ")
 	TEXT(3, 20, "                  NOT     ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "                 PASS!!!  ")
 	TEXT(3, 22, "Hey! that's not           ")
 	TEXT(3, 23, "your line!                ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 
 	TEXT(3, 18, "                 SHALL    ")
 	TEXT(3, 19, "                  NOT     ")
 	TEXT(3, 20, "                 PASS!!!  ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "Hey! that's not           ")
 	TEXT(3, 22, "your line!                ")
 	TEXT(3, 23, "                          ")
+	DRAW_BUFFERS
 	SKIPPABLE_FRAMES(100)
 
 	TEXT(3, 18, "                 SHALL    ")
 	TEXT(3, 19, "                  NOT     ")
 	TEXT(3, 20, "                 PASS!!!  ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "Hey! that's not           ")
 	TEXT(3, 22, "your line!                ")
 	TEXT(3, 23, "              No, but this")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 
 	TEXT(3, 18, "                  NOT     ")
 	TEXT(3, 19, "                 PASS!!!  ")
 	TEXT(3, 20, "Hey! that's not           ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "your line!                ")
 	TEXT(3, 22, "              No, but this")
 	TEXT(3, 23, "              cake is mine")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 
 	TEXT(3, 18, "                 PASS!!!  ")
 	TEXT(3, 19, "Hey! that's not           ")
 	TEXT(3, 20, "your line!                ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(3, 21, "              No, but this")
 	TEXT(3, 22, "              cake is mine")
 	TEXT(3, 23, "                          ")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	SKIPPABLE_FRAMES(150)
 	rts
 .)

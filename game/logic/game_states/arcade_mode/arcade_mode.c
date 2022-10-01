@@ -68,6 +68,12 @@ typedef struct Encounter {
 
 static Encounter const encounters[] = {
 	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_bird_msg, (uint16_t)&cutscene_sinbad_story_bird_msg_bank}}},
+	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_sinbad_encounter, (uint16_t)&cutscene_sinbad_story_sinbad_encounter_bank}}},
+	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_kiki_encounter, (uint16_t)&cutscene_sinbad_story_kiki_encounter_bank}}},
+	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_pepper_encounter, (uint16_t)&cutscene_sinbad_story_pepper_encounter_bank}}},
+	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_meteor, (uint16_t)&cutscene_sinbad_story_meteor_bank}}},
+
+	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_bird_msg, (uint16_t)&cutscene_sinbad_story_bird_msg_bank}}},
 	{.type = ENCOUNTER_RUN, {.run={0}}},
 	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_sinbad_encounter, (uint16_t)&cutscene_sinbad_story_sinbad_encounter_bank}}},
 	{.type = ENCOUNTER_FIGHT, {.fight={0, 1, 0, 0}}},

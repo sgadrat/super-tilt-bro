@@ -57,22 +57,24 @@ cutscene_sinbad_story_kiki_encounter_logic:
 	SKIPPABLE_FRAMES(100)
 	TEXT(3, 21, "Maybe a")
 	TEXT(3, 22, "weird private joke.")
-	SKIPPABLE_FRAMES(100)
+	DRAW_BUFFERS
+	SKIPPABLE_FRAMES(99)
 	TEXT(15, 18, "Saluton amiko!")
 	TEXT(3, 20, "Maybe a")
 	TEXT(3, 21, "weird private joke.")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(15, 19, "              ")
 	TEXT(3, 22, "                   ")
 	TEXT(3, 23, "No time for that")
-	PLAY_FRAMES(1)
+	DRAW_BUFFERS
 	TEXT(15, 18, "              ")
 	TEXT(3, 19, "Maybe a")
 	TEXT(3, 20, "weird private joke.")
 	TEXT(3, 21, "                   ")
 	TEXT(3, 22, "No time for that")
 	TEXT(3, 23, "I'll force the way!")
-	SKIPPABLE_FRAMES(150)
+	DRAW_BUFFERS
+	SKIPPABLE_FRAMES(149)
 	rts
 .)
 .)

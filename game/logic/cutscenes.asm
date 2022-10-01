@@ -362,7 +362,7 @@ load_animation_addr:
 	adc #0
 	sta parameter_addr+1
 
-	; Store character converion routine address in zeropage to be able to jump on it
+	; Store character conversion routine address in zeropage to be able to jump on it
 	ldy #0
 	lda (parameter_addr), y
 	sta character_converter
@@ -549,6 +549,11 @@ load_animation_addr:
 	.asc data, 0 :\
 .)
 
+; Wait a set number of frames while ticking animations, scrolling, and taking care of user skips.
+;  A - Number of frames to play
+;  X - Allow the user to skip this wait
+;
+; Overwrites all registers and all tmpfields
 &cutscene_play_frames:
 .(
 	extended_byte = tmpfield1
@@ -776,6 +781,31 @@ load_animation_addr:
 	bne ok :\
 		rts :\
 	ok:\
+.)
+
+#define DRAW_BUFFERS .( :\
+	; On stack - as the user requested scene's end :\
+	lda #0 :\
+	pha :\
+:\
+	play_one_frame:\
+		lda #1 :\
+		ldx #0 :\
+		jsr cutscene_play_frames :\
+		bne ok :\
+			pla :\
+			lda #1 :\
+			pha :\
+		ok:\
+:\
+		lda nt_buffers_begin :\
+		cmp nt_buffers_end :\
+		bne play_one_frame :\
+:\
+	pla :\
+	beq continue_scene :\
+		rts :\
+	continue_scene:\
 .)
 
 &cutscene_set_screen:
