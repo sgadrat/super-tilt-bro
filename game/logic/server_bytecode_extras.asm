@@ -26,13 +26,6 @@ server_bytecode_init:
 	lda video_system
 	sta system_index
 
-	;FIXME character_*_present should be set
-	;  it actually works without because
-	;   - memory is set to zero before calling server_bytecode_init (thus character_*_present are unset)
-	;   - character_*_present are unsed only on branches not executed in rollback mode (so no impact on having the wrong value)
-
-	;FIXME should explicetely set nt_buffers_end and nt_buffers_begin to zero
-
 	lda #3
 	sta config_initial_stocks
 
@@ -42,6 +35,11 @@ server_bytecode_init:
 
 	lda #1
 	sta network_rollback_mode
+	sta config_player_a_present
+	sta config_player_b_present
+
+	; Ensure nt_buffers to be in a valid state
+	jsr clear_nt_buffers
 
 	; Standard game's initialization
 	jsr init_game_state
