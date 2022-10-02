@@ -13,11 +13,18 @@
 .)
 
 .(
+	SUBSTATE_SLOWING = 0
+	SUBSTATE_STOPPED = 1
+
 	&{char_name}_start_idle:
 	.(
 		; Set the player's state
 		lda #{char_name_upper}_STATE_IDLE
 		sta player_a_state, x
+
+		; Set substate
+		lda #SUBSTATE_SLOWING
+		sta player_a_state_field1, x
 
 		; Set the appropriate animation
 		lda #<{char_name}_anim_idle
@@ -35,15 +42,32 @@
 		jsr {char_name}_global_tick
 #endif
 
-		; Do not move, velocity tends toward vector (0,0)
-		lda #$00
-		sta tmpfield4
-		sta tmpfield3
-		sta tmpfield2
-		sta tmpfield1
-		lda #$ff
-		sta tmpfield5
-		jsr merge_to_player_velocity
+		; Check if we stopped moving (and should change substate)
+		lda player_a_velocity_h, x
+		bne substate_ok
+		lda player_a_velocity_h_low, x
+		bne substate_ok
+			lda #1
+			sta player_a_state_field1, x
+		substate_ok
+
+		; Apply friction
+		lda player_a_state_field1, x
+		bne stopped
+			slowing:
+				; Do not move, velocity tends toward vector (0,0)
+				lda #$00
+				sta tmpfield4
+				sta tmpfield3
+				sta tmpfield2
+				sta tmpfield1
+				lda #$ff ;NOTE should be a character's constant, or use ground friction (and remove substate)
+				sta tmpfield5
+				jsr merge_to_player_velocity
+				jmp friction_ok
+			stopped:
+				jsr {char_name}_apply_ground_friction
+		friction_ok:
 
 		; Force handling directional controls
 		;   we want to start running even if button presses where maintained from previous state

@@ -226,6 +226,9 @@ player_state_action:
 ; Overwrite all registers and all tmpfields, extra_tmpfield1
 check_player_hit:
 .(
+	;TODO optimizable - hitbox vs hitbox should be checked only once, not once per player
+	; it would avoid to do the collision check twice, and simplify logic as consequences for both players would be in one place
+
 	; Parameters of boxes_overlap
 	striking_box_left = tmpfield1
 	striking_box_right = tmpfield2
@@ -250,6 +253,7 @@ check_player_hit:
 
 	; Storage of usefull info read way earlier than used
 	striker_hitbox_type = extra_tmpfield1
+	stroke_hitbox_type = extra_tmpfield2
 
 	; Store current player number (at stack+1)
 	txa
@@ -295,6 +299,9 @@ check_player_hit:
 			do_hitbox_check:
 
 				; Store opponent's hitbox
+				;lda player_a_hitbox_enabled, x ; useless, done above
+				sta stroke_hitbox_type
+
 				lda player_a_hitbox_left, x
 				sta smashed_box_left
 				lda player_a_hitbox_left_msb, x
@@ -337,35 +344,14 @@ check_player_hit:
 							jmp end
 
 						direct_hitbox:
-							; Play parry sound
-							jsr audio_play_parry
-
-							; Hitboxes collide, set opponent in thrown mode without momentum
-							lda #HITSTUN_PARRY_NB_FRAMES
-							sta player_a_hitstun, x
-
-							lda #$00
-							sta player_a_velocity_h, x
-							sta player_a_velocity_h_low, x
-							sta player_a_velocity_v, x
-							sta player_a_velocity_v_low, x
-
-							lda #PLAYER_STATE_THROWN
-							sta player_a_state, x
-							ldy config_player_a_character, x
-							SWITCH_BANK(characters_bank_number COMMA y)
-							lda characters_start_routines_table_lsb, y
-							sta tmpfield1
-							lda characters_start_routines_table_msb, y
-							sta tmpfield2
-							jsr player_state_action
-
-							lda #SCREENSHAKE_PARRY_INTENSITY
-							sta screen_shake_nextval_x
-							sta screen_shake_nextval_y
-							lda #SCREENSHAKE_PARRY_NB_FRAMES
-							sta screen_shake_counter
-
+							; Apply parry to the stroke player if their hitbox is direct (custom hitboxes must take care of themselve)
+							lda stroke_hitbox_type
+							cmp #HITBOX_DIRECT
+							bne parry_done
+								ldy config_player_a_character, x
+								SWITCH_BANK(characters_bank_number COMMA y)
+								jsr parry_player
+							parry_done:
 							jmp end
 
 			; Unreachable - No branch returns (one jumps directly to check_hitbox_hurtbox)
@@ -499,6 +485,45 @@ hurt_player:
 	sta player_a_hitbox_enabled, x
 
 	rts
+.)
+
+; Make a player who hit an hitbox fall
+;  register X - Player number
+;  register Y - Character number
+;
+;  Can overwrite any register and any tmpfield
+;  The currently selected bank must be the current character's bank
+parry_player:
+.(
+	; Play parry sound
+	jsr audio_play_parry
+
+	; Shake the screen
+	lda #SCREENSHAKE_PARRY_INTENSITY
+	sta screen_shake_nextval_x
+	sta screen_shake_nextval_y
+	lda #SCREENSHAKE_PARRY_NB_FRAMES
+	sta screen_shake_counter
+
+	; Set player in thrown mode without momentum
+	lda #HITSTUN_PARRY_NB_FRAMES
+	sta player_a_hitstun, x
+
+	lda #$00
+	sta player_a_velocity_h, x
+	sta player_a_velocity_h_low, x
+	sta player_a_velocity_v, x
+	sta player_a_velocity_v_low, x
+
+	lda #PLAYER_STATE_THROWN
+	sta player_a_state, x
+	lda characters_start_routines_table_lsb, y
+	sta tmpfield1
+	lda characters_start_routines_table_msb, y
+	sta tmpfield2
+	jmp player_state_action
+
+	;rts ; useless, jump to subroutine
 .)
 
 ; Throw the player upward off a bumper stage element

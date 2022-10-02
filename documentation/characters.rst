@@ -73,6 +73,15 @@ Constraints on the callback
 
  * ``A``: output: Can be modified, input: Garbage
  * ``X``: output: Can be modified, input: Player number
- * ``Y``: output: Can be modified, input: Type of the collided object (HITBOX or HURTBOX defined in global constants)
+ * ``Y``: output: Can be modified, input: Type of the collided object (``HITBOX`` or ``HURTBOX`` defined in global constants)
  * ``player_number``: output: Can be modified, input: Not ensured to be set
  * ``tmpfields``: output: can be modified, input: Garbage
+
+When ``Y`` is set to ``HITBOX`` the callback is responsible for consequences of the collision::
+
+ * On the character it controls,
+ * On the opponent if the opponent's hitbox is direct.
+
+Direct hitboxes will not apply parry to their opponent when colliding to a custom hitbox.
+
+Xhen ``Y`` is set to ``HITBOX`` the hitbox type should not be changed to ``HITBOX_DISABLED`` if the result is a parry. (Quirk in the engine, relying on hitboxes staying active in parry to apply it correctly to both player. May change with a future rework of parry handling.)

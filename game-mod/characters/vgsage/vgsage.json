@@ -7514,19 +7514,7 @@
               "y": 8
             }
           ],
-          "hitbox": {
-            "type": "animation_direct_hitbox",
-            "left": -10,
-            "top": 0,
-            "right": -2,
-            "bottom": 14,
-            "base_h": -500,
-            "base_v": 0,
-            "force_h": 0,
-            "force_v": 0,
-            "damages": 1,
-            "enabled": true
-          },
+          "hitbox": null,
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -5,
@@ -7650,19 +7638,7 @@
               "y": 0
             }
           ],
-          "hitbox": {
-            "type": "animation_direct_hitbox",
-            "left": 6,
-            "top": 2,
-            "right": 14,
-            "bottom": 16,
-            "base_h": -500,
-            "base_v": -500,
-            "force_h": 0,
-            "force_v": 0,
-            "damages": 1,
-            "enabled": true
-          },
+          "hitbox": null,
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -4,
@@ -7891,7 +7867,7 @@
         },
         {
           "type": "animation_frame",
-          "duration": 6,
+          "duration": 4,
           "sprites": [
             {
               "type": "animation_sprite",
@@ -7940,6 +7916,30 @@
               "foreground": false,
               "x": -5,
               "y": 6
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_60",
+              "attr": 1,
+              "foreground": true,
+              "x": -16,
+              "y": -1
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_60",
+              "attr": 129,
+              "foreground": true,
+              "x": -17,
+              "y": 12
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_60",
+              "attr": 129,
+              "foreground": true,
+              "x": -21,
+              "y": 7
             }
           ],
           "hitbox": {
@@ -7966,7 +7966,211 @@
         },
         {
           "type": "animation_frame",
-          "duration": 6,
+          "duration": 4,
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_27",
+              "attr": 0,
+              "foreground": false,
+              "x": -6,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_28",
+              "attr": 0,
+              "foreground": false,
+              "x": 2,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_26",
+              "attr": 0,
+              "foreground": false,
+              "x": -1,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_25",
+              "attr": 0,
+              "foreground": false,
+              "x": -9,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_88",
+              "attr": 129,
+              "foreground": false,
+              "x": -4,
+              "y": 6
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_89",
+              "attr": 129,
+              "foreground": false,
+              "x": -12,
+              "y": 6
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_66",
+              "attr": 1,
+              "foreground": false,
+              "x": -25,
+              "y": -1
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_66",
+              "attr": 193,
+              "foreground": false,
+              "x": -27,
+              "y": 12
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_60",
+              "attr": 129,
+              "foreground": false,
+              "x": -30,
+              "y": 7
+            }
+          ],
+          "hitbox": {
+            "type": "animation_custom_hitbox",
+            "left": -28,
+            "top": 3,
+            "right": -2,
+            "bottom": 16,
+            "enabled": false,
+            "routine": "vgsage_special_hit",
+            "directional1": -1024,
+            "directional2": 0,
+            "value1": 0,
+            "value2": 0,
+            "value3": 0
+          },
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
+        },
+        {
+          "type": "animation_frame",
+          "duration": 4,
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_27",
+              "attr": 0,
+              "foreground": false,
+              "x": -6,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_30",
+              "attr": 0,
+              "foreground": false,
+              "x": 2,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_56",
+              "attr": 0,
+              "foreground": false,
+              "x": -9,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_59",
+              "attr": 0,
+              "foreground": false,
+              "x": -1,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_60",
+              "attr": 1,
+              "foreground": false,
+              "x": -10,
+              "y": 4
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_88",
+              "attr": 129,
+              "foreground": false,
+              "x": -5,
+              "y": 6
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_66",
+              "attr": 1,
+              "foreground": false,
+              "x": -30,
+              "y": -1
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_66",
+              "attr": 193,
+              "foreground": false,
+              "x": -32,
+              "y": 12
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_66",
+              "attr": 129,
+              "foreground": false,
+              "x": -31,
+              "y": 8
+            }
+          ],
+          "hitbox": {
+            "type": "animation_custom_hitbox",
+            "left": -28,
+            "top": 3,
+            "right": -2,
+            "bottom": 16,
+            "enabled": false,
+            "routine": "vgsage_special_hit",
+            "directional1": -1024,
+            "directional2": 0,
+            "value1": 0,
+            "value2": 0,
+            "value3": 0
+          },
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 8,
+            "bottom": 16
+          }
+        }
+      ],
+      "name": "vgsage_anim_special_punch",
+      "type": "animation"
+    },
+    {
+      "frames": [
+        {
+          "type": "animation_frame",
+          "duration": 3,
           "sprites": [
             {
               "type": "animation_sprite",
@@ -8017,20 +8221,7 @@
               "y": 6
             }
           ],
-          "hitbox": {
-            "type": "animation_custom_hitbox",
-            "left": -28,
-            "top": 3,
-            "right": -2,
-            "bottom": 16,
-            "enabled": false,
-            "routine": "vgsage_special_hit",
-            "directional1": -1024,
-            "directional2": 0,
-            "value1": 0,
-            "value2": 0,
-            "value3": 0
-          },
+          "hitbox": null,
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -5,
@@ -8041,7 +8232,69 @@
         },
         {
           "type": "animation_frame",
-          "duration": 6,
+          "duration": 3,
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_27",
+              "attr": 0,
+              "foreground": false,
+              "x": -6,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_28",
+              "attr": 0,
+              "foreground": false,
+              "x": 2,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_26",
+              "attr": 0,
+              "foreground": false,
+              "x": -1,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_25",
+              "attr": 0,
+              "foreground": false,
+              "x": -9,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_88",
+              "attr": 129,
+              "foreground": false,
+              "x": -4,
+              "y": 6
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_89",
+              "attr": 129,
+              "foreground": false,
+              "x": -12,
+              "y": 6
+            }
+          ],
+          "hitbox": null,
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 3,
+            "right": 9,
+            "bottom": 16
+          }
+        },
+        {
+          "type": "animation_frame",
+          "duration": 4,
           "sprites": [
             {
               "type": "animation_sprite",
@@ -8092,20 +8345,131 @@
               "y": 6
             }
           ],
-          "hitbox": {
-            "type": "animation_custom_hitbox",
-            "left": -28,
+          "hitbox": null,
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
+            "top": 4,
+            "right": 8,
+            "bottom": 16
+          }
+        },
+        {
+          "type": "animation_frame",
+          "duration": 4,
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_27",
+              "attr": 0,
+              "foreground": false,
+              "x": -6,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_28",
+              "attr": 0,
+              "foreground": false,
+              "x": 2,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_26",
+              "attr": 0,
+              "foreground": false,
+              "x": -1,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_25",
+              "attr": 0,
+              "foreground": false,
+              "x": -9,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_88",
+              "attr": 129,
+              "foreground": false,
+              "x": -4,
+              "y": 6
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_89",
+              "attr": 129,
+              "foreground": false,
+              "x": -12,
+              "y": 6
+            }
+          ],
+          "hitbox": null,
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": -5,
             "top": 3,
-            "right": -2,
-            "bottom": 16,
-            "enabled": false,
-            "routine": "vgsage_special_hit",
-            "directional1": -1024,
-            "directional2": 0,
-            "value1": 0,
-            "value2": 0,
-            "value3": 0
-          },
+            "right": 9,
+            "bottom": 16
+          }
+        },
+        {
+          "type": "animation_frame",
+          "duration": 4,
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_27",
+              "attr": 0,
+              "foreground": false,
+              "x": -6,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_30",
+              "attr": 0,
+              "foreground": false,
+              "x": 2,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_56",
+              "attr": 0,
+              "foreground": false,
+              "x": -9,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_59",
+              "attr": 0,
+              "foreground": false,
+              "x": -1,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_60",
+              "attr": 1,
+              "foreground": false,
+              "x": -10,
+              "y": 4
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SAGE_TILE_88",
+              "attr": 129,
+              "foreground": false,
+              "x": -5,
+              "y": 6
+            }
+          ],
+          "hitbox": null,
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -5,
@@ -8115,7 +8479,7 @@
           }
         }
       ],
-      "name": "vgsage_anim_special_punch",
+      "name": "vgsage_anim_special_punch_hit",
       "type": "animation"
     },
     {
@@ -10335,49 +10699,49 @@
       },
       {
         "colors": [
-          8,
+          55,
           40,
-          55
+          32
         ],
         "type": "palette"
       },
       {
         "colors": [
-          1,
           49,
-          51
+          50,
+          32
         ],
         "type": "palette"
       },
       {
         "colors": [
-          8,
-          24,
-          41
+          32,
+          40,
+          57
         ],
         "type": "palette"
       },
       {
         "colors": [
-          15,
-          15,
-          0
+          37,
+          39,
+          21
         ],
         "type": "palette"
       },
       {
         "colors": [
-          4,
-          36,
-          55
+          57,
+          56,
+          32
         ],
         "type": "palette"
       },
       {
         "colors": [
-          8,
-          22,
-          55
+          50,
+          49,
+          32
         ],
         "type": "palette"
       }

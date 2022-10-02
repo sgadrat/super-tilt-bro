@@ -41,7 +41,10 @@
 			dec player_a_state_clock, x
 		end_tick:
 
-		rts
+		; Apply friction
+		jmp {char_name}_apply_ground_friction
+
+		;rts ; useless, jump to subroutine
 	.)
 
 	&{char_name}_input_shielding:

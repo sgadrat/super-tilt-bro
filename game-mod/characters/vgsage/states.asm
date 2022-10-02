@@ -588,6 +588,14 @@ vgsage_global_onground:
 				force_h_lsb = tmpfield1
 				force_h_msb = tmpfield2
 
+				;NOTE We don't check if we hit an hitbox or hurtbox
+				;     Hitbox vs Hitbox collision will prevent Hitbox vs Hurtbox collision check
+				;     so we cannot easily know if we collide with opponent hurtbox to push them only if it's the case.
+
+				;NOTE We keep hitbox_enabled to HITBOX_DISABLED when hitting an hitbox
+				;     It avoids multi-hits but has the unwated side effect of favoring player A when two Sage's windboxes collide
+				;     Should be fixed by a refactor of hitbox vs hitbox collisions in game logic
+
 				; Store wind power at fixed location
 				lda player_a_force_h_lsb, x
 				sta force_h_lsb
@@ -616,27 +624,68 @@ vgsage_global_onground:
 
 			strong_hit:
 			.(
-				; Put opponent in owned state
-				SWITCH_SELECTED_PLAYER
-				lda #PLAYER_STATE_OWNED
-				sta player_a_state, x
-				ldy config_player_a_character, x
-				lda characters_start_routines_table_lsb, y
-				sta tmpfield1
-				lda characters_start_routines_table_msb, y
-				sta tmpfield2
-				TRAMPOLINE(player_state_action, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
+				; If we hit opponent's hitbox, we should apply parry
+				.(
+					cpy #HURTBOX
+					beq process
 
-				; Cancel any opponent's momentum
-				lda #0
-				sta player_a_velocity_v_low, x
-				sta player_a_velocity_v, x
-				sta player_a_velocity_h_low, x
-				sta player_a_velocity_h, x
+						; Reenable our hitbox (we should not have disabled it in hitbox vs hitbox case)
+						;NOTE requirement would be made obsolete if hitbox vs hitbox collisions were not made once per player
+						lda #HITBOX_CUSTOM
+						sta player_a_hitbox_enabled, x
 
-				; Start knight's animation
-				SWITCH_SELECTED_PLAYER
-				;jmp vgsage_start_special_fadeout ; useless, fallthrough
+						; Apply parry to ourself
+						ldy config_player_a_character, x
+						jsr parry_player
+
+						; Apply parry to our opponent (if it is a direct hitbox)
+						SWITCH_SELECTED_PLAYER
+						lda player_a_hitbox_enabled, x
+						cmp #HITBOX_DIRECT
+						bne ok
+							ldy config_player_a_character, x
+							TRAMPOLINE(parry_player, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
+						ok:
+
+						; Do not actually process hit
+						rts
+
+					process:
+				.)
+
+				; Set the appropriate animation
+				lda #<vgsage_anim_special_punch_hit
+				sta tmpfield13
+				lda #>vgsage_anim_special_punch_hit
+				sta tmpfield14
+				jsr set_player_animation
+
+				; Start Knigth's animation if the sage is on his last stock, else apply the hit directly
+				lda player_a_stocks, x
+				beq knight_hit
+					simple_hit:
+						jmp apply_hit
+					knight_hit:
+						; Put opponent in owned state
+						SWITCH_SELECTED_PLAYER
+						lda #PLAYER_STATE_OWNED
+						sta player_a_state, x
+						ldy config_player_a_character, x
+						lda characters_start_routines_table_lsb, y
+						sta tmpfield1
+						lda characters_start_routines_table_msb, y
+						sta tmpfield2
+						TRAMPOLINE(player_state_action, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
+
+						; Cancel any opponent's momentum
+						lda #0
+						sta player_a_velocity_v_low, x
+						sta player_a_velocity_v, x
+						sta player_a_velocity_h_low, x
+						sta player_a_velocity_h, x
+
+						SWITCH_SELECTED_PLAYER
+						;jmp vgsage_start_special_fadeout ; useless, fallthrough
 			.)
 	.)
 
@@ -1068,47 +1117,102 @@ vgsage_global_onground:
 
 		+vgsage_tick_special_restore_screen:
 		.(
+			; Restore screen
 			lda #FADE_LEVEL_NORMAL
 			sta stage_fade_level
 			dec stage_screen_effect
-			jmp resume_game
+			jsr apply_hit
+
+			; Come back to a playable state
+			jmp vgsage_start_inactive_state
+
 			;rts ; useless, jump to subroutine
 		.)
 	.)
 
-	resume_game:
+	apply_hit:
 	.(
+		DAMAGES = 23
+		BASE_H = -900
+		FORCE_H = -40
+		BASE_V = -1500
+		FORCE_V = 0
+
 		; Hurt opponent
-		;  optimisable - avoid hurt_player routine, call apply_force_vector_direct to not setup the hitbox just to read it in tmpfields
-		;  could also be better to use a hitbox in the animation (just ensure it connects someway)
-		lda #23
-		sta player_a_hitbox_damages, x
-		lda #0
-		sta player_a_hitbox_force_h, x
-		sta player_a_hitbox_force_h_low, x
-		sta player_a_hitbox_force_v, x
-		sta player_a_hitbox_force_v_low, x
-		lda #<-2048
-		sta player_a_hitbox_base_knock_up_v_low, x
-		lda #>-2048
-		sta player_a_hitbox_base_knock_up_v_high, x
-		lda #<2048
-		sta player_a_hitbox_base_knock_up_h_low, x
-		lda #>2048
-		sta player_a_hitbox_base_knock_up_h_high, x
+		.(
+			; Rewrite hitbox knockback info to match sage's punch values
+			lda #DAMAGES
+			sta player_a_hitbox_damages, x
+			lda #<BASE_V
+			sta player_a_hitbox_base_knock_up_v_low, x
+			lda #>BASE_V
+			sta player_a_hitbox_base_knock_up_v_high, x
+			lda #<FORCE_V
+			sta player_a_hitbox_force_v_low, x
+			lda #>FORCE_V
+			sta player_a_hitbox_force_v, x
 
-		txa:pha
-		stx tmpfield10
-		SWITCH_SELECTED_PLAYER
-		stx tmpfield11
-		ldy config_player_a_character, x
-		TRAMPOLINE(hurt_player, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
-		pla:tax
+			lda player_a_direction, x
+			bne right
+				left:
+					lda #<BASE_H
+					sta player_a_hitbox_base_knock_up_h_low, x
+					lda #>BASE_H
+					sta player_a_hitbox_base_knock_up_h_high, x
+					lda #<FORCE_H
+					sta player_a_hitbox_force_h_low, x
+					lda #>FORCE_H
+					sta player_a_hitbox_force_h, x
 
-		; Come back to a playable state
-		jmp vgsage_start_inactive_state
+					jmp hitbox_ok
 
-		;rts ; useless, jump to subroutine
+				right:
+					lda #<-BASE_H
+					sta player_a_hitbox_base_knock_up_h_low, x
+					lda #>-BASE_H
+					sta player_a_hitbox_base_knock_up_h_high, x
+					lda #<-FORCE_H
+					sta player_a_hitbox_force_h_low, x
+					lda #>-FORCE_H
+					sta player_a_hitbox_force_h, x
+
+			hitbox_ok:
+
+			; Call opponent's onhurt routine
+			.(
+				; Save X
+				txa:pha
+
+				; Set current_player/opponent_player parameters (and switch X to the hurt player)
+				stx tmpfield10
+				SWITCH_SELECTED_PLAYER
+				stx tmpfield11
+
+				; Hurt the player
+				lda player_a_state, x
+				cmp #PLAYER_STATE_OWNED
+				bne normal_onhurt
+					owned_onhurt:
+						; Character is owned (by Knight's animation), hurt directly
+						ldy config_player_a_character, x
+						TRAMPOLINE(hurt_player, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
+						jmp hurt_ok
+					normal_onhurt:
+						; Character is in a normal state, call its onhurt callback
+						ldy config_player_a_character, x
+						lda characters_onhurt_routines_table_lsb, y
+						sta tmpfield1
+						lda characters_onhurt_routines_table_msb, y
+						sta tmpfield2
+						TRAMPOLINE(player_state_action, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
+				hurt_ok:
+
+				; Restore X
+				pla:tax
+			.)
+		.)
+
+		rts
 	.)
 .)
 
