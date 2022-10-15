@@ -43,7 +43,7 @@
 	rts
 
 	framerate:
-	.byt 60, 50
+	.byt 50, 60
 .)
 
 +arcade_mode_display_counter:
