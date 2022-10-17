@@ -9073,7 +9073,19 @@
               "y": 3
             }
           ],
-          "hitbox": null,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": 5,
+            "top": 4,
+            "right": 10,
+            "bottom": 16,
+            "base_h": 0,
+            "base_v": -1500,
+            "force_h": 0,
+            "force_v": 2,
+            "damages": 3,
+            "enabled": true
+          },
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -6,
@@ -9135,7 +9147,19 @@
               "y": 0
             }
           ],
-          "hitbox": null,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": 5,
+            "top": 4,
+            "right": 10,
+            "bottom": 16,
+            "base_h": 0,
+            "base_v": -1500,
+            "force_h": 0,
+            "force_v": 2,
+            "damages": 3,
+            "enabled": false
+          },
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -4,
@@ -9203,7 +9227,19 @@
               "y": 5
             }
           ],
-          "hitbox": null,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -4,
+            "top": 3,
+            "right": 10,
+            "bottom": 16,
+            "base_h": 0,
+            "base_v": -1500,
+            "force_h": 0,
+            "force_v": 2,
+            "damages": 3,
+            "enabled": true
+          },
           "hurtbox": {
             "type": "animation_hurtbox",
             "left": -4,
