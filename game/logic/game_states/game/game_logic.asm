@@ -8,12 +8,17 @@ init_game_state:
 game_tick:
 .(
 	; Tick game mode
-	ldx config_game_mode
-	lda game_modes_pre_update_lsb, x
-	sta tmpfield1
-	lda game_modes_pre_update_msb, x
-	sta tmpfield2
-	jsr call_pointed_subroutine
+	.(
+		ldx config_game_mode
+		lda game_modes_pre_update_lsb, x
+		sta tmpfield1
+		lda game_modes_pre_update_msb, x
+		sta tmpfield2
+		jsr call_pointed_subroutine ; omptimizable - we could directly jump to (tmpfield1) and require the hook to jump back to "continue" or "abort" labels
+		bcc ok
+			rts
+		ok:
+	.)
 
 	; Shake screen and do nothing until shaking is over
 	lda screen_shake_counter

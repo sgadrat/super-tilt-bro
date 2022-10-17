@@ -186,31 +186,40 @@ hide_player_b:
 
 &game_mode_arcade_pre_update_hook:
 .(
-	lda arcade_mode_stage_type
-	beq fight
-	cmp #ENCOUNTER_RUN
-	beq reach_the_exit
+	.(
+		;HACK local mode only handle AI and pause, and we want it too
+		TRAMPOLINE(game_mode_local_pre_update, #0, #CURRENT_BANK_NUMBER)
+		bcc ok
+			rts
+		ok:
 
-		break_the_targets:
-			jsr break_the_targets_tick
-			jmp common
+		; Update counter
+		jsr arcade_mode_inc_counter
+		jsr arcade_mode_display_counter
 
-		reach_the_exit:
-			jsr reach_the_exit_tick
-			;jmp common ; useless, "fight" is empty
+		; Tick stage type's specific code
+		lda arcade_mode_stage_type
+		beq fight
+		cmp #ENCOUNTER_RUN
+		beq reach_the_exit
 
-		fight:
-			; Nothing special
+			break_the_targets:
+				jsr break_the_targets_tick
+				jmp end
 
-	common:
+			reach_the_exit:
+				jsr reach_the_exit_tick
+				;jmp end ; useless, "fight" is empty
 
-	; Update counter
-	jsr arcade_mode_inc_counter
-	jsr arcade_mode_display_counter
+			fight:
+				; Nothing special
 
-	;HACK local mode only handle AI, and we want AI too
-	jmp game_mode_local_pre_update
-	;rts ; useless, jump to subroutine
+		end:
+
+		; Return without skipping the frame
+		clc
+		rts
+	.)
 
 	reach_the_exit_tick:
 	.(

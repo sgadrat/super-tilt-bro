@@ -40,7 +40,7 @@ network_tick_ingame:
 		; Do nothing in rollback mode, it would be recursive
 		lda network_rollback_mode
 		beq do_tick
-		jmp end ; optimizable, equivalent to "rts", would be even better to not call the routine in rollback mode
+			jmp end ; optimizable, could be inlined, would be even better to not call the routine in rollback mode
 		do_tick:
 
 		; Update local controller's history
@@ -173,6 +173,9 @@ network_tick_ingame:
 		inc_ok:
 
 		end:
+
+		; Return with carry unset to avoid skipping the frame (see pre-update game hooks documentation.)
+		clc
 		rts
 	.)
 

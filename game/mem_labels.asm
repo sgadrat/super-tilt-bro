@@ -260,15 +260,18 @@ game_winner = $05db ; Set to winner's player number after the game is finished
 
 game_mode_state_begin = $05dc
 
-arcade_mode_stage_type = $05dc
+local_mode_paused = game_mode_state_begin ; $05dc
+local_mode_state_end = local_mode_paused+1
 
-arcade_mode_targets_x = $05dd ; $05dd to $05e6
-arcade_mode_targets_y = $05e7 ; $05e7 to $05f0
-arcade_mode_target_break_animation = $05f1 ; $05f1 to $05fd
-arcade_mode_target_break_animation_timer = $05fe
+arcade_mode_stage_type = $05dd
 
-arcade_mode_run_teleport_animation = $05f1 ; $05f1 to $05fd
-arcade_mode_run_teleport_timer = $05fe
+arcade_mode_targets_x = $05de ; $05de to $05e7
+arcade_mode_targets_y = $05e8 ; $05e8 to $05f1
+arcade_mode_target_break_animation = $05f2 ; $05f2 to $05fe
+arcade_mode_target_break_animation_timer = $05ff
+
+arcade_mode_run_teleport_animation = $05f2 ; $05f2 to $05fe
+arcade_mode_run_teleport_timer = $05ff
 
 game_mode_state_end = $05ff ; Inclusive (game mode can safely write here)
 

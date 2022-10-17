@@ -153,6 +153,7 @@ clear_bg_bot_left:
 ; Change active PRG-BANK
 ;  register A - number of the PRG-BANK to activate
 ; TODO - handle CHR-BANK switching
+; NOTE - not allowed to impact register values, nor carry flag value
 ; See macro with the same name
 switch_bank:
 .(
@@ -190,6 +191,7 @@ switch_bank:
 ; Overwrites register A
 ;
 ; Note - Called routine can override parameters without affecting trampoline's behaviour (it is notably safe to modify extra_tmpfield4)
+; Note - Carry flag from called routine's return is preserved (you can trampoline to a routine that returns info in the carry flag and expect it to work)
 trampoline:
 .(
 	lda extra_tmpfield4

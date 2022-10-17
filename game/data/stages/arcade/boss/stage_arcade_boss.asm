@@ -20,7 +20,7 @@ cursor = stage_state_begin
 #error arcade stage BOSS uses to much memory
 #endif
 
--cursor = game_mode_state_begin
+-cursor = local_mode_state_end
 
 &mem_buffer = cursor : -cursor += 32
 
