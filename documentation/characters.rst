@@ -1,3 +1,16 @@
+Characters animations
+=====================
+
+Sprites per scanline
+--------------------
+
+Animation frames should not have more than 4 sprites per scanline to not hit the limit (of 8) when both characters are on the same height.
+
+Animations can occasionally place more than 4 sprites per scanline, but make it fast to come back to a compliant state.
+
+Special case: the idle animation should not have more than 3 sprites per scanline, to limit its impact on stage's elements.
+
+
 Constraints on netload routines
 ===============================
 
