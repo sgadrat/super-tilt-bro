@@ -15602,7 +15602,7 @@
       "onhurt_routine": "dummy_routine",
       "start_routine": "vgsage_start_innexistant",
       "type": "character_state",
-      "update_routine": "dummy_routine"
+      "update_routine": "vgsage_tick_innexistant"
     },
     {
       "input_routine": "keep_input_dirty",

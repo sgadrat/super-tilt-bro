@@ -27,4 +27,26 @@
 
 		;rts ; useless, jump to subroutine
 	.)
+
+	+{char_name}_tick_innexistant:
+	.(
+#ifldef {char_name}_global_tick
+		jsr {char_name}_global_tick
+#endif
+
+		; Force to a fixed place
+		lda #0
+		sta player_a_x_screen, x
+		sta player_a_x, x
+		sta player_a_x_low, x
+		sta player_a_y_screen, x
+		sta player_a_y, x
+		sta player_a_y_low, x
+		sta player_a_velocity_h, x
+		sta player_a_velocity_h_low, x
+		sta player_a_velocity_v, x
+		sta player_a_velocity_v_low, x
+
+		rts
+	.)
 .)

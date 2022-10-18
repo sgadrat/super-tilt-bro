@@ -196,6 +196,146 @@ update_players:
 	cpx #$02
 	bne update_one_player
 
+	; Updates that impacts both players
+	.(
+		; Jostling
+		;  Compute manathan distance between players, if too close move them appart
+		;
+		;  Better use simple distance instead of checking if hurtboxes overlap
+		;   - Causes less weird behaviors caused by unstable hurtbox shape (you feel to be pushed farther from a crashing opponent than an idle one.)
+		;   - Less CPU intensive
+		;  Better move players than change their velocity
+		;   - We don't want to keep momentum after being pushed appart
+		.(
+			JOSTLING_STRENGTH = $0050
+			JOSTLING_DISTANCE_V = 16
+			JOSTLING_DISTANCE_H = 8
+
+			; Jostling is active only if both player are in the stage
+			;NOTE the "respawn" state is actually the invisibility time before respawn platform appears
+			.(
+				lda player_a_state
+				cmp #PLAYER_STATE_RESPAWN
+				beq skip_jostling
+				cmp #PLAYER_STATE_INNEXISTANT
+				beq skip_jostling
+				lda player_b_state
+				cmp #PLAYER_STATE_RESPAWN
+				beq skip_jostling
+				cmp #PLAYER_STATE_INNEXISTANT
+				bne ok
+					skip_jostling:
+					jmp end_jostling
+				ok:
+			.)
+
+			; Jostling is active only if both players are on main screen
+			lda player_a_x_screen
+			bne end_jostling
+			lda player_a_y_screen
+			bne end_jostling
+			lda player_b_x_screen
+			bne end_jostling
+			lda player_b_y_screen
+			bne end_jostling
+
+			; Check if characters are at jostling vertical distance
+			.(
+				lda player_a_y
+				sec
+				sbc player_b_y
+				bcc negative
+					positive:
+						cmp #JOSTLING_DISTANCE_V
+						bcs end_jostling
+						jmp vertical_in_range
+					negative:
+						cmp #<-JOSTLING_DISTANCE_V
+						bcc end_jostling
+						;jmp vertical_in_range ; useless, falltrhough
+				vertical_in_range:
+			.)
+
+			; Check if characters are at jostling horizontal distance
+			.(
+				lda player_a_x
+				sec
+				sbc player_b_x
+				bcc negative
+					positive:
+						cmp #JOSTLING_DISTANCE_H
+						bcs end_jostling
+						jmp player_a_is_on_right ; optimizable, inline
+					negative:
+						cmp #<-JOSTLING_DISTANCE_H
+						bcc end_jostling
+						jmp player_a_is_on_left ; optimizable, inline
+			.)
+
+			player_a_is_on_right:
+			.(
+				;FIXME allow to pass through walls
+				; would be nice to avoid a special collision detection (it would push rollback to its limit)
+				; idea - could have a "temporary velocity"
+				;  - Moving player's code take in in consideration, then resets it to zero
+				;  - Code moving players by a set offset in certain conditions (like this one, or moving platforms) add their offset to this value
+				;  - This will make moving platform not pass through walls
+				;  - temporary velocity would have to be stored in stnp GameState, or ensure code modifying it is always called before "move_player"
+				;    - In later case, we can reset temporary velocity at the begining of game ticks
+				lda #<JOSTLING_STRENGTH
+				clc
+				adc player_a_x_low
+				sta player_a_x_low
+				lda #>JOSTLING_STRENGTH
+				adc player_a_x
+				sta player_a_x
+				bcc right_ok
+					inc player_a_x_screen
+				right_ok:
+
+				lda #<-JOSTLING_STRENGTH
+				clc
+				adc player_b_x_low
+				sta player_b_x_low
+				lda #>-JOSTLING_STRENGTH
+				adc player_b_x
+				sta player_b_x
+				bcs left_ok
+					dec player_b_x_screen
+				left_ok:
+
+				jmp end_jostling
+			.)
+
+			player_a_is_on_left:
+			.(
+				lda #<JOSTLING_STRENGTH
+				clc
+				adc player_b_x_low
+				sta player_b_x_low
+				lda #>JOSTLING_STRENGTH
+				adc player_b_x
+				sta player_b_x
+				bcc right_ok
+					inc player_b_x_screen
+				right_ok:
+
+				lda #<-JOSTLING_STRENGTH
+				clc
+				adc player_a_x_low
+				sta player_a_x_low
+				lda #>-JOSTLING_STRENGTH
+				adc player_a_x
+				sta player_a_x
+				bcs left_ok
+					dec player_a_x_screen
+				left_ok:
+			.)
+
+			end_jostling:
+		.)
+	.)
+
 	rts
 .)
 
@@ -500,6 +640,12 @@ hurt_player:
 ;  The currently selected bank must be the current character's bank
 parry_player:
 .(
+	;TODO optimizable
+	; parry logic could be rewriten to be done only once (maybe in the "Updates that impacts both players" section)
+	; That would have benefits
+	;  - Avoid to check twice the collision between hitboxes (should be big CPU gain)
+	;  - Simplify responsibilities of direct/custom hitboxes (see characters documentation)
+
 	; Play parry sound
 	jsr audio_play_parry
 

@@ -519,7 +519,7 @@
 			"onhurt_routine": "dummy_routine",
 			"start_routine": "sinbad_start_innexistant",
 			"type": "character_state",
-			"update_routine": "dummy_routine"
+			"update_routine": "sinbad_tick_innexistant"
 		},
 		{
 			"input_routine": "keep_input_dirty",
