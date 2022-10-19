@@ -38,11 +38,13 @@ loop_on_particle_boxes:
 ;  tmpfield1, tmpfield2 - adress of the subroutine to call
 ;  Y - offset of the block's first byte from particle_blocks
 ;
-;  For each call, Y is the offset of the particle's first byte and
-;  tmpfield3 is the particle number (from 1)
+; Overwrites A, Y, tmpfield3
+;
+; For each call, Y is the offset of the particle's first byte and
+; tmpfield3 is the particle number (from 1)
 loop_on_particles:
 .(
-	action = tmpfield1
+	;action = tmpfield1
 	particle_counter = tmpfield3
 
 	lda #0                           ;

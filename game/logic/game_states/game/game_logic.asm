@@ -86,10 +86,29 @@ game_tick:
 	jsr update_players
 
 	; Update screen
-	SWITCH_BANK(#GAMESTATE_GAME_EXTRA_BANK)
-	jsr vfx_deathplosion
+	.(
+		; Caracter dependent screen updating routines
+		lda network_rollback_mode
+		bne end_visuals
+			ldx #0
+			jsr write_player_damages
+			jsr player_effects
+			ldx #1
+			jsr write_player_damages
+			jsr player_effects
+		end_visuals:
 
-	jmp update_sprites ;NOTE update_sprites is called only there, could be in extra bank (or optimizable, falled-through)
+		; Deathplosion
+		SWITCH_BANK(#GAMESTATE_GAME_EXTRA_BANK)
+		jsr vfx_deathplosion
+
+		; Characters animations (and extras like oos bubble)
+		;TODO optimizable could not loop, and be included in "Caracter dependent screen updating routines"
+		;     but shall be done even in rollback because it ticks animations (which are part of the state) and draw animations (which updates hitboxes)
+		;     Ok, seems hard to do, and just avoid a loop. Future me (or dear maintainer), it may require some serious refactor, problem being than animations
+		;     are essential for display AND game state.
+		jmp update_sprites ;NOTE update_sprites is called only there, could be in extra bank (or optimizable, falled-through)
+	.)
 
 	;rts ; useless, jump to subroutine
 .)
@@ -137,6 +156,7 @@ game_mode_goto_gameover:
 update_players:
 .(
 	; Decrement hitstun counters
+	;TODO optimizable, unroll loop
 	ldx #$00
 	hitstun_one_player:
 		lda player_a_hitstun, x
@@ -148,6 +168,7 @@ update_players:
 		bne hitstun_one_player
 
 	; Check hitbox collisions
+	;TODO optimizable, unroll loop. Or better, see check_player_hit comment
 	ldx #$00
 	hitbox_one_player:
 		jsr check_player_hit
@@ -180,17 +201,6 @@ update_players:
 			sta tmpfield2
 			jsr player_state_action
 		end_input_event:
-
-		; Call generic update routines
-		txa
-		sta player_number
-		jsr move_player
-		jsr check_player_position
-		lda network_rollback_mode
-		bne end_visuals
-			jsr write_player_damages
-			jsr player_effects
-		end_visuals:
 
 	inx
 	cpx #$02
@@ -334,6 +344,26 @@ update_players:
 
 			end_jostling:
 		.)
+	.)
+
+	; Move characters, and check position-dependent events (like being behind blastlines)
+	.(
+		;TODO optimizable, unroll
+		ldx #0
+		generic_update_one_player:
+			; Select character's bank
+			ldy config_player_a_character, x
+			SWITCH_BANK(characters_bank_number COMMA y)
+
+			; Generic update routines
+			stx player_number
+			jsr move_player
+			jsr check_player_position
+
+			; Loop
+			inx
+			cpx #$02
+			bne generic_update_one_player
 	.)
 
 	rts
@@ -2380,15 +2410,15 @@ write_player_damages:
 ; Update comestic effects on the player
 ;  register X must contain the player number
 ;
-;  Overwrites A, Y, tmpfield1 to tmpfield2 (and certainly other tmpfields, to be checked)
+;  Overwrites all registers, tmpfield1 to tmpfield2 (and certainly other tmpfields, to be checked)
 player_effects:
 .(
 	.(
 		lda config_player_a_present, x
 		beq end
-			jsr blinking
 			jsr particle_directional_indicator_tick
 			jsr particle_death_tick
+			jsr blinking
 		end:
 		rts
 	.)
@@ -2445,8 +2475,6 @@ player_effects:
 		player_one:
 
 		; Copy pointed palette to a nametable buffer
-		txa            ;
-		pha            ; Initialize working values
 		LAST_NT_BUFFER ; X = destination's offset (from nametable_buffers)
 		ldy #0         ; Y = source's offset (from (palette_buffer) origin)
 
@@ -2462,13 +2490,14 @@ player_effects:
 		dex                ; Update last buffer pointer
 		stx nt_buffers_end ;
 
-		pla ; Restore X
-		tax ;
-
 		rts
 	.)
 .)
 
+; Update animation and out of screen bubble for a player
+;  X - Player number
+;
+; Overwrites all registers, player_number, and all tmpfields
 update_sprites:
 .(
 	; Pretty names
@@ -2593,6 +2622,7 @@ update_sprites:
 	all_player_sprites_updated:
 
 	; Enhancement sprites
+	;TODO optimizable not needed in rollback mode
 	jsr particle_draw
 	;jsr show_hitboxes
 

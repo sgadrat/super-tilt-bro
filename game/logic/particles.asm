@@ -6,7 +6,7 @@
 ; Uses particle box number 0 for player A or 1 for player B
 ; Deactivate any particle handler on the same box
 ;
-; Overwrites all registers
+; Overwrites A, Y, tmpfield1 to tmpfield3
 particle_directional_indicator_start:
 .(
 	; Initialize handler state
@@ -85,12 +85,14 @@ particle_directional_indicator_start:
 
 ; Move directional indicator particles of a player
 ;  X - player number
+;
+; Overwrites A, Y, tmpfield1 to tmpfield7
 particle_directional_indicator_tick:
 .(
 	; Avoid doing anything if not activated (counter at zero)
 	lda directional_indicator_player_a_counter, x
 	bne do_something
-	rts
+		rts
 	do_something:
 
 	; Decrement counter
@@ -345,9 +347,11 @@ particle_death_start:
 
 ; Update death particles of a player
 ;  X - player number
+;
+; Overwrites A, Y, tmpfield1, tmpfield2, tmpfield3 and tmpfield4
 particle_death_tick:
 .(
-	particle_counter = tmpfield1
+	;particle_counter = tmpfield1
 
 	; Do nothing if deactivated
 	lda death_particles_player_a_counter, x
