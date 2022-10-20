@@ -225,11 +225,17 @@ death_particles_player_b_counter = $7e
 
 slow_down_counter = $7f
 
+stage_state_begin = $80 ; $80 to $8f
+
 ; particles lo position tables
 ;  | byte 0 | bytes 1 to 7       | byte 8 | bytes 9 to 15      |
 ;  | unused | player A particles | unused | player B particles |
 directional_indicator_player_a_position_x_low = $90 ; $90 to $9f - unused $90 and $98
 directional_indicator_player_a_position_y_low = $a0 ; $a0 to $af - unused $a0 and $a8
+
+;$b0 to $bf used by network engine
+;$c0 to $c9 used by audio engine
+;$d0 to $ff used by global labels, constants and registers ($e5 to $e7 are still free)
 
 ; Stages common variables
 stage_restore_screen_step = $0560 ; Set to zero to start asynchrone restoration of the screen by stage's logic
@@ -288,8 +294,6 @@ game_mode_state_end = $05ff ; Inclusive (game mode can safely write here)
 ;
 ; Stage specific labels
 ;
-
-stage_state_begin = $80
 
 stage_pit_platform1_direction_v = $80
 stage_pit_platform2_direction_v = $81
