@@ -240,7 +240,17 @@ deathplosion_step = $0562
 deathplosion_pos = $0563
 deathplosion_origin = $0564
 
-;$0565-$057f unused
+; Temporary velocity
+player_a_temporary_velocity_h_low = $0565
+player_b_temporary_velocity_h_low = $0566
+player_a_temporary_velocity_h = $0567
+player_b_temporary_velocity_h = $0568
+player_a_temporary_velocity_v_low = $0569
+player_b_temporary_velocity_v_low = $056a
+player_a_temporary_velocity_v = $056b
+player_b_temporary_velocity_v = $056c
+
+;$056d-$057f unused
 
 players_palettes = $0580 ; $0580 to $059f - 4 nametable buffers (8 bytes each) containing avatars palettes in normal and alternate mode
 player_a_animation = $05a0 ; $05a0 to $05ac - player a's animation state

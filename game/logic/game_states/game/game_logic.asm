@@ -7,6 +7,18 @@ init_game_state:
 
 game_tick:
 .(
+	; Reset temporary velocity
+	lda #0
+	sta player_a_temporary_velocity_h
+	sta player_a_temporary_velocity_h_low
+	sta player_a_temporary_velocity_v
+	sta player_a_temporary_velocity_v_low
+
+	sta player_b_temporary_velocity_h
+	sta player_b_temporary_velocity_h_low
+	sta player_b_temporary_velocity_v
+	sta player_b_temporary_velocity_v_low
+
 	; Tick game mode
 	.(
 		ldx config_game_mode
@@ -57,8 +69,8 @@ game_tick:
 	; Do nothing during a slowdown skipped frame
 	lda slow_down_counter
 	beq no_slowdown
+		SWITCH_BANK(#GAMESTATE_GAME_EXTRA_BANK)
 		jsr slowdown
-		lda tmpfield1
 		beq no_slowdown
 			; Keep inputs dirty (inlined double call to keep_input_dirty)
 			lda controller_a_last_frame_btns
@@ -107,39 +119,10 @@ game_tick:
 		;     but shall be done even in rollback because it ticks animations (which are part of the state) and draw animations (which updates hitboxes)
 		;     Ok, seems hard to do, and just avoid a loop. Future me (or dear maintainer), it may require some serious refactor, problem being than animations
 		;     are essential for display AND game state.
-		jmp update_sprites ;NOTE update_sprites is called only there, could be in extra bank (or optimizable, falled-through)
+		jmp update_sprites
 	.)
 
 	;rts ; useless, jump to subroutine
-.)
-
-; Set tmpfield1 to 1 if the current frame need to be skipped, follow to gameover
-; screen when the counter goes to zero
-slowdown:
-.(
-	dec slow_down_counter
-	beq next_screen
-	lda slow_down_counter
-	and #%00000011
-	beq keep_frame
-		lda #1
-		sta tmpfield1
-		jmp end
-	keep_frame:
-		lda #0
-		sta tmpfield1
-		jmp end
-
-	next_screen:
-	ldx config_game_mode
-	lda game_modes_gameover_lsb, x
-	sta tmpfield1
-	lda game_modes_gameover_msb, x
-	sta tmpfield2
-	jsr call_pointed_subroutine
-
-	end:
-	rts
 .)
 
 ; Your typical handler for game mod's gameover routine
@@ -1294,7 +1277,7 @@ apply_force_vector_direct:
 ;   - tmpfield8 equals to "player_a_y_screen, x"
 ;   - "player_a_grounded, x", "player_a_ceiled, x", "player_a_walled, x", and "player_a_walled_direction, x" are set according to collisions
 ;
-;  Overwrites register A, regiter Y, and tmpfield1 to tmpfield12
+;  Overwrites register A, regiter Y, and tmpfield1 to tmpfield14
 ;
 ;FIXME bug - A walled player with null velocity becomes unwalled
 move_player:
@@ -1311,6 +1294,8 @@ move_player:
 	orig_x_screen = tmpfield10
 	orig_y_pixel = tmpfield11
 	orig_y_screen = tmpfield12
+	effective_velocity_lsb = tmpfield13
+	effective_velocity_msb = tmpfield14
 
 	; Save original position
 	lda player_a_x, x
@@ -1330,17 +1315,27 @@ move_player:
 		;   Do not use final_x, not even in platform handlers,
 		;   we care only of moving the character from (orig_x;orig_y) to (orig_x;orig_y+velocity_v)
 
-		; Apply velocity to position
+		; Compute effective vertical velocity (normal + temporary velocity)
 		lda player_a_velocity_v_low, x
+		clc
+		adc player_a_temporary_velocity_v_low, x
+		sta effective_velocity_lsb
+
+		lda player_a_velocity_v, x
+		adc player_a_temporary_velocity_v, x
+		sta effective_velocity_msb
+
+		; Apply velocity to position
+		lda effective_velocity_lsb
 		clc
 		adc player_a_y_low, x
 		sta final_y_subpixel
-		lda player_a_velocity_v, x
+		lda effective_velocity_msb
 		adc orig_y_pixel
 		sta final_y_pixel
-		lda player_a_velocity_v, x
+		lda effective_velocity_msb
 		SIGN_EXTEND()
-		pha ; save velocity direction
+		pha ; save velocity direction ;TODO optimizable use a tmpfield instead of the stack
 		adc orig_y_screen
 		sta final_y_screen
 
@@ -1378,17 +1373,27 @@ move_player:
 		;   Do not use orig_y, not even in platform handlers,
 		;   we care only of moving the character from (orig_x;final_y) to (orig_x+velocity_h;final_y)
 
-		; Apply velocity to position
+		; Compute effective vertical velocity (normal + temporary velocity)
 		lda player_a_velocity_h_low, x
+		clc
+		adc player_a_temporary_velocity_h_low, x
+		sta effective_velocity_lsb
+
+		lda player_a_velocity_h, x
+		adc player_a_temporary_velocity_h, x
+		sta effective_velocity_msb
+
+		; Apply velocity to position
+		lda effective_velocity_lsb
 		clc
 		adc player_a_x_low, x
 		sta final_x_subpixel
-		lda player_a_velocity_h, x
+		lda effective_velocity_msb
 		adc orig_x_pixel
 		sta final_x_pixel
-		lda player_a_velocity_h, x
+		lda effective_velocity_msb
 		SIGN_EXTEND()
-		pha ; save velocity direction
+		pha ; save velocity direction ;TODO optimizable, use a tmpfield instead of the stack
 		adc orig_x_screen
 		sta final_x_screen
 
@@ -2624,7 +2629,6 @@ update_sprites:
 	; Enhancement sprites
 	;TODO optimizable not needed in rollback mode
 	jsr particle_draw
-	;jsr show_hitboxes
 
 	rts
 
@@ -2638,217 +2642,3 @@ update_sprites:
 	oos_anim_state_per_player_msb:
 	.byt >player_a_out_of_screen_indicator, >player_a_out_of_screen_indicator+ANIMATION_STATE_LENGTH
 .)
-
-; Debug subroutine to show hitboxes and hurtboxes
-;show_hitboxes:
-;.(
-;	pha
-;	txa
-;	pha
-;	tya
-;	pha
-;
-;	; Player A hurtbox
-;	ldx #$fc
-;	lda player_a_hurtbox_top
-;	sta oam_mirror, x
-;	inx
-;	lda #$0d
-;	sta oam_mirror, x
-;	inx
-;	lda #$03
-;	sta oam_mirror, x
-;	inx
-;	lda player_a_hurtbox_left
-;	sta oam_mirror, x
-;	inx
-;	ldx #$f8
-;	lda player_a_hurtbox_bottom
-;	sec
-;	sbc #$07
-;	sta oam_mirror, x
-;	inx
-;	lda #$0d
-;	sta oam_mirror, x
-;	inx
-;	lda #$03
-;	sta oam_mirror, x
-;	inx
-;	lda player_a_hurtbox_right
-;	sec
-;	sbc #$07
-;	sta oam_mirror, x
-;	inx
-;
-;	; Player B hurtbox
-;	ldx #$f4
-;	lda player_b_hurtbox_top
-;	sta oam_mirror, x
-;	inx
-;	lda #$0d
-;	sta oam_mirror, x
-;	inx
-;	lda #$03
-;	sta oam_mirror, x
-;	inx
-;	lda player_b_hurtbox_left
-;	sta oam_mirror, x
-;	inx
-;	ldx #$f0
-;	lda player_b_hurtbox_bottom
-;	sec
-;	sbc #$07
-;	sta oam_mirror, x
-;	inx
-;	lda #$0d
-;	sta oam_mirror, x
-;	inx
-;	lda #$03
-;	sta oam_mirror, x
-;	inx
-;	lda player_b_hurtbox_right
-;	sec
-;	sbc #$07
-;	sta oam_mirror, x
-;	inx
-;
-;	; Player A hitbox
-;	lda player_a_hitbox_enabled
-;	bne show_player_a_hitbox
-;	lda #$fe  ;
-;	sta $02e8 ;
-;	sta $02e9 ;
-;	sta $02ea ;
-;	sta $02eb ; Hide disabled hitbox
-;	sta $02ec ;
-;	sta $02ed ;
-;	sta $02ee ;
-;	sta $02ef ;
-;	jmp end_player_a_hitbox
-;	show_player_a_hitbox:
-;	ldx #$ec
-;	lda player_a_hitbox_top
-;	sta oam_mirror, x
-;	inx
-;	lda #$0e
-;	sta oam_mirror, x
-;	inx
-;	lda #$03
-;	sta oam_mirror, x
-;	inx
-;	lda player_a_hitbox_left
-;	sta oam_mirror, x
-;	inx
-;	ldx #$e8
-;	lda player_a_hitbox_bottom
-;	sec
-;	sbc #$07
-;	sta oam_mirror, x
-;	inx
-;	lda #$0e
-;	sta oam_mirror, x
-;	inx
-;	lda #$03
-;	sta oam_mirror, x
-;	inx
-;	lda player_a_hitbox_right
-;	sec
-;	sbc #$07
-;	sta oam_mirror, x
-;	inx
-;	end_player_a_hitbox
-;
-;	; Player B hitbox
-;	lda player_b_hitbox_enabled
-;	bne show_player_b_hitbox
-;	lda #$fe  ;
-;	sta $02e0 ;
-;	sta $02e1 ;
-;	sta $02e2 ;
-;	sta $02e3 ; Hide disabled hitbox
-;	sta $02e4 ;
-;	sta $02e5 ;
-;	sta $02e6 ;
-;	sta $02e7 ;
-;	jmp end_player_b_hitbox
-;	show_player_b_hitbox:
-;	ldx #$e4
-;	lda player_b_hitbox_top
-;	sta oam_mirror, x
-;	inx
-;	lda #$0e
-;	sta oam_mirror, x
-;	inx
-;	lda #$03
-;	sta oam_mirror, x
-;	inx
-;	lda player_b_hitbox_left
-;	sta oam_mirror, x
-;	inx
-;	ldx #$e0
-;	lda player_b_hitbox_bottom
-;	sec
-;	sbc #$07
-;	sta oam_mirror, x
-;	inx
-;	lda #$0e
-;	sta oam_mirror, x
-;	inx
-;	lda #$03
-;	sta oam_mirror, x
-;	inx
-;	lda player_b_hitbox_right
-;	sec
-;	sbc #$07
-;	sta oam_mirror, x
-;	inx
-;	end_player_b_hitbox
-;
-;	; Player A hitstun indicator
-;	lda player_a_hitstun
-;	bne show_player_a_hitstun
-;	lda #$fe  ;
-;	sta $02dc ;
-;	sta $02dd ; Hide disabled hitstun
-;	sta $02de ;
-;	sta $02df ;
-;	jmp end_player_a_hitstun
-;	show_player_a_hitstun:
-;	ldx #$dc
-;	lda #$10
-;	sta oam_mirror, x
-;	sta oam_mirror+3, x
-;	lda #$0e
-;	sta oam_mirror+1, x
-;	lda #$03
-;	sta oam_mirror+2, x
-;	end_player_a_hitstun:
-;
-;	; Player B hitstun indicator
-;	lda player_b_hitstun
-;	bne show_player_b_hitstun
-;	lda #$fe  ;
-;	sta $02d8 ;
-;	sta $02d9 ; Hide disabled hitstun
-;	sta $02da ;
-;	sta $02db ;
-;	jmp end_player_b_hitstun
-;	show_player_b_hitstun:
-;	ldx #$d8
-;	lda #$10
-;	sta oam_mirror, x
-;	lda #$20
-;	sta oam_mirror+3, x
-;	lda #$0e
-;	sta oam_mirror+1, x
-;	lda #$03
-;	sta oam_mirror+2, x
-;	end_player_b_hitstun:
-;
-;	pla
-;	tay
-;	pla
-;	tax
-;	pla
-;	rts
-;.)

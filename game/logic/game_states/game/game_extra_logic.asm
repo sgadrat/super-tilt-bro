@@ -1099,3 +1099,25 @@ audio_music_ingame:
 		anim_frame15_bottom_pos = 2+8*(8-(*-anim_frame15))
 #undef ATT
 .)
+
+; Set Z flag to 1 if the current frame need to be skipped, follow to gameover
+; screen when the counter goes to zero
++slowdown:
+.(
+    dec slow_down_counter
+    beq next_screen
+		check_if_skip_frame:
+			lda slow_down_counter
+			and #%00000011
+			rts
+
+		next_screen:
+			; Call game mode handler for end-game. It shall never return (should call change_global_gamestate)
+			ldx config_game_mode
+			lda game_modes_gameover_lsb, x
+			sta tmpfield1
+			lda game_modes_gameover_msb, x
+			sta tmpfield2
+			jmp (tmpfield1) ;NOTE beware if a mode wants to return, we are not in the fixed bank (our caller may be)
+			; No return, jump to subroutine
+.)

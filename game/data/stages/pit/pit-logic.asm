@@ -333,6 +333,7 @@ stage_pit_repair_screen:
 		check_one_player_one_platform:
 
 			; Move players that are on platforms
+			;TODO use temporary velocity instead of changing position directly (would no more ignore Kiki's walls)
 			move_players_on_platform:
 				tya
 				clc

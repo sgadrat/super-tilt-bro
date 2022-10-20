@@ -16,8 +16,6 @@
 #print update_players
 #echo update_sprites
 #print update_sprites
-#echo game_tick_end:
-#print slowdown-1
 
 ;
 ; Print some PRG-ROM space usage information
