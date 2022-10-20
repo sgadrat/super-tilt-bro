@@ -333,7 +333,6 @@ stage_pit_repair_screen:
 		check_one_player_one_platform:
 
 			; Move players that are on platforms
-			;TODO use temporary velocity instead of changing position directly (would no more ignore Kiki's walls)
 			move_players_on_platform:
 				tya
 				clc
@@ -341,14 +340,18 @@ stage_pit_repair_screen:
 				cmp player_a_grounded, x
 				bne next_check
 
+					;HACK don't use temporary velocity for vertical movement
+					;     problem - When effective player velocity is upward, grounded flag is never set.
+					;               So if the platform moves up, the player is considered ungrounded next frame and no more moves with platform.
 					lda player_a_y, x
 					clc
 					adc tmpfield4
 					sta player_a_y, x
-					lda player_a_x, x
+
+					lda player_a_temporary_velocity_h, x
 					clc
 					adc tmpfield5
-					sta player_a_x, x
+					sta player_a_temporary_velocity_h, x
 
 				next_check:
 				inx
