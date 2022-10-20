@@ -267,35 +267,21 @@ update_players:
 
 			player_a_is_on_right:
 			.(
-				;FIXME allow to pass through walls
-				; would be nice to avoid a special collision detection (it would push rollback to its limit)
-				; idea - could have a "temporary velocity"
-				;  - Moving player's code take in in consideration, then resets it to zero
-				;  - Code moving players by a set offset in certain conditions (like this one, or moving platforms) add their offset to this value
-				;  - This will make moving platform not pass through walls
-				;  - temporary velocity would have to be stored in stnp GameState, or ensure code modifying it is always called before "move_player"
-				;    - In later case, we can reset temporary velocity at the begining of game ticks
 				lda #<JOSTLING_STRENGTH
 				clc
-				adc player_a_x_low
-				sta player_a_x_low
+				adc player_a_temporary_velocity_h_low
+				sta player_a_temporary_velocity_h_low
 				lda #>JOSTLING_STRENGTH
-				adc player_a_x
-				sta player_a_x
-				bcc right_ok
-					inc player_a_x_screen
-				right_ok:
+				adc player_a_temporary_velocity_h
+				sta player_a_temporary_velocity_h
 
 				lda #<-JOSTLING_STRENGTH
 				clc
-				adc player_b_x_low
-				sta player_b_x_low
+				adc player_b_temporary_velocity_h_low
+				sta player_b_temporary_velocity_h_low
 				lda #>-JOSTLING_STRENGTH
-				adc player_b_x
-				sta player_b_x
-				bcs left_ok
-					dec player_b_x_screen
-				left_ok:
+				adc player_b_temporary_velocity_h
+				sta player_b_temporary_velocity_h
 
 				jmp end_jostling
 			.)
@@ -304,25 +290,19 @@ update_players:
 			.(
 				lda #<JOSTLING_STRENGTH
 				clc
-				adc player_b_x_low
-				sta player_b_x_low
+				adc player_b_temporary_velocity_h_low
+				sta player_b_temporary_velocity_h_low
 				lda #>JOSTLING_STRENGTH
-				adc player_b_x
-				sta player_b_x
-				bcc right_ok
-					inc player_b_x_screen
-				right_ok:
+				adc player_b_temporary_velocity_h
+				sta player_b_temporary_velocity_h
 
 				lda #<-JOSTLING_STRENGTH
 				clc
-				adc player_a_x_low
-				sta player_a_x_low
+				adc player_a_temporary_velocity_h_low
+				sta player_a_temporary_velocity_h_low
 				lda #>-JOSTLING_STRENGTH
-				adc player_a_x
-				sta player_a_x
-				bcs left_ok
-					dec player_a_x_screen
-				left_ok:
+				adc player_a_temporary_velocity_h
+				sta player_a_temporary_velocity_h
 			.)
 
 			end_jostling:
