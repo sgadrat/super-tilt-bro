@@ -181,8 +181,6 @@ forever:
 .(
 	; Keep game's pace under control
 	jsr wait_next_frame
-	lda config_ticks_per_frame
-	sta current_frame_tick
 
 	; Update game state
 	tick_state:
@@ -203,10 +201,6 @@ forever:
 
 		; Call audio a second time if necessary to emulate 60Hz system
 		jsr audio_music_extra_tick
-
-		; Loop if there is multi-tick per frames
-		dec current_frame_tick
-		bne tick_state
 
 	jmp forever
 .)

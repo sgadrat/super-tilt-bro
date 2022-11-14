@@ -41,6 +41,14 @@ bank_data_stage_arcade_boss_begin:
 #echo arcade stage boss size:
 #print *-bank_data_stage_arcade_boss_begin
 
+.(
+bank_data_extra_jukebox_logic:
+#include "game/logic/game_states/jukebox_screen/jukebox_screen_extra_logic.asm"
+#echo
+#echo Extra jukebox logic:
+#print *-bank_data_extra_jukebox_logic
+.)
+
 bank_data10_end:
 
 #echo

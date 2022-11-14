@@ -57,6 +57,20 @@ static uint32_t random(uint32_t seed)
   return seed;
 }
 
+static uint8_t capped_dec(uint8_t val, uint8_t max) {
+	if (val == 0) {
+		return max;
+	}
+	return val - 1;
+}
+
+static uint8_t capped_inc(uint8_t val, uint8_t max) {
+	if (val == max) {
+		return 0;
+	}
+	return val + 1;
+}
+
 /**
  * Return 0 if the built ROM has networking feature, else 1
  *

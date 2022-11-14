@@ -500,6 +500,13 @@ cutscene_frame_count = $05da
 cutscene_frames_skippable = $05db
 
 ;
+; JUKEBOX labels
+;
+
+jukebox_zp_mem = last_c_label+1 ; $39
+jukebox_mem = $0580
+
+;
 ; DONATION labels
 ;
 
@@ -735,11 +742,11 @@ config_requested_player_b_character = $0543
 config_requested_player_a_palette = $0544
 config_requested_player_b_palette = $0545
 config_ingame_track = $0546
-config_ticks_per_frame = $0547
+;unused $0547
 config_player_a_present = $0548 ; 0 - player is absent, and should not impact the screen, 1 - player is there as usual
 config_player_b_present = $0549 ; 0 - player is absent, and should not impact the screen, 1 - player is there as usual
 
-current_frame_tick = $054a
+;unused $054a
 
 arcade_mode_current_encounter = $054b
 arcade_mode_player_damages = $054c

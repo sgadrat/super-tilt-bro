@@ -56,10 +56,10 @@ init_gameover_screen:
 	lda PPUSTATUS ;
 	lda #$3f      ; Point PPU to Background palette 0
 	sta PPUADDR   ; (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
-	lda #$00      ;
-	sta PPUADDR   ;
+	ldx #$00      ;
+	stx PPUADDR   ;
 
-	ldx #$00                    ;
+	;ldx #$00                   ;
 	copy_palette:               ;
 		lda palette_gameover, x ;
 		sta PPUDATA             ; Write palette_data in actual ppu palettes
@@ -269,13 +269,6 @@ gameover_screen_tick:
 			jmp update_animations
 
 		next_screen:
-			; Special case, on turbo mode just reset to get everything in order (most menus don't handle turbo correctly)
-			lda config_ticks_per_frame
-			cmp #1
-			beq no_turbo
-				jmp ($fffc)
-			no_turbo:
-
 			; Return to the best menu screen to jump back into battle as soon as possible
 			ldx config_game_mode
 			lda next_screen_by_game_mode, x

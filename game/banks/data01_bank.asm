@@ -44,6 +44,16 @@ bank_data_extra_game_logic:
 #print *-bank_data_extra_game_logic
 .)
 
+.(
+bank_data_extra_jukebox_data:
+#include "game/data/menu_jukebox/tilesets.asm"
+#include "game/data/menu_jukebox/screen.asm"
+#include "game/data/menu_jukebox/anims.asm"
+#echo
+#echo Extra jukebox data:
+#print *-bank_data_extra_jukebox_data
+.)
+
 bank_data01_end:
 
 #echo

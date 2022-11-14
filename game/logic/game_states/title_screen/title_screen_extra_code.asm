@@ -203,11 +203,7 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 
 			cheat_succeed:
 				jsr default_config
-				lda #2
-				sta config_ticks_per_frame
-				lda #3
-				sta config_ai_level
-				lda #GAME_STATE_INGAME
+				lda #GAME_STATE_JUKEBOX
 				jsr change_global_game_state
 
 		; If all buttons of any controller are released on this frame, got to the next screen

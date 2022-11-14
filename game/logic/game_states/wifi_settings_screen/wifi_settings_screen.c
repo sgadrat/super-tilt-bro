@@ -52,7 +52,7 @@ typedef struct {
 	Animation cursor_anim;
 } __attribute__((__packed__)) StateMem;
 
-_Static_assert(sizeof(StateVars) <= 0x16, "State require more zp than allocated");
+_Static_assert(sizeof(StateVars) <= 0x16, "State require more zp than allocated"); //NOTE we actually have more space than that available (up to $b0)
 _Static_assert(sizeof(StateMem) <= 0x80, "State require more memory than allocated");
 
 static StateVars* vars() {
