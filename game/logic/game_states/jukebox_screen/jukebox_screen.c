@@ -145,9 +145,6 @@ static void change_track() {
 	print(5, 8, 2, "by");
 	char const* const author = (&jukebox_themes_author) + vars()->current_track * theme_author_len();
 	print(8, 8, theme_author_len(), author);
-
-	// Reset cursor
-	mem()->cursor_anim.x = CURSOR_MIN_X;
 }
 
 static void move_cursor() {
@@ -212,6 +209,9 @@ static uint8_t handle_input() {
 					break;
 				case CONTROLLER_BTN_START:
 					toggle_music();
+					break;
+				case CONTROLLER_BTN_SELECT:
+					change_track();
 					break;
 				case CONTROLLER_BTN_B:
 					//had_input = 1; // Useless, previous_screen never returns
