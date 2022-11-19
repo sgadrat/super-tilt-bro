@@ -1207,7 +1207,7 @@ def _apply_duty_sequence(seq_dut, ref_note, modified, instrument_idx, track_idx,
 	scan_previous_chan_rows(check_row_duty, modified, track_idx, pattern_idx, chan_idx, row_idx)
 
 	if ref_duty is None:
-		warn('unable to find reference duty for instrument enveloppe in {}: considere it as V00'.format(
+		notice('unable to find reference duty for instrument enveloppe in {}: considere it as V00'.format(
 			row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 		))
 		ref_duty = 0
