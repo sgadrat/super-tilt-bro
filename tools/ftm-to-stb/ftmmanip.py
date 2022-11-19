@@ -464,6 +464,47 @@ def get_current_pitch_effect(music, track_idx, pattern_idx, chan_idx, row_idx):
 	scan_previous_chan_rows(effect_scanner, music, track_idx, pattern_idx, chan_idx, row_idx)
 	return current_effect
 
+def get_later_row(music, track_idx, pattern_idx, row_idx, diff):
+	"""
+	Return the (pattern,row) indexes pair to a row at "diff" steps of the indicated one, handling patterns boundaries
+
+	>>> music = {
+	...   'tracks': [
+	...     {
+	...       'patterns':[
+	...         {'rows': [{},{}]},
+	...         {'rows': [{},{}]},
+	...       ]
+	...     },
+	...   ]
+	... }
+	>>> get_later_row(
+	...   music,
+	...   0, 0, 1, 2
+	... )
+	(1, 1)
+	>>> get_later_row(
+	...   music,
+	...   0, 0, 1, 3
+	... )
+	(None, None)
+	"""
+	assert diff >= 0, 'TODO search backward if diff < 0'
+
+	res_pattern_idx = None
+	res_row_idx = None
+
+	def scanner(current_pattern_idx, current_row_idx):
+		nonlocal diff, res_pattern_idx, res_row_idx
+		diff -= 1
+		if diff < 0:
+			res_pattern_idx = current_pattern_idx
+			res_row_idx = current_row_idx
+			return False
+	scan_next_chan_rows(scanner, music, track_idx, pattern_idx, row_idx)
+
+	return (res_pattern_idx, res_row_idx)
+
 def scan_previous_chan_rows(callback, music, track_idx, pattern_idx, chan_idx, start_row_idx):
 	"""
 	Invoke callback on all previous rows for the channel, ignoring pattern boundary.
@@ -1725,6 +1766,7 @@ def apply_3_effect(music):
 						continue
 
 					if original_note['note'] in ['---', '===']:
+						#NOTE matches famitracker's behavior, details in repeat_3_effect
 						notice('3xx effect on a note preceded by a stop in {}: effect ignored'.format(
 							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 						))
@@ -1758,15 +1800,18 @@ def apply_3_effect(music):
 						continue
 
 					# Compute end row
-					dest_row_idx = row_idx + duration
-					if dest_row_idx >= len(pattern['rows']):
-						warn('3xx effect goes over pattern limits in {}: truncated to pattern end'.format(
+					dest_pattern_idx, dest_row_idx = get_later_row(modified, track_idx, pattern_idx, row_idx, duration)
+					last_pattern_idx = len(track['patterns']) - 1
+					last_row_idx = len(track['patterns'][dest_pattern_idx]['rows']) - 1
+					if (dest_pattern_idx, dest_row_idx) == (last_pattern_idx, last_row_idx):
+						warn('3xx effect goes over track limits in {}: truncated to track end'.format(
 							row_identifier(track_idx, pattern_idx, dest_row_idx, chan_idx)
 						))
-						dest_row_idx = len(pattern['rows']) - 1
+						dest_pattern_idx = last_pattern_idx
+						dest_row_idx = last_row_idx
 
 					# Special handling when ending on the same row as we begin (same as if duration == 0, but due to truncation)
-					if dest_row_idx == row_idx:
+					if (dest_pattern_idx, dest_row_idx) == (pattern_idx, row_idx):
 						chan_row['effects'][portamento_effect_idx] = '...'
 						continue
 
@@ -1775,21 +1820,30 @@ def apply_3_effect(music):
 					chan_row['effects'][portamento_effect_idx] = '{}{:02X}'.format(direction, slide_speed)
 
 					# Place the note and a 100 effect at stop location
-					explicitely_stopped = False
-					assert dest_row_idx > row_idx
-					for current_row_idx in range(row_idx+1, dest_row_idx+1):
-						current_row = pattern['rows'][current_row_idx]['channels'][chan_idx]
+					assert (dest_pattern_idx, dest_row_idx) > (pattern_idx, row_idx)
+					def place_stop_scanner(current_pattern_idx, current_row_idx):
+						nonlocal dest_pattern_idx, dest_row_idx, track, chan_row, chan_idx
+						current_pattern = track['patterns'][current_pattern_idx]
+						current_row = current_pattern['rows'][current_row_idx]['channels'][chan_idx]
 
+						# Check if the slide must be stopped early on this row
 						explicitely_stopped = current_row['note'] != '...'
 						if current_row['effects'][portamento_effect_idx][0] in pitch_effects:
 							explicitely_stopped = True
 
+						# Explicitely stopped means we don't have to place the note, but must force destination here
 						if explicitely_stopped:
+							dest_pattern_idx = current_pattern_idx
 							dest_row_idx = current_row_idx
-							break
+							return False
 
-					if not explicitely_stopped:
-						pattern['rows'][dest_row_idx]['channels'][chan_idx]['note'] = chan_row['note']
+						# If we hit destination, place the note
+						if (current_pattern_idx, current_row_idx) >= (dest_pattern_idx, dest_row_idx):
+							assert (current_pattern_idx, current_row_idx) == (dest_pattern_idx, dest_row_idx) # Scanning rows, we should not have skipped our destination
+							track['patterns'][dest_pattern_idx]['rows'][dest_row_idx]['channels'][chan_idx]['note'] = chan_row['note']
+							return False
+					hit_the_end = scan_next_chan_rows(place_stop_scanner, modified, track_idx, pattern_idx, row_idx+1)
+					assert not hit_the_end # We already capped destination at the end of the track
 
 					dest_has_pitch = False
 					current_effect = pattern['rows'][dest_row_idx]['channels'][chan_idx]['effects'][portamento_effect_idx]
