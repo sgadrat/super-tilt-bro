@@ -719,11 +719,11 @@ audio_music_ingame:
 	rts
 
 	ingame_themes_lsb:
-		.byt <music_perihelium_info, <music_sinbad_info, <music_adventure_info, <music_volcano_info, <music_kiki_info
+		.byt <music_perihelium_info, <music_sinbad2_info, <music_adventure_info, <music_sinbad_info, <music_volcano_info, <music_kiki_info
 	ingame_themes_msb:
-		.byt >music_perihelium_info, >music_sinbad_info, >music_adventure_info, >music_volcano_info, >music_kiki_info
+		.byt >music_perihelium_info, >music_sinbad2_info, >music_adventure_info, >music_sinbad_info, >music_volcano_info, >music_kiki_info
 	ingame_themes_bank:
-		.byt music_perihelium_bank, music_sinbad_bank, music_adventure_bank, music_volcano_bank, music_kiki_bank
+		.byt music_perihelium_bank, music_sinbad2_bank, music_sinbad_bank, music_adventure_bank, music_volcano_bank, music_kiki_bank
 	LAST_INGAME_TRACK = ingame_themes_msb - ingame_themes_lsb - 1
 .)
 

@@ -8,6 +8,7 @@ jukebox_themes_lsb:
 	.byt <music_volcano_info
 	.byt <music_kiki_info
 	.byt <music_jump_rope_info
+	.byt <music_sinbad2_info
 jukebox_themes_msb:
 	.byt >music_title_info
 	.byt >music_perihelium_info
@@ -16,6 +17,7 @@ jukebox_themes_msb:
 	.byt >music_volcano_info
 	.byt >music_kiki_info
 	.byt >music_jump_rope_info
+	.byt >music_sinbad2_info
 jukebox_themes_bank:
 	.byt music_title_bank
 	.byt music_perihelium_bank
@@ -24,6 +26,7 @@ jukebox_themes_bank:
 	.byt music_volcano_bank
 	.byt music_kiki_bank
 	.byt music_jump_rope_bank
+	.byt music_sinbad2_bank
 jukebox_themes_title:
 	.asc "Super Tilt Bro. "
 	.asc "Perihelium      "
@@ -32,6 +35,7 @@ jukebox_themes_title:
 	.asc "Volcano         "
 	.asc "Kiki theme      "
 	.asc "I Like Jump Rope"
+	.asc "Sinbad theme    "
 jukebox_themes_title_end:
 jukebox_themes_author:
 	.asc "Tui     "
@@ -41,6 +45,7 @@ jukebox_themes_author:
 	.asc "Kilirane"
 	.asc "Tui     "
 	.asc "Ozzed   "
+	.asc "Tui     "
 jukebox_themes_author_end:
 
 LAST_JUKEBOX_TRACK = jukebox_themes_msb - jukebox_themes_lsb - 1
