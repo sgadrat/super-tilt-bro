@@ -519,7 +519,9 @@ def scan_next_chan_rows(callback, music, track_idx, pattern_idx, start_row_idx):
 	"""
 	Invoke callback on all next rows, ignoring pattern boundary.
 
-	Stops after invoking the very row line of the track or if callback returns False
+	Stops after invoking the last row line of the track or if callback returns False
+
+	Return True if the scan hit the end of the track, False if stopped by the callback
 
 	Notes:
 
@@ -546,6 +548,7 @@ def scan_next_chan_rows(callback, music, track_idx, pattern_idx, start_row_idx):
 	(0, 1)
 	(1, 0)
 	(1, 1)
+	True
 	>>> scan_next_chan_rows(
 	...   lambda p, r: print(str((p, r))),
 	...   music,
@@ -553,6 +556,7 @@ def scan_next_chan_rows(callback, music, track_idx, pattern_idx, start_row_idx):
 	... )
 	(1, 0)
 	(1, 1)
+	True
 	"""
 	first_pattern = True
 	track = music['tracks'][track_idx]
@@ -565,7 +569,8 @@ def scan_next_chan_rows(callback, music, track_idx, pattern_idx, start_row_idx):
 			first_pattern = False
 		for current_row_idx in range(current_row_idx, len(pattern['rows'])):
 			if callback(pattern_idx, current_row_idx) == False:
-				return
+				return False
+	return True
 
 #
 # Music modifiers
@@ -2178,14 +2183,12 @@ def apply_4_effect(music):
 	return modified
 
 def apply_a_effect(music):
-	modified = copy.deepcopy(music)
-
 	# Iterate on rows per channel
-	for track_idx in range(len(modified['tracks'])):
-		track = modified['tracks'][track_idx]
+	for track_idx in range(len(music['tracks'])):
+		track = music['tracks'][track_idx]
 		for pattern_idx in range(len(track['patterns'])):
 			pattern = track['patterns'][pattern_idx]
-			for chan_idx in range(modified['params']['n_chan']):
+			for chan_idx in range(music['params']['n_chan']):
 				for row_idx in range(len(pattern['rows'])):
 					chan_row = pattern['rows'][row_idx]['channels'][chan_idx]
 
@@ -2227,7 +2230,7 @@ def apply_a_effect(music):
 						if current_chan_row['volume'] != '.':
 							current_volume = int(current_chan_row['volume'], 16)
 							return False
-					scan_previous_chan_rows(scanner, modified, track_idx, pattern_idx, chan_idx, row_idx)
+					scan_previous_chan_rows(scanner, music, track_idx, pattern_idx, chan_idx, row_idx)
 
 					if current_volume is None:
 						current_volume = 15
@@ -2243,9 +2246,11 @@ def apply_a_effect(music):
 					chan_row['effects'][a_effect_idx] = '...'
 
 					# Apply volume slide until another volume effect is found or the slide is over
-					current_row_idx = row_idx
-					while current_row_idx < len(pattern['rows']):
-						current_chan_row = pattern['rows'][current_row_idx]['channels'][chan_idx]
+					def apply_volume_slide_scanner(current_pattern_idx, current_row_idx):
+						global volume_effects
+						nonlocal current_volume, slide, track, pattern_idx, row_idx, chan_idx
+						current_pattern = track['patterns'][current_pattern_idx]
+						current_chan_row = current_pattern['rows'][current_row_idx]['channels'][chan_idx]
 
 						# Reset volume if any volume exists in the volume column
 						if current_chan_row['volume'] != '.':
@@ -2261,10 +2266,10 @@ def apply_a_effect(music):
 
 						if current_volume_effect is not None:
 							if current_volume_effect[0] != 'A':
-								warn('Axy interrupted by another volume effect in {}: volume slide stopped'.format(
+								notice('Axy interrupted by another volume effect in {}: volume slide stopped'.format(
 									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 								))
-							break
+							return False
 
 						# Apply new volume
 						current_volume += slide
@@ -2273,16 +2278,15 @@ def apply_a_effect(music):
 
 						# Stop if the slide hit the end
 						if current_volume <= 0 or current_volume >= 15:
-							break
+							return False
+					hit_the_end = scan_next_chan_rows(apply_volume_slide_scanner, music, track_idx, pattern_idx, row_idx)
 
-						current_row_idx += 1
-
-					if current_row_idx >= len(pattern['rows']):
-						warn('Axy goes beyond end of pattern in {}: effect truncated'.format(
+					if hit_the_end:
+						warn('Axy goes beyond end of track in {}: effect truncated'.format(
 							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 						))
 
-	return modified
+	return music
 
 def merge_pitch_slides(music):
 	"""
