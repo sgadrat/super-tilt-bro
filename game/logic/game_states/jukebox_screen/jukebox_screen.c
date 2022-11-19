@@ -5,7 +5,7 @@
 ///////////////////////////////////////
 
 typedef struct {
-	uint8_t current_music;
+	uint8_t current_track;
 } __attribute__((__packed__)) StateVars;
 
 typedef struct {
@@ -116,9 +116,9 @@ static uint8_t const* audio_read(uint8_t const* addr) {
 	return res;
 }
 
-static void change_music() {
+static void change_track() {
 	// Start playback
-	*tmpfield1 = vars()->current_music;
+	*tmpfield1 = vars()->current_track;
 	jukebox_play_music();
 
 	// Compute music length
@@ -132,18 +132,18 @@ static void change_music() {
 	--mem()->last_sample_index;
 
 	// Update title info
-	uint8_t const track_num = vars()->current_music + 1;
+	uint8_t const track_num = vars()->current_track + 1;
 	mem()->track_num_str[0] = '0' + track_num / 10;
 	mem()->track_num_str[1] = '0' + track_num % 10;
 	mem()->track_num_str[2] = '.';
 	print(5, 6, 3, mem()->track_num_str);
 
-	char const* const title = (&jukebox_themes_title) + vars()->current_music * theme_title_len();
+	char const* const title = (&jukebox_themes_title) + vars()->current_track * theme_title_len();
 	print(9, 6, theme_title_len(), title);
 
 	// Update author info
 	print(5, 8, 2, "by");
-	char const* const author = (&jukebox_themes_author) + vars()->current_music * theme_author_len();
+	char const* const author = (&jukebox_themes_author) + vars()->current_track * theme_author_len();
 	print(8, 8, theme_author_len(), author);
 
 	// Reset cursor
@@ -169,14 +169,22 @@ static void move_cursor() {
 	}
 }
 
-static void previous_music() {
-	vars()->current_music = capped_dec(vars()->current_music, last_jukebox_track());
-	change_music();
+static void previous_track() {
+	vars()->current_track = capped_dec(vars()->current_track, last_jukebox_track());
+	change_track();
 }
 
-static void next_music() {
-	vars()->current_music = capped_inc(vars()->current_music, last_jukebox_track());
-	change_music();
+static void next_track() {
+	vars()->current_track = capped_inc(vars()->current_track, last_jukebox_track());
+	change_track();
+}
+
+static void toggle_music() {
+	if (*audio_music_enabled == 0) {
+		audio_unmute_music();
+	}else {
+		audio_mute_music();
+	}
 }
 
 static void previous_screen() {
@@ -194,14 +202,16 @@ static uint8_t handle_input() {
 				case CONTROLLER_BTN_UP:
 				case CONTROLLER_BTN_LEFT:
 					had_input = 1;
-					previous_music();
+					previous_track();
 					break;
 				case CONTROLLER_BTN_DOWN:
 				case CONTROLLER_BTN_RIGHT:
-				case CONTROLLER_BTN_START:
 				case CONTROLLER_BTN_A:
 					had_input = 1;
-					next_music();
+					next_track();
+					break;
+				case CONTROLLER_BTN_START:
+					toggle_music();
 					break;
 				case CONTROLLER_BTN_B:
 					//had_input = 1; // Useless, previous_screen never returns
@@ -230,8 +240,8 @@ void init_jukebox_screen_extra() {
 	long_cpu_to_ppu_copy_tileset(tileset_bank(), &menu_jukebox_sprites_tileset, 0x0000);
 
 	// Initialize state
-	vars()->current_music = 0;
-	change_music(); //NOTE maybe we could avoid to reset the music if it was already playing
+	vars()->current_track = 0;
+	change_track(); //NOTE maybe we could avoid to reset the music if it was already playing
 
 	// Init animations
 	wrap_animation_init_state((uint8_t*)(&(mem()->cursor_anim)), &menu_jukebox_cursor_anim);
