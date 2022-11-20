@@ -2795,8 +2795,21 @@ def adapt_tempo(music):
 						else:
 							next_line_idx = None
 
-						# Merge current line in the next one
-						if next_line_idx is not None:
+						# Easy access to previous line
+						previous_line = None
+						if len(new_lines) > 0:
+							previous_line = new_lines[-1]
+
+						# Adapt neighbor lines to compensate the loss of this line
+						if next_line is not None:
+							#
+							# Common case, we are not deleting the last line
+							#  - Fields unset in the next one are overided by their equivalent in the deleted line
+							#  - frequency_adjust is a weird field that impacts only the current line, treat it as such
+							#  - Add deleted line slide to previous line's slide
+							#
+
+							# Merge current line in the next one
 							for field in next_line:
 								if field == 'frequency_adjust':
 									# Special field, merging meaning adding both values
@@ -2811,48 +2824,68 @@ def adapt_tempo(music):
 									if next_line[field] is None:
 										next_line[field] = original_line[field]
 
-						# Add slide speed of current line in previous one
-						if len(new_lines) > 0:
-							previous_line = new_lines[-1]
+							# Add slide speed of current line in previous one
+							if len(new_lines) > 0:
+								previous_line = new_lines[-1]
 
-							# Find slide value of previous line
-							previous_line_slide = None
-							error = None
-							for reference_line_idx in range(len(new_lines)-1, -1, -1):
-								if new_lines[reference_line_idx]['pitch_slide'] is not None:
-									previous_line_slide = new_lines[reference_line_idx]['pitch_slide']
-									break
+								# Find slide value of previous line
+								previous_line_slide = None
+								error = None
+								for reference_line_idx in range(len(new_lines)-1, -1, -1):
+									if new_lines[reference_line_idx]['pitch_slide'] is not None:
+										previous_line_slide = new_lines[reference_line_idx]['pitch_slide']
+										break
 
-							if previous_line_slide is None:
-								previous_line_slide, error = uctf_find_value_at_sample_begin('pitch_slide', music, sample_idx)
+								if previous_line_slide is None:
+									previous_line_slide, error = uctf_find_value_at_sample_begin('pitch_slide', music, sample_idx)
 
-							if previous_line_slide is None:
-								if error is None:
-									# Will behave differently than famitracker only if pitch slide was set before looping
-									warn('no pitch slide for uctf sample={} line={}: assume zero'.format(
-										sample_idx, original_line_idx-1
-									))
-									previous_line_slide = 0
+								if previous_line_slide is None:
+									if error is None:
+										# Will behave differently than famitracker only if pitch slide was set before looping
+										warn('no pitch slide for uctf sample={} line={}: assume zero'.format(
+											sample_idx, original_line_idx-1
+										))
+										previous_line_slide = 0
+									else:
+										warn('unknown pitch slide for an uctf line sample={} line={}: {}'.format(
+											sample_idx, original_line_idx-1,
+											error
+										))
+										#TODO determine what to do
+										#     note: we may already have modified the "music" by altering other samples
+										ensure(False)
+
+								# Find slide value of original line
+								original_line_slide = original_line['pitch_slide'] if original_line['pitch_slide'] is not None else previous_line_slide
+
+								# Adapt previous slide to compensate for the loss of original line
+								adapted_slide = previous_line_slide + original_line_slide
+								if adapted_slide != previous_line_slide:
+									previous_line['pitch_slide'] = previous_line_slide + original_line_slide
+
+								# Ensure slide value is reset on next line
+								if next_line is not None and next_line['pitch_slide'] is None:
+									next_line['pitch_slide'] = original_line_slide
+						elif previous_line is not None:
+							#
+							# Corner case, we are deleting the last line
+							#  - Non-null fields from deleted line override the previous line's fields
+							#  - frequency_adjust is a weird field that impacts only the current line, treat it as such
+							#  - Previous line's slide is not adapted, previous line will be the last it must hold sample's last slide value unaltered
+							#
+
+							# Merge deleted line in the previous one
+							for field in original_line:
+								if field == 'frequency_adjust':
+									# Special field, merging meaning adding both values
+									current_freq_adjust = original_line['frequency_adjust'] if original_line['frequency_adjust'] is not None else 0
+									previous_freq_adjust = previous_line['frequency_adjust'] if previous_line['frequency_adjust'] is not None else 0
+									merged_freq_adjust = current_freq_adjust + previous_freq_adjust
+									previous_line['frequency_adjust'] = merged_freq_adjust if merged_freq_adjust != 0 else None
 								else:
-									warn('unknown pitch slide for an uctf line sample={} line={}: {}'.format(
-										sample_idx, original_line_idx-1,
-										error
-									))
-									#TODO determine what to do
-									#     note: we may already have modified the "music" by altering other samples
-									ensure(False)
-
-							# Find slide value of original line
-							original_line_slide = original_line['pitch_slide'] if original_line['pitch_slide'] is not None else previous_line_slide
-
-							# Adapt previous slide to compensate for the loss of original line
-							adapted_slide = previous_line_slide + original_line_slide
-							if adapted_slide != previous_line_slide:
-								previous_line['pitch_slide'] = previous_line_slide + original_line_slide
-
-							# Ensure slide value is reset on next line
-							if next_line is not None and next_line['pitch_slide'] is None:
-								next_line['pitch_slide'] = original_line_slide
+									# Keep deleted line's value if not null
+									if original_line[field] is not None:
+										previous_line[field] = original_line[field]
 
 						# Skip processing this line (not adding it to new lines)
 						continue
