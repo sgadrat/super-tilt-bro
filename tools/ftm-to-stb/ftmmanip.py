@@ -641,9 +641,8 @@ def get_num_channels(music):
 		n_channels += 3
 	#TODO handle other expansion chips
 
-	modified = copy.deepcopy(music)
-	modified['params']['n_chan'] = n_channels
-	return modified
+	music['params']['n_chan'] = n_channels
+	return music
 
 def flatten_orders(music):
 	"""
@@ -683,66 +682,6 @@ def flatten_orders(music):
 		assert len(modified['tracks'][track_idx]['patterns']) == len(music['tracks'][track_idx]['orders']), "modified patterns do not match orders"
 
 	return modified
-
-#
-# Obsolete: seems to be based on false assumptions
-#  - Don't take module's original speed into account (While FXX and speed are interlinked)
-#  - FXX effect impact only its row (While should change permanentely the module's speed)
-#  - Considere all FXX equal (While XX >= 0x20 means tempo change)
-#
-#def unroll_f_effect(music):
-#	"""
-#	Remove FXX effect, place empty lines to compensate
-#
-#	Depends: get_num_channels
-#	"""
-#	# Copy the music without its patterns
-#	modified = copy.deepcopy(music)
-#	for track in modified['tracks']:
-#		track['patterns'] = []
-#
-#	# Rewrite patterns with FXX effects unrolled
-#	for track_idx in range(len(music['tracks'])):
-#		for original_pattern in music['tracks'][track_idx]['patterns']:
-#			modified['tracks'][track_idx]['patterns'].append({'rows': []})
-#			for original_row in original_pattern['rows']:
-#				# Copy the row without FXX effect, noting the number of dummy rows to add
-#				modified_row = copy.deepcopy(original_row)
-#				repeats = 0
-#				for channel in modified_row['channels']:
-#					for i in range(len(channel['effects'])):
-#						if channel['effects'][i][0] == 'F':
-#							repeats = int(channel['effects'][i][1:], 16) - 1
-#							# F00 case:
-#							#  It makes no sense. Maybe infinite beats per minute.
-#							#  Famitracker wiki state that F00 is valid, without detail on what it does.
-#							#  Famitracker chm states that it is invalid.
-#							#  It seems to be equivalent to F01, until a proof is given, let's just crash.
-#							ensure(repeats >= 0, 'unhandled effect F00')
-#							channel['effects'][i] = '...'
-#
-#				# Store modified row and dummies to compensate the lack of FXX effect
-#				modified['tracks'][track_idx]['patterns'][-1]['rows'].append(modified_row)
-#
-#				dummy_row = {'channels': []}
-#				for n_effects in modified['tracks'][track_idx]['channels_effects']:
-#					dummy_row['channels'].append({
-#						'note': '...',
-#						'instrument': '..',
-#						'volume': '.',
-#						'effects': ['...'] * n_effects
-#					})
-#				for i in range(repeats):
-#					modified['tracks'][track_idx]['patterns'][-1]['rows'].append(copy.deepcopy(dummy_row))
-#
-#	# Sanity checks and return
-#	assert len(modified['tracks']) == len(music['tracks']), 'number of tracks differs between modified and original (modified:{}, original:{})'.format(len(modified['tracks']), len(music['tracks']))
-#	for track_id in range(len(music['tracks'])):
-#		assert len(modified['tracks'][track_idx]['patterns']) == len(music['tracks'][track_idx]['patterns'])
-#		for pattern_idx in range(len(music['tracks'][track_idx]['patterns'])):
-#			assert len(modified['tracks'][track_idx]['patterns'][pattern_idx]) >= len(music['tracks'][track_idx]['patterns'][pattern_idx]), 'pattern {:02x}-{:02x} is shorted than original'.format(track_idx, pattern_idx)
-#
-#	return modified
 
 def unroll_speed(music):
 	"""
@@ -980,13 +919,11 @@ def apply_g_effect(music):
 
 	Depends: get_num_channels
 	"""
-	modified = copy.deepcopy(music)
-
-	for track_idx in range(len(modified['tracks'])):
-		track = modified['tracks'][track_idx]
+	for track_idx in range(len(music['tracks'])):
+		track = music['tracks'][track_idx]
 		for pattern_idx in range(len(track['patterns'])):
 			pattern = track['patterns'][pattern_idx]
-			for chan_idx in range(modified['params']['n_chan']):
+			for chan_idx in range(music['params']['n_chan']):
 				for row_idx in range(len(pattern['rows'])):
 					chan_row = pattern['rows'][row_idx]['channels'][chan_idx]
 
@@ -1025,7 +962,7 @@ def apply_g_effect(music):
 							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 						))
 						dest_row_idx = len(pattern['rows'] - 1)
-					dest_chan_row = get_row(modified, track=track_idx, pattern=pattern_idx, chan=chan_idx, row=dest_row_idx)
+					dest_chan_row = get_row(music, track=track_idx, pattern=pattern_idx, chan=chan_idx, row=dest_row_idx)
 
 					if chan_row['note'] != '...':
 						if dest_chan_row['note'] != '...':
@@ -1068,7 +1005,7 @@ def apply_g_effect(music):
 
 					del chan_row # This line is mainly here to explicit that we just rewrited the row (so chan_row keeps a reference to the obsolete value)
 
-	return modified
+	return music
 
 def apply_s_effect(music):
 	"""
@@ -1076,13 +1013,11 @@ def apply_s_effect(music):
 
 	Depends: get_num_channels
 	"""
-	modified = copy.deepcopy(music)
-
-	for track_idx in range(len(modified['tracks'])):
-		track = modified['tracks'][track_idx]
+	for track_idx in range(len(music['tracks'])):
+		track = music['tracks'][track_idx]
 		for pattern_idx in range(len(track['patterns'])):
 			pattern = track['patterns'][pattern_idx]
-			for chan_idx in range(modified['params']['n_chan']):
+			for chan_idx in range(music['params']['n_chan']):
 				for row_idx in range(len(pattern['rows'])):
 					chan_row = pattern['rows'][row_idx]['channels'][chan_idx]
 
@@ -1123,7 +1058,7 @@ def apply_s_effect(music):
 							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 						))
 						dest_row_idx = len(pattern['rows']) - 1
-					dest_chan_row = get_row(modified, track=track_idx, pattern=pattern_idx, chan=chan_idx, row=dest_row_idx)
+					dest_chan_row = get_row(music, track=track_idx, pattern=pattern_idx, chan=chan_idx, row=dest_row_idx)
 
 					if dest_chan_row['note'] != '...':
 						warn('SXX effect conflict with a note in {} => {}: note erased'.format(
@@ -1133,16 +1068,16 @@ def apply_s_effect(music):
 					dest_chan_row['note'] = '---'
 					chan_row['effects'][s_effect_idx] = '...'
 
-	return modified
+	return music
 
-def _apply_volume_sequence(seq_vol, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx):
+def _apply_volume_sequence(seq_vol, ref_note, music, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx):
 	ensure(len(seq_vol['sequence']) > 0, 'instrument {:X} has an empty volume sequence'.format(instrument_idx))
 
 	# Common variables
-	track = modified['tracks'][track_idx]
+	track = music['tracks'][track_idx]
 
 	# Handle volume envelope, triange is special: lacking volume control is can be mute when envelope is zero
-	if get_chan_type(modified, chan_idx) == '2a03-triangle':
+	if get_chan_type(music, chan_idx) == '2a03-triangle':
 		# Until the next note, the channel is mute if the volume is zero
 		sequence_step = 0
 		last_envelope_value = None
@@ -1174,12 +1109,12 @@ def _apply_volume_sequence(seq_vol, ref_note, modified, instrument_idx, track_id
 				sequence_step += 1
 				if sequence_step >= len(seq_vol['sequence']):
 					sequence_step = seq_vol['loop']
-		scan_next_chan_rows(scanner_vol_tri, modified, track_idx, pattern_idx, row_idx)
+		scan_next_chan_rows(scanner_vol_tri, music, track_idx, pattern_idx, row_idx)
 
 		# Inform that the sequence is handled
 		return True
 
-	elif get_chan_type(modified, chan_idx) in ['2a03-pulse', '2a03-noise']:
+	elif get_chan_type(music, chan_idx) in ['2a03-pulse', '2a03-noise']:
 		# Find initial reference volume (even if above the note)
 		ref_volume = None
 		def check_row_volume(curent_pattern_idx, current_row_idx):
@@ -1188,7 +1123,7 @@ def _apply_volume_sequence(seq_vol, ref_note, modified, instrument_idx, track_id
 			if current_chan_row['volume'] != '.':
 				ref_volume = int(current_chan_row['volume'], 16)
 				return False
-		scan_previous_chan_rows(check_row_volume, modified, track_idx, pattern_idx, chan_idx, row_idx)
+		scan_previous_chan_rows(check_row_volume, music, track_idx, pattern_idx, chan_idx, row_idx)
 
 		if ref_volume is None:
 			ref_volume = 15
@@ -1220,7 +1155,7 @@ def _apply_volume_sequence(seq_vol, ref_note, modified, instrument_idx, track_id
 				sequence_step += 1
 				if sequence_step >= len(seq_vol['sequence']):
 					sequence_step = seq_vol['loop']
-		scan_next_chan_rows(scanner_apply_volume, modified, track_idx, pattern_idx, row_idx)
+		scan_next_chan_rows(scanner_apply_volume, music, track_idx, pattern_idx, row_idx)
 
 		# On the next note, explicitely reset reference volume
 		if stop_row is not None and stop_row['volume'] == '.':
@@ -1232,9 +1167,9 @@ def _apply_volume_sequence(seq_vol, ref_note, modified, instrument_idx, track_id
 	# Unhandled channel type
 	return False
 
-def _apply_duty_sequence(seq_dut, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx):
+def _apply_duty_sequence(seq_dut, ref_note, music, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx):
 	ensure(len(seq_dut['sequence']) > 0)
-	track = modified['tracks'][track_idx]
+	track = music['tracks'][track_idx]
 
 	# Find initial reference duty (even if above the note)
 	ref_duty = None
@@ -1245,7 +1180,7 @@ def _apply_duty_sequence(seq_dut, ref_note, modified, instrument_idx, track_idx,
 			if current_effect[0] == 'V':
 				ref_duty = int(current_effect[1:], 16)
 				return False
-	scan_previous_chan_rows(check_row_duty, modified, track_idx, pattern_idx, chan_idx, row_idx)
+	scan_previous_chan_rows(check_row_duty, music, track_idx, pattern_idx, chan_idx, row_idx)
 
 	if ref_duty is None:
 		notice('unable to find reference duty for instrument enveloppe in {}: considere it as V00'.format(
@@ -1297,7 +1232,7 @@ def _apply_duty_sequence(seq_dut, ref_note, modified, instrument_idx, track_idx,
 			sequence_step += 1
 			if sequence_step >= len(seq_dut['sequence']):
 				sequence_step = seq_dut['loop']
-	scan_next_chan_rows(scanner_dut, modified, track_idx, pattern_idx, row_idx )
+	scan_next_chan_rows(scanner_dut, music, track_idx, pattern_idx, row_idx )
 
 	# Warn if envelop goes past the end of the track, hoping there is an explicit VXX at the begining to reset duty
 	if stopped_on_track_end:
@@ -1308,7 +1243,7 @@ def _apply_duty_sequence(seq_dut, ref_note, modified, instrument_idx, track_idx,
 	# Inform that the sequence is handled
 	return True
 
-def _apply_arpeggio_sequence(seq_arp, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx, force_absolute_notes):
+def _apply_arpeggio_sequence(seq_arp, ref_note, music, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx, force_absolute_notes):
 	"""
 	force_absolute_notes: if False and the enveloppe is impacted by pitch effect, a frequency_adjust effect will be placed to
 	                      allow the arpeggio to be played alongside the pitch effect.
@@ -1316,10 +1251,10 @@ def _apply_arpeggio_sequence(seq_arp, ref_note, modified, instrument_idx, track_
 	"""
 	ensure(len(seq_arp['sequence']) > 0, 'instrument {:X} has an empty arpeggio sequence'.format(instrument_idx))
 	ensure(seq_arp['setting'] == 0, 'instrument {:X} use a non-absolute arpeggio: TODO handle fixed and relative arpeggio'.format(instrument_idx))
-	track = modified['tracks'][track_idx]
+	track = music['tracks'][track_idx]
 
 	# Get reference note in numerical form
-	if get_chan_type(modified, chan_idx) == '2a03-noise':
+	if get_chan_type(music, chan_idx) == '2a03-noise':
 		ref_note_idx = int(ref_note[0], 16)
 	else:
 		ref_note_idx = get_note_table_index(ref_note)
@@ -1327,7 +1262,7 @@ def _apply_arpeggio_sequence(seq_arp, ref_note, modified, instrument_idx, track_
 
 	# Check if there is an active pitch effect impacting the first row
 	#TODO cannot check only one pitch effect, has_pitch_effect should be True if any column has an active pitch effect
-	pitch_effect = get_current_pitch_effect(modified, track_idx, pattern_idx, chan_idx, row_idx)
+	pitch_effect = get_current_pitch_effect(music, track_idx, pattern_idx, chan_idx, row_idx)
 	has_pitch_effect = pitch_effect is not None and is_pitch_slide_activation_effect(pitch_effect)
 
 	# Until the next note, the note is adjusted by the enveloppe
@@ -1354,7 +1289,7 @@ def _apply_arpeggio_sequence(seq_arp, ref_note, modified, instrument_idx, track_
 		enveloppe_note_idx = ref_note_idx + sequence_value
 
 		# Bound computed value to valid values
-		if get_chan_type(modified, chan_idx) == '2a03-noise':
+		if get_chan_type(music, chan_idx) == '2a03-noise':
 			if enveloppe_note_idx > 0xf:
 				enveloppe_note_idx %= 10
 			while enveloppe_note_idx < 0:
@@ -1375,7 +1310,7 @@ def _apply_arpeggio_sequence(seq_arp, ref_note, modified, instrument_idx, track_
 		# Place computed value
 		if force_absolute_notes or not has_pitch_effect or current_chan_row['note'] != '...':
 			# There is not pitch effect, or we are on the first row (setting the note), so we can simply place the resulting note
-			if get_chan_type(modified, chan_idx) == '2a03-noise':
+			if get_chan_type(music, chan_idx) == '2a03-noise':
 				current_chan_row['note'] = '{:X}-#'.format(enveloppe_note_idx)
 			else:
 				current_chan_row['note'] = note_table_names[enveloppe_note_idx]
@@ -1391,7 +1326,7 @@ def _apply_arpeggio_sequence(seq_arp, ref_note, modified, instrument_idx, track_
 			)
 		else:
 			# There is an active pitch effect that may impact the played frequency, place the wanted difference with current frequency
-			if get_chan_type(modified, chan_idx) == '2a03-noise':
+			if get_chan_type(music, chan_idx) == '2a03-noise':
 				pitch_diff = enveloppe_note_idx - last_note_idx
 			else:
 				pitch_diff = note_table_freqs[enveloppe_note_idx] - note_table_freqs[last_note_idx]
@@ -1420,14 +1355,14 @@ def _apply_arpeggio_sequence(seq_arp, ref_note, modified, instrument_idx, track_
 			sequence_step += 1
 			if sequence_step >= len(seq_arp['sequence']):
 				sequence_step = seq_arp['loop']
-	scan_next_chan_rows(scanner_arp, modified, track_idx, pattern_idx, row_idx )
+	scan_next_chan_rows(scanner_arp, music, track_idx, pattern_idx, row_idx )
 
 	# Inform that the sequence is handled
 	return True
 
-def _apply_pitch_sequence(seq_pit, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx):
+def _apply_pitch_sequence(seq_pit, ref_note, music, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx):
 	ensure(len(seq_pit['sequence']) > 0, 'instrument {:X} has an empty pitch sequence'.format(instrument_idx))
-	track = modified['tracks'][track_idx]
+	track = music['tracks'][track_idx]
 
 	# Until the next note, the note is adjusted by the envelope
 	sequence_step = 0
@@ -1476,7 +1411,7 @@ def _apply_pitch_sequence(seq_pit, ref_note, modified, instrument_idx, track_idx
 			sequence_step += 1
 			if sequence_step >= len(seq_pit['sequence']):
 				sequence_step = seq_pit['loop']
-	scan_next_chan_rows(scanner_pit, modified, track_idx, pattern_idx, row_idx)
+	scan_next_chan_rows(scanner_pit, music, track_idx, pattern_idx, row_idx)
 
 	# End envelope's effect with a 100
 	if last_chan_row is not None:
@@ -1509,20 +1444,18 @@ def remove_instruments(music, arp_force_absolute_notes=True):
 	def effect_key(track_idx, chan_idx):
 		return (track_idx, chan_idx)
 
-	modified = copy.deepcopy(music)
-
 	# Create an effect column per channel reserved to instruments usage
 	# NOTE: we could need to actually create one column per enveloppe type to be safe (and remove HACKs adding their own columns in apply_*_sequence)
 	instrument_effect_idx = {} # key=track_idx.chan_idx, value=index of the effect column for instruments usage
-	for track_idx in range(len(modified['tracks'])):
-		for chan_idx in range(modified['params']['n_chan']):
+	for track_idx in range(len(music['tracks'])):
+		for chan_idx in range(music['params']['n_chan']):
 			# Search for the largest effects list
 			max_effects = 0
 			def max_effect_scanner(current_pattern_idx, current_row_idx):
 				nonlocal max_effects, track_idx, chan_idx
-				current_chan_row = modified['tracks'][track_idx]['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+				current_chan_row = music['tracks'][track_idx]['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
 				max_effects = max(max_effects, len(current_chan_row['effects']))
-			scan_next_chan_rows(max_effect_scanner, modified, track_idx, 0, 0)
+			scan_next_chan_rows(max_effect_scanner, music, track_idx, 0, 0)
 
 			# Save info of the next column ID, to be used by instruments
 			instrument_effect_idx[effect_key(track_idx, chan_idx)] = max_effects
@@ -1530,17 +1463,17 @@ def remove_instruments(music, arp_force_absolute_notes=True):
 			# Create a new column, and ensure all row have it
 			def create_columns_scanner(current_pattern_idx, current_row_idx):
 				nonlocal max_effects, track_idx, chan_idx
-				current_chan_row = modified['tracks'][track_idx]['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+				current_chan_row = music['tracks'][track_idx]['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
 				while len(current_chan_row['effects']) < max_effects+1:
 					current_chan_row['effects'].append('...')
-			scan_next_chan_rows(create_columns_scanner, modified, track_idx, 0, 0)
+			scan_next_chan_rows(create_columns_scanner, music, track_idx, 0, 0)
 
 	# Scan each row to flatten instruments
-	for track_idx in range(len(modified['tracks'])):
-		track = modified['tracks'][track_idx]
+	for track_idx in range(len(music['tracks'])):
+		track = music['tracks'][track_idx]
 		for pattern_idx in range(len(track['patterns'])):
 			pattern = track['patterns'][pattern_idx]
-			for chan_idx in range(modified['params']['n_chan']):
+			for chan_idx in range(music['params']['n_chan']):
 				effect_idx = instrument_effect_idx[effect_key(track_idx, chan_idx)]
 				for row_idx in range(len(pattern['rows'])):
 					chan_row = pattern['rows'][row_idx]['channels'][chan_idx]
@@ -1551,13 +1484,13 @@ def remove_instruments(music, arp_force_absolute_notes=True):
 
 					# Get instrument details
 					instrument_idx = int(chan_row['instrument'], 16)
-					instrument = copy.deepcopy(modified['instruments'][instrument_idx])
+					instrument = copy.deepcopy(music['instruments'][instrument_idx])
 					if instrument['type'] == '2a03':
 						for seq_name in [('seq_vol', 'volume'), ('seq_arp', 'arpeggio'), ('seq_pit', 'pitch'), ('seq_hpi', 'hi-pitch'), ('seq_dut', 'duty')]:
-							instrument[seq_name[0]] = get_sequence(modified, instrument['type'], seq_name[1], instrument[seq_name[0]])
+							instrument[seq_name[0]] = get_sequence(music, instrument['type'], seq_name[1], instrument[seq_name[0]])
 					elif instrument['type'] == 'vrc6':
 						for seq_name in [('seq_vol', 'volume'), ('seq_arp', 'arpeggio'), ('seq_pit', 'pitch'), ('seq_hpi', 'hi-pitch'), ('seq_wid', 'pulse-width')]:
-							instrument[seq_name[0]] = get_sequence(modified, instrument['type'], seq_name[1], instrument[seq_name[0]])
+							instrument[seq_name[0]] = get_sequence(music, instrument['type'], seq_name[1], instrument[seq_name[0]])
 					else:
 						ensure(False, 'unsuported instrument type "{}"'.format(instrument['type']))
 
@@ -1584,24 +1517,24 @@ def remove_instruments(music, arp_force_absolute_notes=True):
 						seq_wid = None
 
 					# Remove effects non-applicable to current channel
-					if get_chan_type(modified, chan_idx) == '2a03-triangle':
+					if get_chan_type(music, chan_idx) == '2a03-triangle':
 						seq_dut = None
 
 					# Apply instrument effects to the timeline
 					if seq_vol is not None:
-						if (_apply_volume_sequence(seq_vol, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx)):
+						if (_apply_volume_sequence(seq_vol, ref_note, music, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx)):
 							seq_vol = None
 
 					if seq_dut is not None:
-						if (_apply_duty_sequence(seq_dut, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx)):
+						if (_apply_duty_sequence(seq_dut, ref_note, music, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx)):
 							seq_dut = None
 
 					if seq_arp is not None:
-						if (_apply_arpeggio_sequence(seq_arp, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx, force_absolute_notes=arp_force_absolute_notes)):
+						if (_apply_arpeggio_sequence(seq_arp, ref_note, music, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx, force_absolute_notes=arp_force_absolute_notes)):
 							seq_arp = None
 
 					if seq_pit is not None:
-						if (_apply_pitch_sequence(seq_pit, ref_note, modified, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx)):
+						if (_apply_pitch_sequence(seq_pit, ref_note, music, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx)):
 							seq_pit = None
 
 					# Remove instrument reference (only if completely handled, to keep warnings where it was partial)
@@ -1615,7 +1548,7 @@ def remove_instruments(music, arp_force_absolute_notes=True):
 					):
 						chan_row['instrument'] = '..'
 
-	return modified
+	return music
 
 def repeat_3_effect(music):
 	"""
@@ -1623,13 +1556,11 @@ def repeat_3_effect(music):
 
 	Note: 3xx are deactivated by any pitch effect
 	"""
-	modified = copy.deepcopy(music)
-
-	for track_idx in range(len(modified['tracks'])):
-		track = modified['tracks'][track_idx]
+	for track_idx in range(len(music['tracks'])):
+		track = music['tracks'][track_idx]
 		for pattern_idx in range(len(track['patterns'])):
 			pattern = track['patterns'][pattern_idx]
-			for chan_idx in range(modified['params']['n_chan']):
+			for chan_idx in range(music['params']['n_chan']):
 
 				original_portamento_effect_idx = None
 				current_portamento = 0
@@ -1691,7 +1622,7 @@ def repeat_3_effect(music):
 
 						# Do not apply on notes preceded by a stop (matches famitracker's behaviour)
 						#NOTE: Check actually done by apply_3_effect, reactivate here if log-flood is too ennoying
-						#if get_previous_note(modified, track_idx, pattern_idx, chan_idx, row_idx, ignore_stop=False)['note'] in ['---', '===']:
+						#if get_previous_note(music, track_idx, pattern_idx, chan_idx, row_idx, ignore_stop=False)['note'] in ['---', '===']:
 						#	continue
 
 						# Place the 3xx effect
@@ -1702,7 +1633,7 @@ def repeat_3_effect(music):
 						if chan_row['effects'][original_portamento_effect_idx] == '...':
 							chan_row['effects'][original_portamento_effect_idx] = '3{:02X}'.format(current_portamento)
 
-	return modified
+	return music
 
 def apply_3_effect(music):
 	"""
@@ -1710,14 +1641,12 @@ def apply_3_effect(music):
 
 	Expects: repeat_3_effect
 	"""
-	modified = copy.deepcopy(music)
-
 	# Iterate on rows per channel
-	for track_idx in range(len(modified['tracks'])):
-		track = modified['tracks'][track_idx]
+	for track_idx in range(len(music['tracks'])):
+		track = music['tracks'][track_idx]
 		for pattern_idx in range(len(track['patterns'])):
 			pattern = track['patterns'][pattern_idx]
-			for chan_idx in range(modified['params']['n_chan']):
+			for chan_idx in range(music['params']['n_chan']):
 				for row_idx in range(len(pattern['rows'])):
 					chan_row = pattern['rows'][row_idx]['channels'][chan_idx]
 
@@ -1756,7 +1685,7 @@ def apply_3_effect(music):
 						continue
 
 					# Search for original note
-					original_note = get_previous_note(modified, track_idx, pattern_idx, chan_idx, row_idx, ignore_stop=False)
+					original_note = get_previous_note(music, track_idx, pattern_idx, chan_idx, row_idx, ignore_stop=False)
 
 					if original_note['note'] is None:
 						warn('3xx effect without original note in {}: effect ignored'.format(
@@ -1800,7 +1729,7 @@ def apply_3_effect(music):
 						continue
 
 					# Compute end row
-					dest_pattern_idx, dest_row_idx = get_later_row(modified, track_idx, pattern_idx, row_idx, duration)
+					dest_pattern_idx, dest_row_idx = get_later_row(music, track_idx, pattern_idx, row_idx, duration)
 					last_pattern_idx = len(track['patterns']) - 1
 					last_row_idx = len(track['patterns'][dest_pattern_idx]['rows']) - 1
 					if (dest_pattern_idx, dest_row_idx) == (last_pattern_idx, last_row_idx):
@@ -1842,7 +1771,7 @@ def apply_3_effect(music):
 							assert (current_pattern_idx, current_row_idx) == (dest_pattern_idx, dest_row_idx) # Scanning rows, we should not have skipped our destination
 							track['patterns'][dest_pattern_idx]['rows'][dest_row_idx]['channels'][chan_idx]['note'] = chan_row['note']
 							return False
-					hit_the_end = scan_next_chan_rows(place_stop_scanner, modified, track_idx, pattern_idx, row_idx+1)
+					hit_the_end = scan_next_chan_rows(place_stop_scanner, music, track_idx, pattern_idx, row_idx+1)
 					assert not hit_the_end # We already capped destination at the end of the track
 
 					dest_has_pitch = False
@@ -1860,7 +1789,7 @@ def apply_3_effect(music):
 					# Remove the note from origin row
 					chan_row['note'] = '...'
 
-	return modified
+	return music
 
 def apply_qr_effect(music, effect_name):
 	"""
@@ -2013,18 +1942,16 @@ def apply_r_effect(music):
 	return apply_qr_effect(music, 'R')
 
 def apply_4_effect(music):
-	modified = copy.deepcopy(music)
-
 	#
 	# Vibrato apply functions
 	#
 
-	def vibrato_flatten_noise(depth, modified, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx):
+	def vibrato_flatten_noise(depth, music, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx):
 		"""
 		Apply vibrato on noise channel by flattening it.
 		This is costly, but can handles step values lower than 1, which is the minimum of 1xx effect.
 		"""
-		track = modified['tracks'][track_idx]
+		track = music['tracks'][track_idx]
 
 		# Get original pitch
 		current_pitch = None
@@ -2034,7 +1961,7 @@ def apply_4_effect(music):
 			if current_chan_row['note'] not in ['...', '---', '===']:
 				current_pitch = int(current_chan_row['note'][0], 16)
 				return False
-		scan_previous_chan_rows(scanner_flatten_original_pitch, modified, track_idx, pattern_idx, chan_idx, row_idx)
+		scan_previous_chan_rows(scanner_flatten_original_pitch, music, track_idx, pattern_idx, chan_idx, row_idx)
 
 		ensure(current_pitch is not None, 'unable to find original pitch for 4xy in {}: TODO handle it for next notes'.format(
 			row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
@@ -2087,9 +2014,9 @@ def apply_4_effect(music):
 
 			# Step envelope position
 			envelope_step = (envelope_step + effect_speed) % len(vibrato_envelope)
-		scan_next_chan_rows(scanner_flatten_apply, modified, track_idx, pattern_idx, row_idx)
+		scan_next_chan_rows(scanner_flatten_apply, music, track_idx, pattern_idx, row_idx)
 
-	def vibrato_slide(step, half_way_time, modified, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx):
+	def vibrato_slide(step, half_way_time, music, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx):
 		"""
 		Apply vibrato on any channel by convering it to a series of 1xx 2xx.
 		This is cheap, but can conflict with other pitch effects.
@@ -2160,11 +2087,11 @@ def apply_4_effect(music):
 	#
 
 	# Iterate on rows per channel
-	for track_idx in range(len(modified['tracks'])):
-		track = modified['tracks'][track_idx]
+	for track_idx in range(len(music['tracks'])):
+		track = music['tracks'][track_idx]
 		for pattern_idx in range(len(track['patterns'])):
 			pattern = track['patterns'][pattern_idx]
-			for chan_idx in range(modified['params']['n_chan']):
+			for chan_idx in range(music['params']['n_chan']):
 				for row_idx in range(len(pattern['rows'])):
 					chan_row = pattern['rows'][row_idx]['channels'][chan_idx]
 
@@ -2224,17 +2151,17 @@ def apply_4_effect(music):
 
 					# Transform effect
 					assert conversion_type in ['flatten', 'pitch-slide']
-					if get_chan_type(modified, chan_idx) == '2a03-noise' and conversion_type == 'flatten':
-						vibrato_flatten_noise(depth, modified, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx)
+					if get_chan_type(music, chan_idx) == '2a03-noise' and conversion_type == 'flatten':
+						vibrato_flatten_noise(depth, music, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx)
 					elif conversion_type == 'pitch-slide':
-						vibrato_slide(step, half_way_time, modified, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx)
+						vibrato_slide(step, half_way_time, music, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx)
 					else:
 						warn('unhandled 4xy in {} chan_type="{}" conversion="{}": effect ignored'.format(
 							row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
-							get_chan_type(modified, chan_idx), conversion_type
+							get_chan_type(music, chan_idx), conversion_type
 						))
 
-	return modified
+	return music
 
 def apply_a_effect(music):
 	# Iterate on rows per channel
@@ -2446,10 +2373,9 @@ def remove_superfluous_volume(music):
 
 	Depends: get_num_channels
 	"""
-	modified = copy.deepcopy(music)
-	for track in modified['tracks']:
+	for track in music['tracks']:
 		for pattern in track['patterns']:
-			for chan_idx in range(modified['params']['n_chan']):
+			for chan_idx in range(music['params']['n_chan']):
 				previous_volume = None
 				for row_idx in range(len(pattern['rows'])):
 					chan_row = pattern['rows'][row_idx]['channels'][chan_idx]
@@ -2460,7 +2386,7 @@ def remove_superfluous_volume(music):
 						if current_volume == previous_volume:
 							chan_row['volume'] = '.'
 						previous_volume = current_volume
-	return modified
+	return music
 
 def remove_superfluous_duty(music):
 	"""
@@ -2468,13 +2394,11 @@ def remove_superfluous_duty(music):
 
 	Depends: get_num_channels
 	"""
-	modified = copy.deepcopy(music)
-
-	for track_idx in range(len(modified['tracks'])):
-		track = modified['tracks'][track_idx]
+	for track_idx in range(len(music['tracks'])):
+		track = music['tracks'][track_idx]
 		for pattern_idx in range(len(track['patterns'])):
 			pattern = track['patterns'][pattern_idx]
-			for chan_idx in range(modified['params']['n_chan']):
+			for chan_idx in range(music['params']['n_chan']):
 				previous_duty = None
 				for row_idx in range(len(pattern['rows'])):
 					chan_row = pattern['rows'][row_idx]['channels'][chan_idx]
@@ -2500,7 +2424,7 @@ def remove_superfluous_duty(music):
 							chan_row['effects'][duty_effect_idx] = '...'
 						previous_duty = current_duty
 
-	return modified
+	return music
 
 def std_empty_row(music):
 	"""
@@ -2508,8 +2432,7 @@ def std_empty_row(music):
 
 	Depends: none
 	"""
-	modified = copy.deepcopy(music)
-	for track in modified['tracks']:
+	for track in music['tracks']:
 		for pattern in track['patterns']:
 			for row in pattern['rows']:
 				for chan_idx in range(len(row['channels'])):
@@ -2523,7 +2446,7 @@ def std_empty_row(music):
 						# Replace empty row by a sigle standard string
 						if empty:
 							row['channels'][chan_idx] = 'empty_row'
-	return modified
+	return music
 
 def to_uncompressed_format(music):
 	"""
@@ -2531,15 +2454,14 @@ def to_uncompressed_format(music):
 
 	Depends: get_num_channels, std_empty_row
 	"""
-	modified = copy.deepcopy(music)
-	modified['uctf'] = {
+	music['uctf'] = {
 		'channels': [],
 		'samples': [],
 	}
 
-	for track in modified['tracks']:
-		for chan_idx in range(modified['params']['n_chan']):
-			modified['uctf']['channels'].append([])
+	for track in music['tracks']:
+		for chan_idx in range(music['params']['n_chan']):
+			music['uctf']['channels'].append([])
 			for pattern in track['patterns']:
 				# Skip unsuported channels
 				#TODO generate samples for all channels
@@ -2548,7 +2470,7 @@ def to_uncompressed_format(music):
 
 				# Construct sample from channel's rows
 				sample = {
-					'type': get_chan_type(modified, chan_idx),
+					'type': get_chan_type(music, chan_idx),
 					'lines': []
 				}
 				for row in pattern['rows']:
@@ -2598,10 +2520,10 @@ def to_uncompressed_format(music):
 							ensure(False, 'unhandled sample type: {}'.format(sample['type']))
 
 				# Store Sample
-				modified['uctf']['channels'][-1].append(len(modified['uctf']['samples']))
-				modified['uctf']['samples'].append(sample)
+				music['uctf']['channels'][-1].append(len(music['uctf']['samples']))
+				music['uctf']['samples'].append(sample)
 
-	return modified
+	return music
 
 def big_samples(music):
 	"""
@@ -3011,10 +2933,9 @@ def compute_note_length(music):
 	#TODO for now simply use 5, real value should certainly be gcd(num frames between non-empty rows) (maybe ingoring rare occurence of shorter times)
 	#     or simply use track's speed (except on degenerate case were a lot of FXX is used, allow to specify it)
 	#     Note that is does not changes a lot of things, PLAY_NOTE opcode is rarely used (PLAY_TIMED_NOTE is less CPU intensive and the same size)
-	modified = copy.deepcopy(music)
-	for sample in modified['uctf']['samples']:
+	for sample in music['uctf']['samples']:
 		sample['default_note_length'] = 5
-	return modified
+	return music
 
 def to_mod_format(music):
 	"""
@@ -3421,13 +3342,12 @@ def to_mod_format(music):
 		samples_list.append(sample_converters[sample['type']](sample))
 
 	# Return the music with added "music" field
-	modified = copy.deepcopy(music)
-	modified['mod'] = {
+	music['mod'] = {
 		'type': 'music',
 		'channels': copy.deepcopy(music['uctf']['channels']),
 		'samples': samples_list,
 	}
-	return modified
+	return music
 
 def optim_pulse_opcodes_to_meta(music):
 	"""
@@ -3851,12 +3771,11 @@ def samples_to_source(music):
 
 		sample_num += 1
 
-	modified = copy.deepcopy(music)
-	modified['src'] = {
+	music['src'] = {
 		'type': 'samples_source',
 		'value': asm_header + '\n' + music_header + '\n' + tracks_source + '\n' +samples_source,
 	}
-	return modified
+	return music
 
 def compute_stats(music):
 	"""
@@ -3943,9 +3862,8 @@ def compute_stats(music):
 	stats['opcode_groups'] = opcode_groups_flat
 
 	# Return the music with a "stats" section
-	modified = copy.deepcopy(music)
-	modified['stats'] = stats
-	return modified
+	music['stats'] = stats
+	return music
 
 if __name__ == "__main__":
     import doctest
