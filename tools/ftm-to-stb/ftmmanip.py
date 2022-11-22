@@ -1989,10 +1989,16 @@ def apply_4_effect(music):
 			current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
 
 			# Stop on any pitch effect
-			#TODO only stop on pitch effect in the same column
 			initial_row = (current_pattern_idx == pattern_idx and current_row_idx == row_idx)
-			if not initial_row and len(get_pitch_effects(current_chan_row)) != 0:
-				#TODO warn if not a 4xy
+			current_effect = current_chan_row['effects'][vibrato_effect_idx]
+			if not initial_row and current_effect != '...':
+				if current_effect[0] not in pitch_effects:
+					# Should be handled by a filter that move pitch and volum effects to dedicated columns
+					#  (after checking that famitracker actually support both effect types on the same column running simultaneously)
+					warn('4xy interrupted by a non-pitch effect in {} at {}: effect trucated'.format(
+						row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
+						row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+					))
 				return False
 
 			# Stop on halt/release
@@ -2016,10 +2022,10 @@ def apply_4_effect(music):
 			envelope_step = (envelope_step + effect_speed) % len(vibrato_envelope)
 		scan_next_chan_rows(scanner_flatten_apply, music, track_idx, pattern_idx, row_idx)
 
-	def vibrato_slide(step, half_way_time, music, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx):
+	def vibrato_slide(step, one_way_time, half_way_time, music, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx):
 		"""
 		Apply vibrato on any channel by convering it to a series of 1xx 2xx.
-		This is cheap, but can conflict with other pitch effects.
+		This is cheap, but cannot handle step values lower than 1.
 		"""
 		# Step must be an integer
 		step_int = int(0.5 + step)
@@ -2035,9 +2041,10 @@ def apply_4_effect(music):
 		chan_row['effects'][vibrato_effect_idx] = '{}{:02X}'.format(current_direction, step)
 
 		# Every one way pitch deviation, change direction. Until the next pitch impacting effect.
-		current_row_idx = row_idx + 1
-		while current_row_idx < len(pattern['rows']):
-			current_chan_row = pattern['rows'][current_row_idx]['channels'][chan_idx]
+		def scanner_vibrato_apply(current_pattern_idx, current_row_idx):
+			nonlocal track, chan_idx, vibrato_effect_idx, time_left, current_direction, one_way_time
+			current_pattern = track['patterns'][current_pattern_idx]
+			current_chan_row = current_pattern['rows'][current_row_idx]['channels'][chan_idx]
 
 			# If there is any pitch effect in the same column as the initial 4xy, just stop
 			#   warn if pitch impacting effect is not a 4xy (these effects should be stopped by a 40*)
@@ -2045,14 +2052,14 @@ def apply_4_effect(music):
 			current_effect = current_chan_row['effects'][vibrato_effect_idx]
 			if current_effect[0] in pitch_effects:
 				if current_effect[0] != '4':
-					notice('4xy effect is interrupted by another effect type in {}, starting in {}'.format(
+					notice('4xy effect is interrupted by another pitch effect type in {}, starting in {}'.format(
 						row_identifier(track_idx, pattern_idx, current_row_idx, chan_idx),
 						row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
 					))
 				has_pitch_effect = True
 
 			if has_pitch_effect:
-				break
+				return False
 
 			# If there is a non-pitch effect, move it to another column
 			if current_effect != '...':
@@ -2072,15 +2079,12 @@ def apply_4_effect(music):
 				current_direction = '2' if current_direction == '1' else '1'
 				time_left = one_way_time
 				current_chan_row['effects'][vibrato_effect_idx] = '{}{:02X}'.format(current_direction, step)
+		hit_the_end = scan_next_chan_rows(scanner_vibrato_apply, music, track_idx, pattern_idx, row_idx+1)
 
-			# Next
-			current_row_idx += 1
-
-		# Check if we hit the end of pattern
-		if current_row_idx >= len(pattern['rows']):
-			#TODO use scanner to avoid that
-			warn('4xy effect extends after pattern in {}: effect truncated'.format(row_identifier(track_idx, pattern_idx, row_idx, chan_idx)))
-			pattern['rows'][-1]['channels'][chan_idx]['effects'][vibrato_effect_idx] = '100'
+		# Check if we hit the end of track
+		if hit_the_end:
+			warn('4xy effect extends after track in {}: effect truncated'.format(row_identifier(track_idx, pattern_idx, row_idx, chan_idx)))
+			music['tracks'][track_idx]['patterns'][-1]['rows'][-1]['channels'][chan_idx]['effects'][vibrato_effect_idx] = '100'
 
 	#
 	# Common logic
@@ -2094,72 +2098,63 @@ def apply_4_effect(music):
 			for chan_idx in range(music['params']['n_chan']):
 				for row_idx in range(len(pattern['rows'])):
 					chan_row = pattern['rows'][row_idx]['channels'][chan_idx]
+					for vibrato_effect_idx in range(len(chan_row['effects'])):
+						# Ignore columns which does not hold a 4xy effect
+						effect = chan_row['effects'][vibrato_effect_idx]
+						if effect[0] != '4':
+							continue
 
-					# Find if current row has a 4 effect
-					vibrato_effect_idx = None
-					has_other_pitch_effect = False
-					for effect_idx in range(len(chan_row['effects'])):
-						effect = chan_row['effects'][effect_idx]
-						if effect[0] == '4':
-							if vibrato_effect_idx is not None:
-								#TODO handle columns separately
-								warn('multiple 4xy effects in {}: some will be ignored'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-								))
-							vibrato_effect_idx = effect_idx
-						elif effect[0] in pitch_effects:
-							has_other_pitch_effect = True
+						# Special handling of 40*, simply stop pitch slide
+						if effect[1] == '0':
+							chan_row['effects'][vibrato_effect_idx] = '100'
+							continue
 
-					# Do not process the row if it has no 4 effect or is a non-supported corner case
-					if vibrato_effect_idx is None:
-						continue
+						# Find if current row has other pitch effects
+						has_other_pitch_effect = False
+						for current_effect_idx in range(len(chan_row['effects'])):
+							current_effect = chan_row['effects'][current_effect_idx][0]
+							if current_effect_idx != vibrato_effect_idx and is_pitch_slide_activation_effect(current_effect):
+								has_other_pitch_effect = True
 
-					if has_other_pitch_effect:
-						#TODO Handle multiple 4xy (by handling columns separately)
-						#TODO Maybe fail if we have to flatten noise or
-						#     warn harder since it is compatble with pitch effect but not other flattening.
-						warn('multiple pitch effects in {}: 4xy support for it is partial'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
-						))
+						# Compute useful values
+						effect_speed = int(effect[1], 16)
+						effect_y = int(effect[2], 16)
+						assert effect_speed != 0
 
-					# Special handling of 40*, simply stop pitch slide
-					effect = chan_row['effects'][vibrato_effect_idx]
-					if effect[1] == '0':
-						chan_row['effects'][vibrato_effect_idx] = '100'
-						continue
+						period = 64 / effect_speed
+						depth = [1, 1, 2, 3, 4, 7, 8, 0xf, 0x10, 0x1f, 0x20, 0x3f, 0x40, 0x7f, 0x80, 0xff][effect_y]
 
-					# Compute useful values
-					effect_speed = int(effect[1], 16)
-					effect_y = int(effect[2], 16)
-					assert effect_speed != 0
+						step = (depth * 4) / period
+						one_way_time = int(.5 + period / 2)
+						half_way_time = int(.5 + period / 4)
+						conversion_type = 'pitch-slide'
+						if step < 1:
+							conversion_type = 'flatten'
 
-					period = 64 / effect_speed
-					depth = [1, 1, 2, 3, 4, 7, 8, 0xf, 0x10, 0x1f, 0x20, 0x3f, 0x40, 0x7f, 0x80, 0xff][effect_y]
+						if half_way_time < 1:
+							warn('4xy effect too tight in {}: period={}, one_way={}, half_way={}'.format(
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
+								period, one_way_time, half_way_time
+							))
 
-					step = (depth * 4) / period
-					one_way_time = int(.5 + period / 2)
-					half_way_time = int(.5 + period / 4)
-					conversion_type = 'pitch-slide'
-					if step < 1:
-						conversion_type = 'flatten'
+						if conversion_type == 'flatten' and has_other_pitch_effect:
+							# Flattening noise is compatble with pitch effect but not other flattening.
+							#NOTE: has_other_pitch_effect computation is incomplete and should check any active pitch effect, not just those starting on this row
+							warn('multiple pitch effects in {}: 4xy support for it is partial'.format(
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							))
 
-					if half_way_time < 1:
-						warn('4xy effect too tight in {}: period={}, one_way={}, half_way={}'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
-							period, one_way_time, half_way_time
-						))
-
-					# Transform effect
-					assert conversion_type in ['flatten', 'pitch-slide']
-					if get_chan_type(music, chan_idx) == '2a03-noise' and conversion_type == 'flatten':
-						vibrato_flatten_noise(depth, music, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx)
-					elif conversion_type == 'pitch-slide':
-						vibrato_slide(step, half_way_time, music, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx)
-					else:
-						warn('unhandled 4xy in {} chan_type="{}" conversion="{}": effect ignored'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
-							get_chan_type(music, chan_idx), conversion_type
-						))
+						# Transform effect
+						assert conversion_type in ['flatten', 'pitch-slide']
+						if get_chan_type(music, chan_idx) == '2a03-noise' and conversion_type == 'flatten':
+							vibrato_flatten_noise(depth, music, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx)
+						elif conversion_type == 'pitch-slide':
+							vibrato_slide(step, one_way_time, half_way_time, music, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx)
+						else:
+							warn('unhandled 4xy in {} chan_type="{}" conversion="{}": effect ignored'.format(
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
+								get_chan_type(music, chan_idx), conversion_type
+							))
 
 	return music
 
