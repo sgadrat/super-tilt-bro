@@ -180,13 +180,24 @@ def get_opcode_size(opcode):
 def is_timed_opcode(opcode):
 	return mod_opcode_name(opcode) in timed_opcodes
 
-def row_identifier(track_idx, pattern_idx, row_idx, channel_idx):
+def row_identifier(track_idx, pattern_idx, row_idx, channel_idx, music = None):
 	"""
 	Return a human readable string indicating a location in the file
 	"""
-	return 'track:{:02x}-pattern:{:02x}-row:{:02x}-chan:{}'.format(
-		track_idx, pattern_idx, row_idx, channel_idx
-	)
+	chan_row = None
+	if music is not None:
+		chan_row = get_row(music, track_idx, pattern_idx, channel_idx, row_idx)
+
+	if chan_row is None or chan_row.get('original') is None:
+		return '#pattern:{:02x}-row:{:02x}-chan:{}'.format(
+			pattern_idx, row_idx, channel_idx
+		)
+	else:
+		original = chan_row['original']
+		return 'order:{}-pattern:{:02x}-row:{:02x}-chan:{}'.format(
+			'??' if 'order' not in original else '{:02x}'.format(original['order']),
+			original['pattern'], original['row'], original['chan']
+		)
 
 def std_note_name(note):
 	"""
@@ -422,7 +433,7 @@ def get_previous_note(music, track_idx, pattern_idx, chan_idx, row_idx, ignore_s
 			elif effect[0] in pitch_effects:
 				if is_pitch_slide_activation_effect(effect):
 					unhandled_cases.append('non 1xx/2xx effect in {}'.format(
-						row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+						row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx, music)
 					))
 				else:
 					current_slide[effect_idx] = 0
@@ -617,6 +628,54 @@ def scan_next_chan_rows(callback, music, track_idx, pattern_idx, start_row_idx):
 # Music modifiers
 #
 
+def annotate_chanrows_sources(music):
+	"""
+	Add an "original" field to channels' rows indicating their orignal track:pattern:row:channel tuple
+
+	Depends: none
+	NotAfter: unroll_speed, flatten_orders, std_empty_row
+	"""
+	for track_idx in range(len(music['tracks'])):
+		track = music['tracks'][track_idx]
+		def scanner_annotate(pattern_idx, row_idx):
+			row = track['patterns'][pattern_idx]['rows'][row_idx]
+			for chan_idx in range(len(row['channels'])):
+				chan_row = row['channels'][chan_idx]
+
+				ensure('original' not in chan_row)
+				chan_row['original'] = {
+					'track': track_idx,
+					'pattern': pattern_idx,
+					'row': row_idx,
+					'chan': chan_idx,
+				}
+		scan_next_chan_rows(scanner_annotate, music, track_idx, 0, 0)
+
+	return music
+
+def annotate_chanrows_order(music):
+	"""
+	Add an "order" to "original" field of channels' rows to indicate original order.
+
+	Depends: annotate_chanrows_sources, flatten_orders
+	NotAfter: std_empty_row, anything that makes pattern missmatch pages (currently nothing does that before UCTF conversion)
+	"""
+	for track_idx in range(len(music['tracks'])):
+		track = music['tracks'][track_idx]
+		def scanner_annotate(pattern_idx, row_idx):
+			row = track['patterns'][pattern_idx]['rows'][row_idx]
+			for chan_idx in range(len(row['channels'])):
+				chan_row = row['channels'][chan_idx]
+
+				ensure('original' in chan_row, 'original location not found for {}'.format(
+					row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
+				))
+				ensure('order' not in chan_row['original'])
+				chan_row['original']['order'] = pattern_idx # Assuming pattern_idx equals order_idx thanks to dependency on "flatten_orders"
+		scan_next_chan_rows(scanner_annotate, music, track_idx, 0, 0)
+
+	return music
+
 def isolate_track(music, track_index):
 	"""
 	Remove all tracks except one.
@@ -723,12 +782,14 @@ def unroll_speed(music):
 				modified['tracks'][track_idx]['patterns'][-1]['rows'].append(modified_row)
 
 				dummy_row = {'channels': []}
-				for n_effects in modified['tracks'][track_idx]['channels_effects']:
+				for current_chan_idx in range(len(modified['tracks'][track_idx]['channels_effects'])):
+					n_effects = modified['tracks'][track_idx]['channels_effects'][current_chan_idx]
 					dummy_row['channels'].append({
 						'note': '...',
 						'instrument': '..',
 						'volume': '.',
-						'effects': ['...'] * n_effects
+						'effects': ['...'] * n_effects,
+						'original': copy.deepcopy(original_row['channels'][current_chan_idx].get('original'))
 					})
 
 				ensure(current_speed > 0, 'unhandled speed of {} in {}'.format(
@@ -774,7 +835,7 @@ def apply_forward_b_effect(music):
 							if bxx_location is not None:
 								if effect != original_row['channels'][bxx_location['chan']]['effects'][bxx_location['effect']]:
 									warn('multiple Bxx in {}: some are ignored'.format(
-										row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+										row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 									))
 								modified_row['channels'][bxx_location['chan']]['effects'][bxx_location['effect']] = '...'
 							bxx_location = {'chan':chan_idx, 'effect':effect_idx}
@@ -794,7 +855,7 @@ def apply_forward_b_effect(music):
 				if destination_pattern_idx != pattern_idx + 1:
 					#NOTE handling is may be not trivial, if a later backward BXX jump to a skipped pattern the only solution is to re-order patterns
 					error('Forward BXX is not to the next pattern in {}: interpreted as if it was to next pattern'.format(
-						row_identifier(track_idx, pattern_idx, row_idx, bxx_location['chan'])
+						row_identifier(track_idx, pattern_idx, row_idx, bxx_location['chan'], music)
 					))
 
 				# Remove Bxx effect from modified music
@@ -828,7 +889,7 @@ def apply_backward_b_effect(music):
 				if effect[0] == 'B':
 					if bxx_location is not None:
 						warn('multiple Bxx in {}: some are ignored'.format(
-							row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+							row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx, music)
 						))
 						current_row['channels'][bxx_location['chan']]['effects'][bxx_location['effect']] = '...'
 					bxx_location = {'chan':chan_idx, 'effect':effect_idx}
@@ -840,7 +901,7 @@ def apply_backward_b_effect(music):
 			if destination_pattern_idx <= current_pattern_idx:
 				if destination_pattern_idx != 0:
 					warn('Backward Bxx with "xx != 00" in {}: interpreted as B00'.format(
-						row_identifier(track_idx, current_pattern_idx, current_row_idx, bxx_location['chan'])
+						row_identifier(track_idx, current_pattern_idx, current_row_idx, bxx_location['chan'], music)
 					))
 
 				cut_position = {'pattern': current_pattern_idx, 'row': current_row_idx}
@@ -888,7 +949,7 @@ def apply_d_effect(music):
 						if effect[0] == 'D':
 							if dxx_location is not None:
 								warn('multiple Dxx in {}: some are ignored'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 								))
 								modified_row['channels'][dxx_location['chan']]['effects'][dxx_location['effect']] = '...'
 							dxx_location = {'chan':chan_idx, 'effect':effect_idx}
@@ -899,7 +960,7 @@ def apply_d_effect(music):
 
 				if original_row['channels'][dxx_location['chan']]['effects'][dxx_location['effect']] != 'D00':
 					warn('Dxx with xx != 00 in {}: interpreted as D00'.format(
-						row_identifier(track_idx, pattern_idx, row_idx, dxx_location['chan'])
+						row_identifier(track_idx, pattern_idx, row_idx, dxx_location['chan'], music)
 					))
 
 				# Remove Dxx effect from modified music
@@ -934,7 +995,7 @@ def apply_g_effect(music):
 						if effect[0] == 'G':
 							if g_effect_idx is not None:
 								warn('multiple GXX effects in {}: some will be ignored'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 								))
 							g_effect_idx = effect_idx
 
@@ -950,7 +1011,7 @@ def apply_g_effect(music):
 					ensure(distance >= 0, 'odd Gxx effect (negative xx)')
 					if distance == 0:
 						warn('useless GXX effect in {}: ignored'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 						))
 						chan_row['effects'][g_effect_idx] = '...'
 						continue
@@ -959,7 +1020,7 @@ def apply_g_effect(music):
 					dest_row_idx = row_idx + distance
 					if dest_row_idx >= len(pattern['rows']):
 						warn('GXX effect goes falls beyond pattern end in {}: moved to end of pattern'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 						))
 						dest_row_idx = len(pattern['rows'] - 1)
 					dest_chan_row = get_row(music, track=track_idx, pattern=pattern_idx, chan=chan_idx, row=dest_row_idx)
@@ -967,8 +1028,8 @@ def apply_g_effect(music):
 					if chan_row['note'] != '...':
 						if dest_chan_row['note'] != '...':
 							warn('GXX effect modifies the note at destination in {} => {}: GXX note ignored'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
-								row_identifier(track_idx, pattern_idx, dest_row_idx, chan_idx)
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music),
+								row_identifier(track_idx, pattern_idx, dest_row_idx, chan_idx, music)
 							))
 						else:
 							dest_chan_row['note'] = chan_row['note']
@@ -976,8 +1037,8 @@ def apply_g_effect(music):
 					if chan_row['instrument'] != '..':
 						if dest_chan_row['instrument'] != '..':
 							warn('GXX effect modifies the instrument at destination in {} => {}: GXX instrument ignored'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
-								row_identifier(track_idx, pattern_idx, dest_row_idx, chan_idx)
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music),
+								row_identifier(track_idx, pattern_idx, dest_row_idx, chan_idx, music)
 							))
 						else:
 							dest_chan_row['instrument'] = chan_row['instrument']
@@ -985,8 +1046,8 @@ def apply_g_effect(music):
 					if chan_row['volume'] != '.':
 						if dest_chan_row['volume'] != '.':
 							warn('GXX effect modifies the volume at destination in {} => {}: GXX volume ignored'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
-								row_identifier(track_idx, pattern_idx, dest_row_idx, chan_idx)
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music),
+								row_identifier(track_idx, pattern_idx, dest_row_idx, chan_idx, music)
 							))
 						else:
 							dest_chan_row['volume'] = chan_row['volume']
@@ -1028,7 +1089,7 @@ def apply_s_effect(music):
 						if effect[0] == 'S':
 							if s_effect_idx is not None:
 								warn('multiple GXX effects in {}: some will be ignored'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 								))
 							s_effect_idx = effect_idx
 
@@ -1045,7 +1106,7 @@ def apply_s_effect(music):
 					if distance == 0:
 						if chan_row['note'] != '...':
 							warn('S00 effect conflict with a note in {}: note erased'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 							))
 						chan_row['note'] = '---'
 						chan_row['effects'][s_effect_idx] = '...'
@@ -1055,15 +1116,15 @@ def apply_s_effect(music):
 					dest_row_idx = row_idx + distance
 					if dest_row_idx >= len(pattern['rows']):
 						warn('SXX effect goes falls beyond pattern end in {}: moved to end of pattern'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 						))
 						dest_row_idx = len(pattern['rows']) - 1
 					dest_chan_row = get_row(music, track=track_idx, pattern=pattern_idx, chan=chan_idx, row=dest_row_idx)
 
 					if dest_chan_row['note'] != '...':
 						warn('SXX effect conflict with a note in {} => {}: note erased'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
-							row_identifier(track_idx, pattern_idx, dest_row_idx, chan_idx)
+							row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music),
+							row_identifier(track_idx, pattern_idx, dest_row_idx, chan_idx, music)
 						))
 					dest_chan_row['note'] = '---'
 					chan_row['effects'][s_effect_idx] = '...'
@@ -1184,7 +1245,7 @@ def _apply_duty_sequence(seq_dut, ref_note, music, instrument_idx, track_idx, pa
 
 	if ref_duty is None:
 		notice('unable to find reference duty for instrument enveloppe in {}: considere it as V00'.format(
-			row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+			row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 		))
 		ref_duty = 0
 
@@ -1237,7 +1298,7 @@ def _apply_duty_sequence(seq_dut, ref_note, music, instrument_idx, track_idx, pa
 	# Warn if envelop goes past the end of the track, hoping there is an explicit VXX at the begining to reset duty
 	if stopped_on_track_end:
 		warn('duty envelope from {} goes beyond the end of the track'.format(
-			row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+			row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 		))
 
 	# Inform that the sequence is handled
@@ -1298,12 +1359,12 @@ def _apply_arpeggio_sequence(seq_arp, ref_note, music, instrument_idx, track_idx
 			#TODO check famitracker behaviour, is may be to loop through the table (strange behaviour, but consistent with what happens on noise)
 			if enveloppe_note_idx >= len(note_table_names):
 				warn('arpeggio enveloppe goes over the notes table in {}: last note of the table used'.format(
-					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx, music)
 				))
 				enveloppe_note_idx = len(note_table_names) - 1
 			elif enveloppe_note_idx < 0:
 				warn('arpeggio enveloppe goes under the notes table in {}: first note of the table used'.format(
-					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx, music)
 				))
 				enveloppe_note_idx = 0
 
@@ -1321,7 +1382,7 @@ def _apply_arpeggio_sequence(seq_arp, ref_note, music, instrument_idx, track_idx
 				{'effect': '3xx_skip', 'value': True},
 				replace=True,
 				msg='conflicting 3xx_skip caused by arpeggio instrument in {}: replacing existing effect, TODO avoid warn if exising is already True'.format(
-					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx, music)
 				)
 			)
 		else:
@@ -1337,7 +1398,7 @@ def _apply_arpeggio_sequence(seq_arp, ref_note, music, instrument_idx, track_idx
 					{'effect': 'frequency_adjust', 'value': pitch_diff},
 					replace=True,
 					msg='conflicting frequency_adjust caused by arpeggio instrument in {}: replacing existing effect, TODO merge frequency_adjust effects'.format(
-						row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+						row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx, music)
 					)
 				)
 
@@ -1396,7 +1457,7 @@ def _apply_pitch_sequence(seq_pit, ref_note, music, instrument_idx, track_idx, p
 			place_pitch_effect(
 				current_chan_row, envelope_effect, effect_idx, replace=True, warn_on_stop=False,
 				msg='instrument pitch envelope conflict with pattern in {}: overwrite pattern'.format(
-					row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+					row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 				)
 			)
 			current_slide = envelope_pitch
@@ -1506,7 +1567,7 @@ def remove_instruments(music, arp_force_absolute_notes=True):
 					if ref_note in ['...', '---', '===']:
 						if ref_note == '...':
 							warn('instrument without note in {}: ignored'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 							))
 
 						seq_vol = None
@@ -1575,7 +1636,7 @@ def repeat_3_effect(music):
 						if effect[0] == '3':
 							if portamento_effect_idx is not None:
 								warn('multiple 3XX effects in {}'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 								))
 								chan_row['effects'][portamento_effect_idx] = '...'
 							portamento_effect_idx = effect_idx
@@ -1589,7 +1650,7 @@ def repeat_3_effect(music):
 					if portamento_effect_idx is not None and portamento_effect_idx != original_portamento_effect_idx:
 						#TODO propper handling of multi effects on different columns (may need to rewrite this function from scratch)
 						warn('multiple 3XX effects in {}: keeping the one on column {}, removing from column {}'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
+							row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music),
 							original_portamento_effect_idx,
 							portamento_effect_idx
 						))
@@ -1603,7 +1664,7 @@ def repeat_3_effect(music):
 					# Corner cases
 					if has_other_pitch_effect and new_portamento is not None and new_portamento != 0:
 						warn('3XX effect with other pitch effects in {}: 3XX ignored'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 						))
 						assert portamento_effect_idx is not None, "effect_idx is None while effect value is not"
 						chan_row['effects'][portamento_effect_idx] = '...'
@@ -1628,7 +1689,7 @@ def repeat_3_effect(music):
 						# Place the 3xx effect
 						if chan_row['effects'][original_portamento_effect_idx] != '...' and chan_row['effects'][original_portamento_effect_idx][0] not in pitch_effects:
 							warn('unable to place portamento because of non-pitch effect in {}'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 							))
 						if chan_row['effects'][original_portamento_effect_idx] == '...':
 							chan_row['effects'][original_portamento_effect_idx] = '3{:02X}'.format(current_portamento)
@@ -1659,7 +1720,7 @@ def apply_3_effect(music):
 							if portamento_effect_idx is not None:
 								#TODO handle columns separately
 								warn('multiple 3xx effects in {}: some will be ignored'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 								))
 							portamento_effect_idx = effect_idx
 						elif effect[0] in pitch_effects:
@@ -1672,14 +1733,14 @@ def apply_3_effect(music):
 					if has_other_pitch_effect:
 						#TODO handle columns separately
 						warn('multiple pitch effects in {}: 3xx will be ignored'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 						))
 						chan_row['effects'][portamento_effect_idx] = '...'
 						continue
 
 					if chan_row['note'] in ['...', '---', '===']:
 						warn('3xx effect without explicit note in {}: effect ignored'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 						))
 						chan_row['effects'][portamento_effect_idx] = '...'
 						continue
@@ -1689,7 +1750,7 @@ def apply_3_effect(music):
 
 					if original_note['note'] is None:
 						warn('3xx effect without original note in {}: effect ignored'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 						))
 						chan_row['effects'][portamento_effect_idx] = '...'
 						continue
@@ -1697,7 +1758,7 @@ def apply_3_effect(music):
 					if original_note['note'] in ['---', '===']:
 						#NOTE matches famitracker's behavior, details in repeat_3_effect
 						notice('3xx effect on a note preceded by a stop in {}: effect ignored'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 						))
 						chan_row['effects'][portamento_effect_idx] = '...'
 						continue
@@ -1707,11 +1768,11 @@ def apply_3_effect(music):
 					else:
 						if original_note['unhandled_cases'] != []:
 							warn('3xx effect while origin note was impacted by unhandled pitch effect in {}: original note roughly estimated'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 							))
 						else:
 							notice('3xx effect while origin note was impacted by pitch effect in {}: original note estimated (precision={}%)'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music),
 								100 * (1 - abs(get_note_frequency(original_note['approximate_note']) - original_note['frequency']) / original_note['frequency'])
 							))
 						original_note = original_note['approximate_note']
@@ -1734,7 +1795,7 @@ def apply_3_effect(music):
 					last_row_idx = len(track['patterns'][dest_pattern_idx]['rows']) - 1
 					if (dest_pattern_idx, dest_row_idx) == (last_pattern_idx, last_row_idx):
 						warn('3xx effect goes over track limits in {}: truncated to track end'.format(
-							row_identifier(track_idx, pattern_idx, dest_row_idx, chan_idx)
+							row_identifier(track_idx, pattern_idx, dest_row_idx, chan_idx, music)
 						))
 						dest_pattern_idx = last_pattern_idx
 						dest_row_idx = last_row_idx
@@ -1782,7 +1843,7 @@ def apply_3_effect(music):
 					if not dest_has_pitch:
 						if current_effect != '...':
 							warn('non-pitch effect at portamento end location in {}: removing the non-pitch effect'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 							))
 						pattern['rows'][dest_row_idx]['channels'][chan_idx]['effects'][portamento_effect_idx] = '100'
 
@@ -1820,7 +1881,7 @@ def apply_qr_effect(music, effect_name):
 
 						if origin_note in ['---', '===']:
 							w('effect on a stop in {}: Rxy ignored'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 							))
 							chan_row['effects'][effect_idx] = '...'
 							continue
@@ -1831,20 +1892,20 @@ def apply_qr_effect(music, effect_name):
 							error = False
 							if origin_note_info['note'] is None:
 								w('effect without explicit note in {}: effect ignored'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 								))
 								error = True
 
 							if origin_note_info['note'] in ['---', '===']:
 								w('effect while previous note is a stop in {}: effect ignored'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 								))
 								error = True
 
 							if not origin_note_info['reliable']:
 								#NOTE it should be doable to use computed frequency if necessary, ultimately we just want to compute freq_start and freq_stop
 								w('effect with reference note impacted by pitch effect in {}: ignored'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 								))
 								error = True
 
@@ -1868,7 +1929,7 @@ def apply_qr_effect(music, effect_name):
 							note_table_index_stop = get_note_table_index(origin_note) + effect_y
 							if note_table_index_stop >= len(note_table_freqs):
 								warn('Qxy effect extends after notes table in {}: effect truncated'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 								))
 								note_table_index_stop = len(note_table_freqs) - 1
 							freq_stop = note_table_freqs[note_table_index_stop]
@@ -1878,7 +1939,7 @@ def apply_qr_effect(music, effect_name):
 							note_table_index_stop = get_note_table_index(origin_note) - effect_y
 							if note_table_index_stop < 0:
 								w('effect extends before notes table in {}: effect truncated'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 								))
 								note_table_index_stop = 0
 							freq_stop = note_table_freqs[note_table_index_stop]
@@ -1910,7 +1971,7 @@ def apply_qr_effect(music, effect_name):
 						if stop_row_idx is None:
 							#NOTE possible if the effect lasts after the last pattern, should be fixed if it occurs
 							w('effect stop row not found in {}: effect ignored'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 							))
 							chan_row['effects'][effect_idx] = '...'
 							continue
@@ -1925,7 +1986,7 @@ def apply_qr_effect(music, effect_name):
 						if not stop_has_pitch_effect:
 							if stop_chan_row['effects'][effect_idx] != '...':
 								w('effect stops where a non-pitch effect is placed in {}: removing non-pitch effect {}'.format(
-									row_identifier(track_idx, pattern_idx, stop_row_idx, chan_idx),
+									row_identifier(track_idx, pattern_idx, stop_row_idx, chan_idx, music),
 									stop_chan_row['effects'][effect_idx]
 								))
 							stop_chan_row['effects'][effect_idx] = '100'
@@ -1964,7 +2025,7 @@ def apply_4_effect(music):
 		scan_previous_chan_rows(scanner_flatten_original_pitch, music, track_idx, pattern_idx, chan_idx, row_idx)
 
 		ensure(current_pitch is not None, 'unable to find original pitch for 4xy in {}: TODO handle it for next notes'.format(
-			row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+			row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 		))
 
 		# Remove effect from pattern
@@ -1996,16 +2057,16 @@ def apply_4_effect(music):
 					# Should be handled by a filter that move pitch and volum effects to dedicated columns
 					#  (after checking that famitracker actually support both effect types on the same column running simultaneously)
 					warn('4xy interrupted by a non-pitch effect in {} at {}: effect trucated'.format(
-						row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
-						row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+						row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music),
+						row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx, music)
 					))
 				return False
 
 			# Stop on halt/release
 			if current_chan_row['note'] in ['---', '===']:
 				warn('4xy goes through a stop in {} at {}: effect truncated'.format(
-					row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
-					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx)
+					row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music),
+					row_identifier(track_idx, current_pattern_idx, current_row_idx, chan_idx, music)
 				))
 				return False
 
@@ -2031,7 +2092,7 @@ def apply_4_effect(music):
 		step_int = int(0.5 + step)
 		if abs(step_int - step) / step > .1:
 			warn('4xy transformation to pitch slide is imprecise in {}: precision lost'.format(
-				row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+				row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 			))
 		step = step_int
 
@@ -2053,8 +2114,8 @@ def apply_4_effect(music):
 			if current_effect[0] in pitch_effects:
 				if current_effect[0] != '4':
 					notice('4xy effect is interrupted by another pitch effect type in {}, starting in {}'.format(
-						row_identifier(track_idx, pattern_idx, current_row_idx, chan_idx),
-						row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+						row_identifier(track_idx, pattern_idx, current_row_idx, chan_idx, music),
+						row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 					))
 				has_pitch_effect = True
 
@@ -2068,7 +2129,7 @@ def apply_4_effect(music):
 				#     Example: from one column containing pitch slides and volume slides,
 				#              we get two columnsi: one with only pitch slides, another with only volume slides
 				warn('non-pitch effect while a 4xy is active in {}: moving the non-pitch effect to another column'.format(
-					row_identifier(track_idx, pattern_idx, current_row_idx, chan_idx),
+					row_identifier(track_idx, pattern_idx, current_row_idx, chan_idx, music),
 				))
 				current_chan_row['effects'][vibrato_effect_idx] = '...'
 				current_chan_row['effects'].append(current_effect)
@@ -2083,7 +2144,7 @@ def apply_4_effect(music):
 
 		# Check if we hit the end of track
 		if hit_the_end:
-			warn('4xy effect extends after track in {}: effect truncated'.format(row_identifier(track_idx, pattern_idx, row_idx, chan_idx)))
+			warn('4xy effect extends after track in {}: effect truncated'.format(row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)))
 			music['tracks'][track_idx]['patterns'][-1]['rows'][-1]['channels'][chan_idx]['effects'][vibrato_effect_idx] = '100'
 
 	#
@@ -2133,7 +2194,7 @@ def apply_4_effect(music):
 
 						if half_way_time < 1:
 							warn('4xy effect too tight in {}: period={}, one_way={}, half_way={}'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music),
 								period, one_way_time, half_way_time
 							))
 
@@ -2141,7 +2202,7 @@ def apply_4_effect(music):
 							# Flattening noise is compatble with pitch effect but not other flattening.
 							#NOTE: has_other_pitch_effect computation is incomplete and should check any active pitch effect, not just those starting on this row
 							warn('multiple pitch effects in {}: 4xy support for it is partial'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 							))
 
 						# Transform effect
@@ -2152,7 +2213,7 @@ def apply_4_effect(music):
 							vibrato_slide(step, one_way_time, half_way_time, music, track_idx, pattern_idx, row_idx, chan_idx, vibrato_effect_idx)
 						else:
 							warn('unhandled 4xy in {} chan_type="{}" conversion="{}": effect ignored'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music),
 								get_chan_type(music, chan_idx), conversion_type
 							))
 
@@ -2176,7 +2237,7 @@ def apply_a_effect(music):
 						if effect[0] == 'A':
 							if a_effect_idx is not None:
 								warn('multiple Axy effects in {}: some will be ignored'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 								))
 							a_effect_idx = effect_idx
 						elif effect[0] in volume_effects:
@@ -2193,7 +2254,7 @@ def apply_a_effect(music):
 
 					if has_other_volume_effect:
 						warn('multiple volume effects in {}: Axy will be ignored'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 						))
 						chan_row['effects'][a_effect_idx] = '...'
 						continue
@@ -2243,7 +2304,7 @@ def apply_a_effect(music):
 						if current_volume_effect is not None:
 							if current_volume_effect[0] != 'A':
 								notice('Axy interrupted by another volume effect in {}: volume slide stopped'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 								))
 							return False
 
@@ -2259,7 +2320,7 @@ def apply_a_effect(music):
 
 					if hit_the_end:
 						warn('Axy goes beyond end of track in {}: effect truncated'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx)
+							row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
 						))
 
 	return music
@@ -2318,7 +2379,7 @@ def warn_instruments(music):
 					chan_row = row['channels'][channel_idx]
 					if chan_row['instrument'] != '..':
 						warn('instrument not handled in {}: instrument={}'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, channel_idx),
+							row_identifier(track_idx, pattern_idx, row_idx, channel_idx, music),
 							chan_row['instrument']
 						))
 	return music
@@ -2342,7 +2403,7 @@ def warn_effects(music):
 					for effect in chan_row['effects']:
 						if effect[0] not in ['.', '1', '2', 'V']:
 							warn('effect not handled in {}: effect={}'.format(
-								row_identifier(track_idx, pattern_idx, row_idx, channel_idx),
+								row_identifier(track_idx, pattern_idx, row_idx, channel_idx, music),
 								effect
 							))
 						elif effect[0] in ['1', '2']:
@@ -2352,12 +2413,12 @@ def warn_effects(music):
 
 					if len(pitch_effects) > 1:
 						warn('multiple pitch effects not merged in {}: effects={}'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, channel_idx),
+							row_identifier(track_idx, pattern_idx, row_idx, channel_idx, music),
 							pitch_effects
 						))
 					if len(duty_effects) > 1:
 						warn('multiple duty effects not merged in {}: effects={}'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, channel_idx),
+							row_identifier(track_idx, pattern_idx, row_idx, channel_idx, music),
 							duty_effects
 						))
 	return music
@@ -2406,7 +2467,7 @@ def remove_superfluous_duty(music):
 						if effect[0] == 'V':
 							if current_duty is not None:
 								warn('after manipulation, multiple duty effects in {}: some ignored'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx),
+									row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music),
 								))
 								chan_row['effects'][effect_idx] = '...'
 							else:

@@ -63,9 +63,11 @@ with open(SOURCE_FILE_PATH, 'r', encoding='latin1') as f:
 #  * pre-interpreting effects not handled by the engine
 #  * standardizing things
 #  * ... (whatever is a direct translation of the original with less things to handle)
+music = ftmmanip.annotate_chanrows_sources(music)
 music = ftmmanip.isolate_track(music, TRACK_INDEX)
 music = ftmmanip.get_num_channels(music)
 music = ftmmanip.flatten_orders(music)
+music = ftmmanip.annotate_chanrows_order(music)
 music = ftmmanip.unroll_speed(music)
 music = ftmmanip.apply_forward_b_effect(music)
 music = ftmmanip.apply_backward_b_effect(music)
