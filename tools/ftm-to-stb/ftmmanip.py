@@ -2228,100 +2228,94 @@ def apply_a_effect(music):
 			for chan_idx in range(music['params']['n_chan']):
 				for row_idx in range(len(pattern['rows'])):
 					chan_row = pattern['rows'][row_idx]['channels'][chan_idx]
+					for a_effect_idx in range(len(chan_row['effects'])):
+						# Ignore columns which does not hold a 4xy effect
+						effect = chan_row['effects'][a_effect_idx]
+						if effect[0] != 'A':
+							continue
 
-					# Find if current row has a A effect
-					a_effect_idx = None
-					has_other_volume_effect = False
-					for effect_idx in range(len(chan_row['effects'])):
-						effect = chan_row['effects'][effect_idx]
-						if effect[0] == 'A':
-							if a_effect_idx is not None:
-								warn('multiple Axy effects in {}: some will be ignored'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
-								))
-							a_effect_idx = effect_idx
-						elif effect[0] in volume_effects:
-							has_other_volume_effect = True
+						# Special handling of A00, simply don't slide
+						if effect == 'A00':
+							chan_row['effects'][a_effect_idx] = '...'
+							continue
 
-					# Do not process the row if it has no A effect or is a non-supported corner case
-					if a_effect_idx is None:
-						continue
+						# Find if current row has other volume effects
+						has_other_volume_effect = False
+						for current_effect_idx in range(len(chan_row['effects'])):
+							current_effect = chan_row['effects'][current_effect_idx][0]
+							if current_effect_idx != a_effect_idx and current_effect[0] in volume_effects:
+								has_other_volume_effect = True
 
-					a_effect = chan_row['effects'][a_effect_idx]
-					if a_effect == 'A00':
+						a_effect = chan_row['effects'][a_effect_idx]
+						if has_other_volume_effect:
+							notice('multiple volume effects in {}: it should work, but be ready for the worst'.format(
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
+							))
+
+						# Get original volume
+						current_volume = None
+						def scanner(current_pattern_idx, current_row_idx):
+							nonlocal current_volume
+							current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
+							if current_chan_row['volume'] != '.':
+								current_volume = int(current_chan_row['volume'], 16)
+								return False
+						scan_previous_chan_rows(scanner, music, track_idx, pattern_idx, chan_idx, row_idx)
+
+						if current_volume is None:
+							current_volume = 15
+
+						# Parse effect
+						effect_x = int(a_effect[1], 16)
+						effect_y = int(a_effect[2], 16)
+						ensure(effect_x == 0 or effect_y == 0, 'Axy effect without 0')
+						slide = -effect_y if effect_x == 0 else effect_x
+						slide = slide / 8.
+
+						# Remove effect from pattern
 						chan_row['effects'][a_effect_idx] = '...'
-						continue
 
-					if has_other_volume_effect:
-						warn('multiple volume effects in {}: Axy will be ignored'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
-						))
-						chan_row['effects'][a_effect_idx] = '...'
-						continue
+						# Apply volume slide until another volume effect is found or the slide is over
+						def apply_volume_slide_scanner(current_pattern_idx, current_row_idx):
+							global volume_effects
+							nonlocal current_volume, slide, a_effect_idx, track, pattern_idx, row_idx, chan_idx
+							current_pattern = track['patterns'][current_pattern_idx]
+							current_chan_row = current_pattern['rows'][current_row_idx]['channels'][chan_idx]
 
-					# Get original volume
-					current_volume = None
-					def scanner(current_pattern_idx, current_row_idx):
-						nonlocal current_volume
-						current_chan_row = track['patterns'][current_pattern_idx]['rows'][current_row_idx]['channels'][chan_idx]
-						if current_chan_row['volume'] != '.':
-							current_volume = int(current_chan_row['volume'], 16)
-							return False
-					scan_previous_chan_rows(scanner, music, track_idx, pattern_idx, chan_idx, row_idx)
+							# Reset volume if any volume exists in the volume column
+							if current_chan_row['volume'] != '.':
+								current_volume = int(current_chan_row['volume'], 16)
 
-					if current_volume is None:
-						current_volume = 15
-
-					# Parse effect
-					effect_x = int(a_effect[1], 16)
-					effect_y = int(a_effect[2], 16)
-					ensure(effect_x == 0 or effect_y == 0, 'Axy effect without 0')
-					slide = -effect_y if effect_x == 0 else effect_x
-					slide = slide / 8.
-
-					# Remove effect from pattern
-					chan_row['effects'][a_effect_idx] = '...'
-
-					# Apply volume slide until another volume effect is found or the slide is over
-					def apply_volume_slide_scanner(current_pattern_idx, current_row_idx):
-						global volume_effects
-						nonlocal current_volume, slide, track, pattern_idx, row_idx, chan_idx
-						current_pattern = track['patterns'][current_pattern_idx]
-						current_chan_row = current_pattern['rows'][current_row_idx]['channels'][chan_idx]
-
-						# Reset volume if any volume exists in the volume column
-						if current_chan_row['volume'] != '.':
-							current_volume = int(current_chan_row['volume'], 16)
-
-						# Stop immediately on any volume effect
-						current_volume_effect = None
-						for current_effect in current_chan_row['effects']:
-							if current_effect[0] == 'A':
-								current_volume_effect = current_effect
-							elif current_volume_effect is None and current_effect[0] in volume_effects:
+							# Stop immediately on any volume effect
+							current_volume_effect = None
+							current_effect = current_chan_row['effects'][a_effect_idx]
+							if current_effect[0] in volume_effects:
 								current_volume_effect = current_effect
 
-						if current_volume_effect is not None:
-							if current_volume_effect[0] != 'A':
-								notice('Axy interrupted by another volume effect in {}: volume slide stopped'.format(
-									row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
-								))
-							return False
+							if current_volume_effect is not None:
+								if current_volume_effect[0] == 'A':
+									return False
+								else:
+									# Famitracker behavior is to handle both effects in parallel (as if there was on different columns)
+									# We emulate that by just ignoring the new effect, it will be handled by its own filter.
+									notice('Axy crosses another volume effect in {}: volume slide continues and both should coexist'.format(
+										row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
+									))
 
-						# Apply new volume
-						current_volume += slide
-						current_volume = min(15, max(0, current_volume))
-						current_chan_row['volume'] = '{:2X}'.format(int(current_volume))
+							# Apply new volume
+							current_volume += slide
+							current_volume = min(15, max(0, current_volume))
+							current_chan_row['volume'] = '{:2X}'.format(int(current_volume))
 
-						# Stop if the slide hit the end
-						if current_volume <= 0 or current_volume >= 15:
-							return False
-					hit_the_end = scan_next_chan_rows(apply_volume_slide_scanner, music, track_idx, pattern_idx, row_idx)
+							# Stop if the slide hit the end
+							if current_volume <= 0 or current_volume >= 15:
+								return False
+						hit_the_end = scan_next_chan_rows(apply_volume_slide_scanner, music, track_idx, pattern_idx, row_idx)
 
-					if hit_the_end:
-						warn('Axy goes beyond end of track in {}: effect truncated'.format(
-							row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
-						))
+						if hit_the_end:
+							warn('Axy goes beyond end of track in {}: effect truncated'.format(
+								row_identifier(track_idx, pattern_idx, row_idx, chan_idx, music)
+							))
 
 	return music
 
