@@ -3890,10 +3890,10 @@ def samples_to_source(music):
 	track_names = ['pulse1', 'pulse2', 'triangle', 'noise']
 
 	# Banking information
-	asm_header = 'music_{music_name_low}_bank = CURRENT_BANK_NUMBER\n'.format(**locals())
+	asm_header = '+music_{music_name_low}_bank = CURRENT_BANK_NUMBER\n'.format(**locals())
 
 	# Music header
-	music_header = 'music_{music_name_low}_info:\n'.format(**locals())
+	music_header = '+music_{music_name_low}_info:\n'.format(**locals())
 	for track_name in track_names:
 		music_header += '.word music_{music_name_low}_track_{track_name}\n'.format(**locals())
 
