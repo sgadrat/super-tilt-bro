@@ -2219,6 +2219,29 @@ def apply_4_effect(music):
 
 	return music
 
+def apply_e_effect(music):
+	# Iterate on rows per channel
+	for track_idx in range(len(music['tracks'])):
+		track = music['tracks'][track_idx]
+		for pattern_idx in range(len(track['patterns'])):
+			pattern = track['patterns'][pattern_idx]
+			for chan_idx in range(music['params']['n_chan']):
+				for row_idx in range(len(pattern['rows'])):
+					chan_row = pattern['rows'][row_idx]['channels'][chan_idx]
+					for effect_idx in range(len(chan_row['effects'])):
+						# Ignore columns which does not hold a Axy effect
+						effect = chan_row['effects'][effect_idx]
+						if effect[0] != 'E':
+							continue
+
+						# Set volume
+						chan_row['volume'] = '{:X}'.format(min(0x0f, int(effect[1:], 16)))
+
+						# Remove effect
+						chan_row['effects'][effect_idx] = '...'
+
+	return music
+
 def apply_a_effect(music):
 	# Iterate on rows per channel
 	for track_idx in range(len(music['tracks'])):
