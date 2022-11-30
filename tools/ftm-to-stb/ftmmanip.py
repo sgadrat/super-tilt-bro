@@ -2789,7 +2789,7 @@ def adapt_tempo(music):
 			elif occurences > 0 and chan_idx is not None:
 				return (None, 'unable to find value of {} at the begining of sample {}, used by multiple channels'.format(field, sample_idx))
 			elif occurences > 1:
-				return (None, 'unable to find value of {} at the begining of sample {}, used by multiple channels'.format(field, sample_idx))
+				return (None, 'unable to find value of {} at the begining of sample {}, used multiple times in channel {}'.format(field, sample_idx, current_chan_idx))
 
 		if chan_idx is None:
 			notice('unused sample')
@@ -2954,7 +2954,7 @@ def adapt_tempo(music):
 								if previous_line_slide is None:
 									if error is None:
 										# Will behave differently than famitracker only if pitch slide was set before looping
-										warn('no pitch slide for uctf sample={} line={}: assume zero'.format(
+										notice('no pitch slide for uctf sample={} line={}: assume zero'.format(
 											sample_idx, original_line_idx-1
 										))
 										previous_line_slide = 0
