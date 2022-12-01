@@ -848,8 +848,9 @@ static void connection_send_msg() {
 
 	uint8_t flags_byte = (*system_index == 0 ? 0x00 : 0x80); // framerate
 	flags_byte |= (RAINBOW_MAPPER_VERSION & 0x60); // support
-	buff[12] = (flags_byte | u16_msb(GAME_VERSION)); // release_type + version_major
-	buff[13] = u16_lsb(GAME_VERSION); // version_minor
+	flags_byte |= ((GAME_VERSION_TYPE << 3) & 0x18); // release_type
+	buff[12] = (flags_byte | (GAME_VERSION_MAJOR & 0x07)); // version_major
+	buff[13] = GAME_VERSION_MINOR; // version_minor
 
 	buff[14] = *config_player_a_character; // selected_character
 	buff[15] = *config_player_a_character_palette; // selected_palette
