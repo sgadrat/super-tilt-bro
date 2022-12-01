@@ -12,7 +12,7 @@ import stblib.utils
 import sys
 import textwrap
 
-FIRST_AVAILABLE_BANK = 14
+FIRST_AVAILABLE_BANK = 15
 
 def text_asm(text, size, space_tile):
 	"""
