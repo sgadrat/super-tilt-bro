@@ -8,7 +8,7 @@ bank_data13_begin:
 bank_data_music_sinbad2_begin:
 #include "game/data/music/theme_sinbad2.asm"
 #echo
-#echo Sinbad theme by tui size:
+#echo Sinbad2 theme size:
 #print *-bank_data_music_sinbad2_begin
 
 bank_data13_end:
