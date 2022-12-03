@@ -24,4 +24,6 @@ static uint16_t const STNP_START_GAME_FIELD_PB_PALETTE = 8;
 static uint16_t const STNP_START_GAME_FIELD_PA_PING = 9;
 static uint16_t const STNP_START_GAME_FIELD_PB_PING = 12;
 
+static uint16_t const STNP_GAMEOVER_FIELD_WINNER_PLAYER_NUMBER = 1;
+
 static uint16_t const STNP_DISCONNECTED_FIELD_REASON = 1;

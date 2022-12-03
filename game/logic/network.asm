@@ -116,27 +116,38 @@ network_tick_ingame:
 
 			lda esp_rx_buffer+ESP_MSG_PAYLOAD+0 ; Message type from payload
 			cmp #STNP_SRV_MSG_TYPE_NEWSTATE
+			beq handle_new_state
+			cmp #STNP_SRV_MSG_TYPE_GAMEOVER
 			bne skip_message
 
-				; Ignore prediction ID
-				; TODO use it to avoid useless state reset
-				;lda esp_rx_buffer+ESP_MSG_PAYLOAD+1
+				handle_gameover:
+					; Set winner according to the message
+					lda esp_rx_buffer+ESP_MSG_PAYLOAD+STNP_GAMEOVER_FIELD_WINNER_PLAYER_NUMBER
+					sta game_winner
 
-				; Override gamestate with the one in message's payload
-				jsr update_state
+					; Jump to gameover screen, skipping any further processing
+					jmp game_mode_goto_gameover
 
-				; Acknowledge message reception
-				sta RAINBOW_WIFI_RX
+				handle_new_state:
+					; Ignore prediction ID
+					; TODO use it to avoid useless state reset
+					;lda esp_rx_buffer+ESP_MSG_PAYLOAD+1
 
-				; Update last_frame_btns
-				;  "update_state" leaves buttons as after the "game_tick", before "fetch_controllers"
-				;  So, it needs a full refresh, update only "last_frame_btns" here since "controller_*_btns" will be ubdated below
-				lda controller_a_btns
-				sta controller_a_last_frame_btns
-				lda controller_b_btns
-				sta controller_b_last_frame_btns
+					; Override gamestate with the one in message's payload
+					jsr update_state
 
-				jmp state_updated
+					; Acknowledge message reception
+					sta RAINBOW_WIFI_RX
+
+					; Update last_frame_btns
+					;  "update_state" leaves buttons as after the "game_tick", before "fetch_controllers"
+					;  So, it needs a full refresh, update only "last_frame_btns" here since "controller_*_btns" will be ubdated below
+					lda controller_a_btns
+					sta controller_a_last_frame_btns
+					lda controller_b_btns
+					sta controller_b_last_frame_btns
+
+					jmp state_updated
 
 			skip_message:
 				; Acknowledge message reception
