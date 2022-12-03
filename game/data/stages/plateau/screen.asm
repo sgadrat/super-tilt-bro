@@ -19,7 +19,7 @@ stage_flatland_fadeout_msb:
 .byt >stage_flatland_palette_black, >stage_flatland_palette_fadeout3, >stage_flatland_palette_fadeout2, >stage_flatland_palette_fadeout1, >stage_flatland_palette
 
 ; Temporary 3 char alias for tiles
-#define TFP TILE_CHAR_PCT
+#define TFP INGAME_TILE_CHAR_PCT
 
 nametable_flatland:
 .byt ZIPNT_ZEROS(148)

@@ -2358,7 +2358,7 @@ write_player_damages:
 					lda character_icon
 					jmp set_stock_tile
 				empty_stock:
-					lda #TILE_EMPTY_STOCK_ICON
+					lda #INGAME_CHARACTER_EMPTY_STOCK_TILE
 			set_stock_tile:
 			sta nametable_buffers, x
 			inx

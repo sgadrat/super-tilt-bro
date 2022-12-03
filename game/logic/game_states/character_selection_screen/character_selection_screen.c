@@ -45,13 +45,6 @@ extern uint8_t const tileset_menu_char_select_sprites;
 extern uint8_t const CHARACTERS_NUMBER; // This is actually a value label, use the address of this variable
 extern uint8_t const CHARSET_ALPHANUM_BANK_NUMBER; // Actually a label, use its address or "charset_bank()"
 
-static uint8_t const TILE_CHAR_A = 230;
-static uint8_t const TILE_CHAR_R = TILE_CHAR_A + ('r' - 'a');
-static uint8_t const TILE_CHAR_N = TILE_CHAR_A + ('n' - 'a');
-static uint8_t const TILE_CHAR_D = TILE_CHAR_A + ('d' - 'a');
-static uint8_t const TILE_CHAR_O = TILE_CHAR_A + ('o' - 'a');
-static uint8_t const TILE_CHAR_M = TILE_CHAR_A + ('m' - 'a');
-
 ///////////////////////////////////////
 // Character selection's ASM functions
 ///////////////////////////////////////

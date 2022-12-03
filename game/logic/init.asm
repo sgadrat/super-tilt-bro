@@ -1,10 +1,5 @@
 global_init:
 .(
-	; Set data bank
-	;TODO check if still necessary (seems to be a leftover of NROM to UNROM512 conversion)
-	lda #DATA_BANK_NUMBER
-	jsr switch_bank
-
 	; Initialize configuration
 	jsr default_config
 

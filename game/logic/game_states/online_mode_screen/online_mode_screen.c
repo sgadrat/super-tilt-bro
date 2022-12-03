@@ -40,44 +40,6 @@ extern uint8_t const tileset_menu_online_mode_sprites;
 extern uint8_t const MENU_ONLINE_MODE_TILESET_BANK_NUMBER; // Actually a label, use its address or "tileset_bank()"
 extern uint8_t const TILESET_CHARSET_ALPHANUM_FG0_BG2_BANK_NUMBER; // Actually a label, use its address or "charset_bank()"
 
-static uint8_t const TILE_CHAR_0 = 220;
-static uint8_t const TILE_CHAR_1 = TILE_CHAR_0 + ('1' - '0');
-static uint8_t const TILE_CHAR_2 = TILE_CHAR_0 + ('2' - '0');
-static uint8_t const TILE_CHAR_3 = TILE_CHAR_0 + ('3' - '0');
-static uint8_t const TILE_CHAR_4 = TILE_CHAR_0 + ('4' - '0');
-static uint8_t const TILE_CHAR_5 = TILE_CHAR_0 + ('5' - '0');
-static uint8_t const TILE_CHAR_6 = TILE_CHAR_0 + ('6' - '0');
-static uint8_t const TILE_CHAR_7 = TILE_CHAR_0 + ('7' - '0');
-static uint8_t const TILE_CHAR_8 = TILE_CHAR_0 + ('8' - '0');
-static uint8_t const TILE_CHAR_9 = TILE_CHAR_0 + ('9' - '0');
-
-static uint8_t const TILE_CHAR_A = 230;
-static uint8_t const TILE_CHAR_B = TILE_CHAR_A + ('B' - 'A');
-static uint8_t const TILE_CHAR_C = TILE_CHAR_A + ('C' - 'A');
-static uint8_t const TILE_CHAR_D = TILE_CHAR_A + ('D' - 'A');
-static uint8_t const TILE_CHAR_E = TILE_CHAR_A + ('E' - 'A');
-static uint8_t const TILE_CHAR_F = TILE_CHAR_A + ('F' - 'A');
-static uint8_t const TILE_CHAR_G = TILE_CHAR_A + ('G' - 'A');
-static uint8_t const TILE_CHAR_H = TILE_CHAR_A + ('H' - 'A');
-static uint8_t const TILE_CHAR_I = TILE_CHAR_A + ('I' - 'A');
-static uint8_t const TILE_CHAR_J = TILE_CHAR_A + ('J' - 'A');
-static uint8_t const TILE_CHAR_K = TILE_CHAR_A + ('K' - 'A');
-static uint8_t const TILE_CHAR_L = TILE_CHAR_A + ('L' - 'A');
-static uint8_t const TILE_CHAR_M = TILE_CHAR_A + ('M' - 'A');
-static uint8_t const TILE_CHAR_N = TILE_CHAR_A + ('N' - 'A');
-static uint8_t const TILE_CHAR_O = TILE_CHAR_A + ('O' - 'A');
-static uint8_t const TILE_CHAR_P = TILE_CHAR_A + ('P' - 'A');
-static uint8_t const TILE_CHAR_Q = TILE_CHAR_A + ('Q' - 'A');
-static uint8_t const TILE_CHAR_R = TILE_CHAR_A + ('R' - 'A');
-static uint8_t const TILE_CHAR_S = TILE_CHAR_A + ('S' - 'A');
-static uint8_t const TILE_CHAR_T = TILE_CHAR_A + ('T' - 'A');
-static uint8_t const TILE_CHAR_U = TILE_CHAR_A + ('U' - 'A');
-static uint8_t const TILE_CHAR_V = TILE_CHAR_A + ('V' - 'A');
-static uint8_t const TILE_CHAR_W = TILE_CHAR_A + ('W' - 'A');
-static uint8_t const TILE_CHAR_X = TILE_CHAR_A + ('X' - 'A');
-static uint8_t const TILE_CHAR_Y = TILE_CHAR_A + ('Y' - 'A');
-static uint8_t const TILE_CHAR_Z = TILE_CHAR_A + ('Z' - 'A');
-
 ///////////////////////////////////////
 // Screen specific ASM functions
 ///////////////////////////////////////

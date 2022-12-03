@@ -3,9 +3,6 @@
 * = $8000
 
 bank_data01_begin:
-bank_data01_tileset_common_begin:
-#include "game/data/tilesets/common.asm"
-bank_data01_tileset_common_end:
 bank_data01_tileset_green_grass_begin:
 #include "game/data/tilesets/green_grass.asm"
 bank_data01_tileset_green_grass_end:
@@ -20,9 +17,15 @@ bank_data01_char_select_screen_extra_data_end:
 bank_data01_char_select_screen_extra_code_begin:
 #include "game/logic/game_states/character_selection_screen/character_selection_screen_extra_code.asm"
 bank_data01_char_select_screen_extra_code_end:
+
+.(
 bank_data01_gameover_data_begin:
 #include "game/data/menu_gameover/tilesets.asm"
-bank_data01_gameover_data_end:
+#include "game/data/menu_gameover/screen.asm"
+#echo
+#echo DATA01-bank Gameover screen data:
+#print *-bank_data01_gameover_data_begin
+.)
 
 bank_data_sfx:
 #include "game/data/sfx.asm"
@@ -66,17 +69,11 @@ bank_data01_end:
 #echo DATA01-bank Menus tileset size:
 #print bank_data01_tileset_menus_end-bank_data01_tileset_menus_begin
 #echo
-#echo DATA01-bank Common tileset size:
-#print bank_data01_tileset_common_end-bank_data01_tileset_common_begin
-#echo
 #echo DATA01-bank Character selection screen extra data:
 #print bank_data01_char_select_screen_extra_data_end-bank_data01_char_select_screen_extra_data_begin
 #echo
 #echo DATA01-bank Character selection screen extra code:
 #print bank_data01_char_select_screen_extra_code_end-bank_data01_char_select_screen_extra_code_begin
-#echo
-#echo DATA01-bank Gameover screen data:
-#print bank_data01_gameover_data_end-bank_data01_gameover_data_begin
 #echo
 #echo DATA01-bank free space:
 #print $c000-*

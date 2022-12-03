@@ -1,12 +1,8 @@
 #echo
-#echo ====== DATA-BANK =====
+#echo ====== DATA-02-BANK =====
 * = $8000
 
-bank_data_begin:
-#include "game/data/data.asm"
-#echo
-#echo DATA-bank data size:
-#print *-bank_data_begin
+bank_data02_begin:
 
 bank_data_online_mode_extra_data_begin:
 #include "game/data/menu_online_mode/anims.asm"
@@ -59,13 +55,13 @@ bank_data_common_ingame_sprites_begin:
 #echo Tileset common ingame sprites:
 #print *-bank_data_common_ingame_sprites_begin
 
-bank_data_end:
+bank_data02_end:
 
 #echo
-#echo DATA-bank used size:
-#print bank_data_end-bank_data_begin
+#echo DATA-02-bank used size:
+#print bank_data02_end-bank_data02_begin
 #echo
-#echo DATA-bank free space:
+#echo DATA-02-bank free space:
 #print $c000-*
 
 #if $c000-* < 0

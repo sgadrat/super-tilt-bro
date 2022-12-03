@@ -49,9 +49,9 @@
 		;  - "%"
 		;  - Numerics (fg=1 bg=3)
 		lda PPUSTATUS
-		lda #>($1000+(TILE_EMPTY_STOCK_ICON*16))
+		lda #>($1000+(INGAME_CHARACTER_EMPTY_STOCK_TILE*16))
 		sta PPUADDR
-		lda #<($1000+(TILE_EMPTY_STOCK_ICON*16))
+		lda #<($1000+(INGAME_CHARACTER_EMPTY_STOCK_TILE*16))
 		sta PPUADDR
 
 		ldx #8

@@ -126,9 +126,9 @@ character_selection_change_global_game_state_lite:
 	jmp forever
 .)
 
+;FIXME could be handled by trampoline from screen's bank instead of being a routine stored in fixed bank
 character_selection_reset_music:
 .(
-	SWITCH_BANK(#DATA_BANK_NUMBER)
 	jsr audio_music_weak
 	SWITCH_BANK(#CHAR_SELECT_SCREEN_EXTRA_BANK_NUMBER)
 	rts

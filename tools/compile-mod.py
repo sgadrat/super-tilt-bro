@@ -586,16 +586,9 @@ def generate_banks(char_to_bank, tileset_to_bank, game_dir):
 			#define CHR_BANK_NUMBER $00
 			#define CURRENT_BANK_NUMBER CHR_BANK_NUMBER
 			#include "game/banks/chr_data.asm"
-
-			#define CURRENT_BANK_NUMBER $01
-			#include "game/banks/data01_bank.asm"
-
-			#define DATA_BANK_NUMBER $02
-			#define CURRENT_BANK_NUMBER DATA_BANK_NUMBER
-			#include "game/banks/data_bank.asm"
 		"""))
 
-		for bank_number in range(3, FIRST_AVAILABLE_BANK):
+		for bank_number in range(1, FIRST_AVAILABLE_BANK):
 			bank_index_file.write(textwrap.dedent("""\
 
 				#define CURRENT_BANK_NUMBER ${num:02x}
