@@ -235,7 +235,7 @@ directional_indicator_player_a_position_y_low = $a0 ; $a0 to $af - unused $a0 an
 
 ;$b0 to $bf used by network engine
 ;$c0 to $c9 used by audio engine
-;$d0 to $ff used by global labels, constants and registers ($e5 to $e7 are still free)
+;$d0 to $ff used by global labels, constants and registers ($e5 and $e6 are still free)
 
 ; Stages common variables
 stage_restore_screen_step = $0560 ; Set to zero to start asynchrone restoration of the screen by stage's logic
@@ -683,6 +683,7 @@ nt_buffer_timer = $e4
 ; Zero-page constants
 ;
 
+pal_emulation_counter = $e7 ; $ff - disabled, set to 5 to enable
 system_index = $e8 ; 0 - PAL, 1 - NTSC
 
 ;

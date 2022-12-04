@@ -52,6 +52,23 @@ sleep_frame:
 .(
 	jsr audio_music_extra_tick
 	jsr wait_next_frame
+	; Handle PAL emulation while on NTSC by waiting one more frame when needed
+	.(
+		; Skip if no PAL emulation is requested
+		ldx pal_emulation_counter
+		bmi ok
+			; Count ticks, reset clock and skip frame every 5 ticks
+			dex
+			bne normal_tick
+				skipped_tick:
+					ldx #6
+					stx pal_emulation_counter
+					jsr wait_next_frame
+					jmp ok
+				normal_tick:
+					stx pal_emulation_counter
+		ok:
+	.)
 	jmp audio_music_tick
 	; rts ; useless, jump to a subroutine
 .)

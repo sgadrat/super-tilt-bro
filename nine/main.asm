@@ -184,6 +184,23 @@ forever:
 
 	; Update game state
 	tick_state:
+		; Handle PAL emulation while on NTSC by skipping a frame after ticking 5 times in a row
+		.(
+			; Skip if no PAL emulation is requested
+			ldx pal_emulation_counter
+			bmi ok
+				; Count ticks, reset clock and skip frame every 5 ticks
+				dex
+				bne normal_tick
+					skipped_tick:
+						ldx #6
+						stx pal_emulation_counter
+						jmp forever
+					normal_tick:
+						stx pal_emulation_counter
+			ok:
+		.)
+
 		; Call common routines to all states
 		jsr audio_music_tick
 		jsr fetch_controllers
