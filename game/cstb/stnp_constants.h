@@ -23,6 +23,7 @@ static uint16_t const STNP_START_GAME_FIELD_PA_PALETTE = 7;
 static uint16_t const STNP_START_GAME_FIELD_PB_PALETTE = 8;
 static uint16_t const STNP_START_GAME_FIELD_PA_PING = 9;
 static uint16_t const STNP_START_GAME_FIELD_PB_PING = 12;
+static uint16_t const STNP_START_GAME_FIELD_FRAMERATES = 15;
 
 static uint16_t const STNP_GAMEOVER_FIELD_WINNER_PLAYER_NUMBER = 1;
 

@@ -126,7 +126,7 @@ network_tick_ingame:
 					sta game_winner
 
 					; Jump to gameover screen, skipping any further processing
-					jmp game_mode_goto_gameover
+					jmp game_mode_online_gameover
 
 				handle_new_state:
 					; Ignore prediction ID

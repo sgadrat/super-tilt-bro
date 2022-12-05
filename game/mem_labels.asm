@@ -473,6 +473,7 @@ netplay_launch_rival_ping_values = netplay_launch_rival_ping_count+1 ; $52-$54
 netplay_launch_rival_ping_quality = netplay_launch_rival_ping_values+3 ; $55
 netplay_launch_countdown = netplay_launch_rival_ping_quality+1 ; $56
 netplay_launch_original_music_state = netplay_launch_countdown+1 ; $57
+netplay_launch_rival_system = netplay_launch_original_music_state+1 ; $58
 
 netplay_launch_bg_mem_buffer = $0580 ; $0580 to $???? (current biggest usage, 3+16 bytes, map illustration draw)
 

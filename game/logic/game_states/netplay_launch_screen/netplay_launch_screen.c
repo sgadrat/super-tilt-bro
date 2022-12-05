@@ -50,7 +50,8 @@ static uint8_t const BG_STEP_PING_SCREEN_DISPLAY_LOCAL = 9;
 static uint8_t const BG_STEP_PING_SCREEN_LOCAL_CONNECTION = 10;
 static uint8_t const BG_STEP_MATCHMAKING = 11;
 static uint8_t const BG_STEP_MATCHMAKING_STATUS = 12;
-static uint8_t const BG_STEP_COUNTDOWN = 13;
+static uint8_t const BG_STEP_MATCHMAKING_CROSSPLAY = 13;
+static uint8_t const BG_STEP_COUNTDOWN = 14;
 static uint8_t const BG_STEP_DEACTIVATED = 255;
 
 static uint8_t const NB_KNOWN_SERVERS = 2;
@@ -397,10 +398,21 @@ static void tick_bg_task() {
 				display_ping(1, 9, 4);
 				display_ping_quality(*netplay_launch_rival_ping_quality, 10, 4);
 
-				// Next step, expected to be BG_STEP_COUNTDOWN
-				task->count = 255;
+				// Next step
 				++task->step;
 			}
+			break;
+		}
+
+		case BG_STEP_MATCHMAKING_CROSSPLAY: {
+			if (*netplay_launch_rival_system != *system_index || !(*pal_emulation_counter & 0x80)) {
+				set_text("crossplay", 13, 4);
+			}
+
+			// Next step, expected to be BG_STEP_COUNTDOWN
+			task->count = 255;
+			++task->step;
+
 			break;
 		}
 
@@ -474,12 +486,22 @@ static void got_start_game_msg() {
 
 	// Store opponent's connection info (for display)
 	uint8_t const connections_qualities = msg[STNP_START_GAME_FIELD_PLAYER_CONNECTIONS];
-	*netplay_launch_rival_ping_quality = (*network_local_player_number == 0 ? connections_qualities >> 4 : connections_qualities & 0x0f);
+	*netplay_launch_rival_ping_quality = (*network_local_player_number == 1 ? connections_qualities >> 4 : connections_qualities & 0x0f);
 	uint8_t const ping_field = (*network_local_player_number ? STNP_START_GAME_FIELD_PA_PING : STNP_START_GAME_FIELD_PB_PING);
 	for (uint8_t ping_idx = 0; ping_idx < NB_PINGS; ++ping_idx) {
 		netplay_launch_rival_ping_values[ping_idx] = msg[ping_field + ping_idx];
 	}
 	*netplay_launch_rival_ping_count = NB_PINGS;
+
+	// Store opponent's native framerate (for display)
+	uint8_t const framerates = msg[STNP_START_GAME_FIELD_FRAMERATES];
+	*netplay_launch_rival_system = (*network_local_player_number == 1 ? framerates >> 7 : ((framerates >> 6) & 0x01));
+
+	// Activate PAL emulation if needed
+	if (*system_index == 1 && (framerates & 0x20) == 0) {
+		*system_index = 0;
+		*pal_emulation_counter = 5;
+	}
 
 	// Cut music
 	*netplay_launch_original_music_state = *audio_music_enabled;
@@ -831,7 +853,7 @@ static void connection_send_msg() {
 	esp_wait_tx();
 	uint8_t * buff = &esp_tx_buffer;
 
-	buff[0] = 33; // ESP header
+	buff[0] = 32; // ESP header
 	buff[1] = TOESP_MSG_SERVER_SEND_MESSAGE;
 
 	buff[2] = STNP_CLI_MSG_TYPE_CONNECTION; // message_type
@@ -839,25 +861,24 @@ static void connection_send_msg() {
 	buff[4] = *network_client_id_byte1;
 	buff[5] = *network_client_id_byte2;
 	buff[6] = *network_client_id_byte3;
-	buff[7] = 6; // protocol_version
-	buff[8] = 6; // protocol_version_mirror
+	buff[7] = 7; // protocol_version
 
-	buff[9] = netplay_launch_local_ping_values[0]; // ping
-	buff[10] = netplay_launch_local_ping_values[1];
-	buff[11] = netplay_launch_local_ping_values[2];
+	buff[8] = netplay_launch_local_ping_values[0]; // ping
+	buff[9] = netplay_launch_local_ping_values[1];
+	buff[10] = netplay_launch_local_ping_values[2];
 
 	uint8_t flags_byte = (*system_index == 0 ? 0x00 : 0x80); // framerate
 	flags_byte |= (RAINBOW_MAPPER_VERSION & 0x60); // support
 	flags_byte |= ((GAME_VERSION_TYPE << 3) & 0x18); // release_type
-	buff[12] = (flags_byte | (GAME_VERSION_MAJOR & 0x07)); // version_major
-	buff[13] = GAME_VERSION_MINOR; // version_minor
+	buff[11] = (flags_byte | (GAME_VERSION_MAJOR & 0x07)); // version_major
+	buff[12] = GAME_VERSION_MINOR; // version_minor
 
-	buff[14] = *config_player_a_character; // selected_character
-	buff[15] = *config_player_a_character_palette; // selected_palette
-	buff[16] = *config_selected_stage; // selected_stage
-	buff[17] = *network_ranked; // ranked_play
+	buff[13] = *config_player_a_character; // selected_character
+	buff[14] = *config_player_a_character_palette; // selected_palette
+	buff[15] = *config_selected_stage; // selected_stage
+	buff[16] = *network_ranked; // ranked_play
 
-	wrap_fixed_memcpy(buff+18, network_game_password, 16);
+	wrap_fixed_memcpy(buff+17, network_game_password, 16);
 
 	esp_tx_message_send();
 

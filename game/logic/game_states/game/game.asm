@@ -24,10 +24,10 @@ game_modes_pre_update_msb:
 
 game_modes_gameover_lsb:
 .byt <game_mode_goto_gameover
-.byt <game_mode_goto_gameover
+.byt <game_mode_online_gameover
 .byt <game_mode_arcade_gameover
 
 game_modes_gameover_msb:
 .byt >game_mode_goto_gameover
-.byt >game_mode_goto_gameover
+.byt >game_mode_online_gameover
 .byt >game_mode_arcade_gameover
