@@ -48,6 +48,25 @@
 
 stage_thehunt_init:
 .(
+	; Lighten avatars
+	.(
+		; Lighten only if the game engine didn't already ligtened one to handle same character + same skin situation
+		lda config_player_a_character
+		cmp config_player_b_character
+		bne do_it
+		lda config_player_a_character_palette
+		cmp config_player_b_character_palette
+		bne do_it
+		jmp ok
+
+			do_it:
+				ldx #0+4 ; Player A's normal palette, first color
+				TRAMPOLINE(lighten_player_palette, #GAMESTATE_GAME_EXTRA_BANK, #CURRENT_BANK_NUMBER)
+				ldx #16+4 ; Player B's normal palette, first color
+				TRAMPOLINE(lighten_player_palette, #GAMESTATE_GAME_EXTRA_BANK, #CURRENT_BANK_NUMBER)
+		ok:
+	.)
+
 	; Copy stage's tiles in VRAM
 	.(
 		tileset_addr = tmpfield1 ; Not movable, used by cpu_to_ppu_copy_tileset

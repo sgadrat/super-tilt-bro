@@ -259,34 +259,7 @@
 			cmp config_player_b_character_palette
 			bne ok
 				ldx #16+4 ; Player B's normal palette, first color
-				ldy #3
-				lighten_one_color:
-					; Get color
-					lda players_palettes, x
-
-					; Skip if cannot be lightened, special handling for black
-					cmp #$0f
-					beq lighten_black
-					cmp #$30
-					bcs end_color
-
-						ligthen_normal:
-							; Up color to the lighter value
-							clc
-							adc #$10
-							sta players_palettes, x
-							jmp end_color
-
-						lighten_black:
-							; Change to dark-grey
-							lda #$00
-							sta players_palettes, x
-
-					; Loop on three colors
-					end_color:
-					inx
-					dey
-					bne lighten_one_color
+				jsr lighten_player_palette
 			ok:
 		.)
 
@@ -1138,4 +1111,54 @@ audio_music_ingame:
 			sta tmpfield2
 			jmp (tmpfield1) ;NOTE beware if a mode wants to return, we are not in the fixed bank (our caller may be)
 			; No return, jump to subroutine
+.)
+
+; Change a color value to a lighter version
+;  A - Original color value
+;
+; Output
+;  A - Lightened color value
+;
+; Overwrites A
++lighten_color:
+.(
+	; Skip if cannot be lightened, special handling for black
+	cmp #$0f
+	beq lighten_black
+	cmp #$30
+	bcs end
+
+		ligthen_normal:
+			; Up color to the lighter value
+			clc
+			adc #$10
+			rts
+
+		lighten_black:
+			; Change to dark-grey
+			lda #$00
+
+	end:
+	rts
+.)
+
+; Lighten a player palette
+;  X - Offset of the palette from players_palette
+;
+; Overwrites A, X, Y
++lighten_player_palette:
+.(
+    ldy #3
+    lighten_one_color:
+        ; Get color
+        lda players_palettes, x
+        jsr lighten_color
+        sta players_palettes, x
+
+        ; Loop on three colors
+        inx
+        dey
+        bne lighten_one_color
+
+    rts
 .)
