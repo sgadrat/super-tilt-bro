@@ -105,6 +105,8 @@ absolute_a:
 ;  Overwrites register A, tmpfield4 and tmpfield5
 multiply:
 .(
+	;TODO optimizable - use shift and add instead of addition loop
+	;TODO check if it may be merged with multiply8 code
 	multiplicand_low = tmpfield1
 	multiplicand_high = tmpfield2
 	multiplier = tmpfield3
@@ -304,32 +306,83 @@ copy_palette_to_ppu:
 
 shake_screen:
 .(
-	; Change scrolling possition a little
-	lda screen_shake_nextval_x
-	eor #%11111111
-	clc
-	adc #1
-	sta screen_shake_nextval_x
-	sta scroll_x
-	lda screen_shake_nextval_y
-	eor #%11111111
-	clc
-	adc #1
-	sta screen_shake_nextval_y
-	sta scroll_y
+	multiplier = tmpfield1
+	multiplicand = tmpfield2
+	rand_offset = tmpfield3
+
+	; Move scroll position closer to target (target is hardcoded as 0,0)
+	.(
+		ldy screen_shake_counter
+		ldx #1
+		move_one_component:
+			; Move current position one step closer to origin
+			lda screen_shake_current_x, x
+			beq ok
+			bpl dec_component
+				inc_component:
+					lda screen_shake_current_x, x
+					clc
+					adc screen_shake_speed_h, x
+					sta screen_shake_current_x, x
+					jmp ok
+				dec_component:
+					lda screen_shake_current_x, x
+					sec
+					sbc screen_shake_speed_h, x
+					sta screen_shake_current_x, x
+			ok:
+
+			; Update scroll value, adding noise
+			lda screen_shake_noise_h, x ; Compute screen_shake_noise/2
+			lsr
+			sta rand_offset
+
+			lda random_table, y ; Get a random number
+			tay ; Change Y to avoid using the same random number for both componenet
+
+#if 1
+			sta multiplicand ; Cap random value in range [0 ; screen_shake_noise]
+			lda screen_shake_noise_h, x
+			sta multiplier
+			jsr multiply8
+#else
+			;TODO optimize
+			;  - This version simply divide by 2 until finding a number below screen_shake_noise
+			;    - Simple and pretty fast, will induce significant bias toward high numbers
+			;  - Another idea would be to compute the bitmask, and if result still higher than screen_shake_noise LSR
+			;    - Should be speedier than multiplying and only slighlty bias toward middle values
+			cap_rand: ; Cap random value in range [0 ; screen_shake_noise]
+			cmp screen_shake_noise_h, x
+			bcc cap_rand_ok
+			beq cap_rand_ok
+				lsr
+				bne cap_rand
+			cap_rand_ok:
+#endif
+
+			sec ; Move random value to range [-(screen_shake_noise/2) ; screen_shake_noise/2]
+			sbc rand_offset
+
+			clc ; scroll = current position + random number
+			adc screen_shake_current_x, x
+			sta scroll_x, x
+
+			; Next component
+			dex
+			bpl move_one_component
+	.)
 
 	; Adapt screen number to Y scrolling
-	;  Litle negative values are set at the end of screen 2
+	;  Negative values are set at the end of screen 2, on position 240 - abs(scroll_y) = 240 + scroll_y
 	lda scroll_y
-	cmp #240
-	bcs set_screen_two
-	lda #%10010000
-	jmp set_screen
+	bmi set_screen_two
+		lda #%10010000
+		jmp set_screen
 	set_screen_two:
-	clc
-	adc #240
-	sta scroll_y
-	lda #%10010010
+		clc
+		adc #240
+		sta scroll_y
+		lda #%10010010
 	set_screen:
 	sta ppuctrl_val
 
@@ -499,3 +552,46 @@ get_unzipped_bytes:
 
 #undef NEXT_BYTE
 #undef GOT_BYTE
+
+; Multiply two 8 bit unsigned numbers
+;  tmpfield1 - Multiplier
+;  tmpfield2 - Multiplicand
+;
+; Output:
+;  tmpfield1 - Result LSB
+;  A - Result MSB
+;
+; Overwrites A, tmpfield1
+;
+; Note - For best performances, put the number with less bits set to 1 as multiplier.
+;
+; Original code - https://www.lysator.liu.se/~nisse/misc/6502-mul.html
+multiply8:
+.(
+	factor1 = tmpfield1
+	factor2 = tmpfield2
+
+#define ADD_ROR .( :\
+		bcc no_add :\
+			clc :\
+			adc factor2 :\
+		no_add:\
+		ror :\
+		ror factor1 :\
+	.)
+
+	lda #0
+	lsr factor1
+	ADD_ROR
+	ADD_ROR
+	ADD_ROR
+	ADD_ROR
+	ADD_ROR
+	ADD_ROR
+	ADD_ROR
+	ADD_ROR
+
+	rts
+
+#undef ADD_ROR
+.)

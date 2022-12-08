@@ -412,11 +412,14 @@ tick_impact:
 		lda #0
 		sta transition_step
 
-		lda #6
-		sta screen_shake_nextval_x
-		lda #3
-		sta screen_shake_nextval_y
-		lda #2 ;HACK 2 is the lowest value that does not end the shaking on next frame
+		lda #24
+		sta screen_shake_noise_h
+		lda #12
+		sta screen_shake_noise_v
+		lda #0
+		sta screen_shake_current_x
+		sta screen_shake_current_y
+		lda #18 ; 18 is slightly more than the fadeout, ensuring it to have "normal" screenshake
 		sta screen_shake_counter
 
 		rts
@@ -425,8 +428,13 @@ tick_impact:
 	&transition_tick:
 	.(
 		; Stay in screen-shake mode as long as necessary
-		lda #2 ;HACK 2 is the lowest value that does not end the shaking on next frame
-		sta screen_shake_counter
+		.(
+			lda screen_shake_counter
+			bne ok
+				lda #2 ;HACK 2 is the lowest value that does not end the shaking on next frame, this cause screenshake randomness to be terribly poor
+				sta screen_shake_counter
+			ok:
+		.)
 
 		; Call current state routine
 		ldx transition

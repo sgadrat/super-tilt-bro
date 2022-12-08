@@ -1105,8 +1105,10 @@ stage_thehunt_set_state_breaking:
 
 	; Freeze the screen for the duration of the breaking animation
 	lda #0
-	sta screen_shake_nextval_x
-	sta screen_shake_nextval_y
+	sta screen_shake_current_x
+	sta screen_shake_current_y
+	sta screen_shake_noise_h
+	sta screen_shake_noise_v
 	lda #STAGE_THEHUNT_BREAK_DURATION
 	sta screen_shake_counter
 

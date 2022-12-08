@@ -37,7 +37,7 @@ cutscene_sinbad_story_meteor_logic:
 	INIT_ANIM_FOR_PLAYER(1, sinbad_anim_idle, SINBAD_BANK_NUMBER, DIRECTION_LEFT2, 196, 111, 0, 0, 1)
 
 	; Screen shakes and sky darkens
-	CUTS_SCREEN_SHAKE(50, 1, 3)
+	CUTS_SCREEN_SHAKE(50, 2, 12)
 	PLAY_FRAMES(20)
 	SET_PALETTE(0, $19, $19, $12)
 	SET_PALETTE(1, $27, $12, $20)

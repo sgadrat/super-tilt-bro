@@ -1123,6 +1123,13 @@ vgsage_global_onground:
 			dec stage_screen_effect
 			jsr apply_hit
 
+			; Avoid directional movement of screen shake (it is weird with knight's illustration)
+			lda #0
+			sta screen_shake_current_x
+			sta screen_shake_current_y
+			sta screen_shake_speed_h
+			sta screen_shake_speed_v
+
 			; Come back to a playable state
 			jmp vgsage_start_inactive_state
 
@@ -1209,6 +1216,15 @@ vgsage_global_onground:
 
 				; Restore X
 				pla:tax
+			.)
+
+			; Compute non-capped screenshake
+			.(
+				SWITCH_SELECTED_PLAYER
+				lda player_a_hitstun, x
+				lsr
+				sta screen_shake_counter
+				SWITCH_SELECTED_PLAYER
 			.)
 		.)
 

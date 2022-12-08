@@ -116,6 +116,9 @@
 		; Reset screen shaking
 		lda #0
 		sta screen_shake_counter
+		lda #2
+		sta screen_shake_speed_h
+		sta screen_shake_speed_v
 
 		; Disable deathplosion
 		lda #$ff

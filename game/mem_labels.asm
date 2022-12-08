@@ -208,6 +208,8 @@ stage_screen_effect = $6f ; 0 - The screen is clean from effects, any other - Th
 screen_shake_counter = $70
 screen_shake_nextval_x = $71
 screen_shake_nextval_y = $72
+screen_shake_current_x = $71
+screen_shake_current_y = $72
 
 directional_indicator_player_a_counter = $73
 directional_indicator_player_b_counter = $74
@@ -763,6 +765,11 @@ menu_state_mode_selection_current_option = $0552
 ; Nine-gine variables
 nt_buffers_begin = $0553
 nt_buffers_end = $0554
+
+screen_shake_noise_h = $0555
+screen_shake_noise_v = $0556
+screen_shake_speed_h = $0557
+screen_shake_speed_v = $0558
 
 ;$0560 to $05ff may be used by game states
 

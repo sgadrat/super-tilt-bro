@@ -384,12 +384,17 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 			jsr set_super_attr
 
 			; Initialize screen shake
+			lda #3*4
+			sta screen_shake_noise_h
+			lda #6*4
+			sta screen_shake_noise_v
 			lda #4
 			sta screen_shake_counter
-			lda #3
-			sta screen_shake_nextval_x
-			lda #$fa
-			sta screen_shake_nextval_y
+			lda #0
+			sta screen_shake_current_x
+			sta screen_shake_current_y
+			sta screen_shake_speed_h
+			sta screen_shake_speed_v
 
 			; Set wait timer
 			ldx system_index
@@ -448,12 +453,17 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 			jsr set_attr
 
 			; Initialize screen shake
+			lda #3*4
+			sta screen_shake_noise_h
+			lda #6*4
+			sta screen_shake_noise_v
 			lda #4
 			sta screen_shake_counter
-			lda #3
-			sta screen_shake_nextval_x
-			lda #$fa
-			sta screen_shake_nextval_y
+			lda #0
+			sta screen_shake_current_x
+			sta screen_shake_current_y
+			sta screen_shake_speed_h
+			sta screen_shake_speed_v
 
 			; Set wait timer
 			ldx system_index
@@ -512,12 +522,17 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 			jsr set_attr
 
 			; Initialize screen shake
+			lda #3*4
+			sta screen_shake_noise_h
+			lda #6*4
+			sta screen_shake_noise_v
 			lda #4
 			sta screen_shake_counter
-			lda #3
-			sta screen_shake_nextval_x
-			lda #$fa
-			sta screen_shake_nextval_y
+			lda #0
+			sta screen_shake_current_x
+			sta screen_shake_current_y
+			sta screen_shake_speed_h
+			sta screen_shake_speed_v
 
 			; Set wait timer
 			ldx system_index

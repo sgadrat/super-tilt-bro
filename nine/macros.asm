@@ -409,6 +409,7 @@ duration
 ;
 ; Output - N flag set if "a < b", unset otherwise
 ;          C flag set if "(unsigned)a < (unsigned)b", unset otherwise
+;
 ; Overwrites register A
 ;
 ; See also the routine with the same name (lowercase)
@@ -420,6 +421,21 @@ duration
 	bvc end_signed_cmp:\
 	eor #%10000000:\
 	end_signed_cmp:\
+.)
+
+; Perform single byte signed comparison
+;
+; Output - N flag set if "a < b", unset otherwise
+;          C flag set if "(unsigned)a < (unsigned)b", unset otherwise
+;
+; Overwrites register A
+#define SIGNED_CMP8(a,b) .(:\
+	lda a:\
+	sec:\
+	sbc b:\
+	bvc end_signed_cmp:\
+    eor #%10000000:\
+    end_signed_cmp:\
 .)
 
 ; Switch current player

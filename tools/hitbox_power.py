@@ -35,12 +35,17 @@ force_v = args.force_v
 start_pos = origin_to_start_position(args.origin)
 
 # Compute indirect values (as computed by the engine)
+SCREEN_SAKE_MAX_DURATION = 0x10
 force_multiplier = damage // 4
 knockback_h = force_h * force_multiplier + base_h
 knockback_v = force_v * force_multiplier + base_v
 knockback_total = abs(knockback_v) + abs(knockback_h)
 hitstun_duration = ((2 * knockback_total) >> 8) + (knockback_total >> 8)
-screen_shake_duration = hitstun_duration // 2
+screen_shake_duration = min(hitstun_duration // 2, SCREEN_SAKE_MAX_DURATION)
+screen_shake_noise_h = abs(knockback_h // 0x100) * 4
+screen_shake_noise_v = abs(knockback_v // 0x100) * 4
+screen_shake_start_pos_x = knockback_h // 0x100 * 4
+screen_shake_start_pos_y = knockback_v // 0x100 * 2
 
 # Compute implied values (not explicitely computed, just consequences)
 if implied_deduction_method == 'compute':
@@ -95,6 +100,8 @@ print('horizontal knockback ......................... {}/frame'.format(pix(knock
 print('vertical knockback ........................... {}/frame'.format(pix(knockback_v)))
 print('hitstun duration ............................. {} frames'.format(hitstun_duration))
 print('screenshake duration ......................... {} frames'.format(screen_shake_duration))
+print('screenshake noise ............................ ({}, {}) pixels'.format(screen_shake_noise_h, screen_shake_noise_v))
+print('screenshake start position ................... ({}, {}) pixels'.format(screen_shake_start_pos_x, screen_shake_start_pos_y))
 print('horizontal distance traveled under hitstun ... {}'.format(pix(hitstun_distance_h)))
 print('vertical distance traveled under hitstun ..... {}'.format(pix(hitstun_distance_v)))
 print('distance traveled under hitstun .............. {}'.format(pix(hitstun_distance)))

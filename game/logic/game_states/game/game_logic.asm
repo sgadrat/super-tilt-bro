@@ -644,10 +644,13 @@ parry_player:
 
 	; Shake the screen
 	lda #SCREENSHAKE_PARRY_INTENSITY
-	sta screen_shake_nextval_x
-	sta screen_shake_nextval_y
+	sta screen_shake_noise_h
+	sta screen_shake_noise_v
 	lda #SCREENSHAKE_PARRY_NB_FRAMES
 	sta screen_shake_counter
+	lda #0
+	sta screen_shake_current_x
+	sta screen_shake_current_y
 
 	; Set player in thrown mode without momentum
 	lda #HITSTUN_PARRY_NB_FRAMES
@@ -1159,6 +1162,33 @@ apply_force_vector_direct:
 		sta knockback_v_low            ;
 	end_abs_kb_v:                      ;
 
+	; Screenshake strength
+	.(
+		; Horizontal noise = knockback_h * 4
+		lda knockback_h_high
+		asl:asl
+		sta screen_shake_noise_h
+
+		; Vertical noise = knockback_v * 4
+		lda knockback_v_high
+		asl:asl
+		sta screen_shake_noise_v
+
+		; Start position
+		.(
+			; Compute start position from thrown player velocity
+			;  vertical velocity has less impact to compensate higher typical values to fight gravity
+			lda player_a_velocity_h, x
+			asl
+			asl
+			sta screen_shake_current_x
+
+			lda player_a_velocity_v, x
+			asl
+			sta screen_shake_current_y
+		.)
+	.)
+
 	lda knockback_h_low  ;
 	clc                  ;
 	adc knockback_v_low  ;
@@ -1174,13 +1204,17 @@ apply_force_vector_direct:
 	adc knockback_h_high    ;   CLC ignored, should not happen, precision loss is one frame, and if knockback is this high we don't care of hitstun anyway
 	sta player_a_hitstun, x ;
 
-	; Start screenshake of duration = hitstun / 2
-	lsr
-	sta screen_shake_counter
-	lda player_a_velocity_h, x
-	sta screen_shake_nextval_x
-	lda player_a_velocity_v, x
-	sta screen_shake_nextval_y
+	; Screenshake of duration = hitstun / 2
+	.(
+		SCREEN_SAKE_MAX_DURATION = $10
+
+		lsr
+		cmp #SCREEN_SAKE_MAX_DURATION
+		bcc ok
+			lda #SCREEN_SAKE_MAX_DURATION
+		ok:
+		sta screen_shake_counter
+	.)
 
 	; Adapt resulting velocity, screenshake and hitstun duration in ntsc
 	lda system_index

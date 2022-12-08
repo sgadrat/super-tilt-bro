@@ -911,16 +911,21 @@ load_animation_addr:
 	jsr inline_parameters
 
 	ldy #0
+	sty screen_shake_current_x
+	sty screen_shake_current_y
+	sty screen_shake_speed_h
+	sty screen_shake_speed_v
+
 	lda (parameter_addr), y
 	sta screen_shake_counter
 	iny
 
 	lda (parameter_addr), y
-	sta screen_shake_nextval_x
+	sta screen_shake_noise_h
 	iny
 
 	lda (parameter_addr), y
-	sta screen_shake_nextval_y
+	sta screen_shake_noise_v
 
 	rts
 .)

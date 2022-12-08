@@ -27,9 +27,22 @@ fi
 c_flags="$c_optim $c_warnings $c_compat $c_defines"
 
 # Print a message in console and log file
+say_color=0
 say() {
-	echo "$@"
+	if [ $say_color -eq 0 ]; then
+		echo "$@"
+	else
+		echo -e "\e[${say_color}m$@\e[0m"
+		say_color=0
+	fi
 	echo "$@" >> "$log_file"
+}
+
+sayc() {
+	say_color="$1"
+	shift
+
+	say $@
 }
 
 # Print a message in log file
@@ -130,7 +143,7 @@ say "======================="
 #  Static bank cannot be safely upgraded, so avoid modifying it
 #  Only a warning for ease of development, should be an error when carts are distributed to non-technical players.
 static_bank_hash=`tail -c 4096 'Super_Tilt_Bro_(E).nes' | md5sum - | grep -Eo '^[0-9a-f]+'`
-if [ "$static_bank_hash" != '64170300d4ab979eaaf0a89c4984a8e4' ]; then
-	say "WARNING: static bank changed"
-	say "======================="
+if [ "$static_bank_hash" != 'b2467bc9044f1ae46be8af7d872321d7' ]; then
+	sayc 41 "WARNING: static bank changed"
+	sayc 41 "============================"
 fi
