@@ -350,7 +350,7 @@ void arcade_mode_tick_extra() {
 #define TIME(min, sec, frames) ((uint32_t)(min) << 16) + ((uint32_t)(sec) << 8) + (uint32_t)(frames)
 		uint32_t const timer = TIME(*arcade_mode_counter_minutes, *arcade_mode_counter_seconds, *arcade_mode_counter_frames);
 
-		if (timer < TIME(0,60,0)) { // World record TAS (hypotetical for now)
+		if (timer < TIME(1,0,0)) { // World record TAS (hypotetical for now)
 			set_text("chocolate medal", 15, 9);
 			wait_input();
 			set_text("wow that is impressive", 17, 6);
@@ -358,14 +358,14 @@ void arcade_mode_tick_extra() {
 			set_text("toolassistium medal", 15, 7);
 			wait_input();
 			set_text("for cocolate beat 1 00 00", 17, 4);
-		}else if (timer < TIME(1,35,0)) {
+		}else if (timer < TIME(1,32,0)) {
 			set_text("mythril medal", 15, 9);
 			wait_input();
 			set_text("for toolassistium beat 1 01 14", 17, 0);
 		}else if (timer < TIME(2,30,0)) {
 			set_text("gold medal", 15, 9);
 			wait_input();
-			set_text("for mythril beat 1 35 00", 17, 4);
+			set_text("for mythril beat 1 32 00", 17, 4);
 		}else if (timer < TIME(5,0,0)) {
 			set_text("silver medal", 15, 9);
 			wait_input();
