@@ -5,10 +5,26 @@
 ; Construct a nametable buffer to replace palettes
 ;  tmpfield1,tmpfield2 - new palette data adress (points to 32 bytes to be copied in PPU palettes)
 ;
-;  Overwrites register X, register Y and register A
+;  Overwrites all rigsters, and tmpfield3
 construct_palettes_nt_buffer:
 .(
+	lda #32
+	sta tmpfield3
+	; Fallthrough to construct_palettes_nt_buffer_small
+.)
+
+; Construct a nametable buffer to replace palettes
+;  tmpfield1,tmpfield2 - new palette data adress (points to 32 bytes to be copied in PPU palettes)
+;  tmpfield3 - number of bytes in buffer's payload
+;
+;  Overwrites register X, register Y and register A
+;
+;TODO this routine should be named "construct_palettes_nt_buffer" the other should have a derivative name
+construct_palettes_nt_buffer_small:
+.(
 	palettes_data = tmpfield1
+	;palettes_data_msb = tmpfield2
+	payload_size = tmpfield3
 
 	LAST_NT_BUFFER
 
@@ -26,7 +42,7 @@ construct_palettes_nt_buffer:
 	inx
 
 	; Tiles count
-	lda #32
+	lda payload_size
 	sta nametable_buffers, x
 	inx
 
@@ -38,7 +54,7 @@ construct_palettes_nt_buffer:
 
 		inx
 		iny
-		cpy #32
+		cpy payload_size
 		bne copy_one_byte
 
 	lda #0

@@ -625,14 +625,6 @@ stage_generic_init:
 	sta stage_table_index
 
 	; Write palette_data in actual ppu palettes
-	jsr wait_vbi ; Wait the begining of a VBI before writing data to PPU's palettes
-
-	lda PPUSTATUS ;
-	lda #$3f      ; Point PPU to Background palette 0
-	sta PPUADDR   ; (see http://wiki.nesdev.com/w/index.php/PPU_palettes)
-	lda #$00      ;
-	sta PPUADDR   ;
-
 	ldx stage_table_index   ;
 	lda stage_palettes, x   ;
 	sta tmpfield1           ;
@@ -641,7 +633,7 @@ stage_generic_init:
 	lda #$10
 	sta tmpfield3
 	ldx config_selected_stage
-	TRAMPOLINE(cpu_to_ppu_copy_bytes, stages_bank COMMA x, #CURRENT_BANK_NUMBER)
+	TRAMPOLINE(construct_palettes_nt_buffer_small, stages_bank COMMA x, #CURRENT_BANK_NUMBER)
 
 	; Copy background from PRG-rom to PPU nametable
 	ldx stage_table_index
