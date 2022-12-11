@@ -452,7 +452,6 @@ vgsage_global_onground:
 	!define "anim" {vgsage_anim_special_charge}
 	!define "state" {VGSAGE_STATE_SPECIAL_NEUTRAL_CHARGE}
 	!define "routine" {special}
-	;almost like "characters/tpl_aerial_attack_uncancellable.asm" (just need a custom exit routine, and custom duration, and sfx)
 	.(
 		duration:
 			.byt {anim}_dur_pal*2, {anim}_dur_ntsc*2
@@ -488,6 +487,11 @@ vgsage_global_onground:
 #endif
 
 			jsr {char_name}_apply_friction_lite
+
+			lda player_a_grounded, x
+			bne no_di
+				jsr {char_name}_aerial_directional_influence
+			no_di:
 
 			; Play the sfx a second time mid-animation
 			ldy system_index
