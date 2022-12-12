@@ -206,8 +206,6 @@ stage_fade_level = $6e
 stage_screen_effect = $6f ; 0 - The screen is clean from effects, any other - There are effects at play (inc when starting an effect, dec on end)
 
 screen_shake_counter = $70
-screen_shake_nextval_x = $71
-screen_shake_nextval_y = $72
 screen_shake_current_x = $71
 screen_shake_current_y = $72
 
