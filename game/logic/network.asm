@@ -359,20 +359,28 @@ network_tick_ingame:
 					lda #%10010000
 					sta ppuctrl_val
 				screen_shake_updated:
+				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE+1
+				sta screen_shake_current_x
+				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE+2
+				sta screen_shake_current_y
+				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE+3
+				sta screen_shake_noise_h
+				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE+4
+				sta screen_shake_noise_v
 
 				; Deathplosion
-				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE+1
+				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE+5
 				sta deathplosion_step
-				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE+2
+				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE+6
 				sta deathplosion_pos
-				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE+3
+				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE+7
 				sta deathplosion_origin
 
 				; Screen state
-				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE+4
+				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE+8
 				sta stage_fade_level
 
-				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE+5
+				lda esp_rx_buffer+GAMESTATE_OFFSET+GAMESTATE_SIZE+9
 				sta stage_screen_effect
 				beq screen_effect_ok
 					; Some screen effects are playing, the screen will need to be restored
@@ -382,7 +390,7 @@ network_tick_ingame:
 			.)
 
 			; Copy controllers state
-			CONTROLLERS_STATE_OFFSET = GAMESTATE_OFFSET+GAMESTATE_SIZE+6
+			CONTROLLERS_STATE_OFFSET = GAMESTATE_OFFSET+GAMESTATE_SIZE+10
 			lda esp_rx_buffer+CONTROLLERS_STATE_OFFSET+0
 			sta controller_a_btns
 			lda esp_rx_buffer+CONTROLLERS_STATE_OFFSET+1
