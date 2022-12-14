@@ -23,6 +23,12 @@ bank_data_cutscene_sinbad_story_pepper_encounter_begin:
 #echo arcade cutscene sinbad story pepper encounter size:
 #print *-bank_data_cutscene_sinbad_story_pepper_encounter_begin
 
+bank_data_stage_theplank_begin:
+#include "game/data/stages/theplank/stage_theplank.asm"
+#echo
+#echo Stage The Plank size:
+#print *-bank_data_stage_theplank_begin
+
 bank_data11_end:
 
 #echo

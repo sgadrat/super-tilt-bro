@@ -19,6 +19,9 @@ extern uint8_t const stage_selection_palette;
 extern uint8_t const stages_bank;
 extern uint8_t const stages_illustration;
 
+// Labels containing values, preferably use their helper function
+extern uint8_t const stage_versus_end_index; // n_stages()
+
 ///////////////////////////////////////
 // Stage selection's ASM functions
 ///////////////////////////////////////
@@ -46,14 +49,16 @@ static uint8_t const BG_STEP_STAGE_PICTURE = 3;
 static uint8_t const BG_STEP_DEACTIVATED = 255;
 static uint8_t const TILE_MENU_CHAR_SELECT_STAGE_SELECTOR = 0x40;
 
-static uint16_t const selector_position_x[] = {112, 120, 128, 136};
-
 ///////////////////////////////////////
 // Utility functions
 ///////////////////////////////////////
 
 static struct BgTaskState* Task(uint8_t* raw) {
 	return (struct BgTaskState*)raw;
+}
+
+static uint8_t n_stages() {
+	return ptr_lsb(&stage_versus_end_index);
 }
 
 /** Set nt buffer writes in horizontal mode
@@ -75,6 +80,16 @@ static void nt_buffers_vertical() {
 ///////////////////////////////////////
 // State implementation
 ///////////////////////////////////////
+
+static uint8_t selector_position_x(uint8_t stage_num) {
+	uint8_t const max_slots = 16;
+	uint8_t const free_slots = max_slots - n_stages();
+	uint8_t const first_pixel = 64;
+	uint8_t const slot_size = 8;
+	uint8_t const first_position = first_pixel + (free_slots / 2) * slot_size;
+
+	return first_position + stage_num * slot_size;
+}
 
 static void skip_frame() {
 	wrap_trampoline(code_bank(), code_bank(), &sleep_frame);
@@ -124,7 +139,7 @@ static void tick_bg_task() {
 	static uint8_t const upper_frame_border_header[] = {0x21, 0xe8, 16};
 	static uint8_t const lower_frame_border_header[] = {0x23, 0x88, 16};
 	static uint8_t const frame_clear_bot[] = {0x23, 0xa8, 16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-	static uint8_t const frame_selector[] = {0x21, 0xc8, 16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, tsel, tsel, tsel, tsel, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+	static uint8_t const frame_selector_header[] = {0x21, 0xc8, 16};
 
 	// Screen init nametable buffers
 	static uint8_t const nt_palette_header[] = {0x3f, 0x00, 0x20};
@@ -157,7 +172,20 @@ static void tick_bg_task() {
 			wrap_construct_nt_buffer(upper_frame_border_header, frame_border);
 			wrap_construct_nt_buffer(lower_frame_border_header, frame_border);
 			wrap_push_nt_buffer(frame_clear_bot);
-			wrap_push_nt_buffer(frame_selector);
+
+			// Selection slots
+			uint8_t const n_slots = 16;
+			uint8_t const free_slots = n_slots - n_stages();
+			uint8_t const first_slot = free_slots / 2;
+			uint8_t const last_slot = first_slot + n_stages();
+			for (uint8_t i = 0; i < n_slots; ++i) {
+				if (i < first_slot || i >= last_slot) {
+					stage_selection_mem_buffer[i] = 0x00;
+				}else {
+					stage_selection_mem_buffer[i] = tsel;
+				}
+			}
+			wrap_construct_nt_buffer(frame_selector_header, stage_selection_mem_buffer);
 
 			// Set nt buffer writes in vertical mode
 			//  note: it will not take effect until the next frame (buffers pushed above are horizontal)
@@ -168,7 +196,7 @@ static void tick_bg_task() {
 
 		case BG_STEP_STAGE_PICTURE_INIT:
 			// Move selector, and reset it to its first frame (forcing it to be visible)
-			Anim(stage_selection_cursor_anim)->x = selector_position_x[*config_requested_stage];
+			Anim(stage_selection_cursor_anim)->x = selector_position_x(*config_requested_stage);
 			wrap_animation_state_change_animation(stage_selection_cursor_anim, &menu_stage_selection_selector_anim);
 
 			task->count = 0;
@@ -207,7 +235,7 @@ void init_stage_selection_screen_extra() {
 
 	// Initialize selector animation
 	wrap_animation_init_state(stage_selection_cursor_anim, &menu_stage_selection_selector_anim);
-	Anim(stage_selection_cursor_anim)->x = selector_position_x[*config_requested_stage];
+	Anim(stage_selection_cursor_anim)->x = selector_position_x(*config_requested_stage);
 	Anim(stage_selection_cursor_anim)->y = 111;
 	Anim(stage_selection_cursor_anim)->first_sprite_num = 0;
 	Anim(stage_selection_cursor_anim)->last_sprite_num = 1;
@@ -230,11 +258,7 @@ void stage_selection_screen_tick_extra() {
 			switch (controller_btns) {
 				case CONTROLLER_BTN_RIGHT:
 					audio_play_interface_click();
-					if (*config_requested_stage < 3) {
-						++*config_requested_stage;
-					}else {
-						*config_requested_stage = 0;
-					}
+					*config_requested_stage = capped_inc(*config_requested_stage, n_stages()-1);
 					if (Task(stage_selection_bg_task)->step >= BG_STEP_STAGE_PICTURE_INIT) {
 						Task(stage_selection_bg_task)->step = BG_STEP_STAGE_PICTURE_INIT;
 						Task(stage_selection_bg_task)->count = 0;
@@ -243,11 +267,7 @@ void stage_selection_screen_tick_extra() {
 
 				case CONTROLLER_BTN_LEFT:
 					audio_play_interface_click();
-					if (*config_requested_stage > 0) {
-						--*config_requested_stage;
-					}else {
-						*config_requested_stage = 3;
-					}
+					*config_requested_stage = capped_dec(*config_requested_stage, n_stages()-1);
 					if (Task(stage_selection_bg_task)->step >= BG_STEP_STAGE_PICTURE_INIT) {
 						Task(stage_selection_bg_task)->step = BG_STEP_STAGE_PICTURE_INIT;
 						Task(stage_selection_bg_task)->count = 0;

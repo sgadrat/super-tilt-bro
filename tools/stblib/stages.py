@@ -32,6 +32,9 @@ class Platform:
 		self.top = top
 		self.bottom = bottom
 
+	def is_smooth(self):
+		return False
+
 	def check(self):
 		# Check that platform is in the screen
 		position = f'left={self.left} right={self.right} top={self.top} bot={self.bottom}'
@@ -51,6 +54,9 @@ class OosPlatform:
 		self.top = top
 		self.bottom = bottom
 
+	def is_smooth(self):
+		return False
+
 	def check(self):
 		# Check that platform is in the gaming area
 		position = f'left={self.left} right={self.right} top={self.top} bot={self.bottom}'
@@ -68,6 +74,9 @@ class SmoothPlatform:
 		self.left = left
 		self.right = right
 		self.top = top
+
+	def is_smooth(self):
+		return True
 
 	def check(self):
 		# Check that platform is in the screen
@@ -90,6 +99,9 @@ class Bumper:
 		self.force = force
 		self.horizontal_direction = horizontal_direction
 		self.vertical_direction = vertical_direction
+
+	def is_smooth(self):
+		return False
 
 	def check(self):
 		# Check that bumper is in the screen
@@ -187,7 +199,7 @@ class Waypoints:
 			)
 
 class Stage:
-	def __init__(self, name = 'stage', description = 'Stage', player_a_position = (32768, 32768), player_b_position = (32768, 32768), respawn_position = (32768, 32768), platforms = None, targets = None, exit_area = None):
+	def __init__(self, name = 'stage', description = 'Stage', player_a_position = (32768, 32768), player_b_position = (32768, 32768), respawn_position = (32768, 32768), platforms = None, targets = None, exit_area = None, illustration = None):
 		self.name = name
 		self.description = description
 		self.player_a_position = player_a_position
@@ -196,6 +208,7 @@ class Stage:
 		self.platforms = platforms if platforms is not None else [] #TODO should be renamed in "elements" or "layout"
 		self.targets = targets if targets is not None else []
 		self.exit = exit_area
+		self.illustration = illustration
 
 	def layout_size(self):
 		"""
@@ -217,12 +230,10 @@ class Stage:
 		smooth = False
 		for platform in self.platforms:
 			ensure(platform.__class__.__name__ in ['Platform', 'OosPlatform', 'SmoothPlatform', 'Bumper'], 'Unknown platform object of type "{}"'.format(platform.__class__.__name__))
-			if platform.__class__.__name__ in ['Platform', 'OosPlatform', 'Bumper']:
-				ensure(not smooth, 'Hard platform found after a smooth one')
-			elif isinstance(platform, SmoothPlatform):
+			if platform.is_smooth():
 				smooth = True
 			else:
-				assert False # dead code, unknown types are checked by a former "ensure"
+				ensure(not smooth, 'Hard platform found after a smooth one')
 
 		# Check platforms
 		for platform in self.platforms:
@@ -240,6 +251,42 @@ class Stage:
 		# Check exit
 		if self.exit is not None:
 			self.exit.check()
+
+		# Check illustration
+		if self.illustration is not None:
+			ILLUSTRATION_WIDTH = 16
+			ILLUSTRATION_HEIGHT = 12
+			ILLUSTRATION_SPACE = 0
+			ILLUSTRATION_SMOOTH = 1
+			ILLUSTRATION_BLOCK = 2
+			ensure(isinstance(self.illustration, list),
+				f'Stage illustration must be a two dimensional list of {ILLUSTRATION_WIDTH}x{ILLUSTRATION_HEIGHT} elements'
+			)
+			ensure(len(self.illustration) == ILLUSTRATION_HEIGHT,
+				'Stage illustration has not the right count of lines ({} instead of {})'.format(len(self.illustration), ILLUSTRATION_HEIGHT)
+			)
+			actual_width = None
+			for line_idx in range(len(self.illustration)):
+				line = self.illustration[line_idx]
+				ensure(isinstance(line, list), f'Stage illustration line {line_idx} is not a list')
+				ensure(actual_width is None or len(line) == actual_width,
+					f'Stage illustration line {line_idx} is not the same size than previous ones {len(line)} instead of {actual_width}'
+				)
+				for entry_index in range(len(line)):
+					entry = line[entry_index]
+					ensure(isinstance(entry, int) or isinstance(entry, str),
+						'Stage illustration element at {}x{} is of type {} instead of int or str'.format(
+							line_idx, entry_index, entry.__class__.__name__
+						)
+					)
+					if (isinstance(entry, int)):
+						ensure(entry in [ILLUSTRATION_SPACE, ILLUSTRATION_SMOOTH, ILLUSTRATION_BLOCK],
+							f'Stage illustration int element {entry} unknown at position {entry_index}x{line_idx}'
+						)
+					if (isinstance(entry, str)):
+						ensure(entry in ' abcdefghijklmnopqrstuvwxyz' and len(entry) == 1)
+				actual_width = len(line)
+			ensure(actual_width == ILLUSTRATION_WIDTH, 'Stage illustration with is {actual_width} instead of {ILLUSTRATION_WIDTH}')
 
 		# Check that stage fits in is reserved memory area
 		max_size = 0x80

@@ -38,6 +38,65 @@ def stage_to_asm(stage, visibility=''):
 
 	serialized += 'END_OF_STAGE\n'
 
+	# Illustration
+	if stage.illustration is not None:
+		serialized += '\n; Illustration\n'
+		serialized += '.(\n'
+		serialized += 'BAC = 0\n'
+		serialized += 'SMO = TILE_MENU_CHAR_SELECT_STAGE_SMOOTH\n'
+		serialized += 'PLT = TILE_MENU_CHAR_SELECT_STAGE_PLATFORM\n'
+		serialized += 'C_A = TILE_CHAR_A\n'
+		serialized += 'C_B = C_A + 1\n'
+		serialized += 'C_C = C_A + 2\n'
+		serialized += 'C_D = C_A + 3\n'
+		serialized += 'C_E = C_A + 4\n'
+		serialized += 'C_F = C_A + 5\n'
+		serialized += 'C_G = C_A + 6\n'
+		serialized += 'C_H = C_A + 7\n'
+		serialized += 'C_I = C_A + 8\n'
+		serialized += 'C_J = C_A + 9\n'
+		serialized += 'C_K = C_A + 10\n'
+		serialized += 'C_L = C_A + 11\n'
+		serialized += 'C_M = C_A + 12\n'
+		serialized += 'C_N = C_A + 13\n'
+		serialized += 'C_O = C_A + 14\n'
+		serialized += 'C_P = C_A + 15\n'
+		serialized += 'C_Q = C_A + 16\n'
+		serialized += 'C_R = C_A + 17\n'
+		serialized += 'C_S = C_A + 18\n'
+		serialized += 'C_T = C_A + 19\n'
+		serialized += 'C_U = C_A + 20\n'
+		serialized += 'C_V = C_A + 21\n'
+		serialized += 'C_W = C_A + 22\n'
+		serialized += 'C_X = C_A + 23\n'
+		serialized += 'C_Y = C_A + 24\n'
+		serialized += 'C_Z = C_A + 25\n'
+		serialized += '\n'
+		serialized += '{}{}_illustration:\n'.format(visibility, stage.name)
+		for x in range(len(stage.illustration[0])):
+			serialized += '.byt '
+			for y in range(len(stage.illustration)):
+				entry = stage.illustration[y][x]
+
+				translated_entry = None
+				if isinstance(entry, int):
+					translated_entry = ['BAC', 'SMO', 'PLT'][entry]
+				elif isinstance(entry, str):
+					if entry == ' ':
+						translated_entry = 'BAC'
+					else:
+						translated_entry = 'C_{}'.format(entry.upper())
+				assert translated_entry is not None, f'unable to translate entry "{entry}", should have been detected by stage.check()'
+
+				serialized += '{}{}'.format(
+					', ' if y != 0 else '',
+					translated_entry
+				)
+
+			serialized += '\n'
+
+		serialized += '.)\n'
+
 	return serialized
 
 def platform_to_asm(platform, visibility=''):

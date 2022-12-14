@@ -3,6 +3,7 @@ RAW_VECTOR(stage_flatland_init) ; Flatland
 RAW_VECTOR(stage_pit_init) ; Pit
 RAW_VECTOR(stage_skyride_init) ; Skyride
 RAW_VECTOR(stage_thehunt_init) ; The Hunt
+RAW_VECTOR(stage_theplank_init) ; The Plank
 
 stage_versus_end_index = (* - stages_init_routine) / 2
 RAW_VECTOR(stage_arcade_boss_init) ; arcade boss
@@ -18,6 +19,7 @@ RAW_VECTOR(stage_flatland_tick) ; Flatland
 RAW_VECTOR(stage_pit_tick) ; Pit
 RAW_VECTOR(stage_skyride_tick) ; Skyride
 RAW_VECTOR(stage_thehunt_tick) ; The Hunt
+RAW_VECTOR(stage_theplank_tick) ; The Plank
 
 RAW_VECTOR(stage_arcade_boss_tick) ; arcade boss
 
@@ -31,6 +33,7 @@ stages_freezed_tick_routine_lsb:
 .byt <dummy_routine ; Pit
 .byt <dummy_routine ; Skyride
 .byt <stage_thehunt_freezed_tick ; The Hunt
+.byt <dummy_routine ; The Plank
 
 .byt <stage_arcade_boss_freezed_tick ; arcade boss
 
@@ -44,6 +47,7 @@ stages_freezed_tick_routine_msb:
 .byt >dummy_routine ; Pit
 .byt >dummy_routine ; Skyride
 .byt >stage_thehunt_freezed_tick ; The Hunt
+.byt >dummy_routine ; The Plank
 
 .byt >stage_arcade_boss_freezed_tick ; arcade boss
 
@@ -57,6 +61,7 @@ RAW_VECTOR(nametable_flatland) ; Flatland
 RAW_VECTOR(nametable_stage_pit) ; Pit
 RAW_VECTOR(nametable_stage_skyride) ; Skyride
 RAW_VECTOR(nametable_stage_thehunt) ; The Hunt
+RAW_VECTOR(stage_theplank_nametable) ; The Plank
 
 RAW_VECTOR(stage_arcade_boss_space_nametable) ; arcade boss
 
@@ -70,6 +75,7 @@ RAW_VECTOR(stage_flatland_palette) ; Flatland
 RAW_VECTOR(stage_pit_palette) ; Pit
 RAW_VECTOR(stage_skyride_palette) ; Skyride
 RAW_VECTOR(stage_thehunt_palette) ; The Hunt
+RAW_VECTOR(stage_theplank_palette) ; The Plank
 
 RAW_VECTOR(stage_arcade_boss_space_palette) ; arcade boss
 
@@ -83,6 +89,7 @@ stage_routine_fadeout_lsb:
 .byt <stage_pit_fadeout ; Pit
 .byt <stage_skyride_fadeout ; Skyride
 .byt <stage_thehunt_fadeout ; The Hunt
+.byt <stage_theplank_fadeout ; The Plank
 .byt <dummy_routine ; arcade boss
 .byt <dummy_routine ; arcade run01
 .byt <dummy_routine ; arcade btt01
@@ -93,6 +100,7 @@ stage_routine_fadeout_msb:
 .byt >stage_pit_fadeout ; Pit
 .byt >stage_skyride_fadeout ; Skyride
 .byt >stage_thehunt_fadeout ; The Hunt
+.byt >stage_theplank_fadeout ; The Plank
 .byt >dummy_routine ; arcade boss
 .byt >dummy_routine ; arcade run01
 .byt >dummy_routine ; arcade btt01
@@ -104,6 +112,7 @@ RAW_VECTOR(stage_flatland_data) ; Flatland
 RAW_VECTOR(stage_pit_data) ; Pit
 RAW_VECTOR(stage_skyride_data) ; Skyride
 RAW_VECTOR(stage_thehunt_data) ; The Hunt
+RAW_VECTOR(stage_theplank_data) ; The Plank
 
 RAW_VECTOR(stage_arcade_boss_space_data) ; arcade boss
 
@@ -117,6 +126,7 @@ RAW_VECTOR(stage_flatland_illustration) ; Flatland
 RAW_VECTOR(stage_pit_illustration) ; Pit
 RAW_VECTOR(stage_skyride_illustration) ; Skyride
 RAW_VECTOR(stage_thehunt_illustration) ; The Hunt
+RAW_VECTOR(stage_theplank_illustration) ; The Plank
 
 RAW_VECTOR($0000) ; arcade boss
 
@@ -130,6 +140,7 @@ stages_netload_routine_lsb:
 .byt <stage_pit_netload ; Pit
 .byt <dummy_routine ; Skyride
 .byt <stage_thehunt_netload ; The Hunt
+.byt <dummy_routine ; The Plank
 
 .byt <dummy_routine ; arcade boss
 
@@ -143,6 +154,7 @@ stages_netload_routine_msb:
 .byt >stage_pit_netload ; Pit
 .byt >dummy_routine ; Skyride
 .byt >stage_thehunt_netload ; The Hunt
+.byt >dummy_routine ; The Plank
 
 .byt >dummy_routine ; arcade boss
 
@@ -156,6 +168,7 @@ stages_bank:
 .byt STAGE_PIT_BANK_NUMBER ; Pit
 .byt STAGE_SKYRIDE_BANK_NUMBER ; Skyride
 .byt STAGE_THEHUNT_BANK_NUMBER ; The Hunt
+.byt STAGE_THEPLANK_BANK_NUMBER ; The Plank
 
 .byt STAGE_ARCADE_BOSS_BANK_NUMBER ; arcade boss
 
@@ -169,6 +182,7 @@ stages_tileset_lsb:
 .byt <tileset_jungle ; Pit
 .byt <tileset_ruins ; Skyride
 .byt <tileset_magma ; The Hunt
+.byt <tileset_jungle ; The Plank
 
 .byt <tileset_magma ; arcade boss
 
@@ -182,6 +196,7 @@ stages_tileset_msb:
 .byt >tileset_jungle ; Pit
 .byt >tileset_ruins ; Skyride
 .byt >tileset_magma ; The Hunt
+.byt >tileset_jungle ; The Plank
 
 .byt >tileset_magma ; arcade boss
 
@@ -195,6 +210,7 @@ stages_tileset_bank:
 .byt TILESET_JUNGLE_BANK_NUMBER ; Pit
 .byt TILESET_RUINS_BANK_NUMBER ; Skyride
 .byt TILESET_MAGMA_BANK_NUMBER ; The Hunt
+.byt TILESET_JUNGLE_BANK_NUMBER ; The Plank
 
 .byt TILESET_MAGMA_BANK_NUMBER ; arcade boss
 
