@@ -246,7 +246,13 @@ init_gameover_screen_extra:
 		bne position_a_balloon
 
 	; Change for music for gameover theme
-	jsr audio_music_gameover
+	lda #<music_jump_rope_info
+	sta audio_current_track_lsb
+	lda #>music_jump_rope_info
+	sta audio_current_track_msb
+	lda #music_jump_rope_bank
+	sta audio_current_track_bank
+	TRAMPOLINE(audio_play_music_direct, #0, #CURRENT_BANK_NUMBER)
 
 	; Set both gamepads as non-ready
 	lda #%00000000

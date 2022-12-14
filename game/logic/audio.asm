@@ -8,16 +8,6 @@ audio_music_weak:
 	;rts ; useless, jump to a subroutine
 .)
 
-audio_music_gameover:
-.(
-	ldy #<music_jump_rope_info
-	ldx #>music_jump_rope_info
-	lda #music_jump_rope_bank
-	jmp audio_play_music
-
-	;rts ; useless, jump to a subroutine
-.)
-
 #define audio_preserve_x_y \
 .(:\
 	tya:\
@@ -57,10 +47,8 @@ audio_play_sfx_from_list:
 .)
 
 sfx_list_lsb:
-	SFX_COUNTDOWN_TICK_IDX = * - sfx_list_lsb
-	.byt <sfx_countdown_tick
-	SFX_COUNTDOWN_REACH_IDX = * - sfx_list_lsb
-	.byt <sfx_countdown_reach
+	.byt <sfx_countdown_tick : SFX_COUNTDOWN_TICK_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_countdown_reach : SFX_COUNTDOWN_REACH_IDX = * - sfx_list_lsb - 1
 sfx_list_msb:
 	.byt >sfx_countdown_tick
 	.byt >sfx_countdown_reach
@@ -68,6 +56,10 @@ sfx_list_bnk:
 	.byt SFX_BANK
 	.byt SFX_BANK
 
+;TODO replace calls to "audio_play_*" by "audio_play_sfx_from_list", which
+;      - preserve x, and y naturally (without pushing to stack)
+;      - takes less bytes of ROM per supported SFX
+;      - supports moving SFXs to different banks
 audio_play_crash:
 .(
 	audio_preserve_x_y
