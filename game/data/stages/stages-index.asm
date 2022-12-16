@@ -1,18 +1,18 @@
 stages_init_routine:
-RAW_VECTOR(stage_flatland_init) ; Flatland
-RAW_VECTOR(stage_pit_init) ; Pit
-RAW_VECTOR(stage_skyride_init) ; Skyride
-RAW_VECTOR(stage_thehunt_init) ; The Hunt
-RAW_VECTOR(stage_theplank_init) ; The Plank
+RAW_VECTOR(stage_flatland_init) : stage_flatland_index = ((* - stages_init_routine) / 2) - 1 ; Flatland
+RAW_VECTOR(stage_pit_init) : stage_pit_index = ((* - stages_init_routine) / 2) - 1 ; Pit
+RAW_VECTOR(stage_skyride_init) : stage_skyride_index = ((* - stages_init_routine) / 2) - 1 ; Skyride
+RAW_VECTOR(stage_thehunt_init) : stage_thehunt_index = ((* - stages_init_routine) / 2) - 1 ; The Hunt
+RAW_VECTOR(stage_theplank_init) : stage_theplank_index = ((* - stages_init_routine) / 2) - 1 ; The Plank
 
 stage_versus_end_index = (* - stages_init_routine) / 2
-RAW_VECTOR(stage_arcade_boss_init) ; arcade boss
+RAW_VECTOR(stage_arcade_boss_init) : stage_arcade_boss_index = ((* - stages_init_routine) / 2) - 1 ; arcade boss
 
 stage_arcade_first_index = (* - stages_init_routine) / 2
-RAW_VECTOR(stage_arcade_run01_init) ; arcade run01
-RAW_VECTOR(stage_arcade_btt01_init) ; arcade btt01
-RAW_VECTOR(stage_arcade_run02_init) ; arcade run02
-RAW_VECTOR(stage_arcade_btt02_init) ; arcade btt02
+RAW_VECTOR(stage_arcade_run01_init) : stage_arcade_run01_index = ((* - stages_init_routine) / 2) - stage_arcade_first_index - 1 ; arcade run01
+RAW_VECTOR(stage_arcade_btt01_init) : stage_arcade_btt01_index = ((* - stages_init_routine) / 2) - stage_arcade_first_index - 1 ; arcade btt01
+RAW_VECTOR(stage_arcade_run02_init) : stage_arcade_run02_index = ((* - stages_init_routine) / 2) - stage_arcade_first_index - 1 ; arcade run02
+RAW_VECTOR(stage_arcade_btt02_init) : stage_arcade_btt02_index = ((* - stages_init_routine) / 2) - stage_arcade_first_index - 1 ; arcade btt02
 
 stages_tick_routine:
 RAW_VECTOR(stage_flatland_tick) ; Flatland

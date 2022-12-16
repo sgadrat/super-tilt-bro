@@ -13,16 +13,22 @@ extern uint8_t const cutscene_sinbad_story_kiki_encounter;
 extern uint8_t const cutscene_sinbad_story_meteor;
 extern uint8_t const cutscene_sinbad_story_pepper_encounter;
 extern uint8_t const cutscene_sinbad_story_sinbad_encounter;
+extern uint8_t const arcade_encounters; // encounters()
 
 // Labels, use their address or the associated function
 extern uint8_t const ARCADE_MODE_EXTRA_BANK_NUMBER; // arcade_bank()
 extern uint8_t const ARCADE_MODE_SCREEN_BANK; // screen_bank()
+extern uint8_t const arcade_n_encounters; // n_encounters()
 extern uint8_t const CHARSET_ALPHANUM_BANK_NUMBER; // charset_bank()
 extern uint8_t const cutscene_sinbad_story_bird_msg_bank;
 extern uint8_t const cutscene_sinbad_story_kiki_encounter_bank;
 extern uint8_t const cutscene_sinbad_story_meteor_bank;
 extern uint8_t const cutscene_sinbad_story_pepper_encounter_bank;
 extern uint8_t const cutscene_sinbad_story_sinbad_encounter_bank;
+extern uint8_t const ENCOUNTER_FIGHT; // encounter_type_fight()
+extern uint8_t const ENCOUNTER_RUN; // encounter_type_run()
+extern uint8_t const ENCOUNTER_TARGETS; // encounter_type_targets()
+//extern uint8_t const ENCOUNTER_CUTSCENE; // encounter_type_cutscene()
 extern uint8_t const stage_arcade_first_index;
 
 ///////////////////////////////////////
@@ -56,32 +62,10 @@ typedef struct Encounter {
 		} targets;
 		struct {
 			uint8_t const* scene;
-			uint16_t bank;
+			uint8_t bank;
 		} cutscene;
 	};
 } __attribute__((__packed__)) Encounter;
-
-#define ENCOUNTER_FIGHT 0
-#define ENCOUNTER_RUN 1
-#define ENCOUNTER_TARGETS 2
-#define ENCOUNTER_CUTSCENE 3
-
-static Encounter const encounters[] = {
-	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_bird_msg, (uint16_t)&cutscene_sinbad_story_bird_msg_bank}}},
-	{.type = ENCOUNTER_RUN, {.run={0}}},
-	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_sinbad_encounter, (uint16_t)&cutscene_sinbad_story_sinbad_encounter_bank}}},
-	{.type = ENCOUNTER_FIGHT, {.fight={0, 1, 0, 0}}},
-	{.type = ENCOUNTER_TARGETS, {.targets={1}}},
-	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_kiki_encounter, (uint16_t)&cutscene_sinbad_story_kiki_encounter_bank}}},
-	{.type = ENCOUNTER_FIGHT, {.fight={1, 2, 0, 1}}},
-	{.type = ENCOUNTER_RUN, {.run={2}}},
-	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_pepper_encounter, (uint16_t)&cutscene_sinbad_story_pepper_encounter_bank}}},
-	{.type = ENCOUNTER_FIGHT, {.fight={2, 3, 0, 2}}},
-	{.type = ENCOUNTER_TARGETS, {.targets={3}}},
-	{.type = ENCOUNTER_CUTSCENE, {.cutscene={&cutscene_sinbad_story_meteor, (uint16_t)&cutscene_sinbad_story_meteor_bank}}},
-	{.type = ENCOUNTER_FIGHT, {.fight={0, 4, 1, 4}}},
-};
-uint8_t const n_encounters = sizeof(encounters) / sizeof(Encounter);
 
 static uint8_t const INPUT_NONE = 0;
 static uint8_t const INPUT_BACK = 1;
@@ -95,12 +79,36 @@ static uint8_t arcade_bank() {
 	return ptr_lsb(&ARCADE_MODE_EXTRA_BANK_NUMBER);
 }
 
-static uint8_t screen_bank() {
-	return ptr_lsb(&ARCADE_MODE_SCREEN_BANK);
-}
-
 static uint8_t charset_bank() {
 	return ptr_lsb(&CHARSET_ALPHANUM_BANK_NUMBER);
+}
+
+static Encounter const* encounters() {
+	return (Encounter const*)(&arcade_encounters);
+}
+
+static uint8_t n_encounters() {
+	return ptr_lsb(&arcade_n_encounters);
+}
+
+static uint8_t encounter_type_fight() {
+	return ptr_lsb(&ENCOUNTER_FIGHT);
+}
+
+static uint8_t encounter_type_run() {
+	return ptr_lsb(&ENCOUNTER_RUN);
+}
+
+static uint8_t encounter_type_targets() {
+	return ptr_lsb(&ENCOUNTER_TARGETS);
+}
+
+//static uint8_t encounter_type_cutscene() {
+//	return ptr_lsb(&ENCOUNTER_CUTSCENE);
+//}
+
+static uint8_t screen_bank() {
+	return ptr_lsb(&ARCADE_MODE_SCREEN_BANK);
 }
 
 /** Not a real yield, pass a frame "as if" it gone through main loop */
@@ -140,7 +148,7 @@ static void set_text(char const* text, uint8_t line, uint8_t col) {
 ///////////////////////////////////////
 
 static Encounter current_encounter() {
-	return encounters[*arcade_mode_current_encounter];
+	return encounters()[*arcade_mode_current_encounter];
 }
 
 static void start_cutscene() {
@@ -214,7 +222,7 @@ static void next_screen() {
 	*arcade_mode_stage_type = current_encounter().type;
 	*config_game_mode = GAME_MODE_ARCADE;
 
-	if (*arcade_mode_stage_type == ENCOUNTER_FIGHT) {
+	if (*arcade_mode_stage_type == encounter_type_fight()) {
 		*config_ai_level = min(current_encounter().fight.difficulty, 3);
 		*config_selected_stage = current_encounter().fight.stage;
 		*config_player_b_character_palette = current_encounter().fight.skin;
@@ -222,7 +230,7 @@ static void next_screen() {
 		*config_player_b_character = current_encounter().fight.character;
 		*config_player_a_present = true;
 		*config_player_b_present = true;
-	}else if (*arcade_mode_stage_type == ENCOUNTER_RUN || *arcade_mode_stage_type == ENCOUNTER_TARGETS) {
+	}else if (*arcade_mode_stage_type == encounter_type_run() || *arcade_mode_stage_type == encounter_type_targets()) {
 		*config_ai_level = 0;
 		*config_selected_stage = ptr_lsb(&stage_arcade_first_index) + current_encounter().run.stage;
 		*config_player_b_character_palette = 0;
@@ -341,7 +349,7 @@ void arcade_mode_tick_extra() {
 		reinit_player_state();
 	}
 
-	if (*arcade_mode_current_encounter == n_encounters) {
+	if (*arcade_mode_current_encounter == n_encounters()) {
 		display_timer();
 
 		set_text("congratulations", 13, 9);
