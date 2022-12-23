@@ -776,6 +776,7 @@ static void estimate_latency_request() {
 
 static void estimate_latency_wait() {
 	if (esp_rx_message_ready()) {
+		//TODO check message type (there could be leftover messages from the game server, like a late "GameOver")
 		// Read message
 		if ((&esp_rx_buffer)[ESP_MSG_SIZE] != 5) {
 			// Empty message means "unable to resolve host"
