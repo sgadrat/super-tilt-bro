@@ -72,3 +72,50 @@ sleep_frame:
 	jmp audio_music_tick
 	; rts ; useless, jump to a subroutine
 .)
+
+; Stop rendering, displaying only the backdrop color and allowing to write PPU's register regardless of vblank
+;
+; Overwrites register A
+stop_rendering:
+.(
+	;TODO should be a fixed bank util
+	; other implementations
+	;  - arcade_mode.c start_cutscene()
+	;  - change_global_game_state
+
+	lda #NMI_AUDIO
+	sta nmi_processing
+	lda #%10010000
+	sta ppuctrl_val
+	sta PPUCTRL
+	lda #$00
+	sta PPUMASK
+
+	rts
+.)
+
+; Restart rendring stopped by stop_rendering
+; 	A - scroll's nametable
+;
+; Overwrites register A
+start_rendering:
+.(
+	;TODO should be a fixed bank util
+	; other implementations
+	;  - post_transition
+	;  - (hypotetical) all specific post-transition routines
+
+	; Reactivate rendering
+	ora #%10010000
+	sta ppuctrl_val
+	sta PPUCTRL
+
+	; Avoid re-enabling mid-frame (and quit NMI_AUDIO mode)
+	jsr wait_next_frame
+
+	; Enable sprites and background rendering
+	lda #%00011110
+	sta PPUMASK
+
+	rts
+.)

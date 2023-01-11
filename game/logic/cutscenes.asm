@@ -253,6 +253,78 @@ load_animation_addr:
 	.byt index :\
 .)
 
+&cutscene_load_tileset:
+.(
+	parameter_addr = tmpfield1
+
+	; Stack shenaningans to handle parameters being hardcoded after the jsr
+	lda #5
+	jsr inline_parameters
+
+	; Set PPU address
+	lda PPUSTATUS
+	ldy #0
+	lda (parameter_addr), y
+	sta PPUADDR
+	iny
+	lda (parameter_addr), y
+	sta PPUADDR
+
+	; Set trampoline parameters
+	;NOTE Not using the macro because we read bank number from parameters while we will invalid parameters pointer
+	lda #<cpu_to_ppu_copy_tileset
+	sta extra_tmpfield1
+	lda #>cpu_to_ppu_copy_tileset
+	sta extra_tmpfield2
+
+	iny
+	lda (parameter_addr), y
+	sta extra_tmpfield3
+
+	lda #CURRENT_BANK_NUMBER
+	sta extra_tmpfield4
+
+	; Store tileset address
+	;NOTE Beware, we invalid paramer_addr pointer while reading parameters
+	iny
+	lda (parameter_addr), y
+	tax
+	iny
+	lda (parameter_addr), y
+	sta tmpfield2
+	txa
+	sta tmpfield1
+
+	; Call to tileset copying routine
+	jsr stop_rendering
+	jsr trampoline
+
+	rts
+.)
+
+#define LOAD_TILESET(addr,bank,ppu_addr) .( :\
+	jsr cutscene_load_tileset :\
+	.byt >ppu_addr, <ppu_addr :\
+	.byt bank :\
+	.word addr :\
+.)
+
+#define LOAD_TILESET_SPRITES(addr,bank) .( :\
+	ppu_addr = $0000 :\
+	jsr cutscene_load_tileset :\
+	.byt >ppu_addr, <ppu_addr :\
+	.byt bank :\
+	.word addr :\
+.)
+
+#define LOAD_TILESET_BG(addr,bank) .( :\
+	ppu_addr = $1000 :\
+	jsr cutscene_load_tileset :\
+	.byt >ppu_addr, <ppu_addr :\
+	.byt bank :\
+	.word addr :\
+.)
+
 &cutscene_set_palette:
 .(
 	parameter_addr = tmpfield1
@@ -342,6 +414,29 @@ load_animation_addr:
 	jsr cutscene_set_bg_color :\
 	.byt color :\
 .)
+
+&cutscene_start_rendering:
+.(
+	parameter_addr = tmpfield1
+
+	; Stack shenaningans to handle parameters being hardcoded after the jsr
+	lda #1
+	jsr inline_parameters
+
+	; Start rendering
+	ldy #0
+	lda (parameter_addr), y
+	jmp start_rendering
+
+	; rts ; useless, jump to subroutine
+.)
+
+#define START_RENDERING(nametable_y,nametable_x) .( :\
+	jsr cutscene_start_rendering :\
+	.byt (nametable_y << 1) + nametable_x :\
+.)
+
+#define STOP_RENDERING jsr stop_rendering
 
 &cutscene_text:
 .(
