@@ -51,9 +51,10 @@ class Nametable:
 					line.append([0]*4)
 				self.attributes.append(line)
 
-	def set_tile(self, x, y, tile, attribute):
+	def set_tile(self, x, y, tile, attribute = None):
 		self.tilemap[y][x] = tile
-		self.set_attribute_for_tile(x, y, attribute)
+		if attribute is not None:
+			self.set_attribute_for_tile(x, y, attribute)
 
 	def set_attribute_for_tile(self, x, y, attribute):
 		x = x // 2
@@ -65,6 +66,17 @@ class Nametable:
 		byte = x // 2
 		index = ((y+1) % 2) * 2 + (x+1) % 2
 		self.attributes[line][byte][index] = attribute
+
+	def get_attribute_for_tile(self, x, y):
+		x = x // 2
+		y = y // 2
+		return get_attribute(self, x, y)
+
+	def get_attribute(self, x, y):
+		line = y // 2
+		byte = x // 2
+		index = ((y+1) % 2) * 2 + (x+1) % 2
+		return self.attributes[line][byte][index]
 
 	def serialize(self, visibility=''):
 		serialized = '{}{}:\n'.format(visibility, self.name)
