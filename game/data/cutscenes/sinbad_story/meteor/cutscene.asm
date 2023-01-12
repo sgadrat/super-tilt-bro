@@ -1,8 +1,8 @@
 +cutscene_sinbad_story_meteor_bank = CURRENT_BANK_NUMBER
 
-#include "game/data/cutscenes/sinbad_story_meteor/anims.asm"
-#include "game/data/cutscenes/sinbad_story_meteor/screen.asm"
-#include "game/data/cutscenes/sinbad_story_meteor/tilesets.asm"
+#include "game/data/cutscenes/sinbad_story/meteor/anims.asm"
+#include "game/data/cutscenes/sinbad_story/meteor/screen.asm"
+#include "game/data/cutscenes/sinbad_story/meteor/tilesets.asm"
 
 .(
 +cutscene_sinbad_story_meteor:
@@ -22,19 +22,7 @@ cutscene_sinbad_story_meteor_init:
 	TRAMPOLINE(place_character_ppu_tiles_direct, #SINBAD_BANK_NUMBER, #CURRENT_BANK_NUMBER)
 
 	; Place sprites specific from this cutscene
-	ppu_addr = CHARACTERS_END_TILES_OFFSET
-	lda PPUSTATUS
-	lda #>ppu_addr
-	sta PPUADDR
-	lda #<ppu_addr
-	sta PPUADDR
-
-	lda #<cutscene_sinbad_story_meteor_sprites_tileset
-	sta tmpfield1
-	lda #>cutscene_sinbad_story_meteor_sprites_tileset
-	sta tmpfield2
-
-	jsr cpu_to_ppu_copy_tileset
+	LOAD_TILESET(cutscene_sinbad_story_meteor_sprites_tileset, cutscene_sinbad_story_meteor_bank, CHARACTERS_END_TILES_OFFSET)
 
 	rts
 .)

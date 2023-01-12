@@ -499,6 +499,8 @@ cutscene_autoscroll_h = $05d8
 cutscene_autoscroll_v = $05d9
 cutscene_frame_count = $05da
 cutscene_frames_skippable = $05db
+cutscene_sprite0_hit = $05dc
+cutscene_sprite0_scroll = $05dd
 
 ;
 ; JUKEBOX labels

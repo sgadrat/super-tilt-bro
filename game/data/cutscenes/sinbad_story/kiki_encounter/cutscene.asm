@@ -1,7 +1,7 @@
 +cutscene_sinbad_story_kiki_encounter_bank = CURRENT_BANK_NUMBER
 
-#include "game/data/cutscenes/sinbad_story_kiki_encounter/screen.asm"
-#include "game/data/cutscenes/sinbad_story_kiki_encounter/tilesets.asm"
+#include "game/data/cutscenes/sinbad_story/kiki_encounter/screen.asm"
+#include "game/data/cutscenes/sinbad_story/kiki_encounter/tilesets.asm"
 
 .(
 +cutscene_sinbad_story_kiki_encounter:
@@ -9,7 +9,7 @@
 .word cutscene_sinbad_story_kiki_encounter_nametable ; top nametable
 .word cutscene_sinbad_story_kiki_encounter_nametable ; bottom nametable
 .word cutscene_sinbad_story_kiki_encounter_bg_tileset ; background tileset
-.word cutscene_sinbad_story_kiki_encounter_bg_tileset ; sprites tileset
+.word $ffff ; sprites tileset
 .word cutscene_sinbad_story_kiki_encounter_logic ; scene script
 .word cutscene_sinbad_story_kiki_encounter_init ; initialization routine
 

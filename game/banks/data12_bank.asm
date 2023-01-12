@@ -12,7 +12,7 @@ bank_data_cutscene_logic_begin:
 #print *-bank_data_cutscene_logic_begin
 
 bank_data_cutscene_sinbad_story_meteor_begin:
-#include "game/data/cutscenes/sinbad_story_meteor/cutscene.asm"
+#include "game/data/cutscenes/sinbad_story/meteor/cutscene.asm"
 #echo
 #echo arcade cutscene sinbad story meteor size:
 #print *-bank_data_cutscene_sinbad_story_meteor_begin

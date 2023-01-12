@@ -57,6 +57,14 @@ bank_data_extra_jukebox_data:
 #print *-bank_data_extra_jukebox_data
 .)
 
+.(
+bank_data_cutscene_sinbad_common_tilesets:
+#include "game/data/cutscenes/sinbad_story/common/tilesets.asm"
+#echo
+#echo Cutscene Sinbad common tilesets
+#print *-bank_data_cutscene_sinbad_common_tilesets
+.)
+
 bank_data01_end:
 
 #echo

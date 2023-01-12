@@ -201,6 +201,8 @@ static void start_cutscene() {
 	cutscene_anims_enabled[3] = 0;
 	*cutscene_autoscroll_h = 0;
 	*cutscene_autoscroll_v = 0;
+	*cutscene_sprite0_hit = 0;
+	*screen_shake_counter = 0;
 
 	// Call cutscene's logic
 	wrap_trampoline(encounter.cutscene.bank, code_bank(), cutscene->logic);

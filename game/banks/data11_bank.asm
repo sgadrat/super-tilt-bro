@@ -12,13 +12,13 @@ bank_data_cutscene_logic_begin:
 #print *-bank_data_cutscene_logic_begin
 
 bank_data_cutscene_sinbad_story_sinbad_encounter_begin:
-#include "game/data/cutscenes/sinbad_story_sinbad_encounter/cutscene.asm"
+#include "game/data/cutscenes/sinbad_story/sinbad_encounter/cutscene.asm"
 #echo
 #echo arcade cutscene sinbad story sinbad encounter size:
 #print *-bank_data_cutscene_sinbad_story_sinbad_encounter_begin
 
 bank_data_cutscene_sinbad_story_pepper_encounter_begin:
-#include "game/data/cutscenes/sinbad_story_pepper_encounter/cutscene.asm"
+#include "game/data/cutscenes/sinbad_story/pepper_encounter/cutscene.asm"
 #echo
 #echo arcade cutscene sinbad story pepper encounter size:
 #print *-bank_data_cutscene_sinbad_story_pepper_encounter_begin

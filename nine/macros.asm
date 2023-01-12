@@ -316,7 +316,7 @@ duration
 #define ANIM_ANIMATION_END .byt $00
 #define ANIM_SPRITE_FOREGROUND_COUNT(n) .byt n
 #define ANIM_SPRITE_NORMAL_COUNT(n) .byt n
-#define ANIM_SPRITE(y,tile,attr,x) .byt y, tile, attr, x
+#define ANIM_SPRITE(y,tile,attr,x) .byt <y, tile, attr, <x
 
 ;
 ; Transition between gamestates

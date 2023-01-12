@@ -184,6 +184,7 @@ forever:
 
 	; Update game state
 	tick_state:
+
 		; Handle PAL emulation while on NTSC by skipping a frame after ticking 5 times in a row
 		.(
 			; Skip if no PAL emulation is requested

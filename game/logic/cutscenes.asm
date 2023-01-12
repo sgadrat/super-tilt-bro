@@ -336,7 +336,7 @@ load_animation_addr:
 	; Construct a nametable buffer from parameters
 	LAST_NT_BUFFER
 
-	lda #1
+	lda #NT_BUFFER_HORIZONTAL
 	sta nametable_buffers, x
 	inx
 	lda #$3f
@@ -814,6 +814,27 @@ load_animation_addr:
 			lda screen_shake_counter
 			beq ok
 				jsr shake_screen
+			ok:
+		.)
+
+		; Sprite 0 hit
+		.(
+			lda cutscene_sprite0_hit
+			beq ok
+				; Avoid doing stuff if we missed the hit or are still in the vertical blank
+				wait_vblank:
+					bit PPUSTATUS
+					bvs wait_vblank
+
+				; Wait sprite 0 hit
+				wait:
+					bit PPUSTATUS
+					bvc wait
+
+				; Update scrolling
+				lda cutscene_sprite0_scroll
+				sta PPUSCROLL
+				sta PPUSCROLL
 			ok:
 		.)
 

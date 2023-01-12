@@ -50,6 +50,23 @@
 	jsr trampoline :\
 .)
 
+; Rainbow-based performance profiling
+;  Adapted from Matt Hughson's Witch n' Wiz: https://github.com/mhughson/mbh-A53-witchnwiz
+PROF_CLEAR = $1e ; none
+PROF_R_TINT = $3e ; red
+PROF_G_TINT = $5e ; green
+PROF_B_TINT = $9e ; blue
+PROF_W_TINT = $1e ; white
+PROF_R = $3f ; red + grey
+PROF_G = $5f ; green + grey
+PROF_B = $9f ; blue + grey
+PROF_W = $1f ; white + grey
+
+#define PROFILE_POKE(value) .( :\
+	lda #value :\
+	sta PPUMASK :\
+.)
+
 ;
 ; Stage specific macros
 ;

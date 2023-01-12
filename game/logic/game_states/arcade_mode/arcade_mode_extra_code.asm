@@ -22,6 +22,13 @@ ENCOUNTER_ENTRY_SIZE = 5
 	.byt ENCOUNTER_CUTSCENE, <info, >info, <bank, 0
 
 &arcade_encounters:
+	;FIXME do not commit
+	ARCADE_CUTSCENE(cutscene_sinbad_story_bird_msg, cutscene_sinbad_story_bird_msg_bank)
+	ARCADE_CUTSCENE(cutscene_sinbad_story_sinbad_encounter, cutscene_sinbad_story_sinbad_encounter_bank)
+	ARCADE_CUTSCENE(cutscene_sinbad_story_kiki_encounter, cutscene_sinbad_story_kiki_encounter_bank)
+	ARCADE_CUTSCENE(cutscene_sinbad_story_pepper_encounter, cutscene_sinbad_story_pepper_encounter_bank)
+	ARCADE_CUTSCENE(cutscene_sinbad_story_meteor, cutscene_sinbad_story_meteor_bank)
+
 	ARCADE_CUTSCENE(cutscene_sinbad_story_bird_msg, cutscene_sinbad_story_bird_msg_bank)
 	ARCADE_RUN(stage_arcade_run01_index)
 	ARCADE_CUTSCENE(cutscene_sinbad_story_sinbad_encounter, cutscene_sinbad_story_sinbad_encounter_bank)

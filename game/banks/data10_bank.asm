@@ -11,12 +11,6 @@ bank_data_cutscene_logic_begin:
 #echo cutscenes logic size
 #print *-bank_data_cutscene_logic_begin
 
-bank_data_cutscene_sinbad_story_bird_msg_begin:
-#include "game/data/cutscenes/sinbad_story_bird_msg/cutscene.asm"
-#echo
-#echo arcade cutscene sinbad story bird size:
-#print *-bank_data_cutscene_sinbad_story_bird_msg_begin
-
 bank_data_stage_arcade_btt01_begin:
 #include "game/data/stages/arcade/btt01/stage_arcade_btt01.asm"
 #echo
@@ -30,7 +24,7 @@ bank_data_arcade_btt_sprites_begin:
 #print *-bank_data_arcade_btt_sprites_begin
 
 bank_data_cutscene_sinbad_story_kiki_encounter_begin:
-#include "game/data/cutscenes/sinbad_story_kiki_encounter/cutscene.asm"
+#include "game/data/cutscenes/sinbad_story/kiki_encounter/cutscene.asm"
 #echo
 #echo arcade cutscene sinbad story kiki encounter size:
 #print *-bank_data_cutscene_sinbad_story_kiki_encounter_begin
