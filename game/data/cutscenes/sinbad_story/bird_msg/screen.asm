@@ -8,20 +8,20 @@
 
 &cutscene_sinbad_story_bird_msg_boat_nametable:
 .(
-W00 = bg_boat_tileset_size+TILE_CUTSCENE_SINBAD_STORY_COMMON_WATER_TILESET_0
-W01 = W00+1
-W02 = W00+2
-W03 = W00+3
-W04 = W00+4
-W05 = W00+5
-W06 = W00+6
-W07 = W00+7
-W08 = W00+8
-W09 = W00+9
-W10 = W00+10
-W11 = W00+11
-W12 = W00+12
-W13 = W00+13
+#define W00 bg_boat_tileset_size + TILE_CUTSCENE_SINBAD_WATER_0
+#define W01 W00+1
+#define W02 W00+2
+#define W03 W00+3
+#define W04 W00+4
+#define W05 W00+5
+#define W06 W00+6
+#define W07 W00+7
+#define W08 W00+8
+#define W09 W00+9
+#define W10 W00+10
+#define W11 W00+11
+#define W12 W00+12
+#define W13 W00+13
 
 .byt $00,$c0
 .byt
@@ -65,6 +65,21 @@ W13 = W00+13
 .byt $00,$13,$55,$00,$07,$55,$00,$0c,$a0,$a0,$a0,$a0,$a0,$a0,$a0,$a0,$00,$10
 ; End
 .byt ZIPNT_END
+
+#undef W00
+#undef W01
+#undef W02
+#undef W03
+#undef W04
+#undef W05
+#undef W06
+#undef W07
+#undef W08
+#undef W09
+#undef W10
+#undef W11
+#undef W12
+#undef W13
 .)
 
 &cutscene_sinbad_story_bird_msg_letter_nametable:

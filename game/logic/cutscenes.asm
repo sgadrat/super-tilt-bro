@@ -256,9 +256,15 @@ load_animation_addr:
 &cutscene_load_tileset:
 .(
 	parameter_addr = tmpfield1
+	;parameter_addr_msb = tmpfield2
+
+	prg_vector = tmpfield1
+	prg_vector_msb = tmpfield2
+	modifier = tmpfield4
+	modifier_msb = tmpfield5
 
 	; Stack shenaningans to handle parameters being hardcoded after the jsr
-	lda #5
+	lda #7
 	jsr inline_parameters
 
 	; Set PPU address
@@ -270,11 +276,19 @@ load_animation_addr:
 	lda (parameter_addr), y
 	sta PPUADDR
 
+	; Set modifier address
+	iny
+	lda (parameter_addr), y
+	sta modifier
+	iny
+	lda (parameter_addr), y
+	sta modifier_msb
+
 	; Set trampoline parameters
 	;NOTE Not using the macro because we read bank number from parameters while we will invalid parameters pointer
-	lda #<cpu_to_ppu_copy_tileset
+	lda #<cpu_to_ppu_copy_tileset_modified
 	sta extra_tmpfield1
-	lda #>cpu_to_ppu_copy_tileset
+	lda #>cpu_to_ppu_copy_tileset_modified
 	sta extra_tmpfield2
 
 	iny
@@ -291,9 +305,9 @@ load_animation_addr:
 	tax
 	iny
 	lda (parameter_addr), y
-	sta tmpfield2
+	sta prg_vector_msb
 	txa
-	sta tmpfield1
+	sta prg_vector
 
 	; Call to tileset copying routine
 	jsr stop_rendering
@@ -305,14 +319,7 @@ load_animation_addr:
 #define LOAD_TILESET(addr,bank,ppu_addr) .( :\
 	jsr cutscene_load_tileset :\
 	.byt >ppu_addr, <ppu_addr :\
-	.byt bank :\
-	.word addr :\
-.)
-
-#define LOAD_TILESET_SPRITES(addr,bank) .( :\
-	ppu_addr = $0000 :\
-	jsr cutscene_load_tileset :\
-	.byt >ppu_addr, <ppu_addr :\
+	.word modifier_identity :\
 	.byt bank :\
 	.word addr :\
 .)
@@ -321,6 +328,28 @@ load_animation_addr:
 	ppu_addr = $1000 :\
 	jsr cutscene_load_tileset :\
 	.byt >ppu_addr, <ppu_addr :\
+	.word modifier_identity :\
+	.byt bank :\
+	.word addr :\
+.)
+
+#define LOAD_TILESET_REMAP(addr,bank,ppu_addr,p0,p1,p2,p3) .( :\
+	lda p0:sta tmpfield8 :\
+	lda p1:sta tmpfield9 :\
+	lda p2:sta tmpfield10 :\
+	lda p3:sta tmpfield11 :\
+	jsr cutscene_load_tileset :\
+	.byt >ppu_addr, <ppu_addr :\
+	.word modifier_remap :\
+	.byt bank :\
+	.word addr :\
+.)
+
+#define LOAD_TILESET_SPRITES(addr,bank) .( :\
+	ppu_addr = $0000 :\
+	jsr cutscene_load_tileset :\
+	.byt >ppu_addr, <ppu_addr :\
+	.word modifier_identity :\
 	.byt bank :\
 	.word addr :\
 .)

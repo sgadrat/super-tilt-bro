@@ -43,6 +43,22 @@ bank_data_extra_jukebox_logic:
 #print *-bank_data_extra_jukebox_logic
 .)
 
+.(
+bank_data:
+#include "game/data/cutscenes/sinbad_story/common/sinbad_dialog.asm"
+#echo
+#echo Sinbad dialog illustration size:
+#print *-bank_data
+.)
+
+.(
+bank_data:
+#include "game/data/cutscenes/sinbad_story/pepper_encounter/tileset_pepper.asm"
+#echo
+#echo Pepper dialog illustration size:
+#print *-bank_data
+.)
+
 bank_data10_end:
 
 #echo

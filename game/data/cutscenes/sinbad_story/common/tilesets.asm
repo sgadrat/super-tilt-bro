@@ -92,46 +92,46 @@
 .byt (cutscene_sinbad_story_common_water_tileset_end-cutscene_sinbad_story_common_water_tileset_tiles)/16
 
 cutscene_sinbad_story_common_water_tileset_tiles:
-+TILE_CUTSCENE_SINBAD_STORY_COMMON_WATER_TILESET_0 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
++TILE_CUTSCENE_SINBAD_WATER_0 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
 .byt %00111111, %00000001, %00001001, %00011110, %00000000, %00011111, %00000000, %00011011
 .byt %11000000, %11111111, %11110110, %11111111, %11111111, %11100000, %11111111, %11111100
-+TILE_CUTSCENE_SINBAD_STORY_COMMON_WATER_TILESET_1 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
++TILE_CUTSCENE_SINBAD_WATER_1 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
 .byt %11111111, %11111111, %11111111, %00000111, %00111111, %11111111, %00000010, %11111001
 .byt %00000000, %11111111, %00000000, %11111000, %11000000, %00000000, %11111101, %00000110
-+TILE_CUTSCENE_SINBAD_STORY_COMMON_WATER_TILESET_2 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
++TILE_CUTSCENE_SINBAD_WATER_2 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
 .byt %11111111, %11111111, %11111111, %11111000, %11000111, %11111000, %00000000, %11111110
 .byt %00000000, %11111111, %00000000, %00000111, %00111111, %00000111, %11111111, %00000001
-+TILE_CUTSCENE_SINBAD_STORY_COMMON_WATER_TILESET_3 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
++TILE_CUTSCENE_SINBAD_WATER_3 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
 .byt %11111111, %11111111, %11111111, %00100111, %11011111, %00011111, %00000111, %00111111
 .byt %00000000, %11111111, %00011111, %11111000, %11111111, %11100111, %11111100, %11000011
-+TILE_CUTSCENE_SINBAD_STORY_COMMON_WATER_TILESET_4 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
++TILE_CUTSCENE_SINBAD_WATER_4 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
 .byt %11111111, %11111111, %11111111, %11111110, %11110000, %11111111, %11101111, %11111011
 .byt %00000000, %11111111, %11111111, %00000001, %11111111, %11111110, %00011111, %11111100
-+TILE_CUTSCENE_SINBAD_STORY_COMMON_WATER_TILESET_5 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
++TILE_CUTSCENE_SINBAD_WATER_5 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
 .byt %11111111, %11111111, %11111111, %00000111, %11111111, %11111111, %11110010, %11111001
 .byt %00000000, %11111111, %00000000, %11111000, %11111111, %00000000, %11111101, %00000110
-+TILE_CUTSCENE_SINBAD_STORY_COMMON_WATER_TILESET_6 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
++TILE_CUTSCENE_SINBAD_WATER_6 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
 .byt %11111111, %11111111, %11111111, %11111000, %11000111, %11111000, %00000000, %11111110
 .byt %00000000, %11111111, %00000000, %00000111, %11111111, %00000111, %11111111, %00000001
-+TILE_CUTSCENE_SINBAD_STORY_COMMON_WATER_TILESET_7 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
++TILE_CUTSCENE_SINBAD_WATER_7 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
 .byt %11111100, %11100000, %11011100, %00100000, %11000000, %00000000, %00000000, %00000000
 .byt %00000011, %11011111, %00111111, %11111111, %11111111, %11111111, %11111111, %11111111
-+TILE_CUTSCENE_SINBAD_STORY_COMMON_WATER_TILESET_8 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
++TILE_CUTSCENE_SINBAD_WATER_8 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
 .byt %00000111, %00000000, %00000100, %00000011, %01111000, %00000000, %00000000, %00000000
 .byt %11111000, %11111111, %11111011, %11111100, %10000111, %11111111, %11111111, %11111111
-+TILE_CUTSCENE_SINBAD_STORY_COMMON_WATER_TILESET_9 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
++TILE_CUTSCENE_SINBAD_WATER_9 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
 .byt %11000111, %00011111, %00000111, %11111001, %00000001, %11111000, %00000101, %00000000
 .byt %00111000, %11100000, %11111000, %00000110, %11111110, %00000111, %11111011, %11111111
-+TILE_CUTSCENE_SINBAD_STORY_COMMON_WATER_TILESET_10 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
++TILE_CUTSCENE_SINBAD_WATER_10 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
 .byt %10111111, %10000000, %11111111, %10000000, %11110111, %00000001, %11111110, %00000000
 .byt %01111111, %01111111, %00000000, %01111111, %00001111, %11111111, %11111111, %11111111
-+TILE_CUTSCENE_SINBAD_STORY_COMMON_WATER_TILESET_11 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
++TILE_CUTSCENE_SINBAD_WATER_11 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
 .byt %11111111, %01111111, %11111111, %00011111, %11111111, %11110111, %00001111, %00001111
 .byt %11110000, %10000011, %00000000, %11101111, %11110000, %11111111, %11110001, %11111111
-+TILE_CUTSCENE_SINBAD_STORY_COMMON_WATER_TILESET_12 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
++TILE_CUTSCENE_SINBAD_WATER_12 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
 .byt %11111111, %11111110, %11110100, %11000011, %01111000, %11100000, %11111000, %11100000
 .byt %00011000, %10000001, %01111011, %11111100, %11111111, %00011111, %11100111, %10011111
-+TILE_CUTSCENE_SINBAD_STORY_COMMON_WATER_TILESET_13 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
++TILE_CUTSCENE_SINBAD_WATER_13 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
 .byt %11110000, %00000000, %11110000, %00000000, %11111110, %11110000, %00000000, %00000000
 .byt %11111111, %11111111, %00001111, %11111111, %11111111, %11111111, %11111111, %11111111
 cutscene_sinbad_story_common_water_tileset_end:
