@@ -108,6 +108,17 @@ say "Compile game mod ..."
 log "===================="
 PYTHONPATH="${root_dir}/tools:$PYTHONPATH" cmd "${root_dir}/tools/compile-mod.py" --tpl-dir "${root_dir}/game/templates" "${root_dir}/game-mod/mod.json" "${root_dir}"
 
+# Pass pre-preprocessor
+#TODO could be better to use the preprocessor for template files, which is more featured and already exists
+log
+say "Pre-preprocessor"
+log "================"
+
+for ppp_source in `find . -name '*.pp.asm'`; do
+	asm_source="`dirname "$ppp_source"`/`basename "$ppp_source" .pp.asm`.built.asm"
+	run tools/slow_prepocessor.py "$ppp_source" > "$asm_source"
+done
+
 # Compile C files
 if [ $skip_c -eq 0 ]; then
 log

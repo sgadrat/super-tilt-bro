@@ -91,7 +91,7 @@
 ; Tileset's size in tiles (zero means 256)
 .byt (cutscene_sinbad_story_common_water_tileset_end-cutscene_sinbad_story_common_water_tileset_tiles)/16
 
-cutscene_sinbad_story_common_water_tileset_tiles:
++cutscene_sinbad_story_common_water_tileset_tiles:
 +TILE_CUTSCENE_SINBAD_WATER_0 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
 .byt %00111111, %00000001, %00001001, %00011110, %00000000, %00011111, %00000000, %00011011
 .byt %11000000, %11111111, %11110110, %11111111, %11111111, %11100000, %11111111, %11111100
@@ -134,4 +134,4 @@ cutscene_sinbad_story_common_water_tileset_tiles:
 +TILE_CUTSCENE_SINBAD_WATER_13 = (*-cutscene_sinbad_story_common_water_tileset_tiles)/16
 .byt %11110000, %00000000, %11110000, %00000000, %11111110, %11110000, %00000000, %00000000
 .byt %11111111, %11111111, %00001111, %11111111, %11111111, %11111111, %11111111, %11111111
-cutscene_sinbad_story_common_water_tileset_end:
++cutscene_sinbad_story_common_water_tileset_end:

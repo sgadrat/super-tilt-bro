@@ -23,6 +23,14 @@ bank_data_arcade_btt_sprites_begin:
 #echo arcade btt sprites size:
 #print *-bank_data_arcade_btt_sprites_begin
 
+.(
+bank_data_begin:
+#include "game/data/cutscenes/sinbad_story/common/utils.asm"
+#echo
+#echo Cutscene Sinbad story utils
+#print *-bank_data_begin
+.)
+
 bank_data_cutscene_sinbad_story_kiki_encounter_begin:
 #include "game/data/cutscenes/sinbad_story/kiki_encounter/cutscene.asm"
 #echo
