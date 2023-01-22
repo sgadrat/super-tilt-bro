@@ -6,10 +6,10 @@ island_tileset_size = (cutscene_sinbad_story_common_island_tileset_end-cutscene_
 cloud_tileset_size = (tileset_new_cloud_end-tileset_new_cloud_tiles)/16
 water_tileset_size = (cutscene_sinbad_story_common_water_tileset_end-cutscene_sinbad_story_common_water_tileset_tiles)/16
 
-sinbad_tiles_begin = bg_tileset_size
-island_tiles_begin = sinbad_tiles_begin + sinbad_tileset_size
-cloud_tiles_begin = island_tiles_begin + island_tileset_size
-water_tiles_begin = cloud_tiles_begin + cloud_tileset_size
++sinbad_tiles_begin = bg_tileset_size
++island_tiles_begin = sinbad_tiles_begin + sinbad_tileset_size
++cloud_tiles_begin = island_tiles_begin + island_tileset_size
++water_tiles_begin = cloud_tiles_begin + cloud_tileset_size
 +opponent_tiles_begin = water_tiles_begin + water_tileset_size
 
 

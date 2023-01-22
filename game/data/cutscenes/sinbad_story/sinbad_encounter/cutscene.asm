@@ -1,6 +1,6 @@
 +cutscene_sinbad_story_sinbad_encounter_bank = CURRENT_BANK_NUMBER
 
-#include "game/data/cutscenes/sinbad_story/sinbad_encounter/screen.asm"
+#include "game/data/cutscenes/sinbad_story/sinbad_encounter/screen.built.asm"
 #include "game/data/cutscenes/sinbad_story/sinbad_encounter/tilesets.asm"
 
 .(
@@ -15,38 +15,8 @@
 
 cutscene_sinbad_story_sinbad_encounter_init:
 .(
-	; Set alphanum charset at the end of tileset
-	lda PPUSTATUS
-	lda #$1d
-	sta PPUADDR
-	lda #$c0
-	sta PPUADDR
-
-	lda #<charset_alphanum
-	sta tmpfield3
-	lda #>charset_alphanum
-	sta tmpfield4
-
-	ldx #%00001000
-
-	TRAMPOLINE(cpu_to_ppu_copy_charset, #CHARSET_ALPHANUM_BANK_NUMBER, #CURRENT_BANK_NUMBER)
-
-	; Set symbols before alphanum in the tileset
-	lda PPUSTATUS
-	lda #$1c
-	sta PPUADDR
-	lda #$c0
-	sta PPUADDR
-
-	lda #<charset_symbols
-	sta tmpfield3
-	lda #>charset_symbols
-	sta tmpfield4
-
-	ldx #%00001000
-
-	TRAMPOLINE(cpu_to_ppu_copy_charset, #CHARSET_SYMBOLS_BANK_NUMBER, #CURRENT_BANK_NUMBER)
-
+	TRAMPOLINE(cutscene_sinbad_story_dialog_encounter_init, #cutscene_sinbad_story_dialog_encounter_utils_bank, #CURRENT_BANK_NUMBER)
+	LOAD_TILESET_FLIP(cutscene_sinbad_story_sinbad_dialog_tileset, CUTSCENE_SINBAD_STORY_SINBAD_DIALOG_BANK_NUMBER, $1000+opponent_tiles_begin*16)
 	rts
 .)
 

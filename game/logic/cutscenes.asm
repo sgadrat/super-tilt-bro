@@ -333,6 +333,15 @@ load_animation_addr:
 	.word addr :\
 .)
 
+#define LOAD_TILESET_FLIP(addr,bank,ppu_addr) .( :\
+	jsr cutscene_load_tileset :\
+	.byt >ppu_addr, <ppu_addr :\
+	.word modifier_horizontal_flip :\
+	.byt bank :\
+	.word addr :\
+.)
+
+
 #define LOAD_TILESET_REMAP(addr,bank,ppu_addr,p0,p1,p2,p3) .( :\
 	lda p0:sta tmpfield8 :\
 	lda p1:sta tmpfield9 :\

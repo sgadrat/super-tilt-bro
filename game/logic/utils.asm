@@ -193,6 +193,35 @@ modifier_remap:
 	rts
 .)
 
+; cpu_to_ppu_copy_tiles_modified's modifier flipping pixels horizontally
+;
+; Extra side effects
+;  Overwrites tmpfield8
+modifier_horizontal_flip:
+.(
+	low_bits = tmpfield6
+	high_bits = tmpfield7
+	reversed_high_bits = tmpfield8
+
+	ldx #8
+	reverse_high_bits:
+		asl high_bits
+		ror reversed_high_bits
+		dex
+		bne reverse_high_bits
+
+	ldx #8
+	reverse_low_bits:
+		asl low_bits
+		ror
+		dex
+		bne reverse_low_bits
+
+	ldx reversed_high_bits
+
+	rts
+.)
+
 ; Place sprite tiles for a character in PPU memory
 ;  register X - Player number
 ;  config_player_a_character, x - Character number
