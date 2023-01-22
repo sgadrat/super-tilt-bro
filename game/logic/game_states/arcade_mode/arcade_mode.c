@@ -179,7 +179,9 @@ static void start_cutscene() {
 	if (cutscene->nametable_bot != (void*)0xffff) {
 		long_draw_zipped_vram(encounter.cutscene.bank, cutscene->nametable_bot, 0x2800);
 	}
-	long_cpu_to_ppu_copy_tileset_background(encounter.cutscene.bank, cutscene->bg_tileset);
+	if (cutscene->bg_tileset != (void*)0xffff) {
+		long_cpu_to_ppu_copy_tileset_background(encounter.cutscene.bank, cutscene->bg_tileset);
+	}
 	long_place_character_ppu_tiles_direct(0, 0);
 	if (cutscene->sprites_tileset != (void*)0xffff) {
 		long_cpu_to_ppu_copy_tileset(encounter.cutscene.bank, cutscene->sprites_tileset, 0);

@@ -3,14 +3,14 @@
 kiki_tiles_begin = opponent_tiles_begin
 
 #include "game/data/cutscenes/sinbad_story/kiki_encounter/screen.built.asm"
-#include "game/data/cutscenes/sinbad_story/kiki_encounter/tilesets.asm"
+#include "game/data/cutscenes/sinbad_story/kiki_encounter/tileset_kiki.asm"
 
 .(
 +cutscene_sinbad_story_kiki_encounter:
 .word cutscene_sinbad_story_kiki_encounter_palette ; palettes
 .word cutscene_sinbad_story_kiki_encounter_nametable ; top nametable
 .word cutscene_sinbad_story_kiki_encounter_nametable ; bottom nametable
-.word cutscene_sinbad_story_kiki_encounter_bg_tileset ; background tileset
+.word $ffff ; background tileset
 .word $ffff ; sprites tileset
 .word cutscene_sinbad_story_kiki_encounter_logic ; scene script
 .word cutscene_sinbad_story_kiki_encounter_init ; initialization routine

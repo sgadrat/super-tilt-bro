@@ -302,11 +302,6 @@ sleep_frame:
 ; Overwrites register A
 stop_rendering:
 .(
-	;TODO should be a fixed bank util
-	; other implementations
-	;  - arcade_mode.c start_cutscene()
-	;  - change_global_game_state
-
 	lda #NMI_AUDIO
 	sta nmi_processing
 	lda #%10010000
@@ -324,11 +319,6 @@ stop_rendering:
 ; Overwrites register A
 start_rendering:
 .(
-	;TODO should be a fixed bank util
-	; other implementations
-	;  - post_transition
-	;  - (hypotetical) all specific post-transition routines
-
 	; Reactivate rendering
 	ora #%10010000
 	sta ppuctrl_val

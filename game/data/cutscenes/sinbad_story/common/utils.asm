@@ -1,20 +1,42 @@
 +cutscene_sinbad_story_dialog_encounter_utils_bank = CURRENT_BANK_NUMBER
 
-bg_tileset_size = (cutscene_sinbad_story_pepper_encounter_bg_tileset_end-cutscene_sinbad_story_pepper_encounter_bg_tileset_tiles)/16 ;TODO this should actually be hardcoded 4, as it is guaranteed to be solid tiles and only solid tiles (TODO actually don't use a tileset for that)
+solid_tileset_size = 4
 sinbad_tileset_size = (cutscene_sinbad_story_sinbad_dialog_tileset_end-cutscene_sinbad_story_sinbad_dialog_tileset_tiles)/16
 island_tileset_size = (cutscene_sinbad_story_common_island_tileset_end-cutscene_sinbad_story_common_island_tileset_tiles)/16
 cloud_tileset_size = (tileset_new_cloud_end-tileset_new_cloud_tiles)/16
 water_tileset_size = (cutscene_sinbad_story_common_water_tileset_end-cutscene_sinbad_story_common_water_tileset_tiles)/16
 
-+sinbad_tiles_begin = bg_tileset_size
++sinbad_tiles_begin = solid_tileset_size
 +island_tiles_begin = sinbad_tiles_begin + sinbad_tileset_size
 +cloud_tiles_begin = island_tiles_begin + island_tileset_size
 +water_tiles_begin = cloud_tiles_begin + cloud_tileset_size
 +opponent_tiles_begin = water_tiles_begin + water_tileset_size
 
-
 +cutscene_sinbad_story_dialog_encounter_init:
 .(
+	; Write solid tiles in patterns
+	lda PPUSTATUS
+	lda #$10
+	sta PPUADDR
+	lda #$00
+	sta PPUADDR
+
+	lda #$00
+	ldx #16
+	jsr ppu_fill
+
+	lda #$ff
+	ldx #8
+	jsr ppu_fill
+
+	lda #$00
+	ldx #16
+	jsr ppu_fill
+
+	lda #$ff
+	ldx #24
+	jsr ppu_fill
+
 	; Set alphanum charset at the end of tileset
 	lda PPUSTATUS
 	lda #$1d

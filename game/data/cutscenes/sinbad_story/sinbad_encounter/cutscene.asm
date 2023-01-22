@@ -1,14 +1,13 @@
 +cutscene_sinbad_story_sinbad_encounter_bank = CURRENT_BANK_NUMBER
 
 #include "game/data/cutscenes/sinbad_story/sinbad_encounter/screen.built.asm"
-#include "game/data/cutscenes/sinbad_story/sinbad_encounter/tilesets.asm"
 
 .(
 +cutscene_sinbad_story_sinbad_encounter:
 .word cutscene_sinbad_story_sinbad_encounter_palette ; palettes
 .word cutscene_sinbad_story_sinbad_encounter_nametable ; top nametable
 .word cutscene_sinbad_story_sinbad_encounter_nametable ; bottom nametable
-.word cutscene_sinbad_story_sinbad_encounter_bg_tileset ; background tileset
+.word $ffff ; background tileset
 .word $ffff ; sprites tileset
 .word cutscene_sinbad_story_sinbad_encounter_logic ; scene script
 .word cutscene_sinbad_story_sinbad_encounter_init ; initialization routine

@@ -4,14 +4,13 @@ pepper_tiles_begin = opponent_tiles_begin
 pepper_tileset_size = (cutscene_sinbad_story_pepper_dialog_tileset_end-cutscene_sinbad_story_pepper_dialog_tileset_tiles)/16
 
 #include "game/data/cutscenes/sinbad_story/pepper_encounter/screen.built.asm"
-#include "game/data/cutscenes/sinbad_story/pepper_encounter/tilesets.asm"
 
 .(
 +cutscene_sinbad_story_pepper_encounter:
 .word cutscene_sinbad_story_pepper_encounter_palette ; palettes
 .word cutscene_sinbad_story_pepper_encounter_nametable ; top nametable
 .word cutscene_sinbad_story_pepper_encounter_nametable ; bottom nametable
-.word cutscene_sinbad_story_pepper_encounter_bg_tileset ; background tileset
+.word $ffff ; background tileset
 .word $ffff ; sprites tileset
 .word cutscene_sinbad_story_pepper_encounter_logic ; scene script
 .word cutscene_sinbad_story_pepper_encounter_init ; initialization routine

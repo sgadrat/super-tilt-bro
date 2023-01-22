@@ -66,7 +66,7 @@ cutscene_sinbad_story_meteor_logic:
 	; Camera traveling to space
 	;  Fade-out palettes 0 and 1, must be black before contents from space-screen is displayed
 	AUTO_SCROLL(0, -5)
-	INIT_ANIM(0, sinbad_anim_idle, SINBAD_BANK_NUMBER, DIRECTION_RIGHT2, 172, 111, 0, $0500) ;TODO anim_velocity opcode should work here
+	ANIM_VELOCITY(0, 0, $0500)
 	INIT_ANIM_FOR_PLAYER(1, sinbad_anim_idle, SINBAD_BANK_NUMBER, DIRECTION_LEFT2, 196, 111, 0, $0500, 1)
 	PLAY_FRAMES(3)
 	SET_PALETTE(0, $09, $09, $0f)
@@ -87,7 +87,6 @@ cutscene_sinbad_story_meteor_logic:
 	START_RENDERING(1, 0)
 
 	; Init sprites overlay
-	;TODO implement SPRITE_OVERLAY opcode (taking a list of ANIM_SPRITE-like objects, placing sprites not touching it)
 	INIT_ANIM(2, cutscene_sinbad_story_meteor_space_overlay, cutscene_sinbad_story_meteor_bank, DIRECTION_LEFT2, 192, 127-(5*8), 0, $0500) ; index, anim, bank, direction, x, y, velocity_h, velocity_v
 	INIT_ANIM(3, cutscene_sinbad_story_meteor_space_overlay2, cutscene_sinbad_story_meteor_bank, DIRECTION_LEFT2, 192, 127-(5*8), 0, $0500)
 
