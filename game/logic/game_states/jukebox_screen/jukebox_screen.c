@@ -62,6 +62,7 @@ uint8_t const CURSOR_MIN_X = 40;
 uint8_t const CURSOR_Y = 79;
 uint8_t const CURSOR_FIRST_SPRITE = 0;
 uint8_t const CURSOR_LAST_SPRITE = 0;
+uint8_t const PROGRESS_CHANNEL = 0;
 
 ///////////////////////////////////////
 // Utility functions
@@ -124,7 +125,7 @@ static void change_track() {
 	// Compute music length
 	mem()->last_sample_index = 0;
 
-	uint8_t const* sample_ptr = audio_read(ptr(*audio_current_track_lsb, *audio_current_track_msb));
+	uint8_t const* sample_ptr = audio_read(ptr(*audio_current_track_lsb, *audio_current_track_msb) + 2 * PROGRESS_CHANNEL);
 	while (audio_read(sample_ptr) != 0) { // 0 = MUSIC_END
 		++mem()->last_sample_index;
 		sample_ptr += 2;
@@ -152,7 +153,7 @@ static void move_cursor() {
 	uint16_t const cursor_range = u16(0, CURSOR_MAX_X - CURSOR_MIN_X);
 	uint16_t const nb_steps = mem()->last_sample_index;
 	uint16_t const step_size = cursor_range / nb_steps;
-	uint16_t const cursor_progress = step_size * (*audio_square1_sample_num);
+	uint16_t const cursor_progress = step_size * (*(audio_square1_sample_num + PROGRESS_CHANNEL));
 
 	// Set cursor pos on the integral part of the progress
 	uint8_t const cursor_pos = CURSOR_MIN_X + u16_msb(cursor_progress);
