@@ -29,6 +29,14 @@ bank_data_stage_theplank_begin:
 #echo Stage The Plank size:
 #print *-bank_data_stage_theplank_begin
 
+.(
+bank_data_begin:
+#include "game/data/music/theme_spirit_of_chivalry.asm"
+#echo
+#echo Theme Spirit of chivalry size:
+#print *-bank_data_begin
+.)
+
 bank_data11_end:
 
 #echo

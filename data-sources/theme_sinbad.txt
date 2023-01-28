@@ -1,9 +1,9 @@
 # FamiTracker text export 0.4.2
 
 # Song information
-TITLE           "Untitled"
-AUTHOR          "Unknown"
-COPYRIGHT       ""
+TITLE           "Sinbad"
+AUTHOR          "Kiliran"
+COPYRIGHT       "CC-BY"
 
 # Song comment
 COMMENT         ""

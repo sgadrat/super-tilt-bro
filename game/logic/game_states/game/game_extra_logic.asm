@@ -690,6 +690,7 @@ audio_music_ingame:
 		.byt <music_perihelium_info
 		.byt <music_sinbad2_info
 		.byt <music_adventure_info
+		.byt <music_spirit_of_chivalry_info
 		.byt <music_sinbad_info
 		.byt <music_pepper_info
 		.byt <music_volcano_info
@@ -698,6 +699,7 @@ audio_music_ingame:
 		.byt >music_perihelium_info
 		.byt >music_sinbad2_info
 		.byt >music_adventure_info
+		.byt >music_spirit_of_chivalry_info
 		.byt >music_sinbad_info
 		.byt >music_pepper_info
 		.byt >music_volcano_info
@@ -705,8 +707,9 @@ audio_music_ingame:
 	ingame_themes_bank:
 		.byt music_perihelium_bank
 		.byt music_sinbad2_bank
-		.byt music_sinbad_bank
 		.byt music_adventure_bank
+		.byt music_spirit_of_chivalry_bank
+		.byt music_sinbad_bank
 		.byt music_pepper_bank
 		.byt music_volcano_bank
 		.byt music_kiki_bank

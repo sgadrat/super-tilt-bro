@@ -1,9 +1,9 @@
 # FamiTracker text export 0.4.2
 
 # Song information
-TITLE           ""
-AUTHOR          ""
-COPYRIGHT       ""
+TITLE           "Super Tilt Bro."
+AUTHOR          "Tuï"
+COPYRIGHT       "CC-BY"
 
 # Song comment
 COMMENT ""

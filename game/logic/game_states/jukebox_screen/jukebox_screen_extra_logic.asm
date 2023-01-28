@@ -10,6 +10,7 @@ jukebox_themes_lsb:
 	.byt <music_jump_rope_info
 	.byt <music_sinbad2_info
 	.byt <music_pepper_info
+	.byt <music_spirit_of_chivalry_info
 jukebox_themes_msb:
 	.byt >music_title_info
 	.byt >music_perihelium_info
@@ -20,6 +21,7 @@ jukebox_themes_msb:
 	.byt >music_jump_rope_info
 	.byt >music_sinbad2_info
 	.byt >music_pepper_info
+	.byt >music_spirit_of_chivalry_info
 jukebox_themes_bank:
 	.byt music_title_bank
 	.byt music_perihelium_bank
@@ -30,16 +32,18 @@ jukebox_themes_bank:
 	.byt music_jump_rope_bank
 	.byt music_sinbad2_bank
 	.byt music_pepper_bank
+	.byt music_spirit_of_chivalry_bank
 jukebox_themes_title:
-	.asc "Super Tilt Bro. "
-	.asc "Perihelium      "
-	.asc "Sinbad theme    "
-	.asc "Adventure       "
-	.asc "Volcano         "
-	.asc "Kiki theme      "
-	.asc "I Like Jump Rope"
-	.asc "Sinbad theme    "
-	.asc "Pepper theme    "
+	.asc "Super Tilt Bro.   "
+	.asc "Perihelium        "
+	.asc "Sinbad theme      "
+	.asc "Adventure         "
+	.asc "Volcano           "
+	.asc "Kiki theme        "
+	.asc "I Like Jump Rope  "
+	.asc "Sinbad the pirate "
+	.asc "Pepper theme      "
+	.asc "Spirit of chivalry"
 jukebox_themes_title_end:
 jukebox_themes_author:
 	.asc "Tui     "
@@ -51,6 +55,7 @@ jukebox_themes_author:
 	.asc "Ozzed   "
 	.asc "Tui     "
 	.asc "Tui     "
+	.asc "Kilirane"
 jukebox_themes_author_end:
 
 LAST_JUKEBOX_TRACK = jukebox_themes_msb - jukebox_themes_lsb - 1
