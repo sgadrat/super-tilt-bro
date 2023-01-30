@@ -93,6 +93,8 @@ audio_play_music:
 	sta audio_noise_apu_period_byte
 	lda #%00111111
 	sta audio_noise_apu_envelope_byte
+	lda #0
+	sta audio_noise_pitch_slide
 
 	lda #%00001000
 	sta APU_NOISE_LENGTH_CNT
@@ -192,8 +194,10 @@ audio_mute_music:
 	;lda #0 ; useless, set above
 	sta APU_SQUARE1_TIMER_LOW
 	sta APU_SQUARE1_LENGTH_CNT
+	sta audio_square1_apu_timer_high_byte_old
 	sta APU_SQUARE2_TIMER_LOW
 	sta APU_SQUARE2_LENGTH_CNT
+	sta audio_square2_apu_timer_high_byte_old
 
 	; Silence triangle channel
 	lda #%10000000
@@ -225,6 +229,7 @@ audio_unmute_music:
 		sta APU_SQUARE1_TIMER_LOW, y
 		lda audio_square1_apu_timer_high_byte, x
 		sta APU_SQUARE1_LENGTH_CNT, y
+		sta audio_square1_apu_timer_high_byte_old, x
 
 		dey
 		dey
