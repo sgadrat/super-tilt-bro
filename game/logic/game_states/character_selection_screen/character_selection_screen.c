@@ -44,6 +44,7 @@ extern uint8_t const tileset_menu_char_select_sprites;
 
 extern uint8_t const CHARACTERS_NUMBER; // This is actually a value label, use the address of this variable
 extern uint8_t const CHARSET_ALPHANUM_BANK_NUMBER; // Actually a label, use its address or "charset_bank()"
+extern uint8_t const SFX_COUNTDOWN_REACH_IDX; // Actually a label, use its address or "player_entering_sfx_id()"
 
 ///////////////////////////////////////
 // Character selection's ASM functions
@@ -132,6 +133,10 @@ static struct Position16 const builder_anims_start_pos[] = {{32,79}, {176,79}};
 
 static uint8_t charset_bank() {
 	return ptr_lsb(&CHARSET_ALPHANUM_BANK_NUMBER);
+}
+
+static uint8_t player_entering_sfx_id() {
+	return ptr_lsb(&SFX_COUNTDOWN_REACH_IDX);
 }
 
 static struct BgTaskState* Task(uint8_t* raw) {
@@ -944,8 +949,17 @@ void character_selection_screen_tick_extra() {
 		}
 
 		case CONTROL_ONE_PLAYER: {
+			if (*controller_b_btns != *controller_b_last_frame_btns) {
+				*character_selection_control_scheme = CONTROL_TWO_PLAYERS;
+				*config_ai_level = 0;
+				take_input(1, *controller_b_btns, *controller_b_last_frame_btns);
+				wrap_audio_play_sfx_from_list(player_entering_sfx_id());
+			}
+
 			uint8_t const player_num = *character_selection_player_a_ready;
-			take_input(player_num, *controller_a_btns, *controller_a_last_frame_btns);
+			if (player_num == 0 || *character_selection_control_scheme == CONTROL_ONE_PLAYER) {
+				take_input(player_num, *controller_a_btns, *controller_a_last_frame_btns);
+			}
 			break;
 		}
 
