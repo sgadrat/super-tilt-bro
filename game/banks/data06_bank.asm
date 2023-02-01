@@ -45,12 +45,20 @@ bank_data_charset_qr_code_begin:
 #print *-bank_data_charset_qr_code_begin
 
 bank_data_credits_logic_begin:
-;FIXME code is dependent on these data to be located on the same bank
+;NOTE code is dependent on these data to be located on the same bank
 #include "game/data/menu_credits/credits.asm"
 #include "game/logic/game_states/credits_screen/credits_screen_extra_code.asm"
 #echo
 #echo Credits logic size:
 #print *-bank_data_credits_logic_begin
+
+.(
+bank_data_begin:
+#include "game/data/stages/deeprock/stage_deeprock.asm"
+#echo
+#echo Stage Deep Rock:
+#print *-bank_data_begin
+.)
 
 bank_data06_end:
 

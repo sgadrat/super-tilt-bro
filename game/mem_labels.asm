@@ -295,6 +295,8 @@ game_mode_state_end = $05ff ; Inclusive (game mode can safely write here)
 ; Stage specific labels
 ;
 
+stages_magma_frame_cnt = $8f
+
 stage_pit_platform1_direction_v = $80
 stage_pit_platform2_direction_v = $81
 stage_pit_platform1_direction_h = $82
@@ -313,7 +315,7 @@ stage_thehunt_gem_cooldown_high = $89
 stage_thehunt_gem_state = $8a ; one of STAGE_GEM_GEM_STATE_*
 stage_thehunt_buffed_player = $8b
 stage_thehunt_last_opponent_state = $8c
-stage_thehunt_frame_cnt = $8d
+stage_thehunt_frame_cnt = stages_magma_frame_cnt
 
 ;Note - $90 to $af are used by DI particles
 

@@ -55,6 +55,14 @@ bank_data_common_ingame_sprites_begin:
 #echo Tileset common ingame sprites:
 #print *-bank_data_common_ingame_sprites_begin
 
+.(
+bank_data_begin:
+#include "game/logic/utils_banked.asm"
+#echo
+#echo Banked utils:
+#print *-bank_data_begin
+.)
+
 bank_data02_end:
 
 #echo

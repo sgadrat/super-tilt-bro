@@ -48,24 +48,8 @@
 
 stage_thehunt_init:
 .(
-	; Lighten avatars
-	.(
-		; Lighten only if the game engine didn't already ligtened one to handle same character + same skin situation
-		lda config_player_a_character
-		cmp config_player_b_character
-		bne do_it
-		lda config_player_a_character_palette
-		cmp config_player_b_character_palette
-		bne do_it
-		jmp ok
-
-			do_it:
-				ldx #0+4 ; Player A's normal palette, first color
-				TRAMPOLINE(lighten_player_palette, #GAMESTATE_GAME_EXTRA_BANK, #CURRENT_BANK_NUMBER)
-				ldx #16+4 ; Player B's normal palette, first color
-				TRAMPOLINE(lighten_player_palette, #GAMESTATE_GAME_EXTRA_BANK, #CURRENT_BANK_NUMBER)
-		ok:
-	.)
+	; Magma stage initialization
+	TRAMPOLINE(stages_magma_init, #BANKED_UTILS_BANK_NUMBER, #CURRENT_BANK_NUMBER)
 
 	; Copy stage's tiles in VRAM
 	.(
@@ -89,10 +73,6 @@ stage_thehunt_init:
 
 	; Put the gem in its initial state
 	jsr stage_thehunt_set_state_cooldown
-
-	; Init background animation
-	lda #0
-	sta stage_thehunt_frame_cnt
 
 	; Disable screen restoration
 	lda #$ff
@@ -269,7 +249,11 @@ stage_thehunt_freezed_tick:
 	; Restore screen if requested
 	lda network_rollback_mode
 	bne bg_update_ok
-		jsr stage_thehunt_repair_screen
+		lda #<stage_thehunt_top_attributes : sta tmpfield1
+		lda #<stage_thehunt_bot_attributes : sta tmpfield2
+		lda #>stage_thehunt_top_attributes : sta tmpfield3
+		lda #>stage_thehunt_bot_attributes : sta tmpfield4
+		TRAMPOLINE(stages_magma_repair_screen, #BANKED_UTILS_BANK_NUMBER, #CURRENT_BANK_NUMBER)
 	bg_update_ok:
 
 	; Update gem breaking state if it is the cause of the freeze
@@ -298,112 +282,20 @@ stage_thehunt_tick:
 		; Update background (apply an asynchrone change if requested, else animate lava)
 		lda network_rollback_mode
 		bne bg_update_ok
-			; Apply repair operation (and stop there if it had work to do)
-			.(
-				lda #1
-				sta tmpfield5
-				jsr stage_thehunt_repair_screen
-				lda tmpfield5
-				beq bg_update_ok
-			.)
-
-			; Do nothing if there is not enough space for lava tiles
-			IF_NT_BUFFERS_FREE_SPACE_GE(#1+3+2+1, bg_update_ok)
-
-				; Update lava
-				.(
-					;  NOTE - despite its name, stage_thehunt_frame_cnt is only used for one purpose, animating lava.
-					;         If this change, the "inc" should certainly be done even in rollback mode.
-
-					; Update frame counter
-					inc stage_thehunt_frame_cnt
-
-					; Compute current animation frame frome counter
-					lda #%0010000
-					bit stage_thehunt_frame_cnt
-					beq even_frame
-						ldx #1
-						jmp x_ok
-					even_frame:
-						ldx #0
-					x_ok:
-
-					; Get animation frame pointer
-					lda lava_bg_frames_lsb, x
-					sta tmpfield1
-					lda lava_bg_frames_msb, x
-					sta tmpfield2
-
-					; Write nametable buffer
-					.(
-						; X points to last nametable buffer
-						LAST_NT_BUFFER
-
-						; Write buffer's header
-						lda #1 ; Continuation byte
-						sta nametable_buffers, x
-						inx
-
-						lda #$3f ; VRAM address MSB
-						sta nametable_buffers, x
-						inx
-
-						lda #$02 ; VRAM address LSB
-						sta nametable_buffers, x
-						inx
-
-						lda #$02 ; Payload size
-						sta nametable_buffers, x
-						inx
-
-						; Y = offset in the frame of colors for the current fade level
-						lda stage_fade_level
-						asl
-						tay
-
-						; Write buffer's payload
-						lda (tmpfield1), y
-						sta nametable_buffers, x
-						inx
-						iny
-
-						lda (tmpfield1), y
-						sta nametable_buffers, x
-						inx
-
-						; Write stop byte
-						lda #0
-						sta nametable_buffers, x
-						stx nt_buffers_end
-					.)
-				.)
-
+			lda #<stage_thehunt_top_attributes : sta tmpfield1
+			lda #<stage_thehunt_bot_attributes : sta tmpfield2
+			lda #>stage_thehunt_top_attributes : sta tmpfield3
+			lda #>stage_thehunt_bot_attributes : sta tmpfield4
+			TRAMPOLINE(stages_magma_update_background, #BANKED_UTILS_BANK_NUMBER, #CURRENT_BANK_NUMBER)
 		bg_update_ok:
 		rts
-
-		; gem state tick routines
-		stage_thehunt_tick_state_routines_lsb:
-			.byt <stage_thehunt_tick_state_cooldown, <stage_thehunt_tick_state_active, <stage_thehunt_tick_state_breaking, <stage_thehunt_tick_state_buff
-		stage_thehunt_tick_state_routines_msb:
-			.byt >stage_thehunt_tick_state_cooldown, >stage_thehunt_tick_state_active, >stage_thehunt_tick_state_breaking, >stage_thehunt_tick_state_buff
-
-		lava_color_frame0:
-			.byt $0f, $0f ; black
-			.byt $0f, $07 ; darkest
-			.byt $06, $07 ; darker
-			.byt $06, $17 ; dark
-			.byt $17, $27 ; normal
-		lava_color_frame1:
-			.byt $0f, $0f ; black
-			.byt $07, $0f ; darkest
-			.byt $07, $06 ; darker
-			.byt $17, $06 ; dark
-			.byt $27, $17 ; normal
-		lava_bg_frames_lsb:
-			.byt <lava_color_frame0, <lava_color_frame1
-		lava_bg_frames_msb:
-			.byt >lava_color_frame0, >lava_color_frame1
 	.)
+
+	; gem state tick routines
+	stage_thehunt_tick_state_routines_lsb:
+		.byt <stage_thehunt_tick_state_cooldown, <stage_thehunt_tick_state_active, <stage_thehunt_tick_state_breaking, <stage_thehunt_tick_state_buff
+	stage_thehunt_tick_state_routines_msb:
+		.byt >stage_thehunt_tick_state_cooldown, >stage_thehunt_tick_state_active, >stage_thehunt_tick_state_breaking, >stage_thehunt_tick_state_buff
 
 	stage_thehunt_tick_state_cooldown:
 	.(
@@ -935,107 +827,6 @@ stage_thehunt_tick:
 
 		rts
 	.)
-.)
-
-; Redraw the stage background (one step per call)
-;  stage_screen_effect - set to inhibit any repair operation
-;  stage_fade_level - Desired fade level
-;  stage_current_fade_level - Currently applied fade level
-;  stage_restore_screen_step - Attributes restoration step (>= $80 to inhibit attributes restoration)
-;
-; Output
-;  tmpfield5 - Set to zero if a nametable buffer has been produced (untouched otherwise)
-;
-; Overwrites all registers, tmpfield1 to tmpfield5
-;
-;NOTE - not your typical repair screen routine
-; - Expects rollback mode to be off (will not check it)
-; - Sets tmpfield5 to zero if actually did something (don't touch it if nothing to do)
-stage_thehunt_repair_screen:
-.(
-	result = tmpfield5
-
-	; Do nothing if a fullscreen animation is running
-	.(
-		lda stage_screen_effect
-		beq ok
-			rts
-		ok:
-	.)
-
-	; Fix fadeout if needed
-	;NOTE does not return if action is taken (to avoid flooding nametable buffers)
-	.(
-		ldx stage_fade_level
-		cpx stage_current_fade_level
-		beq ok
-			lda #0
-			sta result
-			jmp stage_thehunt_fadeout_update
-			;No return, jump to subroutine
-		ok:
-	.)
-
-	; Fix attributes if needed
-	.(
-		; Do noting if there is no restore operation running
-		.(
-			ldx stage_restore_screen_step
-			bpl ok
-				rts
-			ok:
-		.)
-
-		; Do nothing if there lack space for the nametable buffers
-		.(
-			IF_NT_BUFFERS_FREE_SPACE_LT(#1+3+32+1, ok)
-				rts
-			ok:
-		.)
-
-		; Write NT buffer corresponding to current step
-		.(
-			;ldx stage_restore_screen_step ; useless, done above
-			lda steps_buffers_lsb, x
-			ldy steps_buffers_msb, x
-			jsr push_nt_buffer
-
-			lda #0
-			sta result
-		.)
-
-		; Increment step
-		.(
-			inc stage_restore_screen_step
-			lda stage_restore_screen_step
-			cmp #NUM_RESTORE_STEPS
-			bne ok
-				lda #$ff
-				sta stage_restore_screen_step
-			ok:
-		.)
-	.)
-
-	rts
-
-	top_attributes:
-	.byt $23, $c0, $20
-	.byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
-	.byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
-	.byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
-	.byt %00000000, %00000000, %00000000, %00000000, %00000000, %10000000, %01101010, %00000000
-	bot_attributes:
-	.byt $23, $e0, $20
-	.byt %00000000, %10101010, %00100001, %00000000, %00000000, %10001000, %10101010, %00000000
-	.byt %00000000, %10101010, %10101010, %10101010, %10100101, %10101010, %10101010, %00000000
-	.byt %10100010, %10101010, %10101010, %10101010, %10101010, %10101010, %10101010, %10101000
-	.byt %10101010, %10101010, %10101010, %10101010, %10101010, %10101010, %10101010, %10101010
-
-	steps_buffers_lsb:
-		.byt <top_attributes, <bot_attributes
-	steps_buffers_msb:
-		.byt >top_attributes, >bot_attributes
-	NUM_RESTORE_STEPS = *-steps_buffers_msb
 .)
 
 ; Puts the gem in cooldown
