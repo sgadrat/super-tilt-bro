@@ -18,7 +18,7 @@ pepper_tileset_size = (cutscene_sinbad_story_pepper_dialog_tileset_end-cutscene_
 cutscene_sinbad_story_pepper_encounter_init:
 .(
 	TRAMPOLINE(cutscene_sinbad_story_dialog_encounter_init, #cutscene_sinbad_story_dialog_encounter_utils_bank, #CURRENT_BANK_NUMBER)
-	LOAD_TILESET(cutscene_sinbad_story_pepper_dialog_tileset, CUTSCENE_SINBAD_STORY_PEPPER_DIALOG_BANK_NUMBER, $1000+pepper_tiles_begin*16)
+	LOAD_TILESET(cutscene_sinbad_story_pepper_dialog_tileset, CUTSCENE_SINBAD_STORY_PEPPER_DIALOG_BANK_NUMBER, $1000+pepper_tiles_begin*16, CURRENT_BANK_NUMBER)
 	rts
 .)
 

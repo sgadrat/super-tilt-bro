@@ -50,6 +50,57 @@
 	jsr trampoline :\
 .)
 
+#define LOAD_TILESET(addr,bank,ppu_addr,return_bank) .( :\
+	jsr load_tileset :\
+	.byt >ppu_addr, <ppu_addr :\
+	.word modifier_identity :\
+	.byt bank :\
+	.byt return_bank :\
+	.word addr :\
+.)
+
+#define LOAD_TILESET_BG(addr,bank,return_bank) .( :\
+	ppu_addr = $1000 :\
+	jsr load_tileset :\
+	.byt >ppu_addr, <ppu_addr :\
+	.word modifier_identity :\
+	.byt bank :\
+	.byt return_bank :\
+	.word addr :\
+.)
+
+#define LOAD_TILESET_FLIP(addr,bank,ppu_addr,return_bank) .( :\
+	jsr load_tileset :\
+	.byt >ppu_addr, <ppu_addr :\
+	.word modifier_horizontal_flip :\
+	.byt bank :\
+	.byt return_bank :\
+	.word addr :\
+.)
+
+#define LOAD_TILESET_REMAP(addr,bank,ppu_addr,p0,p1,p2,p3,return_bank) .( :\
+	lda p0:sta tmpfield8 :\
+	lda p1:sta tmpfield9 :\
+	lda p2:sta tmpfield10 :\
+	lda p3:sta tmpfield11 :\
+	jsr load_tileset :\
+	.byt >ppu_addr, <ppu_addr :\
+	.word modifier_remap :\
+	.byt bank :\
+	.byt return_bank :\
+	.word addr :\
+.)
+
+#define LOAD_TILESET_SPRITES(addr,bank,return_bank) .( :\
+	ppu_addr = $0000 :\
+	jsr load_tileset :\
+	.byt >ppu_addr, <ppu_addr :\
+	.word modifier_identity :\
+	.byt bank :\
+	.byt return_bank :\
+	.word addr :\
+.)
+
 ; Rainbow-based performance profiling
 ;  Adapted from Matt Hughson's Witch n' Wiz: https://github.com/mhughson/mbh-A53-witchnwiz
 PROF_CLEAR = $1e ; none

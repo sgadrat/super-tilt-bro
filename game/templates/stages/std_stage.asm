@@ -2,7 +2,7 @@
 ;  register X - fadeout level
 ;
 ; Overwrites registers, tmpfield1 to tmpfield4
-+stage_arcade_run02_fadeout:
++{stage_name}_fadeout:
 .(
 	; Set ideal fade level
 	stx stage_fade_level
@@ -13,14 +13,14 @@
 		rts
 
 	apply_fadeout:
-	;Fallthrough to stage_arcade_run02_fadeout_update
+	;Fallthrough to {stage_name}_fadeout_update
 .)
 
 ; Rewrite palettes to match fadeout level
 ;  register X - fadeout level
 ;
 ; Overwrites registers, tmpfield1 to tmpfield4
-stage_arcade_run02_fadeout_update:
+{stage_name}_fadeout_update:
 .(
 	header = tmpfield1 ; construct_nt_buffer parameter
 	payload = tmpfield3 ; construct_nt_buffer parameter
@@ -41,9 +41,9 @@ stage_arcade_run02_fadeout_update:
 	lda #>palette_header
 	sta header+1
 
-	lda stage_arcade_run02_fadeout_lsb, x
+	lda {stage_name}_fadeout_lsb, x
 	sta payload
-	lda stage_arcade_run02_fadeout_msb, x
+	lda {stage_name}_fadeout_msb, x
 	sta payload+1
 
 	jmp construct_nt_buffer
@@ -54,7 +54,7 @@ stage_arcade_run02_fadeout_update:
 	.byt $3f, $00, $10
 .)
 
-+stage_arcade_run02_init:
++{stage_name}_init:
 .(
 	; Disable screen restore
 	lda #$ff
@@ -62,10 +62,20 @@ stage_arcade_run02_fadeout_update:
 	lda #FADE_LEVEL_NORMAL
 	sta stage_fade_level
 	sta stage_current_fade_level
+
+	{extra_init}
+
 	rts
 .)
 
-+stage_arcade_run02_tick = stage_arcade_run02_repair_screen
++{stage_name}_tick:
+.(
+	{extra_tick}
+
+	; Fallthrough to {stage_name}_repair_screen
+	;jsr {stage_name}_repair_screen
+	;rts
+.)
 
 ; Redraw the stage background (one step per call)
 ;  network_rollback_mode - set to inhibit any repair operation
@@ -75,7 +85,7 @@ stage_arcade_run02_fadeout_update:
 ;  stage_restore_screen_step - Attributes restoration step (>= $80 to inhibit attributes restoration)
 ;
 ; Overwrites all registers, tmpfield1 to tmpfield4
-stage_arcade_run02_repair_screen:
+{stage_name}_repair_screen:
 .(
 	; Do nothing in rollback mode
 	.(
@@ -99,7 +109,7 @@ stage_arcade_run02_repair_screen:
 		ldx stage_fade_level
 		cpx stage_current_fade_level
 		beq ok
-			jmp stage_arcade_run02_fadeout_update
+			jmp {stage_name}_fadeout_update
 			;No return, jump to subroutine
 		ok:
 	.)
@@ -143,22 +153,12 @@ stage_arcade_run02_repair_screen:
 
 	rts
 
-	top_attributes:
-	.byt $23, $c0, $20
-	.byt $00, $00, $00, $00, $00, $00, $00, $00
-	.byt $00, $00, $00, $00, $00, $00, $00, $00
-	.byt $00, $00, $00, $00, $00, $00, $00, $00
-	.byt $00, $00, $00, $00, $00, $00, $00, $00
-	bot_attibutes:
-	.byt $23, $e0, $20
-	.byt $00, $00, $00, $00, $00, $00, $00, $00
-	.byt $00, $00, $00, $00, $00, $00, $00, $00
-	.byt $00, $00, $aa, $00, $00, $00, $00, $00
-	.byt $00, $00, $00, $00, $00, $00, $00, $00
-
 	steps_buffers_lsb:
-	.byt <top_attributes, <bot_attibutes
+	.byt <{stage_name}_top_attributes, <{stage_name}_bot_attributes
 	steps_buffers_msb:
-	.byt >top_attributes, >bot_attibutes
+	.byt >{stage_name}_top_attributes, >{stage_name}_bot_attributes
 	NUM_RESTORE_STEPS = *-steps_buffers_msb
 .)
+
+!undef "stage_name"
+!undef "extra_init"

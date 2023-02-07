@@ -22,7 +22,7 @@ cutscene_sinbad_story_meteor_init:
 	TRAMPOLINE(place_character_ppu_tiles_direct, #SINBAD_BANK_NUMBER, #CURRENT_BANK_NUMBER)
 
 	; Place sprites specific from this cutscene
-	LOAD_TILESET(cutscene_sinbad_story_meteor_sprites_tileset, cutscene_sinbad_story_meteor_bank, CHARACTERS_END_TILES_OFFSET)
+	LOAD_TILESET(cutscene_sinbad_story_meteor_sprites_tileset, cutscene_sinbad_story_meteor_bank, CHARACTERS_END_TILES_OFFSET, CURRENT_BANK_NUMBER)
 
 	rts
 .)
@@ -83,7 +83,8 @@ cutscene_sinbad_story_meteor_logic:
 	PLAY_FRAMES(40-3-1-1-14)
 
 	; Copy space tileset to VRAM
-	LOAD_TILESET_BG(cutscene_sinbad_story_meteor_space_tileset, cutscene_sinbad_story_meteor_bank)
+	STOP_RENDERING
+	LOAD_TILESET_BG(cutscene_sinbad_story_meteor_space_tileset, cutscene_sinbad_story_meteor_bank, CURRENT_BANK_NUMBER)
 	START_RENDERING(1, 0)
 
 	; Init sprites overlay
@@ -132,7 +133,8 @@ cutscene_sinbad_story_meteor_logic:
 	SET_PALETTE(4, $08, $1a, $20)
 
 	; Copy ground tileset to VRAM
-	LOAD_TILESET_BG(cutscene_sinbad_story_meteor_ground_tileset, cutscene_sinbad_story_meteor_bank)
+	STOP_RENDERING
+	LOAD_TILESET_BG(cutscene_sinbad_story_meteor_ground_tileset, cutscene_sinbad_story_meteor_bank, CURRENT_BANK_NUMBER)
 	START_RENDERING(0, 0)
 
 	; Come back to Earth

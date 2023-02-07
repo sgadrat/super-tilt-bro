@@ -1,10 +1,10 @@
-.(
+;
+;TODO this is made to be generic, it could be placed in common libs (even in nine-gine actually)
+;
 
 ;
 ; Waypoint-based moving object implementation
 ;
-
-;TODO this is made to be generic, it could be placed in common libs (even in nine-gine actually)
 
 MOVING_OBJECT_X = 0
 MOVING_OBJECT_Y = 1
@@ -150,7 +150,7 @@ moving_object_tick:
 		clc
 		adc num_waypoints
 		tay
-		
+
 		lda (waypoints), y
 		cmp fixed_state_x
 		bne ok
@@ -161,7 +161,7 @@ moving_object_tick:
 		clc
 		adc num_waypoints
 		tay
-		
+
 		lda (waypoints), y
 		cmp fixed_state_y
 		bne ok
@@ -196,8 +196,6 @@ moving_object_tick:
 ;
 ; Actors implementations
 ;
-
-;TODO this is generic code that should be made available to all stages, or all arcade stages
 
 stage_actor_target_mover_init:
 .(
@@ -349,230 +347,3 @@ stage_actor_target_mover:
 	rts
 .)
 
-;
-; Stage-specific code
-;
-
-.(
-cursor = stage_state_begin
-&circle_target_x = cursor : -cursor += 1
-&circle_target_y = cursor : -cursor += 1
-&circle_target_current_waypoint = cursor : -cursor += 1
-
-&top_target_x = cursor : -cursor += 1
-&top_target_y = cursor : -cursor += 1
-&top_target_current_waypoint = cursor : -cursor += 1
-
-&bot_target_x = cursor : -cursor += 1
-&bot_target_y = cursor : -cursor += 1
-&bot_target_current_waypoint = cursor : -cursor += 1
-
-#if cursor - stage_state_begin >= $10
-#error arcade stage BTT02 uses to much memory
-#endif
-.)
-
-+stage_arcade_btt02_init:
-.(
-	; Initialize moving targets
-	jsr stage_actor_target_mover_init
-	.word top_target_x, top_target_path
-
-	jsr stage_actor_target_mover_init
-	.word circle_target_x, circle_target_path
-
-	jsr stage_actor_target_mover_init
-	.word bot_target_x, bot_target_path
-
-	; Disable screen restore
-	lda #$ff
-	sta stage_restore_screen_step
-	lda #FADE_LEVEL_NORMAL
-	sta stage_fade_level
-	sta stage_current_fade_level
-
-	rts
-.)
-
-+stage_arcade_btt02_tick:
-.(
-	; Repair screen
-	jsr stage_arcade_btt02_repair_screen
-
-	; Tick moving targets
-	TOP_TARGET_INDEX = 6
-	jsr stage_actor_target_mover
-	.byt TOP_TARGET_INDEX
-	.word top_target_x, top_target_path
-	.byt 48-4, 40-4
-	.byt 1
-
-	CIRCLE_TARGET_INDEX = 9
-	jsr stage_actor_target_mover
-	.byt CIRCLE_TARGET_INDEX
-	.word circle_target_x, circle_target_path
-	.byt 84-4, 52-4
-	.byt 2
-
-	BOT_TARGET_INDEX = 7
-	jsr stage_actor_target_mover
-	.byt BOT_TARGET_INDEX
-	.word bot_target_x, bot_target_path
-	.byt 149-4, 139-4
-	.byt 2
-
-	rts
-.)
-
-; Sets fadeout level
-;  register X - fadeout level
-;
-; Overwrites registers, tmpfield1 to tmpfield4
-+stage_arcade_btt02_fadeout:
-.(
-	; Set ideal fade level
-	stx stage_fade_level
-
-	; If not in rollback, apply it immediately
-	lda network_rollback_mode
-	beq apply_fadeout
-		rts
-
-	apply_fadeout:
-	;Fallthrough to stage_arcade_btt02_fadeout_update
-.)
-
-; Rewrite palettes to match fadeout level
-;  register X - fadeout level
-;
-; Overwrites registers, tmpfield1 to tmpfield4
-stage_arcade_btt02_fadeout_update:
-.(
-	header = tmpfield1 ; construct_nt_buffer parameter
-	payload = tmpfield3 ; construct_nt_buffer parameter
-
-	; Do nothing if there is not enough space in the buffer
-	.(
-		IF_NT_BUFFERS_FREE_SPACE_LT(#1+3+16+1, ok)
-			rts
-		ok:
-	.)
-
-	; Set actual fade level
-	stx stage_current_fade_level
-
-	; Change palette
-	lda #<palette_header
-	sta header
-	lda #>palette_header
-	sta header+1
-
-	lda stage_arcade_btt02_fadeout_lsb, x
-	sta payload
-	lda stage_arcade_btt02_fadeout_msb, x
-	sta payload+1
-
-	jmp construct_nt_buffer
-
-	;rts ; useless, jump to subroutine
-
-	palette_header:
-	.byt $3f, $00, $10
-.)
-
-; Redraw the stage background (one step per call)
-;  network_rollback_mode - set to inhibit any repair operation
-;  stage_screen_effect - set to inhibit any repair operation
-;  stage_fade_level - Desired fade level
-;  stage_current_fade_level - Currently applied fade level
-;  stage_restore_screen_step - Attributes restoration step (>= $80 to inhibit attributes restoration)
-;
-; Overwrites all registers, tmpfield1 to tmpfield4
-stage_arcade_btt02_repair_screen:
-.(
-	; Do nothing in rollback mode
-	.(
-		lda network_rollback_mode
-		beq ok
-			rts
-		ok:
-	.)
-
-	; Do nothing if a fullscreen animation is running
-	.(
-		lda stage_screen_effect
-		beq ok
-			rts
-		ok:
-	.)
-
-	; Fix fadeout if needed
-	;NOTE does not return if action is taken (to avoid flooding nametable buffers)
-	.(
-		ldx stage_fade_level
-		cpx stage_current_fade_level
-		beq ok
-			jmp stage_arcade_btt02_fadeout_update
-			;No return, jump to subroutine
-		ok:
-	.)
-
-	; Fix attributes if needed
-	.(
-		; Do noting if there is no restore operation running
-		.(
-			ldx stage_restore_screen_step
-			bpl ok
-				rts
-			ok:
-		.)
-
-		; Do nothing if there lack space for the nametable buffers
-		.(
-			IF_NT_BUFFERS_FREE_SPACE_LT(#1+3+32+1, ok)
-				rts
-			ok:
-		.)
-
-		; Write NT buffer corresponding to current step
-		.(
-			;ldx stage_restore_screen_step ; useless, done above
-			lda steps_buffers_lsb, x
-			ldy steps_buffers_msb, x
-			jsr push_nt_buffer
-		.)
-
-		; Increment step
-		.(
-			inc stage_restore_screen_step
-			lda stage_restore_screen_step
-			cmp #NUM_RESTORE_STEPS
-			bne ok
-				lda #$ff
-				sta stage_restore_screen_step
-			ok:
-		.)
-	.)
-
-	rts
-
-	top_attributes:
-	.byt $23, $c0, $20
-	.byt $00, $00, $00, $00, $00, $00, $50, $00
-	.byt $00, $00, $00, $00, $00, $00, $05, $00
-	.byt $00, $00, $00, $00, $00, $00, $00, $00
-	.byt $00, $00, $00, $00, $00, $00, $00, $00
-	bot_attibutes:
-	.byt $23, $e0, $20
-	.byt $00, $00, $00, $00, $00, $00, $00, $00
-	.byt $50, $10, $00, $00, $00, $00, $00, $00
-	.byt $05, $01, $aa, $00, $00, $00, $55, $00
-	.byt $00, $00, $00, $00, $00, $00, $00, $00
-
-	steps_buffers_lsb:
-	.byt <top_attributes, <bot_attibutes
-	steps_buffers_msb:
-	.byt >top_attributes, >bot_attibutes
-	NUM_RESTORE_STEPS = *-steps_buffers_msb
-.)
-.)

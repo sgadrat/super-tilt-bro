@@ -74,3 +74,4 @@ TILE_TILESET_NEW_CLOUD_6 = (*-tileset_new_cloud_tiles)/16
 .byt %11111101, %11111101, %11111101, %11110010, %00000100, %00000100, %10000011, %01111100
 .byt %11111011, %11111011, %11111011, %11111101, %11111111, %11111111, %01111100, %00000000
 tileset_new_cloud_end:
+tileset_new_cloud_size = tileset_new_cloud_end - tileset_new_cloud_tiles

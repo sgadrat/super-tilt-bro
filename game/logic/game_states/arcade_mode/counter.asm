@@ -48,8 +48,7 @@
 
 +arcade_mode_display_counter:
 .(
-	COLON_TILE = INGAME_CHARACTER_EMPTY_STOCK_TILE
-	DOT_TILE = INGAME_CHARACTER_EMPTY_STOCK_TILE
+	+ARCADE_COLON_TILE = 256 - 25
 
 	POSITION_X = 3
 	POSITION_Y = 3
@@ -78,7 +77,7 @@
 	lda base10_to_tile_low, y
 	jsr set_one_tile
 
-	lda #COLON_TILE
+	lda #ARCADE_COLON_TILE
 	jsr set_one_tile
 
 	ldy arcade_mode_counter_seconds
@@ -87,7 +86,7 @@
 	lda base10_to_tile_low, y
 	jsr set_one_tile
 
-	lda #DOT_TILE
+	lda #ARCADE_COLON_TILE
 	jsr set_one_tile
 
 	ldy arcade_mode_counter_frames

@@ -1,5 +1,77 @@
 ;TODO move non-critical performance routines to an utility bank
 
+; Load a tileset to from ROM to VRAM
+;  Parameters after routine call
+;   ppu_addr_msb, ppu_addr_lsb
+;   modifier_lsb, modifier_msb
+;   tileset_bank
+;   return_bank
+;   tileset_addr_lsb, tileset_addr_msb
+;
+;  Overwrites all registers, tmpfield1 to tmpfield7 (plus possible modifier's side effects)
++load_tileset:
+.(
+	parameter_addr = tmpfield1
+	;parameter_addr_msb = tmpfield2
+
+	prg_vector = tmpfield1
+	prg_vector_msb = tmpfield2
+	modifier = tmpfield4
+	modifier_msb = tmpfield5
+
+	; Stack shenaningans to handle parameters being hardcoded after the jsr
+	lda #8
+	jsr inline_parameters
+
+	; Set PPU address
+	lda PPUSTATUS
+	ldy #0
+	lda (parameter_addr), y
+	sta PPUADDR
+	iny
+	lda (parameter_addr), y
+	sta PPUADDR
+
+	; Set modifier address
+	iny
+	lda (parameter_addr), y
+	sta modifier
+	iny
+	lda (parameter_addr), y
+	sta modifier_msb
+
+	; Set trampoline parameters
+	;NOTE Not using the macro because we read bank number from parameters while we will invalid parameters pointer
+	lda #<cpu_to_ppu_copy_tileset_modified
+	sta extra_tmpfield1
+	lda #>cpu_to_ppu_copy_tileset_modified
+	sta extra_tmpfield2
+
+	iny
+	lda (parameter_addr), y
+	sta extra_tmpfield3
+
+	iny
+	lda (parameter_addr), y
+	sta extra_tmpfield4
+
+	; Store tileset address
+	;NOTE Beware, we invalid paramer_addr pointer while reading parameters
+	iny
+	lda (parameter_addr), y
+	tax
+	iny
+	lda (parameter_addr), y
+	sta prg_vector_msb
+	txa
+	sta prg_vector
+
+	; Call to tileset copying routine
+	jsr trampoline
+
+	rts
+.)
+
 ; Copy a tileset from CPU memory to PPU memory, applying a modifier on the fly
 ;  tmpfield1, tmpfield2 - Address of the tileset in CPU memory
 ;  tmpfield4, tmpfield5 - Address of the modifier routine

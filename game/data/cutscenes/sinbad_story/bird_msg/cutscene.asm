@@ -22,12 +22,12 @@ bg_boat_tileset_size = (cutscene_sinbad_story_bird_msg_bg_boat_tileset_end-cutsc
 cutscene_sinbad_story_bird_msg_init:
 .(
 	; Load sprites tiles (begin after character 1 animations tiles)
-	LOAD_TILESET(cutscene_sinbad_story_bird_msg_sprite_tileset, cutscene_sinbad_story_bird_msg_bank, CHARACTERS_CHARACTER_B_TILES_OFFSET)
-	LOAD_TILESET(cutscene_sinbad_story_common_island_tileset, cutscene_sinbad_story_common_tilesets_bank, CHARACTERS_CHARACTER_B_TILES_OFFSET+sprites_tileset_size*16)
-	LOAD_TILESET(tileset_new_cloud, TILESET_NEW_CLOUD_BANK_NUMBER, CHARACTERS_CHARACTER_B_TILES_OFFSET+(sprites_tileset_size+island_tileset_size)*16)
+	LOAD_TILESET(cutscene_sinbad_story_bird_msg_sprite_tileset, cutscene_sinbad_story_bird_msg_bank, CHARACTERS_CHARACTER_B_TILES_OFFSET, CURRENT_BANK_NUMBER)
+	LOAD_TILESET(cutscene_sinbad_story_common_island_tileset, cutscene_sinbad_story_common_tilesets_bank, CHARACTERS_CHARACTER_B_TILES_OFFSET+sprites_tileset_size*16, CURRENT_BANK_NUMBER)
+	LOAD_TILESET(tileset_new_cloud, TILESET_NEW_CLOUD_BANK_NUMBER, CHARACTERS_CHARACTER_B_TILES_OFFSET+(sprites_tileset_size+island_tileset_size)*16, CURRENT_BANK_NUMBER)
 
 	; Load background tiles from common tilesets
-	LOAD_TILESET(cutscene_sinbad_story_common_water_tileset, cutscene_sinbad_story_common_tilesets_bank, $1000+bg_boat_tileset_size*16)
+	LOAD_TILESET(cutscene_sinbad_story_common_water_tileset, cutscene_sinbad_story_common_tilesets_bank, $1000+bg_boat_tileset_size*16, CURRENT_BANK_NUMBER)
 
 	rts
 .)
@@ -77,7 +77,8 @@ cutscene_sinbad_story_bird_msg_logic:
 	CLEAR_ANIM(1)
 	CLEAR_ANIM(2)
 	CLEAR_ANIM(3)
-	LOAD_TILESET_BG(cutscene_sinbad_story_bird_msg_bg_letter_tileset, cutscene_sinbad_story_bird_msg_bank)
+	STOP_RENDERING
+	LOAD_TILESET_BG(cutscene_sinbad_story_bird_msg_bg_letter_tileset, cutscene_sinbad_story_bird_msg_bank, CURRENT_BANK_NUMBER)
 
 	; Showing letter
 	SET_PALETTE(0, $21,$27,$37):SET_PALETTE(1, $19,$21,$27):SET_PALETTE(2, $19,$27,$37)
@@ -99,8 +100,9 @@ cutscene_sinbad_story_bird_msg_logic:
 	; Sinbad going to adventure
 	.(
 		; Display boat scene
-		LOAD_TILESET_BG(cutscene_sinbad_story_bird_msg_bg_boat_tileset, cutscene_sinbad_story_bird_msg_bank)
-		LOAD_TILESET(cutscene_sinbad_story_common_water_tileset, cutscene_sinbad_story_common_tilesets_bank, $1000+bg_boat_tileset_size*16)
+		STOP_RENDERING
+		LOAD_TILESET_BG(cutscene_sinbad_story_bird_msg_bg_boat_tileset, cutscene_sinbad_story_bird_msg_bank, CURRENT_BANK_NUMBER)
+		LOAD_TILESET(cutscene_sinbad_story_common_water_tileset, cutscene_sinbad_story_common_tilesets_bank, $1000+bg_boat_tileset_size*16, CURRENT_BANK_NUMBER)
 
 		INIT_ANIM(0, sinbad_anim_idle, SINBAD_BANK_NUMBER, DIRECTION_RIGHT2, 146, 127, $0100, 0) ; index, anim, bank, direction, x, y, velocity_h, velocity_v
 		INIT_ANIM(2, cutscene_sinbad_story_bird_msg_anim_overlay_left, cutscene_sinbad_story_bird_msg_bank, DIRECTION_LEFT2, 128, 47, 0, 0) ; index, anim, bank, direction, x, y, velocity_h, velocity_v

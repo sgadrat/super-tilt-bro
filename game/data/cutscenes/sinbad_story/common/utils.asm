@@ -15,27 +15,7 @@ water_tileset_size = (cutscene_sinbad_story_common_water_tileset_end-cutscene_si
 +cutscene_sinbad_story_dialog_encounter_init:
 .(
 	; Write solid tiles in patterns
-	lda PPUSTATUS
-	lda #$10
-	sta PPUADDR
-	lda #$00
-	sta PPUADDR
-
-	lda #$00
-	ldx #16
-	jsr ppu_fill
-
-	lda #$ff
-	ldx #8
-	jsr ppu_fill
-
-	lda #$00
-	ldx #16
-	jsr ppu_fill
-
-	lda #$ff
-	ldx #24
-	jsr ppu_fill
+	TRAMPOLINE(write_solid_bg_tiles, #BANKED_UTILS_BANK_NUMBER, #CURRENT_BANK_NUMBER)
 
 	; Set alphanum charset at the end of tileset
 	lda PPUSTATUS
@@ -70,10 +50,31 @@ water_tileset_size = (cutscene_sinbad_story_common_water_tileset_end-cutscene_si
 	TRAMPOLINE(cpu_to_ppu_copy_charset, #CHARSET_SYMBOLS_BANK_NUMBER, #CURRENT_BANK_NUMBER)
 
 	; Load shared background tilesets
-	LOAD_TILESET(cutscene_sinbad_story_sinbad_dialog_tileset, CUTSCENE_SINBAD_STORY_SINBAD_DIALOG_BANK_NUMBER, $1000+sinbad_tiles_begin*16)
-	LOAD_TILESET_REMAP(cutscene_sinbad_story_common_island_tileset, cutscene_sinbad_story_common_tilesets_bank, $1000+island_tiles_begin*16, #2, #1, #3, #2)
-	LOAD_TILESET_REMAP(tileset_new_cloud, TILESET_NEW_CLOUD_BANK_NUMBER, $1000+cloud_tiles_begin*16, #2, #1, #2, #3)
-	LOAD_TILESET(cutscene_sinbad_story_common_water_tileset, cutscene_sinbad_story_common_tilesets_bank, $1000+water_tiles_begin*16)
+	LOAD_TILESET(cutscene_sinbad_story_sinbad_dialog_tileset, CUTSCENE_SINBAD_STORY_SINBAD_DIALOG_BANK_NUMBER, $1000+sinbad_tiles_begin*16, CURRENT_BANK_NUMBER)
+	LOAD_TILESET_REMAP(cutscene_sinbad_story_common_island_tileset, cutscene_sinbad_story_common_tilesets_bank, $1000+island_tiles_begin*16, #2, #1, #3, #2, CURRENT_BANK_NUMBER)
+	LOAD_TILESET_REMAP(tileset_new_cloud, TILESET_NEW_CLOUD_BANK_NUMBER, $1000+cloud_tiles_begin*16, #2, #1, #2, #3, CURRENT_BANK_NUMBER)
+	LOAD_TILESET(cutscene_sinbad_story_common_water_tileset, cutscene_sinbad_story_common_tilesets_bank, $1000+water_tiles_begin*16, CURRENT_BANK_NUMBER)
+
+	rts
+.)
+
++arcade_write_colon_tile:
+.(
+	lda PPUSTATUS
+	lda #>($1000 + ARCADE_COLON_TILE * 16)
+	sta PPUADDR
+	lda #<($1000 + ARCADE_COLON_TILE * 16)
+	sta PPUADDR
+
+	lda #<char_colon
+	sta tmpfield3
+	lda #>char_colon
+	sta tmpfield4
+
+	lda #1
+	sta tmpfield7
+	ldx #CHARSET_COLOR(0,3)
+	TRAMPOLINE(cpu_to_ppu_copy_charset_raw, #CHARSET_SYMBOLS_BANK_NUMBER, #CURRENT_BANK_NUMBER)
 
 	rts
 .)

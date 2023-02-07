@@ -9,7 +9,7 @@ def expand(source, game_dir, filename, templates_dir):
 	# State
 	expanded_source_code = source # Source code with macros expanded
 	defined = {} # Defined macro values
-	source_pos = [{'file': '{}/states.asm'.format(filename), 'line': 1}] # Current backtrace of files/lines being parsed
+	source_pos = [{'file': filename, 'line': 1}] # Current backtrace of files/lines being parsed
 
 	# Helper functions
 	def place_tpl_values(orig):
@@ -55,7 +55,7 @@ def expand(source, game_dir, filename, templates_dir):
 
 	class DefineHandler:
 		name = '!define'
-		regexp = re.compile('!define "(?P<name>[^"]+)" {(?P<value>[^}]+)}', flags=re.MULTILINE)
+		regexp = re.compile('!define "(?P<name>[^"]+)" {(?P<value>[^}]*)}', flags=re.MULTILINE)
 		def process(m):
 			nonlocal defined, source_pos
 			ensure(

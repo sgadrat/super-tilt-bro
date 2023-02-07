@@ -1,5 +1,35 @@
 +BANKED_UTILS_BANK_NUMBER = CURRENT_BANK_NUMBER
 
+; Write solid tiles in background patterns
+;
+; Overwrites A, X
++write_solid_bg_tiles:
+.(
+	lda PPUSTATUS
+	lda #$10
+	sta PPUADDR
+	lda #$00
+	sta PPUADDR
+
+	lda #$00
+	ldx #16
+	jsr ppu_fill
+
+	lda #$ff
+	ldx #8
+	jsr ppu_fill
+
+	lda #$00
+	ldx #16
+	jsr ppu_fill
+
+	lda #$ff
+	ldx #24
+	jmp ppu_fill
+
+	;rts ; useless, jump to subroutine
+.)
+
 ; Lighten players avatars if the game engine didn't already ligtened one to handle same character + same skin situation
 ;  Overwrites all registers, extra_tmpfield1 to extra_tmpfield4
 +stages_lighten_avatars:

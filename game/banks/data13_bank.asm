@@ -5,11 +5,29 @@
 
 bank_data13_begin:
 
-bank_data_music_sinbad2_begin:
+.(
+bank_data_begin:
 #include "game/data/music/theme_sinbad2.asm"
 #echo
 #echo Sinbad2 theme size:
-#print *-bank_data_music_sinbad2_begin
+#print *-bank_data_begin
+.)
+
+.(
+bank_data_begin:
+#include "game/data/stages/arcade/fight_port/stage_arcade_fight_port.asm"
+#echo
+#echo Stage fight port
+#print *-bank_data_begin
+.)
+
+.(
+bank_data_begin:
+#include "game/data/stages/arcade/fight_town/stage_arcade_fight_town.asm"
+#echo
+#echo Stage fight town
+#print *-bank_data_begin
+.)
 
 bank_data13_end:
 

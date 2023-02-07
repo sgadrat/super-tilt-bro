@@ -79,6 +79,9 @@ cloud_tile:
 
 +stage_arcade_boss_init:
 .(
+	; Load colon tile for the time counter
+	TRAMPOLINE(arcade_write_colon_tile, #cutscene_sinbad_story_dialog_encounter_utils_bank, #CURRENT_BANK_NUMBER)
+
 	; Force boss music
 	lda #<music_volcano_info
 	sta audio_current_track_lsb

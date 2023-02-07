@@ -94,6 +94,11 @@ Background tiles
  * ``219`` -> ``229``: Numeric (plus "%") font for damage metter
  * ``230`` -> ``255``: Alpha font (unused? maybe important for gameover screen?)
 
+Helpful constants:
+
+ * ``ARCADE_COLON_TILE``
+ * ``INGAME_CHARACTER_EMPTY_STOCK_TILE``
+
 Memory allocation
 =================
 

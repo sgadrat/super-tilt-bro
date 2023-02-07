@@ -15,7 +15,7 @@
 cutscene_sinbad_story_sinbad_encounter_init:
 .(
 	TRAMPOLINE(cutscene_sinbad_story_dialog_encounter_init, #cutscene_sinbad_story_dialog_encounter_utils_bank, #CURRENT_BANK_NUMBER)
-	LOAD_TILESET_FLIP(cutscene_sinbad_story_sinbad_dialog_tileset, CUTSCENE_SINBAD_STORY_SINBAD_DIALOG_BANK_NUMBER, $1000+opponent_tiles_begin*16)
+	LOAD_TILESET_FLIP(cutscene_sinbad_story_sinbad_dialog_tileset, CUTSCENE_SINBAD_STORY_SINBAD_DIALOG_BANK_NUMBER, $1000+opponent_tiles_begin*16, CURRENT_BANK_NUMBER)
 	rts
 .)
 

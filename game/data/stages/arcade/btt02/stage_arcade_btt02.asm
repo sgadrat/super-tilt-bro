@@ -20,9 +20,11 @@ PLATFORM($80, $b8, $47, $5f) ; left, right, top, bot
 PLATFORM($d0, $e8, $47, $9f) ; left, right, top, bot
 PLATFORM($a0, $b8, $4f, $9f) ; left, right, top, bot
 PLATFORM($01, $40, $6f, $8f) ; left, right, top, bot
+PLATFORM($30, $40, $7f, $ef) ; left, right, top, bot
+PLATFORM($28, $38, $a7, $bf) ; left, right, top, bot
+PLATFORM($38, $88, $a7, $bf) ; left, right, top, bot
 SMOOTH_PLATFORM($18, $50, $3f) ; left, right, top
 SMOOTH_PLATFORM($b0, $d8, $87) ; left, right, top
-SMOOTH_PLATFORM($28, $88, $a7) ; left, right, top
 END_OF_STAGE
 circle_target_path:
 .byt 8 ; number of waypoints
@@ -56,5 +58,5 @@ bot_target_path:
 
 
 #include "game/data/stages/arcade/btt02/screen.asm"
-#include "game/data/stages/arcade/btt02/logic.asm"
+#include "game/data/stages/arcade/btt02/logic.built.asm"
 .)

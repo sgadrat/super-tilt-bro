@@ -67,6 +67,38 @@ bank_data:
 #print *-bank_data
 .)
 
+.(
+bank_data_begin:
+#include "game/data/stages/arcade/tilesets/gameplay_elements.asm"
+#echo
+#echo Arcade tileset gameplay elements
+#print *-bank_data_begin
+.)
+
+.(
+bank_data_begin:
+#include "game/data/stages/arcade/tilesets/town.asm"
+#echo
+#echo Arcade tileset town
+#print *-bank_data_begin
+.)
+
+.(
+bank_data_begin:
+#include "game/data/stages/arcade/run01/tileset_port.asm"
+#echo
+#echo Arcade tileset port
+#print *-bank_data_begin
+.)
+
+.(
+bank_data_begin:
+#include "game/data/stages/arcade/tilesets/wall.asm"
+#echo
+#echo Arcade tileset wall
+#print *-bank_data_begin
+.)
+
 bank_data10_end:
 
 #echo

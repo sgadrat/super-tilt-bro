@@ -1,6 +1,6 @@
-music_kiki_bank = CURRENT_BANK_NUMBER
++music_kiki_bank = CURRENT_BANK_NUMBER
 
-music_kiki_info:
++music_kiki_info:
 .word music_kiki_track_pulse1
 .word music_kiki_track_pulse2
 .word music_kiki_track_triangle

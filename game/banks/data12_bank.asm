@@ -23,6 +23,30 @@ bank_data_stage_arcade_run02_begin:
 #echo stage arcade run02 size:
 #print *-bank_data_stage_arcade_run02_begin
 
+.(
+bank_data_begin:
+#include "game/data/stages/arcade/tilesets/roof_extras.asm"
+#echo
+#echo Arcade tileset roof extras
+#print *-bank_data_begin
+.)
+
+.(
+bank_data_begin:
+#include "game/data/stages/arcade/btt02/stage_arcade_btt02.asm"
+#echo
+#echo stage arcade btt02 size:
+#print *-bank_data_begin
+.)
+
+.(
+bank_data_begin:
+#include "game/data/stages/arcade/fight_wall/stage_arcade_fight_wall.asm"
+#echo
+#echo stage arcade fight wall size:
+#print *-bank_data_begin
+.)
+
 bank_data12_end:
 
 #echo

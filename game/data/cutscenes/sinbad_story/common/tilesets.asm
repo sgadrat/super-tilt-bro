@@ -135,3 +135,4 @@
 .byt %11110000, %00000000, %11110000, %00000000, %11111110, %11110000, %00000000, %00000000
 .byt %11111111, %11111111, %00001111, %11111111, %11111111, %11111111, %11111111, %11111111
 +cutscene_sinbad_story_common_water_tileset_end:
++cutscene_sinbad_story_common_water_tileset_size = cutscene_sinbad_story_common_water_tileset_end - cutscene_sinbad_story_common_water_tileset_tiles
