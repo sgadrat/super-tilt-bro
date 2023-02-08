@@ -92,7 +92,6 @@ cd "${root_dir}"
 rm -f "$log_file"
 
 # Clean generated files
-# TODO do not hardcode character names here
 say "Clean ..."
 log "========="
 
@@ -109,7 +108,8 @@ log "===================="
 PYTHONPATH="${root_dir}/tools:$PYTHONPATH" cmd "${root_dir}/tools/compile-mod.py" --tpl-dir "${root_dir}/game/templates" "${root_dir}/game-mod/mod.json" "${root_dir}"
 
 # Pass pre-preprocessor
-#TODO could be better to use the preprocessor for template files, which is more featured and already exists
+#TODO Remove: obsoleted by handling of *.tpl.asm which is more feature complete
+#     (existing .pp.asm files must be converted to .tpl.asm)
 log
 say "Pre-preprocessor"
 log "================"
@@ -117,6 +117,16 @@ log "================"
 for ppp_source in `find . -name '*.pp.asm'`; do
 	asm_source="`dirname "$ppp_source"`/`basename "$ppp_source" .pp.asm`.built.asm"
 	run tools/slow_prepocessor.py "$ppp_source" > "$asm_source"
+done
+
+# Expand templates
+log
+say "Expand templates"
+log "================"
+
+for tpl_source in `find . -name '*.tpl.asm'`; do
+	asm_source="`dirname "$tpl_source"`/`basename "$tpl_source" .tpl.asm`.built.asm"
+	run tools/expand_tpl.py --tpl-dir "$root_dir/game/templates" "$tpl_source" "$root_dir" > "$asm_source"
 done
 
 # Compile C files
