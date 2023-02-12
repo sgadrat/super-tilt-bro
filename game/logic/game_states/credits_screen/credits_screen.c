@@ -182,32 +182,44 @@ static void show_current_page() {
 	uint8_t const* text = ptr((&menu_credits_pages_text_lsb)[*credits_current_page], (&menu_credits_pages_text_msb)[*credits_current_page]); //FIXME bug if table is in another bank
 
 	// Illustration related constants
-	uint8_t const n_tiles = 126;
+	uint8_t const n_tiles = 90;
 	uint8_t const tile_size = 16;
 	uint8_t const tiles_per_chunk = 3;
 	uint8_t const chunks_per_line = 3;
 	uint8_t const tiles_per_line = chunks_per_line * tiles_per_chunk;
 	uint8_t const chunk_size = tiles_per_chunk * tile_size;
 	uint8_t const n_chunks = n_tiles / tiles_per_chunk;
+	uint8_t const illustration_n_lines = (n_chunks + chunks_per_line - 1) / chunks_per_line;
 
 	uint8_t const* const illustration = ptr((&menu_credits_pages_illustration_lsb)[*credits_current_page], (&menu_credits_pages_illustration_msb)[*credits_current_page]); //FIXME bug if table is in another bank
 	uint8_t const illustration_bank = (&menu_credits_pages_illustration_bank)[*credits_current_page];
-	uint16_t const illustration_screen_pos = 0x2124;
+	uint8_t const illustration_screen_pos_col = 4;
+	uint8_t const illustration_screen_pos_line = 11;
+	uint8_t const illustration_screen_pos_x = illustration_screen_pos_col * 8;
+	uint8_t const illustration_screen_pos_y = illustration_screen_pos_line * 8;
+	uint16_t const illustration_screen_pos = 0x2000 + illustration_screen_pos_line * 32 + illustration_screen_pos_col;
 
+	// Order in which tiles chunks are drawn
 	static uint8_t const chunks_order[] = {
-		22, 26, 23, 21, 25, 19, 16, 18, 20,
-		24, 17, 15, 29, 13, 27, 12, 14, 31,
-		28,  9, 32, 11,  7, 30, 10,  5, 34,
-		 6, 33, 36,  8, 37, 38, 35,  1, 41,
-		 4,  3, 39,  2,  0, 40,
+		16, 20, 17, 15, 19, 13, 10, 12, 14,
+		18, 11,  9, 23,  7, 21,  6,  8, 25,
+		22,  3, 26,  5,  1, 24,  4, 28,  0,
+		27,  2, 29,
 	};
+	_Static_assert(sizeof(chunks_order) == n_chunks, "Chunks order table mismatch number of chunks");
+
+	// Order in which nametable attributes are updated
+	//  NOTE - Animated independently of chunks drawing
+	uint8_t const attributes_delay = 6; // Start animating attributes n steps after chunks
 
 	static uint8_t const attributes_order_bytes[] = {
+		// Center attributes
 		0xd9, 0xe2, 0xe1, 0xda,
 		0xd9, 0xe2, 0xe1, 0xda, 0xdb, 0xe3,
 		0xd9, 0xe2, 0xe1, 0xda,
 		0xd9, 0xe2, 0xe1, 0xda, 0xdb, 0xe3,
 
+		// Bottom/top attributes
 		0xd1, 0xea, 0xe9, 0xd2,
 		0xd1, 0xea, 0xe9, 0xd2, 0xd3, 0xeb,
 		0xd1, 0xea, 0xe9, 0xd2,
@@ -215,11 +227,13 @@ static void show_current_page() {
 	};
 
 	static uint8_t const attributes_order_bits[] = {
+		// Center attributes
 		ATT(2,1,1,1), ATT(1,1,1,2), ATT(1,1,2,1), ATT(1,2,1,1),
 		ATT(2,2,1,1), ATT(1,1,2,2), ATT(1,1,2,2), ATT(2,2,1,1), ATT(0,2,0,1), ATT(0,1,0,2),
 		ATT(2,2,2,1), ATT(1,2,2,2), ATT(1,2,2,2), ATT(2,2,1,2),
 		ATT(2,2,2,2), ATT(2,2,2,2), ATT(2,2,2,2), ATT(2,2,2,2), ATT(0,2,0,2), ATT(0,2,0,2),
 
+		// Bottom/top attributes
 		ATT(2,1,1,1), ATT(1,1,1,2), ATT(1,1,2,1), ATT(1,2,1,1),
 		ATT(2,2,1,1), ATT(1,1,2,2), ATT(1,1,2,2), ATT(2,2,1,1), ATT(0,2,0,1), ATT(0,1,0,2),
 		ATT(2,2,2,1), ATT(1,2,2,2), ATT(1,2,2,2), ATT(2,2,1,2),
@@ -242,9 +256,9 @@ static void show_current_page() {
 		for (uint8_t tile_num = 0; tile_num < tiles_per_line; ++tile_num) {
 			credits_mem_buffer[3+tile_num] = ' ';
 		}
-		for (uint8_t first_line = 0; first_line < 14; first_line += n_illustration_lines_per_step) {
+		for (uint8_t first_line = 0; first_line < illustration_n_lines; first_line += n_illustration_lines_per_step) {
 			// Construct nt buffers
-			for (uint8_t line_num = first_line; line_num < first_line + n_illustration_lines_per_step; ++line_num) {
+			for (uint8_t line_num = first_line; line_num < first_line + n_illustration_lines_per_step && line_num < illustration_n_lines; ++line_num) {
 				credits_mem_buffer[0] = u16_msb(illustration_screen_pos + 32 * line_num);
 				credits_mem_buffer[1] = u16_lsb(illustration_screen_pos + 32 * line_num);
 				wrap_push_nt_buffer(credits_mem_buffer);
@@ -315,10 +329,13 @@ static void show_current_page() {
 			wrap_push_nt_buffer(credits_mem_buffer);
 
 			// Place bubble animation over chunk
-			reset_bubble(step & 0x03, 32 + chunk_pos_in_line * tiles_per_chunk * 8, 71 + illustration_line * 8);
+			reset_bubble(
+				step & 0x03,
+				illustration_screen_pos_x + chunk_pos_in_line * tiles_per_chunk * 8,
+				illustration_screen_pos_y - 1 + illustration_line * 8
+			);
 
 			// Change illustration attributes
-			uint8_t const attributes_delay = 6;
 			if (step >= attributes_delay && attributes_step < sizeof(attributes_order_bytes)) {
 				credits_mem_buffer[0] = 0x23;
 				credits_mem_buffer[1] = attributes_order_bytes[attributes_step];
