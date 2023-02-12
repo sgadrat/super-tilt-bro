@@ -3,8 +3,8 @@ MENU_CREDITS_SCREEN_BANK = CURRENT_BANK_NUMBER
 .(
 &menu_credits_palette:
 ; Background
-;    0-title,         1-fade,          2-illustration,  3-illustration
-.byt $31,$0f,$21,$28, $31,$11,$21,$3c, $31,$07,$28,$32, $31,$00,$00,$00
+;    0-title,         1-fade,          2-illustration,  3-Text/logos
+.byt $31,$0f,$21,$28, $31,$11,$21,$3c, $31,$07,$28,$32, $31,$0f,$06,$20
 ; Sprites
 ;    0-cursor+bubble, 1-unused,        2-unused,        3-unused
 .byt $31,$08,$28,$31, $31,$00,$00,$00, $31,$00,$00,$00, $31,$00,$00,$00
@@ -50,13 +50,13 @@ MENU_CREDITS_SCREEN_BANK = CURRENT_BANK_NUMBER
 .byt
 .byt
 menu_credits_nametable_attributes:
-.byt ZIPNT_ZEROS(8*8)
+.byt ZIPNT_ZEROS(8*3+4)
 .byt
 .byt
-.byt
-.byt
-.byt
-.byt
+.byt                                             %11111111, %11111111, %11111111, %11111111
+.byt ZIPNT_ZEROS(4),                             %11111111, %11111111, %11111111, %11111111
+.byt ZIPNT_ZEROS(4),                             %11111111, %11111111, %11111111, %11111111
+.byt ZIPNT_ZEROS(8*2)
 .byt
 menu_credits_nametable_end:
 .byt ZIPNT_END

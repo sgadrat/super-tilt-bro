@@ -65,6 +65,14 @@ bank_data_cutscene_sinbad_common_tilesets:
 #print *-bank_data_cutscene_sinbad_common_tilesets
 .)
 
+.(
+bank_data_begin:
+#include "game/data/menu_credits/tileset_ggs.asm"
+#echo
+#echo GGS Studio Creation logo tileset
+#print *-bank_data_begin
+.)
+
 bank_data01_end:
 
 #echo

@@ -16,6 +16,7 @@ extern uint8_t const menu_credits_pages_text_msb;
 extern uint8_t const menu_credits_palette;
 extern uint8_t const menu_credits_sprites_tileset;
 extern uint8_t const menu_credits_tileset;
+extern uint8_t const tileset_ggs_logo;
 
 // Labels, use their address or the associtated *_bank() function
 extern uint8_t const CHARSET_ASCII_BANK_NUMBER;
@@ -23,6 +24,7 @@ extern uint8_t const MENU_CREDITS_ANIMS_BANK;
 extern uint8_t const MENU_CREDITS_CREDITS_BANK;
 extern uint8_t const MENU_CREDITS_SCREEN_BANK;
 extern uint8_t const MENU_CREDITS_TILESET_BANK;
+extern uint8_t const TILESET_GGS_LOGO_BANK_NUMBER;
 
 extern uint8_t const MENU_CREDITS_NB_PAGES;
 extern uint8_t const MENU_CREDITS_NAVIGATION_DOT;
@@ -69,6 +71,10 @@ static uint8_t screen_bank() {
 
 static uint8_t tileset_bank() {
 	return ptr_lsb(&MENU_CREDITS_TILESET_BANK);
+}
+
+static uint8_t tileset_ggs_logo_bank() {
+	return ptr_lsb(&TILESET_GGS_LOGO_BANK_NUMBER);
 }
 
 /** Not a real yield, pass a frame "as if" it gone through main loop */
@@ -404,6 +410,7 @@ void init_credits_screen_extra() {
 	long_cpu_to_ppu_copy_tileset_background(tileset_bank(), &menu_credits_tileset);
 	long_cpu_to_ppu_copy_charset(charset_bank(), &charset_ascii, 0x1200, 1, 0);
 	long_cpu_to_ppu_copy_tileset(tileset_bank(), &menu_credits_sprites_tileset, 0x0000);
+	long_cpu_to_ppu_copy_tileset(tileset_ggs_logo_bank(), &tileset_ggs_logo, 0x1e00);
 
 	// Draw navigation bar
 	uint8_t const dot_tile = ptr_lsb(&MENU_CREDITS_NAVIGATION_DOT);

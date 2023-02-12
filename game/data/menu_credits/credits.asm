@@ -8,12 +8,14 @@ MENU_CREDITS_CREDITS_BANK = CURRENT_BANK_NUMBER
 	.byt <menu_credits_illustration_characters
 	.byt <menu_credits_illustration_special_thanks
 	.byt <menu_credits_illustration_special_thanks
+	.byt <menu_credits_illustration_special_thanks
 	.byt <menu_credits_illustration_author
 &menu_credits_pages_illustration_msb:
 	.byt >menu_credits_illustration_graphics
 	.byt >menu_credits_illustration_music
 	.byt >menu_credits_illustration_characters
 	.byt >menu_credits_illustration_characters
+	.byt >menu_credits_illustration_special_thanks
 	.byt >menu_credits_illustration_special_thanks
 	.byt >menu_credits_illustration_special_thanks
 	.byt >menu_credits_illustration_author
@@ -24,6 +26,7 @@ MENU_CREDITS_CREDITS_BANK = CURRENT_BANK_NUMBER
 	.byt MENU_CREDITS_ILLUSTRATION_CHARACTERS_BANK_NUMBER
 	.byt MENU_CREDITS_ILLUSTRATION_SPECIAL_THANKS_BANK_NUMBER
 	.byt MENU_CREDITS_ILLUSTRATION_SPECIAL_THANKS_BANK_NUMBER
+	.byt MENU_CREDITS_ILLUSTRATION_SPECIAL_THANKS_BANK_NUMBER
 	.byt MENU_CREDITS_ILLUSTRATION_AUTHOR_BANK_NUMBER
 &menu_credits_pages_text_lsb:
 	.byt <text_graphics
@@ -32,6 +35,7 @@ MENU_CREDITS_CREDITS_BANK = CURRENT_BANK_NUMBER
 	.byt <text_characters2
 	.byt <text_special_thanks1
 	.byt <text_special_thanks2
+	.byt <text_special_thanks3
 	.byt <text_author
 &menu_credits_pages_text_msb:
 	.byt >text_graphics
@@ -40,6 +44,7 @@ MENU_CREDITS_CREDITS_BANK = CURRENT_BANK_NUMBER
 	.byt >text_characters2
 	.byt >text_special_thanks1
 	.byt >text_special_thanks2
+	.byt >text_special_thanks3
 	.byt >text_author
 pages_end:
 
@@ -134,6 +139,21 @@ text_special_thanks2:
 	.byt "  SuperGameLand "
 	.byt "                "
 	.byt "      Tui       "
+
+text_special_thanks3:
+	.byt "<SPECIAL THANKS>"
+	.byt "                "
+	.byt "                "
+	.byt "                "
+	.byt "                "
+	.byt "   ", $e0, $e1, $e2, $e0, $e1, $e2, $e3, $e4, $e5, "    "
+	.byt "   ", $e6, $e7, $e8, $e6, $e7, $e8, $e9, $ea, $eb, "    "
+	.byt "   ", $ec, $ed, $ee, $ef, $f0, $f1, $f2, $f3, $f4, "    "
+	.byt "   ", $f5, $f6, $f7, $f8, $f9, $fa, $fb, $fc, $fd, "    "
+	.byt "                "
+	.byt "                "
+	.byt "                "
+	.byt "                "
 
 text_author:
 	.byt "    <AUTHOR>    "
