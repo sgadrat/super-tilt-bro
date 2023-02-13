@@ -53,13 +53,19 @@ typedef struct Encounter {
 			uint8_t difficulty;
 			uint8_t skin;
 			uint8_t stage;
+			uint16_t silver_time;
+			uint16_t gold_time;
 		} fight;
 		struct {
 			uint8_t stage;
+			uint16_t silver_time;
+			uint16_t gold_time;
 		} run;
 		struct {
 			uint8_t stage;
-		} targets;
+			uint16_t silver_time;
+			uint16_t gold_time;
+		} targets; //NOTE some code expect "target" to have the exact same layout as "run" (code should be fixed if needed)
 		struct {
 			uint8_t const* scene;
 			uint8_t bank;
@@ -70,6 +76,15 @@ typedef struct Encounter {
 static uint8_t const INPUT_NONE = 0;
 static uint8_t const INPUT_BACK = 1;
 static uint8_t const INPUT_NEXT = 2;
+
+static uint8_t const BRONZE_MEDAL = 0;
+static uint8_t const SILVER_MEDAL = 1;
+static uint8_t const GOLD_MEDAL = 2;
+static uint8_t const MYTHRIL_MEDAL = 3;
+static uint8_t const TAS_MEDAL = 4;
+static uint8_t const CHOCOLATE_MEDAL = 5;
+
+static uint8_t const BITS_PER_MEDAL = 2; //NOTE: only up to gold are stored as stage result
 
 ///////////////////////////////////////
 // Utility functions
@@ -117,6 +132,15 @@ static void yield() {
 	fetch_controllers();
 }
 
+uint32_t timestamp(uint8_t minutes, uint8_t seconds, uint8_t frames) {
+	uint8_t const frame_base = (*system_index ? 60 : 50);
+	return
+		minutes * 60 * frame_base +
+		seconds * frame_base +
+		frames
+	;
+}
+
 //TODO put it in cstb utils and use it in netplay_menu (if still used in the final arcade mode)
 static uint8_t alpha_tile(char c) {
 	// This is with alphanum charset placed at the end on patterns
@@ -149,6 +173,10 @@ static void set_text(char const* text, uint8_t line, uint8_t col) {
 
 static Encounter current_encounter() {
 	return encounters()[*arcade_mode_current_encounter];
+}
+
+static Encounter previous_encounter() {
+	return encounters()[(*arcade_mode_current_encounter) - 1];
 }
 
 static void start_cutscene() {
@@ -234,6 +262,9 @@ static void next_screen() {
 		*config_player_b_character = current_encounter().fight.character;
 		*config_player_a_present = true;
 		*config_player_b_present = true;
+		*arcade_mode_saved_counter_frames = *arcade_mode_counter_frames;
+		*arcade_mode_saved_counter_seconds = *arcade_mode_counter_seconds;
+		*arcade_mode_saved_counter_minutes = *arcade_mode_counter_minutes;
 	}else if (*arcade_mode_stage_type == encounter_type_run() || *arcade_mode_stage_type == encounter_type_targets()) {
 		*config_ai_level = 0;
 		*config_selected_stage = ptr_lsb(&stage_arcade_first_index) + current_encounter().run.stage;
@@ -242,6 +273,9 @@ static void next_screen() {
 		*config_player_b_character = 0;
 		*config_player_a_present = true;
 		*config_player_b_present = false;
+		*arcade_mode_saved_counter_frames = *arcade_mode_counter_frames;
+		*arcade_mode_saved_counter_seconds = *arcade_mode_counter_seconds;
+		*arcade_mode_saved_counter_minutes = *arcade_mode_counter_minutes;
 	}else {
 		start_cutscene();
 	}
@@ -311,6 +345,95 @@ static void reinit_player_state() {
 	*arcade_mode_player_damages = 0;
 }
 
+static void gameover_screen() {
+	display_timer();
+	set_text("gameover", 13, 11);
+	set_text("continue", 15, 11);
+	set_text("yes  start", 16, 13);
+	set_text("no   b", 17, 13);
+	if (wait_input() == INPUT_BACK) {
+		previous_screen();
+	}
+	++*arcade_mode_nb_credits_used;
+	reinit_player_state();
+}
+
+static uint8_t get_medal(uint8_t index) {
+	uint32_t const medals = u32(arcade_mode_medals[2], arcade_mode_medals[1], arcade_mode_medals[0], 0);
+	return (medals >> (BITS_PER_MEDAL * index)) & 0x00000003;
+}
+
+static void congratulations_screen() {
+	// Show timer
+	display_timer();
+
+	// Congratulate player
+	set_text("congratulations", 13, 9);
+	wait_input();
+
+	// Display medals
+	uint8_t n_medals = 0;
+	Encounter const* const first_encounter = (Encounter const* const)(&arcade_encounters);
+	for (Encounter const* encounter = first_encounter; (uint8_t)(encounter - first_encounter) < n_encounters(); ++encounter) {
+		if (
+			encounter->type == encounter_type_run() ||
+			encounter->type == encounter_type_targets() ||
+			encounter->type == encounter_type_fight()
+		)
+		{
+			++n_medals;
+		}
+	}
+
+	char const* const medal_names[] = {
+		"bronze",
+		"silver",
+		"gold",
+		"mythril",
+		"toolassistium",
+		"chocolate",
+	};
+	uint8_t line = 15;
+	uint8_t current_medal_index = n_medals;
+	while (current_medal_index > 0) {
+		--current_medal_index;
+		set_text(medal_names[get_medal(current_medal_index)], line, 9);
+		++line;
+	}
+
+	// Compute final medal
+	uint8_t final_medal = BRONZE_MEDAL;
+
+	uint32_t const global_timer = timestamp(*arcade_mode_counter_minutes, *arcade_mode_counter_seconds, *arcade_mode_counter_frames);
+	if (global_timer < timestamp(1,0,0)) { // World record TAS (hypotetical for now)
+		final_medal = CHOCOLATE_MEDAL;
+	}else if (global_timer < timestamp(1,1,14)) { // World record Human (hypotetical for now, just me doing my normal strat as speedrun)
+		final_medal = TAS_MEDAL;
+	}else {
+		// Compute score (sum of medals)
+		uint8_t score = 0;
+		current_medal_index = n_medals;
+		while (current_medal_index > 0) {
+			--current_medal_index;
+			score += get_medal(current_medal_index);
+		}
+
+		// Perfect score means mythril, else take the average of medals
+		if (score == GOLD_MEDAL * n_medals && *arcade_mode_nb_credits_used == 0) {
+			final_medal = MYTHRIL_MEDAL;
+		}else {
+			final_medal = (score + n_medals/2) / n_medals;
+		}
+	}
+
+	// Display final medal
+	set_text(medal_names[final_medal], line+1, 4);
+
+	// Wait and quit arcade mode
+	wait_input();
+	previous_screen();
+}
+
 void init_arcade_mode_extra() {
 	// Draw screen
 	long_construct_palettes_nt_buffer(screen_bank(), &arcade_mode_palette);
@@ -335,61 +458,73 @@ void init_arcade_mode_extra() {
 		*arcade_mode_counter_seconds = 0;
 		*arcade_mode_counter_minutes = 0;
 		*arcade_mode_nb_credits_used = 0;
+		arcade_mode_medals[0] = 0;
+		arcade_mode_medals[1] = 0;
+		arcade_mode_medals[2] = 0;
 	}
 }
 
 void arcade_mode_tick_extra() {
-	// Gameover handling
-	if (*arcade_mode_last_game_winner != 0) {
-		display_timer();
-		set_text("gameover", 13, 11);
-		set_text("continue", 15, 11);
-		set_text("yes  start", 16, 13);
-		set_text("no   b", 17, 13);
-		if (wait_input() == INPUT_BACK) {
-			previous_screen();
+	// Update medals
+	if (*arcade_mode_current_encounter > 0) {
+		//NOTE To lose a stock doesn't impact calculation, it resets stage's counter.
+		//     The player can lose the stock on purpose to aim for gold.
+
+		// Get medal times
+		uint32_t silver_time;
+		uint32_t gold_time;
+		if (previous_encounter().type == encounter_type_run() || previous_encounter().type == encounter_type_targets()) {
+			silver_time = timestamp(
+				0,
+				u16_msb(previous_encounter().run.silver_time),
+				u16_lsb(previous_encounter().run.silver_time)
+			);
+			gold_time = timestamp(
+				0,
+				u16_msb(previous_encounter().run.gold_time),
+				u16_lsb(previous_encounter().run.gold_time)
+			);
+		}else /*if (previous_encounter().type == encounter_type_fight())*/ {
+			silver_time = timestamp(
+				0,
+				u16_msb(previous_encounter().fight.silver_time),
+				u16_lsb(previous_encounter().fight.silver_time)
+			);
+			gold_time = timestamp(
+				0,
+				u16_msb(previous_encounter().fight.gold_time),
+				u16_lsb(previous_encounter().fight.gold_time)
+			);
 		}
-		++*arcade_mode_nb_credits_used;
-		reinit_player_state();
+
+		// Check medal acquired
+		uint32_t const encounter_time =
+			timestamp(*arcade_mode_counter_minutes, *arcade_mode_counter_seconds, *arcade_mode_counter_frames) -
+			timestamp(*arcade_mode_saved_counter_minutes, *arcade_mode_saved_counter_seconds, *arcade_mode_saved_counter_frames)
+		;
+		uint8_t medal = BRONZE_MEDAL;
+		if (encounter_time < gold_time) {
+			medal = GOLD_MEDAL;
+		}else if (encounter_time < silver_time) {
+			medal = SILVER_MEDAL;
+		}
+
+		// Save medal
+		uint32_t medals = u32(arcade_mode_medals[2], arcade_mode_medals[1], arcade_mode_medals[0], 0);
+		medals <<= BITS_PER_MEDAL;
+		medals |= medal;
+		arcade_mode_medals[2] = u32_byte0(medals);
+		arcade_mode_medals[1] = u32_byte1(medals);
+		arcade_mode_medals[0] = u32_byte2(medals);
+	}
+
+	// Game ended handling
+	if (*arcade_mode_last_game_winner != 0) {
+		gameover_screen();
 	}
 
 	if (*arcade_mode_current_encounter == n_encounters()) {
-		display_timer();
-
-		set_text("congratulations", 13, 9);
-		wait_input();
-
-#define TIME(min, sec, frames) ((uint32_t)(min) << 16) + ((uint32_t)(sec) << 8) + (uint32_t)(frames)
-		uint32_t const timer = TIME(*arcade_mode_counter_minutes, *arcade_mode_counter_seconds, *arcade_mode_counter_frames);
-
-		if (timer < TIME(1,0,0)) { // World record TAS (hypotetical for now)
-			set_text("chocolate medal", 15, 9);
-			wait_input();
-			set_text("wow that is impressive", 17, 6);
-		}else if (timer < TIME(1,1,14)) { // World record Human (hypotetical for now, just me doing my normal strat as speedrun)
-			set_text("toolassistium medal", 15, 7);
-			wait_input();
-			set_text("for cocolate beat 1 00 00", 17, 4);
-		}else if (timer < TIME(1,32,0)) {
-			set_text("mythril medal", 15, 9);
-			wait_input();
-			set_text("for toolassistium beat 1 01 14", 17, 0);
-		}else if (timer < TIME(2,30,0)) {
-			set_text("gold medal", 15, 9);
-			wait_input();
-			set_text("for mythril beat 1 32 00", 17, 4);
-		}else if (timer < TIME(5,0,0)) {
-			set_text("silver medal", 15, 9);
-			wait_input();
-			set_text("for gold beat 2 30 00", 17, 4);
-		}else {
-			set_text("bronze medal", 15, 9);
-			wait_input();
-			set_text("for silver beat 5 minutes", 17, 4);
-		}
-		wait_input();
-
-		previous_screen();
+		congratulations_screen();
 	}
 
 	// Launch next encounter

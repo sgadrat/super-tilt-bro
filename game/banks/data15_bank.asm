@@ -17,6 +17,22 @@ bank_data_cutscene_sinbad_story_bird_msg_begin:
 #echo arcade cutscene sinbad story bird size:
 #print *-bank_data_cutscene_sinbad_story_bird_msg_begin
 
+.(
+bank_data_begin:
+#include "game/logic/game_states/arcade_mode/arcade_mode_extra_code.asm"
+#echo
+#echo arcade mode extra code size:
+#print *-bank_data_begin
+.)
+
+.(
+bank_data_begin:
+#include "game/data/arcade/screen.asm"
+#echo
+#echo arcade mode screen size:
+#print *-bank_data_begin
+.)
+
 bank_data15_end:
 
 #echo

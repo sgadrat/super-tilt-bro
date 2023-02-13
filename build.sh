@@ -111,8 +111,8 @@ PYTHONPATH="${root_dir}/tools:$PYTHONPATH" cmd "${root_dir}/tools/compile-mod.py
 #TODO Remove: obsoleted by handling of *.tpl.asm which is more feature complete
 #     (existing .pp.asm files must be converted to .tpl.asm)
 log
-say "Pre-preprocessor"
-log "================"
+say "Pre-preprocessor ..."
+log "===================="
 
 for ppp_source in `find . -name '*.pp.asm'`; do
 	asm_source="`dirname "$ppp_source"`/`basename "$ppp_source" .pp.asm`.built.asm"
@@ -121,8 +121,8 @@ done
 
 # Expand templates
 log
-say "Expand templates"
-log "================"
+say "Expand templates ..."
+log "===================="
 
 for tpl_source in `find . -name '*.tpl.asm'`; do
 	asm_source="`dirname "$tpl_source"`/`basename "$tpl_source" .tpl.asm`.built.asm"
@@ -164,7 +164,7 @@ say "======================="
 #  Static bank cannot be safely upgraded, so avoid modifying it
 #  Only a warning for ease of development, should be an error when carts are distributed to non-technical players.
 static_bank_hash=`tail -c 4096 'Super_Tilt_Bro_(E).nes' | md5sum - | grep -Eo '^[0-9a-f]+'`
-if [ "$static_bank_hash" != '8c2b4a8dd950bb813318cddc1059c38a' ]; then
+if [ "$static_bank_hash" != 'bf6361940a45f081684a47c4ca3fdccb' ]; then
 	sayc 41 "WARNING: static bank changed"
 	sayc 41 "============================"
 fi

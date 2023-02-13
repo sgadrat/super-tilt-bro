@@ -279,6 +279,7 @@ game_mode_state_begin = $05dc
 local_mode_paused = game_mode_state_begin ; $05dc
 local_mode_state_end = local_mode_paused+1
 
+; Arcade mode stuff not expected to be preseved by the encounter
 arcade_mode_stage_type = $05dd
 
 arcade_mode_targets_x = $05de ; $05de to $05e7
@@ -748,30 +749,34 @@ config_requested_player_b_character = $0543
 config_requested_player_a_palette = $0544
 config_requested_player_b_palette = $0545
 config_ingame_track = $0546
-;unused $0547
-config_player_a_present = $0548 ; 0 - player is absent, and should not impact the screen, 1 - player is there as usual
-config_player_b_present = $0549 ; 0 - player is absent, and should not impact the screen, 1 - player is there as usual
+config_player_a_present = $0547 ; 0 - player is absent, and should not impact the screen, 1 - player is there as usual
+config_player_b_present = $0548 ; 0 - player is absent, and should not impact the screen, 1 - player is there as usual
 
-;unused $054a
+;unused $0549-$054c
 
-arcade_mode_current_encounter = $054b
-arcade_mode_player_damages = $054c
-arcade_mode_counter_frames = $054d
-arcade_mode_counter_seconds = $054e
-arcade_mode_counter_minutes = $054f
-arcade_mode_nb_credits_used = $0550
+; Arcade mode stuff expected to be preseved by the encounter
+arcade_mode_medals = $054d ; $054d to $054f
+arcade_mode_saved_counter_frames = $0550
+arcade_mode_saved_counter_seconds = $0551
+arcade_mode_saved_counter_minutes = $0552
+arcade_mode_current_encounter = $0553
+arcade_mode_player_damages = $0554
+arcade_mode_counter_frames = $0555
+arcade_mode_counter_seconds = $0556
+arcade_mode_counter_minutes = $0557
+arcade_mode_nb_credits_used = $0558
 
 ; Menu state variable that must persist between screens
-menu_state_mode_selection_current_option = $0552
+menu_state_mode_selection_current_option = $0559
 
 ; Nine-gine variables
-nt_buffers_begin = $0553
-nt_buffers_end = $0554
+nt_buffers_begin = $055a
+nt_buffers_end = $055b
 
-screen_shake_noise_h = $0555
-screen_shake_noise_v = $0556
-screen_shake_speed_h = $0557
-screen_shake_speed_v = $0558
+screen_shake_noise_h = $055c
+screen_shake_noise_v = $055d
+screen_shake_speed_h = $055e
+screen_shake_speed_v = $055f
 
 ;$0560 to $05ff may be used by game states
 

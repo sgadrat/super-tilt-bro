@@ -45,7 +45,7 @@ hide_player_b:
 	;rts ; useless, jump to subroutine
 .)
 
-&game_mode_arcade_init_hook:
++game_mode_arcade_init_hook:
 .(
 	lda arcade_mode_stage_type
 	beq fight
@@ -179,7 +179,7 @@ hide_player_b:
 	.)
 .)
 
-&game_mode_arcade_pre_update_hook:
++game_mode_arcade_pre_update_hook:
 .(
 	.(
 		;HACK local mode only handle AI and pause, and we want it too
@@ -636,7 +636,7 @@ hide_player_b:
 	.)
 .)
 
-&game_mode_arcade_gameover_hook:
++game_mode_arcade_gameover_hook:
 .(
 	; Update persistant character state
 	lda player_a_damages

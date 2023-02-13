@@ -21,6 +21,26 @@ static uint8_t i16_msb(int16_t val) {
 	return (((int)val) >> 8) & 0x00ff;
 }
 
+static uint8_t u32_byte0(uint32_t val) {
+	return val & 0x000000ff;
+}
+
+static uint8_t u32_byte1(uint32_t val) {
+	return (val & 0x0000ff00) >> 8;
+}
+
+static uint8_t u32_byte2(uint32_t val) {
+	return (val & 0x00ff0000) >> 16;
+}
+
+static uint8_t u32_byte3(uint32_t val) {
+	return (val & 0xff000000) >> 24;
+}
+
+static uint32_t u32(uint8_t byte0, uint8_t byte1, uint8_t byte2, uint8_t byte3) {
+	return ((uint32_t)(byte3) << 24) + ((uint32_t)(byte2) << 16) + ((uint32_t)(byte1) << 8) + (uint32_t)(byte0);
+}
+
 static uint16_t u16(uint8_t lsb, uint8_t msb) {
 	return ((uint16_t)msb) * 256 + lsb;
 }
