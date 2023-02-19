@@ -7,7 +7,7 @@ cc_bin="${CC_BIN:-6502-gcc}"
 perf_listings="${XA_LST:-0}"
 force_network="${FORCE_NETWORK:-0}"
 local_login="${LOCAL_LOGIN:-0}"
-skip_c="${SKIP_C:-0}"
+skip_c="${SKIP_C:-0}" # 0 - build C files, 1 - Skip files older than their ASM, 2 - Skip ALL
 
 root_dir=`readlink -m $(dirname "$0")`
 log_file="${root_dir}/build.log"
@@ -130,7 +130,7 @@ for tpl_source in `find . -name '*.tpl.asm'`; do
 done
 
 # Compile C files
-if [ $skip_c -eq 0 ]; then
+if [ $skip_c -ne 2 ]; then
 log
 say "Compile C files ..."
 log "==================="
@@ -139,8 +139,21 @@ tools/c_constants_files.py
 
 for c_source in `find . -name '*.c'`; do
 	asm_source="`dirname "$c_source"`/`basename "$c_source" .c`.built.asm"
-	run "$cc_bin" $c_source -S -I game/ $c_flags -o "$asm_source"
-	tools/asm_converter.py "$asm_source"
+
+	if [ -f "$asm_source" ]; then
+		last_build_date=$(date -r "$asm_source" +%s)
+	else
+		last_build_date=0
+	fi
+	last_update_time=$(date -r "$c_source" +%s)
+
+	if [ $skip_c -eq 0 -o $last_update_time -gt $last_build_date ]; then
+		if [ $skip_c -ne 0 ]; then
+			echo -e "\tBUILD $c_source"
+		fi
+		run "$cc_bin" $c_source -S -I game/ $c_flags -o "$asm_source"
+		tools/asm_converter.py "$asm_source"
+	fi
 done
 fi
 
