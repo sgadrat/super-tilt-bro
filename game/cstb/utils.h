@@ -91,6 +91,20 @@ static uint8_t capped_inc(uint8_t val, uint8_t max) {
 	return val + 1;
 }
 
+static uint8_t limit_add(uint8_t val, uint8_t step, uint8_t max) {
+	if (step > max || val >= max - step) {
+		return max;
+	}
+	return val + step;
+}
+
+static uint8_t limit_sub(uint8_t val, uint8_t step, uint8_t min) {
+	if (val <= (uint16_t)(min) + step) {
+		return min;
+	}
+	return val - step;
+}
+
 /**
  * Return 0 if the built ROM has networking feature, else 1
  *
@@ -143,6 +157,11 @@ static uint8_t code_bank() {
 	return ptr_lsb(&CURRENT_BANK_NUMBER);
 }
 
+/** Return the byte offset of a tile in VRAM */
+static uint16_t ppu_tile_offset(uint8_t tile_index) {
+	return (uint16_t)(tile_index) << 4;
+}
+
 /** Return the offset of the last nametable buffer in nametable_buffers array */
 static uint8_t get_last_nt_buffer() {
 	return *nt_buffers_end;
@@ -151,6 +170,15 @@ static uint8_t get_last_nt_buffer() {
 /** Set the offset of the last nametable buffer in nametable_buffers array */
 static void set_last_nt_buffer(uint8_t offset) {
 	*nt_buffers_end = offset;
+}
+
+/** Set values of an OAM sprite */
+static void place_sprite(uint8_t sprite_idx, uint8_t y, uint8_t tile, uint8_t attributes, uint8_t x) {
+	uint8_t const offset = sprite_idx * 4;
+	oam_mirror[offset+0] = y;
+	oam_mirror[offset+1] = tile;
+	oam_mirror[offset+2] = attributes;
+	oam_mirror[offset+3] = x;
 }
 
 #define CONST_HUNDREDS(val) ((((val) % 1000) / 100))

@@ -49,10 +49,46 @@ audio_play_sfx_from_list:
 sfx_list_lsb:
 	.byt <sfx_countdown_tick : SFX_COUNTDOWN_TICK_IDX = * - sfx_list_lsb - 1
 	.byt <sfx_countdown_reach : SFX_COUNTDOWN_REACH_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_crash : SFX_CRASH_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_death : SFX_DEATH_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_hit : SFX_HIT_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_parry : SFX_PARRY_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_shield_hit : SFX_SHIELD_HIT_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_shield_break : SFX_SHIELD_BREAK_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_interface_click : SFX_INTERFACE_CLICK_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_fast_fall : SFX_FAST_FALL_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_tech : SFX_TECH_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_jump : SFX_JUMP_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_aerial_jump : SFX_AERIAL_JUMP_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_strike_lite : SFX_STRIKE_LITE_IDX = * - sfx_list_lsb - 1
 sfx_list_msb:
 	.byt >sfx_countdown_tick
 	.byt >sfx_countdown_reach
+	.byt >sfx_crash
+	.byt >sfx_death
+	.byt >sfx_hit
+	.byt >sfx_parry
+	.byt >sfx_shield_hit
+	.byt >sfx_shield_break
+	.byt >sfx_interface_click
+	.byt >sfx_fast_fall
+	.byt >sfx_tech
+	.byt >sfx_jump
+	.byt >sfx_aerial_jump
+	.byt >sfx_strike_lite
 sfx_list_bnk:
+	.byt SFX_BANK
+	.byt SFX_BANK
+	.byt SFX_BANK
+	.byt SFX_BANK
+	.byt SFX_BANK
+	.byt SFX_BANK
+	.byt SFX_BANK
+	.byt SFX_BANK
+	.byt SFX_BANK
+	.byt SFX_BANK
+	.byt SFX_BANK
+	.byt SFX_BANK
 	.byt SFX_BANK
 	.byt SFX_BANK
 

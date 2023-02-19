@@ -486,7 +486,13 @@ netplay_launch_bg_mem_buffer = $0580 ; $0580 to $???? (current biggest usage, 3+
 
 arcade_mode_last_game_winner = last_c_label+1 ; $39
 
-arcade_mode_bg_mem_buffer = $0580 ; $0580 to $05a3 (max text size 32 + nt buffer header)
+arcade_mode_bg_mem_buffer = $0580 ; $0580 to $05a3 (max text size 32 + nt buffer header) ;TODO rename to "arcade_mode_mem_buffer", it got more uses than just nt buffers
+arcade_mode_encounter = $05a4 ; $05a4 to $05ac (ENCOUNTER_ENTRY_SIZE)
+
+arcade_mode_congratz_medals_x_subpixel = $05a4 ; $05a4 to $05b3 (room for 16 medals)
+arcade_mode_congratz_medals_y_subpixel = $05b4 ; $05b4 to $05c3 (room for 16 medals)
+arcade_mode_congratz_medals_h_velocity = $05c4 ; $05c4 to $05d3
+arcade_mode_congratz_medals_v_velocity = $05d4 ; $05d4 to $05e3
 
 cutscene_anims = $0580 ; $0580 to $05b3 - 4 animation states
 cutscene_anims_enabled = $05b4 ; $05b4 to $05b7 - 4 bytes

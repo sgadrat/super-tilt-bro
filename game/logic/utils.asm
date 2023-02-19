@@ -74,8 +74,10 @@
 
 ; Copy a tileset from CPU memory to PPU memory, applying a modifier on the fly
 ;  tmpfield1, tmpfield2 - Address of the tileset in CPU memory
+;  tmpfield3 - not a parameter
 ;  tmpfield4, tmpfield5 - Address of the modifier routine
 ;
+; PPUADDR must be set to the destination address
 ; PPUCTRL's I bit should not be set (if set, writes every 32 bytes)
 ;
 ; Overwrites registers, tmpfield1 to tmpfield7 (plus possible modifier's side effects)

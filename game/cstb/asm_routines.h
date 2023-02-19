@@ -16,6 +16,7 @@ void audio_music_tick();
 void audio_mute_music();
 void audio_play_interface_click();
 void audio_unmute_music();
+void clear_bg_bot_left();
 void clear_nt_buffers();
 void dummy_routine();
 void esp_wait_rx();
@@ -28,6 +29,7 @@ void particle_handlers_reinit();
 void process_nt_buffers();
 void re_init_menu();
 void sleep_frame();
+void stop_rendering();
 void tick_menu();
 void wait_next_frame();
 
@@ -78,6 +80,14 @@ static void wrap_animation_state_change_animation(uint8_t const* animation_state
 	*tmpfield13 = ptr_lsb(animation_data);
 	*tmpfield14 = ptr_msb(animation_data);
 	animation_state_change_animation();
+}
+
+void audio_play_music_direct();
+static void wrap_audio_play_music(uint8_t track_bank, uint8_t const* track_info) {
+	*audio_current_track_lsb = ptr_lsb(track_info);
+	*audio_current_track_msb = ptr_msb(track_info);
+	*audio_current_track_bank = track_bank;
+	wrap_trampoline(code_bank(), code_bank(), audio_play_music_direct);
 }
 
 void audio_play_sfx_from_list();
@@ -154,6 +164,35 @@ static void long_cpu_to_ppu_copy_charset(uint8_t bank, uint8_t const* charset, u
 	);
 }
 
+void cpu_to_ppu_copy_charset_raw();
+static void long_cpu_to_ppu_copy_charset_raw(uint8_t bank, uint8_t const* charset, uint16_t ppu_addr, uint8_t foreground, uint8_t background, uint8_t count) {
+	// Set parameters
+	*tmpfield3 = ptr_lsb(charset);
+	*tmpfield4 = ptr_msb(charset);
+	*tmpfield7 = count;
+	uint8_t const colors = (foreground << 2) | background;
+
+	// Set PPU ADDR to destination
+	*PPUSTATUS;
+	*PPUADDR = u16_msb(ppu_addr);
+	*PPUADDR = u16_lsb(ppu_addr);
+
+	// Set trampoline parameters
+	*extra_tmpfield1 = ptr_lsb(&cpu_to_ppu_copy_charset_raw);
+	*extra_tmpfield2 = ptr_msb(&cpu_to_ppu_copy_charset_raw);
+	*extra_tmpfield3 = bank;
+	*extra_tmpfield4 = code_bank();
+
+	// Call
+	asm(
+		"ldx %0\n\t"
+		"jsr trampoline"
+		:
+		: "r"(colors)
+		: "a", "x", "y", "memory"
+	);
+}
+
 void cpu_to_ppu_copy_tileset();
 static void wrap_cpu_to_ppu_copy_tileset(uint8_t const* tileset, uint16_t ppu_addr) {
 	// Set cpu_to_ppu_copy_tileset parameters
@@ -192,12 +231,41 @@ static void long_cpu_to_ppu_copy_tileset_background(uint8_t bank, uint8_t const*
 	wrap_trampoline(bank, code_bank(), &cpu_to_ppu_copy_tileset_background);
 }
 
+void cpu_to_ppu_copy_tileset_modified();
+static void long_cpu_to_ppu_copy_tileset_modified(uint8_t bank, uint8_t const* tileset, void(*modifier)(), uint16_t ppu_addr) {
+	*tmpfield1 = ptr_lsb(tileset);
+	*tmpfield2 = ptr_msb(tileset);
+	*tmpfield4 = ptr_lsb(modifier);
+	*tmpfield5 = ptr_msb(modifier);
+
+	*PPUSTATUS;
+	*PPUADDR = u16_msb(ppu_addr);
+	*PPUADDR = u16_lsb(ppu_addr);
+
+	wrap_trampoline(bank, code_bank(), &cpu_to_ppu_copy_tileset_modified);
+}
+
+void cpu_to_ppu_copy_tiles_modified();
+static void long_cpu_to_ppu_copy_tiles_modified(uint8_t bank, uint8_t const* tileset, void(*modifier)(), uint16_t ppu_addr, uint8_t n_tiles) {
+	*tmpfield1 = ptr_lsb(tileset);
+	*tmpfield2 = ptr_msb(tileset);
+	*tmpfield3 = n_tiles;
+	*tmpfield4 = ptr_lsb(modifier);
+	*tmpfield5 = ptr_msb(modifier);
+
+	*PPUSTATUS;
+	*PPUADDR = u16_msb(ppu_addr);
+	*PPUADDR = u16_lsb(ppu_addr);
+
+	wrap_trampoline(bank, code_bank(), &cpu_to_ppu_copy_tiles_modified);
+}
+
 void cpu_to_ppu_copy_tiles();
-static void wrap_cpu_to_ppu_copy_tiles(uint8_t const* tileset, uint16_t ppu_addr, uint8_t num_bytes) {
+static void wrap_cpu_to_ppu_copy_tiles(uint8_t const* tileset, uint16_t ppu_addr, uint8_t num_tiles) {
 	// Set cpu_to_ppu_copy_tiles parameters
 	*tmpfield1 = ptr_lsb(tileset);
 	*tmpfield2 = ptr_msb(tileset);
-	*tmpfield3 = num_bytes;
+	*tmpfield3 = num_tiles;
 
 	// Set PPU ADDR to destination
 	*PPUSTATUS;
@@ -207,6 +275,20 @@ static void wrap_cpu_to_ppu_copy_tiles(uint8_t const* tileset, uint16_t ppu_addr
 	// Call
 	cpu_to_ppu_copy_tiles();
 }
+static void long_cpu_to_ppu_copy_tiles(uint8_t bank, uint8_t const* tileset, uint16_t ppu_addr, uint8_t num_tiles) {
+	// Set cpu_to_ppu_copy_tiles parameters
+	*tmpfield1 = ptr_lsb(tileset);
+	*tmpfield2 = ptr_msb(tileset);
+	*tmpfield3 = num_tiles;
+
+	// Set PPU ADDR to destination
+	*PPUSTATUS;
+	*PPUADDR = u16_msb(ppu_addr);
+	*PPUADDR = u16_lsb(ppu_addr);
+
+	// Call
+	wrap_trampoline(bank, code_bank(), &cpu_to_ppu_copy_tiles);
+}
 
 void construct_nt_buffer();
 static void wrap_construct_nt_buffer(uint8_t const* header, uint8_t const* payload) {
@@ -215,6 +297,13 @@ static void wrap_construct_nt_buffer(uint8_t const* header, uint8_t const* paylo
 	*tmpfield3 = ptr_lsb(payload);
 	*tmpfield4 = ptr_msb(payload);
 	construct_nt_buffer();
+}
+static void long_construct_nt_buffer(uint8_t bank, uint8_t const* header, uint8_t const* payload) {
+	*tmpfield1 = ptr_lsb(header);
+	*tmpfield2 = ptr_msb(header);
+	*tmpfield3 = ptr_lsb(payload);
+	*tmpfield4 = ptr_msb(payload);
+	wrap_trampoline(bank, code_bank(), &construct_nt_buffer);
 }
 
 void construct_palettes_nt_buffer();
@@ -367,6 +456,17 @@ static void wrap_push_nt_buffer(uint8_t const* buffer) {
 
 static void long_sleep_frame() {
 	wrap_trampoline(code_bank(), code_bank(), &sleep_frame);
+}
+
+void start_rendering();
+static void wrap_start_rendering(uint8_t scroll_nametable) {
+	asm(
+		"lda %0\n\t"
+		"jsr start_rendering"
+		:
+		: "r"(scroll_nametable)
+		: "a", "memory"
+	);
 }
 
 #pragma GCC diagnostic pop

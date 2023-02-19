@@ -5,12 +5,12 @@
 #include "game/logic/game_states/arcade_mode/ingame_hooks.asm"
 
 .(
-&ENCOUNTER_FIGHT = 0
-&ENCOUNTER_RUN = 1
-&ENCOUNTER_TARGETS = 2
-&ENCOUNTER_CUTSCENE = 3
++ENCOUNTER_FIGHT = 0
++ENCOUNTER_RUN = 1
++ENCOUNTER_TARGETS = 2
++ENCOUNTER_CUTSCENE = 3
 
-ENCOUNTER_ENTRY_SIZE = 9
++ENCOUNTER_ENTRY_SIZE = 9
 
 #define ARCADE_FIGHT(character,difficulty,skin,stage,silvers,silverf,golds,goldf) \
 	.byt ENCOUNTER_FIGHT, character, difficulty, skin, stage, silverf, silvers, goldf, golds
@@ -21,7 +21,7 @@ ENCOUNTER_ENTRY_SIZE = 9
 #define ARCADE_CUTSCENE(info,bank) \
 	.byt ENCOUNTER_CUTSCENE, <info, >info, <bank, 0, 0, 0, 0, 0
 
-&arcade_encounters:
++arcade_encounters:
 	ARCADE_CUTSCENE(cutscene_sinbad_story_bird_msg, cutscene_sinbad_story_bird_msg_bank)
 	ARCADE_RUN(stage_arcade_run01_index, 6,0, 4,30)
 	ARCADE_CUTSCENE(cutscene_sinbad_story_sinbad_encounter, cutscene_sinbad_story_sinbad_encounter_bank)
@@ -36,5 +36,5 @@ ENCOUNTER_ENTRY_SIZE = 9
 	ARCADE_CUTSCENE(cutscene_sinbad_story_meteor, cutscene_sinbad_story_meteor_bank)
 	ARCADE_FIGHT(0, 4, 1, stage_arcade_boss_index, 90,0, 45,0)
 
-&arcade_n_encounters = (* - arcade_encounters) / ENCOUNTER_ENTRY_SIZE
++arcade_n_encounters = (* - arcade_encounters) / ENCOUNTER_ENTRY_SIZE
 .)

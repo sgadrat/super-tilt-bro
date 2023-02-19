@@ -11,6 +11,16 @@ bank_data_music_pepper_begin:
 #echo Pepper theme size:
 #print *-bank_data_music_pepper_begin
 
+.(
+bank_data_begin:
+#include "game/data/arcade/congratz/screen.asm"
+#include "game/data/arcade/congratz/bg_tileset.asm"
+#include "game/data/arcade/congratz/tiny_medal_tileset.asm"
+#echo
+#echo Arcade congratz screen data
+#print *-bank_data_begin
+.)
+
 bank_data14_end:
 
 #echo
