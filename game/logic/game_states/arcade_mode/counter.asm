@@ -54,6 +54,27 @@
 	POSITION_Y = 3
 	FIRST_DIGIT_PPU_ADDR = $2000+POSITION_Y*32+POSITION_X
 
+	lda #ARCADE_COLON_TILE
+	sta tmpfield1
+	lda #<FIRST_DIGIT_PPU_ADDR
+	sta tmpfield2
+	lda #>FIRST_DIGIT_PPU_ADDR
+	sta tmpfield3
+
+	; Fallthrough to arcade_mode_display_counter_params
+.)
+
+; Push a nametable buffer displaying the counter
+;  tmpfield1 - Separator tile
+;  tmpfield2,tmpfield3 - PPU address
+;
+; Overwrites A, X
++arcade_mode_display_counter_params:
+.(
+	separator_tile = tmpfield1
+	ppu_addr = tmpfield2
+	;ppu_addr_msb = tmpfield3
+
 	; Write buffer header
 	LAST_NT_BUFFER
 
@@ -61,10 +82,10 @@
 	sta nametable_buffers, x
 	inx
 
-	lda #>(FIRST_DIGIT_PPU_ADDR) ; PPU address
+	lda ppu_addr+1 ; PPU address
 	sta nametable_buffers, x
 	inx
-	lda #<(FIRST_DIGIT_PPU_ADDR)
+	lda ppu_addr
 	sta nametable_buffers, x
 	inx
 
@@ -77,7 +98,7 @@
 	lda base10_to_tile_low, y
 	jsr set_one_tile
 
-	lda #ARCADE_COLON_TILE
+	lda separator_tile
 	jsr set_one_tile
 
 	ldy arcade_mode_counter_seconds
@@ -86,7 +107,7 @@
 	lda base10_to_tile_low, y
 	jsr set_one_tile
 
-	lda #ARCADE_COLON_TILE
+	lda separator_tile
 	jsr set_one_tile
 
 	ldy arcade_mode_counter_frames

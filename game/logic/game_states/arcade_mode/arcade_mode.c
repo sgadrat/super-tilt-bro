@@ -25,6 +25,7 @@ extern uint8_t const cutscene_sinbad_story_meteor_bank;
 extern uint8_t const cutscene_sinbad_story_pepper_encounter_bank;
 extern uint8_t const cutscene_sinbad_story_sinbad_encounter_bank;
 extern uint8_t const stage_arcade_first_index;
+extern uint8_t const stage_arcade_gameover_index;
 
 ///////////////////////////////////////
 // Constants specific to this file
@@ -102,10 +103,6 @@ static void start_cutscene() {
 	wrap_change_global_game_state(GAME_STATE_ARCADE_MODE);
 }
 
-static void previous_screen() {
-	wrap_change_global_game_state(GAME_STATE_TITLE);
-}
-
 static void next_screen() {
 	*config_initial_stocks = 0;
 	*config_player_a_character_palette = 0;
@@ -143,53 +140,35 @@ static void next_screen() {
 	wrap_change_global_game_state(GAME_STATE_INGAME);
 }
 
-static void display_timer() {
-	// Display time
-	wrap_trampoline(arcade_bank(), code_bank(), &arcade_mode_display_counter);
-
-	// Display credits
-	if (*arcade_mode_nb_credits_used != 0) {
-		uint8_t const credits_used = min(*arcade_mode_nb_credits_used, 10);
-
-		uint8_t const position_y = 4;
-		uint8_t const position_x = 3;
-		uint16_t const ppu_addr = 0x2000 + position_y * 32 + position_x;
-
-		uint8_t const i = get_last_nt_buffer();
-		nametable_buffers[i] = 1;
-		nametable_buffers[(i+1) % 256] = u16_msb(ppu_addr);
-		nametable_buffers[(i+2) % 256] = u16_lsb(ppu_addr);
-		nametable_buffers[(i+3) % 256] = credits_used;
-
-		for (uint8_t credit_num = 0; credit_num < credits_used; ++credit_num) {
-			nametable_buffers[(i+4+credit_num) % 256] = 0xd0; //TODO name the stock tile (and actually use a specific tile for credits)
-		}
-
-		uint8_t const end_offset = (i+4+credits_used) % 256;
-		nametable_buffers[end_offset] = 0;
-		set_last_nt_buffer(end_offset);
-	}
-
-	// Pass a frame to process nt buffers
-	yield();
-}
-
 static void reinit_player_state() {
 	*arcade_mode_last_game_winner = 0;
 	*arcade_mode_player_damages = 0;
 }
 
 static void gameover_screen() {
-	display_timer();
-	set_text("gameover", 13, 11);
-	set_text("continue", 15, 11);
-	set_text("yes  start", 16, 13);
-	set_text("no   b", 17, 13);
-	if (wait_input() == INPUT_BACK) {
-		previous_screen();
+	// Update arcade mode's state
+	if (*arcade_mode_nb_credits_used != 0xff) {
+		++*arcade_mode_nb_credits_used;
 	}
-	++*arcade_mode_nb_credits_used;
 	reinit_player_state();
+
+	// Start the gameover "encounter"
+	*config_initial_stocks = 0;
+	*config_player_a_character_palette = 0;
+	*config_player_a_weapon_palette = 0;
+	*config_player_a_character = 0;
+	*arcade_mode_stage_type = encounter_type_gameover();
+	*config_game_mode = GAME_MODE_ARCADE;
+
+	*config_ai_level = 0;
+	*config_selected_stage = ptr_lsb(&stage_arcade_gameover_index);
+	*config_player_b_character_palette = 0;
+	*config_player_b_weapon_palette = 0;
+	*config_player_b_character = 0;
+	*config_player_a_present = true;
+	*config_player_b_present = false;
+
+	wrap_change_global_game_state(GAME_STATE_INGAME);
 }
 
 void init_arcade_mode_extra() {
@@ -224,7 +203,7 @@ void init_arcade_mode_extra() {
 
 void arcade_mode_tick_extra() {
 	// Update medals
-	if (*arcade_mode_current_encounter > 0 && previous_encounter().type != encounter_type_cutscene()) {
+	if (*arcade_mode_current_encounter > 0 && previous_encounter().type != encounter_type_cutscene() && *arcade_mode_last_game_winner == 0) {
 		//NOTE To lose a stock doesn't impact calculation, it resets stage's counter.
 		//     The player can lose the stock on purpose to aim for gold.
 
@@ -277,7 +256,7 @@ void arcade_mode_tick_extra() {
 	}
 
 	// Game ended handling
-	if (*arcade_mode_last_game_winner != 0) {
+	if (*arcade_mode_last_game_winner != 0 && *arcade_mode_last_game_winner != 0xff) {
 		gameover_screen();
 	}
 

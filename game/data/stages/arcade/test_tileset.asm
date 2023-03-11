@@ -1,5 +1,6 @@
 ARCADE_TEST_STAGE_TILESET_BANK_NUMBER = CURRENT_BANK_NUMBER
 
+;TODO unused? Should be by now.
 arcade_test_stage_tileset:
 
 ; Tileset's size in tiles (zero means 256)

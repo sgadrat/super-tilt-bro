@@ -59,6 +59,7 @@ extern uint8_t const ENCOUNTER_FIGHT; // encounter_type_fight()
 extern uint8_t const ENCOUNTER_RUN; // encounter_type_run()
 extern uint8_t const ENCOUNTER_TARGETS; // encounter_type_targets()
 extern uint8_t const ENCOUNTER_CUTSCENE; // encounter_type_cutscene()
+extern uint8_t const ENCOUNTER_GAMEOVER; // encounter_type_gameover()
 
 ///////////////////////////////////////
 // Constants specific to this file
@@ -115,6 +116,10 @@ static uint8_t encounter_type_targets() {
 
 static uint8_t encounter_type_cutscene() {
   return ptr_lsb(&ENCOUNTER_CUTSCENE);
+}
+
+static uint8_t encounter_type_gameover() {
+  return ptr_lsb(&ENCOUNTER_GAMEOVER);
 }
 
 static uint8_t n_encounters() {

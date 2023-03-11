@@ -47,30 +47,13 @@ hide_player_b:
 
 +game_mode_arcade_init_hook:
 .(
-	lda arcade_mode_stage_type
-	beq fight
-	cmp #ENCOUNTER_RUN
-	beq reach_the_exit
-
-		break_the_targets:
-			jsr hide_player_b
-			jsr break_the_targets_init
-			jmp common
-
-		reach_the_exit:
-			; Hide second character
-			jsr hide_player_b
-
-			; Disable teleport timer
-			lda #ARCADE_RUN_TELEPORT_TIMER_INACTIVE
-			sta arcade_mode_run_teleport_timer
-
-			;jmp common ; useless, "fight" is empty
-
-		fight:
-			; Nothing special
-
-	common:
+	; Call encounter type-specific initialization
+	ldy arcade_mode_stage_type
+	lda encounter_inits_lsb, y
+	sta tmpfield1
+	lda encounter_inits_msb, y
+	sta tmpfield2
+	jsr call_pointed_subroutine
 
 	; Restore player's damage
 	lda arcade_mode_player_damages
@@ -99,15 +82,38 @@ hide_player_b:
 
 	jsr trampoline
 
-	;HACK Call local mode init because it only handles AI, and we want AI too
+	;HACK Call local mode init because it only handles AI and pause, and we want it too
 	jmp game_mode_local_init
 
 	;rts ; Useless, jump to subroutine
+
+	gameover_init:
+	.(
+		; Hide second character
+		jmp hide_player_b
+
+		;rts ;useless, jump to subroutine
+	.)
+
+	reach_the_exit_init:
+	.(
+		; Hide second character
+		jsr hide_player_b
+
+		; Disable teleport timer
+		lda #ARCADE_RUN_TELEPORT_TIMER_INACTIVE
+		sta arcade_mode_run_teleport_timer
+
+		rts
+	.)
 
 	break_the_targets_init:
 	.(
 		stage_header_addr = tmpfield1
 		;stage_header_addr_msb = tmpfield2
+
+		; Hide second character
+		jsr hide_player_b
 
 		; Find the begining of targets in stage data
 		ldx config_selected_stage
@@ -177,6 +183,12 @@ hide_player_b:
 
 		rts
 	.)
+
+	encounter_inits_lsb:
+	;    fight           run                   targets                  cutscene        gameover
+	.byt <dummy_routine, <reach_the_exit_init, <break_the_targets_init, <dummy_routine, <gameover_init
+	encounter_inits_msb:
+	.byt >dummy_routine, >reach_the_exit_init, >break_the_targets_init, >dummy_routine, >gameover_init
 .)
 
 +game_mode_arcade_pre_update_hook:
@@ -188,36 +200,39 @@ hide_player_b:
 			rts
 		ok:
 
-		; Update counter
-		jsr arcade_mode_inc_counter
-		jsr arcade_mode_display_counter
-
 		; Tick stage type's specific code
-		lda arcade_mode_stage_type
-		beq fight
-		cmp #ENCOUNTER_RUN
-		beq reach_the_exit
-
-			break_the_targets:
-				jsr break_the_targets_tick
-				jmp end
-
-			reach_the_exit:
-				jsr reach_the_exit_tick
-				;jmp end ; useless, "fight" is empty
-
-			fight:
-				; Nothing special
-
-		end:
+		ldy arcade_mode_stage_type
+		lda encounter_ticks_lsb, y
+		sta tmpfield1
+		lda encounter_ticks_msb, y
+		sta tmpfield2
+		jsr call_pointed_subroutine
 
 		; Return without skipping the frame
 		clc
 		rts
 	.)
 
+	encounter_ticks_lsb:
+	;    fight        run                   targets                  cutscene        gameover
+	.byt <fight_tick, <reach_the_exit_tick, <break_the_targets_tick, <dummy_routine, <dummy_routine
+	encounter_ticks_msb:
+	.byt >fight_tick, >reach_the_exit_tick, >break_the_targets_tick, >dummy_routine, >dummy_routine
+
+	fight_tick:
+	.(
+		; Update counter
+		jsr arcade_mode_inc_counter
+		jmp arcade_mode_display_counter
+		;rts ; useless, jump to subroutine
+	.)
+
 	reach_the_exit_tick:
 	.(
+		; Update counter
+		jsr arcade_mode_inc_counter
+		jsr arcade_mode_display_counter
+
 		; Select routine
 		;   is_player_on_exit - is normal game behaviour
 		;   reach_the_exit_end - display teleport animation before exiting
@@ -424,6 +439,10 @@ hide_player_b:
 		hitbox_bot_screen = tmpfield16 ; Rectangle 2 bottom (screen)
 
 		current_target = extra_tmpfield1
+
+		; Update counter
+		jsr arcade_mode_inc_counter
+		jsr arcade_mode_display_counter
 
 		; Skip collision checks if player's hitbox is disabled
 		.(

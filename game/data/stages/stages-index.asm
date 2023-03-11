@@ -11,6 +11,7 @@ RAW_VECTOR(stage_arcade_boss_init) : stage_arcade_boss_index = ((* - stages_init
 RAW_VECTOR(stage_arcade_fight_port_init): stage_arcade_fight_port_index = ((* - stages_init_routine) / 2) - 1 ; Port
 RAW_VECTOR(stage_arcade_fight_town_init): stage_arcade_fight_town_index = ((* - stages_init_routine) / 2) - 1 ; Town
 RAW_VECTOR(stage_arcade_fight_wall_init): stage_arcade_fight_wall_index = ((* - stages_init_routine) / 2) - 1 ; Wall
+RAW_VECTOR(stage_arcade_gameover_init): stage_arcade_gameover_index = ((* - stages_init_routine) / 2) - 1 ; Gameover
 
 stage_arcade_first_index = (* - stages_init_routine) / 2
 RAW_VECTOR(stage_arcade_run01_init) : stage_arcade_run01_index = ((* - stages_init_routine) / 2) - stage_arcade_first_index - 1 ; arcade run01
@@ -30,6 +31,7 @@ RAW_VECTOR(stage_arcade_boss_tick) ; arcade boss
 RAW_VECTOR(stage_arcade_fight_port_tick) ; Port
 RAW_VECTOR(stage_arcade_fight_town_tick) ; Town
 RAW_VECTOR(stage_arcade_fight_wall_tick) ; Wall
+RAW_VECTOR(stage_arcade_gameover_tick) ; Gameover
 
 RAW_VECTOR(stage_arcade_run01_tick) ; arcade run01
 RAW_VECTOR(stage_arcade_btt01_tick) ; arcade btt01
@@ -48,6 +50,7 @@ stages_freezed_tick_routine_lsb:
 .byt <dummy_routine ; Port
 .byt <dummy_routine ; Town
 .byt <dummy_routine ; Wall
+.byt <dummy_routine ; Gameover
 
 .byt <dummy_routine ; arcade run01
 .byt <dummy_routine ; arcade btt01
@@ -66,6 +69,7 @@ stages_freezed_tick_routine_msb:
 .byt >dummy_routine ; Port
 .byt >dummy_routine ; Town
 .byt >dummy_routine ; Wall
+.byt >dummy_routine ; Gameover
 
 .byt >dummy_routine ; arcade run01
 .byt >dummy_routine ; arcade btt01
@@ -84,6 +88,7 @@ RAW_VECTOR(stage_arcade_boss_space_nametable) ; arcade boss
 RAW_VECTOR(stage_arcade_fight_port_nametable) ; Port
 RAW_VECTOR(stage_arcade_fight_town_nametable) ; Town
 RAW_VECTOR(stage_arcade_fight_wall_nametable) ; Wall
+RAW_VECTOR(stage_arcade_gameover_nametable) ; Gameover
 
 RAW_VECTOR(stage_arcade_run01_nametable)
 RAW_VECTOR(stage_arcade_btt01_nametable)
@@ -102,6 +107,7 @@ RAW_VECTOR(stage_arcade_boss_space_palette) ; arcade boss
 RAW_VECTOR(stage_arcade_fight_port_palette) ; Port
 RAW_VECTOR(stage_arcade_fight_town_palette) ; Town
 RAW_VECTOR(stage_arcade_fight_wall_palette) ; Wall
+RAW_VECTOR(stage_arcade_gameover_palette) ; Gameover
 
 RAW_VECTOR(stage_arcade_run01_palette)
 RAW_VECTOR(stage_arcade_btt01_palette)
@@ -119,6 +125,7 @@ stage_routine_fadeout_lsb:
 .byt <stage_arcade_fight_port_fadeout ; Port
 .byt <stage_arcade_fight_town_fadeout ; Town
 .byt <stage_arcade_fight_wall_fadeout ; Wall
+.byt <stage_arcade_gameover_fadeout ; Gameover
 .byt <dummy_routine ; arcade run01
 .byt <dummy_routine ; arcade btt01
 .byt <dummy_routine ; arcade run02
@@ -134,6 +141,7 @@ stage_routine_fadeout_msb:
 .byt >stage_arcade_fight_port_fadeout ; Port
 .byt >stage_arcade_fight_town_fadeout ; Town
 .byt >stage_arcade_fight_wall_fadeout ; Wall
+.byt >stage_arcade_gameover_fadeout ; Gameover
 .byt >dummy_routine ; arcade run01
 .byt >dummy_routine ; arcade btt01
 .byt >dummy_routine ; arcade run02
@@ -151,6 +159,7 @@ RAW_VECTOR(stage_arcade_boss_space_data) ; arcade boss
 RAW_VECTOR(stage_arcade_fight_port_data) ; Port
 RAW_VECTOR(stage_arcade_fight_town_data) ; Town
 RAW_VECTOR(stage_arcade_fight_wall_data) ; Wall
+RAW_VECTOR(stage_arcade_gameover_data) ; Gameover
 
 RAW_VECTOR(stage_arcade_run01_data)
 RAW_VECTOR(stage_arcade_btt01_data)
@@ -169,6 +178,7 @@ RAW_VECTOR($0000) ; arcade boss
 RAW_VECTOR($0000) ; Port
 RAW_VECTOR($0000) ; Town
 RAW_VECTOR($0000) ; Wall
+RAW_VECTOR($0000) ; Gameover
 
 RAW_VECTOR($0000) ; dummy value, unused for arcade stages
 RAW_VECTOR($0000) ; dummy value, unused for arcade stages
@@ -187,6 +197,7 @@ stages_netload_routine_lsb:
 .byt <dummy_routine ; Port
 .byt <dummy_routine ; Town
 .byt <dummy_routine ; Wall
+.byt <dummy_routine ; Gameover
 
 .byt <dummy_routine
 .byt <dummy_routine
@@ -205,6 +216,7 @@ stages_netload_routine_msb:
 .byt >dummy_routine ; Port
 .byt >dummy_routine ; Town
 .byt >dummy_routine ; Wall
+.byt >dummy_routine ; Gameover
 
 .byt >dummy_routine
 .byt >dummy_routine
@@ -223,6 +235,7 @@ stages_bank:
 .byt STAGE_ARCADE_FIGHT_PORT_BANK_NUMBER ; Port
 .byt STAGE_ARCADE_FIGHT_TOWN_BANK_NUMBER ; Town
 .byt STAGE_ARCADE_FIGHT_WALL_BANK_NUMBER ; Wall
+.byt STAGE_ARCADE_GAMEOVER_BANK_NUMBER ; Gameover
 
 .byt STAGE_ARCADE_RUN01_BANK_NUMBER
 .byt STAGE_ARCADE_BTT01_BANK_NUMBER
@@ -241,6 +254,7 @@ stages_tileset_lsb:
 .byt <tileset_ruins ; Port ;NOTE should support null pointer (overriden by custom init)
 .byt <tileset_ruins ; Town (overriden by custom init)
 .byt <tileset_ruins ; Wall (overriden by custom init)
+.byt <arcade_gameover_bg_tileset ; Gameover
 
 .byt <arcade_test_stage_tileset ; arcade run01
 .byt <arcade_test_stage_tileset ; arcade btt01
@@ -259,6 +273,7 @@ stages_tileset_msb:
 .byt >tileset_ruins ; Port (overriden by custom init)
 .byt >tileset_ruins ; Town (overriden by custom init)
 .byt >tileset_ruins ; Wall
+.byt >arcade_gameover_bg_tileset ; Gameover
 
 .byt >arcade_test_stage_tileset ; arcade run01
 .byt >arcade_test_stage_tileset ; arcade btt01
@@ -277,6 +292,7 @@ stages_tileset_bank:
 .byt TILESET_RUINS_BANK_NUMBER ; Port
 .byt TILESET_RUINS_BANK_NUMBER ; Town
 .byt TILESET_RUINS_BANK_NUMBER ; Wall
+.byt ARCADE_GAMEOVER_BG_TILESET_BANK_NUMBER  ; Gameover
 
 .byt ARCADE_TEST_STAGE_TILESET_BANK_NUMBER ; arcade run01
 .byt ARCADE_TEST_STAGE_TILESET_BANK_NUMBER ; arcade btt01

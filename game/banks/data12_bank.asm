@@ -33,17 +33,17 @@ bank_data_begin:
 
 .(
 bank_data_begin:
-#include "game/data/stages/arcade/btt02/stage_arcade_btt02.asm"
+#include "game/data/stages/arcade/fight_wall/stage_arcade_fight_wall.asm"
 #echo
-#echo stage arcade btt02 size:
+#echo stage arcade fight wall size:
 #print *-bank_data_begin
 .)
 
 .(
 bank_data_begin:
-#include "game/data/stages/arcade/fight_wall/stage_arcade_fight_wall.asm"
+#include "game/data/stages/arcade/gameover/stage_arcade_gameover.asm"
 #echo
-#echo stage arcade fight wall size:
+#echo stage arcade gameover size:
 #print *-bank_data_begin
 .)
 
