@@ -24,6 +24,9 @@ cutscene_sinbad_story_kiki_encounter_init:
 
 cutscene_sinbad_story_kiki_encounter_logic:
 .(
+	; Kiki music
+	LOAD_MUSIC(music_kiki_info, music_kiki_bank)
+
 	SKIPPABLE_FRAMES(25)
 	TEXT(15, 19, "Saluton amiko!")
 	SKIPPABLE_FRAMES(100)

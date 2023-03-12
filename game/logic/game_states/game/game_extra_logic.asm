@@ -296,9 +296,6 @@
 		; Move sprites according to the initial state
 		TRAMPOLINE(update_sprites, #0, #CURRENT_BANK_NUMBER)
 
-		; Change for ingame music
-		jsr audio_music_ingame
-
 		; Initialize game mode
 		ldx config_game_mode
 		lda game_modes_init_lsb, x
@@ -665,7 +662,7 @@ stage_generic_init:
 	rts
 .)
 
-audio_music_ingame:
++audio_music_ingame:
 .(
 	; Change selected track, so it varies from game to game
 	dec config_ingame_track

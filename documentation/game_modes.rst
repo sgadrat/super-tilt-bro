@@ -33,7 +33,7 @@ It means that game mode can modify what as been done by generic code, and the st
 Pre update hook
 ===============
 
-Called at the before anything else in the game tick.
+Called before anything else in the game tick.
 
 Output::
 

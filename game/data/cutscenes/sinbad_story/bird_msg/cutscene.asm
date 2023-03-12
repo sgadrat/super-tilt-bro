@@ -62,6 +62,9 @@ cutscene_sinbad_story_bird_msg_boat_fadeout:
 
 cutscene_sinbad_story_bird_msg_logic:
 .(
+	; Pirate music
+	LOAD_MUSIC(music_sinbad2_info, music_sinbad2_bank)
+
 	; Birb going to Sinbad
 	INIT_ANIM(0, cutscene_sinbad_story_bird_msg_anim_bird, cutscene_sinbad_story_bird_msg_bank, DIRECTION_LEFT2, 190, 80, -$0040, $0040) ; index, anim, bank, direction, x, y, velocity_h, velocity_v
 	INIT_ANIM(1, sinbad_anim_idle, SINBAD_BANK_NUMBER, DIRECTION_RIGHT2, 146, 127, 0, 0) ; index, anim, bank, direction, x, y, velocity_h, velocity_v

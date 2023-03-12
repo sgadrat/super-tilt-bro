@@ -82,15 +82,6 @@ cloud_tile:
 	; Load colon tile for the time counter
 	TRAMPOLINE(arcade_write_colon_tile, #cutscene_sinbad_story_dialog_encounter_utils_bank, #CURRENT_BANK_NUMBER)
 
-	; Force boss music
-	lda #<music_volcano_info
-	sta audio_current_track_lsb
-	lda #>music_volcano_info
-	sta audio_current_track_msb
-	lda #music_volcano_bank
-	sta audio_current_track_bank
-	TRAMPOLINE(audio_play_music_direct, #0, #CURRENT_BANK_NUMBER)
-
 	; Hide portrait's sprites (we need sprites for stars/clouds)
 	ldx #INGAME_PORTRAIT_FIRST_SPRITE*4
 	ldy #8

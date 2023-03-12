@@ -29,6 +29,9 @@ cutscene_sinbad_story_meteor_init:
 
 cutscene_sinbad_story_meteor_logic:
 .(
+	; Boss music
+	LOAD_MUSIC(music_volcano_info, music_volcano_bank)
+
 	; Sinbad runs to the cake
 	INIT_ANIM(0, sinbad_anim_run, SINBAD_BANK_NUMBER, DIRECTION_RIGHT2, -8, 111, $0180, 0) ; index, anim, bank, direction, x, y, velocity_h, velocity_v
 	SKIPPABLE_FRAMES(120)

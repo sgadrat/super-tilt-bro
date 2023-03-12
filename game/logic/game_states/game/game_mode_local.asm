@@ -1,5 +1,7 @@
 game_mode_local_init:
 .(
+	TRAMPOLINE(audio_music_ingame, #GAMESTATE_GAME_EXTRA_BANK, #0)
+
 	lda #0
 	sta local_mode_paused
 

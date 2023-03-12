@@ -253,6 +253,34 @@ load_animation_addr:
 	.byt index :\
 .)
 
+&cutscene_load_music:
+.(
+	parameter_addr = tmpfield1
+
+	; Stack shenaningans to handle parameters being hardcoded after the jsr
+	lda #3
+	jsr inline_parameters
+
+	; Start music in parameters
+	lda (parameter_addr), y
+	sta audio_current_track_lsb
+	iny
+	lda (parameter_addr), y
+	sta audio_current_track_msb
+	iny
+	lda (parameter_addr), y
+	sta audio_current_track_bank
+
+	TRAMPOLINE(audio_play_music_direct, #0, #CURRENT_BANK_NUMBER)
+	rts
+.)
+
+#define LOAD_MUSIC(track,bank) .( :\
+	jsr cutscene_load_music :\
+	.word track :\
+	.byt bank :\
+.)
+
 &cutscene_set_palette:
 .(
 	parameter_addr = tmpfield1

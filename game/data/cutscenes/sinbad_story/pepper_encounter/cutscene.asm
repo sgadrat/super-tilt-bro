@@ -24,6 +24,9 @@ cutscene_sinbad_story_pepper_encounter_init:
 
 cutscene_sinbad_story_pepper_encounter_logic:
 .(
+	; Pepper music
+	LOAD_MUSIC(music_adventure_info, music_adventure_bank)
+
 	SKIPPABLE_FRAMES(25)
 	TEXT(3, 18, "                          ")
 	TEXT(3, 19, "                  YOU     ")

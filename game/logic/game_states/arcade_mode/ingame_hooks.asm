@@ -82,8 +82,12 @@ hide_player_b:
 
 	jsr trampoline
 
-	;HACK Call local mode init because it only handles AI and pause, and we want it too
-	jmp game_mode_local_init
+	; Unpause the game
+	lda #0
+	sta local_mode_paused
+
+	; Init computer opponent
+	jmp ai_init
 
 	;rts ; Useless, jump to subroutine
 
@@ -194,7 +198,7 @@ hide_player_b:
 +game_mode_arcade_pre_update_hook:
 .(
 	.(
-		;HACK local mode only handle AI and pause, and we want it too
+		;HACK local mode update routine only handles AI and pause, and we want it too
 		TRAMPOLINE(game_mode_local_pre_update, #0, #CURRENT_BANK_NUMBER)
 		bcc ok
 			rts
