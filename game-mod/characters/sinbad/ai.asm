@@ -165,9 +165,25 @@ sinbad_ai_recover_selector:
 		jmp end
 		process:
 
-			; Select any platform as the best
-			tya
-			sta best_platform
+			; Select this platfor as the best if
+			;  - It is the first platform we encounter - we want to ensure a result
+			;  - or we are helpless and this is an hard platform - a wall jump may be our only hope
+			.(
+				lda best_platform
+				beq select_current_platform
+				lda player_b_state
+				cmp #SINBAD_STATE_HELPLESS
+				bne dont_select_current_platform
+				lda stage_data, y
+				cmp #STAGE_ELEMENT_PLATFORM
+				bne dont_select_current_platform
+
+					select_current_platform:
+						tya
+						sta best_platform
+
+				dont_select_current_platform:
+			.)
 
 			; A platform above the player cannot save him
 			SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0, player_b_y, player_b_y_screen)
