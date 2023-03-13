@@ -416,6 +416,17 @@ stage_thehunt_tick:
 
 	stage_thehunt_tick_state_buff:
 	.(
+		; Cancel buff if player lost a stock
+		.(
+			ldx stage_thehunt_buffed_player
+			lda player_a_state, x
+			cmp #PLAYER_STATE_RESPAWN
+			bne ok
+				jmp stage_thehunt_set_state_cooldown
+				;No return, we don't want to run buff code knowing we are actually in colldown
+			ok:
+		.)
+
 		; Update buff animation
 		lda network_rollback_mode
 		bne end_update_anim
