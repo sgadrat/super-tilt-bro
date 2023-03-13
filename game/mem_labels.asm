@@ -510,6 +510,7 @@ cutscene_frame_count = $05da
 cutscene_frames_skippable = $05db
 cutscene_sprite0_hit = $05dc
 cutscene_sprite0_scroll = $05dd
+cutscene_flags = $05de ; Freely usable by cutscene script, opcodes won't overwrite it
 
 ;
 ; JUKEBOX labels

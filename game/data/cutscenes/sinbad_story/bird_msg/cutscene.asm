@@ -70,7 +70,40 @@ cutscene_sinbad_story_bird_msg_logic:
 	INIT_ANIM(1, sinbad_anim_idle, SINBAD_BANK_NUMBER, DIRECTION_RIGHT2, 146, 127, 0, 0) ; index, anim, bank, direction, x, y, velocity_h, velocity_v
 	INIT_ANIM(2, cutscene_sinbad_story_bird_msg_anim_overlay_left, cutscene_sinbad_story_bird_msg_bank, DIRECTION_LEFT2, 128, 47, 0, 0) ; index, anim, bank, direction, x, y, velocity_h, velocity_v
 	INIT_ANIM(3, cutscene_sinbad_story_bird_msg_anim_overlay_right, cutscene_sinbad_story_bird_msg_bank, DIRECTION_LEFT2, 128, 47, 0, 0) ; index, anim, bank, direction, x, y, velocity_h, velocity_v
-	SKIPPABLE_FRAMES(160) ; n_frames
+
+	PLAY_SFX(SFX_STRIKE_LITE_IDX) ;NOTE deserves a dedicated "flap" sound
+	SKIPPABLE_FRAMES(20)
+	cpx #0
+	beq end_birb_fly
+	PLAY_SFX(SFX_STRIKE_LITE_IDX) ;NOTE deserves a dedicated "flap" sound
+	SKIPPABLE_FRAMES(20)
+	cpx #0
+	beq end_birb_fly
+	PLAY_SFX(SFX_STRIKE_LITE_IDX) ;NOTE deserves a dedicated "flap" sound
+	SKIPPABLE_FRAMES(20)
+	cpx #0
+	beq end_birb_fly
+	PLAY_SFX(SFX_STRIKE_LITE_IDX) ;NOTE deserves a dedicated "flap" sound
+	SKIPPABLE_FRAMES(20)
+	cpx #0
+	beq end_birb_fly
+	PLAY_SFX(SFX_STRIKE_LITE_IDX) ;NOTE deserves a dedicated "flap" sound
+	SKIPPABLE_FRAMES(20)
+	cpx #0
+	beq end_birb_fly
+	PLAY_SFX(SFX_STRIKE_LITE_IDX) ;NOTE deserves a dedicated "flap" sound
+	SKIPPABLE_FRAMES(20)
+	cpx #0
+	beq end_birb_fly
+	PLAY_SFX(SFX_STRIKE_LITE_IDX) ;NOTE deserves a dedicated "flap" sound
+	SKIPPABLE_FRAMES(20)
+	cpx #0
+	beq end_birb_fly
+	PLAY_SFX(SFX_STRIKE_LITE_IDX) ;NOTE deserves a dedicated "flap" sound
+	SKIPPABLE_FRAMES(20)
+	cpx #0
+	beq end_birb_fly
+	end_birb_fly:
 
 	; Fade out
 	jsr cutscene_sinbad_story_bird_msg_boat_fadeout
@@ -84,6 +117,7 @@ cutscene_sinbad_story_bird_msg_logic:
 	LOAD_TILESET_BG(cutscene_sinbad_story_bird_msg_bg_letter_tileset, cutscene_sinbad_story_bird_msg_bank, CURRENT_BANK_NUMBER)
 
 	; Showing letter
+	PLAY_SFX(SFX_TECH_IDX) ;NOTE "letter open" sound
 	SET_PALETTE(0, $21,$27,$37):SET_PALETTE(1, $19,$21,$27):SET_PALETTE(2, $19,$27,$37)
 	START_RENDERING(1, 0)
 	SKIPPABLE_FRAMES(220)
@@ -142,8 +176,10 @@ cutscene_sinbad_story_bird_msg_logic:
 		stx cutscene_sprite0_scroll
 
 		; Boat acceleration
+		PLAY_SFX(SFX_FAST_FALL_IDX) ;NOTE "wind" sound
 		AUTO_SCROLL(-1, 0)
 		PLAY_FRAMES(4)
+		PLAY_SFX(SFX_FAST_FALL_IDX) ;NOTE "wind" sound
 
 		AUTO_SCROLL(-2, 0)
 		ANIM_VELOCITY(0, $0200, 0)

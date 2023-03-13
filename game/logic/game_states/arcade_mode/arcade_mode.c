@@ -19,6 +19,7 @@ extern uint8_t const cutscene_sinbad_story_sinbad_encounter;
 // Labels, use their address or the associated function
 extern uint8_t const ARCADE_MODE_CONGRATZ_BANK_NUMBER; // congratz_bank()
 extern uint8_t const ARCADE_MODE_SCREEN_BANK; // screen_bank()
+extern uint8_t const SFX_COUNTDOWN_REACH_IDX;
 extern uint8_t const cutscene_sinbad_story_bird_msg_bank;
 extern uint8_t const cutscene_sinbad_story_kiki_encounter_bank;
 extern uint8_t const cutscene_sinbad_story_meteor_bank;
@@ -122,6 +123,7 @@ static void next_screen() {
 		*arcade_mode_saved_counter_frames = *arcade_mode_counter_frames;
 		*arcade_mode_saved_counter_seconds = *arcade_mode_counter_seconds;
 		*arcade_mode_saved_counter_minutes = *arcade_mode_counter_minutes;
+		wrap_audio_play_sfx_from_list(ptr_lsb(&SFX_COUNTDOWN_REACH_IDX));
 	}else if (*arcade_mode_stage_type == encounter_type_run() || *arcade_mode_stage_type == encounter_type_targets()) {
 		*config_ai_level = 0;
 		*config_selected_stage = ptr_lsb(&stage_arcade_first_index) + current_encounter().run.stage;

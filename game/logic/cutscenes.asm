@@ -262,6 +262,7 @@ load_animation_addr:
 	jsr inline_parameters
 
 	; Start music in parameters
+	ldy #0
 	lda (parameter_addr), y
 	sta audio_current_track_lsb
 	iny
@@ -279,6 +280,28 @@ load_animation_addr:
 	jsr cutscene_load_music :\
 	.word track :\
 	.byt bank :\
+.)
+
+&cutscene_play_sfx:
+.(
+	parameter_addr = tmpfield1
+
+	; Stack shenaningans to handle parameters being hardcoded after the jsr
+	lda #1
+	jsr inline_parameters
+
+	; Play sfx
+	ldy #0
+	lda (parameter_addr), y
+	tax
+	jmp audio_play_sfx_from_list
+
+	;rts ; useless, jump to a subroutine
+.)
+
+#define PLAY_SFX(index) .( :\
+	jsr cutscene_play_sfx :\
+	.byt index :\
 .)
 
 &cutscene_set_palette:
@@ -604,6 +627,11 @@ load_animation_addr:
 ;  A - Number of frames to play
 ;  X - Allow the user to skip this wait
 ;
+; Output
+;  Z flag - Set if cutscene is skipped
+;  A - Set to #0 if cutscene is skipped, #1 otherwise
+;  X - Set to #0 if some frames have been skipped, #1 otherwise
+;
 ; Overwrites all registers and all tmpfields
 &cutscene_play_frames:
 .(
@@ -813,6 +841,7 @@ load_animation_addr:
 			lda controller_a_last_frame_btns
 			cmp #CONTROLLER_BTN_START
 			bne not_start
+				ldx #0
 				lda #0
 				rts
 			not_start:
@@ -822,6 +851,7 @@ load_animation_addr:
 			bne not_a
 				lda cutscene_frames_skippable
 				beq not_a
+					ldx #0
 					lda #1
 					rts
 			not_a:
@@ -833,6 +863,7 @@ load_animation_addr:
 		jmp play_frames_loop
 
 	end:
+	ldx #1
 	lda #1
 	rts
 .)

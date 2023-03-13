@@ -15,6 +15,8 @@ pepper_tileset_size = (cutscene_sinbad_story_pepper_dialog_tileset_end-cutscene_
 .word cutscene_sinbad_story_pepper_encounter_logic ; scene script
 .word cutscene_sinbad_story_pepper_encounter_init ; initialization routine
 
+reenable_music = cutscene_flags
+
 cutscene_sinbad_story_pepper_encounter_init:
 .(
 	TRAMPOLINE(cutscene_sinbad_story_dialog_encounter_init, #cutscene_sinbad_story_dialog_encounter_utils_bank, #CURRENT_BANK_NUMBER)
@@ -22,12 +24,50 @@ cutscene_sinbad_story_pepper_encounter_init:
 	rts
 .)
 
-cutscene_sinbad_story_pepper_encounter_logic:
+start_pepper_music:
 .(
-	; Pepper music
+	; Start Pepper theme
 	LOAD_MUSIC(music_adventure_info, music_adventure_bank)
 
+	; Unmute music if config allows
+	lda reenable_music
+	beq ok
+		jsr audio_unmute_music
+	ok:
+
+	; Unset reenable flag
+	lda #0
+	sta reenable_music
+
+	rts
+.)
+
+cutscene_sinbad_story_pepper_encounter_logic:
+.(
+	; Real script is in cutscene_sinbad_story_pepper_encounter_logic_script
+	; This method is a wrapper around it,
+	; handling reenabling music if the cutscene has been skipped before
+
+	lda audio_music_enabled
+	sta reenable_music
+
+	jsr cutscene_sinbad_story_pepper_encounter_logic_script
+
+	lda reenable_music
+	bne start_pepper_music ;NOTE bne to another routine
+
+	rts
+.)
+
+cutscene_sinbad_story_pepper_encounter_logic_script:
+.(
+	jsr audio_mute_music
+	; Pepper music
+	;OAD_MUSIC(music_adventure_info, music_adventure_bank)
+
 	SKIPPABLE_FRAMES(25)
+
+	PLAY_SFX(SFX_HIT_IDX)
 	TEXT(3, 18, "                          ")
 	TEXT(3, 19, "                  YOU     ")
 	TEXT(3, 20, "                          ")
@@ -37,6 +77,8 @@ cutscene_sinbad_story_pepper_encounter_logic:
 	TEXT(3, 23, "                          ")
 	DRAW_BUFFERS
 	SKIPPABLE_FRAMES(25)
+
+	PLAY_SFX(SFX_HIT_IDX)
 	TEXT(3, 18, "                          ")
 	TEXT(3, 19, "                  YOU     ")
 	TEXT(3, 20, "                 SHALL    ")
@@ -46,6 +88,8 @@ cutscene_sinbad_story_pepper_encounter_logic:
 	TEXT(3, 23, "                          ")
 	DRAW_BUFFERS
 	SKIPPABLE_FRAMES(25)
+
+	PLAY_SFX(SFX_HIT_IDX)
 	TEXT(3, 18, "                          ")
 	TEXT(3, 19, "                  YOU     ")
 	TEXT(3, 20, "                 SHALL    ")
@@ -55,6 +99,9 @@ cutscene_sinbad_story_pepper_encounter_logic:
 	TEXT(3, 23, "                          ")
 	DRAW_BUFFERS
 	SKIPPABLE_FRAMES(25)
+
+	PLAY_SFX(SFX_SHIELD_BREAK_IDX)
+	CUTS_SCREEN_SHAKE(25, 10, 0)
 	TEXT(3, 18, "                          ")
 	TEXT(3, 19, "                  YOU     ")
 	TEXT(3, 20, "                 SHALL    ")
@@ -63,7 +110,10 @@ cutscene_sinbad_story_pepper_encounter_logic:
 	TEXT(3, 22, "                 PASS!!!  ")
 	TEXT(3, 23, "                          ")
 	DRAW_BUFFERS
-	SKIPPABLE_FRAMES(100)
+	SKIPPABLE_FRAMES(50)
+
+	jsr start_pepper_music
+	SKIPPABLE_FRAMES(25)
 
 	TEXT(3, 18, "                          ")
 	TEXT(3, 19, "                  YOU     ")
@@ -120,6 +170,7 @@ cutscene_sinbad_story_pepper_encounter_logic:
 	TEXT(3, 23, "                          ")
 	DRAW_BUFFERS
 	SKIPPABLE_FRAMES(150)
+
 	rts
 .)
 .)

@@ -29,9 +29,6 @@ cutscene_sinbad_story_meteor_init:
 
 cutscene_sinbad_story_meteor_logic:
 .(
-	; Boss music
-	LOAD_MUSIC(music_volcano_info, music_volcano_bank)
-
 	; Sinbad runs to the cake
 	INIT_ANIM(0, sinbad_anim_run, SINBAD_BANK_NUMBER, DIRECTION_RIGHT2, -8, 111, $0180, 0) ; index, anim, bank, direction, x, y, velocity_h, velocity_v
 	SKIPPABLE_FRAMES(120)
@@ -43,9 +40,21 @@ cutscene_sinbad_story_meteor_logic:
 	SKIPPABLE_FRAMES(50)
 	INIT_ANIM_FOR_PLAYER(1, sinbad_anim_idle, SINBAD_BANK_NUMBER, DIRECTION_LEFT2, 196, 111, 0, 0, 1)
 
+	; Boss music
+	LOAD_MUSIC(music_volcano_info, music_volcano_bank)
+
 	; Screen shakes and sky darkens
 	CUTS_SCREEN_SHAKE(50, 2, 12)
-	PLAY_FRAMES(20)
+	PLAY_SFX(SFX_DEATH_IDX)
+	PLAY_FRAMES(4)
+	PLAY_SFX(SFX_DEATH_IDX)
+	PLAY_FRAMES(4)
+	PLAY_SFX(SFX_DEATH_IDX)
+	PLAY_FRAMES(4)
+	PLAY_SFX(SFX_DEATH_IDX)
+	PLAY_FRAMES(4)
+	PLAY_SFX(SFX_DEATH_IDX)
+	PLAY_FRAMES(4)
 	SET_PALETTE(0, $19, $19, $12)
 	SET_PALETTE(1, $27, $12, $20)
 	SET_PALETTE(2, $07, $19, $17)
@@ -64,7 +73,20 @@ cutscene_sinbad_story_meteor_logic:
 	SET_PALETTE(0, $09, $19, $0f)
 	SET_PALETTE(1, $27, $0f, $20)
 	SET_PALETTE(3, $0f, $00, $26)
-	PLAY_FRAMES(50-20-1-1-1)
+	PLAY_FRAMES(1)
+	PLAY_SFX(SFX_DEATH_IDX)
+	PLAY_FRAMES(4)
+	PLAY_SFX(SFX_DEATH_IDX)
+	PLAY_FRAMES(4)
+	PLAY_SFX(SFX_DEATH_IDX)
+	PLAY_FRAMES(4)
+	PLAY_SFX(SFX_DEATH_IDX)
+	PLAY_FRAMES(4)
+	PLAY_SFX(SFX_DEATH_IDX)
+	PLAY_FRAMES(4)
+	PLAY_SFX(SFX_DEATH_IDX)
+	PLAY_FRAMES(50-20-1-1-1-1-20)
+	PLAY_SFX(SFX_DEATH_IDX)
 
 	; Camera traveling to space
 	;  Fade-out palettes 0 and 1, must be black before contents from space-screen is displayed
@@ -147,12 +169,14 @@ cutscene_sinbad_story_meteor_logic:
 	SET_PALETTE(1, $27, $0f, $20)
 
 	; Player's Sinbad jump to the meteor
+	PLAY_SFX(SFX_JUMP_IDX)
 	INIT_ANIM(0, sinbad_anim_aerial_jump, SINBAD_BANK_NUMBER, DIRECTION_RIGHT2, 172, 111, 0, 0) ; index, anim, bank, direction, x, y, velocity_h, velocity_v
 	INIT_ANIM_FOR_PLAYER(1, sinbad_anim_idle, SINBAD_BANK_NUMBER, DIRECTION_LEFT2, 196, 111, 0, 0, 1)
 	SKIPPABLE_FRAMES(7)
 	ANIM_VELOCITY(0, 0, -$0700) ; index, velocity_h, velocity_v
 
 	; Evil Sinbad follows
+	PLAY_SFX(SFX_JUMP_IDX)
 	INIT_ANIM_FOR_PLAYER(1, sinbad_anim_jump, SINBAD_BANK_NUMBER, DIRECTION_LEFT2, 196, 111, 0, 0, 1)
 	SKIPPABLE_FRAMES(7)
 	ANIM_VELOCITY(1, 0, -$0700)
