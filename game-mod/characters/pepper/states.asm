@@ -518,10 +518,15 @@ pepper_global_tick:
 ; Aerial wrench grab
 ;
 
-;TODO could use tpl_aerial_attack if there was a way to add extra code to init
 .(
 	pepper_anim_aerial_wrench_grab_dur:
 		.byt pepper_anim_aerial_wrench_grab_dur_pal, pepper_anim_aerial_wrench_grab_dur_ntsc
+
+	pal_fall_immunity_dur = 20
+	ntsc_fall_immunity_dur = pal_fall_immunity_dur + ((((pal_fall_immunity_dur)*10)/5)+9)/10
+	pepper_anim_aerial_wrench_fall_time:
+		.byt pepper_anim_aerial_wrench_grab_dur_pal - pal_fall_immunity_dur
+		.byt pepper_anim_aerial_wrench_grab_dur_ntsc - ntsc_fall_immunity_dur
 
 	&pepper_start_aerial_wrench_grab:
 	.(
@@ -561,6 +566,17 @@ pepper_global_tick:
 			jmp pepper_start_falling
 			; No return, jump to subroutine
 		do_tick:
+
+		; Apply friction
+		jsr {char_name}_apply_air_friction
+
+		; Apply gravity if after the gravity-ignoring section
+		lda player_a_state_clock, x
+		ldy system_index
+		cmp pepper_anim_aerial_wrench_fall_time, y
+		bcs ok
+			jsr apply_player_gravity
+		ok:
 
 		rts
 	.)
