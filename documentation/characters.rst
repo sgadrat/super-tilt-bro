@@ -1,3 +1,13 @@
+Editor
+======
+
+The characters editor can be found here: https://benoitryder.github.io/stb-mod-editor/#/tileset
+
+Source code may be at two locations, choose the most up to date:
+
+ * https://github.com/benoitryder/stb-mod-editor
+ * https://github.com/sgadrat/stb-mod-editor
+
 Characters animations
 =====================
 
