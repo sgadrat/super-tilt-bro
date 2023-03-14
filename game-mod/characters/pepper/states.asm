@@ -1199,6 +1199,13 @@ pepper_global_tick:
 	duration_table(FLY_DURATION, fly_duration)
 	velocity_table(-VELOCITY_V, velocity_v_msb, velocity_v_lsb)
 
+	witch_fly_velocity_h_lsb_per_direction:
+		.byt <-VELOCITY_H, <VELOCITY_H
+		.byt <-VELOCITY_H_NTSC, <VELOCITY_H_NTSC
+	witch_fly_velocity_h_msb_per_direction:
+		.byt >-VELOCITY_H, >VELOCITY_H
+		.byt >-VELOCITY_H_NTSC, >VELOCITY_H_NTSC
+
 	&pepper_start_witch_fly_right:
 	.(
 		lda DIRECTION_RIGHT
@@ -1253,13 +1260,6 @@ pepper_global_tick:
 		jmp set_player_animation
 
 		;rts ; useless, jump to subroutine
-
-		witch_fly_velocity_h_lsb_per_direction:
-			.byt <-VELOCITY_H, <VELOCITY_H
-			.byt <-VELOCITY_H_NTSC, <VELOCITY_H_NTSC
-		witch_fly_velocity_h_msb_per_direction:
-			.byt >-VELOCITY_H, >VELOCITY_H
-			.byt >-VELOCITY_H_NTSC, >VELOCITY_H_NTSC
 	.)
 
 	&pepper_tick_witch_fly:
@@ -1273,7 +1273,30 @@ pepper_global_tick:
 			; No return, jump to subroutine
 		do_tick:
 
-		rts
+		; Force momentum to come back to normal if modified
+		lda system_index
+		asl
+		clc
+		adc player_a_direction, x
+		tay
+
+		lda witch_fly_velocity_h_lsb_per_direction, y
+		sta tmpfield2
+		lda witch_fly_velocity_h_msb_per_direction, y
+		sta tmpfield4
+
+		ldy system_index
+		lda velocity_v_lsb, y
+		sta tmpfield1
+		lda velocity_v_msb, y
+		sta tmpfield3
+
+		lda {char_name}_ground_friction_strength, y
+		sta tmpfield5
+
+		jmp merge_to_player_velocity
+
+		;rts ; useless, jump to subroutine
 	.)
 .)
 
