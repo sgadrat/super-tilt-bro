@@ -1,5 +1,9 @@
 .(
 
+;FIXME this entire file needs revamp for rainbow2
+; - flash routine has changed
+; - The use of diff files may be necessary (huge ROM of rainbow2 would be too long to entirely rewrite / hard to store on ESP filesystem)
+
 current_sector = $00
 num_blocks = $01
 current_write_addr = $02
@@ -162,6 +166,8 @@ flash_sectors_launch:
 	; Save parameter
 	sta num_sectors_to_flash
 
+	;FIXME no longer work like that
+#if 0
 	; Set banking to 8+8+8+8 mode
 	lda #%00011111 ; ssmm.rccp
 	sta RAINBOW_CONFIGURATION ; change PRG mode to mode 1
@@ -169,6 +175,7 @@ flash_sectors_launch:
 	sta RAINBOW_PRG_BANKING_2 ; select 8K bank @ $A000
 	lda #2
 	sta RAINBOW_PRG_BANKING_3 ; select 8K bank @ $C000
+#endif
 
 	; Copy flash_sectors routine in RAM
 	copy_ptr_rom = tmpfield1
@@ -345,7 +352,7 @@ flash_sectors_rom:
 		; Select sector's bank
 		lda current_sector
 		lsr
-		sta RAINBOW_PRG_BANKING_1
+		;sta RAINBOW_PRG_BANKING_1 ;FIXME deactivated because old register in flashing code (which needs to be ported to rainbow v2)
 
 		; Store sector's address
 		.(

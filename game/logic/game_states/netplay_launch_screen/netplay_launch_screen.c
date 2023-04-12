@@ -604,7 +604,7 @@ static void connecting_wifi_wait() {
 static void select_server_query_settings() {
 	set_selection_bar_title("read server conf"); //FIXME should find an acceptable way to put it in bg task (valable for other calls to set_selection_bar_title in fg tasks
 
-	wrap_esp_send_cmd((uint8_t[]){1, TOESP_MSG_SERVER_GET_CONFIG_SETTINGS});
+	wrap_esp_send_cmd((uint8_t[]){1, TOESP_MSG_SERVER_GET_SAVED_SETTINGS});
 	++Task(netplay_launch_fg_task)->step;
 }
 
@@ -727,7 +727,7 @@ static void select_server() {
 						audio_play_interface_click();
 
 						if (*netplay_launch_server == CUSTOM_SERVER_IDX) {
-							wrap_esp_send_cmd((uint8_t[]){1, TOESP_MSG_SERVER_RESTORE_SETTINGS});
+							wrap_esp_send_cmd((uint8_t[]){1, TOESP_MSG_SERVER_RESTORE_SAVED_SETTINGS});
 						}else {
 							esp_set_server_settings(3000, server_host[*netplay_launch_server]);
 						}

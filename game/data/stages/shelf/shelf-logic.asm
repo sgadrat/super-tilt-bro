@@ -65,7 +65,10 @@ stage_skyride_fadeout_update:
 	rts
 .)
 
-+stage_skyride_tick = stage_skyride_repair_screen
++stage_skyride_tick:
+.(
+	; Falthrough to stage_skyride_repair_screen
+.)
 
 ; Redraw the stage background (one step per call)
 ;  network_rollback_mode - set to inhibit any repair operation

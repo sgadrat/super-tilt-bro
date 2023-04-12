@@ -9,6 +9,8 @@
 
 * = $c000 ; $c000 is where the PRG fixed bank rom is mapped in CPU space, so code position is relative to it
 
+FIXED_BANK_NUMBER = CURRENT_BANK_NUMBER
+
 ; Note - interruption handlers and main loop first, their location being constant is critical (impacts static bank)
 fixed_bank_main_begin:
 #include "nine/main.asm"

@@ -65,7 +65,10 @@ stage_theplank_fadeout_update:
 	rts
 .)
 
-+stage_theplank_tick = stage_theplank_repair_screen
++stage_theplank_tick:
+.(
+	; Falthrough to stage_theplank_repair_screen
+.)
 
 ; Redraw the stage background (one step per call)
 ;  network_rollback_mode - set to inhibit any repair operation

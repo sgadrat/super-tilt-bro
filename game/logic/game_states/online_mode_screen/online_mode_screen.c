@@ -679,18 +679,11 @@ static void anonymous_login_draw_connexion_window() {
 
 static bool connect_to_login_server() {
 #ifndef LOCAL_LOGIN_SERVER
-	static uint8_t const set_server_cmd[] = {
-		// ESP header
-		23, TOESP_MSG_SERVER_SET_SETTINGS,
-		// Port
-		0x12, 0x34,
-		// Address
-		's', 't', 'b', '-', 'l', 'o', 'g', 'i', 'n', '.', 'w', 'o', 'n', 't', 'f', 'i', 'x', '.', 'i', 't',
-	};
-	wrap_esp_send_cmd(set_server_cmd);
+	static char const * const official_login_server = "stb-login.wontfix.it";
+	esp_set_server_settings(0x1234, official_login_server);
 #else
 	// Get configured server info
-	static uint8_t const get_server_settings_cmd[] = {1, TOESP_MSG_SERVER_GET_CONFIG_SETTINGS};
+	static uint8_t const get_server_settings_cmd[] = {1, TOESP_MSG_SERVER_GET_SAVED_SETTINGS};
 	wrap_esp_send_cmd(get_server_settings_cmd);
 	yield();
 	while (true) {
@@ -1565,6 +1558,10 @@ void init_online_mode_screen_extra() {
 
 	// Initialize state
 	*online_mode_selection_current_option = 0;
+
+	// Enable Wi-Fi
+	esp_wait_ready();
+	esp_enable_wifi(true, false, false);
 
 	// Initialize State in WRAM
 	if (*network_logged == LOGIN_UNLOGGED) {

@@ -75,6 +75,7 @@
 .byt %11100000, %11111100, %00111110, %00111010, %00001001, %00000100, %01000000, %10000000
 
 +cutscene_sinbad_story_common_island_tileset_end:
++cutscene_sinbad_story_common_island_tileset_size = (cutscene_sinbad_story_common_island_tileset_end-cutscene_sinbad_story_common_island_tileset_tiles)/16
 
 ;
 ; Water

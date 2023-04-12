@@ -65,7 +65,10 @@ stage_flatland_fadeout_update:
 	rts
 .)
 
-+stage_flatland_tick = stage_flatland_repair_screen
++stage_flatland_tick:
+.(
+	; Falthrough to stage_flatland_repair_screen
+.)
 
 ; Redraw the stage background (one step per call)
 ;  network_rollback_mode - set to inhibit any repair operation

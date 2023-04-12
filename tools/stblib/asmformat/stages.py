@@ -43,8 +43,8 @@ def stage_to_asm(stage, visibility=''):
 		serialized += '\n; Illustration\n'
 		serialized += '.(\n'
 		serialized += 'BAC = 0\n'
-		serialized += 'SMO = TILE_MENU_CHAR_SELECT_STAGE_SMOOTH\n'
-		serialized += 'PLT = TILE_MENU_CHAR_SELECT_STAGE_PLATFORM\n'
+		serialized += '#define SMO TILE_MENU_CHAR_SELECT_STAGE_SMOOTH\n'
+		serialized += '#define PLT TILE_MENU_CHAR_SELECT_STAGE_PLATFORM\n'
 		serialized += 'C_A = TILE_CHAR_A\n'
 		serialized += 'C_B = C_A + 1\n'
 		serialized += 'C_C = C_A + 2\n'
@@ -95,6 +95,8 @@ def stage_to_asm(stage, visibility=''):
 
 			serialized += '\n'
 
+		serialized += '#undef SMO\n'
+		serialized += '#undef PLT\n'
 		serialized += '.)\n'
 
 	return serialized

@@ -3,7 +3,6 @@
 .(
 
 sprites_tileset_size = (cutscene_sinbad_story_bird_msg_sprite_tileset_end-cutscene_sinbad_story_bird_msg_sprite_tileset_tiles)/16
-island_tileset_size = (cutscene_sinbad_story_common_island_tileset_end-cutscene_sinbad_story_common_island_tileset_tiles)/16
 bg_boat_tileset_size = (cutscene_sinbad_story_bird_msg_bg_boat_tileset_end-cutscene_sinbad_story_bird_msg_bg_boat_tileset_tiles)/16
 
 #include "game/data/cutscenes/sinbad_story/bird_msg/screen.asm"
@@ -24,7 +23,7 @@ cutscene_sinbad_story_bird_msg_init:
 	; Load sprites tiles (begin after character 1 animations tiles)
 	LOAD_TILESET(cutscene_sinbad_story_bird_msg_sprite_tileset, cutscene_sinbad_story_bird_msg_bank, CHARACTERS_CHARACTER_B_TILES_OFFSET, CURRENT_BANK_NUMBER)
 	LOAD_TILESET(cutscene_sinbad_story_common_island_tileset, cutscene_sinbad_story_common_tilesets_bank, CHARACTERS_CHARACTER_B_TILES_OFFSET+sprites_tileset_size*16, CURRENT_BANK_NUMBER)
-	LOAD_TILESET(tileset_new_cloud, TILESET_NEW_CLOUD_BANK_NUMBER, CHARACTERS_CHARACTER_B_TILES_OFFSET+(sprites_tileset_size+island_tileset_size)*16, CURRENT_BANK_NUMBER)
+	LOAD_TILESET(tileset_new_cloud, TILESET_NEW_CLOUD_BANK_NUMBER, CHARACTERS_CHARACTER_B_TILES_OFFSET+(sprites_tileset_size+cutscene_sinbad_story_common_island_tileset_size)*16, CURRENT_BANK_NUMBER)
 
 	; Load background tiles from common tilesets
 	LOAD_TILESET(cutscene_sinbad_story_common_water_tileset, cutscene_sinbad_story_common_tilesets_bank, $1000+bg_boat_tileset_size*16, CURRENT_BANK_NUMBER)

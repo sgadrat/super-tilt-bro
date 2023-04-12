@@ -648,3 +648,5 @@ ai_delay_action:
 	end:
 	rts
 .)
+
+#undef NOT

@@ -83,17 +83,39 @@ static void esp_wait_answer(uint8_t type) {
 	}
 }
 
+static void esp_enable_wifi(bool wifi, bool access_point, bool web_server) {
+	esp_wait_tx();
+
+	uint8_t* const buff = &esp_tx_buffer;
+	buff[0] = 2;
+	buff[1] = TOESP_MSG_WIFI_SET_CONFIG;
+	buff[2] = (wifi?1:0) + (access_point?2:0) + (web_server?4:0);
+	esp_tx_message_send();
+}
+
+static void esp_wait_ready() {
+	esp_wait_tx();
+
+	uint8_t* const buff = &esp_tx_buffer;
+	buff[0] = 1;
+	buff[1] = TOESP_MSG_GET_ESP_STATUS;
+	esp_tx_message_send();
+
+	esp_wait_answer(FROMESP_MSG_READY);
+}
+
 static void esp_set_server_settings(uint16_t port, char const* host) {
 	uint8_t const host_len = strnlen8(host, 200); // Lil' bit below 256 because ESP message headers + port information
 
 	esp_wait_tx();
 
 	uint8_t* const buff = &esp_tx_buffer;
-	buff[0] = host_len + 3;
+	buff[0] = host_len + 4;
 	buff[1] = TOESP_MSG_SERVER_SET_SETTINGS;
 	buff[2] = u16_msb(port);
 	buff[3] = u16_lsb(port);
-	wrap_fixed_memcpy(buff+4, (uint8_t*)host, host_len);
+	buff[4] = host_len;
+	wrap_fixed_memcpy(buff+5, (uint8_t*)host, host_len);
 
 	esp_tx_message_send();
 }

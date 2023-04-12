@@ -1,5 +1,5 @@
 island_begin = CHARACTERS_CHARACTER_B_FIRST_TILE + sprites_tileset_size
-cloud_begin = island_begin + island_tileset_size
+cloud_begin = island_begin + cutscene_sinbad_story_common_island_tileset_size
 
 cutscene_sinbad_story_bird_msg_anim_bird:
 ; Frame 1

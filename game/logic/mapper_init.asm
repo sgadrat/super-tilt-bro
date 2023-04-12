@@ -26,48 +26,59 @@ mapper_init:
 	stx APU_DMC_FLAGS ; disable DMC IRQs
 
 #ifdef MAPPER_RAINBOW
+
 	; Enable ESP, disable IRQ
-	lda #%00000001
-	sta RAINBOW_WIFI_CONF
+	;TODO disable ESP here, enable it when needed
+	ESP_ENABLE(1, 0)
 
-	; Configure rainbow mapper
-	lda #%00011110 ; ssmmrccp - horizontal mirroring, CHR-RAM, 8k CHR window, 16k+8k+8k PRG banking
-	sta RAINBOW_CONFIGURATION
+	; Set PRG ROM banking
+	lda #>FIXED_BANK_NUMBER ; CUUUUUUU - PRG-ROM, fixed bank
+	sta RAINBOW_PRG_BANK_C000_MODE_1_HI
+	lda #<FIXED_BANK_NUMBER ; LLLLLLLL - fixed bank
+	sta RAINBOW_PRG_BANK_C000_MODE_1_LO
+	lda #%00000001 ; A....OOO - PRG-RAM 8K, PRG-ROM 16K+16K
+	sta RAINBOW_PRG_BANKING_MODE
 
-	; Select the PRG bank just before the last for the variable 8k window (emulating 16k variable + 16k fixed banking)
-	lda #%00111110 ; c.BBBBbb - PRG-ROM, before the last bank
-	sta RAINBOW_PRG_BANKING_3
+	lda #%00000000 ; CUUUUUUU - PRG-ROM, first bank
+	sta RAINBOW_PRG_BANK_8000_MODE_1_HI
+	lda #%00000000 ; LLLLLLLL - first bank
+	sta RAINBOW_PRG_BANK_8000_MODE_1_LO
 
-	; Select the first CHR-BANK (Actually we don't care, the game don't use CHR banking, but let's be consistent)
-	lda #%00000000 ; .......u - bank number's upper bit (always zero if not in 1K CHR window)
-	sta RAINBOW_CHR_BANKING_UPPER
-	lda #%00000000 ; BBBBBBBB - first bank
-	sta RAINBOW_CHR_BANKING_1
-	sta current_bank
+	; Set CHR-RAM
+	lda #%01000000 ; CCE..BBB - CHR-RAM, Disable Sprite extension, 8K CHR banking
+	sta RAINBOW_CHR_CONTROL
 
-	; Select the second FPGA WRAM bank
-	;  half of the first one is always mapped at $4800, using the second by default avoids mirroring
-	lda #%00000001
-	sta RAINBOW_FPGA_WRAM_BANKING
+	; Select CHR bank
+	;  Disabled - matches reset value of the register, and ultimately we don't care we are not using CHR RAM banking
+	;lda #0
+	;sta RAINBOW_CHR_BANKING_1_HI
+	;sta RAINBOW_CHR_BANKING_1_LO
 
-	; Select the first WRAM bank
-	lda #%00000000 ; ccBBBBbb - WRAM, first bank
-	sta RAINBOW_WRAM_BANKING
+	; Set Horizontal mirroring
+	; Nothing, reset values are fine
 
-	; Disable scanline IRQ
-	sta RAINBOW_IRQ_DISABLE
+	; Select the first FPGA WRAM bank to be mapped at CPU address $5000 to $5fff
+	;  half of the second one is always mapped at $4800, using the second by default avoids mirroring
+	lda #0
+	sta RAINBOW_FPGA_RAM_BANKING
+
+	; Select PRG-RAM bank to be mapped at $6000 to $7fff
+	lda #%10000000 ; CuUUUUUU - PRG-RAM, bank 0
+	sta RAINBOW_PRG_RAM_BANKING_1_HI
+	lda #%00000000 ; LLLLLLLL - bank 0
+	sta RAINBOW_PRG_RAM_BANKING_1_LO
+
+	; Place TX/RX buffers
+	lda #%00000000 ; Buffer at $4800
+	sta RAINBOW_WIFI_RX_DEST
+	lda #%00000001 ; Buffer at $4900
+	sta RAINBOW_WIFI_TX_SOURCE
 
 	; Disable sound extension
-	;lda #%00000000 ; E...FFFF - disable, (don't care of frequency) ; useless - the value in A is already good
+	lda #%00000000 ; E...FFFF - disable, (don't care of frequency) ; useless - the value in A is already good
 	sta RAINBOW_PULSE_CHANNEL_1_FREQ_HIGH
 	sta RAINBOW_PULSE_CHANNEL_2_FREQ_HIGH
 	sta RAINBOW_SAW_CHANNEL_FREQ_HIGH
-
-	; Set ESP messages memory to consecutive pages
-	lda #0
-	sta RAINBOW_WIFI_RX_DEST
-	lda #1
-	sta RAINBOW_WIFI_TX_SOURCE
 
 	; Enter rescue mode if magic buttons are pressed
 	.(

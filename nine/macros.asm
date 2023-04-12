@@ -468,7 +468,7 @@ duration
 #define SWITCH_BANK(n) .(:\
 	lda n:\
 	sta current_bank:\
-	sta RAINBOW_PRG_BANKING_1:\
+	sta RAINBOW_PRG_BANK_8000_MODE_1_LO:\
 .)
 #else
 #ifdef MAPPER_UNROM

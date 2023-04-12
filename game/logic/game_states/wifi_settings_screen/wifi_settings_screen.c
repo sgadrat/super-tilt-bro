@@ -173,6 +173,7 @@ static void update_cursor() {
 
 static void display_wifi_status() {
 	static uint8_t const buffer_header[] = {0x20, 0x6a, 14};
+	static uint8_t const error_code_buffer_header[] = {0x20, 0x6a+15, 3};
 	static uint8_t const wifi_status_strings[][14] = {
 		{'i', 'd', 'l', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
 		{'n', 'o', ' ', 's', 's', 'i', 'd', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
@@ -180,6 +181,7 @@ static void display_wifi_status() {
 		{'c', 'o', 'n', 'n', 'e', 'c', 't', 'e', 'd', ' ', ' ', ' ', ' ', ' '},
 		{'c', 'o', 'n', 'n', 'e', 'c', 't', ' ', 'f', 'a', 'i', 'l', 'e', 'd'},
 		{'c', 'o', 'n', 'n', 'e', 'c', 't', ' ', 'l', 'o', 's', 't', ' ', ' '},
+		{'w', 'r', 'o', 'n', 'g', ' ', 'p', 'a', 's', 's', 'w', 'o', 'r', 'd'},
 		{'d', 'i', 's', 'c', 'o', 'n', 'n', 'e', 'c', 't', 'e', 'd', ' ', ' '},
 	};
 	static uint8_t const error_string[] =
@@ -188,12 +190,23 @@ static void display_wifi_status() {
 
 	// Refresh displayed status
 	uint8_t const* msg = mem()->msg_buf;
-	if (msg[ESP_MSG_SIZE] == 2 && msg[ESP_MSG_TYPE] == FROMESP_MSG_WIFI_STATUS) {
+	if (msg[ESP_MSG_SIZE] == 3 && msg[ESP_MSG_TYPE] == FROMESP_MSG_WIFI_STATUS) {
+		// Display status
 		uint8_t const status = msg[ESP_MSG_PAYLOAD];
 		if (status < sizeof(wifi_status_strings) / sizeof(*wifi_status_strings)) {
 			wrap_construct_nt_buffer(buffer_header, wifi_status_strings[status]);
 		}else {
 			wrap_construct_nt_buffer(buffer_header, error_string);
+		}
+
+		// Display error code
+		uint8_t const error_code = msg[ESP_MSG_PAYLOAD+1];
+		if (status != ESP_WIFI_STATUS_CONNECTED && error_code != 0) {
+			uint8_t ascii_error_code[3];
+			ascii_error_code[0] = '0' + (error_code / 100);
+			ascii_error_code[1] = '0' + CONST_TENS(error_code);
+			ascii_error_code[2] = '0' + CONST_UNITS(error_code);
+			wrap_construct_nt_buffer(error_code_buffer_header, ascii_error_code);
 		}
 	}
 
@@ -343,20 +356,23 @@ static void register_network_in_msg() {
 	esp_wait_tx();
 
 	// Message header
-	(&esp_tx_buffer)[0] = 2 + 1 + ssid_len + 1 + password_len;
+	(&esp_tx_buffer)[0] = 3 + 1 + ssid_len + 1 + password_len;
 	(&esp_tx_buffer)[1] = TOESP_MSG_NETWORK_REGISTER;
 
 	// Network ID
 	(&esp_tx_buffer)[2] = 0;
 
+	// Network active flag
+	(&esp_tx_buffer)[3] = 1;
+
 	// SSID
-	(&esp_tx_buffer)[3] = ssid_len;
+	(&esp_tx_buffer)[4] = ssid_len;
 	for (uint8_t i = 1; i <= ssid_len; ++i) {
-		(&esp_tx_buffer)[3+i] = msg[MSG_NETWORK_SSID_OFFSET + i];
+		(&esp_tx_buffer)[4+i] = msg[MSG_NETWORK_SSID_OFFSET + i];
 	}
 
 	// Password
-	uint8_t const msg_network_password_offset = 3 + 1 + ssid_len;
+	uint8_t const msg_network_password_offset = 4 + 1 + ssid_len;
 	(&esp_tx_buffer)[msg_network_password_offset] = password_len;
 	for (uint8_t i = 0; i < password_len; ++i) {
 		(&esp_tx_buffer)[msg_network_password_offset+1+i] = mem()->password[i];

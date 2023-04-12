@@ -13,8 +13,8 @@ END_OF_STAGE
 ; Illustration
 .(
 BAC = 0
-SMO = TILE_MENU_CHAR_SELECT_STAGE_SMOOTH
-PLT = TILE_MENU_CHAR_SELECT_STAGE_PLATFORM
+#define SMO TILE_MENU_CHAR_SELECT_STAGE_SMOOTH
+#define PLT TILE_MENU_CHAR_SELECT_STAGE_PLATFORM
 C_A = TILE_CHAR_A
 C_B = C_A + 1
 C_C = C_A + 2
@@ -59,6 +59,9 @@ C_Z = C_A + 25
 .byt BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC
 .byt BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC
 .byt BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC, BAC
+
+#undef SMO
+#undef PLT
 .)
 
 #include "game/data/stages/deeprock/screen.asm"

@@ -37,4 +37,4 @@
 
 #define STAGE_COUNT 4
 
-#define RAW_VECTOR(x) .byt <x, >x
+#define RAW_VECTOR(x) .word x

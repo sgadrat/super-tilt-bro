@@ -13,4 +13,3 @@ game/cstb/rainbow_constants.h
 game/data/characters/characters-index.asm
 game/data/characters/characters-data/
 game/data/tilesets/ruins.asm
-game/extra_banks.asm

@@ -13,7 +13,7 @@ import stblib.utils
 import sys
 import textwrap
 
-FIRST_AVAILABLE_BANK = 17
+FIRST_AVAILABLE_BANK = None
 
 def text_asm(text, size, space_tile):
 	"""
@@ -50,6 +50,23 @@ def compute_anim_duration_ntsc(anim):
 
 def expand_macros(source, game_dir, char, templates_dir):
 	return expand_tpl.expand(source, game_dir, '{}/states.asm'.format(char.name), templates_dir)
+
+def find_first_available_bank(game_dir):
+	global FIRST_AVAILABLE_BANK
+	bank_index_template_path = '{}/game/banks.asm'.format(game_dir)
+	with open(bank_index_template_path, 'r') as bank_template_file:
+		re_bank_number = re.compile('^#define CURRENT_BANK_NUMBER FIRST_GAME_BANK\+(?P<num>[$%0-9a-fA-F]+)$')
+		current_bank_number = None
+		for line_num, line in enumerate(bank_template_file):
+			if line.startswith(';; mod banks'):
+				ensure(current_bank_number is not None, f'{bank_index_template_path}:{line_num}: Mod banks place before CURRENT_BANK_NUMBER has been found')
+				FIRST_AVAILABLE_BANK = current_bank_number + 1
+				return
+			else:
+				m = re_bank_number.match(line.strip())
+				if m is not None:
+					current_bank_number = stblib.utils.asmint(m.group('num'))
+	ensure(False, f'{bank_index_template_path}: No ";; mod banks" line found')
 
 def generate_character(char, game_dir, templates_dir):
 	name_upper = char.name.upper()
@@ -443,36 +460,22 @@ def generate_banks(char_to_bank, tileset_to_bank, game_dir):
 	data_banks = []
 
 	# Populate the bank index
-	bank_index_file_path = '{}/game/extra_banks.asm'.format(game_dir)
-	with open(bank_index_file_path, 'w') as bank_index_file:
-		bank_index_file.write(textwrap.dedent("""\
-			;
-			; Contents of the 31 swappable banks
-			;
-			; The fixed bank is handled separately
-			;
-
-
-			#define CHR_BANK_NUMBER $00
-			#define CURRENT_BANK_NUMBER CHR_BANK_NUMBER
-			#include "game/banks/chr_data.asm"
-		"""))
-
-		for bank_number in range(1, FIRST_AVAILABLE_BANK):
-			bank_index_file.write(textwrap.dedent("""\
-
-				#define CURRENT_BANK_NUMBER ${num:02x}
-				#include "game/banks/data{num:02d}_bank.asm"
-			""".format(num=bank_number)))
-
-		for bank_number in range(FIRST_AVAILABLE_BANK, 31):
-			bank_index_file.write('\n#define CURRENT_BANK_NUMBER {}\n'.format(stblib.utils.uintasm8(bank_number)))
-			if bank_number in char_to_bank.values() or bank_number in tileset_to_bank.values():
-				bank_index_file.write('#include "game/banks/data{:02d}_bank.built.asm"\n'.format(bank_number))
-				if bank_number not in data_banks:
-					data_banks.append(bank_number)
-			else:
-				bank_index_file.write('#include "game/banks/empty_bank.asm"\n')
+	bank_index_template_path = '{}/game/banks.asm'.format(game_dir)
+	bank_index_file_path = '{}/game/banks.built.asm'.format(game_dir)
+	with open(bank_index_template_path, 'r') as bank_template_file:
+		with open(bank_index_file_path, 'w') as bank_index_file:
+			for line_num, line in enumerate(bank_template_file):
+				if line.startswith(';; mod banks'):
+					for bank_number in range(FIRST_AVAILABLE_BANK, 31):
+						bank_index_file.write('\n#define CURRENT_BANK_NUMBER FIRST_GAME_BANK+{}\n'.format(stblib.utils.uintasm8(bank_number)))
+						if bank_number in char_to_bank.values() or bank_number in tileset_to_bank.values():
+							bank_index_file.write('#include "game/banks/data{:02d}_bank.built.asm"\n'.format(bank_number))
+							if bank_number not in data_banks:
+								data_banks.append(bank_number)
+						else:
+							bank_index_file.write('#include "game/banks/empty_bank.asm"\n')
+				else:
+					bank_index_file.write(line)
 
 	# Construct data banks
 	for bank_number in data_banks:
@@ -579,6 +582,9 @@ def main():
 		mod_dict = stblib.jsonformat.json_to_dict(f, os.path.dirname(mod_file))
 	mod = stblib.dictformat.import_from_dict(mod_dict)
 	mod.check()
+
+	# Gather info from source
+	find_first_available_bank(game_dir)
 
 	# Generate characters
 	char_to_bank = {}
