@@ -1,8 +1,7 @@
 network_init_stage:
 .(
-	; Enable ESP
-	lda #1
-	sta RAINBOW_WIFI_CONF
+	; Change music
+	TRAMPOLINE(audio_music_ingame, #GAMESTATE_GAME_EXTRA_BANK, #0)
 
 	; Clear rolling mode
 	lda #0

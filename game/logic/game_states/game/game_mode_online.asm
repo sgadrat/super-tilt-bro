@@ -3,9 +3,6 @@ game_mode_online_pre_update = network_tick_ingame
 
 game_mode_online_gameover:
 .(
-	; Change music
-	TRAMPOLINE(audio_music_ingame, #GAMESTATE_GAME_EXTRA_BANK, #0)
-
 	; Deactivate PAL emulation
 	.(
 		lda pal_emulation_counter
