@@ -742,6 +742,7 @@ pepper_global_tick:
 			; No return, jump to subroutine
 		do_tick:
 
+		jsr pepper_short_hop_takeover_tick
 		jsr pepper_aerial_directional_influence ;NOTE this line makes it not like other aerial attacks which do not allow influence (maybe others should be changed)
 		jmp apply_player_gravity
 		;rts ; useless, jump to subroutine
@@ -755,6 +756,9 @@ pepper_global_tick:
 
 	&pepper_start_aerial_firework:
 	.(
+		; Take over short hop logic to force a short hop if aerial is input at the begining of the jump
+		jsr pepper_short_hop_takeover_init
+
 		; Set state
 		lda #PEPPER_STATE_AERIAL_FIREWORK
 		sta player_a_state, x

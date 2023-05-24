@@ -12,6 +12,9 @@
 
 	+{char_name}_start_{routine}:
 	.(
+		; Take over short hop logic to force a short hop if aerial is input at the begining of the jump
+		jsr {char_name}_short_hop_takeover_init
+
 		; Set state
 		lda #{state}
 		sta player_a_state, x
@@ -38,6 +41,7 @@
 #endif
 
 		jsr {char_name}_apply_friction_lite
+		jsr {char_name}_short_hop_takeover_tick
 
 		dec player_a_state_clock, x
 		bne end

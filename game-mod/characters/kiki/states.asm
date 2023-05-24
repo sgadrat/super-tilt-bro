@@ -687,7 +687,7 @@ kiki_global_onground:
 		lda #0
 		sta player_a_state_clock,x
 
-		; TODO study intersting velocity setups
+		; NOTE interesting velocity setups
 		;  Original - rapidly slow down to (0, 0) (was done to copy-paste code from side tilt)
 		;  Current - directly stop any velocity (should feel like original, without computations per tick)
 		;  Idea 2 - stop horizontal velocity, keep vertical velocity, apply gravity on tick (should help to side spe as part of aerial gameplay)

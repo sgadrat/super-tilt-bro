@@ -82,6 +82,8 @@
 ; Change the player's state if an aerial move is input on the controller
 ;  register X - Player number
 ;
+;  Output - tmpfield15 set to 1 if an aerial move has been started, can be set to zero or untouched if there was not
+;
 ;  Overwrites tmpfield15 and tmpfield2 plus the ones overriten by the state starting subroutine
 {char_name}_check_aerial_inputs:
 .(

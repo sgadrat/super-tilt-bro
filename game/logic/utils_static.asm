@@ -902,10 +902,18 @@ check_in_platform:
 ;  tmpfield2 - Callbacks table (low byte)
 ;  tmpfield3 - number of states in the callbacks table
 ;
-;  Overwrites register Y, tmpfield4, tmpfield5 and tmpfield6
+;  Overwrites A, Y, tmpfield4, tmpfield5 and tmpfield6
 ;
-;  Note - The callback is called with jmp, controller_callbacks never
-;         returns using rts.
+;  Note - The callback is called with JMP
+;          - controller_callbacks never returns using RTS,
+;          - the stack is untouched by controller_callbacks.
+;       - If you call "jsr controller_callbacks"
+;          - You should return from callbacks with RTS, continuing execution after the call to "jsr controller_callbacks"
+;       - If you call "jmp controller_callbacks"
+;          - You can return from callbacks with RTS, returning from your routine
+;          - You can exit callbacks with JMP or falling through without problem
+;          - You can use the stack normally
+;          - Think as if you never left your routine, it is just an equivalent of "switch" in C
 controller_callbacks:
 .(
 	lda controller_a_btns, x
@@ -920,8 +928,16 @@ controller_callbacks:
 ;
 ;  Overwrites register Y, tmpfield4, tmpfield5 and tmpfield6
 ;
-;  Note - The callback is called with jmp, controller_callbacks never
-;         returns using rts.
+;  Note - The callback is called with JMP
+;          - switch_linear never returns using RTS,
+;          - the stack is untouched by switch_linear.
+;       - If you call "jsr switch_linear"
+;          - You should return from callbacks with RTS, continuing execution after the call to "jsr switch_linear"
+;       - If you call "jmp switch_linear"
+;          - You can return from callbacks with RTS, returning from your routine
+;          - You can exit callbacks with JMP or falling through without problem
+;          - You can use the stack normally
+;          - Think as if you never left your routine, it is just an equivalent of "switch" in C
 switch_linear:
 .(
 	callbacks_table = tmpfield1

@@ -52,6 +52,7 @@ Tick routines constraints generally apply, as start routines are often called fr
  * ``Y``: output: Can be modified
  * ``player_number``: output: to be checked, input: not ensured to be set
  * ``tmpfields``: Can be modified
+ * ``tmpfield15``: Used by aerial input code, aerial attacks should not modify it (or {char_name}_check_aerial_inputs should be fixed to use the stack/extra tmpfields)
  * ``extra_tmpfields``: To be checked
 
 Constraints on input routines

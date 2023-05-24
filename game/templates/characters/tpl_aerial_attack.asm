@@ -10,8 +10,13 @@
 	duration:
 		.byt {anim}_dur_pal, {anim}_dur_ntsc
 
+	;Note - player_a_state_field1,x is used by short hop takeover
+
 	+{char_name}_start_{routine}:
 	.(
+		; Take over short hop logic to force a short hop if aerial is input at the begining of the jump
+		jsr {char_name}_short_hop_takeover_init
+
 		; Set state
 		lda #{state}
 		sta player_a_state, x
@@ -37,14 +42,17 @@
 	+{char_name}_std_aerial_tick:
 	.(
 #ifldef {char_name}_global_tick
+		; Global tick
 		jsr {char_name}_global_tick
 #endif
 
+		; Return to falling at the end of the move
 		dec player_a_state_clock, x
 		bne tick
 			jmp {char_name}_start_falling
 			; No return, jump to subroutine
 		tick:
+		jsr {char_name}_short_hop_takeover_tick
 		jmp apply_player_gravity
 		;rts ; useless, jump to subroutine
 	.)
