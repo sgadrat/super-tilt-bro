@@ -9,12 +9,14 @@ MENU_CREDITS_CREDITS_BANK = CURRENT_BANK_NUMBER
 	.byt <menu_credits_illustration_special_thanks
 	.byt <menu_credits_illustration_special_thanks
 	.byt <menu_credits_illustration_special_thanks
+	.byt <menu_credits_illustration_special_thanks
 	.byt <menu_credits_illustration_author
 &menu_credits_pages_illustration_msb:
 	.byt >menu_credits_illustration_graphics
 	.byt >menu_credits_illustration_music
 	.byt >menu_credits_illustration_characters
 	.byt >menu_credits_illustration_characters
+	.byt >menu_credits_illustration_special_thanks
 	.byt >menu_credits_illustration_special_thanks
 	.byt >menu_credits_illustration_special_thanks
 	.byt >menu_credits_illustration_special_thanks
@@ -27,6 +29,7 @@ MENU_CREDITS_CREDITS_BANK = CURRENT_BANK_NUMBER
 	.byt MENU_CREDITS_ILLUSTRATION_SPECIAL_THANKS_BANK_NUMBER
 	.byt MENU_CREDITS_ILLUSTRATION_SPECIAL_THANKS_BANK_NUMBER
 	.byt MENU_CREDITS_ILLUSTRATION_SPECIAL_THANKS_BANK_NUMBER
+	.byt MENU_CREDITS_ILLUSTRATION_SPECIAL_THANKS_BANK_NUMBER
 	.byt MENU_CREDITS_ILLUSTRATION_AUTHOR_BANK_NUMBER
 &menu_credits_pages_text_lsb:
 	.byt <text_graphics
@@ -36,6 +39,7 @@ MENU_CREDITS_CREDITS_BANK = CURRENT_BANK_NUMBER
 	.byt <text_special_thanks1
 	.byt <text_special_thanks2
 	.byt <text_special_thanks3
+	.byt <text_special_thanks4
 	.byt <text_author
 &menu_credits_pages_text_msb:
 	.byt >text_graphics
@@ -45,6 +49,7 @@ MENU_CREDITS_CREDITS_BANK = CURRENT_BANK_NUMBER
 	.byt >text_special_thanks1
 	.byt >text_special_thanks2
 	.byt >text_special_thanks3
+	.byt >text_special_thanks4
 	.byt >text_author
 pages_end:
 
@@ -122,11 +127,14 @@ text_special_thanks1:
 	.byt "                "
 	.byt "    Bjorn Nah   "
 	.byt "                "
-	.byt "     Dennis     "
-	.byt "  van den Broek "
+	.byt "     Daria      "
+	.byt "   Zhuravleva   "
 
 text_special_thanks2:
 	.byt "<SPECIAL THANKS>"
+	.byt "                "
+	.byt "     Dennis     "
+	.byt "  van den Broek "
 	.byt "                "
 	.byt "       Fei      "
 	.byt "                "
@@ -136,11 +144,23 @@ text_special_thanks2:
 	.byt "                "
 	.byt "Margarita Gadrat"
 	.byt "                "
+
+text_special_thanks3:
+	.byt "<SPECIAL THANKS>"
+	.byt "                "
 	.byt "  SuperGameLand "
 	.byt "                "
 	.byt "      Tui       "
+	.byt "                "
+	.byt "                "
+	.byt "                "
+	.byt "                "
+	.byt "                "
+	.byt "                "
+	.byt "                "
+	.byt "                "
 
-text_special_thanks3:
+text_special_thanks4:
 	.byt "<SPECIAL THANKS>"
 	.byt "                "
 	.byt "                "

@@ -13,6 +13,16 @@ bank_data_begin:
 #print *-bank_data_begin
 .)
 
+.(
+bank_data_begin:
+;NOTE code is dependent on these data to be located on the same bank
+#include "game/data/menu_credits/credits.asm"
+#include "game/logic/game_states/credits_screen/credits_screen_extra_code.asm"
+#echo
+#echo Credits logic size:
+#print *-bank_data_begin
+.)
+
 bank_data16_end:
 
 #echo
