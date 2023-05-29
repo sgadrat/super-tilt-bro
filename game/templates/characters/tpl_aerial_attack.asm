@@ -53,6 +53,7 @@
 			; No return, jump to subroutine
 		tick:
 		jsr {char_name}_short_hop_takeover_tick
+		jsr {char_name}_aerial_directional_influence
 		jmp apply_player_gravity
 		;rts ; useless, jump to subroutine
 	.)

@@ -697,6 +697,9 @@ pepper_global_tick:
 
 	&pepper_start_aerial_side:
 	.(
+		; Short hop takeover
+		jsr pepper_short_hop_takeover_init
+
 		; Set state
 		lda #PEPPER_STATE_AERIAL_SIDE
 		sta player_a_state, x
@@ -729,55 +732,15 @@ pepper_global_tick:
 			sta player_a_velocity_v_low, x
 		ok:
 
-		;rts ; Fallthrough to generic aerial tick
-	.)
-	&pepper_tick_aerial_firework:
-	.(
-		jsr pepper_global_tick
-
-		; After move's time is out, go to falling state
-		dec player_a_state_clock, x
-		bne do_tick
-			jmp pepper_start_falling
-			; No return, jump to subroutine
-		do_tick:
-
-		jsr pepper_short_hop_takeover_tick
-		jsr pepper_aerial_directional_influence ;NOTE this line makes it not like other aerial attacks which do not allow influence (maybe others should be changed)
-		jmp apply_player_gravity
+		jmp pepper_std_aerial_tick
 		;rts ; useless, jump to subroutine
 	.)
 .)
 
-;TODO could be "tpl_aerial_move" if aerial moves could have aerial_directional_influence (se NOTE above)
-.(
-	pepper_anim_firework_dur:
-		.byt pepper_anim_firework_dur_pal, pepper_anim_firework_dur_ntsc
-
-	&pepper_start_aerial_firework:
-	.(
-		; Take over short hop logic to force a short hop if aerial is input at the begining of the jump
-		jsr pepper_short_hop_takeover_init
-
-		; Set state
-		lda #PEPPER_STATE_AERIAL_FIREWORK
-		sta player_a_state, x
-
-		; Reset clock
-		ldy system_index
-		lda pepper_anim_firework_dur, y
-		sta player_a_state_clock, x
-
-		; Set the appropriate animation
-		lda #<pepper_anim_firework
-		sta tmpfield13
-		lda #>pepper_anim_firework
-		sta tmpfield14
-		jmp set_player_animation
-
-		;rts ; useless, jump to subroutine
-	.)
-.)
+!define "anim" {pepper_anim_firework}
+!define "state" {PEPPER_STATE_AERIAL_FIREWORK}
+!define "routine" {aerial_firework}
+!include "characters/tpl_aerial_attack.asm"
 
 .(
 	;FIXME keyframe system is not ntsc-friendly
