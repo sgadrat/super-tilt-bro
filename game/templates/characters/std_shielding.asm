@@ -152,6 +152,15 @@
 			; Play sound
 			jsr audio_play_shield_hit
 
+			; Hit pause
+			lda #SHIELD_HIT_PAUSE_NB_FRAMES
+			sta screen_shake_counter
+			lda #0
+			sta screen_shake_current_x
+			sta screen_shake_current_y
+			sta screen_shake_noise_h
+			sta screen_shake_noise_v
+
 		end:
 		; Disable the hitbox to avoid multi-hits
 		SWITCH_SELECTED_PLAYER
