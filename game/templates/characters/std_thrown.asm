@@ -9,6 +9,10 @@
 		lda #{char_name_upper}_STATE_THROWN
 		sta player_a_state, x
 
+		; Reinitialize walljump counter
+		lda #{char_name_upper}_MAX_WALLJUMPS
+		sta player_a_walljump, x
+
 		; Initialize tech counter
 		lda #0
 		sta player_a_state_field1, x
