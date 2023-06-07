@@ -1175,14 +1175,14 @@ pepper_global_tick:
 
 	&pepper_start_witch_fly_right:
 	.(
-		lda DIRECTION_RIGHT
+		lda #DIRECTION_RIGHT2
 		sta player_a_direction, x
 		jmp pepper_start_witch_fly
 		;rts ; useless, jump to subroutine
 	.)
 	&pepper_start_witch_fly_left:
 	.(
-		lda DIRECTION_LEFT
+		lda #DIRECTION_LEFT2
 		sta player_a_direction, x
 		jmp pepper_start_witch_fly
 		;rts ; useless, jump to subroutine
@@ -1240,6 +1240,50 @@ pepper_global_tick:
 			; No return, jump to subroutine
 		do_tick:
 
+		; Allow to change direction
+		reset_speed = tmpfield1
+		.(
+			animation_state_vector = tmpfield2
+
+			lda #0
+			sta reset_speed
+
+			lda controller_a_btns, x
+			and #CONTROLLER_INPUT_LEFT
+			bne go_left
+			lda controller_a_btns, x
+			and #CONTROLLER_INPUT_RIGHT
+			bne go_right
+			jmp ok
+
+				go_left:
+					lda #DIRECTION_LEFT2
+					jmp common_changes
+
+				go_right:
+					lda #DIRECTION_RIGHT2
+
+				common_changes:
+					sta player_a_direction, x
+
+					; Chose animation state
+					lda player_animation_state_vectors_lsb, x
+					sta animation_state_vector
+					lda player_animation_state_vectors_msb, x
+					sta animation_state_vector+1
+
+					; Set animation's direction
+					lda player_a_direction, x
+					ldy #ANIMATION_STATE_OFFSET_DIRECTION
+					sta (animation_state_vector), y
+
+					; Force a reset of fly speed
+					lda #1
+					sta reset_speed
+
+			ok:
+		.)
+
 		; Force momentum to come back to normal if modified
 		lda system_index
 		asl
@@ -1247,23 +1291,39 @@ pepper_global_tick:
 		adc player_a_direction, x
 		tay
 
-		lda witch_fly_velocity_h_lsb_per_direction, y
-		sta tmpfield2
-		lda witch_fly_velocity_h_msb_per_direction, y
-		sta tmpfield4
+		lda reset_speed
+		bne set_velocity
 
-		ldy system_index
-		lda velocity_v_lsb, y
-		sta tmpfield1
-		lda velocity_v_msb, y
-		sta tmpfield3
+			merge_to_velocity:
+				; Accelerate to the desired speed
+				;  In normal condition, Pepper stays at desired speed since it has been set at start
+				;  If an external force is applied, this is the natural behavior
+				lda witch_fly_velocity_h_lsb_per_direction, y
+				sta tmpfield2
+				lda witch_fly_velocity_h_msb_per_direction, y
+				sta tmpfield4
 
-		lda {char_name}_ground_friction_strength, y
-		sta tmpfield5
+				ldy system_index
+				lda velocity_v_lsb, y
+				sta tmpfield1
+				lda velocity_v_msb, y
+				sta tmpfield3
 
-		jmp merge_to_player_velocity
+				lda {char_name}_ground_friction_strength, y
+				sta tmpfield5
 
-		;rts ; useless, jump to subroutine
+				jmp merge_to_player_velocity
+				; No return
+
+			set_velocity:
+				; Reset velocity directly
+				;  This is the wanted behaviour when we change direction
+				lda witch_fly_velocity_h_lsb_per_direction, y
+				sta player_a_velocity_h_low, x
+				lda witch_fly_velocity_h_msb_per_direction, y
+				sta player_a_velocity_h, x
+
+		rts
 	.)
 .)
 

@@ -11,9 +11,9 @@ set_player_animation:
 	;tmpfield15 shall not be modified, it is used by check_aerials_input which tends to start states which tend to set animations. May be a good idea to write a safer version of check_aerials_input
 
 	; Chose animation state
-	lda animation_state_vectors_lsb, x
+	lda player_animation_state_vectors_lsb, x
 	sta animation_state_vector
-	lda animation_state_vectors_msb, x
+	lda player_animation_state_vectors_msb, x
 	sta animation_state_vector+1
 
 	; Reset animation
@@ -26,8 +26,8 @@ set_player_animation:
 
 	rts
 
-	animation_state_vectors_lsb:
+	+player_animation_state_vectors_lsb:
 		.byt <player_a_animation, <player_b_animation
-	animation_state_vectors_msb:
+	+player_animation_state_vectors_msb:
 		.byt >player_a_animation, >player_b_animation
 .)
