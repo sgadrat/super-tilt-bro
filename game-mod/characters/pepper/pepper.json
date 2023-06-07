@@ -15012,7 +15012,7 @@
       "update_routine": "pepper_tick_shielding"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "pepper_input_shieldlag",
       "name": "PEPPER_STATE_SHIELDLAG",
       "offground_routine": "pepper_start_falling",
       "onground_routine": "pepper_global_onground",

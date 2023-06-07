@@ -15724,7 +15724,7 @@
       "update_routine": "vgsage_tick_shielding"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "vgsage_input_shieldlag",
       "name": "VGSAGE_STATE_SHIELDLAG",
       "offground_routine": "vgsage_start_falling",
       "onground_routine": "vgsage_global_onground",

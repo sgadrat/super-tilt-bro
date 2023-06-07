@@ -10754,7 +10754,7 @@
       "update_routine": "kiki_tick_shielding"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "kiki_input_shieldlag",
       "name": "KIKI_STATE_SHIELDLAG",
       "offground_routine": "kiki_start_falling",
       "onground_routine": "dummy_routine",

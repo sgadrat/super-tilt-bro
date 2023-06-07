@@ -189,6 +189,8 @@
 .(
 	shieldlag_duration:
 		.byt {char_name}_anim_shield_remove_dur_pal, {char_name}_anim_shield_remove_dur_ntsc
+	shieldlag_cancellable_time:
+		.byt {char_name}_anim_shield_remove_dur_pal / 2, {char_name}_anim_shield_remove_dur_ntsc / 2
 
 	&{char_name}_start_shieldlag:
 	.(
@@ -223,6 +225,31 @@
 			; No return, jump to subroutine
 		tick:
 		jmp {char_name}_apply_ground_friction
+		;rts ; useless, jump to subroutine
+	.)
+
+	&{char_name}_input_shieldlag:
+	.(
+#ifldef {char_name}_global_tick
+		jsr {char_name}_global_tick
+#endif
+
+		; Allow to cancel shield lag by a jump
+		lda controller_a_btns, x
+		cmp #CONTROLLER_INPUT_JUMP
+		bne no_jump
+
+		ldy system_index
+		lda player_a_state_clock, x
+		cmp shieldlag_cancellable_time, y
+		bcs no_jump
+
+			jmp {char_name}_start_jumping
+			; No return, jump to subroutine
+
+		no_jump:
+
+		jmp smart_keep_input_dirty
 		;rts ; useless, jump to subroutine
 	.)
 .)

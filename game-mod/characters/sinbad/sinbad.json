@@ -14146,7 +14146,7 @@
       "update_routine": "sinbad_tick_shielding"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "sinbad_input_shieldlag",
       "name": "SINBAD_STATE_SHIELDLAG",
       "offground_routine": "sinbad_start_falling",
       "onground_routine": "sinbad_global_onground",
