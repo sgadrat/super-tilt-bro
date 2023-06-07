@@ -104,6 +104,7 @@
 
 	&{char_name}_hurt_shielding:
 	.(
+		striker_player = tmpfield10
 		stroke_player = tmpfield11
 
 		; Reduce shield's life
@@ -146,8 +147,22 @@
 
 		still_shield:
 			; Set the new shield animation
+			ldx stroke_player
 			sta tmpfield14
-			jsr set_player_animation
+			jsr set_player_animation ; Note - overwrites tmpfield10 (stroke_player)
+
+			; Apply pushback, "base_horizontal_knock_up / 2"
+			ldy striker_player
+
+			lda player_a_hitbox_base_knock_up_h_high, y
+			asl
+
+			lda player_a_hitbox_base_knock_up_h_high, y
+			ror
+			sta player_a_velocity_h, x
+			lda player_a_hitbox_base_knock_up_h_low, y
+			ror
+			sta player_a_velocity_h_low, x
 
 			; Play sound
 			jsr audio_play_shield_hit
@@ -163,7 +178,7 @@
 
 		end:
 		; Disable the hitbox to avoid multi-hits
-		SWITCH_SELECTED_PLAYER
+		ldx striker_player
 		lda #HITBOX_DISABLED
 		sta player_a_hitbox_enabled, x
 
