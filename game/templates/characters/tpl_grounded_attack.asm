@@ -10,6 +10,21 @@
 	{anim}_dur:
 		.byt {anim}_dur_pal, {anim}_dur_ntsc
 
+	+{char_name}_start_{routine}_left:
+	.(
+		lda #DIRECTION_LEFT2
+		jmp {char_name}_start_{routine}_directional
+	.)
+	+{char_name}_start_{routine}_right:
+	.(
+		lda #DIRECTION_RIGHT2
+		; Fallthrough to {char_name}_start_{routine}_directional
+	.)
+	{char_name}_start_{routine}_directional:
+	.(
+		sta player_a_direction, x
+		; Fallthrough to {char_name}_start_{routine}
+	.)
 	+{char_name}_start_{routine}:
 	.(
 		; Set state

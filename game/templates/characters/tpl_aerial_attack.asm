@@ -12,6 +12,21 @@
 
 	;Note - player_a_state_field1,x is used by short hop takeover
 
+	+{char_name}_start_{routine}_left:
+	.(
+		lda #DIRECTION_LEFT2
+		jmp {char_name}_start_{routine}_directional
+	.)
+	+{char_name}_start_{routine}_right:
+	.(
+		lda #DIRECTION_RIGHT2
+		; Fallthrough to {char_name}_start_{routine}_directional
+	.)
+	{char_name}_start_{routine}_directional:
+	.(
+		sta player_a_direction, x
+		; Fallthrough to {char_name}_start_{routine}
+	.)
 	+{char_name}_start_{routine}:
 	.(
 		; Take over short hop logic to force a short hop if aerial is input at the begining of the jump

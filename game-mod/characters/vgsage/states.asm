@@ -95,178 +95,108 @@ vgsage_global_onground:
 ;  fast_fall - mandatorily on INPUT_NONE to take effect on release of DOWN
 ;  jump      - automatically choose between aerial jump or wall jump
 ;  no_input  - expected default
-!define "VGSAGE_AERIAL_INPUTS_TABLE" {
-	.(
-		controller_inputs:
-		.byt CONTROLLER_INPUT_NONE,               CONTROLLER_INPUT_SPECIAL_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_LEFT,       CONTROLLER_INPUT_JUMP
-		.byt CONTROLLER_INPUT_JUMP_RIGHT,         CONTROLLER_INPUT_JUMP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_LEFT,        CONTROLLER_INPUT_ATTACK_RIGHT
-		.byt CONTROLLER_INPUT_DOWN_TILT,          CONTROLLER_INPUT_ATTACK_UP
-		.byt CONTROLLER_INPUT_JAB,                CONTROLLER_INPUT_SPECIAL
-		.byt CONTROLLER_INPUT_SPECIAL_UP,         CONTROLLER_INPUT_SPECIAL_DOWN
-		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,    CONTROLLER_INPUT_ATTACK_UP_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT,   CONTROLLER_INPUT_SPECIAL_UP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_DOWN_RIGHT,  CONTROLLER_INPUT_ATTACK_DOWN_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT, CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
-		controller_callbacks_lo:
-		.byt <fast_fall,                   <vgsage_start_spe_side
-		.byt <vgsage_start_spe_side,       <jump
-		.byt <jump,                        <jump
-		.byt <vgsage_start_aerial_side,    <vgsage_start_aerial_side
-		.byt <vgsage_start_aerial_down,    <vgsage_start_aerial_up
-		.byt <vgsage_start_aerial_neutral, <vgsage_start_aerial_spe
-		.byt <vgsage_start_spe_up,         <vgsage_start_spe_down
-		.byt <vgsage_start_aerial_up,      <vgsage_start_aerial_up
-		.byt <vgsage_start_spe_up,         <vgsage_start_spe_up
-		.byt <vgsage_start_aerial_down,    <vgsage_start_aerial_down
-		.byt <vgsage_start_spe_down,       <vgsage_start_spe_down
-		controller_callbacks_hi:
-		.byt >fast_fall,                   >vgsage_start_spe_side
-		.byt >vgsage_start_spe_side,       >jump
-		.byt >jump,                        >jump
-		.byt >vgsage_start_aerial_side,    >vgsage_start_aerial_side
-		.byt >vgsage_start_aerial_down,    >vgsage_start_aerial_up
-		.byt >vgsage_start_aerial_neutral, >vgsage_start_aerial_spe
-		.byt >vgsage_start_spe_up,         >vgsage_start_spe_down
-		.byt >vgsage_start_aerial_up,      >vgsage_start_aerial_up
-		.byt >vgsage_start_spe_up,         >vgsage_start_spe_up
-		.byt >vgsage_start_aerial_down,    >vgsage_start_aerial_down
-		.byt >vgsage_start_spe_down,       >vgsage_start_spe_down
-		controller_default_callback:
-		.word no_input
-		&INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
-	.)
+!input-table-define "VGSAGE_AERIAL_INPUTS_TABLE" {
+	CONTROLLER_INPUT_NONE               fast_fall
+	CONTROLLER_INPUT_SPECIAL_LEFT       vgsage_start_spe_side_left
+	CONTROLLER_INPUT_SPECIAL_RIGHT      vgsage_start_spe_side_right
+	CONTROLLER_INPUT_JUMP               jump
+	CONTROLLER_INPUT_JUMP_LEFT          jump
+	CONTROLLER_INPUT_JUMP_RIGHT         jump
+	CONTROLLER_INPUT_ATTACK_LEFT        vgsage_start_aerial_side_left
+	CONTROLLER_INPUT_ATTACK_RIGHT       vgsage_start_aerial_side_right
+	CONTROLLER_INPUT_DOWN_TILT          vgsage_start_aerial_down
+	CONTROLLER_INPUT_ATTACK_UP          vgsage_start_aerial_up
+	CONTROLLER_INPUT_JAB                vgsage_start_aerial_neutral
+	CONTROLLER_INPUT_SPECIAL            vgsage_start_aerial_spe
+	CONTROLLER_INPUT_SPECIAL_UP         vgsage_start_spe_up
+	CONTROLLER_INPUT_SPECIAL_DOWN       vgsage_start_spe_down
+	CONTROLLER_INPUT_ATTACK_UP_LEFT     vgsage_start_aerial_up_left
+	CONTROLLER_INPUT_ATTACK_UP_RIGHT    vgsage_start_aerial_up_right
+	CONTROLLER_INPUT_SPECIAL_UP_LEFT    vgsage_start_spe_up_left
+	CONTROLLER_INPUT_SPECIAL_UP_RIGHT   vgsage_start_spe_up_right
+	CONTROLLER_INPUT_ATTACK_DOWN_LEFT   vgsage_start_aerial_down_left
+	CONTROLLER_INPUT_ATTACK_DOWN_RIGHT  vgsage_start_aerial_down_right
+	CONTROLLER_INPUT_SPECIAL_DOWN_LEFT  vgsage_start_spe_down_left
+	CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT vgsage_start_spe_down_right
+
+	no_input
 }
 
 ; Input table for idle state, special values are
-;  input_idle_jump_left - Force LEFT direction and jump
-;  input_idle_jump_right - Force RIGHT direction and jump
-;  input_idle_tilt_left - Left tilt
-;  input_idle_tilt_right - Right tilt
-;  input_idle_left - Run to the left
-;  input_idle_right - Run to the right
 ;  no_input - Default
-!define "VGSAGE_IDLE_INPUTS_TABLE" {
-	.(
-		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,              CONTROLLER_INPUT_RIGHT
-		.byt CONTROLLER_INPUT_JUMP,              CONTROLLER_INPUT_JUMP_RIGHT
-		.byt CONTROLLER_INPUT_JUMP_LEFT,         CONTROLLER_INPUT_JAB
-		.byt CONTROLLER_INPUT_ATTACK_LEFT,       CONTROLLER_INPUT_ATTACK_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL,           CONTROLLER_INPUT_SPECIAL_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_LEFT,      CONTROLLER_INPUT_DOWN_TILT
-		.byt CONTROLLER_INPUT_SPECIAL_UP,        CONTROLLER_INPUT_SPECIAL_DOWN
-		.byt CONTROLLER_INPUT_ATTACK_UP,         CONTROLLER_INPUT_TECH
-		.byt CONTROLLER_INPUT_TECH_LEFT,         CONTROLLER_INPUT_TECH_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT,   CONTROLLER_INPUT_SPECIAL_UP_RIGHT
-		.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,    CONTROLLER_INPUT_ATTACK_UP_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN_LEFT, CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
-		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,  CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
-		controller_callbacks_lo:
-		.byt <input_idle_left,            <input_idle_right
-		.byt <vgsage_start_jumping,       <input_idle_jump_right
-		.byt <input_idle_jump_left,       <vgsage_start_jabbing
-		.byt <input_idle_tilt_left,       <input_idle_tilt_right
-		.byt <vgsage_start_special,       <vgsage_start_spe_side_right
-		.byt <vgsage_start_spe_side_left, <vgsage_start_down_tilt
-		.byt <vgsage_start_spe_up,        <vgsage_start_spe_down
-		.byt <vgsage_start_up_tilt,       <vgsage_start_shielding
-		.byt <vgsage_start_shielding,     <vgsage_start_shielding
-		.byt <vgsage_start_spe_up,        <vgsage_start_spe_up
-		.byt <vgsage_start_up_tilt,       <vgsage_start_up_tilt
-		.byt <vgsage_start_spe_down,      <vgsage_start_spe_down
-		.byt <vgsage_start_down_tilt,     <vgsage_start_down_tilt
-		controller_callbacks_hi:
-		.byt >input_idle_left,            >input_idle_right
-		.byt >vgsage_start_jumping,       >input_idle_jump_right
-		.byt >input_idle_jump_left,       >vgsage_start_jabbing
-		.byt >input_idle_tilt_left,       >input_idle_tilt_right
-		.byt >vgsage_start_special,       >vgsage_start_spe_side_right
-		.byt >vgsage_start_spe_side_left, >vgsage_start_down_tilt
-		.byt >vgsage_start_spe_up,        >vgsage_start_spe_down
-		.byt >vgsage_start_up_tilt,       >vgsage_start_shielding
-		.byt >vgsage_start_shielding,     >vgsage_start_shielding
-		.byt >vgsage_start_spe_up,        >vgsage_start_spe_up
-		.byt >vgsage_start_up_tilt,       >vgsage_start_up_tilt
-		.byt >vgsage_start_spe_down,      >vgsage_start_spe_down
-		.byt >vgsage_start_down_tilt,     >vgsage_start_down_tilt
-		controller_default_callback:
-		.word no_input
-		&INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
-	.)
+!input-table-define "VGSAGE_IDLE_INPUTS_TABLE" {
+	CONTROLLER_INPUT_LEFT               vgsage_start_running_left
+	CONTROLLER_INPUT_RIGHT              vgsage_start_running_right
+	CONTROLLER_INPUT_JUMP               vgsage_start_jumping
+	CONTROLLER_INPUT_JUMP_LEFT          vgsage_start_jumping_left
+	CONTROLLER_INPUT_JUMP_RIGHT         vgsage_start_jumping_right
+	CONTROLLER_INPUT_JAB                vgsage_start_jabbing
+	CONTROLLER_INPUT_ATTACK_LEFT        vgsage_start_side_tilt_left
+	CONTROLLER_INPUT_ATTACK_RIGHT       vgsage_start_side_tilt_right
+	CONTROLLER_INPUT_SPECIAL            vgsage_start_special
+	CONTROLLER_INPUT_SPECIAL_LEFT       vgsage_start_spe_side_left
+	CONTROLLER_INPUT_SPECIAL_RIGHT      vgsage_start_spe_side_right
+	CONTROLLER_INPUT_DOWN_TILT          vgsage_start_down_tilt
+	CONTROLLER_INPUT_SPECIAL_UP         vgsage_start_spe_up
+	CONTROLLER_INPUT_SPECIAL_DOWN       vgsage_start_spe_down
+	CONTROLLER_INPUT_ATTACK_UP          vgsage_start_up_tilt
+	CONTROLLER_INPUT_TECH               vgsage_start_shielding
+	CONTROLLER_INPUT_TECH_LEFT          vgsage_start_shielding_left
+	CONTROLLER_INPUT_TECH_RIGHT         vgsage_start_shielding_right
+	CONTROLLER_INPUT_SPECIAL_UP_LEFT    vgsage_start_spe_up_left
+	CONTROLLER_INPUT_SPECIAL_UP_RIGHT   vgsage_start_spe_up_right
+	CONTROLLER_INPUT_ATTACK_UP_LEFT     vgsage_start_up_tilt_left
+	CONTROLLER_INPUT_ATTACK_UP_RIGHT    vgsage_start_up_tilt_right
+	CONTROLLER_INPUT_SPECIAL_DOWN_LEFT  vgsage_start_spe_down_left
+	CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT vgsage_start_spe_down_right
+	CONTROLLER_INPUT_ATTACK_DOWN_LEFT   vgsage_start_down_tilt_left
+	CONTROLLER_INPUT_ATTACK_DOWN_RIGHT  vgsage_start_down_tilt_right
+
+	no_input
 }
 
 ; Input table for running state, special values are
 ;  input_running_left - Change running direction to the left (if not already running to the left)
 ;  input_runnning_right - Change running direction to the right (if not already running to the right)
-!define "VGSAGE_RUNNING_INPUTS_TABLE" {
-	.(
-		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,              CONTROLLER_INPUT_RIGHT
-		.byt CONTROLLER_INPUT_JUMP,              CONTROLLER_INPUT_JUMP_RIGHT
-		.byt CONTROLLER_INPUT_JUMP_LEFT,         CONTROLLER_INPUT_ATTACK_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_RIGHT,      CONTROLLER_INPUT_SPECIAL
-		.byt CONTROLLER_INPUT_SPECIAL_RIGHT,     CONTROLLER_INPUT_SPECIAL_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_UP,        CONTROLLER_INPUT_SPECIAL_DOWN
-		.byt CONTROLLER_INPUT_TECH_LEFT,         CONTROLLER_INPUT_TECH_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT,   CONTROLLER_INPUT_SPECIAL_UP_RIGHT
-		.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,    CONTROLLER_INPUT_ATTACK_UP_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN_LEFT, CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
-		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,  CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
-		.byt CONTROLLER_INPUT_DOWN_TILT
-		controller_callbacks_lo:
-		.byt <input_running_left,           <input_running_right
-		.byt <vgsage_start_jumping,         <vgsage_start_jumping
-		.byt <vgsage_start_jumping,         <vgsage_start_side_tilt_left
-		.byt <vgsage_start_side_tilt_right, <vgsage_start_special
-		.byt <vgsage_start_spe_side,        <vgsage_start_spe_side
-		.byt <vgsage_start_spe_up,          <vgsage_start_spe_down
-		.byt <vgsage_start_shielding,       <vgsage_start_shielding
-		.byt <vgsage_start_spe_up,          <vgsage_start_spe_up
-		.byt <vgsage_start_up_tilt,         <vgsage_start_up_tilt
-		.byt <vgsage_start_spe_down,        <vgsage_start_spe_down
-		.byt <vgsage_start_down_tilt,       <vgsage_start_down_tilt
-		.byt <vgsage_start_down_tilt
-		controller_callbacks_hi:
-		.byt >input_running_left,           >input_running_right
-		.byt >vgsage_start_jumping,         >vgsage_start_jumping
-		.byt >vgsage_start_jumping,         >vgsage_start_side_tilt_left
-		.byt >vgsage_start_side_tilt_right, >vgsage_start_special
-		.byt >vgsage_start_spe_side,        >vgsage_start_spe_side
-		.byt >vgsage_start_spe_up,          >vgsage_start_spe_down
-		.byt >vgsage_start_shielding,       >vgsage_start_shielding
-		.byt >vgsage_start_spe_up,          >vgsage_start_spe_up
-		.byt >vgsage_start_up_tilt,         >vgsage_start_up_tilt
-		.byt >vgsage_start_spe_down,        >vgsage_start_spe_down
-		.byt >vgsage_start_down_tilt,       >vgsage_start_down_tilt
-		.byt >vgsage_start_down_tilt
-		controller_default_callback:
-		.word vgsage_start_idle
-		&INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
-	.)
+!input-table-define "VGSAGE_RUNNING_INPUTS_TABLE" {
+	CONTROLLER_INPUT_LEFT               input_running_left
+	CONTROLLER_INPUT_RIGHT              input_running_right
+	CONTROLLER_INPUT_JUMP               vgsage_start_jumping
+	CONTROLLER_INPUT_JUMP_LEFT          vgsage_start_jumping_left
+	CONTROLLER_INPUT_JUMP_RIGHT         vgsage_start_jumping_right
+	CONTROLLER_INPUT_ATTACK_LEFT        vgsage_start_side_tilt_left
+	CONTROLLER_INPUT_ATTACK_RIGHT       vgsage_start_side_tilt_right
+	CONTROLLER_INPUT_SPECIAL            vgsage_start_special
+	CONTROLLER_INPUT_SPECIAL_LEFT       vgsage_start_spe_side_left
+	CONTROLLER_INPUT_SPECIAL_RIGHT      vgsage_start_spe_side_right
+	CONTROLLER_INPUT_SPECIAL_UP         vgsage_start_spe_up
+	CONTROLLER_INPUT_SPECIAL_DOWN       vgsage_start_spe_down
+	CONTROLLER_INPUT_TECH_LEFT          vgsage_start_shielding_left
+	CONTROLLER_INPUT_TECH_RIGHT         vgsage_start_shielding_right
+	CONTROLLER_INPUT_SPECIAL_UP_LEFT    vgsage_start_spe_up_left
+	CONTROLLER_INPUT_SPECIAL_UP_RIGHT   vgsage_start_spe_up_right
+	CONTROLLER_INPUT_ATTACK_UP_LEFT     vgsage_start_up_tilt_left
+	CONTROLLER_INPUT_ATTACK_UP_RIGHT    vgsage_start_up_tilt_right
+	CONTROLLER_INPUT_SPECIAL_DOWN_LEFT  vgsage_start_spe_down_left
+	CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT vgsage_start_spe_down_right
+	CONTROLLER_INPUT_ATTACK_DOWN_LEFT   vgsage_start_down_tilt_left
+	CONTROLLER_INPUT_ATTACK_DOWN_RIGHT  vgsage_start_down_tilt_right
+	CONTROLLER_INPUT_DOWN_TILT          vgsage_start_down_tilt
+
+	vgsage_start_idle
 }
 
 ; Input table for jumping state state (only used during jumpsquat), special values are
 ;  no_input - default
-!define "VGSAGE_JUMPSQUAT_INPUTS_TABLE" {
-	.(
-		controller_inputs:
-		.byt CONTROLLER_INPUT_ATTACK_UP,       CONTROLLER_INPUT_SPECIAL_UP
-		.byt CONTROLLER_INPUT_ATTACK_UP_LEFT,  CONTROLLER_INPUT_SPECIAL_UP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT, CONTROLLER_INPUT_SPECIAL_UP_RIGHT
-		controller_callbacks_lo:
-		.byt <vgsage_start_up_tilt, <vgsage_start_spe_up
-		.byt <vgsage_start_up_tilt, <vgsage_start_spe_up
-		.byt <vgsage_start_up_tilt, <vgsage_start_spe_up
-		controller_callbacks_hi:
-		.byt >vgsage_start_up_tilt, >vgsage_start_spe_up
-		.byt >vgsage_start_up_tilt, >vgsage_start_spe_up
-		.byt >vgsage_start_up_tilt, >vgsage_start_spe_up
-		controller_default_callback:
-		.word no_input
-		&INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
-	.)
+!input-table-define "VGSAGE_JUMPSQUAT_INPUTS_TABLE" {
+	CONTROLLER_INPUT_ATTACK_UP        vgsage_start_up_tilt
+	CONTROLLER_INPUT_SPECIAL_UP       vgsage_start_spe_up
+	CONTROLLER_INPUT_ATTACK_UP_LEFT   vgsage_start_up_tilt_left
+	CONTROLLER_INPUT_SPECIAL_UP_LEFT  vgsage_start_spe_up_left
+	CONTROLLER_INPUT_ATTACK_UP_RIGHT  vgsage_start_up_tilt_right
+	CONTROLLER_INPUT_SPECIAL_UP_RIGHT vgsage_start_spe_up_right
+
+	no_input
 }
 
 !include "characters/std_aerial_input.asm"
@@ -1260,6 +1190,21 @@ vgsage_global_onground:
 	velocity_table(JUMP_INITIAL_VELOCITY_H, jump_initial_velocity_h_msb, jump_initial_velocity_h_lsb)
 	velocity_table(-JUMP_INITIAL_VELOCITY_H, jump_initial_velocity_h_neg_msb, jump_initial_velocity_h_neg_lsb)
 
+	&{char_name}_start_spe_up_left:
+	.(
+		lda #DIRECTION_LEFT2
+		jmp {char_name}_start_spe_up_directional
+	.)
+	&{char_name}_start_spe_up_right:
+	.(
+		lda #DIRECTION_RIGHT2
+		; Fallthrough to {char_name}_start_spe_up_directional
+	.)
+	{char_name}_start_spe_up_directional:
+	.(
+		sta player_a_direction, x
+		; Fallthrough to {char_name}_start_spe_up
+	.)
 	+vgsage_start_spe_up:
 	.(
 		; Set state
@@ -1474,6 +1419,21 @@ vgsage_global_onground:
 	velocity_table($400, fall_velocity_v_msb, fall_velocity_v_lsb)
 	velocity_table(-$400, roll_velocity_v_msb, roll_velocity_v_lsb)
 
+	&{char_name}_start_spe_down_left:
+	.(
+		lda #DIRECTION_LEFT2
+		jmp {char_name}_start_spe_down_directional
+	.)
+	&{char_name}_start_spe_down_right:
+	.(
+		lda #DIRECTION_RIGHT2
+		; Fallthrough to {char_name}_start_spe_down_directional
+	.)
+	{char_name}_start_spe_down_directional:
+	.(
+		sta player_a_direction, x
+		; Fallthrough to {char_name}_start_spe_down
+	.)
 	&vgsage_start_spe_down:
 	.(
 		; Set state

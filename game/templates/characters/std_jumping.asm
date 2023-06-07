@@ -1,4 +1,19 @@
 .(
+	+{char_name}_start_jumping_left:
+	.(
+		lda #DIRECTION_LEFT2
+		jmp {char_name}_start_jumping_directional
+	.)
+	+{char_name}_start_jumping_right:
+	.(
+		lda #DIRECTION_RIGHT2
+		; Fallthrough to {char_name}_start_jumping_directional
+	.)
+	{char_name}_start_jumping_directional:
+	.(
+		sta player_a_direction, x
+		; Fallthrough to {char_name}_start_jumping
+	.)
 	&{char_name}_start_jumping:
 	.(
 		lda #{char_name_upper}_STATE_JUMPING

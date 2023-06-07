@@ -1,4 +1,19 @@
 .(
+	+{char_name}_start_shielding_left:
+	.(
+		lda #DIRECTION_LEFT2
+		jmp {char_name}_start_shielding_directional
+	.)
+	+{char_name}_start_shielding_right:
+	.(
+		lda #DIRECTION_RIGHT2
+		; Fallthrough to {char_name}_start_shielding_directional
+	.)
+	{char_name}_start_shielding_directional:
+	.(
+		sta player_a_direction, x
+		; Fallthrough to {char_name}_start_shielding
+	.)
 	&{char_name}_start_shielding:
 	.(
 		; Set state

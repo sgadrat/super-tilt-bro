@@ -7,7 +7,22 @@
 
 	acceleration_table({char_name_upper}_RUNNING_ACCELERATION, run_acceleration)
 
-	&{char_name}_start_running:
+	+{char_name}_start_running_left:
+	.(
+		lda #DIRECTION_LEFT2
+		jmp {char_name}_start_running_directional
+	.)
+	+{char_name}_start_running_right:
+	.(
+		lda #DIRECTION_RIGHT2
+		; Fallthrough to {char_name}_start_running_directional
+	.)
+	{char_name}_start_running_directional:
+	.(
+		sta player_a_direction, x
+		; Fallthrough to {char_name}_start_running
+	.)
+	+{char_name}_start_running:
 	.(
 		; Set the player's state
 		lda #{char_name_upper}_STATE_RUNNING

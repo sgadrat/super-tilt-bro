@@ -43,12 +43,12 @@
 		lda controller_a_btns, x
 		cmp #CONTROLLER_INPUT_LEFT
 		bne no_left
-			jmp input_idle_left
+			jmp {char_name}_start_running_left
 			; No return, jump to subroutine
 		no_left:
 			cmp #CONTROLLER_INPUT_RIGHT
 			bne end
-				jmp input_idle_right
+				jmp {char_name}_start_running_right
 				; No return, jump to subroutine
 
 		end:
@@ -75,53 +75,5 @@
 
 		input_table:
 		!place "{char_name_upper}_IDLE_INPUTS_TABLE"
-
-		input_idle_jump_right:
-		.(
-			lda DIRECTION_RIGHT
-			sta player_a_direction, x
-			jmp {char_name}_start_jumping
-			;rts ; useless, jump to subroutine
-		.)
-
-		input_idle_jump_left:
-		.(
-			lda DIRECTION_LEFT
-			sta player_a_direction, x
-			jmp {char_name}_start_jumping
-			;rts ; useless, jump to subroutine
-		.)
-
-		input_idle_tilt_left:
-		.(
-			lda DIRECTION_LEFT
-			sta player_a_direction, x
-			jmp {char_name}_start_side_tilt
-			;rts ; useless, jump to subroutine
-		.)
-
-		input_idle_tilt_right:
-		.(
-			lda DIRECTION_RIGHT
-			sta player_a_direction, x
-			jmp {char_name}_start_side_tilt
-			;rts ; useless, jump to subroutine
-		.)
-	.)
-
-	input_idle_left:
-	.(
-		lda DIRECTION_LEFT
-		sta player_a_direction, x
-		jsr {char_name}_start_running
-		rts
-	.)
-
-	input_idle_right:
-	.(
-		lda DIRECTION_RIGHT
-		sta player_a_direction, x
-		jsr {char_name}_start_running
-		rts
 	.)
 .)

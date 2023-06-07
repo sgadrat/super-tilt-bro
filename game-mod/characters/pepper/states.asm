@@ -321,182 +321,111 @@ pepper_global_tick:
 ;  fast_fall - mandatorily on INPUT_NONE to take effect on release of DOWN
 ;  jump      - automatically choose between aerial jump or wall jump
 ;  no_input  - expected default
-!define "PEPPER_AERIAL_INPUTS_TABLE" {
-	.(
-		controller_inputs
-		.byt CONTROLLER_INPUT_NONE,              CONTROLLER_INPUT_SPECIAL_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_LEFT,      CONTROLLER_INPUT_JUMP
-		.byt CONTROLLER_INPUT_JUMP_RIGHT,        CONTROLLER_INPUT_JUMP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_LEFT,       CONTROLLER_INPUT_ATTACK_RIGHT
-		.byt CONTROLLER_INPUT_DOWN_TILT,         CONTROLLER_INPUT_ATTACK_UP
-		.byt CONTROLLER_INPUT_JAB,               CONTROLLER_INPUT_SPECIAL
-		.byt CONTROLLER_INPUT_SPECIAL_UP,        CONTROLLER_INPUT_SPECIAL_DOWN,
-		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,   CONTROLLER_INPUT_ATTACK_UP_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT,  CONTROLLER_INPUT_SPECIAL_UP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,  CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN_LEFT, CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT
-		controller_callbacks_lo
-		.byt <fast_fall,                        <pepper_start_dzzz_right
-		.byt <pepper_start_dzzz_left,           <jump
-		.byt <jump,                             <jump
-		.byt <pepper_start_aerial_side,         <pepper_start_aerial_side
-		.byt <pepper_start_hyperspeed_landing,  <pepper_start_aerial_firework
-		.byt <pepper_start_potion_smash,        <pepper_start_plan_7b
-		.byt <pepper_start_witch_fly,           <pepper_start_aerial_wrench_grab
-		.byt <pepper_start_aerial_firework,     <pepper_start_aerial_firework
-		.byt <pepper_start_witch_fly_right,     <pepper_start_witch_fly_left
-		.byt <pepper_start_hyperspeed_landing,  <pepper_start_hyperspeed_landing
-		.byt <pepper_start_aerial_wrench_grab,  <pepper_start_aerial_wrench_grab
-		controller_callbacks_hi
-		.byt >fast_fall,                        >pepper_start_dzzz_right
-		.byt >pepper_start_dzzz_left,           >jump
-		.byt >jump,                             >jump
-		.byt >pepper_start_aerial_side,         >pepper_start_aerial_side
-		.byt >pepper_start_hyperspeed_landing,  >pepper_start_aerial_firework
-		.byt >pepper_start_potion_smash,        >pepper_start_plan_7b
-		.byt >pepper_start_witch_fly,           >pepper_start_aerial_wrench_grab
-		.byt >pepper_start_aerial_firework,     >pepper_start_aerial_firework
-		.byt >pepper_start_witch_fly_right,     >pepper_start_witch_fly_left
-		.byt >pepper_start_hyperspeed_landing,  >pepper_start_hyperspeed_landing
-		.byt >pepper_start_aerial_wrench_grab,  >pepper_start_aerial_wrench_grab
-		controller_default_callback
-		.word no_input
-		&INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
-	.)
+!input-table-define "PEPPER_AERIAL_INPUTS_TABLE" {
+	CONTROLLER_INPUT_NONE               fast_fall
+	CONTROLLER_INPUT_SPECIAL_RIGHT      pepper_start_dzzz_right
+	CONTROLLER_INPUT_SPECIAL_LEFT       pepper_start_dzzz_left
+	CONTROLLER_INPUT_JUMP               jump
+	CONTROLLER_INPUT_JUMP_RIGHT         jump
+	CONTROLLER_INPUT_JUMP_LEFT          jump
+	CONTROLLER_INPUT_ATTACK_LEFT        pepper_start_aerial_side_left
+	CONTROLLER_INPUT_ATTACK_RIGHT       pepper_start_aerial_side_right
+	CONTROLLER_INPUT_DOWN_TILT          pepper_start_hyperspeed_landing
+	CONTROLLER_INPUT_ATTACK_UP          pepper_start_aerial_firework
+	CONTROLLER_INPUT_JAB                pepper_start_potion_smash
+	CONTROLLER_INPUT_SPECIAL            pepper_start_plan_7b
+	CONTROLLER_INPUT_SPECIAL_UP         pepper_start_witch_fly
+	CONTROLLER_INPUT_SPECIAL_DOWN       pepper_start_aerial_wrench_grab
+	CONTROLLER_INPUT_ATTACK_UP_LEFT     pepper_start_aerial_firework_left
+	CONTROLLER_INPUT_ATTACK_UP_RIGHT    pepper_start_aerial_firework_right
+	CONTROLLER_INPUT_SPECIAL_UP_RIGHT   pepper_start_witch_fly_right
+	CONTROLLER_INPUT_SPECIAL_UP_LEFT    pepper_start_witch_fly_left
+	CONTROLLER_INPUT_ATTACK_DOWN_LEFT   pepper_start_hyperspeed_landing_left
+	CONTROLLER_INPUT_ATTACK_DOWN_RIGHT  pepper_start_hyperspeed_landing_right
+	CONTROLLER_INPUT_SPECIAL_DOWN_LEFT  pepper_start_aerial_wrench_grab_left
+	CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT pepper_start_aerial_wrench_grab_right
+
+	no_input
 }
 
 ; Input table for idle state, special values are
-;  input_idle_jump_left - Force LEFT direction and jump
-;  input_idle_jump_right - Force RIGHT direction and jump
-;  input_idle_tilt_left - Left tilt
-;  input_idle_tilt_right - Right tilt
-;  input_idle_left - Run to the left
-;  input_idle_right - Run to the right
 ;  no_input - Default
-!define "PEPPER_IDLE_INPUTS_TABLE" {
-	.(
-		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,               CONTROLLER_INPUT_RIGHT
-		.byt CONTROLLER_INPUT_JUMP,               CONTROLLER_INPUT_JUMP_RIGHT
-		.byt CONTROLLER_INPUT_JUMP_LEFT,          CONTROLLER_INPUT_TECH
-		.byt CONTROLLER_INPUT_TECH_LEFT,          CONTROLLER_INPUT_TECH_RIGHT
-		.byt CONTROLLER_INPUT_DOWN_TILT,          CONTROLLER_INPUT_ATTACK_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_RIGHT,       CONTROLLER_INPUT_SPECIAL_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_RIGHT,      CONTROLLER_INPUT_SPECIAL
-		.byt CONTROLLER_INPUT_SPECIAL_UP,         CONTROLLER_INPUT_SPECIAL_UP_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT,   CONTROLLER_INPUT_ATTACK_UP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,    CONTROLLER_INPUT_ATTACK_UP
-		.byt CONTROLLER_INPUT_JAB,                CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT, CONTROLLER_INPUT_SPECIAL_DOWN
-		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,   CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
-		controller_callbacks_lsb:
-		.byt <input_idle_left,                  <input_idle_right
-		.byt <pepper_start_jumping,             <input_idle_jump_right
-		.byt <input_idle_jump_left,             <pepper_start_shielding
-		.byt <pepper_start_shielding,           <pepper_start_shielding
-		.byt <pepper_start_down_tilt,           <input_idle_tilt_left
-		.byt <input_idle_tilt_right,            <pepper_start_dzzz_left
-		.byt <pepper_start_dzzz_right,          <pepper_start_plan_7b
-		.byt <pepper_start_witch_fly,           <pepper_start_witch_fly_left
-		.byt <pepper_start_witch_fly_right,     <pepper_start_up_tilt
-		.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
-		.byt <pepper_start_flash_potion,        <pepper_start_wrench_grab
-		.byt <pepper_start_wrench_grab,         <pepper_start_wrench_grab
-		.byt <pepper_start_down_tilt,           <pepper_start_down_tilt
-		controller_callbacks_msb:
-		.byt >input_idle_left,                  >input_idle_right
-		.byt >pepper_start_jumping,             >input_idle_jump_right
-		.byt >input_idle_jump_left,             >pepper_start_shielding
-		.byt >pepper_start_shielding,           >pepper_start_shielding
-		.byt >pepper_start_down_tilt,           >input_idle_tilt_left
-		.byt >input_idle_tilt_right,            >pepper_start_dzzz_left
-		.byt >pepper_start_dzzz_right,          >pepper_start_plan_7b
-		.byt >pepper_start_witch_fly,           >pepper_start_witch_fly_left
-		.byt >pepper_start_witch_fly_right,     >pepper_start_up_tilt
-		.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
-		.byt >pepper_start_flash_potion,        >pepper_start_wrench_grab
-		.byt >pepper_start_wrench_grab,         >pepper_start_wrench_grab
-		.byt >pepper_start_down_tilt,           >pepper_start_down_tilt
-		controller_default_callback:
-		.word no_input
-		&INPUT_TABLE_LENGTH = controller_callbacks_lsb - controller_inputs
-	.)
+!input-table-define "PEPPER_IDLE_INPUTS_TABLE" {
+	CONTROLLER_INPUT_LEFT                pepper_start_running_left
+	CONTROLLER_INPUT_RIGHT               pepper_start_running_right
+	CONTROLLER_INPUT_JUMP                pepper_start_jumping
+	CONTROLLER_INPUT_JUMP_RIGHT          pepper_start_jumping_right
+	CONTROLLER_INPUT_JUMP_LEFT           pepper_start_jumping_left
+	CONTROLLER_INPUT_TECH                pepper_start_shielding
+	CONTROLLER_INPUT_TECH_LEFT           pepper_start_shielding_left
+	CONTROLLER_INPUT_TECH_RIGHT          pepper_start_shielding_right
+	CONTROLLER_INPUT_DOWN_TILT           pepper_start_down_tilt
+	CONTROLLER_INPUT_ATTACK_LEFT         pepper_start_side_tilt_left
+	CONTROLLER_INPUT_ATTACK_RIGHT        pepper_start_side_tilt_right
+	CONTROLLER_INPUT_SPECIAL_LEFT        pepper_start_dzzz_left
+	CONTROLLER_INPUT_SPECIAL_RIGHT       pepper_start_dzzz_right
+	CONTROLLER_INPUT_SPECIAL             pepper_start_plan_7b
+	CONTROLLER_INPUT_SPECIAL_UP          pepper_start_witch_fly
+	CONTROLLER_INPUT_SPECIAL_UP_LEFT     pepper_start_witch_fly_left
+	CONTROLLER_INPUT_SPECIAL_UP_RIGHT    pepper_start_witch_fly_right
+	CONTROLLER_INPUT_ATTACK_UP_LEFT      pepper_start_up_tilt_left
+	CONTROLLER_INPUT_ATTACK_UP_RIGHT     pepper_start_up_tilt_right
+	CONTROLLER_INPUT_ATTACK_UP           pepper_start_up_tilt
+	CONTROLLER_INPUT_JAB                 pepper_start_flash_potion
+	CONTROLLER_INPUT_SPECIAL_DOWN_LEFT   pepper_start_wrench_grab_left
+	CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT  pepper_start_wrench_grab_right
+	CONTROLLER_INPUT_SPECIAL_DOWN        pepper_start_wrench_grab
+	CONTROLLER_INPUT_ATTACK_DOWN_LEFT    pepper_start_down_tilt_left
+	CONTROLLER_INPUT_ATTACK_DOWN_RIGHT   pepper_start_down_tilt_right
+
+	no_input
 }
 
 ; Input table for running state, special values are
 ;  input_running_left - Change running direction to the left (if not already running to the left)
 ;  input_runnning_right - Change running direction to the right (if not already running to the right)
-!define "PEPPER_RUNNING_INPUTS_TABLE" {
-	.(
-		controller_inputs:
-		.byt CONTROLLER_INPUT_LEFT,               CONTROLLER_INPUT_RIGHT
-		.byt CONTROLLER_INPUT_JUMP,               CONTROLLER_INPUT_JUMP_RIGHT,
-		.byt CONTROLLER_INPUT_JUMP_LEFT,          CONTROLLER_INPUT_TECH
-		.byt CONTROLLER_INPUT_TECH_LEFT,          CONTROLLER_INPUT_TECH_RIGHT
-		.byt CONTROLLER_INPUT_DOWN_TILT,          CONTROLLER_INPUT_ATTACK_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_RIGHT,       CONTROLLER_INPUT_SPECIAL_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_RIGHT,      CONTROLLER_INPUT_SPECIAL
-		.byt CONTROLLER_INPUT_SPECIAL_UP,         CONTROLLER_INPUT_SPECIAL_UP_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_UP_RIGHT,   CONTROLLER_INPUT_SPECIAL_UP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT,    CONTROLLER_INPUT_ATTACK_UP
-		.byt CONTROLLER_INPUT_JAB,                CONTROLLER_INPUT_SPECIAL_DOWN_LEFT
-		.byt CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT, CONTROLLER_INPUT_SPECIAL_DOWN
-		.byt CONTROLLER_INPUT_ATTACK_DOWN_LEFT,   CONTROLLER_INPUT_ATTACK_DOWN_RIGHT
-		controller_callbacks_lsb:
-		.byt <input_running_left,               <input_running_right
-		.byt <pepper_start_jumping,             <pepper_start_jumping
-		.byt <pepper_start_jumping,             <pepper_start_shielding
-		.byt <pepper_start_shielding,           <pepper_start_shielding
-		.byt <pepper_start_down_tilt,           <pepper_start_side_tilt
-		.byt <pepper_start_side_tilt,           <pepper_start_dzzz_left
-		.byt <pepper_start_dzzz_right,          <pepper_start_plan_7b
-		.byt <pepper_start_witch_fly,           <pepper_start_witch_fly_left
-		.byt <pepper_start_witch_fly_right,     <pepper_start_up_tilt
-		.byt <pepper_start_up_tilt,             <pepper_start_up_tilt
-		.byt <pepper_start_flash_potion,        <pepper_start_wrench_grab
-		.byt <pepper_start_wrench_grab,         <pepper_start_wrench_grab
-		.byt <pepper_start_down_tilt,           <pepper_start_down_tilt
-		controller_callbacks_msb:
-		.byt >input_running_left,               >input_running_right
-		.byt >pepper_start_jumping,             >pepper_start_jumping
-		.byt >pepper_start_jumping,             >pepper_start_shielding
-		.byt >pepper_start_shielding,           >pepper_start_shielding
-		.byt >pepper_start_down_tilt,           >pepper_start_side_tilt
-		.byt >pepper_start_side_tilt,           >pepper_start_dzzz_left
-		.byt >pepper_start_dzzz_right,          >pepper_start_plan_7b
-		.byt >pepper_start_witch_fly,           >pepper_start_witch_fly_left
-		.byt >pepper_start_witch_fly_right,     >pepper_start_up_tilt
-		.byt >pepper_start_up_tilt,             >pepper_start_up_tilt
-		.byt >pepper_start_flash_potion,        >pepper_start_wrench_grab
-		.byt >pepper_start_wrench_grab,         >pepper_start_wrench_grab
-		.byt >pepper_start_down_tilt,           >pepper_start_down_tilt
-		controller_default_callback:
-		.word pepper_start_idle
+!input-table-define "PEPPER_RUNNING_INPUTS_TABLE" {
+	CONTROLLER_INPUT_LEFT                input_running_left
+	CONTROLLER_INPUT_RIGHT               input_running_right
+	CONTROLLER_INPUT_JUMP                pepper_start_jumping
+	CONTROLLER_INPUT_JUMP_LEFT           pepper_start_jumping_left
+	CONTROLLER_INPUT_JUMP_RIGHT          pepper_start_jumping_right
+	CONTROLLER_INPUT_TECH                pepper_start_shielding
+	CONTROLLER_INPUT_TECH_LEFT           pepper_start_shielding
+	CONTROLLER_INPUT_TECH_RIGHT          pepper_start_shielding
+	CONTROLLER_INPUT_DOWN_TILT           pepper_start_down_tilt
+	CONTROLLER_INPUT_ATTACK_LEFT         pepper_start_side_tilt_left
+	CONTROLLER_INPUT_ATTACK_RIGHT        pepper_start_side_tilt_right
+	CONTROLLER_INPUT_SPECIAL_LEFT        pepper_start_dzzz_left
+	CONTROLLER_INPUT_SPECIAL_RIGHT       pepper_start_dzzz_right
+	CONTROLLER_INPUT_SPECIAL             pepper_start_plan_7b
+	CONTROLLER_INPUT_SPECIAL_UP          pepper_start_witch_fly
+	CONTROLLER_INPUT_SPECIAL_UP_LEFT     pepper_start_witch_fly_left
+	CONTROLLER_INPUT_SPECIAL_UP_RIGHT    pepper_start_witch_fly_right
+	CONTROLLER_INPUT_SPECIAL_UP_LEFT     pepper_start_up_tilt_left
+	CONTROLLER_INPUT_ATTACK_UP_RIGHT     pepper_start_up_tilt_right
+	CONTROLLER_INPUT_ATTACK_UP           pepper_start_up_tilt
+	CONTROLLER_INPUT_JAB                 pepper_start_flash_potion
+	CONTROLLER_INPUT_SPECIAL_DOWN_LEFT   pepper_start_wrench_grab_left
+	CONTROLLER_INPUT_SPECIAL_DOWN_RIGHT  pepper_start_wrench_grab_right
+	CONTROLLER_INPUT_SPECIAL_DOWN        pepper_start_wrench_grab
+	CONTROLLER_INPUT_ATTACK_DOWN_LEFT    pepper_start_down_tilt_left
+	CONTROLLER_INPUT_ATTACK_DOWN_RIGHT   pepper_start_down_tilt_right
 
-		&INPUT_TABLE_LENGTH = controller_callbacks_lsb - controller_inputs
-	.)
+	pepper_start_idle
 }
 
 ; Input table for jumping state state (only used during jumpsquat), special values are
 ;  no_input - default
-!define "PEPPER_JUMPSQUAT_INPUTS_TABLE" {
-	.(
-		controller_inputs:
-		.byt CONTROLLER_INPUT_ATTACK_UP,       CONTROLLER_INPUT_ATTACK_UP_LEFT
-		.byt CONTROLLER_INPUT_ATTACK_UP_RIGHT, CONTROLLER_INPUT_SPECIAL_UP
-		.byt CONTROLLER_INPUT_SPECIAL_UP_LEFT, CONTROLLER_INPUT_SPECIAL_UP_RIGHT
-		controller_callbacks_lo:
-		.byt <pepper_start_up_tilt,            <pepper_start_up_tilt
-		.byt <pepper_start_up_tilt,            <pepper_start_witch_fly
-		.byt <pepper_start_witch_fly_left,     <pepper_start_witch_fly_right
-		controller_callbacks_hi:
-		.byt >pepper_start_up_tilt,            >pepper_start_up_tilt
-		.byt >pepper_start_up_tilt,            >pepper_start_witch_fly
-		.byt >pepper_start_witch_fly_left,     >pepper_start_witch_fly_right
-		controller_default_callback:
-		.word no_input
-		&INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
-	.)
+!input-table-define "PEPPER_JUMPSQUAT_INPUTS_TABLE" {
+	CONTROLLER_INPUT_ATTACK_UP        pepper_start_up_tilt
+	CONTROLLER_INPUT_ATTACK_UP_LEFT   pepper_start_up_tilt_left
+	CONTROLLER_INPUT_ATTACK_UP_RIGHT  pepper_start_up_tilt_right
+	CONTROLLER_INPUT_SPECIAL_UP       pepper_start_witch_fly
+	CONTROLLER_INPUT_SPECIAL_UP_LEFT  pepper_start_witch_fly_left
+	CONTROLLER_INPUT_SPECIAL_UP_RIGHT pepper_start_witch_fly_right
+
+	no_input
 }
 
 !include "characters/std_aerial_input.asm"
@@ -528,6 +457,21 @@ pepper_global_tick:
 		.byt pepper_anim_aerial_wrench_grab_dur_pal - pal_fall_immunity_dur
 		.byt pepper_anim_aerial_wrench_grab_dur_ntsc - ntsc_fall_immunity_dur
 
+	&{char_name}_start_aerial_wrench_grab_left:
+	.(
+		lda #DIRECTION_LEFT2
+		jmp {char_name}_start_aerial_wrench_grab_directional
+	.)
+	&{char_name}_start_aerial_wrench_grab_right:
+	.(
+		lda #DIRECTION_RIGHT2
+		; Fallthrough to {char_name}_start_aerial_wrench_grab_directional
+	.)
+	{char_name}_start_aerial_wrench_grab_directional:
+	.(
+		sta player_a_direction, x
+		; Fallthrough to {char_name}_start_aerial_wrench_grab
+	.)
 	&pepper_start_aerial_wrench_grab:
 	.(
 		; Set state
@@ -652,6 +596,21 @@ pepper_global_tick:
 	STILT_DURATION = 20
 	duration_table(STILT_DURATION, stilt_duration)
 
+	+{char_name}_start_side_tilt_left:
+	.(
+		lda #DIRECTION_LEFT2
+		jmp {char_name}_start_side_tilt_directional
+	.)
+	+{char_name}_start_side_tilt_right:
+	.(
+		lda #DIRECTION_RIGHT2
+		; Fallthrough to {char_name}_start_side_tilt_directional
+	.)
+	{char_name}_start_side_tilt_directional:
+	.(
+		sta player_a_direction, x
+		; Fallthrough to {char_name}_start_side_tilt
+	.)
 	&pepper_start_side_tilt:
 	.(
 		; Set state
@@ -695,6 +654,22 @@ pepper_global_tick:
 	hit_time:
 		.byt pepper_anim_aerial_wrench_dur_pal-HIT_TIME_PAL, pepper_anim_aerial_wrench_dur_ntsc-HIT_TIME_NTSC
 
+
+	&{char_name}_start_aerial_side_left:
+	.(
+		lda #DIRECTION_LEFT2
+		jmp {char_name}_start_aerial_side_directional
+	.)
+	&{char_name}_start_aerial_side_right:
+	.(
+		lda #DIRECTION_RIGHT2
+		; Fallthrough to {char_name}_start_aerial_side_directional
+	.)
+	{char_name}_start_aerial_side_directional:
+	.(
+		sta player_a_direction, x
+		; Fallthrough to {char_name}_start_aerial_side
+	.)
 	&pepper_start_aerial_side:
 	.(
 		; Short hop takeover
@@ -744,6 +719,21 @@ pepper_global_tick:
 
 .(
 	;FIXME keyframe system is not ntsc-friendly
+	&{char_name}_start_hyperspeed_landing_left:
+	.(
+		lda #DIRECTION_LEFT2
+		jmp {char_name}_start_hyperspeed_landing_directional
+	.)
+	&{char_name}_start_hyperspeed_landing_right:
+	.(
+		lda #DIRECTION_RIGHT2
+		; Fallthrough to {char_name}_start_hyperspeed_landing_directional
+	.)
+	{char_name}_start_hyperspeed_landing_directional:
+	.(
+		sta player_a_direction, x
+		; Fallthrough to {char_name}_start_hyperspeed_landing
+	.)
 	&pepper_start_hyperspeed_landing:
 	.(
 		keyframe_index = player_a_state_field1
