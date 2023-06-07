@@ -102,8 +102,19 @@
 		lda player_a_state_clock, x
 		cmp landing_duration, y
 		bne end
-			jmp {char_name}_start_inactive_state
-			; No return, jump to subroutine
+
+			; Select next state, can put shield regardless of the input being cosumed
+			; (Typical cases are tech and fastfall, we want to shield if button is still pressed)
+			lda controller_a_btns, x
+			and #(CONTROLLER_BTN_LEFT | CONTROLLER_BTN_RIGHT) ^ %11111111 ; Unset left/right, to ignore tech direction
+			cmp #CONTROLLER_INPUT_TECH
+			beq shield_out_of_landing
+				no_shield:
+					jmp {char_name}_start_inactive_state
+					; No return, jump to subroutine
+				shield_out_of_landing:
+					jmp {char_name}_start_shielding
+					; No return, jump to subroutine
 
 		end:
 		rts
