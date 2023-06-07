@@ -13906,7 +13906,7 @@
       "update_routine": "sinbad_tick_innexistant"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "SINBAD_STATE_SPAWN",
       "offground_routine": "dummy_routine",
       "onground_routine": "sinbad_global_onground",
@@ -13976,7 +13976,7 @@
       "update_routine": "sinbad_tick_jabbing"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "SINBAD_STATE_SIDE_TILT",
       "offground_routine": "dummy_routine",
       "onground_routine": "sinbad_global_onground",
@@ -14026,7 +14026,7 @@
       "update_routine": "sinbad_tick_helpless"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "SINBAD_STATE_LANDING",
       "offground_routine": "sinbad_start_falling",
       "onground_routine": "sinbad_global_onground",
@@ -14036,7 +14036,7 @@
       "update_routine": "sinbad_tick_landing"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "SINBAD_STATE_CRASHING",
       "offground_routine": "sinbad_start_falling",
       "onground_routine": "sinbad_global_onground",
@@ -14046,7 +14046,7 @@
       "update_routine": "sinbad_tick_crashing"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "SINBAD_STATE_DOWN_TILT",
       "offground_routine": "dummy_routine",
       "onground_routine": "sinbad_global_onground",
@@ -14056,7 +14056,7 @@
       "update_routine": "sinbad_tick_down_tilt"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "SINBAD_STATE_AERIAL_SIDE",
       "offground_routine": "dummy_routine",
       "onground_routine": "sinbad_start_landing",
@@ -14066,7 +14066,7 @@
       "update_routine": "sinbad_tick_aerial_side"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "SINBAD_STATE_AERIAL_DOWN",
       "offground_routine": "dummy_routine",
       "onground_routine": "sinbad_start_landing",
@@ -14076,7 +14076,7 @@
       "update_routine": "sinbad_tick_aerial_down"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "SINBAD_STATE_AERIAL_UP",
       "offground_routine": "dummy_routine",
       "onground_routine": "sinbad_start_landing",
@@ -14086,7 +14086,7 @@
       "update_routine": "sinbad_tick_aerial_up"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "SINBAD_STATE_AERIAL_NEUTRAL",
       "offground_routine": "dummy_routine",
       "onground_routine": "sinbad_start_landing",
@@ -14116,7 +14116,7 @@
       "update_routine": "sinbad_tick_spe_up"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "SINBAD_STATE_SPE_DOWN",
       "offground_routine": "dummy_routine",
       "onground_routine": "sinbad_global_onground",
@@ -14126,7 +14126,7 @@
       "update_routine": "sinbad_tick_spe_down"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "SINBAD_STATE_UP_TILT",
       "offground_routine": "dummy_routine",
       "onground_routine": "sinbad_global_onground",
@@ -14176,7 +14176,7 @@
       "update_routine": "sinbad_tick_jabbing"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "SINBAD_STATE_JABBING_3",
       "offground_routine": "sinbad_start_falling",
       "onground_routine": "sinbad_global_onground",

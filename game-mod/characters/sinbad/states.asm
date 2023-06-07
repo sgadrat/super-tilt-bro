@@ -400,7 +400,7 @@ sinbad_global_onground:
 				;  So releasing then pressing again jab input correctly bufferises the jab input
 				lda controller_a_btns, x
 				beq end
-					jmp keep_input_dirty
+					jmp dumb_keep_input_dirty ; dumb as we already checked the "smart" condition for our own logic
 
 			take_input:
 				; Allow to cut the animation for another jab
@@ -426,7 +426,7 @@ sinbad_global_onground:
 				;  So releasing then pressing again jab input correctly bufferises the jab input
 				lda controller_a_btns, x
 				beq end
-					jmp keep_input_dirty
+					jmp dumb_keep_input_dirty ; dumb as we already checked the "smart" condition for our own logic
 
 			take_input:
 				; Allow to cut the animation for another jab

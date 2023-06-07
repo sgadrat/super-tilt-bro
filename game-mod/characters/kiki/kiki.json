@@ -10704,7 +10704,7 @@
       "update_routine": "kiki_tick_falling"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "KIKI_STATE_LANDING",
       "offground_routine": "kiki_start_falling",
       "onground_routine": "dummy_routine",
@@ -10714,7 +10714,7 @@
       "update_routine": "kiki_tick_landing"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "KIKI_STATE_CRASHING",
       "offground_routine": "kiki_start_falling",
       "onground_routine": "dummy_routine",
@@ -10774,7 +10774,7 @@
       "update_routine": "kiki_tick_walljumping"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "KIKI_STATE_SIDE_TILT",
       "offground_routine": "kiki_start_falling",
       "onground_routine": "dummy_routine",
@@ -10784,7 +10784,7 @@
       "update_routine": "kiki_tick_side_tilt"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "KIKI_STATE_SIDE_SPE",
       "offground_routine": "dummy_routine",
       "onground_routine": "dummy_routine",
@@ -10794,7 +10794,7 @@
       "update_routine": "kiki_tick_side_spe"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "KIKI_STATE_DOWN_WALL",
       "offground_routine": "dummy_routine",
       "onground_routine": "dummy_routine",
@@ -10804,7 +10804,7 @@
       "update_routine": "kiki_tick_down_wall"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "KIKI_STATE_TOP_WALL",
       "offground_routine": "dummy_routine",
       "onground_routine": "dummy_routine",
@@ -10814,7 +10814,7 @@
       "update_routine": "kiki_tick_top_wall"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "KIKI_STATE_UP_TILT",
       "offground_routine": "dummy_routine",
       "onground_routine": "dummy_routine",
@@ -10824,7 +10824,7 @@
       "update_routine": "kiki_tick_up_tilt"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "KIKI_STATE_UP_AERIAL",
       "offground_routine": "dummy_routine",
       "onground_routine": "kiki_start_landing",
@@ -10834,7 +10834,7 @@
       "update_routine": "kiki_tick_up_aerial"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "KIKI_STATE_DOWN_TILT",
       "offground_routine": "dummy_routine",
       "onground_routine": "dummy_routine",
@@ -10844,7 +10844,7 @@
       "update_routine": "kiki_tick_down_tilt"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "KIKI_STATE_DOWN_AERIAL",
       "offground_routine": "dummy_routine",
       "onground_routine": "dummy_routine",
@@ -10854,7 +10854,7 @@
       "update_routine": "kiki_tick_down_aerial"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "KIKI_STATE_SIDE_AERIAL",
       "offground_routine": "dummy_routine",
       "onground_routine": "kiki_start_landing",
@@ -10874,7 +10874,7 @@
       "update_routine": "kiki_tick_jabbing"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "KIKI_STATE_NEUTRAL_AERIAL",
       "offground_routine": "dummy_routine",
       "onground_routine": "kiki_start_landing",
@@ -10884,7 +10884,7 @@
       "update_routine": "kiki_tick_neutral_aerial"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "KIKI_STATE_COUNTER_GUARD",
       "offground_routine": "dummy_routine",
       "onground_routine": "dummy_routine",
@@ -10894,7 +10894,7 @@
       "update_routine": "kiki_tick_counter_guard"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "KIKI_STATE_COUNTER_STRIKE",
       "offground_routine": "dummy_routine",
       "onground_routine": "dummy_routine",

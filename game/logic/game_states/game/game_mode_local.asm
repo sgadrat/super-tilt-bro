@@ -14,7 +14,7 @@ game_mode_local_pre_update:
 .(
 	; Toggle pause status if requested
 	.(
-		;NOTE we cannot trust "controller_a_last_frame_btns, x" as keep_input_dirty messes with it
+		;NOTE we cannot trust "controller_a_last_frame_btns, x" as *_keep_input_dirty mess with it
 		;     instead we store if the "pause" input was the last in bits 7 and 6 of local_mode_paused
 		;
 		;     local_mode_paused - AB.. ...P

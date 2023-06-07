@@ -343,17 +343,17 @@ process_nt_buffers:
 .)
 
 ; Consume input only if it is "all buttons released"
-;  Essentially the same as keep_input_dirty, but releasing and pressing again
+;  Essentially the same as dumb_keep_input_dirty, but releasing and pressing again
 ;  the button that started the move will work as expected
 smart_keep_input_dirty:
 .(
 	lda controller_a_btns, x
 	beq keep_input_dirty_rts ; exploit CONTROLLER_INPUT_NONE being zero
-	; Fallthrough to  keep_input_dirty
+	; Fallthrough to dumb_keep_input_dirty
 .)
 
 ; Indicate that the input modification on this frame has not been consumed
-keep_input_dirty:
+dumb_keep_input_dirty:
 .(
 	lda controller_a_last_frame_btns, x
 	sta controller_a_btns, x

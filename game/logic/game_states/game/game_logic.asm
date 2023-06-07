@@ -48,7 +48,7 @@ game_tick:
 		sta tmpfield2
 		jsr call_pointed_subroutine
 
-		; Keep inputs dirty (inlined double call to keep_input_dirty)
+		; Keep inputs dirty (inlined double call to dumb_keep_input_dirty)
 		lda controller_a_last_frame_btns
 		sta controller_a_btns
 		lda controller_b_last_frame_btns
@@ -72,7 +72,7 @@ game_tick:
 		SWITCH_BANK(#GAMESTATE_GAME_EXTRA_BANK)
 		jsr slowdown
 		beq no_slowdown
-			; Keep inputs dirty (inlined double call to keep_input_dirty)
+			; Keep inputs dirty (inlined double call to dumb_keep_input_dirty)
 			lda controller_a_last_frame_btns
 			sta controller_a_btns
 			lda controller_b_last_frame_btns

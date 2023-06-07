@@ -1561,7 +1561,7 @@ vgsage_global_onground:
 		beq cancel
 
 			ignore:
-				jmp keep_input_dirty
+				jmp smart_keep_input_dirty
 
 			cancel:
 				jmp vgsage_start_helpless

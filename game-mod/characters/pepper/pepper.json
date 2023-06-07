@@ -14962,7 +14962,7 @@
       "update_routine": "pepper_tick_falling"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "PEPPER_STATE_LANDING",
       "offground_routine": "pepper_start_falling",
       "onground_routine": "pepper_global_onground",
@@ -14972,7 +14972,7 @@
       "update_routine": "pepper_tick_landing"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "PEPPER_STATE_CRASHING",
       "offground_routine": "pepper_start_falling",
       "onground_routine": "pepper_global_onground",
@@ -15032,7 +15032,7 @@
       "update_routine": "pepper_tick_walljumping"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "PEPPER_STATE_DTILT",
       "offground_routine": "pepper_start_falling",
       "onground_routine": "pepper_global_onground",
@@ -15042,7 +15042,7 @@
       "update_routine": "pepper_tick_down_tilt"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "PEPPER_STATE_STILT",
       "offground_routine": "pepper_start_falling",
       "onground_routine": "pepper_global_onground",
@@ -15052,7 +15052,7 @@
       "update_routine": "pepper_tick_side_tilt"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "PEPPER_STATE_UTILT",
       "offground_routine": "pepper_start_falling",
       "onground_routine": "pepper_global_onground",
@@ -15062,7 +15062,7 @@
       "update_routine": "pepper_tick_up_tilt"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "PEPPER_STATE_FLASH_POTION",
       "offground_routine": "pepper_start_falling",
       "onground_routine": "pepper_global_onground",
@@ -15072,7 +15072,7 @@
       "update_routine": "pepper_tick_flash_potion"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "PEPPER_STATE_AERIAL_SIDE",
       "offground_routine": "dummy_routine",
       "onground_routine": "pepper_start_landing",
@@ -15082,7 +15082,7 @@
       "update_routine": "pepper_tick_aerial_side"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "PEPPER_STATE_AERIAL_FIREWORK",
       "offground_routine": "dummy_routine",
       "onground_routine": "pepper_start_landing",
@@ -15092,7 +15092,7 @@
       "update_routine": "pepper_tick_aerial_firework"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "PEPPER_STATE_HYPERSPEED_LANDING",
       "offground_routine": "dummy_routine",
       "onground_routine": "pepper_start_hyperspeed_crashing",
@@ -15102,7 +15102,7 @@
       "update_routine": "pepper_tick_hyperspeed_landing"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "PEPPER_STATE_HYPERSPEED_CRASHING",
       "offground_routine": "pepper_start_falling",
       "onground_routine": "dummy_routine",
@@ -15112,7 +15112,7 @@
       "update_routine": "pepper_tick_hyperspeed_crashing"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "PEPPER_STATE_AERIAL_WRENCH_GRAB",
       "offground_routine": "dummy_routine",
       "onground_routine": "pepper_start_landing",
@@ -15122,7 +15122,7 @@
       "update_routine": "pepper_tick_aerial_wrench_grab"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "PEPPER_STATE_POTION_SMASH",
       "offground_routine": "dummy_routine",
       "onground_routine": "pepper_start_landing",
@@ -15132,7 +15132,7 @@
       "update_routine": "pepper_tick_potion_smash"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "PEPPER_STATE_SEND_CARROT",
       "offground_routine": "dummy_routine",
       "onground_routine": "dummy_routine",
@@ -15142,7 +15142,7 @@
       "update_routine": "pepper_tick_send_carrot"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "PEPPER_STATE_WITCH_FLY",
       "offground_routine": "dummy_routine",
       "onground_routine": "dummy_routine",
@@ -15152,7 +15152,7 @@
       "update_routine": "pepper_tick_witch_fly"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "PEPPER_STATE_TELEPORT",
       "offground_routine": "dummy_routine",
       "onground_routine": "dummy_routine",
@@ -15162,7 +15162,7 @@
       "update_routine": "pepper_tick_teleport"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "PEPPER_STATE_WRENCH_GRAB",
       "offground_routine": "pepper_start_falling",
       "onground_routine": "pepper_global_onground",
@@ -15182,7 +15182,7 @@
       "update_routine": "pepper_tick_dzzz_charge"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "PEPPER_STATE_DZZZ_STRIKE",
       "offground_routine": "dummy_routine",
       "onground_routine": "dummy_routine",

@@ -15604,7 +15604,7 @@
       "update_routine": "vgsage_tick_innexistant"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "VGSAGE_STATE_SPAWN",
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_global_onground",
@@ -15694,7 +15694,7 @@
       "update_routine": "vgsage_tick_helpless"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "VGSAGE_STATE_LANDING",
       "offground_routine": "vgsage_start_falling",
       "onground_routine": "vgsage_global_onground",
@@ -15704,7 +15704,7 @@
       "update_routine": "vgsage_tick_landing"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "VGSAGE_STATE_CRASHING",
       "offground_routine": "vgsage_start_falling",
       "onground_routine": "vgsage_global_onground",
@@ -15744,7 +15744,7 @@
       "update_routine": "vgsage_tick_jabbing"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "VGSAGE_STATE_UP_TILT",
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_global_onground",
@@ -15754,7 +15754,7 @@
       "update_routine": "vgsage_tick_up_tilt"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "VGSAGE_STATE_DOWN_TILT",
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_global_onground",
@@ -15764,7 +15764,7 @@
       "update_routine": "vgsage_tick_down_tilt"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "VGSAGE_STATE_SIDE_TILT",
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_global_onground",
@@ -15774,7 +15774,7 @@
       "update_routine": "vgsage_tick_side_tilt"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "VGSAGE_STATE_AERIAL_NEUTRAL",
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_start_landing",
@@ -15784,7 +15784,7 @@
       "update_routine": "vgsage_tick_aerial_neutral"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "VGSAGE_STATE_AERIAL_UP",
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_start_landing",
@@ -15794,7 +15794,7 @@
       "update_routine": "vgsage_tick_aerial_up"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "VGSAGE_STATE_AERIAL_DOWN",
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_start_landing",
@@ -15804,7 +15804,7 @@
       "update_routine": "vgsage_tick_aerial_down"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "VGSAGE_STATE_AERIAL_SIDE",
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_start_landing",
@@ -15828,13 +15828,13 @@
       "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_PUNCH",
       "start_routine": null,
       "update_routine": "vgsage_tick_special_punch",
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "onground_routine": "vgsage_global_onground",
       "offground_routine": "dummy_routine",
       "onhurt_routine": "hurt_player"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_1",
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_global_onground",
@@ -15844,7 +15844,7 @@
       "update_routine": "vgsage_tick_special_fadeout"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_2",
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_global_onground",
@@ -15854,7 +15854,7 @@
       "update_routine": "vgsage_tick_special_draw_knight"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_3",
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_global_onground",
@@ -15864,7 +15864,7 @@
       "update_routine": "vgsage_tick_special_show_knight"
     },
     {
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_4",
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_global_onground",
@@ -15878,7 +15878,7 @@
       "name": "VGSAGE_STATE_SPECIAL_NEUTRAL_STEP_5",
       "start_routine": null,
       "update_routine": "vgsage_tick_special_restore_screen",
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "onground_routine": "vgsage_global_onground",
       "offground_routine": "dummy_routine",
       "onhurt_routine": "dummy_routine"
@@ -15888,7 +15888,7 @@
       "name": "VGSAGE_STATE_SPECIAL_UP_CHARGE",
       "start_routine": null,
       "update_routine": "vgsage_tick_spe_up_charge",
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "onground_routine": "vgsage_global_onground",
       "offground_routine": "dummy_routine",
       "onhurt_routine": "hurt_player"
@@ -15918,7 +15918,7 @@
       "name": "VGSAGE_STATE_SPECIAL_DOWN_ROLL",
       "start_routine": null,
       "update_routine": "vgsage_tick_spe_down_roll",
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "onground_routine": "vgsage_start_crashing",
       "offground_routine": "dummy_routine",
       "onhurt_routine": "hurt_player"
@@ -15938,7 +15938,7 @@
       "name": "VGSAGE_STATE_SPECIAL_SIDE_CHARGE",
       "start_routine": null,
       "update_routine": "vgsage_tick_spe_side_charge",
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "onground_routine": "dummy_routine",
       "offground_routine": "dummy_routine",
       "onhurt_routine": "hurt_player"
@@ -15948,7 +15948,7 @@
       "name": "VGSAGE_STATE_SPECIAL_SIDE_MOVE",
       "start_routine": null,
       "update_routine": "vgsage_tick_spe_side_move",
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "onground_routine": "dummy_routine",
       "offground_routine": "dummy_routine",
       "onhurt_routine": "hurt_player"
@@ -15958,7 +15958,7 @@
       "name": "VGSAGE_STATE_SPECIAL_SIDE_LAND",
       "start_routine": null,
       "update_routine": "vgsage_tick_spe_side_land",
-      "input_routine": "keep_input_dirty",
+      "input_routine": "smart_keep_input_dirty",
       "onground_routine": "dummy_routine",
       "offground_routine": "dummy_routine",
       "onhurt_routine": "hurt_player"

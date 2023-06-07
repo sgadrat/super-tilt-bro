@@ -395,7 +395,7 @@ network_tick_ingame:
 			lda esp_rx_buffer+CONTROLLERS_STATE_OFFSET+1
 			sta controller_b_btns
 
-			; Copy actually pressed opponent btns (keep_input_dirty may mess with normal values, but not this one)
+			; Copy actually pressed opponent btns (*_keep_input_dirty may mess with normal values, but not this one)
 			.(
 				;TODO Investigate
 				;     We may want to write received buttons in local player history instead of burning it
