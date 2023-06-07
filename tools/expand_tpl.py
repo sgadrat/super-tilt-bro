@@ -66,11 +66,84 @@ def expand(source, game_dir, filename, templates_dir):
 			source_pos[-1]['line'] += m.group('value').count('\n')
 			return ''
 
+	class InputTableDefineHandler:
+		"""
+		Define a macro containing an ASM jump table, with higher level parameters.
+
+		Example:
+
+		!input-table-define "MY_TABLE" {
+			VALUE1 label1
+			VALUE2 label2
+			default_label
+		}
+
+		is equivalent to
+
+		!define "MY_TABLE" {
+			.(
+				controller_inputs:
+				.byt VALUE1,  VALUE2
+				controller_callbacks_lo:
+				.byt <label1, <label2
+				controller_callbacks_hi:
+				.byt >label1, >label2
+				controller_default_callback:
+				.word default_label
+				&INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs
+			.)
+		}
+		"""
+		name = '!input-table-define'
+		regexp = re.compile('!input-table-define "(?P<name>[^"]+)" {(?P<value>[^}]*)}', flags=re.MULTILINE)
+		def process(m):
+			nonlocal defined, source_pos
+
+			# Generate ASM table
+			tokens = m.group('value').split()
+			ensure(len(tokens) > 0, '[{}] empty input table: "{}"'.format(bt(), m.group('name')))
+			ensure(len(tokens) % 2 == 1, '[{}] wrong number of symbols in inputtable "{}" : expected format VALUE1 label1 VALUE2 label2 ... VALUEN labelN default_label'.format(bt(), m.group('name')))
+
+			default_label = tokens[-1]
+			del tokens[-1]
+
+			values = []
+			labels = []
+			for token in tokens:
+				if len(values) == len(labels):
+					values.append(token)
+				else:
+					labels.append(token)
+
+			asm = '\n.(\n'
+			asm += '\tcontroller_inputs:\n'
+			for value in values:
+				asm += f'\t\t.byt {value}\n'
+			asm += '\tcontroller_callbacks_lo:\n'
+			for label in labels:
+				asm += f'\t\t.byt <{label}\n'
+			asm += '\tcontroller_callbacks_hi:\n'
+			for label in labels:
+				asm += f'\t\t.byt >{label}\n'
+			asm += '\tcontroller_default_callback:\n'
+			asm += f'\t\t.word {default_label}\n'
+			asm += '&INPUT_TABLE_LENGTH = controller_callbacks_lo - controller_inputs\n'
+			asm += '.)\n\n'
+
+			# Register value
+			ensure(
+				m.group('name') not in defined,
+				'[{}] defining an already defined value: "{}"'.format(bt(), m.group('name'))
+			)
+			defined[m.group('name')] = asm
+			source_pos[-1]['line'] += m.group('value').count('\n')
+			return ''
+
 	class UndefHandler:
 		name = '!undef'
 		regexp = re.compile('!undef "(?P<name>[^"]+)"')
 		def process(m):
-			nonlocal defined, source_pos
+			nonlocal defined
 			ensure(
 				m.group('name') in defined,
 				'[{}] !undef on a value not already defined: {} ...'.format(bt(), expanded_source_code[pos:pos+20])
@@ -82,7 +155,7 @@ def expand(source, game_dir, filename, templates_dir):
 		name = '!place'
 		regexp = re.compile('!place "(?P<name>[^"]+)"')
 		def process(m):
-			nonlocal defined, source_pos
+			nonlocal defined
 			name = place_tpl_values(m.group('name'))
 			ensure(name in defined, '[{}] unknown value to !place "{}" (resolved: "{}")'.format(bt(), m.group('name'), name))
 			return defined[name]
@@ -100,13 +173,14 @@ def expand(source, game_dir, filename, templates_dir):
 		regexp = re.compile('\{(?P<name>[a-z_]+)\}')
 		parse_may_fail = True
 		def process(m):
-			nonlocal defined, source_pos
+			nonlocal defined
 			ensure(m.group('name') in defined, '[%s] unknown value to place: {%s}' % (bt(), m.group('name'),))
 			return defined[m.group('name')]
 
 	handlers = [
 		IncludeHandler,
 		DefineHandler,
+		InputTableDefineHandler,
 		UndefHandler,
 		PlaceHandler,
 		ReturnIncludeHandler,
