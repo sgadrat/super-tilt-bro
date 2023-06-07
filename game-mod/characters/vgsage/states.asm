@@ -1709,3 +1709,7 @@ vgsage_global_onground:
 .)
 
 !include "characters/std_friction_routines.asm"
+
+; Standard move names
+;{char_name}_start_down_tilt = {char_name}_start_down_tilt
+;{char_name}_start_spe_down = {char_name}_start_spe_down

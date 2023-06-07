@@ -1443,3 +1443,7 @@ pepper_global_tick:
 .)
 
 !include "characters/std_friction_routines.asm"
+
+; Standard move names
+;pepper_start_down_tilt = pepper_start_down_tilt
+pepper_start_spe_down = pepper_start_wrench_grab

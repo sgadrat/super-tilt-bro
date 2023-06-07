@@ -65,17 +65,23 @@
 	&{char_name}_input_shielding:
 	.(
 		; Maintain down to stay on shield
-		; Ignore left/right as they are too susceptible to be pressed unvoluntarily on a lot of gamepads
-		; Down-a and down-b are allowed as out of shield moves
-		; Any other combination ends the shield (with shield lag or falling from smooth platform)
+		;   Ignore left/right as they are too susceptible to be pressed unvoluntarily on a lot of gamepads
+		; During coyote time (same duration as the down tap used to fall from smooth platforms)
+		;   Process inputs as in "idle" state (notably eases reverse down-tilt and down-spe)
+		; After coyote time
+		;   Down-a and down-b are allowed as out of shield moves (ignoring left/right)
+		;   Any other combination ends the shield (with shield lag or falling from smooth platform)
 		lda controller_a_btns, x
 		and #CONTROLLER_BTN_A+CONTROLLER_BTN_B+CONTROLLER_BTN_UP+CONTROLLER_BTN_DOWN
+		beq end_shield
 		cmp #CONTROLLER_INPUT_TECH
 		beq end
+		ldy player_a_state_clock, x
+		bne handle_input_coyote
 		cmp #CONTROLLER_INPUT_DOWN_TILT
-		beq handle_input
+		beq handle_input_dtilt
 		cmp #CONTROLLER_INPUT_SPECIAL_DOWN
-		beq handle_input
+		beq handle_input_dspe
 
 		end_shield:
 
@@ -108,7 +114,15 @@
 				jmp {char_name}_start_shieldlag
 				; No return, jump to subroutine
 
-		handle_input:
+		handle_input_dtilt:
+			jmp {char_name}_start_down_tilt
+			; No return, jump to subroutine
+
+		handle_input_dspe:
+			jmp {char_name}_start_spe_down
+			; No return, jump to subroutine
+
+		handle_input_coyote:
 
 			jmp {char_name}_input_idle
 			; No return, jump to subroutine
