@@ -148,11 +148,11 @@ text_special_thanks2:
 text_special_thanks3:
 	.byt "<SPECIAL THANKS>"
 	.byt "                "
+	.byt "    Smiley09    "
+	.byt "                "
 	.byt "  SuperGameLand "
 	.byt "                "
 	.byt "      Tui       "
-	.byt "                "
-	.byt "                "
 	.byt "                "
 	.byt "                "
 	.byt "                "
