@@ -217,7 +217,7 @@
 .(
 	jumping_short_hop_clock = player_a_state_field1
 
-	; Initialize what's needed to be able to adjust jump velocity like the jumoing state would do for a short hop
+	; Initialize what's needed to be able to adjust jump velocity like the jumping state would do for a short hop
 	;  X - player number
 	;
 	;  Overwrites A, Y, player_a_state_field1, player_b_state_field1
@@ -233,15 +233,15 @@
 
 		; Don't handle short hop if input check has already been done
 		ldy system_index
-		lda {char_name}_short_hop_time, y
-		sec
-		sbc player_a_state_clock, x
+		lda {char_name}_short_hop_aerial_time, y
+		cmp player_a_state_clock, x
 		bcc disable_clock
 
 		enable_clock:
 			; Store number of frames left before short hop velocity change in clock
-			;lda  {char_name}_short_hop_time, y ; useless, done above
-			;sbc player_a_state_clock, x        ;
+			lda  {char_name}_short_hop_time, y
+			sec
+			sbc player_a_state_clock, x
 			sta jumping_short_hop_clock, x
 			rts
 

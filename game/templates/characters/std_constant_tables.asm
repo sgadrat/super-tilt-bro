@@ -22,3 +22,7 @@ velocity_table(-{char_name_upper}_JUMP_SHORT_HOP_POWER, {char_name}_jump_short_h
 {char_name}_short_hop_time:
 	.byt {char_name_upper}_JUMP_SQUAT_DURATION_PAL + {char_name_upper}_JUMP_SHORT_HOP_EXTRA_TIME_PAL
 	.byt {char_name_upper}_JUMP_SQUAT_DURATION_NTSC + {char_name_upper}_JUMP_SHORT_HOP_EXTRA_TIME_NTSC
+
+{char_name}_short_hop_aerial_time:
+	.byt {char_name_upper}_JUMP_SQUAT_DURATION_PAL + {char_name_upper}_JUMP_SHORT_HOP_AERIAL_TIME_PAL
+	.byt {char_name_upper}_JUMP_SQUAT_DURATION_NTSC + {char_name_upper}_JUMP_SHORT_HOP_AERIAL_TIME_NTSC
