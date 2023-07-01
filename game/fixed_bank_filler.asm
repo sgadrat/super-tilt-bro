@@ -36,7 +36,7 @@
 ; Fill bank's empty space
 ;
 
-.dsb $fffa-*, 0
+.dsb $fffa-*, $ff
 
 ;
 ; Set entry points vectors

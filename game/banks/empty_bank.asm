@@ -1,7 +1,4 @@
 * = $8000
 
-#ifndef CURRENT_BANK_NUMBER
-#define CURRENT_BANK_NUMBER $ff
-#endif
-
-.dsb $c000-*, CURRENT_BANK_NUMBER
+.byt CURRENT_BANK_NUMBER
+.dsb $c000-*, $ff

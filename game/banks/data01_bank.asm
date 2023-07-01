@@ -2,6 +2,8 @@
 #echo ===== DATA01-BANK =====
 * = $8000
 
+.byt CURRENT_BANK_NUMBER
+
 bank_data01_begin:
 bank_data01_tileset_green_grass_begin:
 #include "game/data/tilesets/green_grass.asm"
@@ -97,5 +99,5 @@ bank_data01_end:
 #if $c000-* < 0
 #error DATA01 bank occupies too much space
 #else
-.dsb $c000-*, CURRENT_BANK_NUMBER
+.dsb $c000-*, $ff
 #endif

@@ -2,6 +2,8 @@
 #echo ===== DATA04-BANK =====
 * = $8000
 
+.byt CURRENT_BANK_NUMBER
+
 bank_data04_begin:
 
 bank_data04_stage_shelf_begin:
@@ -73,5 +75,5 @@ bank_data04_end:
 #if $c000-* < 0
 #error DATA04 bank occupies too much space
 #else
-.dsb $c000-*, CURRENT_BANK_NUMBER
+.dsb $c000-*, $ff
 #endif

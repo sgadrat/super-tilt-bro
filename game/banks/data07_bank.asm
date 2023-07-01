@@ -2,6 +2,8 @@
 #echo ====== DATA-07-BANK =====
 * = $8000
 
+.byt CURRENT_BANK_NUMBER
+
 bank_data07_begin:
 
 bank_data_theme_volcano_begin:
@@ -52,5 +54,5 @@ bank_data07_end:
 #if $c000-* < 0
 #error Data bank occupies too much space
 #else
-.dsb $c000-*, CURRENT_BANK_NUMBER
+.dsb $c000-*, $ff
 #endif

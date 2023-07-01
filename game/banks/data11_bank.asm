@@ -3,6 +3,8 @@
 #echo ====== DATA-11-BANK =====
 * = $8000
 
+.byt CURRENT_BANK_NUMBER
+
 bank_data11_begin:
 
 bank_data_cutscene_logic_begin:
@@ -49,6 +51,6 @@ bank_data11_end:
 #if $c000-* < 0
 #error Data bank occupies too much space
 #else
-.dsb $c000-*, CURRENT_BANK_NUMBER
+.dsb $c000-*, $ff
 #endif
 .)

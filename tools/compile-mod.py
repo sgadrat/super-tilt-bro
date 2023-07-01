@@ -486,6 +486,9 @@ def generate_banks(char_to_bank, tileset_to_bank, game_dir):
 
 			""".format_map(locals())))
 
+			# Bank number as first byte
+			bank_file.write('.byt CURRENT_BANK_NUMBER\n\n')
+
 			# Data begining label
 			bank_file.write('bank_data{bank_number:02d}_begin:\n'.format_map(locals()))
 
@@ -544,7 +547,7 @@ def generate_banks(char_to_bank, tileset_to_bank, game_dir):
 				#if $c000-* < 0
 				#error DATADATA{bank_number:02d} bank occupies too much space
 				#else
-				.dsb $c000-*, CURRENT_BANK_NUMBER
+				.dsb $c000-*, $ff
 				#endif
 			""".format_map(locals())))
 
