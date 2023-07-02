@@ -157,6 +157,13 @@ for c_source in `find . -name '*.c'`; do
 done
 fi
 
+# Check that rescue code can build without the rest of the game
+#  It must bear absolutely no dependency from game code
+log
+say "Check rescue build ..."
+log "======================"
+cmd "$xa_bin" rescue.asm -C -o "rescue.prg" -P /tmp/rescue.lst
+
 # Assemble the game
 log
 say "Assemble the game ..."
@@ -168,16 +175,30 @@ asm exe 'tilt_rainbow512_(E)'          "-DMAPPER_RAINBOW512"
 asm exe 'tilt_no_network_unrom512_(E)' "$no_network_flag -DMAPPER_UNROM512"
 asm exe 'tilt_no_network_unrom_(E)'    "$no_network_flag -DMAPPER_UNROM"
 
+# Check that rescue code in ROM is exactly as built independently
+#  We re-build it with the ROM, instead of including binaries, to have its code listed "Super_Tilt_Bro_(E).lst"
+#  We want to be sure that assembling options or inclusion in larger code base did not modify the generated code
+log
+say "Check rescue integration ..."
+log "============================"
+rescue_hash=$(md5sum rescue.prg | grep -Eo '^[0-9a-f]+')
+rescue_rom_hash=$(tail -c +17 'Super_Tilt_Bro_(E).nes' | head -c $((64*1024)) | md5sum - | grep -Eo '^[0-9a-f]+')
+if [ "$rescue_rom_hash" != "$rescue_hash" ]; then
+	say "ERROR: rescue code differs in ROM than built alone"
+	say "rescue code built alone: cat rescue.prg"
+	say 'rescue built in ROM: tail -c +17 "Super_Tilt_Bro_(E).nes" | head -c $((64*1024))'
+	exit 1
+fi
+
 say
 say "======================="
 say "Game built successfuly."
 say "======================="
 
-# Check that static bank did not change
-#  Static bank cannot be safely upgraded, so avoid modifying it
+# Check that rescue code did not change
+#  Rescue code cannot be safely upgraded, and first published version shall work regardless of the rest of the ROM, so avoid modifying it.
 #  Only a warning for ease of development, should be an error when carts are distributed to non-technical players.
-static_bank_hash=`tail -c 4096 'Super_Tilt_Bro_(E).nes' | md5sum - | grep -Eo '^[0-9a-f]+'`
-if [ "$static_bank_hash" != 'bf6361940a45f081684a47c4ca3fdccb' ]; then
-	sayc 41 "WARNING: static bank changed"
+if [ "$rescue_rom_hash" != '6f1c5ee2cdbe9c383013c7770a24df52' ]; then
+	sayc 41 "WARNING: rescue code changed"
 	sayc 41 "============================"
 fi

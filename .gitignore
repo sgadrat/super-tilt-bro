@@ -5,6 +5,7 @@
 *.nl
 *.bin
 *.built.asm
+rescue.prg
 build.log
 build.log.err
 game/cstb/mem_labels.h

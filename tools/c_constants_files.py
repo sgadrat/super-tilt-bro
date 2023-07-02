@@ -61,7 +61,7 @@ for paths in [
 				dest_file.write(processed + '\n')
 
 # Build rainbow constants
-with open('game/logic/rainbow_lib.asm', 'r') as source_file:
+with open('game/rainbow_lib_declarations.asm', 'r') as source_file:
 	with open('game/cstb/rainbow_constants.h', 'w') as dest_file:
 		dest_file.write('#pragma once\n\n')
 		dest_file.write('#include <stdint.h>\n\n')
