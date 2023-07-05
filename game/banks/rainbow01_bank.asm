@@ -15,6 +15,14 @@ bank_data_begin:
 #print *-bank_data_begin
 .)
 
+.(
+bank_data_begin:
+#include "game/logic/rainbow_boot/rescue.built.asm"
+#echo
+#echo Rescue code:
+#print *-bank_data_begin
+.)
+
 bank_rainbow01_end:
 
 ;

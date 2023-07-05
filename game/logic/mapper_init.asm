@@ -79,23 +79,6 @@ mapper_init:
 	sta RAINBOW_PULSE_CHANNEL_1_FREQ_HIGH
 	sta RAINBOW_PULSE_CHANNEL_2_FREQ_HIGH
 	sta RAINBOW_SAW_CHANNEL_FREQ_HIGH
-
-	; Enter rescue mode if magic buttons are pressed
-	.(
-		jsr fetch_controllers
-		lda controller_a_btns
-		cmp #CONTROLLER_BTN_UP+CONTROLLER_BTN_SELECT
-		beq safe_rescue
-		cmp #CONTROLLER_BTN_UP+CONTROLLER_BTN_SELECT+CONTROLLER_BTN_B
-		bne no_rescue
-			full_rescue:
-				lda #1
-				jmp rescue
-			safe_rescue:
-				lda #0
-				jmp rescue
-		no_rescue:
-	.)
 #endif
 
 	jmp reset ; mapper_init is the physical entry point, let's jump to the generic entry point

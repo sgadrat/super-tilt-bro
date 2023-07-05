@@ -1137,7 +1137,6 @@ next_bit:
 	sta _s0
 	rts
 .)
-.)
 #endif
 
 #iflused __umodsi3
@@ -1422,7 +1421,6 @@ __nesf2:
 
 #iflused __addsf3
 #include "addsf3.S"
-.)
 #endif
 
 #iflused __subsf3
@@ -1609,6 +1607,7 @@ done:
 	;     end
 	;   end
 __divsf3:
+.(
 	lda _s2
 	pha
 	lda _s1
