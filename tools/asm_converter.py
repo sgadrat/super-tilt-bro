@@ -29,9 +29,24 @@ def convert_gcc_to_xa(source):
 			# Handling of pseudo ops (mainly contain meta information and segments boundaries)
 			opcode = re.match(r'^\.([^ \t]+).*$', unindent_line).group(1)
 			if opcode == 'export':
-				exports = unindent_line[8:].split(', ')
+				exports += unindent_line[8:].split(', ')
 			elif opcode == 'res':
 				res.append(mangle_labels(line.replace('.res ', '.dsb ')))
+			elif opcode == 'proc':
+				symbol = re.match(r'^\.proc ([0-9a-zA-Z_$@]+)$', unindent_line).group(1)
+				if symbol in exports:
+					res.append(mangle_labels('+{}:'.format(symbol)))
+				else:
+					res.append(mangle_labels('{}:'.format(symbol)))
+				res.append('.(')
+			elif opcode == 'endproc':
+				res.append('.)')
+			elif opcode == 'assert':
+				params = unindent_line[8:].split(', ')
+				res.append('#if {}'.format(params[0]))
+				res.append('#else')
+				res.append('#error {}'.format(' '.join(params[1:])))
+				res.append('#endif')
 			elif opcode in passthru_opcodes:
 				res.append(mangle_labels(line))
 			else:
@@ -50,7 +65,7 @@ def convert_gcc_to_xa(source):
 			# Rename labels (xa does not like @, nor $ in label names)
 			line = mangle_labels(line)
 
-			# Make exported symboles global labels
+			# Make exported symbols global labels
 			for symbol in exports:
 				if line == '{}:'.format(symbol):
 					line = '+{}:'.format(symbol)

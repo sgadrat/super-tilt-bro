@@ -8,6 +8,7 @@
 rescue.prg
 build.log
 build.log.err
+rescue_img/
 game/cstb/mem_labels.h
 game/cstb/constants.h
 game/cstb/rainbow_constants.h

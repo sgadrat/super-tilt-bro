@@ -4,10 +4,12 @@ set -e
 
 xa_bin="${XA_BIN:-xa}"
 cc_bin="${CC_BIN:-6502-gcc}"
+huffmunch_bin="${HUFFMUNCH_BIN:-huffmunch}"
 perf_listings="${XA_LST:-0}"
 force_network="${FORCE_NETWORK:-0}"
 local_login="${LOCAL_LOGIN:-0}"
 skip_c="${SKIP_C:-0}" # 0 - build C files, 1 - Skip files older than their ASM, 2 - Skip ALL
+skip_rescue_img="${SKIP_RESCUE_IMG:-0}"
 
 root_dir=`readlink -m $(dirname "$0")`
 log_file="${root_dir}/build.log"
@@ -174,6 +176,68 @@ asm exe 'tilt_no_network_(E)'          "$no_network_flag"
 asm exe 'tilt_rainbow512_(E)'          "-DMAPPER_RAINBOW512"
 asm exe 'tilt_no_network_unrom512_(E)' "$no_network_flag -DMAPPER_UNROM512"
 asm exe 'tilt_no_network_unrom_(E)'    "$no_network_flag -DMAPPER_UNROM"
+
+# Build rescue image
+if [ "$skip_rescue_img" -ne 2 ]; then
+	log
+	say "Build rescue image ..."
+	log "======================"
+
+	# Numeric constants
+	bank_size=$((16*1024))
+	n_game_banks=32
+	game_size=$((n_game_banks*bank_size))
+	chunk_size=256
+	ines_header_size=16
+	n_rescue_banks=4
+
+	# Paths
+	rescue_img_dir="rescue_img"
+
+	# Build rescue image
+	if [ "$skip_rescue_img" -eq 0 -o ! -f "$rescue_img_dir/rescue_img.bin" ]; then
+
+		# Create output path
+		rm -rf "$rescue_img_dir"
+		mkdir -p "$rescue_img_dir"
+
+		# Extract game banks from built ROM
+		tail -c +$((ines_header_size + n_rescue_banks*bank_size + 1)) 'Super_Tilt_Bro_(E).nes' | head -c $game_size > "$rescue_img_dir/tilt_game.prg"
+
+		# Compress game banks
+		echo 0 $bank_size > "$rescue_img_dir/huffmunch.lst"
+		for i in $(seq 0 $(((game_size/chunk_size)-1))); do
+			echo $((i*chunk_size)) $(((i+1)*chunk_size)) "$rescue_img_dir/tilt_game.prg" >> "$rescue_img_dir/huffmunch.lst"
+		done
+		cmd "$huffmunch_bin" -L "$rescue_img_dir/huffmunch.lst" "$rescue_img_dir/rescue.hfm"
+		n_compressed_banks=$(ls "$rescue_img_dir"/rescue0*.hfm | wc -l)
+
+		# Make each compressed bank exactly 16K
+		for f in "$rescue_img_dir"/rescue0*.hfm; do
+			truncate -s 16K "$f";
+		done
+
+		# Build index bank
+		index_table_size=$((2*n_compressed_banks))
+		footer_size=1
+		free_size=$((bank_size - index_table_size - footer_size))
+		head -c $free_size /dev/zero > "$rescue_img_dir/rescue_index.bank"                     # Padding
+		cat "$rescue_img_dir/rescue.hfm" >> "$rescue_img_dir/rescue_index.bank"                # Index
+		echo -en "\x$(printf %02x $n_compressed_banks)" >> "$rescue_img_dir/rescue_index.bank" # Number of compressed banks
+
+		# Build full rescue image
+		cat "$rescue_img_dir/"rescue0*.hfm > "$rescue_img_dir/rescue_img.bin"
+		cat "$rescue_img_dir/rescue_index.bank" >> "$rescue_img_dir/rescue_img.bin"
+	fi
+
+	# Override last banks of Rainbow ROM with rescue image
+	n_compressed_banks=$(ls "$rescue_img_dir"/rescue0*.hfm | wc -l) #NOTE: may have not been computed if partial skip
+	nes_file_size=$((ines_header_size + 64 * bank_size))
+	rescue_img_size=$(((n_compressed_banks+1) * bank_size))
+	cp 'Super_Tilt_Bro_(E).nes' "$rescue_img_dir/tilt_rainbow.nes"
+	truncate -s $((nes_file_size - rescue_img_size)) "$rescue_img_dir/tilt_rainbow.nes"
+	cat "$rescue_img_dir/tilt_rainbow.nes" "$rescue_img_dir/rescue_img.bin" > 'Super_Tilt_Bro_(E).nes'
+fi
 
 # Check that rescue code in ROM is exactly as built independently
 #  We re-build it with the ROM, instead of including binaries, to have its code listed "Super_Tilt_Bro_(E).lst"
