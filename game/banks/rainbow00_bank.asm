@@ -9,6 +9,18 @@ bank_rainbow00_begin:
 
 .(
 bank_data_begin:
+#include "game/logic/rainbow_boot/memory_map.asm"
+#echo
+#echo no-data boot code declarations:
+#print *-bank_data_begin
+
+#if *-bank_data_begin <> 0
+#error "data in no-data declarations"
+#endif
+.)
+
+.(
+bank_data_begin:
 #include "game/logic/rainbow_boot/charset.asm"
 #echo
 #echo charset:

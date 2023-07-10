@@ -1,8 +1,4 @@
-* = $f000
-
-jsr main
-lda $ffff
-
+.(
 crc32_table0:
 .byt $00, $96, $2c, $ba, $19, $8f, $35, $a3, $32, $a4, $1e, $88, $2b, $bd, $07, $91
 .byt $64, $f2, $48, $de, $7d, $eb, $51, $c7, $56, $c0, $7a, $ec, $4f, $d9, $63, $f5
@@ -72,78 +68,79 @@ crc32_table3:
 .byt $a0, $d7, $4e, $39, $a7, $d0, $49, $3e, $ae, $d9, $40, $37, $a9, $de, $47, $30
 .byt $bd, $ca, $53, $24, $ba, $cd, $54, $23, $b3, $c4, $5d, $2a, $b4, $c3, $5a, $2d
 
-input:
-.byt "hello-world"
-input_size = * - input
-
-crc = $00
-
-main:
+; Reinitialize CRC-32 computation
++crc32_init:
+.(
 	; CRC init
 	lda #$ff
-	sta crc
-	sta crc+1
-	sta crc+2
-	sta crc+3
+	sta crc32_value
+	sta crc32_value+1
+	sta crc32_value+2
+	sta crc32_value+3
 
+	rts
+.)
+
+; Add a page of 256 bytes to the current CRC-32
+;  crc32_value - The CRC being computed
+;  crc32_address - vector to the first byte to add
+; Overwrites all registers, crc32_value
++crc32_add_page:
+.(
 	; Munch input
 	ldy #0
 	add_byte:
 		; crc = (crc >> 8) ^ table[(byte) ^ (crc & 0x000000ff)];
 		.(
 			; (byte) ^ (crc & 0x000000ff) ; NOTE - C in big endian, 0x000000ff is the first byte
-			lda input, y
-			eor crc
+			lda (crc32_address), y
+			eor crc32_value
 			tax
 
-			; crc >> 8
-			lda crc+1
-			sta crc
-			lda crc+2
-			sta crc+1
-			lda crc+3
-			sta crc+2
-			lda #0
-			sta crc+3
-
 			; (crc >> 8) ^ table[(byte) ^ (crc & 0x000000ff)]
-			lda crc32_table0, x
-			eor crc
-			sta crc
+			lda crc32_value+1
+			eor crc32_table0, x
+			sta crc32_value
 
-			lda crc32_table1, x
-			eor crc+1
-			sta crc+1
+			lda crc32_value+2
+			eor crc32_table1, x
+			sta crc32_value+1
 
-			lda crc32_table2, x
-			eor crc+2
-			sta crc+2
+			lda crc32_value+3
+			eor crc32_table2, x
+			sta crc32_value+2
 
-			lda crc32_table3, x
-			eor crc+3
-			sta crc+3
+			lda crc32_table3, x ; this byte is zero after the shift, EOR result is table's value
+			sta crc32_value+3
 		.)
 
 		; Loop
 		iny
-		cpy #input_size
 		bne add_byte
 
+	rts
+.)
+
+; Finalize CRC-32 computation
++crc32_finalize:
+.(
 	; CRC finalize
-	lda crc
+	lda crc32_value
 	eor #%11111111
-	sta crc
+	sta crc32_value
 
-	lda crc+1
+	lda crc32_value+1
 	eor #%11111111
-	sta crc+1
+	sta crc32_value+1
 
-	lda crc+2
+	lda crc32_value+2
 	eor #%11111111
-	sta crc+2
+	sta crc32_value+2
 
-	lda crc+3
+	lda crc32_value+3
 	eor #%11111111
-	sta crc+3
+	sta crc32_value+3
 
 	rts
+.)
+.)

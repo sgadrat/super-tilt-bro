@@ -33,6 +33,14 @@ extern uint8_t volatile RAINBOW_WIFI_CONF;
 
 extern uint8_t const tileset_rainbow_rescue;
 extern uint8_t const tileset_rainbow_segments;
+extern uint32_t crc32_value;
+extern uint8_t* crc32_address;
+extern uint8_t log_position;
+extern uint8_t scroll_state;
+
+void crc32_init();
+void crc32_add_page();
+void crc32_finalize();
 
 // -----------------------
 // Constants for this file
@@ -44,6 +52,33 @@ static uint8_t const sector_tile_erased = 2;
 static uint8_t const sector_tile_writing = 3;
 static uint8_t const sector_tile_ok = 4;
 static uint8_t const sector_tile_error = 5;
+
+//
+// Vocabulary:
+//  sector:     64 KB. A flash sector, the unit that can be erased at once
+//  bank:       16 KB. A bank of the ROM (both bootcode and game use 16 KB banks)
+//  segment:    1 KB.  The unit shown on screen while flashing
+//  chunk:      256 B. A block encoded by huffmunch (rescue image's banks each contain an integer number of chunks)
+//  flash page: 256 B. A page of the flash chip, unit that can be flashed in one go and provides ECC.
+//  6502 page:  256 B. Incidentally the same as flash page, the code may hardcode it.
+
+static uint16_t const bg_patterns = 0x0000;
+static uint16_t const sprites_patterns = 0x0000;
+
+static uint32_t const flash_rom_size = 524288; // 512 KB - Total size of the ROM to be flashed
+
+static uint32_t const sector_size = 65536; // 64 KB - Size of a flash sector (we must erase by sector)
+static uint8_t const nb_sectors = flash_rom_size / sector_size;
+static uint8_t const first_sector = 1;
+
+static uint32_t const bank_size = 16384; // 16 KB - Size of a bank in the ROM (game and bootcode both use 16 KB banks)
+
+static uint32_t const segment_size = 1024; // 1 KB - Size of a segment shown in screen
+static uint32_t const flash_nb_segments = flash_rom_size / segment_size;
+
+static uint32_t const page_size = 256; // We program the flash page per page
+static uint32_t const nb_pages = flash_rom_size / page_size;
+static uint8_t const nb_pages_per_segment = segment_size / page_size;
 
 // -----------------------
 // Syntax helper functions
@@ -207,6 +242,10 @@ static void scroll(uint16_t x, uint16_t y) {
 	PPUCTRL = ppuctrl | (y >= 240 ? 2 : 0) | (x >= 256 ? 1 : 0);
 }
 
+static void post_vbi() {
+	scroll(0, scroll_state ? 240 : 0);
+}
+
 static void set_attribute(uint8_t nametable, uint8_t x, uint8_t y, uint8_t value) {
 	uint16_t const nametable_ppu_addr = 0x2000 + (0x400 * nametable);
 	uint16_t const attribute_addr = nametable_ppu_addr + 0x03c0 + (8 * (y / 2)) + (x / 2);
@@ -228,6 +267,39 @@ static void set_attribute(uint8_t nametable, uint8_t x, uint8_t y, uint8_t value
 static void print(char const* message, uint8_t col, uint8_t line) {
 	uint8_t const len = strlen8(message);
 	cpu_to_ppu((uint8_t const*)message, 0x2000 + line * 32 + col, len);
+}
+
+static void error_log(char const* message) {
+	uint8_t const len = strlen8(message);
+	uint8_t const col = 4;
+	uint8_t const line = 3 + log_position;
+	log_position += 1;
+	if (log_position > 24) {
+		log_position = 0;
+	}
+
+	wait_vbi();
+	cpu_to_ppu((uint8_t const*)message, 0x2800 + line * 32 + col, len);
+	post_vbi();
+}
+
+static char hex_digit(uint8_t value) {
+	if (value < 10) {
+		return '0' + value;
+	}
+	return 'a' - 10 + value;
+}
+
+static char* uint_to_hex32(char* dest, uint32_t value) {
+	*(dest++) = hex_digit((value >> 28) & 0x0000000f);
+	*(dest++) = hex_digit((value >> 24) & 0x0000000f);
+	*(dest++) = hex_digit((value >> 20) & 0x0000000f);
+	*(dest++) = hex_digit((value >> 16) & 0x0000000f);
+	*(dest++) = hex_digit((value >> 12) & 0x0000000f);
+	*(dest++) = hex_digit((value >> 8) & 0x0000000f);
+	*(dest++) = hex_digit((value >> 4) & 0x0000000f);
+	*(dest++) = hex_digit((value >> 0) & 0x0000000f);
+	return dest;
 }
 
 static char* uint_to_str(char* dest, uint32_t value) {
@@ -288,39 +360,82 @@ static void program_page(uint32_t page_index) {
 	(void)page_index;
 }
 
-static bool check_page(uint32_t page_index) {
-	//TODO
-	return page_index < 100 || page_index > 150;
+static bool check_segment(uint32_t segment_index) {
+	uint32_t const rainbow_segment_index = segment_index + first_sector * (sector_size / segment_size);
+	uint32_t const segments_per_bank = bank_size / segment_size;
+	uint8_t const bank_index = rainbow_segment_index / segments_per_bank;
+	uint8_t* const segment_addr = (uint8_t*)0x8000 + (rainbow_segment_index % segments_per_bank) * segment_size;
+
+	// Compute page's CRC-32
+#if 0
+	//Preferable, but needs a fix for https://github.com/itszor/gcc-6502/issues/10
+	switch_bank(bank_index);
+	crc32_init();
+	crc32_address = segment_addr;
+	for (uint8_t page = 0; page < nb_pages_per_segment; ++page) {
+		crc32_add_page();
+		crc32_address += page_size;
+	}
+	crc32_finalize();
+#else
+	switch_bank(bank_index);
+	crc32_init();
+	for (uint8_t page = 0; page < nb_pages_per_segment; ++page) {
+		crc32_address = segment_addr + ((uint16_t)page * page_size);
+		crc32_add_page();
+	}
+	crc32_finalize();
+#endif
+
+	// Load reference CRC value
+	uint8_t const rescue_img_index_bank = 63;
+	uint32_t const* const reference_crc_table = (uint32_t const*)0x8000;
+	switch_bank(rescue_img_index_bank);
+	uint32_t const reference_crc = reference_crc_table[segment_index];
+
+	// Check match
+	if (crc32_value == reference_crc) {
+		return true;
+	}
+
+	// Log error details
+	char msg[27];
+
+	char* dest = msg;
+	dest = strcpy8(dest, "CRC "); // 4
+	dest = uint_to_str(dest, segment_index); //4+3=7
+	*(dest++) = ' '; //7+1=8
+	dest = uint_to_hex32(dest, crc32_value); // 8+8=16
+	*(dest++) = '!'; //16+1=17
+	*(dest++) = '='; //17+1=18
+	dest = uint_to_hex32(dest, reference_crc); // 18+8 = 26
+	*dest = 0; //16+1=27
+	error_log(msg);
+
+	dest = msg;
+	dest = strcpy8(dest, "  bank "); // 7
+	dest = uint_to_str(dest, bank_index); //7+2=9
+	dest = strcpy8(dest, " addr "); //9+6=15
+	dest = uint_to_hex32(dest, (uint16_t)segment_addr); //15+8=23
+	*dest = 0; // 23+1=24
+	error_log(msg);
+
+	return false;
 }
 
 void rainbow_rescue() {
 	// Reprogram the flash memory with rescue image (while printing fancy things on screen)
-	//
-	// Vocabulary:
-	//  sector:     64 KB. A flash sector, the unit that can be erased at once
-	//  segment:    1 KB.  The unit shown on screen while flashing
-	//  chunk:      256 B. A block encoded by huffmunch (rescue image's banks each contain an integer number of chunks)
-	//  flash page: 256 B. A page of the flash chip, unit that can be flashed in one go and provides ECC.
-	//  6502 page:  256 B. Incidentally the same as flash page, the code may hardcode it.
 
-	static uint16_t const bg_patterns = 0x0000;
-	static uint16_t const sprites_patterns = 0x0000;
-
-	static uint32_t const flash_rom_size = 524288; // 512 KB - Total size of the ROM to be flashed
-
-	static uint32_t const sector_size = 65536; // 64 KB - Size of a flash sector (we must erase by sector)
-	static uint8_t const nb_sectors = flash_rom_size / sector_size;
-	static uint8_t const first_sector = 1;
-	_Static_assert(flash_rom_size % sector_size == 0, "non integer number of sectors");
+	// Check sizes match
+	_Static_assert(flash_rom_size % sector_size == 0, "non integer number of sectors in the ROM");
 	_Static_assert(flash_rom_size / sector_size < 256 - first_sector, "too many sectors to fit in uint8");
 
-	static uint32_t const segment_size = 1024; // 1 KB - Size of a segment shown in screen
-	static uint32_t const flash_nb_segments = flash_rom_size / segment_size;
+	_Static_assert(sector_size % bank_size == 0, "non integer number of banks in a sector");
+
 	_Static_assert(flash_rom_size % segment_size == 0, "non integer number of segments in the ROM");
 	_Static_assert(sector_size % segment_size == 0, "non integer number of segments in a sector");
+	_Static_assert(bank_size % segment_size == 0, "non integer number of segments in a bank");
 
-	static uint32_t const page_size = 256; // We program the flash page per page
-	static uint32_t const nb_pages = flash_rom_size / page_size;
 	_Static_assert(flash_rom_size % page_size == 0, "non integer number of pages in the ROM");
 	_Static_assert(sector_size % page_size == 0, "non integer number of pages in a sector");
 	_Static_assert(segment_size % page_size == 0, "non integer number of pages in a segment");
@@ -330,6 +445,10 @@ void rainbow_rescue() {
 
 	// Initialize mapper state
 	rainbow_mapper_init();
+
+	// Initialize global variables
+	log_position = 0;
+	scroll_state = 0;
 
 	// Clear nametables
 	clear_nt(0x2000);
@@ -416,7 +535,7 @@ void rainbow_rescue() {
 	wait_vbi();
 	PPUCTRL = ppuctrl_val(false, false, bg_patterns == 0x1000, sprites_patterns == 0x1000, false, 0);
 	PPUMASK = ppumask_val(false, false, false, false, true, true, true, false);
-	scroll(0, 0);
+	post_vbi();
 
 	// Flash all sectors
 	char msg[frame_width+1];
@@ -428,7 +547,7 @@ void rainbow_rescue() {
 		progress(msg, "Erase sector ", sector_index+1, " / ", nb_sectors, frame_width);
 		wait_vbi();
 		print(msg, txtx, txty);
-		scroll(0, 0);
+		post_vbi();
 
 		erase_sector(first_sector + sector_index);
 
@@ -443,7 +562,7 @@ void rainbow_rescue() {
 			PPUADDR = u16_msb(segment_ppu_addr);
 			PPUADDR = u16_lsb(segment_ppu_addr);
 			PPUDATA = sector_tile_erased;
-			scroll(0, 0);
+			post_vbi();
 			++erased_segment_index;
 		}
 
@@ -457,22 +576,21 @@ void rainbow_rescue() {
 			PPUADDR = u16_msb(segment_ppu_addr);
 			PPUADDR = u16_lsb(segment_ppu_addr);
 			PPUDATA = sector_tile_writing;
-			scroll(0, 0);
+			post_vbi();
 
 			// Program pages
 			uint32_t const segment_pages_end = page_index + (segment_size / page_size);
-			bool success = true;
 			while (page_index < segment_pages_end) {
 				progress(msg, "Write page ", page_index+1, " / ", nb_pages, frame_width);
 				wait_vbi();
 				print(msg, txtx, txty);
-				scroll(0, 0);
+				post_vbi();
 
 				program_page(page_index);
-				success = (success && check_page(page_index));
 				++page_index;
 			}
 
+			bool const success = check_segment(segment_index);
 			if (!success) {
 				++nb_errors;
 			}
@@ -483,7 +601,7 @@ void rainbow_rescue() {
 			PPUADDR = u16_msb(segment_ppu_addr);
 			PPUADDR = u16_lsb(segment_ppu_addr);
 			PPUDATA = success ? sector_tile_ok : sector_tile_error;
-			scroll(0, 0);
+			post_vbi();
 
 			// Next
 			++segment_index;
@@ -497,13 +615,13 @@ void rainbow_rescue() {
 	msg[frame_width] = 0;
 	wait_vbi();
 	print(msg, txtx, txty);
-	scroll(0, 0);
+	post_vbi();
 
 	if (nb_errors == 0) {
 		wait_vbi();
 		print("Success", txtx, txty);
 		print("You can reboot now", txtx, txty+1);
-		scroll(0, 0);
+		post_vbi();
 	}else {
 		char* dest = msg;
 		dest = uint_to_str(dest, nb_errors);
@@ -513,12 +631,12 @@ void rainbow_rescue() {
 		wait_vbi();
 		print("Error", txtx, txty);
 		print(msg, txtx, txty+1);
-		scroll(0, 0);
+		post_vbi();
 	}
 
 	// Loop endlessely
 	while (true) {
 		wait_vbi();
-		scroll(0, 0);
+		post_vbi();
 	}
 }

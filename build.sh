@@ -239,13 +239,15 @@ EOF
 		crc_size=$((4 * game_size / segment_size))
 		footer_size=1
 		free_size=$((bank_size - index_table_size - crc_size - footer_size))
-		head -c $free_size /dev/zero > "$rescue_img_dir/rescue_index.bank"                     # Padding
+		rm -f "$rescue_img_dir/rescue_index.bank"
+		cat "$rescue_img_dir/segments_crc.bin" >> "$rescue_img_dir/rescue_index.bank"          # Segments CRCs
+		head -c $free_size /dev/zero >> "$rescue_img_dir/rescue_index.bank"                    # Padding
 		cat "$rescue_img_dir/rescue.hfm" >> "$rescue_img_dir/rescue_index.bank"                # Index
 		echo -en "\x$(printf %02x $n_compressed_banks)" >> "$rescue_img_dir/rescue_index.bank" # Number of compressed banks
 
 		# Build full rescue image
-		cat "$rescue_img_dir/"rescue0*.hfm > "$rescue_img_dir/rescue_img.bin"
-		cat "$rescue_img_dir/segments_crc.bin" >> "$rescue_img_dir/rescue_img.bin"
+		rm -f "$rescue_img_dir/rescue_img.bin"
+		cat "$rescue_img_dir/"rescue0*.hfm >> "$rescue_img_dir/rescue_img.bin"
 		cat "$rescue_img_dir/rescue_index.bank" >> "$rescue_img_dir/rescue_img.bin"
 	fi
 

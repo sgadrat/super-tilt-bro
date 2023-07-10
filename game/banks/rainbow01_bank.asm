@@ -17,6 +17,14 @@ bank_data_begin:
 
 .(
 bank_data_begin:
+#include "game/logic/rainbow_boot/crc32.asm"
+#echo
+#echo CRC-32 code:
+#print *-bank_data_begin
+.)
+
+.(
+bank_data_begin:
 #include "game/logic/rainbow_boot/rescue.built.asm"
 #echo
 #echo Rescue code:
