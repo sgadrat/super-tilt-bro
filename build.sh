@@ -190,6 +190,7 @@ if [ "$skip_rescue_img" -ne 2 ]; then
 	chunk_size=256
 	ines_header_size=16
 	n_rescue_banks=4
+	segment_size=1024
 
 	# Paths
 	rescue_img_dir="rescue_img"
@@ -203,6 +204,22 @@ if [ "$skip_rescue_img" -ne 2 ]; then
 
 		# Extract game banks from built ROM
 		tail -c +$((ines_header_size + n_rescue_banks*bank_size + 1)) 'Super_Tilt_Bro_(E).nes' | head -c $game_size > "$rescue_img_dir/tilt_game.prg"
+
+		# Compute CRC32 of segments
+		python -c "$(cat <<EOF
+import binascii
+import struct
+import sys
+assert binascii.crc32(b'hello-world') == 2983461467, 'binascii.crc32 returns signed numbers (python2 behaviour)'
+with open("$rescue_img_dir/tilt_game.prg", "rb") as prg:
+	segment = prg.read($segment_size)
+	while len(segment) > 0:
+		assert len(segment) == $segment_size, f'unexpected end of tilt_game.prg: last segment is {len(segment)} bytes instead of {$segment_size}'
+		sys.stdout.buffer.write(struct.pack('<I', binascii.crc32(segment)))
+		segment = prg.read($segment_size)
+EOF
+		)
+		" > "$rescue_img_dir/segments_crc.bin"
 
 		# Compress game banks
 		echo 0 $bank_size > "$rescue_img_dir/huffmunch.lst"
@@ -219,14 +236,16 @@ if [ "$skip_rescue_img" -ne 2 ]; then
 
 		# Build index bank
 		index_table_size=$((2*n_compressed_banks))
+		crc_size=$((4 * game_size / segment_size))
 		footer_size=1
-		free_size=$((bank_size - index_table_size - footer_size))
+		free_size=$((bank_size - index_table_size - crc_size - footer_size))
 		head -c $free_size /dev/zero > "$rescue_img_dir/rescue_index.bank"                     # Padding
 		cat "$rescue_img_dir/rescue.hfm" >> "$rescue_img_dir/rescue_index.bank"                # Index
 		echo -en "\x$(printf %02x $n_compressed_banks)" >> "$rescue_img_dir/rescue_index.bank" # Number of compressed banks
 
 		# Build full rescue image
 		cat "$rescue_img_dir/"rescue0*.hfm > "$rescue_img_dir/rescue_img.bin"
+		cat "$rescue_img_dir/segments_crc.bin" >> "$rescue_img_dir/rescue_img.bin"
 		cat "$rescue_img_dir/rescue_index.bank" >> "$rescue_img_dir/rescue_img.bin"
 	fi
 
