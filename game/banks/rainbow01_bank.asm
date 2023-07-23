@@ -9,7 +9,7 @@ bank_rainbow01_begin:
 
 .(
 bank_data_begin:
-#include "game/logic/rainbow_boot/startup.asm"
+#include "rainbow-boot/startup.asm"
 #echo
 #echo Startup code:
 #print *-bank_data_begin
@@ -17,7 +17,7 @@ bank_data_begin:
 
 .(
 bank_data_begin:
-#include "game/logic/rainbow_boot/crc32.asm"
+#include "rainbow-boot/crc32.asm"
 #echo
 #echo CRC-32 code:
 #print *-bank_data_begin
@@ -25,7 +25,7 @@ bank_data_begin:
 
 .(
 bank_data_begin:
-#include "game/logic/rainbow_boot/rescue.built.asm"
+#include "rainbow-boot/rescue.built.asm"
 #echo
 #echo Rescue code:
 #print *-bank_data_begin

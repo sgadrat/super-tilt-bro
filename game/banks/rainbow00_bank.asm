@@ -9,7 +9,7 @@ bank_rainbow00_begin:
 
 .(
 bank_data_begin:
-#include "game/logic/rainbow_boot/memory_map.asm"
+#include "rainbow-boot/memory_map.asm"
 #echo
 #echo no-data boot code declarations:
 #print *-bank_data_begin
@@ -21,7 +21,7 @@ bank_data_begin:
 
 .(
 bank_data_begin:
-#include "game/logic/rainbow_boot/charset.asm"
+#include "rainbow-boot/charset.asm"
 #echo
 #echo charset:
 #print *-bank_data_begin
@@ -29,7 +29,7 @@ bank_data_begin:
 
 .(
 bank_data_begin:
-#include "game/logic/rainbow_boot/tileset_segments.asm"
+#include "rainbow-boot/tileset_segments.asm"
 #echo
 #echo tileset segments:
 #print *-bank_data_begin
