@@ -4,16 +4,26 @@ import re
 from stblib.utils import asmint
 
 # Build memory layout header
-with open('game/mem_labels.asm', 'r') as source_file:
-	with open('game/cstb/mem_labels.h', 'w') as dest_file:
-		dest_file.write('#pragma once\n\n')
-		dest_file.write('#include <stdint.h>\n\n')
+def process_mem_labels_line(line):
+	processed = line.rstrip('\n')
+	processed = re.sub(';', '//', processed)
+	processed = re.sub(r'^([a-zA-Z0-9_]+) = \$([0-9a-f]+)', r'static uint8_t* const \1 = (uint8_t* const)0x\2;', processed)
+	processed = re.sub(r'^([a-zA-Z0-9_]+) = ([^/]*)( //.*)?$', r'static uint8_t* const \1 = \2;\3', processed)
+	return processed + '\n'
+
+def process_mem_labels_file(filename, dest_file):
+	with open(filename, 'r') as source_file:
 		for line in source_file:
-			processed = line.rstrip('\n')
-			processed = re.sub(';', '//', processed)
-			processed = re.sub(r'^([a-zA-Z0-9_]+) = \$([0-9a-f]+)', r'static uint8_t* const \1 = (uint8_t* const)0x\2;', processed)
-			processed = re.sub(r'^([a-zA-Z0-9_]+) = ([^/]*)( //.*)?$', r'static uint8_t* const \1 = \2;\3', processed)
-			dest_file.write(processed + '\n')
+			m = re.search('^#include "(?P<inc>.*)"', line)
+			if m is not None:
+				process_mem_labels_file(m.group('inc'), dest_file)
+			else:
+				dest_file.write(process_mem_labels_line(line))
+
+with open('game/cstb/mem_labels.h', 'w') as dest_file:
+	dest_file.write('#pragma once\n\n')
+	dest_file.write('#include <stdint.h>\n\n')
+	process_mem_labels_file('game/mem_labels.asm', dest_file)
 
 #
 # Build project wide constants headers

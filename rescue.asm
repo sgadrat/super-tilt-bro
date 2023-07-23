@@ -2,13 +2,9 @@
 
 * = 0
 
-#include "game/constants.asm"
-#include "nine/macros.asm"
-#include "game/macros.asm"
 #include "game/rainbow_lib_declarations.asm"
-#include "game/animation_extra_declarations.asm"
 #include "nine/nes_labels.asm"
-#include "game/mem_labels.asm"
+#include "game/c_labels.asm"
 
 #if * <> 0
 #error "data in no-data declarations"
