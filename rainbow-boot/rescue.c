@@ -31,16 +31,24 @@ extern uint8_t volatile RAINBOW_WIFI_CONF;
 // Rainbow boot ROM symbols
 // ------------------------
 
-extern uint8_t const tileset_rainbow_rescue;
-extern uint8_t const tileset_rainbow_segments;
 extern uint32_t crc32_value;
 extern uint8_t* crc32_address;
+extern uint8_t erase_sector_result;
 extern uint8_t log_position;
+extern uint8_t rescue_controller_a_btns;
 extern uint8_t scroll_state;
+extern uint8_t const tileset_rainbow_rescue;
+extern uint8_t const tileset_rainbow_segments;
+extern uint8_t txtx;
+extern uint8_t txty;
 
 void crc32_init();
 void crc32_add_page();
 void crc32_finalize();
+
+void erase_sector();
+
+void rescue_fetch_controllers();
 
 // -----------------------
 // Constants for this file
@@ -52,6 +60,18 @@ static uint8_t const sector_tile_erased = 2;
 static uint8_t const sector_tile_writing = 3;
 static uint8_t const sector_tile_ok = 4;
 static uint8_t const sector_tile_error = 5;
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-const-variable"
+static uint8_t const btn_start = 0x10;
+static uint8_t const btn_select = 0x20;
+static uint8_t const btn_b = 0x40;
+static uint8_t const btn_a = 0x80;
+static uint8_t const btn_right = 0x01;
+static uint8_t const btn_left = 0x02;
+static uint8_t const btn_down = 0x04;
+static uint8_t const btn_up = 0x08;
+#pragma GCC diagnostic pop
 
 //
 // Vocabulary:
@@ -69,7 +89,7 @@ static uint32_t const flash_rom_size = 524288; // 512 KB - Total size of the ROM
 
 static uint32_t const sector_size = 65536; // 64 KB - Size of a flash sector (we must erase by sector)
 static uint8_t const nb_sectors = flash_rom_size / sector_size;
-static uint8_t const first_sector = 1;
+static uint8_t const first_game_sector = 1;
 
 static uint32_t const bank_size = 16384; // 16 KB - Size of a bank in the ROM (game and bootcode both use 16 KB banks)
 
@@ -243,6 +263,12 @@ static void scroll(uint16_t x, uint16_t y) {
 }
 
 static void post_vbi() {
+	rescue_fetch_controllers();
+	if (rescue_controller_a_btns == btn_up) {
+		scroll_state = 0;
+	}else if (rescue_controller_a_btns == btn_down) {
+		scroll_state = 1;
+	}
 	scroll(0, scroll_state ? 240 : 0);
 }
 
@@ -269,9 +295,15 @@ static void print(char const* message, uint8_t col, uint8_t line) {
 	cpu_to_ppu((uint8_t const*)message, 0x2000 + line * 32 + col, len);
 }
 
+static void say(char const* message) {
+	wait_vbi();
+	print(message, txtx, txty);
+	post_vbi();
+}
+
 static void error_log(char const* message) {
 	uint8_t const len = strlen8(message);
-	uint8_t const col = 4;
+	uint8_t const col = 2;
 	uint8_t const line = 3 + log_position;
 	log_position += 1;
 	if (log_position > 24) {
@@ -297,6 +329,12 @@ static char* uint_to_hex32(char* dest, uint32_t value) {
 	*(dest++) = hex_digit((value >> 16) & 0x0000000f);
 	*(dest++) = hex_digit((value >> 12) & 0x0000000f);
 	*(dest++) = hex_digit((value >> 8) & 0x0000000f);
+	*(dest++) = hex_digit((value >> 4) & 0x0000000f);
+	*(dest++) = hex_digit((value >> 0) & 0x0000000f);
+	return dest;
+}
+
+static char* uint_to_hex8(char* dest, uint8_t value) {
 	*(dest++) = hex_digit((value >> 4) & 0x0000000f);
 	*(dest++) = hex_digit((value >> 0) & 0x0000000f);
 	return dest;
@@ -350,9 +388,70 @@ static void progress(char* dest, char const* prefix, uint32_t value, char const*
 	*dest = 0;
 }
 
-static void erase_sector(uint8_t sector_index) {
-	//TODO
-	(void)sector_index;
+static void erase_game_sector(uint8_t sector_index) {
+	uint8_t const rainbow_sector_index = first_game_sector + sector_index;
+	uint8_t const banks_per_sector = sector_size / bank_size;
+	uint8_t const bank_index = rainbow_sector_index * banks_per_sector;
+
+	switch_bank(bank_index);
+	erase_sector();
+
+	if (erase_sector_result == 0) {
+		return;
+	}
+
+	bool const fatal = (erase_sector_result & 0x80);
+
+	char msg[25];
+	char* dest = msg;
+	dest = strcpy8(dest, "erase "); // 6
+	dest = uint_to_hex8(dest, sector_index); // 6+2=8
+	dest = strcpy8(dest, " fail="); // 8+6=14
+	dest = uint_to_hex8(dest, erase_sector_result); // 14+2=16
+	if (fatal) {
+		dest = strcpy8(dest, " chip=KO"); // 16+8=24
+	}
+	*dest = 0; //24+1=25
+
+	error_log(msg);
+	say(msg);
+
+	if (fatal) {
+		// Tell the user it failed badly
+		wait_vbi();
+		print("FATAL ERROR.", txtx, txty+1);
+		post_vbi();
+
+		wait_vbi();
+		print("Please shutdown, and retry.", txtx, txty+2);
+		post_vbi();
+
+		// Wait for the system being reboot, or the user to press the secret key combinaison to try to ignore the error
+		while(true) {
+			wait_vbi();
+			post_vbi();
+			if (rescue_controller_a_btns == (btn_select|btn_b)) { // Secret is SELECT+B
+				break;
+			}
+		}
+
+		// Clear our error messages
+		wait_vbi();
+		print("            ", txtx, txty+1);
+		post_vbi();
+
+		wait_vbi();
+		print("                           ", txtx, txty+2);
+		post_vbi();
+
+		// Let a mark of ignoring error
+		dest = msg;
+		dest = strcpy8(dest, "Ignored erase fail "); //19
+		dest = uint_to_hex8(dest, sector_index); //19+2=21
+		*dest = 0; //21+1=22
+		wait_vbi();
+		print(msg, txtx, txty+3);
+	}
 }
 
 static void program_page(uint32_t page_index) {
@@ -361,7 +460,7 @@ static void program_page(uint32_t page_index) {
 }
 
 static bool check_segment(uint32_t segment_index) {
-	uint32_t const rainbow_segment_index = segment_index + first_sector * (sector_size / segment_size);
+	uint32_t const rainbow_segment_index = segment_index + first_game_sector * (sector_size / segment_size);
 	uint32_t const segments_per_bank = bank_size / segment_size;
 	uint8_t const bank_index = rainbow_segment_index / segments_per_bank;
 	uint8_t* const segment_addr = (uint8_t*)0x8000 + (rainbow_segment_index % segments_per_bank) * segment_size;
@@ -428,7 +527,7 @@ void rainbow_rescue() {
 
 	// Check sizes match
 	_Static_assert(flash_rom_size % sector_size == 0, "non integer number of sectors in the ROM");
-	_Static_assert(flash_rom_size / sector_size < 256 - first_sector, "too many sectors to fit in uint8");
+	_Static_assert(flash_rom_size / sector_size < 256 - first_game_sector, "too many sectors to fit in uint8");
 
 	_Static_assert(sector_size % bank_size == 0, "non integer number of banks in a sector");
 
@@ -504,8 +603,8 @@ void rainbow_rescue() {
 	print("`--------------------------'", frame_col-1, frame_line+frame_height);
 
 	// Compute text position
-	uint8_t const txtx = frame_col;
-	uint8_t const txty = frame_line + frame_height + 1;
+	txtx = frame_col;
+	txty = frame_line + frame_height + 1;
 
 	// Set attributes
 	{
@@ -537,6 +636,10 @@ void rainbow_rescue() {
 	PPUMASK = ppumask_val(false, false, false, false, true, true, true, false);
 	post_vbi();
 
+	// Add an entry in error log to explain what it is
+	error_log("Error journal:");
+	error_log("");
+
 	// Flash all sectors
 	char msg[frame_width+1];
 	uint32_t page_index = 0;
@@ -545,11 +648,9 @@ void rainbow_rescue() {
 	for (uint8_t sector_index = 0; sector_index < nb_sectors; ++sector_index) {
 		// Erase sector
 		progress(msg, "Erase sector ", sector_index+1, " / ", nb_sectors, frame_width);
-		wait_vbi();
-		print(msg, txtx, txty);
-		post_vbi();
+		say(msg);
 
-		erase_sector(first_sector + sector_index);
+		erase_game_sector(sector_index);
 
 		// Update visualization frame
 		uint16_t erased_segment_index = segment_index;
@@ -582,9 +683,7 @@ void rainbow_rescue() {
 			uint32_t const segment_pages_end = page_index + (segment_size / page_size);
 			while (page_index < segment_pages_end) {
 				progress(msg, "Write page ", page_index+1, " / ", nb_pages, frame_width);
-				wait_vbi();
-				print(msg, txtx, txty);
-				post_vbi();
+				say(msg);
 
 				program_page(page_index);
 				++page_index;
@@ -613,9 +712,7 @@ void rainbow_rescue() {
 		msg[i] = ' ';
 	}
 	msg[frame_width] = 0;
-	wait_vbi();
-	print(msg, txtx, txty);
-	post_vbi();
+	say(msg);
 
 	if (nb_errors == 0) {
 		wait_vbi();

@@ -17,9 +17,25 @@ bank_data_begin:
 
 .(
 bank_data_begin:
+#include "rainbow-boot/utils.asm"
+#echo
+#echo Utils:
+#print *-bank_data_begin
+.)
+
+.(
+bank_data_begin:
 #include "rainbow-boot/crc32.asm"
 #echo
 #echo CRC-32 code:
+#print *-bank_data_begin
+.)
+
+.(
+bank_data_begin:
+#include "rainbow-boot/flash.asm"
+#echo
+#echo flash code:
 #print *-bank_data_begin
 .)
 

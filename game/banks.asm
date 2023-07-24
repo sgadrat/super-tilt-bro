@@ -6,7 +6,7 @@
 ;
 
 #ifdef MAPPER_RAINBOW
-; First 64K of Rainbow can be a 64K sector, multiple smaller sectors.
+; First 64K of Rainbow can be a 64K sector, or multiple smaller sectors.
 ; Also it contains the init vectors.
 ;
 ; To avoid the mess of flashing different-sized models, use it to store
