@@ -10,14 +10,15 @@ erase_sector_ram:
 .(
 	; Erase command sequence
 	lda #$aa
-	ldx #$55
-	ldy #$80
-
 	sta $8aaa
-	stx $8555
-	sty $8aaa
+	lda #$55
+	sta $8555
+	lda #$80
 	sta $8aaa
-	stx $8555
+	lda #$aa
+	sta $8aaa
+	lda #$55
+	sta $8555
 
 	; Actual sector erase command
 	lda #$30
