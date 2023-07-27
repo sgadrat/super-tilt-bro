@@ -46,6 +46,7 @@ void crc32_init();
 void crc32_add_page();
 void crc32_finalize();
 
+void prepare_flash_code();
 void erase_sector();
 
 void rescue_fetch_controllers();
@@ -639,6 +640,9 @@ void rainbow_rescue() {
 	// Add an entry in error log to explain what it is
 	error_log("Error journal:");
 	error_log("");
+
+	// Prepare flash code
+	prepare_flash_code();
 
 	// Flash all sectors
 	char msg[frame_width+1];

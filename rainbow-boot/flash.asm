@@ -4,9 +4,24 @@
 ;;   www.infineon.com/dgdl/Infineon-S29GL064S_64-MBIT_(8_MBYTE)_3.0_V_FLASH_MEMORY-DataSheet-v09_00-EN.pdf?fileId=8ac78c8c7d0d8da4017d0ed12bd84d2d
 
 .(
-erase_sector_rom = *
-* = $0200
-erase_sector_ram:
+flash_code_rom = *
+* = flash_code_ram
+
+; Erase a flash sector
+;  Swapable bank must be on the first bank of the sector
+;
+;  Return value in erase_sector_result
+;   U... RRRR
+;   |    \____ Result
+;   \_________ Usable - 0 if the chip can be used, 1 if it is in an unstable state
+;
+;  Result values
+;   - 0, Success
+;   - 1, Timeout
+;   - 2, Failure
+;
+;  If the chip is in an unstable state, there is no better solution than power-off/power-on the system
++erase_sector:
 .(
 	; Erase command sequence
 	lda #$aa
@@ -249,38 +264,26 @@ fatal_timeout:
 	second_line:
 		.byt "Please shutdown, and retry.", 0
 .)
-erase_sector_end = *
-erase_sector_size = erase_sector_end - erase_sector_ram
-* = erase_sector_rom + erase_sector_size
+flash_code_end = *
+flash_code_size = flash_code_end - flash_code_ram
+* = flash_code_rom + flash_code_size
 
-; Erase a flash sector
-;  Swapable bank must be on the first bank of the sector
-;
-;  Return value in erase_sector_result
-;   U... RRRR
-;   |    \____ Result
-;   \_________ Usable - 0 if the chip can be used, 1 if it is in an unstable state
-;
-;  Result values
-;   - 0, Success
-;   - 1, Timeout
-;   - 2, Failure
-;
-;  If the chip is in an unstable state, there is no better solution than power-off/power-on the system
-+erase_sector:
+; Place flash code in RAM
+;  Call this before any call on a flashing routine
++prepare_flash_code:
 .(
 	; Copy real implementation in RAM
 	rom_addr = erase_sector_status
 	ram_addr = erase_sector_status+2 ; Note - this works because we can safely overflow on erase_sector_result
 
-	lda #<erase_sector_rom
+	lda #<flash_code_rom
 	sta rom_addr
-	lda #>erase_sector_rom
+	lda #>flash_code_rom
 	sta rom_addr+1
 
-	lda #<erase_sector_ram
+	lda #<flash_code_ram
 	sta ram_addr
-	lda #>erase_sector_ram
+	lda #>flash_code_ram
 	sta ram_addr+1
 
 	copy_one_page:
@@ -300,11 +303,9 @@ erase_sector_size = erase_sector_end - erase_sector_ram
 
 		; Check if we copied all necessary pages
 		lda ram_addr+1
-		cmp #>(erase_sector_end+$0100)
+		cmp #>(flash_code_end+$0100)
 		bne copy_one_page
 
-	; Execute from RAM
-	jmp erase_sector_ram
-	;rts ; useless, jump to subroutine
+	rts
 .)
 .)

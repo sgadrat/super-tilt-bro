@@ -15,4 +15,7 @@ cursor = last_c_label + 1
 
 +erase_sector_status = cursor : -cursor += 3
 +erase_sector_result = cursor : -cursor += 1
+
++program_data = $0200
++flash_code_ram = $0300
 .)
