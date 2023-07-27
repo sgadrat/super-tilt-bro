@@ -41,6 +41,22 @@ bank_data_begin:
 
 .(
 bank_data_begin:
+#include "rainbow-boot/huffmunch.asm"
+#echo
+#echo huffmunch code:
+#print *-bank_data_begin
+.)
+
+.(
+bank_data_begin:
+#include "rainbow-boot/compression.asm"
+#echo
+#echo compression code:
+#print *-bank_data_begin
+.)
+
+.(
+bank_data_begin:
 #include "rainbow-boot/rescue.built.asm"
 #echo
 #echo Rescue code:

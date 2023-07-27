@@ -16,6 +16,16 @@ cursor = last_c_label + 1
 +erase_sector_status = cursor : -cursor += 3
 +erase_sector_result = cursor : -cursor += 1
 
++hfm_data_stream_index = cursor : -cursor += 2
++decompress_page_result = cursor : -cursor += 1
++decompress_current_byte = cursor : -cursor += 1
++huffmunch_zpblock = cursor : -cursor += 9
+
+#if cursor > $ff
+#print cursor
+#error no more space in zero page
+#endif
+
 +program_data = $0200
 +flash_code_ram = $0300
 .)

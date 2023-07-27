@@ -33,7 +33,9 @@ extern uint8_t volatile RAINBOW_WIFI_CONF;
 
 extern uint32_t crc32_value;
 extern uint8_t* crc32_address;
+extern uint8_t decompress_page_result;
 extern uint8_t erase_sector_result;
+extern uint16_t hfm_data_stream_index;
 extern uint8_t log_position;
 extern uint8_t rescue_controller_a_btns;
 extern uint8_t scroll_state;
@@ -48,6 +50,8 @@ void crc32_finalize();
 
 void prepare_flash_code();
 void erase_sector();
+void decompress_page();
+//void program_page();
 
 void rescue_fetch_controllers();
 
@@ -74,6 +78,8 @@ static uint8_t const btn_down = 0x04;
 static uint8_t const btn_up = 0x08;
 #pragma GCC diagnostic pop
 
+static uint8_t const rescue_img_index_bank = 63;
+
 //
 // Vocabulary:
 //  sector:     64 KB. A flash sector, the unit that can be erased at once
@@ -92,13 +98,13 @@ static uint32_t const sector_size = 65536; // 64 KB - Size of a flash sector (we
 static uint8_t const nb_sectors = flash_rom_size / sector_size;
 static uint8_t const first_game_sector = 1;
 
-static uint32_t const bank_size = 16384; // 16 KB - Size of a bank in the ROM (game and bootcode both use 16 KB banks)
+static uint16_t const bank_size = 16384; // 16 KB - Size of a bank in the ROM (game and bootcode both use 16 KB banks)
 
-static uint32_t const segment_size = 1024; // 1 KB - Size of a segment shown in screen
-static uint32_t const flash_nb_segments = flash_rom_size / segment_size;
+static uint16_t const segment_size = 1024; // 1 KB - Size of a segment shown in screen
+static uint16_t const flash_nb_segments = flash_rom_size / segment_size;
 
-static uint32_t const page_size = 256; // We program the flash page per page
-static uint32_t const nb_pages = flash_rom_size / page_size;
+static uint16_t const page_size = 256; // We program the flash page per page
+static uint16_t const nb_pages = flash_rom_size / page_size;
 static uint8_t const nb_pages_per_segment = segment_size / page_size;
 
 // -----------------------
@@ -313,6 +319,11 @@ static void error_log(char const* message) {
 
 	wait_vbi();
 	cpu_to_ppu((uint8_t const*)message, 0x2800 + line * 32 + col, len);
+	if (len < 26) {
+		for(uint8_t free = 26 - len; free > 0; --free) {
+			PPUDATA = ' ';
+		}
+	}
 	post_vbi();
 }
 
@@ -455,14 +466,53 @@ static void erase_game_sector(uint8_t sector_index) {
 	}
 }
 
-static void program_page(uint32_t page_index) {
+static void program_game_page(uint16_t page_index) {
+	// Find bank in which the compressed page is stored
+	switch_bank(rescue_img_index_bank);
+	uint8_t const nb_img_banks = *((uint8_t const*)0xbfff);
+	uint16_t const* const hfm_bank_table = ((uint16_t const*)0xbfff) - nb_img_banks;
+
+	uint16_t hfm_bank_first_page = 0; // Index of the first page stored in the bank "hfm_bank_index"
+	uint8_t hfm_bank_index = 0;
+	while (hfm_bank_table[hfm_bank_index] <= page_index) {
+		hfm_bank_first_page = hfm_bank_table[hfm_bank_index];
+		++hfm_bank_index;
+	}
+
+	// Compute page offset in the compressed bank
+	uint8_t const compressed_page_bank = rescue_img_index_bank - nb_img_banks + hfm_bank_index;
+	hfm_data_stream_index = page_index - hfm_bank_first_page;
+
+	// Load page in RAM
+	switch_bank(compressed_page_bank);
+	decompress_page();
+
+	if (decompress_page_result != 0) {
+		char msg[21];
+		char* dest = msg;
+		dest = strcpy8(dest, "Unzip FAIL "); //11
+		dest = uint_to_str(dest, page_index); //11+5=16
+		dest = strcpy8(dest, ": "); //16+2=18
+		dest = uint_to_hex8(dest, decompress_page_result); //18+2=20
+		*dest = 0; //20+1=21
+		error_log(msg);
+		return;
+	}
+
+	// Switch to bank containing the page
+	//uint16_t const rainbow_page_index = first_game_sector * nb_pages_per_sector;
 	//TODO
-	(void)page_index;
+
+	// Set page's offset from bank's begining
+	//TODO
+
+	// Flash page from RAM
+	//program_page();
 }
 
-static bool check_segment(uint32_t segment_index) {
-	uint32_t const rainbow_segment_index = segment_index + first_game_sector * (sector_size / segment_size);
-	uint32_t const segments_per_bank = bank_size / segment_size;
+static bool check_segment(uint16_t segment_index) {
+	uint16_t const rainbow_segment_index = segment_index + first_game_sector * (sector_size / segment_size);
+	uint16_t const segments_per_bank = bank_size / segment_size;
 	uint8_t const bank_index = rainbow_segment_index / segments_per_bank;
 	uint8_t* const segment_addr = (uint8_t*)0x8000 + (rainbow_segment_index % segments_per_bank) * segment_size;
 
@@ -488,7 +538,6 @@ static bool check_segment(uint32_t segment_index) {
 #endif
 
 	// Load reference CRC value
-	uint8_t const rescue_img_index_bank = 63;
 	uint32_t const* const reference_crc_table = (uint32_t const*)0x8000;
 	switch_bank(rescue_img_index_bank);
 	uint32_t const reference_crc = reference_crc_table[segment_index];
@@ -646,7 +695,7 @@ void rainbow_rescue() {
 
 	// Flash all sectors
 	char msg[frame_width+1];
-	uint32_t page_index = 0;
+	uint16_t page_index = 0;
 	uint16_t segment_index = 0;
 	uint16_t nb_errors = 0;
 	for (uint8_t sector_index = 0; sector_index < nb_sectors; ++sector_index) {
@@ -658,7 +707,7 @@ void rainbow_rescue() {
 
 		// Update visualization frame
 		uint16_t erased_segment_index = segment_index;
-		uint32_t const sector_segments_end = segment_index + (sector_size / segment_size);
+		uint16_t const sector_segments_end = segment_index + (sector_size / segment_size);
 		while (erased_segment_index < sector_segments_end) {
 			uint16_t const frame_ppu_addr = 0x2000 + frame_line * 32 + frame_col;
 			uint16_t const segment_ppu_addr = frame_ppu_addr + (erased_segment_index / frame_width) * 32 + erased_segment_index % frame_width;
@@ -684,12 +733,12 @@ void rainbow_rescue() {
 			post_vbi();
 
 			// Program pages
-			uint32_t const segment_pages_end = page_index + (segment_size / page_size);
+			uint16_t const segment_pages_end = page_index + (segment_size / page_size);
 			while (page_index < segment_pages_end) {
 				progress(msg, "Write page ", page_index+1, " / ", nb_pages, frame_width);
 				say(msg);
 
-				program_page(page_index);
+				program_game_page(page_index);
 				++page_index;
 			}
 
