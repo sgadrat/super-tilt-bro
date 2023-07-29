@@ -13,8 +13,11 @@ cursor = last_c_label + 1
 +txtx = cursor : -cursor += 1
 +txty = cursor : -cursor += 1
 
-+erase_sector_status = cursor : -cursor += 3
++flash_operation_status = cursor : -cursor += 4
++flash_operation_address = cursor : -cursor += 1
 +erase_sector_result = cursor : -cursor += 1
++program_page_result_flags = cursor : -cursor += 1
++program_page_result_count = cursor : -cursor += 1
 
 +hfm_data_stream_index = cursor : -cursor += 2
 +decompress_page_result = cursor : -cursor += 1

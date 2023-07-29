@@ -37,6 +37,9 @@ extern uint8_t decompress_page_result;
 extern uint8_t erase_sector_result;
 extern uint16_t hfm_data_stream_index;
 extern uint8_t log_position;
+extern uint8_t* flash_operation_address;
+extern uint8_t program_page_result_flags;
+extern uint8_t program_page_result_count;
 extern uint8_t rescue_controller_a_btns;
 extern uint8_t scroll_state;
 extern uint8_t const tileset_rainbow_rescue;
@@ -51,7 +54,7 @@ void crc32_finalize();
 void prepare_flash_code();
 void erase_sector();
 void decompress_page();
-//void program_page();
+void program_page();
 
 void rescue_fetch_controllers();
 
@@ -105,6 +108,8 @@ static uint16_t const flash_nb_segments = flash_rom_size / segment_size;
 
 static uint16_t const page_size = 256; // We program the flash page per page
 static uint16_t const nb_pages = flash_rom_size / page_size;
+static uint16_t const nb_pages_per_sector = sector_size / page_size;
+static uint8_t const nb_pages_per_bank = bank_size / page_size;
 static uint8_t const nb_pages_per_segment = segment_size / page_size;
 
 // -----------------------
@@ -128,6 +133,10 @@ static uint8_t ptr_msb(void const* ptr) {
 	return u16_msb((uint16_t)ptr);
 }
 #endif
+
+static uint8_t* ptr(uint8_t lsb, uint8_t msb) {
+	return (uint8_t*)((((uint16_t)msb) << 8) + lsb);
+}
 
 // -----------------------------------------
 // Access to labels containing useful values
@@ -334,21 +343,21 @@ static char hex_digit(uint8_t value) {
 	return 'a' - 10 + value;
 }
 
-static char* uint_to_hex32(char* dest, uint32_t value) {
-	*(dest++) = hex_digit((value >> 28) & 0x0000000f);
-	*(dest++) = hex_digit((value >> 24) & 0x0000000f);
-	*(dest++) = hex_digit((value >> 20) & 0x0000000f);
-	*(dest++) = hex_digit((value >> 16) & 0x0000000f);
-	*(dest++) = hex_digit((value >> 12) & 0x0000000f);
-	*(dest++) = hex_digit((value >> 8) & 0x0000000f);
-	*(dest++) = hex_digit((value >> 4) & 0x0000000f);
-	*(dest++) = hex_digit((value >> 0) & 0x0000000f);
+static char* uint_to_hex8(char* dest, uint8_t value) {
+	*(dest++) = hex_digit((value >> 4) & 0x0f);
+	*(dest++) = hex_digit((value >> 0) & 0x0f);
 	return dest;
 }
 
-static char* uint_to_hex8(char* dest, uint8_t value) {
-	*(dest++) = hex_digit((value >> 4) & 0x0000000f);
-	*(dest++) = hex_digit((value >> 0) & 0x0000000f);
+static char* uint_to_hex16(char* dest, uint16_t value) {
+	dest = uint_to_hex8(dest, value >> 8);
+	dest = uint_to_hex8(dest, value & 0x00ff);
+	return dest;
+}
+
+static char* uint_to_hex32(char* dest, uint32_t value) {
+	dest = uint_to_hex16(dest, value >> 16);
+	dest = uint_to_hex16(dest, value & 0x0000ffff);
 	return dest;
 }
 
@@ -400,6 +409,35 @@ static void progress(char* dest, char const* prefix, uint32_t value, char const*
 	*dest = 0;
 }
 
+static void fatal_error() {
+	// Tell the user it failed badly
+	wait_vbi();
+	print("FATAL ERROR.", txtx, txty+1);
+	post_vbi();
+
+	wait_vbi();
+	print("Please shutdown, and retry.", txtx, txty+2);
+	post_vbi();
+
+	// Wait for the system being reboot, or the user to press the secret key combinaison to try to ignore the error
+	while(true) {
+		wait_vbi();
+		post_vbi();
+		if (rescue_controller_a_btns == (btn_select|btn_b)) { // Secret is SELECT+B
+			break;
+		}
+	}
+
+	// Clear our error messages
+	wait_vbi();
+	print("            ", txtx, txty+1);
+	post_vbi();
+
+	wait_vbi();
+	print("                           ", txtx, txty+2);
+	post_vbi();
+}
+
 static void erase_game_sector(uint8_t sector_index) {
 	uint8_t const rainbow_sector_index = first_game_sector + sector_index;
 	uint8_t const banks_per_sector = sector_size / bank_size;
@@ -429,32 +467,8 @@ static void erase_game_sector(uint8_t sector_index) {
 	say(msg);
 
 	if (fatal) {
-		// Tell the user it failed badly
-		wait_vbi();
-		print("FATAL ERROR.", txtx, txty+1);
-		post_vbi();
-
-		wait_vbi();
-		print("Please shutdown, and retry.", txtx, txty+2);
-		post_vbi();
-
-		// Wait for the system being reboot, or the user to press the secret key combinaison to try to ignore the error
-		while(true) {
-			wait_vbi();
-			post_vbi();
-			if (rescue_controller_a_btns == (btn_select|btn_b)) { // Secret is SELECT+B
-				break;
-			}
-		}
-
-		// Clear our error messages
-		wait_vbi();
-		print("            ", txtx, txty+1);
-		post_vbi();
-
-		wait_vbi();
-		print("                           ", txtx, txty+2);
-		post_vbi();
+		// Display the fatal error message
+		fatal_error();
 
 		// Let a mark of ignoring error
 		dest = msg;
@@ -463,6 +477,7 @@ static void erase_game_sector(uint8_t sector_index) {
 		*dest = 0; //21+1=22
 		wait_vbi();
 		print(msg, txtx, txty+3);
+		post_vbi();
 	}
 }
 
@@ -499,15 +514,41 @@ static void program_game_page(uint16_t page_index) {
 		return;
 	}
 
-	// Switch to bank containing the page
-	//uint16_t const rainbow_page_index = first_game_sector * nb_pages_per_sector;
-	//TODO
-
-	// Set page's offset from bank's begining
-	//TODO
-
 	// Flash page from RAM
-	//program_page();
+	uint16_t const rainbow_page_index = first_game_sector * nb_pages_per_sector + page_index;
+	uint8_t const raibow_bank_index = rainbow_page_index / nb_pages_per_bank;
+	uint8_t const program_page_index_in_bank = rainbow_page_index - (raibow_bank_index * nb_pages_per_bank);
+	flash_operation_address = ptr(0x00, 0x80 + program_page_index_in_bank);
+	switch_bank(raibow_bank_index);
+	program_page();
+
+	if (program_page_result_flags != 0) {
+		char msg[24];
+		char* dest = msg;
+		dest = strcpy8(dest, "Write FAIL "); //11
+		dest = uint_to_str(dest, page_index); //11+5=16
+		dest = strcpy8(dest, ": "); //16+2=18
+		dest = uint_to_hex8(dest, program_page_result_flags); //18+2=20
+		dest = uint_to_hex8(dest, program_page_result_count); //20+2=22
+		*dest = 0; //22+1=23
+		error_log(msg);
+
+		if (program_page_result_flags & 0x80) {
+			// Display the fatal error message
+			fatal_error();
+
+			// Let a mark of ignoring error
+			dest = msg;
+			dest = strcpy8(dest, "Ignored write fail "); //19
+			dest = uint_to_hex16(dest, page_index); //19+4=23
+			*dest = 0; //23+1=24
+			wait_vbi();
+			print(msg, txtx, txty+3);
+			post_vbi();
+		}
+
+		return;
+	}
 }
 
 static bool check_segment(uint16_t segment_index) {
