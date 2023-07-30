@@ -6,63 +6,72 @@
 
 +rainbow_reset:
 .(
-	;TODO Choose between rebooting in rescue mode, or on the game
+	; Choose between rebooting in rescue mode, or on the game
+	btn_select = $20
+	btn_b = $40
+	jsr rescue_fetch_controllers
 
-	; Boot rescue mode
-	.(
-		; Generic initialization code
-		sei               ; disable IRQs
-		ldx #$40
-		cld               ; disable decimal mode
-		stx APU_FRAMECNT  ; disable APU frame IRQ
-		ldx #$FF
-		txs               ; Set up stack
-		inx               ; now X = 0
-		stx PPUCTRL       ; disable NMI
-		stx PPUMASK       ; disable rendering
-		stx APU_DMC_FLAGS ; disable DMC IRQs
+	lda rescue_controller_a_btns
+	cmp #btn_select+btn_b
+	beq boot_rescue
 
-		; Ensure memory is zero-ed
-		ldx #0
-        clrmem:
-        lda #$00
-        sta $0000, x
-        sta $0100, x
-		sta $0200, x
-        sta $0300, x
-        sta $0400, x
-        sta $0500, x
-        sta $0600, x
-        sta $0700, x
-        inx
-        bne clrmem
+		; Boot the game
+		boot_game:
+		.(
+			rainbow_trampoline_init_ram = $100
 
-		; Initialize C stack
-		lda #<c_stack_end
-		sta _sp0
-		lda #>c_stack_end
-		sta _sp1
+			; Copy trampoline init in RAM
+			ldx #rainbow_trampoline_init_end-rainbow_trampoline_init-1
+			copy_one_byte:
+				lda rainbow_trampoline_init, x
+				sta rainbow_trampoline_init_ram, x
 
-		; Call rainbow rescue code
-		jmp rainbow_rescue
-	.)
+				dex
+				bpl copy_one_byte
 
-	; Boot the game
-	.(
-		rainbow_trampoline_init_ram = $100
+			; Execute trampoline init
+			jmp rainbow_trampoline_init_ram
+		.)
 
-		; Copy trampoline init in RAM
-		ldx #rainbow_trampoline_init_end-rainbow_trampoline_init-1
-		copy_one_byte:
-			lda rainbow_trampoline_init, x
-			sta rainbow_trampoline_init_ram, x
+		; Boot rescue mode
+		boot_rescue:
+		.(
+			; Generic initialization code
+			sei               ; disable IRQs
+			ldx #$40
+			cld               ; disable decimal mode
+			stx APU_FRAMECNT  ; disable APU frame IRQ
+			ldx #$ff
+			txs               ; Set up stack
+			inx               ; now X = 0
+			stx PPUCTRL       ; disable NMI
+			stx PPUMASK       ; disable rendering
+			stx APU_DMC_FLAGS ; disable DMC IRQs
 
-			dex
-			bpl copy_one_byte
+			; Ensure memory is zero-ed
+			ldx #0
+			clrmem:
+			lda #$00
+			sta $0000, x
+			sta $0100, x
+			sta $0200, x
+			sta $0300, x
+			sta $0400, x
+			sta $0500, x
+			sta $0600, x
+			sta $0700, x
+			inx
+			bne clrmem
 
-		; Execute trampoline init
-		jmp rainbow_trampoline_init_ram
-	.)
+			; Initialize C stack
+			lda #<c_stack_end
+			sta _sp0
+			lda #>c_stack_end
+			sta _sp1
+
+			; Call rainbow rescue code
+			jmp rainbow_rescue
+		.)
 .)
 
 rainbow_trampoline_init:

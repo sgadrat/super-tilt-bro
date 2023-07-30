@@ -765,6 +765,7 @@ void rainbow_rescue() {
 	post_vbi();
 
 	// Querry user's confirmation
+	uint8_t last_frame_btns = 0;
 	while(true) {
 		if (rescue_controller_a_btns == btn_left) {
 			dialog_state = 1;
@@ -772,7 +773,7 @@ void rainbow_rescue() {
 		if (rescue_controller_a_btns == btn_right || rescue_controller_a_btns == btn_b) {
 			dialog_state = 0;
 		}
-		if (rescue_controller_a_btns == btn_start) {
+		if (rescue_controller_a_btns == 0 && last_frame_btns == btn_start) {
 			if (dialog_state == 1) {
 				break;
 			}
@@ -783,6 +784,7 @@ void rainbow_rescue() {
 
 		wait_vbi();
 		print(choice_text[dialog_state], box_col, choice_line);
+		last_frame_btns = rescue_controller_a_btns;
 		post_vbi();
 	}
 
