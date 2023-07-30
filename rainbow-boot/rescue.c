@@ -38,6 +38,7 @@ extern uint8_t erase_sector_result;
 extern uint16_t hfm_data_stream_index;
 extern uint8_t log_position;
 extern uint8_t* flash_operation_address;
+extern uint8_t ppuctrl_mirror;
 extern uint8_t program_page_result_flags;
 extern uint8_t program_page_result_count;
 extern uint8_t rescue_controller_a_btns;
@@ -272,20 +273,33 @@ static uint8_t strlen8(char const* s) {
 static void scroll(uint16_t x, uint16_t y) {
 	PPUSTATUS;
 	PPUSCROLL = u16_lsb(x);
-	PPUSCROLL = 0; //(y >= 240 ? y - 240 : y);
+	PPUSCROLL = (uint8_t)(y >= 240 ? y - 240 : y);
 
-	uint8_t const ppuctrl = PPUCTRL & 0xfc; // 1111 1100 - set scroll bits to zero
+	uint8_t const ppuctrl = ppuctrl_mirror & 0xfc; // 1111 1100 - set scroll bits to zero
 	PPUCTRL = ppuctrl | (y >= 240 ? 2 : 0) | (x >= 256 ? 1 : 0);
+}
+
+static void set_scroll(bool locked, uint16_t y) {
+	scroll_state = ((locked?0x80:0x00) | (y / 8));
+}
+
+static uint16_t scroll_pos() {
+	return ((uint16_t)(scroll_state & 0x7f)) * 8;
 }
 
 static void post_vbi() {
 	rescue_fetch_controllers();
-	if (rescue_controller_a_btns == btn_up) {
-		scroll_state = 0;
-	}else if (rescue_controller_a_btns == btn_down) {
-		scroll_state = 1;
+
+	bool const scroll_lock = (scroll_state & 0x80);
+	if (!scroll_lock) {
+		if (rescue_controller_a_btns == btn_up) {
+			set_scroll(false, 0);
+		}else if (rescue_controller_a_btns == btn_down) {
+			set_scroll(false, 240);
+		}
 	}
-	scroll(0, scroll_state ? 240 : 0);
+
+	scroll(0, scroll_pos());
 }
 
 static void set_attribute(uint8_t nametable, uint8_t x, uint8_t y, uint8_t value) {
@@ -721,11 +735,78 @@ void rainbow_rescue() {
 		}
 	}
 
-	// Reactivate display
+	// Draw warning message
+	uint8_t dialog_state = 0;
+	static char const* choice_text[2] = {
+		"|    yes          >NO<   |",
+		"|   >YES<          no    |"
+	};
+
+	uint8_t const bottom_screen_first_line = 64;
+	uint8_t const first_box_line = bottom_screen_first_line+10;
+	uint8_t box_line = first_box_line;
+	uint8_t const box_col = 3;
+	print(".------------------------.", box_col, box_line++);
+	print("|    Reset to factory    |", box_col, box_line++);
+	print("|                        |", box_col, box_line++);
+	print("| This will erase your   |", box_col, box_line++);
+	print("| game and all updates.  |", box_col, box_line++);
+	print("|------------------------|", box_col, box_line++);
+	uint8_t const choice_line = box_line;
+	print(choice_text[dialog_state], box_col, box_line++);
+	print("`------------------------'", box_col, box_line++);
+
+	// Display warning message
+	set_scroll(true, 240);
 	wait_vbi();
-	PPUCTRL = ppuctrl_val(false, false, bg_patterns == 0x1000, sprites_patterns == 0x1000, false, 0);
+	ppuctrl_mirror = ppuctrl_val(false, false, bg_patterns == 0x1000, sprites_patterns == 0x1000, false, 0);
+	PPUCTRL = ppuctrl_mirror;
 	PPUMASK = ppumask_val(false, false, false, false, true, true, true, false);
 	post_vbi();
+
+	// Querry user's confirmation
+	while(true) {
+		if (rescue_controller_a_btns == btn_left) {
+			dialog_state = 1;
+		}
+		if (rescue_controller_a_btns == btn_right || rescue_controller_a_btns == btn_b) {
+			dialog_state = 0;
+		}
+		if (rescue_controller_a_btns == btn_start) {
+			if (dialog_state == 1) {
+				break;
+			}
+			asm(
+				"jmp ($fffc)"
+			);
+		}
+
+		wait_vbi();
+		print(choice_text[dialog_state], box_col, choice_line);
+		post_vbi();
+	}
+
+	// Clear warning message while scrolling up to state
+	static uint16_t const scroll_steps[] = {
+		// Accelerate
+		240-8, 240-8-8, 240-16-16, 240-32-32,
+		// Travel
+		176-32, 144-32, 112-32, 80-32,
+		// Decelerate
+		48-24, 24-16,
+	};
+	uint8_t const nb_steps = sizeof(scroll_steps) / sizeof(uint16_t);
+	_Static_assert(nb_steps >= 8, "not enough steps to clear warning");
+
+	for (uint8_t step = 0; step < nb_steps; ++step) {
+		set_scroll(true, scroll_steps[step]);
+		wait_vbi();
+		if (step < 8) {
+			print("                          ", box_col, first_box_line + step);
+		}
+		post_vbi();
+	}
+	set_scroll(false, 0);
 
 	// Add an entry in error log to explain what it is
 	error_log("Error journal:");
