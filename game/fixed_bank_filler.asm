@@ -36,17 +36,19 @@
 ; Fill bank's empty space
 ;
 
-.dsb $fffa-*, $ff
+.dsb $fff8-*, $ff
 
 ;
 ; Set entry points vectors
 ;
 
 #ifdef SERVER_BYTECODE
+.word server_bytecode_init  ; Rainbow-safe RESET
 .word server_bytecode_tick  ; NMI
 .word server_bytecode_init  ; RESET
 .word server_bytecode_error ; IRQ
 #else
+.word mapper_init   ; Rainbow-safe RESET
 .word nmi           ; NMI
 .word mapper_init   ; RESET
 .word cursed        ; IRQ

@@ -85,6 +85,6 @@ rainbow_trampoline_init:
 	sta RAINBOW_PRG_BANKING_MODE
 
 	; Jump to new reset vector
-	jmp ($fffc)
+	jmp ($fff8)
 .)
 rainbow_trampoline_init_end:
