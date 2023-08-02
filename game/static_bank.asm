@@ -21,7 +21,6 @@
 ; Files that have to be in the static bank
 ;
 
-#include "game/logic/rescue.asm"
 #include "game/logic/mapper_init.asm"
 
 ;

@@ -574,7 +574,6 @@ static void update_game() {
 	}
 
 	n_read = esp_read_file(header_len);
-	uint8_t const safe = (&esp_rx_buffer)[3];
 	RAINBOW_WIFI_RX = 0;
 	if (n_read != header_len) {
 		draw_dialog_string(0x2146, 3, "error  truncated");
@@ -586,14 +585,8 @@ static void update_game() {
 	//TODO
 
 	// Call flash routine
-	*PPUCTRL = ((*ppuctrl_val) & 0x7f); // Disable NMI
-	*PPUMASK = 0; // Disable rendering
-	*APU_STATUS = 0x08; // Enable only noise channel
-	if (safe) {
-		flash_safe_sectors();
-	}else {
-		flash_all_sectors();
-	}
+	// FIXME rewrite a flash routine for rainbow2
+	draw_dialog_string(0x2146, 3, "error  TODO");
 }
 
 static uint8_t select_setting_input(uint8_t* current_setting, uint8_t controller_btns, uint8_t last_frame_btns) {
