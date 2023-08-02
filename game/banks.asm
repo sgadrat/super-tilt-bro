@@ -79,8 +79,7 @@
 ;; mod banks (this line will be replaced by mod compilation tool)
 
 #define CURRENT_BANK_NUMBER FIRST_GAME_BANK+$1f
-#include "game/fixed_bank_updatable.asm"
-#include "game/static_bank.asm"
+#include "game/fixed_bank.asm"
 
 ; Rainbow mapper needs 1024 bytes ROMS, fill it with empty banks
 #ifdef MAPPER_RAINBOW

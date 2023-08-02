@@ -1265,7 +1265,7 @@ apply_force_vector_direct:
 
 	rts ; TODO optimizable by jmp instead of jsr on the routine above. Kept for now as it may help profiling tools.
 
-;TODO comment usage and put in static bank
+;TODO comment usage
 #define TWT(x) (x*4*12)/10
 	plus_20_percent:
 		.byt TWT(0), TWT(1), TWT(2), TWT(3), TWT(4), TWT(5), TWT(6), TWT(7)

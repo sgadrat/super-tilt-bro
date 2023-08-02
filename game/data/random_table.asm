@@ -1,5 +1,5 @@
 ; 256 random bytes for speedy/easy random number generation
-random_table:
++random_table:
 .byt $c5, $19, $9f, $36, $2f, $3f, $bd, $1a, $f2, $d6, $46, $3a, $a5, $07, $29, $43
 .byt $fd, $f7, $8d, $05, $f7, $8a, $ae, $90, $11, $ff, $86, $e5, $ff, $4f, $34, $f6
 .byt $a5, $7b, $f4, $0b, $29, $13, $b0, $c0, $99, $59, $55, $03, $7e, $77, $20, $2b

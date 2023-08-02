@@ -1,4 +1,4 @@
-pal_to_ntsc_velocity_high_byte:
++pal_to_ntsc_velocity_high_byte:
 /* 00 */ .byt $00, $00, $01, $02, $03, $04, $05, $05, $06, $07, $08, $09, $0a, $0a, $0b, $0c
 /* 10 */ .byt $0d, $0e, $0f, $0f, $10, $11, $12, $13, $14, $14, $15, $16, $17, $18, $19, $19
 /* 20 */ .byt $1a, $1b, $1c, $1d, $1e, $1e, $1f, $20, $21, $22, $23, $23, $24, $25, $26, $27
@@ -15,7 +15,7 @@ pal_to_ntsc_velocity_high_byte:
 /* d0 */ .byt $ad, $ae, $af, $af, $b0, $b1, $b2, $b3, $b4, $b4, $b5, $b6, $b7, $b8, $b9, $b9
 /* e0 */ .byt $ba, $bb, $bc, $bd, $be, $be, $bf, $c0, $c1, $c2, $c3, $c3, $c4, $c5, $c6, $c7
 /* f0 */ .byt $c8, $c8, $c9, $ca, $cb, $cc, $cd, $cd, $ce, $cf, $d0, $d1, $d2, $d2, $d3, $d4
-pal_to_ntsc_velocity_low_byte:
++pal_to_ntsc_velocity_low_byte:
 /* 00 */ .byt $00, $d5, $aa, $80, $55, $2a, $00, $d5, $aa, $80, $55, $2a, $00, $d5, $aa, $80
 /* 10 */ .byt $55, $2a, $00, $d5, $aa, $80, $55, $2a, $00, $d5, $aa, $80, $55, $2a, $00, $d5
 /* 20 */ .byt $aa, $80, $55, $2a, $00, $d5, $aa, $80, $55, $2a, $00, $d5, $aa, $80, $55, $2a
@@ -32,7 +32,7 @@ pal_to_ntsc_velocity_low_byte:
 /* d0 */ .byt $55, $2a, $00, $d5, $aa, $80, $55, $2a, $00, $d5, $aa, $80, $55, $2a, $00, $d5
 /* e0 */ .byt $aa, $80, $55, $2a, $00, $d5, $aa, $80, $55, $2a, $00, $d5, $aa, $80, $55, $2a
 /* f0 */ .byt $00, $d5, $aa, $80, $55, $2a, $00, $d5, $aa, $80, $55, $2a, $00, $d5, $aa, $80
-pal_to_ntsc_velocity_neg_high_byte:
++pal_to_ntsc_velocity_neg_high_byte:
 /* 00 */ .byt $2a, $2b, $2c, $2d, $2e, $2e, $2f, $30, $31, $32, $33, $33, $34, $35, $36, $37
 /* 10 */ .byt $38, $38, $39, $3a, $3b, $3c, $3d, $3d, $3e, $3f, $40, $41, $42, $42, $43, $44
 /* 20 */ .byt $45, $46, $47, $47, $48, $49, $4a, $4b, $4c, $4c, $4d, $4e, $4f, $50, $51, $51
@@ -49,7 +49,7 @@ pal_to_ntsc_velocity_neg_high_byte:
 /* d0 */ .byt $d8, $d8, $d9, $da, $db, $dc, $dd, $dd, $de, $df, $e0, $e1, $e2, $e2, $e3, $e4
 /* e0 */ .byt $e5, $e6, $e7, $e7, $e8, $e9, $ea, $eb, $ec, $ec, $ed, $ee, $ef, $f0, $f1, $f1
 /* f0 */ .byt $f2, $f3, $f4, $f5, $f6, $f6, $f7, $f8, $f9, $fa, $fb, $fb, $fc, $fd, $fe, $ff
-pal_to_ntsc_velocity_neg_low_byte:
++pal_to_ntsc_velocity_neg_low_byte:
 /* 00 */ .byt $ab, $80, $56, $2b, $00, $d6, $ab, $80, $56, $2b, $00, $d6, $ab, $80, $56, $2b
 /* 10 */ .byt $00, $d6, $ab, $80, $56, $2b, $00, $d6, $ab, $80, $56, $2b, $00, $d6, $ab, $80
 /* 20 */ .byt $56, $2b, $00, $d6, $ab, $80, $56, $2b, $00, $d6, $ab, $80, $56, $2b, $00, $d6

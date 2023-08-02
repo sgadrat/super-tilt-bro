@@ -74,10 +74,9 @@ bank_rainbow01_end:
 #print bank_rainbow01_end-bank_rainbow01_begin
 #echo
 #echo RAINBOW-01-bank free space:
-#echo FIXED-bank (static) free space:
-#print $fffa-*
+#print $fff8-*
 
-#if $fffa-* < 0
+#if $fff8-* < 0
 #error rainbow01 bank is full
 #endif
 
@@ -85,12 +84,13 @@ bank_rainbow01_end:
 ; Fill bank's empty space
 ;
 
-.dsb $fffa-*, $ff
+.dsb $fff8-*, $ff
 
 ;
 ; Set entry points vectors
 ;
 
+.word rainbow_reset ; Rainbow-safe RESET
 .word rainbow_nmi   ; NMI
 .word rainbow_reset ; RESET
 .word rainbow_irq   ; IRQ

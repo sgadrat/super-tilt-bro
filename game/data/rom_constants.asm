@@ -10,3 +10,5 @@ tech_nb_forbidden_frames:
 tech_window:
 	.byt TECH_MAX_FRAMES_BEFORE_COLLISION_PAL + TECH_NB_FORBIDDEN_FRAMES_PAL
 	.byt TECH_MAX_FRAMES_BEFORE_COLLISION_NTSC + TECH_NB_FORBIDDEN_FRAMES_NTSC
+
+velocity_table(DEFAULT_GRAVITY, default_gravity_per_system_msb, default_gravity_per_system_lsb)

@@ -22,14 +22,14 @@
 ;
 
 #echo
-#echo FIXED-bank (static) total space:
-#print $10000-$f000
+#echo FIXED-bank total space:
+#print $10000-$c000
 #echo
-#echo FIXED-bank (static) free space:
-#print $fffa-*
+#echo FIXED-bank free space:
+#print $fff8-*
 
-#if $fffa-* < 0
-#error static bank is full
+#if $fff8-* < 0
+#error FIXED-bank is full
 #endif
 
 ;

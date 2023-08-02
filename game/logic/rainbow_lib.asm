@@ -2,13 +2,13 @@
 ; Invariable messages
 ;-------------------------------------------------------------------------------
 
-esp_cmd_clear_buffers:
++esp_cmd_clear_buffers:
 	.byt 1, TOESP_MSG_CLEAR_BUFFERS
 
-esp_cmd_connect:
++esp_cmd_connect:
 	.byt 1, TOESP_MSG_SERVER_CONNECT;
 
-esp_cmd_get_esp_status:
++esp_cmd_get_esp_status:
 	.byt 1, TOESP_MSG_GET_ESP_STATUS
 
 ;-------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ esp_cmd_get_esp_status:
 ;  register X - address of the command data (msb)
 ;
 ; Overwrites all registers, tmpfield1 and tmpfield2
-esp_send_cmd_short:
++esp_send_cmd_short:
 .(
 	sta tmpfield1
 	stx tmpfield2
@@ -36,7 +36,7 @@ esp_send_cmd_short:
 ;  Any remaining bytes are parameters for the command.
 ;
 ; Overwrites all registers
-esp_send_cmd:
++esp_send_cmd:
 .(
 	; Wait for the mapper to be ready to send a message to ESP
 	jsr esp_wait_tx
@@ -82,7 +82,7 @@ esp_send_cmd:
 ;    was no message.
 ;
 ; Overwrites all registers
-esp_get_msg:
++esp_get_msg:
 .(
 	ldy #0
 
@@ -115,7 +115,7 @@ esp_get_msg:
 .)
 
 ; Wait for ESP data to be ready to read
-esp_wait_rx:
++esp_wait_rx:
 .(
 	wait_ready_bit:
 		bit RAINBOW_WIFI_RX
@@ -124,7 +124,7 @@ esp_wait_rx:
 .)
 
 ; Wait for mapper to be ready to send data to esp
-esp_wait_tx:
++esp_wait_tx:
 .(
 	wait_ready_bit:
 		bit RAINBOW_WIFI_TX
