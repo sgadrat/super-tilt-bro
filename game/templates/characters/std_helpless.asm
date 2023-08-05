@@ -22,7 +22,8 @@
 		; Allow to escape helpless mode with a walljump, else keep input dirty
 		lda player_a_walled, x
 		beq no_jump
-		lda player_a_walljump, x
+		lda player_a_special_jumps, x
+		and #%00000001
 		beq no_jump
 			jump:
 				lda player_a_walled_direction, x

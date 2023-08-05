@@ -6,11 +6,12 @@
 	&{char_name}_start_walljumping:
 	.(
 		; Deny to start jump state if the player used all it's jumps
-		;lda player_a_walljump, x ; useless, all calls to {char_name}_start_walljumping actually do this check
+		;lda player_a_special_jumps, x ; useless, all calls to {char_name}_start_walljumping actually do this check
+		;and #%00000001
 		;beq end
 
-		; Update wall jump counter
-		dec player_a_walljump, x
+		; Unset wall jump flag
+		dec player_a_special_jumps, x
 
 		; Set player's state
 		lda #{char_name_upper}_STATE_WALLJUMPING

@@ -76,9 +76,9 @@
 		lda player_respawn_max_duration, y
 		sta player_a_state_field1, x
 
-		; Reinitialize walljump counter
-		lda #{char_name_upper}_MAX_WALLJUMPS
-		sta player_a_walljump, x
+		; Reinitialize special jump flags
+		lda #{char_name_upper}_ALL_SPECIAL_JUMPS
+		sta player_a_special_jumps, x
 
 		; Set the appropriate animation
 		lda #<{char_name}_anim_respawn

@@ -71,7 +71,8 @@ kiki_ai_recover_selector:
 			; Wall jump if it is possible
 			lda player_b_walled
 			beq skip_walljump
-			lda player_b_walljump
+			lda player_b_special_jumps
+			and #%00000001
 			bne set_jump_action
 			skip_walljump:
 

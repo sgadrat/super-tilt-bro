@@ -43,7 +43,7 @@ PEPPER_STATE_RESPAWN_PLATFORM = CUSTOM_PLAYER_STATES_BEGIN + 24
 ;
 
 PEPPER_MAX_NUM_AERIAL_JUMPS = 1
-PEPPER_MAX_WALLJUMPS = 1
+PEPPER_ALL_SPECIAL_JUMPS = %10000001
 PEPPER_WALL_JUMP_VELOCITY_H = $0100
 PEPPER_WALL_JUMP_VELOCITY_V = $0480
 PEPPER_WALL_JUMP_SQUAT_END = 4
@@ -207,9 +207,9 @@ pepper_init:
 
 pepper_global_onground:
 .(
-	; Initialize walljump counter
-	lda #PEPPER_MAX_WALLJUMPS
-	sta player_a_walljump, x
+	; Initialize special jump flags
+	lda #PEPPER_ALL_SPECIAL_JUMPS
+	sta player_a_special_jumps, x
 	rts
 .)
 

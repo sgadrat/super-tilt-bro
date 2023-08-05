@@ -55,7 +55,7 @@ KIKI_JUMP_POWER = $0480
 KIKI_JUMP_SHORT_HOP_POWER = $0102
 KIKI_LANDING_MAX_VELOCITY = $0200
 KIKI_MAX_NUM_AERIAL_JUMPS = 1
-KIKI_MAX_WALLJUMPS = 1
+KIKI_ALL_SPECIAL_JUMPS = %10000001
 KIKI_PLATFORM_DURATION = 100 ; Note, 106 (ntsc->127) is the max, we have only 7 bits to store the value
 KIKI_PLATFORM_BLINK_THRESHOLD_MASK = %01100000 ; Platform is blinking if "timer > 0 && (MASK & timer == 0)"
 KIKI_PLATFORM_BLINK_MASK = %00000100 ; Blinking platform is shown on frames where "MASK & timer == 1"
@@ -158,9 +158,9 @@ kiki_init:
 		sta player_a_objects+STAGE_ELEMENT_SIZE, y
 	.)
 
-	; Initialize walljump counter
-	lda #KIKI_MAX_WALLJUMPS
-	sta player_a_walljump, x
+	; Initialize special jump flags
+	lda #KIKI_ALL_SPECIAL_JUMPS
+	sta player_a_special_jumps, x
 
 	rts
 
@@ -394,9 +394,9 @@ kiki_global_tick:
 
 kiki_global_onground:
 .(
-	; Reinitialize walljump counter
-	lda #KIKI_MAX_WALLJUMPS
-	sta player_a_walljump, x
+	; Initialize special jump flags
+	lda #KIKI_ALL_SPECIAL_JUMPS
+	sta player_a_special_jumps, x
 
 	; Reset allowed flag on stage's ground (not on player-made platforms)
 	.(

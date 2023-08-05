@@ -9,9 +9,9 @@
 		lda #{char_name_upper}_STATE_THROWN
 		sta player_a_state, x
 
-		; Reinitialize walljump counter
-		lda #{char_name_upper}_MAX_WALLJUMPS
-		sta player_a_walljump, x
+		; Reinitialize special jump flags
+		lda #{char_name_upper}_ALL_SPECIAL_JUMPS
+		sta player_a_special_jumps, x
 
 		; Initialize tech counter
 		lda #0

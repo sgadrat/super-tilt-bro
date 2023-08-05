@@ -181,20 +181,26 @@
 			rts
 		.)
 
-		; Jump, choose between aerial jump or wall jump
+		; Jump, choose between aerial jump, wall jump or footstool
         jump:
         .(
 			lda player_a_walled, x
-			beq aerial_jump
-			lda player_a_walljump, x
-			beq aerial_jump
+			beq footstool
+			lda player_a_special_jumps, x
+			and #%00000001
+			beq footstool
 				wall_jump:
 					lda player_a_walled_direction, x
 					sta player_a_direction, x
 					jmp {char_name}_start_walljumping
+				footstool:
+					jsr start_footstool
+					beq ok
+					; Falltrhough to aerial_jump
 				aerial_jump:
 					jmp {char_name}_start_aerial_jumping
-			;rts ; useless, both branches jump to subroutine
+			ok:
+			rts ; useless, both branches jump to subroutine
         .)
 
 		; If no input, unmark the input flag and return
@@ -210,5 +216,139 @@
 
 		input_table:
 		!place "{char_name_upper}_AERIAL_INPUTS_TABLE"
+	.)
+
+	; Check if opponent is placed for a footstool, if so proceed
+	;  Z flag is set if footstool jump started
+	start_footstool:
+	.(
+		point_x_lsb = tmpfield1
+		point_y_lsb = tmpfield2
+		point_x_msb = tmpfield3
+		point_y_msb = tmpfield4
+
+		FOOTSTOOL_HITSTUN = 10
+
+		; Do nothing if footstool flag is unset
+		lda player_a_special_jumps, x
+		bpl no_footstool
+
+		; Compute collision point position
+		lda player_a_x, x
+		clc
+		adc #4
+		sta point_x_lsb
+		lda player_a_x_screen, x
+		adc #0
+		sta point_x_msb
+
+		lda player_a_y, x
+		clc
+		adc #18
+		sta point_y_lsb
+		lda player_a_y_screen, x
+		adc #0
+		sta point_y_msb
+
+		; Check if collision point is in opponent hurtbox
+		SWITCH_SELECTED_PLAYER
+		.(
+			;TODO maybe make it routine like check_in_hurtbox
+
+			; Not in hurtbox if on the left of left edge
+			SIGNED_CMP(point_x_lsb, point_x_msb, player_a_hurtbox_left COMMA x, player_a_hurtbox_left_msb COMMA x)
+			bmi not_in_hurtbox
+
+			; Not in hurtbox if on the right of right edge
+			SIGNED_CMP(player_a_hurtbox_right COMMA x, player_a_hurtbox_right_msb COMMA x, point_x_lsb, point_x_msb)
+			bmi not_in_hurtbox
+
+			; Not in hurtbox if above top edge
+			SIGNED_CMP(point_y_lsb, point_y_msb, player_a_hurtbox_top COMMA x, player_a_hurtbox_top_msb COMMA x)
+			bmi not_in_hurtbox
+
+			; Not in hurtbox if under bottom edge
+			SIGNED_CMP(player_a_hurtbox_bottom COMMA x, player_a_hurtbox_bottom_msb COMMA x, point_y_lsb, point_y_msb)
+			bmi not_in_hurtbox
+
+				; All checks failed, the point is in the hurtbox
+				jmp in_hurtbox
+
+		.)
+
+		; No collision, unset Z flag and return
+		not_in_hurtbox:
+			SWITCH_SELECTED_PLAYER
+		no_footstool:
+			lda #1
+			rts
+
+		; Collision happened, place opponent in thrown+hitstun and jump
+		in_hurtbox:
+			; Set opponent to thrown state
+			lda #PLAYER_STATE_THROWN
+			sta player_a_state, x
+			ldy config_player_a_character, x
+			lda characters_start_routines_table_lsb, y
+			sta tmpfield1
+			lda characters_start_routines_table_msb, y
+			sta tmpfield2
+
+			TRAMPOLINE(player_state_action, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
+
+			; Reset opponent's velocity
+			lda #0
+			sta player_a_velocity_v, x
+			sta player_a_velocity_v_low, x
+			sta player_a_velocity_h, x
+			sta player_a_velocity_h_low, x
+
+			; Reset opponent's gravity
+			jsr reset_default_gravity
+
+			; Put opponenet in hitstun
+			ldy system_index
+			lda footstool_hitstun_duration, y
+			sta player_a_hitstun, x
+
+			; Teleport player just above opponent
+			lda player_a_x, x
+			sta point_x_lsb
+			lda player_a_x_screen, x
+			sta point_x_msb
+
+			lda player_a_y, x
+			sec
+			sbc #18
+			sta point_y_lsb
+			lda player_a_y_screen, x
+			sbc #0
+			;sta point_y_msb ; useless, A is not rewriten before use
+
+			SWITCH_SELECTED_PLAYER
+
+			;lda point_y_msb ; useless, A is already the expected value
+			sta player_a_y_screen, x
+			lda point_y_lsb
+			sta player_a_y, x
+
+			lda point_x_msb
+			sta player_a_x_screen, x
+			lda point_x_lsb
+			sta player_a_x, x
+
+			; Make player jump
+			jsr {char_name}_start_footstool_jumping
+
+			; Clear footstool flag
+			lda player_a_special_jumps, x
+			and #%01111111
+			sta player_a_special_jumps, x
+
+			; Return, with Z flag set
+			lda #0
+			rts
+
+			duration_table(FOOTSTOOL_HITSTUN, footstool_hitstun_duration)
 	.)
 .)

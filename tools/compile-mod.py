@@ -602,7 +602,10 @@ def main():
 	# Generate tilesets
 	tileset_to_bank = {}
 	current_bank = FIRST_AVAILABLE_BANK
+	forbidden_banks = [char_to_bank['pepper'], char_to_bank['vgsage']] # Pepper and VGSage occupy all the bank no space left. TODO a more automated way of handling it
 	for tileset in mod.tilesets:
+		while current_bank in forbidden_banks:
+			current_bank += 1
 		tileset_to_bank[tileset.name] = current_bank
 		current_bank += 1
 

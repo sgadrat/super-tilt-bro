@@ -81,8 +81,8 @@ player_a_num_aerial_jumps = $42
 player_b_num_aerial_jumps = $43
 player_a_stocks = $44
 player_b_stocks = $45
-player_a_walljump = $46
-player_b_walljump = $47
+player_a_special_jumps = $46 ; F... ...W - W = wall jump OK, F = footstool OK
+player_b_special_jumps = $47
 player_a_state_field1 = $48
 player_b_state_field1 = $49
 player_a_state_field2 = $4a

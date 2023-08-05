@@ -156,6 +156,8 @@
 		jump_ok:
 		inc player_a_num_aerial_jumps, x
 
+	+{char_name}_start_footstool_jumping:
+
 		; Reset fall speed
 		jsr reset_default_gravity
 
