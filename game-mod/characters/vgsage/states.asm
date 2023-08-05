@@ -403,7 +403,8 @@ vgsage_global_onground:
 		do_tick:
 
 		; Update velocity
-		jmp vgsage_tick_running ;HACK expect tick_running to only update velocity and call global_tick
+		jsr vgsage_tick_running ;HACK expect tick_running to only update velocity and call global_tick
+		jmp apply_player_gravity
 		;rts ; useless, jump to subroutine
 	.)
 .)
