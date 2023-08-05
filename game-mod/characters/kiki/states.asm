@@ -543,6 +543,23 @@ kiki_global_onground:
 !include "characters/std_owned.asm"
 
 ;
+; Respawn
+;
+
+kiki_start_respawn_extra:
+.(
+	; Set platform allowed flag
+	lda #%10000000
+	ora kiki_a_platform_state, x
+	sta kiki_a_platform_state, x
+
+	; Common respawn code
+	jmp {char_name}_start_respawn_invisible
+
+	;rts ; useless, jump to subroutine
+.)
+
+;
 ; Side Tilt
 ;
 

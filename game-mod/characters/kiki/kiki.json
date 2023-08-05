@@ -10639,7 +10639,7 @@
       "offground_routine": "dummy_routine",
       "onground_routine": "dummy_routine",
       "onhurt_routine": "dummy_routine",
-      "start_routine": "kiki_start_respawn_invisible",
+      "start_routine": "kiki_start_respawn_extra",
       "type": "character_state",
       "update_routine": "kiki_tick_respawn_invisible"
     },
