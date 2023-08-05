@@ -15579,7 +15579,7 @@
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_onground_thrown",
       "onhurt_routine": "hurt_player",
-      "start_routine": "vgsage_start_thrown",
+      "start_routine": "vgsage_start_thrown_extra",
       "type": "character_state",
       "update_routine": "vgsage_tick_thrown"
     },

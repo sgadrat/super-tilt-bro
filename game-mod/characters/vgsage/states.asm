@@ -52,7 +52,7 @@ VGSAGE_STATE_SPECIAL_SIDE_LAND = CUSTOM_PLAYER_STATES_BEGIN + 31      ; 26
                             ; sinbad pepper kiki
 VGSAGE_AERIAL_SPEED = $00d0 ; 0100 0100 0100
 VGSAGE_AERIAL_DIRECTIONAL_INFLUENCE_STRENGTH = $80 ; 80 80 80
-VGSAGE_AIR_FRICTION_STRENGTH = 21 ; 7 7 7
+VGSAGE_AIR_FRICTION_STRENGTH = 14 ; 7 7 7
 VGSAGE_FASTFALL_SPEED = $0600 ; 500 600 400
 VGSAGE_GROUND_FRICTION_STRENGTH = $40 ; 40 40 40
 VGSAGE_JUMP_POWER = $0400 ; 480 540 480
@@ -215,6 +215,75 @@ vgsage_global_onground:
 !include "characters/std_shielding.asm"
 !include "characters/std_walljumping.asm"
 !include "characters/std_owned.asm"
+
+;
+; Throw multiplicator
+;
+
+#define VGSAGE_DECREASE(lsb,msb) \
+	.( :\
+		lda lsb, x :\
+		sta decrease_value :\
+		lda msb, x :\
+		sta decrease_value+1 :\
+		bmi negative_velocity :\
+:\
+			positive_velocity: :\
+				; 50% :\
+				lsr decrease_value+1 :\
+				ror decrease_value :\
+				; 25% :\
+				lsr decrease_value+1 :\
+				ror decrease_value :\
+				; 12.5% :\
+				lsr decrease_value+1 :\
+				ror decrease_value :\
+				; 6.25% :\
+				lsr decrease_value+1 :\
+				ror decrease_value :\
+:\
+				jmp subtract :\
+:\
+			negative_velocity: :\
+				; 50% :\
+				sec :\
+				ror decrease_value+1 :\
+				ror decrease_value :\
+				; 25% :\
+				sec :\
+				ror decrease_value+1 :\
+				ror decrease_value :\
+				; 12.5% :\
+				sec :\
+				ror decrease_value+1 :\
+				ror decrease_value :\
+				; 6.25% :\
+				sec :\
+				ror decrease_value+1 :\
+				ror decrease_value :\
+:\
+		subtract: :\
+:\
+		sec :\
+		lda lsb, x :\
+		sbc decrease_value :\
+		sta lsb, x :\
+		lda msb, x :\
+		sbc decrease_value+1 :\
+		sta msb, x :\
+	.)
+
++{char_name}_start_thrown_extra:
+.(
+	decrease_value = tmpfield1
+
+	; Decrease velocity by 3.125%
+	VGSAGE_DECREASE(player_a_velocity_v_low, player_a_velocity_v)
+	VGSAGE_DECREASE(player_a_velocity_h_low, player_a_velocity_h)
+
+	jmp {char_name}_start_thrown
+	;rts ; useless, jump to subroutine
+.)
 
 ;
 ; Jab
