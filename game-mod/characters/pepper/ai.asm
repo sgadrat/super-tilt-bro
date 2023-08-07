@@ -40,6 +40,12 @@ pepper_ai_recover_selector:
 		lda endangered
 		bne try_to_recover
 
+		; If already in up-special just keep it that way
+		;  It avoids changing rapidly direction above the edge alternating between recovery and chase selectors
+		lda player_b_state
+		cmp #PEPPER_STATE_WITCH_FLY
+		beq set_idle_action
+
 		dont_try_to_recover:
 			jmp end
 
