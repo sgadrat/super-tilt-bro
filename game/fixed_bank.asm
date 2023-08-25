@@ -102,4 +102,3 @@ bank_data_begin:
 #include "game/logic/server_bytecode_extras.asm"
 #endif
 #include "game/fixed_bank_filler.asm"
-#endif
