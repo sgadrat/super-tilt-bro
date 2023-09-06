@@ -13,7 +13,7 @@
 ; begining of the compressed bank.
 ;
 ; More information in documentation/rescue.rst
-+decompress_page:
++rescue_decompress_page:
 .(
 	; Load huffmunch on the compressed page
 	.(

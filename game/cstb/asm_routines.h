@@ -11,6 +11,7 @@
 //  simply declare it as extern
 ////////////////////////////////////
 
+void audio_cut_sfx();
 void audio_music_extra_tick();
 void audio_music_tick();
 void audio_mute_music();
@@ -21,9 +22,7 @@ void clear_nt_buffers();
 void dummy_routine();
 void esp_wait_rx();
 void esp_wait_tx();
-void flash_all_sectors();
 void fetch_controllers();
-void flash_safe_sectors();
 void init_menu();
 void particle_handlers_reinit();
 void process_nt_buffers();
@@ -32,6 +31,7 @@ void sleep_frame();
 void stop_rendering();
 void tick_menu();
 void wait_next_frame();
+void wait_vbi();
 
 ////////////////////////////////////
 // Routines that need some glue code

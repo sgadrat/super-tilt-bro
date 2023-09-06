@@ -16,6 +16,15 @@ FIXED_BANK_NUMBER = 4+$1f
 
 ; Bottom sector
 
+.(
+.(
+rescue_declarations_begin:
+#include "rainbow-boot/memory_map.asm"
+#if *-rescue_declarations_begin <> 0
+#error "data in no-data declarations"
+#endif
+.)
+
 #define CURRENT_BANK_NUMBER $00
 #include "game/banks/rainbow00_bank.asm"
 #define CURRENT_BANK_NUMBER $01
@@ -24,3 +33,4 @@ FIXED_BANK_NUMBER = 4+$1f
 #include "game/banks/rainbow02_bank.asm"
 #define CURRENT_BANK_NUMBER $03
 #include "game/banks/rainbow03_bank.asm"
+.)

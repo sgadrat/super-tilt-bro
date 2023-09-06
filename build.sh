@@ -275,6 +275,23 @@ if [ "$rescue_rom_hash" != "$rescue_hash" ]; then
 	exit 1
 fi
 
+# Extract Game region from Rainbow ROM
+#  Prepend a update ROM header because main goal of this file is to be used for game updates.
+#  Update ROM format:
+#   - 1+N bytes: Header
+#     - 1 byte: header size (excluding this byte)
+#     - N bytes: stuffing (must be ignored)
+#   - 524288 bytes (512 KB): Game PRG
+#     - Game region of the Rainbow flash (cf. documentation/rescue.rst > Flash Layout)
+log
+say "Extract Game region ..."
+log "======================="
+ines_header_size=16
+boot_sector_size=$((64*1024))
+game_region_size=$((512*1024))
+echo -en '\x0f\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' > rainbow_game.rom
+tail -c +$((ines_header_size+boot_sector_size+1)) 'Super_Tilt_Bro_(E).nes' | head -c $game_region_size >> rainbow_game.rom
+
 say
 say "======================="
 say "Game built successfuly."

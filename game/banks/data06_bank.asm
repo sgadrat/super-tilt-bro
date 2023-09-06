@@ -54,6 +54,14 @@ bank_data_begin:
 #print *-bank_data_begin
 .)
 
+.(
+bank_data_begin:
+#include "game/logic/game_states/online_mode_screen/update/update_screen.asm"
+#echo
+#echo Update screen:
+#print *-bank_data_begin
+.)
+
 bank_data06_end:
 
 #echo

@@ -23,7 +23,7 @@ flash_code_rom = *
 ;   - any other value, bug in this routine
 ;
 ;  If the chip is in an unstable state, there is no better solution than power-off/power-on the system
-+erase_sector:
++rescue_erase_sector:
 .(
 	; Erase command sequence
 	lda #$aa
@@ -159,7 +159,7 @@ flash_code_rom = *
 ;
 ; program_page_result_count - Number of errors that happened
 ;  Zero means 256 if E flag is set
-+program_page:
++rescue_program_page:
 .(
 	; Init result values
 	lda #0
@@ -456,7 +456,7 @@ flash_code_size = flash_code_end - flash_code_ram
 
 ; Place flash code in RAM
 ;  Call this before any call on a flashing routine
-+prepare_flash_code:
++rescue_prepare_flash_code:
 .(
 	; Copy real implementation in RAM
 	rom_addr = flash_operation_status

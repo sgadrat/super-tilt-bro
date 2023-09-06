@@ -39,6 +39,9 @@ extern uint8_t const tileset_menu_online_mode_sprites;
 
 extern uint8_t const MENU_ONLINE_MODE_TILESET_BANK_NUMBER; // Actually a label, use its address or "tileset_bank()"
 extern uint8_t const TILESET_CHARSET_ALPHANUM_FG0_BG2_BANK_NUMBER; // Actually a label, use its address or "charset_bank()"
+extern uint8_t const UPDATE_SCREEN_BANK_NUMBER; // Actually a label, use its address or "charset_bank()"
+
+void start_update_screen();
 
 ///////////////////////////////////////
 // Screen specific ASM functions
@@ -215,6 +218,10 @@ static uint8_t tileset_bank() {
 
 static uint8_t charset_bank() {
 	return ptr_lsb(&TILESET_CHARSET_ALPHANUM_FG0_BG2_BANK_NUMBER);
+}
+
+static uint8_t update_bank() {
+	return ptr_lsb(&UPDATE_SCREEN_BANK_NUMBER);
 }
 
 /** Not a real yield, pass a frame "as if" it gone through main loop */
@@ -585,8 +592,7 @@ static void update_game() {
 	//TODO
 
 	// Call flash routine
-	// FIXME rewrite a flash routine for rainbow2
-	draw_dialog_string(0x2146, 3, "error  TODO");
+	wrap_trampoline(update_bank(), code_bank(), &start_update_screen);
 }
 
 static uint8_t select_setting_input(uint8_t* current_setting, uint8_t controller_btns, uint8_t last_frame_btns) {

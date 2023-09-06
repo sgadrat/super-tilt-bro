@@ -6,6 +6,7 @@
 *.bin
 *.built.asm
 rescue.prg
+rainbow_game.rom
 build.log
 build.log.err
 deps/cc65/

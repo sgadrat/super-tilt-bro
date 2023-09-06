@@ -353,6 +353,17 @@ online_mode_selection_ship_anim = $05cd ; $05cd to $05d9
 online_mode_selection_monster_anim = $05da ; $05da to $05e6
 online_mode_selection_satellite_anim = $05e7 ; $05e7 to $05e3
 
+; Update screen
+;  Technically ONLINE_MODE_SELECTION state, but can overide any online screen's field
+
+update_screen_txtx = last_c_label+1 ; $39
+update_screen_txty = update_screen_txtx+1 ; $3a
+update_screen_scroll_state = update_screen_txty+1 ; $3b
+update_screen_log_position = update_screen_scroll_state+1 ; 3d
+update_screen_erase_sector_result = update_screen_log_position+1 ; $3e
+update_screen_program_page_result_flags = update_screen_erase_sector_result+1 ; $3f
+update_screen_program_page_result_count = update_screen_program_page_result_flags+1 ; $40
+
 ;
 ; WIFI_SETTINGS labels
 ;

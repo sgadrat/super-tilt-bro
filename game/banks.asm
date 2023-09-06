@@ -11,6 +11,14 @@
 ;
 ; To avoid the mess of flashing different-sized models, use it to store
 ; rainbow-specific boot code and rescue code
+.(
+.(
+rescue_declarations_begin:
+#include "rainbow-boot/memory_map.asm"
+#if *-rescue_declarations_begin <> 0
+#error "data in no-data declarations"
+#endif
+.)
 #define CURRENT_BANK_NUMBER $00
 #include "game/banks/rainbow00_bank.asm"
 #define CURRENT_BANK_NUMBER $01
@@ -19,6 +27,7 @@
 #include "game/banks/rainbow02_bank.asm"
 #define CURRENT_BANK_NUMBER $03
 #include "game/banks/rainbow03_bank.asm"
+.)
 #define FIRST_GAME_BANK $04
 #else
 #define FIRST_GAME_BANK $00

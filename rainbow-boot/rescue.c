@@ -52,10 +52,10 @@ void crc32_init();
 void crc32_add_page();
 void crc32_finalize();
 
-void prepare_flash_code();
-void erase_sector();
-void decompress_page();
-void program_page();
+void rescue_prepare_flash_code();
+void rescue_erase_sector();
+void rescue_decompress_page();
+void rescue_program_page();
 
 void rescue_fetch_controllers();
 
@@ -458,7 +458,7 @@ static void erase_game_sector(uint8_t sector_index) {
 	uint8_t const bank_index = rainbow_sector_index * banks_per_sector;
 
 	switch_bank(bank_index);
-	erase_sector();
+	rescue_erase_sector();
 
 	if (erase_sector_result == 0) {
 		return;
@@ -514,7 +514,7 @@ static void program_game_page(uint16_t page_index) {
 
 	// Load page in RAM
 	switch_bank(compressed_page_bank);
-	decompress_page();
+	rescue_decompress_page();
 
 	if (decompress_page_result != 0) {
 		char msg[21];
@@ -534,7 +534,7 @@ static void program_game_page(uint16_t page_index) {
 	uint8_t const program_page_index_in_bank = rainbow_page_index - (raibow_bank_index * nb_pages_per_bank);
 	flash_operation_address = ptr(0x00, 0x80 + program_page_index_in_bank);
 	switch_bank(raibow_bank_index);
-	program_page();
+	rescue_program_page();
 
 	if (program_page_result_flags != 0) {
 		char msg[24];
@@ -815,7 +815,7 @@ void rainbow_rescue() {
 	error_log("");
 
 	// Prepare flash code
-	prepare_flash_code();
+	rescue_prepare_flash_code();
 
 	// Flash all sectors
 	char msg[frame_width+1];
