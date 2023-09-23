@@ -8,6 +8,10 @@
 rescue.prg
 build.log
 build.log.err
+deps/cc65/
+deps/gcc-6502-bits/
+deps/huffmunch/
+deps/xa65-stb/
 rescue_img/
 game/cstb/mem_labels.h
 game/cstb/constants.h

@@ -13,15 +13,25 @@ Build dependencies
   - Actually a fork of it, with increased memory limits. You can find it [here](https://github.com/sgadrat/xa65-stb).
 - 6502-gcc
   - [Build it from](https://github.com/itszor/gcc-6502-bits)
+- Huffmunch
+  - [Build it from](https://github.com/bbbradsmith/huffmunch)
 - python >= 3.2
 - pillow library for python
+
+A script to get all dependencies built and setup is in `deps/`.
+
+(You may still want to install python and pillow by yourself, the script will install it only it it has root privilege.)
+
+```
+$ deps/build-deps.sh
+```
 
 Building
 --------
 
-From the source repository run
+If you built dependencies in `deps/`, from the source repository run
 ```
-XA_BIN=/path/to/xa CC_BIN=/path/to/6502-gcc ./build.sh
+$ XA_BIN=$(pwd)/deps/xa65-stb/xa/xa CC_BIN=$(pwd)/deps/gcc-6502-bits/prefix/bin/6502-gcc HUFFMUNCH_BIN=$(pwd)/deps/huffmunch/huffmunch ./build.sh
 ```
 
 It will generate the game as `Super_Tilt_Bro_(E).nes`. If any problem occurs you may find clues in the `build.log` file.

@@ -1,0 +1,41 @@
+name: Build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: build-dep-cc65
+      run: deps/build-deps.d/00-cc65.sh
+    - name: build-dep-huffmunch
+      run: deps/build-deps.d/00-huffmunch.sh
+    - name: build-dep-python
+      run: FORCE_INSTALLS=1 deps/build-deps.d/00-python.sh
+    - name: build-dep-xa65
+      run: deps/build-deps.d/00-xa65.sh
+    - name: build-dep-gcc
+      run: FORCE_INSTALLS=1 CC65_PATH=$(pwd)/deps/cc65/bin deps/build-deps.d/01-gcc.sh
+    - name: build-stb
+      run: XA_BIN=$(pwd)/deps/xa65-stb/xa/xa CC_BIN=$(pwd)/deps/gcc-6502-bits/prefix/bin/6502-gcc HUFFMUNCH_BIN=$(pwd)/deps/huffmunch/huffmunch XA_LST=1 ./build.sh
+    - uses: actions/upload-artifact@v3
+      with:
+        name: build-log
+        if-no-files-found: ignore
+        path: |
+          build.log
+          build.log.err
+    - uses: actions/upload-artifact@v3
+      with:
+        name: roms
+        path: |
+          *.nes
+          /tmp/*.lst

@@ -139,7 +139,7 @@ log "==================="
 
 tools/c_constants_files.py
 
-for c_source in `find . -name '*.c'`; do
+for c_source in `find game/ rainbow-boot/ -name '*.c'`; do
 	asm_source="`dirname "$c_source"`/`basename "$c_source" .c`.built.asm"
 
 	if [ -f "$asm_source" ]; then
