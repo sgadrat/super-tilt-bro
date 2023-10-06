@@ -697,6 +697,13 @@ stage_data = $0400
 player_a_objects = $0480 ; Objects independent to character's state like floating hitboxes, temporary platforms, etc
 player_b_objects = $04c0 ;
 
+sha_w = $0400 ; $0400 to $04ff - One page, completely garbaged by sha256_sum routine
+sha_msg = $0440 ; $0440 to $047f - Overlaps sha_w, will be overwriten by computations
+sha_h = $0500 ; $0500 to $051f - 32 bytes hash result
+sha_working_variables = $0520 ; $0520 to $053f
+sha_length_lsb = $0540
+sha_length_msb = $0541
+
 particle_blocks = $0500
 particle_block_0 = $0500
 particle_block_1 = $0520

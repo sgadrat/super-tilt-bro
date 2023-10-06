@@ -62,6 +62,14 @@ bank_data_begin:
 #print *-bank_data_begin
 .)
 
+.(
+bank_data_begin:
+#include "game/logic/sha.asm"
+#echo
+#echo SHA hash:
+#print *-bank_data_begin
+.)
+
 bank_data06_end:
 
 #echo
