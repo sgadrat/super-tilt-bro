@@ -1,5 +1,4 @@
 #include <cstb.h>
-#include <string.h>
 
 ///////////////////////////////////////
 // C types for structured data
@@ -38,6 +37,7 @@ extern uint8_t const tileset_menu_online_mode;
 extern uint8_t const tileset_menu_online_mode_sprites;
 
 extern uint8_t const MENU_ONLINE_MODE_TILESET_BANK_NUMBER; // Actually a label, use its address or "tileset_bank()"
+extern uint8_t const SHA_BANK_NUMBER; // Actually a label, use its address or "sha_bank()"
 extern uint8_t const TILESET_CHARSET_ALPHANUM_FG0_BG2_BANK_NUMBER; // Actually a label, use its address or "charset_bank()"
 extern uint8_t const UPDATE_SCREEN_BANK_NUMBER; // Actually a label, use its address or "charset_bank()"
 
@@ -214,6 +214,10 @@ static void highlight_option(uint8_t shine);
 
 static uint8_t tileset_bank() {
 	return ptr_lsb(&MENU_ONLINE_MODE_TILESET_BANK_NUMBER);
+}
+
+static uint8_t sha_bank() {
+	return ptr_lsb(&SHA_BANK_NUMBER);
 }
 
 static uint8_t charset_bank() {
@@ -788,12 +792,20 @@ static uint8_t check_login_message(uint8_t type) {
 }
 
 static void password_login_send_request(uint8_t create) {
+	// Hash login+password
+	memcpy8(sha_msg, network_login, 16);
+	memcpy8(sha_msg+16, network_password, 16);
+	*sha_length_lsb = u16_lsb(32*8);
+	*sha_length_msb = u16_msb(32*8);
+	wrap_trampoline(sha_bank(), code_bank(), &sha256_sum);
+
+	// Authenticate, using first 16 bytes of the hash as password
 	online_mode_selection_mem_buffer[0] = 35;
 	online_mode_selection_mem_buffer[1] = TOESP_MSG_SERVER_SEND_MESSAGE;
 	online_mode_selection_mem_buffer[2] = STNP_LOGIN_MSG_TYPE;
 	online_mode_selection_mem_buffer[3] = (create == 0 ? STNP_LOGIN_PASSWORD : STNP_LOGIN_CREATE_ACCOUNT);
-	memcpy(online_mode_selection_mem_buffer+4, network_login, 16);
-	memcpy(online_mode_selection_mem_buffer+20, network_password, 16);
+	memcpy8(online_mode_selection_mem_buffer+4, network_login, 16);
+	memcpy8(online_mode_selection_mem_buffer+20, sha_h, 16);
 	wrap_esp_send_cmd(online_mode_selection_mem_buffer);
 }
 
@@ -990,11 +1002,14 @@ static void password_login_input(uint8_t controller_btns, uint8_t last_frame_btn
 				switch (last_frame_btns) {
 					case CONTROLLER_BTN_A:
 					case CONTROLLER_BTN_START:
-						audio_play_interface_click();
 						if (*current_field == 0) {
+							audio_play_interface_click();
 							*char_cursor = strnlen8((char*)network_password, 15);
 							*current_field = 1;
+						}else if(*network_password == 0) {
+							audio_play_interface_deny();
 						}else {
+							audio_play_interface_click();
 							password_login_process(create);
 							*stay_in_window = 0;
 						}
@@ -1368,7 +1383,7 @@ static void highlight_option(uint8_t shine) {
 	};
 
 	// Derivate the "nothing highligthed" attribute table to highlight the good box
-	memcpy(online_mode_selection_mem_buffer, boxes_attributes_no_highlight, 48);
+	memcpy8(online_mode_selection_mem_buffer, boxes_attributes_no_highlight, 48);
 	uint8_t const first_attribute = boxes_attributes_first_attribute_per_option[*online_mode_selection_current_option];
 	for (uint8_t x = 0; x < 4; ++x) {
 		for (uint8_t y = 0; y < 3; ++y) {

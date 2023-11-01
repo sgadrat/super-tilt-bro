@@ -47,20 +47,20 @@ audio_play_sfx_from_list:
 .)
 
 sfx_list_lsb:
-	.byt <sfx_countdown_tick : SFX_COUNTDOWN_TICK_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_countdown_tick  : SFX_COUNTDOWN_TICK_IDX = * - sfx_list_lsb - 1
 	.byt <sfx_countdown_reach : SFX_COUNTDOWN_REACH_IDX = * - sfx_list_lsb - 1
-	.byt <sfx_crash : SFX_CRASH_IDX = * - sfx_list_lsb - 1
-	.byt <sfx_death : SFX_DEATH_IDX = * - sfx_list_lsb - 1
-	.byt <sfx_hit : SFX_HIT_IDX = * - sfx_list_lsb - 1
-	.byt <sfx_parry : SFX_PARRY_IDX = * - sfx_list_lsb - 1
-	.byt <sfx_shield_hit : SFX_SHIELD_HIT_IDX = * - sfx_list_lsb - 1
-	.byt <sfx_shield_break : SFX_SHIELD_BREAK_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_crash           : SFX_CRASH_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_death           : SFX_DEATH_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_hit             : SFX_HIT_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_parry           : SFX_PARRY_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_shield_hit      : SFX_SHIELD_HIT_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_shield_break    : SFX_SHIELD_BREAK_IDX = * - sfx_list_lsb - 1     : SFX_INTERFACE_DENY_IDX = * - sfx_list_lsb - 1 ;TODO specific sfx for interface deny
 	.byt <sfx_interface_click : SFX_INTERFACE_CLICK_IDX = * - sfx_list_lsb - 1
-	.byt <sfx_fast_fall : SFX_FAST_FALL_IDX = * - sfx_list_lsb - 1
-	.byt <sfx_tech : SFX_TECH_IDX = * - sfx_list_lsb - 1
-	.byt <sfx_jump : SFX_JUMP_IDX = * - sfx_list_lsb - 1
-	.byt <sfx_aerial_jump : SFX_AERIAL_JUMP_IDX = * - sfx_list_lsb - 1
-	.byt <sfx_strike_lite : SFX_STRIKE_LITE_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_fast_fall       : SFX_FAST_FALL_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_tech            : SFX_TECH_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_jump            : SFX_JUMP_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_aerial_jump     : SFX_AERIAL_JUMP_IDX = * - sfx_list_lsb - 1
+	.byt <sfx_strike_lite     : SFX_STRIKE_LITE_IDX = * - sfx_list_lsb - 1
 sfx_list_msb:
 	.byt >sfx_countdown_tick
 	.byt >sfx_countdown_reach
@@ -166,6 +166,13 @@ audio_play_interface_click:
 	ldx #>sfx_interface_click
 	jmp audio_play_sfx_from_common_bank
 	;rts ; useless, jump to subroutine
+.)
+
+audio_play_interface_deny:
+.(
+	ldx #SFX_INTERFACE_DENY_IDX
+	jmp audio_play_sfx_from_list
+	; rts ; useless, jump to subroutine
 .)
 
 audio_play_fast_fall:

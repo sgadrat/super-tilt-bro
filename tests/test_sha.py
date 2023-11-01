@@ -71,10 +71,10 @@ tmpfield16 = $ff
 
 sha_w = $0400 ; $0400 to $04ff - One page, completely garbaged by sha256_sum routine
 sha_msg = $0440 ; $0440 to $047f - Overlaps sha_w, will be overwriten by computations
-sha_h = $0500 ; $0500 to $051f - 32 bytes hash result
-sha_working_variables = $0520 ; $0520 to $053f
-sha_length_lsb = $0540
-sha_length_msb = $0541
+sha_h = $0700 ; $0700 to $071f - 32 bytes hash result
+sha_working_variables = $0720 ; $0720 to $073f
+sha_length_lsb = $0740
+sha_length_msb = $0741
 
 #define CURRENT_BANK_NUMBER 0
 
@@ -82,7 +82,7 @@ sha_length_msb = $0541
 """
 
 def test_sha(script, expected):
-	sha_h = 0x0500
+	sha_h = 0x0700
 	vm_state = execute_asm(script_header + script + script_footer)
 	actual = vm_state.memory[sha_h:sha_h+0x20].hex()
 	assert actual == expected, f"{actual} is not the expected hash ({expected})"

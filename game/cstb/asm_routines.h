@@ -16,6 +16,7 @@ void audio_music_extra_tick();
 void audio_music_tick();
 void audio_mute_music();
 void audio_play_interface_click();
+void audio_play_interface_deny();
 void audio_unmute_music();
 void clear_bg_bot_left();
 void clear_nt_buffers();
@@ -456,6 +457,15 @@ static void wrap_push_nt_buffer(uint8_t const* buffer) {
 
 static void long_sleep_frame() {
 	wrap_trampoline(code_bank(), code_bank(), &sleep_frame);
+}
+
+void sha256_sum();
+static void wrap_sha256_sum(uint8_t const* data, uint8_t data_length) {
+	memcpy8(sha_msg, data, data_length);
+	uint16_t const data_length_bits = (uint16_t)(data_length) * 8;
+	*sha_length_lsb = u16_lsb(data_length_bits);
+	*sha_length_msb = u16_msb(data_length_bits);
+	sha256_sum();
 }
 
 void start_rendering();

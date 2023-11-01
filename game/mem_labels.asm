@@ -477,6 +477,7 @@ jukebox_mem = $0580
 ;
 
 support_method = $00
+
 ;
 ; Common menus labels
 ;  Common to TITLE, CONFIG, MODE_SELECTION and CREDITS
@@ -699,10 +700,10 @@ player_b_objects = $04c0 ;
 
 sha_w = $0400 ; $0400 to $04ff - One page, completely garbaged by sha256_sum routine
 sha_msg = $0440 ; $0440 to $047f - Overlaps sha_w, will be overwriten by computations
-sha_h = $0500 ; $0500 to $051f - 32 bytes hash result
-sha_working_variables = $0520 ; $0520 to $053f
-sha_length_lsb = $0540
-sha_length_msb = $0541
+sha_h = $0700 ; $0700 to $071f - 32 bytes hash result
+sha_working_variables = $0720 ; $0720 to $073f
+sha_length_lsb = $0740
+sha_length_msb = $0741
 
 particle_blocks = $0500
 particle_block_0 = $0500
@@ -750,7 +751,6 @@ screen_shake_speed_v = $055f
 ;$0600 to $067f may be used by audio engine, see "Audio engine labels"
 ;$0680 to $06ff may be used by game states
 
-virtual_frame_cnt = $0700
 network_last_known_remote_input = $07bf
 network_player_local_btns_history = $07c0 ; one byte per frame, circular buffers, 32 entries
 network_player_remote_btns_history = $07e0 ;
