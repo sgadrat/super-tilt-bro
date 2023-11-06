@@ -123,11 +123,74 @@
 	rts
 .)
 
+; Wait for ESP data to be ready to read with a timeout
+;  X, Y - timeout value (in loop iterations, roughly 140 iterations per millisecond)
+;  X - timeout LSB
+;  Y - timeout MSB ($7f max)
+;
+;  Output
+;   - Z flag set if timeouted
+;
+; Overwrites X, Y
++esp_wait_rx_timeout:
+.(
+	wait_ready_bit:
+		; Check if we received data
+		bit RAINBOW_WIFI_RX
+		bmi got_rx
+
+		; Decrement tiemout counter
+		dex
+		bne ok
+			dey
+			bmi timeout
+		ok:
+
+		; No timeout, continue to check
+		jmp wait_ready_bit
+
+	timeout:
+	ldx #0 ; set Z flag
+	rts
+
+	got_rx:
+	ldx #1 ; unset Z flag
+	rts
+.)
+
 ; Wait for mapper to be ready to send data to esp
 +esp_wait_tx:
 .(
 	wait_ready_bit:
 		bit RAINBOW_WIFI_TX
 		bpl wait_ready_bit
+	rts
+.)
+
+; Wait for the ESP to be ready to answer messages
+; Overwrites tmpfield1 and tmpfield2
++esp_wait_ready:
+.(
+	; Send message to get ESP status
+	jsr esp_wait_tx
+	lda #1
+	sta esp_tx_buffer
+	lda #TOESP_MSG_GET_ESP_STATUS
+	sta esp_tx_buffer+1
+
+	lda #0
+	sta RAINBOW_WIFI_TX
+
+	; Wait, and retry after a timeout (if ESP is not powered up, it won't answer at all)
+	wait_loop:
+		ldx #<(200*140)
+		ldy #>(200*140)
+		jsr esp_wait_rx_timeout
+		beq esp_wait_ready
+
+		lda esp_rx_buffer+ESP_MSG_TYPE
+		cmp #FROMESP_MSG_READY
+		bne wait_loop
+
 	rts
 .)

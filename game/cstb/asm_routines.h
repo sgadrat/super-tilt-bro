@@ -21,6 +21,7 @@ void audio_unmute_music();
 void clear_bg_bot_left();
 void clear_nt_buffers();
 void dummy_routine();
+void esp_wait_ready();
 void esp_wait_rx();
 void esp_wait_tx();
 void fetch_controllers();

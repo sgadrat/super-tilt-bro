@@ -93,17 +93,6 @@ static void esp_enable_wifi(bool wifi, bool access_point, bool web_server) {
 	esp_tx_message_send();
 }
 
-static void esp_wait_ready() {
-	esp_wait_tx();
-
-	uint8_t* const buff = &esp_tx_buffer;
-	buff[0] = 1;
-	buff[1] = TOESP_MSG_GET_ESP_STATUS;
-	esp_tx_message_send();
-
-	esp_wait_answer(FROMESP_MSG_READY);
-}
-
 static void esp_set_server_settings(uint16_t port, char const* host) {
 	uint8_t const host_len = strnlen8(host, 200); // Lil' bit below 256 because ESP message headers + port information
 
