@@ -328,4 +328,5 @@ esp_tx_buffer = $4900
 ; Enabled or disable features of the ESP
 #define ESP_ENABLE(esp,irq) \
 	lda #(irq<<1)+esp :\
-	sta RAINBOW_WIFI_CONF
+	sta RAINBOW_WIFI_CONF :\
+	sta RAINBOW_WIFI_RX ; acknowlege any remaining buffer, in case we come from a reset of the NES and there was actually an pending message
