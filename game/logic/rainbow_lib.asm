@@ -139,7 +139,7 @@
 		bit RAINBOW_WIFI_RX
 		bmi got_rx
 
-		; Decrement tiemout counter
+		; Decrement timeout counter
 		dex
 		bne ok
 			dey
@@ -178,7 +178,6 @@
 	lda #TOESP_MSG_GET_ESP_STATUS
 	sta esp_tx_buffer+1
 
-	lda #0
 	sta RAINBOW_WIFI_TX
 
 	; Wait, and retry after a timeout (if ESP is not powered up, it won't answer at all)
@@ -189,6 +188,7 @@
 		beq esp_wait_ready
 
 		lda esp_rx_buffer+ESP_MSG_TYPE
+		sta RAINBOW_WIFI_RX
 		cmp #FROMESP_MSG_READY
 		bne wait_loop
 
