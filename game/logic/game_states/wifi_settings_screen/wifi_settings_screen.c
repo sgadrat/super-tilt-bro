@@ -5,12 +5,15 @@
 ///////////////////////////////////////
 
 typedef struct {
-	uint8_t refresh_timer;
+	bool not_registered; // True when last time we checked, no network was registered
+	uint8_t refresh_timer; // Timer to sleep between status updates
 
 	// HACK
 	//  Used by net_list coroutine to block requests to ESP by wifi_status
-	//  Prototype cart tends to mess-up when generating two responses at the same time
-	// FIXME remove this variable and all reference to it once cartridges are fixed
+	//  Network scan is a synchronous operation, it is good to not spam other
+	//  commands until it ends.
+	// NOTE Asynchronous network scan API exists, using it would allow to remove
+	//      this variable and all reference to it.
 	uint8_t blocked;
 } __attribute__((__packed__)) WifiStatusCtx;
 
@@ -171,10 +174,11 @@ static void update_cursor() {
 	wrap_animation_tick((uint8_t*)anim);
 }
 
-static void display_wifi_status() {
-	static uint8_t const buffer_header[] = {0x20, 0x6a, 14};
-	static uint8_t const error_code_buffer_header[] = {0x20, 0x6a+15, 3};
-	static uint8_t const wifi_status_strings[][14] = {
+#define STRING_LEN 14
+static void display_wifi_status_message() {
+	static uint8_t const buffer_header[] = {0x20, 0x6a, STRING_LEN};
+	static uint8_t const error_code_buffer_header[] = {0x20, 0x6a+STRING_LEN+1, 3};
+	static uint8_t const wifi_status_strings[][STRING_LEN] = {
 		{'i', 'd', 'l', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
 		{'n', 'o', ' ', 's', 's', 'i', 'd', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
 		{'s', 'c', 'a', 'n', ' ', 'c', 'o', 'm', 'p', 'l', 'e', 't', 'e', ' '},
@@ -188,25 +192,50 @@ static void display_wifi_status() {
 		{'e', 'r', 'r', 'o', 'r', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}
 	;
 
+	// Avoid printing an error status, if the cause is having no network registered
+	uint8_t const* msg = mem()->msg_buf;
+	uint8_t const status = msg[ESP_MSG_PAYLOAD];
+	if (status == 0xff && vars()->wifi_status_ctx.not_registered) {
+		return;
+	}
+
+	// Display status
+	if (status < sizeof(wifi_status_strings) / sizeof(*wifi_status_strings)) {
+		wrap_construct_nt_buffer(buffer_header, wifi_status_strings[status]);
+	}else {
+		wrap_construct_nt_buffer(buffer_header, error_string);
+	}
+
+	// Display error code
+	uint8_t const error_code = msg[ESP_MSG_PAYLOAD+1];
+	if (status != ESP_WIFI_STATUS_CONNECTED && error_code != 0) {
+		uint8_t ascii_error_code[3];
+		ascii_error_code[0] = '0' + (error_code / 100);
+		ascii_error_code[1] = '0' + CONST_TENS(error_code);
+		ascii_error_code[2] = '0' + CONST_UNITS(error_code);
+		wrap_construct_nt_buffer(error_code_buffer_header, ascii_error_code);
+	}
+}
+
+static void display_wifi_status() {
+	static uint8_t const unregistered_buffer[] = {
+		0x20, 0x6a, STRING_LEN+4,
+		'n', 'o', 't', ' ', 'c', 'o', 'n', 'f', 'i', 'g', 'u', 'r', 'e', 'd', ' ', ' ', ' ', ' '
+	};
+
 	// Refresh displayed status
 	uint8_t const* msg = mem()->msg_buf;
 	if (msg[ESP_MSG_SIZE] == 3 && msg[ESP_MSG_TYPE] == FROMESP_MSG_WIFI_STATUS) {
-		// Display status
-		uint8_t const status = msg[ESP_MSG_PAYLOAD];
-		if (status < sizeof(wifi_status_strings) / sizeof(*wifi_status_strings)) {
-			wrap_construct_nt_buffer(buffer_header, wifi_status_strings[status]);
-		}else {
-			wrap_construct_nt_buffer(buffer_header, error_string);
-		}
+		display_wifi_status_message();
+	}
 
-		// Display error code
-		uint8_t const error_code = msg[ESP_MSG_PAYLOAD+1];
-		if (status != ESP_WIFI_STATUS_CONNECTED && error_code != 0) {
-			uint8_t ascii_error_code[3];
-			ascii_error_code[0] = '0' + (error_code / 100);
-			ascii_error_code[1] = '0' + CONST_TENS(error_code);
-			ascii_error_code[2] = '0' + CONST_UNITS(error_code);
-			wrap_construct_nt_buffer(error_code_buffer_header, ascii_error_code);
+	if (msg[ESP_MSG_SIZE] == 4 && msg[ESP_MSG_TYPE] == FROMESP_MSG_NETWORK_REGISTERED) {
+		uint8_t const* status = msg + ESP_MSG_PAYLOAD;
+		if (status[0] == 0 && status[1] == 0 && status[2] == 0) {
+			wrap_push_nt_buffer(unregistered_buffer);
+			vars()->wifi_status_ctx.not_registered = true;
+		}else {
+			vars()->wifi_status_ctx.not_registered = false;
 		}
 	}
 
@@ -216,7 +245,9 @@ static void display_wifi_status() {
 
 		if (vars()->wifi_status_ctx.blocked == 0) {
 			static uint8_t const cmd_get_wifi_status[] = {1, TOESP_MSG_WIFI_GET_STATUS};
+			static uint8_t const cmd_get_network_registered[] = {1, TOESP_MSG_NETWORK_GET_REGISTERED};
 			wrap_esp_send_cmd(cmd_get_wifi_status);
+			wrap_esp_send_cmd(cmd_get_network_registered);
 		}
 	}
 	++vars()->wifi_status_ctx.refresh_timer;
@@ -515,6 +546,7 @@ void init_wifi_settings_screen_extra() {
 	long_cpu_to_ppu_copy_tileset(tileset_ascii_bank(), &tileset_ascii, 0x1200);
 
 	// Init state
+	vars()->wifi_status_ctx.not_registered = false;
 	vars()->wifi_status_ctx.refresh_timer = 0;
 	vars()->wifi_status_ctx.blocked = 0;
 	vars()->net_list_ctx.step = 0;
