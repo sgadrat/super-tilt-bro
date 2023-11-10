@@ -11,7 +11,7 @@
 ;TODO Maybe we don't want to depend on it (for sure it is not needed, but it is convenient)
 .byt %00001001  ; Flags 10 pppp PPPP - PRG-RAM non-volatile = 0, volatile = 64 << 9 = 32 KB
 #endif
-.byt (%0000 << 4) + (MAPPER_CHR_SHIFTS & $ff) ; Flags 11 cccc CCCC - CHR-NVRAM, CHR-RAM
+.byt (%0000 << 4) + (MAPPER_CHR_SHIFTS & $0f) ; Flags 11 cccc CCCC - CHR-NVRAM, CHR-RAM
 .byt %00000001  ; Flags 12 .... ..VV - PAL timing
 .byt 0          ; Flags 13
 .byt 0          ; Flags 14
