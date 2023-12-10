@@ -15,28 +15,30 @@ SINBAD_STATE_RUNNING = PLAYER_STATE_RUNNING                       ; 06
 SINBAD_STATE_FALLING = CUSTOM_PLAYER_STATES_BEGIN + 0             ; 07
 SINBAD_STATE_JUMPING = CUSTOM_PLAYER_STATES_BEGIN + 1             ; 08
 SINBAD_STATE_JABBING_1 = CUSTOM_PLAYER_STATES_BEGIN + 2           ; 09
-SINBAD_STATE_SIDE_TILT = CUSTOM_PLAYER_STATES_BEGIN + 3           ; 0a
-SINBAD_STATE_SPECIAL_CHARGE = CUSTOM_PLAYER_STATES_BEGIN + 4      ; 0b
-SINBAD_STATE_SPECIAL_STRIKE = CUSTOM_PLAYER_STATES_BEGIN + 5      ; 0c
-SINBAD_STATE_SIDE_SPECIAL = CUSTOM_PLAYER_STATES_BEGIN + 6        ; 0d
-SINBAD_STATE_HELPLESS = CUSTOM_PLAYER_STATES_BEGIN + 7            ; 0e
-SINBAD_STATE_LANDING = CUSTOM_PLAYER_STATES_BEGIN + 8             ; 0f
-SINBAD_STATE_CRASHING = CUSTOM_PLAYER_STATES_BEGIN + 9            ; 10
-SINBAD_STATE_DOWN_TILT = CUSTOM_PLAYER_STATES_BEGIN + 10          ; 11
-SINBAD_STATE_AERIAL_SIDE = CUSTOM_PLAYER_STATES_BEGIN + 11        ; 12
-SINBAD_STATE_AERIAL_DOWN = CUSTOM_PLAYER_STATES_BEGIN + 12        ; 13
-SINBAD_STATE_AERIAL_UP = CUSTOM_PLAYER_STATES_BEGIN + 13          ; 14
-SINBAD_STATE_AERIAL_NEUTRAL = CUSTOM_PLAYER_STATES_BEGIN + 14     ; 15
-SINBAD_STATE_AERIAL_SPE_NEUTRAL = CUSTOM_PLAYER_STATES_BEGIN + 15 ; 16
-SINBAD_STATE_SPE_UP = CUSTOM_PLAYER_STATES_BEGIN + 16             ; 17
-SINBAD_STATE_SPE_DOWN = CUSTOM_PLAYER_STATES_BEGIN + 17           ; 18
-SINBAD_STATE_UP_TILT = CUSTOM_PLAYER_STATES_BEGIN + 18            ; 19
-SINBAD_STATE_SHIELDING = CUSTOM_PLAYER_STATES_BEGIN + 19          ; 1a
-SINBAD_STATE_SHIELDLAG = CUSTOM_PLAYER_STATES_BEGIN + 20          ; 1b
-SINBAD_STATE_WALLJUMPING = CUSTOM_PLAYER_STATES_BEGIN + 21        ; 1c
-SINBAD_STATE_JABBING_2 = CUSTOM_PLAYER_STATES_BEGIN + 22          ; 1d
-SINBAD_STATE_JABBING_3 = CUSTOM_PLAYER_STATES_BEGIN + 23          ; 1e
-SINBAD_STATE_RESPAWN_PLATFORM = CUSTOM_PLAYER_STATES_BEGIN + 24   ; 1f
+SINBAD_STATE_SIDE_TILT_WINDUP = CUSTOM_PLAYER_STATES_BEGIN + 3    ; 0a
+SINBAD_STATE_SIDE_TILT_HIT = CUSTOM_PLAYER_STATES_BEGIN + 4       ; 0b
+SINBAD_STATE_SIDE_TILT_RECOVERY = CUSTOM_PLAYER_STATES_BEGIN + 5  ; 0c
+SINBAD_STATE_SPECIAL_CHARGE = CUSTOM_PLAYER_STATES_BEGIN + 6      ; 0d
+SINBAD_STATE_SPECIAL_STRIKE = CUSTOM_PLAYER_STATES_BEGIN + 7      ; 0e
+SINBAD_STATE_SIDE_SPECIAL = CUSTOM_PLAYER_STATES_BEGIN + 8        ; 0f
+SINBAD_STATE_HELPLESS = CUSTOM_PLAYER_STATES_BEGIN + 9            ; 10
+SINBAD_STATE_LANDING = CUSTOM_PLAYER_STATES_BEGIN + 10            ; 11
+SINBAD_STATE_CRASHING = CUSTOM_PLAYER_STATES_BEGIN + 11           ; 12
+SINBAD_STATE_DOWN_TILT = CUSTOM_PLAYER_STATES_BEGIN + 12          ; 13
+SINBAD_STATE_AERIAL_SIDE = CUSTOM_PLAYER_STATES_BEGIN + 13        ; 14
+SINBAD_STATE_AERIAL_DOWN = CUSTOM_PLAYER_STATES_BEGIN + 14        ; 15
+SINBAD_STATE_AERIAL_UP = CUSTOM_PLAYER_STATES_BEGIN + 15          ; 16
+SINBAD_STATE_AERIAL_NEUTRAL = CUSTOM_PLAYER_STATES_BEGIN + 16     ; 17
+SINBAD_STATE_AERIAL_SPE_NEUTRAL = CUSTOM_PLAYER_STATES_BEGIN + 17 ; 18
+SINBAD_STATE_SPE_UP = CUSTOM_PLAYER_STATES_BEGIN + 18             ; 19
+SINBAD_STATE_SPE_DOWN = CUSTOM_PLAYER_STATES_BEGIN + 19           ; 1a
+SINBAD_STATE_UP_TILT = CUSTOM_PLAYER_STATES_BEGIN + 20            ; 1b
+SINBAD_STATE_SHIELDING = CUSTOM_PLAYER_STATES_BEGIN + 21          ; 1c
+SINBAD_STATE_SHIELDLAG = CUSTOM_PLAYER_STATES_BEGIN + 22          ; 1d
+SINBAD_STATE_WALLJUMPING = CUSTOM_PLAYER_STATES_BEGIN + 23        ; 1e
+SINBAD_STATE_JABBING_2 = CUSTOM_PLAYER_STATES_BEGIN + 24          ; 1f
+SINBAD_STATE_JABBING_3 = CUSTOM_PLAYER_STATES_BEGIN + 25          ; 20
+SINBAD_STATE_RESPAWN_PLATFORM = CUSTOM_PLAYER_STATES_BEGIN + 26   ; 21
 
 ;
 ; Gameplay constants
@@ -125,8 +127,8 @@ sinbad_global_onground:
 	CONTROLLER_INPUT_JUMP_RIGHT         sinbad_start_jumping_right
 	CONTROLLER_INPUT_JUMP_LEFT          sinbad_start_jumping_left
 	CONTROLLER_INPUT_JAB                sinbad_start_jabbing
-	CONTROLLER_INPUT_ATTACK_LEFT        sinbad_start_side_tilt_left
-	CONTROLLER_INPUT_ATTACK_RIGHT       sinbad_start_side_tilt_right
+	CONTROLLER_INPUT_ATTACK_LEFT        sinbad_start_side_tilt_windup_left
+	CONTROLLER_INPUT_ATTACK_RIGHT       sinbad_start_side_tilt_windup_right
 	CONTROLLER_INPUT_SPECIAL            sinbad_start_special
 	CONTROLLER_INPUT_SPECIAL_RIGHT      sinbad_start_side_special_right
 	CONTROLLER_INPUT_SPECIAL_LEFT       sinbad_start_side_special_left
@@ -158,8 +160,8 @@ sinbad_global_onground:
 	CONTROLLER_INPUT_JUMP               sinbad_start_jumping
 	CONTROLLER_INPUT_JUMP_LEFT          sinbad_start_jumping_left
 	CONTROLLER_INPUT_JUMP_RIGHT         sinbad_start_jumping_right
-	CONTROLLER_INPUT_ATTACK_LEFT        sinbad_start_side_tilt_left
-	CONTROLLER_INPUT_ATTACK_RIGHT       sinbad_start_side_tilt_right
+	CONTROLLER_INPUT_ATTACK_LEFT        sinbad_start_side_tilt_windup_left
+	CONTROLLER_INPUT_ATTACK_RIGHT       sinbad_start_side_tilt_windup_right
 	CONTROLLER_INPUT_SPECIAL            sinbad_start_special
 	CONTROLLER_INPUT_SPECIAL_RIGHT      sinbad_start_side_special_right
 	CONTROLLER_INPUT_SPECIAL_LEFT       sinbad_start_side_special_left
@@ -377,95 +379,118 @@ sinbad_global_onground:
 ; Side tilt
 ;
 
+!define "anim" {sinbad_anim_side_tilt_windup}
+!define "state" {SINBAD_STATE_SIDE_TILT_WINDUP}
+!define "routine" {side_tilt_windup}
+!define "followup" {sinbad_start_side_tilt_hit}
+!square-define "init" [
+	; Set initial velocity
+	ldy system_index
+	lda player_a_direction, x
+	cmp #DIRECTION_LEFT2
+	bne direction_right
+		direction_left:
+			lda {char_name}_run_init_neg_velocity_lsb, y
+			sta player_a_velocity_h_low, x
+			lda {char_name}_run_init_neg_velocity_msb, y
+			jmp set_high_byte
+		direction_right:
+			lda {char_name}_run_init_velocity_lsb, y
+			sta player_a_velocity_h_low, x
+			lda {char_name}_run_init_velocity_msb, y
+	set_high_byte:
+	sta player_a_velocity_h, x
+	rts
+]
+!square-define "tick" [
+	jmp {char_name}_side_tilt_speed_update
+	;rts ; useless, jump to subroutine
+]
+!include "characters/tpl_grounded_attack_followup.asm"
+
+!define "anim" {sinbad_anim_side_tilt_hit}
+!define "state" {SINBAD_STATE_SIDE_TILT_HIT}
+!define "routine" {side_tilt_hit}
+!define "followup" {sinbad_side_tilt_hit_end}
+!define "duration" {12, 14}
+!square-define "tick" [
+	jmp {char_name}_side_tilt_speed_update
+	;rts ; useless, jump to subroutine
+]
+!include "characters/tpl_grounded_attack_followup.asm"
+
+!define "anim" {sinbad_anim_side_tilt_recovery}
+!define "state" {SINBAD_STATE_SIDE_TILT_RECOVERY}
+!define "routine" {side_tilt_recovery}
+!include "characters/tpl_grounded_attack_followup.asm"
+
+SINBAD_DASH_MAX_VELOCITY = (SINBAD_RUNNING_MAX_VELOCITY*4)/3
+velocity_table({char_name_upper}_DASH_MAX_VELOCITY, {char_name}_dash_max_velocity_msb, {char_name}_dash_max_velocity_lsb)
+velocity_table(-{char_name_upper}_DASH_MAX_VELOCITY, {char_name}_dash_max_neg_velocity_msb, {char_name}_dash_max_neg_velocity_lsb)
+
+sinbad_side_tilt_speed_update:
 .(
-	side_tilt_duration:
-		.byt sinbad_anim_side_tilt_dur_pal, sinbad_anim_side_tilt_dur_ntsc
+	; Update player's velocity depending on their direction
+	ldy system_index
+	lda player_a_direction, x
+	beq run_left
 
-	; Not per-system constant
-	;  The static decay ensures the same distance is traveled
-	;  The difference in travel speed is barely noticeable (when focusing on it)
-	;  Seriously, this animation is ugly and should be rework anyway
-	VELOCITY_H = $0480
-	VELOCITY_V = $fd80
-	VELOCITY_DECAY = $80
+		; Running right, velocity tends toward vector max velocity
+		lda {char_name}_dash_max_velocity_msb, y
+		sta tmpfield4
+		lda {char_name}_dash_max_velocity_lsb, y
+		jmp update_velocity ; Optimizable - inline "update_velocity" section in both "run_left" and "run_right" branches
 
-	&sinbad_start_side_tilt_right:
-	.(
-		lda DIRECTION_RIGHT
-		sta player_a_direction, x
-		jmp sinbad_start_side_tilt
-		; rts ; useless - sinbad_start_side_tilt is a routine
-	.)
+	run_left:
+		; Running left, velocity tends toward vector "-1 * max volcity"
+		lda {char_name}_dash_max_neg_velocity_msb, y
+		sta tmpfield4
+		lda {char_name}_dash_max_neg_velocity_lsb, y
 
-	&sinbad_start_side_tilt_left:
-	.(
-		lda DIRECTION_LEFT
-		sta player_a_direction, x
-		; jmp sinbad_start_side_tilt ; useless - fallthrough
-		; rts ; useless - sinbad_start_side_tilt is a routine
-	.)
+	update_velocity:
+		sta tmpfield2
+		lda #0
+		sta tmpfield3
+		sta tmpfield1
+		lda {char_name}_run_acceleration, y
+		sta tmpfield5
+		jmp merge_to_player_velocity
+		; No return, jump to subroutine
 
-	&sinbad_start_side_tilt:
-	.(
-		; Set the appropriate animation
-		lda #<sinbad_anim_side_tilt
-		sta tmpfield13
-		lda #>sinbad_anim_side_tilt
-		sta tmpfield14
-		jsr set_player_animation
+	;rts; useless, no branch return
+.)
 
-		; Set the player's state
-		lda #SINBAD_STATE_SIDE_TILT
-		sta player_a_state, x
+anim_duration_table(sinbad_anim_side_tilt_recovery_dur_pal-4, sinbad_side_tilt_recovery_cuttable_time)
 
-		; Initialize the clock
-		ldy system_index
-		lda side_tilt_duration, y
-		sta player_a_state_clock,x
+sinbad_input_side_tilt_recovery:
+.(
+	lda player_a_state_clock, x
+	ldy system_index
+	cmp sinbad_side_tilt_recovery_cuttable_time, y
+	bcs ignore
+		jmp sinbad_input_idle
+	ignore:
+		jmp smart_keep_input_dirty
+	;rts ; useless, no branch return
+.)
 
-		; Set initial velocity
-		lda #>VELOCITY_V
-		sta player_a_velocity_v, x
-		lda #<VELOCITY_V
-		sta player_a_velocity_v_low, x
+sinbad_side_tilt_hit_end:
+.(
+	lda player_a_grounded, x
+	bne grounded
 
-		lda player_a_direction, x
-		beq set_velocity_left
-			set_velocity_right:
-				lda #>VELOCITY_H
-				sta player_a_velocity_h, x
-				jmp end_set_velocity
-			set_velocity_left:
-				lda #>-VELOCITY_H
-				sta player_a_velocity_h, x
-		end_set_velocity:
-		lda #<VELOCITY_H ;NOTE this is the same as "<-VELOCITY_H" ($80)
-		sta player_a_velocity_h_low, x
+		midair:
+			jmp sinbad_start_falling
 
-		rts
-	.)
+		grounded:
+			lda controller_a_btns, x
+			and #CONTROLLER_INPUT_LEFT|CONTROLLER_INPUT_RIGHT
+			bne goto_sinbad_start_running
+				jmp sinbad_start_side_tilt_recovery
+			goto_sinbad_start_running:
+				jmp sinbad_start_running
 
-	; Update a player that is performing a side tilt
-	;  register X must contain the player number
-	&sinbad_tick_side_tilt:
-	.(
-		dec player_a_state_clock, x
-		bne update_velocity
-			jmp sinbad_start_inactive_state
-			; No return, jump to a subroutine
-
-		update_velocity:
-			lda #$01
-			sta tmpfield3
-			lda #$00
-			sta tmpfield4
-			sta tmpfield1
-			sta tmpfield2
-			lda #VELOCITY_DECAY
-			sta tmpfield5
-			jmp merge_to_player_velocity
-			; No return, jump to subroutine
-	.)
+	;rts ; useless, no branch return
 .)
 
 ;

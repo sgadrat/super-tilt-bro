@@ -4878,6 +4878,648 @@
     {
       "frames": [
         {
+          "duration": 4,
+          "hitbox": null,
+          "hurtbox": {
+            "bottom": 16,
+            "left": 0,
+            "right": 12,
+            "top": 1,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "attr": 1,
+              "foreground": false,
+              "tile": "SINBAD_TILE_63",
+              "type": "animation_sprite",
+              "x": 9,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_60",
+              "type": "animation_sprite",
+              "x": 0,
+              "y": 1
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_61",
+              "type": "animation_sprite",
+              "x": 0,
+              "y": 9
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_66",
+              "type": "animation_sprite",
+              "x": 8,
+              "y": 7
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SINBAD_TILE_26",
+              "attr": 1,
+              "foreground": false,
+              "x": 14,
+              "y": 6
+            }
+          ],
+          "type": "animation_frame"
+        },
+        {
+          "duration": 4,
+          "hitbox": null,
+          "hurtbox": {
+            "bottom": 15,
+            "left": 0,
+            "right": 13,
+            "top": 0,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "attr": 65,
+              "foreground": false,
+              "tile": "SINBAD_TILE_16",
+              "type": "animation_sprite",
+              "x": -2,
+              "y": 8
+            },
+            {
+              "attr": 1,
+              "foreground": false,
+              "tile": "SINBAD_TILE_64",
+              "type": "animation_sprite",
+              "x": 6,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_53",
+              "type": "animation_sprite",
+              "x": 0,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_61",
+              "type": "animation_sprite",
+              "x": -1,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_62",
+              "type": "animation_sprite",
+              "x": 7,
+              "y": 7
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SINBAD_TILE_75",
+              "attr": 1,
+              "foreground": false,
+              "x": 9,
+              "y": 0
+            }
+          ],
+          "type": "animation_frame"
+        },
+        {
+          "duration": 4,
+          "hitbox": null,
+          "hurtbox": {
+            "bottom": 15,
+            "left": 0,
+            "right": 11,
+            "top": 0,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "attr": 65,
+              "foreground": false,
+              "tile": "SINBAD_TILE_16",
+              "type": "animation_sprite",
+              "x": -6,
+              "y": 6
+            },
+            {
+              "attr": 1,
+              "foreground": false,
+              "tile": "SINBAD_TILE_64",
+              "type": "animation_sprite",
+              "x": 1,
+              "y": 6
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_60",
+              "type": "animation_sprite",
+              "x": 0,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_54",
+              "type": "animation_sprite",
+              "x": 8,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_61",
+              "type": "animation_sprite",
+              "x": 0,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_66",
+              "type": "animation_sprite",
+              "x": 8,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SINBAD_TILE_56",
+              "attr": 129,
+              "foreground": false,
+              "x": 9,
+              "y": -2
+            }
+          ],
+          "type": "animation_frame"
+        }
+      ],
+      "name": "sinbad_anim_side_tilt_windup",
+      "type": "animation"
+    },
+    {
+      "frames": [
+        {
+          "duration": 2,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -7,
+            "top": 5,
+            "right": 16,
+            "bottom": 12,
+            "base_h": -800,
+            "base_v": -400,
+            "force_h": 0,
+            "force_v": 0,
+            "damages": 1,
+            "enabled": true
+          },
+          "hurtbox": {
+            "bottom": 16,
+            "left": 0,
+            "right": 16,
+            "top": 0,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "attr": 129,
+              "foreground": false,
+              "tile": "SINBAD_TILE_5",
+              "type": "animation_sprite",
+              "x": -8,
+              "y": 5
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SINBAD_TILE_24",
+              "attr": 129,
+              "foreground": false,
+              "x": 8,
+              "y": 3
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_60",
+              "type": "animation_sprite",
+              "x": 0,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_61",
+              "type": "animation_sprite",
+              "x": -2,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_66",
+              "type": "animation_sprite",
+              "x": 6,
+              "y": 8
+            }
+          ],
+          "type": "animation_frame"
+        },
+        {
+          "duration": 2,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -7,
+            "top": 0,
+            "right": 13,
+            "bottom": 15,
+            "base_h": -800,
+            "base_v": -400,
+            "force_h": 0,
+            "force_v": 0,
+            "damages": 1,
+            "enabled": false
+          },
+          "hurtbox": {
+            "bottom": 16,
+            "left": 0,
+            "right": 16,
+            "top": 0,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "attr": 129,
+              "foreground": false,
+              "tile": "SINBAD_TILE_15",
+              "type": "animation_sprite",
+              "x": -7,
+              "y": 0
+            },
+            {
+              "attr": 129,
+              "foreground": false,
+              "tile": "SINBAD_TILE_16",
+              "type": "animation_sprite",
+              "x": 1,
+              "y": 0
+            },
+            {
+              "attr": 1,
+              "foreground": false,
+              "tile": "SINBAD_TILE_63",
+              "type": "animation_sprite",
+              "x": 7,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_29",
+              "type": "animation_sprite",
+              "x": 0,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_61",
+              "type": "animation_sprite",
+              "x": -1,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_66",
+              "type": "animation_sprite",
+              "x": 7,
+              "y": 8
+            }
+          ],
+          "type": "animation_frame"
+        },
+        {
+          "duration": 2,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": 0,
+            "top": 0,
+            "right": 12,
+            "bottom": 15,
+            "base_h": -800,
+            "base_v": -400,
+            "force_h": 0,
+            "force_v": 0,
+            "damages": 1,
+            "enabled": true
+          },
+          "hurtbox": {
+            "bottom": 16,
+            "left": 0,
+            "right": 16,
+            "top": 0,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "attr": 129,
+              "foreground": false,
+              "tile": "SINBAD_TILE_24",
+              "type": "animation_sprite",
+              "x": 4,
+              "y": -2
+            },
+            {
+              "attr": 129,
+              "foreground": false,
+              "tile": "SINBAD_TILE_20",
+              "type": "animation_sprite",
+              "x": 4,
+              "y": 6
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SINBAD_TILE_63",
+              "attr": 65,
+              "foreground": false,
+              "x": -2,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_29",
+              "type": "animation_sprite",
+              "x": 0,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_61",
+              "type": "animation_sprite",
+              "x": 0,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_66",
+              "type": "animation_sprite",
+              "x": 8,
+              "y": 8
+            }
+          ],
+          "type": "animation_frame"
+        },
+        {
+          "duration": 2,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -2,
+            "top": -2,
+            "right": 12,
+            "bottom": 16,
+            "base_h": -800,
+            "base_v": -400,
+            "force_h": 0,
+            "force_v": 0,
+            "damages": 1,
+            "enabled": false
+          },
+          "hurtbox": {
+            "bottom": 16,
+            "left": 0,
+            "right": 16,
+            "top": 0,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "attr": 129,
+              "foreground": false,
+              "tile": "SINBAD_TILE_24",
+              "type": "animation_sprite",
+              "x": -3,
+              "y": -3
+            },
+            {
+              "attr": 129,
+              "foreground": false,
+              "tile": "SINBAD_TILE_16",
+              "type": "animation_sprite",
+              "x": 1,
+              "y": 0
+            },
+            {
+              "attr": 65,
+              "foreground": false,
+              "tile": "SINBAD_TILE_15",
+              "type": "animation_sprite",
+              "x": 4,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_60",
+              "type": "animation_sprite",
+              "x": 0,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_61",
+              "type": "animation_sprite",
+              "x": -1,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_66",
+              "type": "animation_sprite",
+              "x": 7,
+              "y": 8
+            }
+          ],
+          "type": "animation_frame"
+        }
+      ],
+      "name": "sinbad_anim_side_tilt_hit",
+      "type": "animation"
+    },
+    {
+      "frames": [
+        {
+          "duration": 6,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -7,
+            "top": 5,
+            "right": 16,
+            "bottom": 12,
+            "base_h": -400,
+            "base_v": -1000,
+            "force_h": 0,
+            "force_v": 0,
+            "damages": 1,
+            "enabled": true
+          },
+          "hurtbox": {
+            "bottom": 16,
+            "left": 0,
+            "right": 16,
+            "top": 0,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SINBAD_TILE_16",
+              "attr": 65,
+              "foreground": false,
+              "x": -2,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SINBAD_TILE_59",
+              "attr": 1,
+              "foreground": false,
+              "x": 6,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_35",
+              "type": "animation_sprite",
+              "x": 3,
+              "y": 1
+            },
+            {
+              "attr": 64,
+              "foreground": false,
+              "tile": "SINBAD_TILE_89",
+              "type": "animation_sprite",
+              "x": -2,
+              "y": 8
+            }
+          ],
+          "type": "animation_frame"
+        },
+        {
+          "duration": 6,
+          "hitbox": null,
+          "hurtbox": {
+            "bottom": 16,
+            "left": 0,
+            "right": 16,
+            "top": 0,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SINBAD_TILE_63",
+              "attr": 1,
+              "foreground": false,
+              "x": 7,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_35",
+              "type": "animation_sprite",
+              "x": 0,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_11",
+              "type": "animation_sprite",
+              "x": 0,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SINBAD_TILE_16",
+              "attr": 65,
+              "foreground": false,
+              "x": -1,
+              "y": 8
+            }
+          ],
+          "type": "animation_frame"
+        },
+        {
+          "duration": 6,
+          "hitbox": null,
+          "hurtbox": {
+            "bottom": 16,
+            "left": 0,
+            "right": 16,
+            "top": 0,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SINBAD_TILE_16",
+              "attr": 65,
+              "foreground": false,
+              "x": -3,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SINBAD_TILE_64",
+              "attr": 1,
+              "foreground": false,
+              "x": 5,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_35",
+              "type": "animation_sprite",
+              "x": 1,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SINBAD_TILE_8",
+              "type": "animation_sprite",
+              "x": 0,
+              "y": 8
+            }
+          ],
+          "type": "animation_frame"
+        }
+      ],
+      "name": "sinbad_anim_side_tilt_recovery",
+      "type": "animation"
+    },
+    {
+      "frames": [
+        {
           "duration": 61,
           "hitbox": {
             "base_h": 256,
@@ -6985,210 +7627,6 @@
         }
       ],
       "name": "sinbad_anim_side_special_charge",
-      "type": "animation"
-    },
-    {
-      "frames": [
-        {
-          "duration": 7,
-          "hitbox": {
-            "base_h": -768,
-            "base_v": -768,
-            "bottom": 0,
-            "damages": 5,
-            "enabled": true,
-            "force_h": -16,
-            "force_v": -4,
-            "left": 4,
-            "right": 10,
-            "top": -12,
-            "type": "animation_direct_hitbox"
-          },
-          "hurtbox": {
-            "bottom": 16,
-            "left": 0,
-            "right": 12,
-            "top": 0,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SINBAD_TILE_19",
-              "type": "animation_sprite",
-              "x": 2,
-              "y": -12
-            },
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SINBAD_TILE_20",
-              "type": "animation_sprite",
-              "x": 2,
-              "y": -4
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SINBAD_TILE_31",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SINBAD_TILE_32",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SINBAD_TILE_33",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 8
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SINBAD_TILE_34",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 7,
-          "hitbox": {
-            "base_h": -768,
-            "base_v": -768,
-            "bottom": 8,
-            "damages": 5,
-            "enabled": false,
-            "force_h": -16,
-            "force_v": -4,
-            "left": -7,
-            "right": 1,
-            "top": -4,
-            "type": "animation_direct_hitbox"
-          },
-          "hurtbox": {
-            "bottom": 16,
-            "left": 0,
-            "right": 8,
-            "top": 0,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SINBAD_TILE_24",
-              "type": "animation_sprite",
-              "x": -7,
-              "y": -4
-            },
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SINBAD_TILE_23",
-              "type": "animation_sprite",
-              "x": -7,
-              "y": 4
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SINBAD_TILE_29",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SINBAD_TILE_50",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 7,
-          "hitbox": {
-            "base_h": -768,
-            "base_v": -768,
-            "bottom": 12,
-            "damages": 5,
-            "enabled": false,
-            "force_h": -16,
-            "force_v": -4,
-            "left": -12,
-            "right": 0,
-            "top": 6,
-            "type": "animation_direct_hitbox"
-          },
-          "hurtbox": {
-            "bottom": 16,
-            "left": -4,
-            "right": 8,
-            "top": 0,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SINBAD_TILE_5",
-              "type": "animation_sprite",
-              "x": -12,
-              "y": 6
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SINBAD_TILE_6",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 6
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SINBAD_TILE_9",
-              "type": "animation_sprite",
-              "x": -8,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SINBAD_TILE_10",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SINBAD_TILE_11",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        }
-      ],
-      "name": "sinbad_anim_side_tilt",
       "type": "animation"
     },
     {
@@ -13977,13 +14415,33 @@
     },
     {
       "input_routine": "smart_keep_input_dirty",
-      "name": "SINBAD_STATE_SIDE_TILT",
-      "offground_routine": "dummy_routine",
+      "name": "SINBAD_STATE_SIDE_TILT_WINDUP",
+      "offground_routine": "sinbad_start_falling",
       "onground_routine": "sinbad_global_onground",
       "onhurt_routine": "hurt_player",
       "start_routine": null,
       "type": "character_state",
-      "update_routine": "sinbad_tick_side_tilt"
+      "update_routine": "sinbad_tick_side_tilt_windup"
+    },
+    {
+      "type": "character_state",
+      "name": "SINBAD_STATE_SIDE_TILT_HIT",
+      "start_routine": null,
+      "update_routine": "sinbad_tick_side_tilt_hit",
+      "input_routine": "smart_keep_input_dirty",
+      "onground_routine": "sinbad_global_onground",
+      "offground_routine": "sinbad_start_falling",
+      "onhurt_routine": "hurt_player"
+    },
+    {
+      "type": "character_state",
+      "name": "SINBAD_STATE_SIDE_TILT_RECOVERY",
+      "start_routine": null,
+      "update_routine": "sinbad_tick_side_tilt_recovery",
+      "input_routine": "sinbad_input_side_tilt_recovery",
+      "onground_routine": "sinbad_global_onground",
+      "offground_routine": "sinbad_start_falling",
+      "onhurt_routine": "hurt_player"
     },
     {
       "input_routine": "dummy_routine",

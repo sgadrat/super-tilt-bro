@@ -1,12 +1,12 @@
+velocity_table({char_name_upper}_RUNNING_INITIAL_VELOCITY, {char_name}_run_init_velocity_msb, {char_name}_run_init_velocity_lsb)
+velocity_table(-{char_name_upper}_RUNNING_INITIAL_VELOCITY, {char_name}_run_init_neg_velocity_msb, {char_name}_run_init_neg_velocity_lsb)
+
+velocity_table({char_name_upper}_RUNNING_MAX_VELOCITY, {char_name}_run_max_velocity_msb, {char_name}_run_max_velocity_lsb)
+velocity_table(-{char_name_upper}_RUNNING_MAX_VELOCITY, {char_name}_run_max_neg_velocity_msb, {char_name}_run_max_neg_velocity_lsb)
+
+acceleration_table({char_name_upper}_RUNNING_ACCELERATION, {char_name}_run_acceleration)
+
 .(
-	velocity_table({char_name_upper}_RUNNING_INITIAL_VELOCITY, run_init_velocity_msb, run_init_velocity_lsb)
-	velocity_table(-{char_name_upper}_RUNNING_INITIAL_VELOCITY, run_init_neg_velocity_msb, run_init_neg_velocity_lsb)
-
-	velocity_table({char_name_upper}_RUNNING_MAX_VELOCITY, run_max_velocity_msb, run_max_velocity_lsb)
-	velocity_table(-{char_name_upper}_RUNNING_MAX_VELOCITY, run_max_neg_velocity_msb, run_max_neg_velocity_lsb)
-
-	acceleration_table({char_name_upper}_RUNNING_ACCELERATION, run_acceleration)
-
 	+{char_name}_start_running_left:
 	.(
 		lda #DIRECTION_LEFT2
@@ -31,17 +31,17 @@
 		; Set initial velocity
 		ldy system_index
 		lda player_a_direction, x
-		cmp DIRECTION_LEFT
+		cmp #DIRECTION_LEFT2
 		bne direction_right
 			direction_left:
-				lda run_init_neg_velocity_lsb, y
+				lda {char_name}_run_init_neg_velocity_lsb, y
 				sta player_a_velocity_h_low, x
-				lda run_init_neg_velocity_msb, y
+				lda {char_name}_run_init_neg_velocity_msb, y
 				jmp set_high_byte
 			direction_right:
-				lda run_init_velocity_lsb, y
+				lda {char_name}_run_init_velocity_lsb, y
 				sta player_a_velocity_h_low, x
-				lda run_init_velocity_msb, y
+				lda {char_name}_run_init_velocity_msb, y
 		set_high_byte:
 		sta player_a_velocity_h, x
 
@@ -61,29 +61,29 @@
 		jsr {char_name}_global_tick
 #endif
 
-		; Update player's velocity dependeing on his direction
+		; Update player's velocity depending on their direction
 		ldy system_index
 		lda player_a_direction, x
 		beq run_left
 
 			; Running right, velocity tends toward vector max velocity
-			lda run_max_velocity_msb, y
+			lda {char_name}_run_max_velocity_msb, y
 			sta tmpfield4
-			lda run_max_velocity_lsb, y
+			lda {char_name}_run_max_velocity_lsb, y
 			jmp update_velocity ; Optimizable - inline "update_velocity" section in both "run_left" and "run_right" branches
 
 		run_left:
 			; Running left, velocity tends toward vector "-1 * max volcity"
-			lda run_max_neg_velocity_msb, y
+			lda {char_name}_run_max_neg_velocity_msb, y
 			sta tmpfield4
-			lda run_max_neg_velocity_lsb, y
+			lda {char_name}_run_max_neg_velocity_lsb, y
 
 		update_velocity:
 			sta tmpfield2
 			lda #0
 			sta tmpfield3
 			sta tmpfield1
-			lda run_acceleration, y
+			lda {char_name}_run_acceleration, y
 			sta tmpfield5
 			jmp merge_to_player_velocity
 			; No return, jump to subroutine
@@ -114,7 +114,7 @@
 
 		input_running_left:
 		.(
-			lda DIRECTION_LEFT
+			lda #DIRECTION_LEFT2
 			cmp player_a_direction, x
 			beq end_changing_direction
 				sta player_a_direction, x
@@ -126,7 +126,7 @@
 
 		input_running_right:
 		.(
-			lda DIRECTION_RIGHT
+			lda #DIRECTION_RIGHT2
 			cmp player_a_direction, x
 			beq end_changing_direction
 				sta player_a_direction, x

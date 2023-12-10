@@ -41,9 +41,14 @@ def expand(source, game_dir, filename, templates_dir):
 	#   regexp - Fine parsing of the macro
 	#   parse_may_fail (optional) - if True, parse errors will be ignored (and the source left untouched)
 	#   process - Function to do the job
+	# Process function has to
+	#   - Return a text that will replace the macro invocation in expanded source code
+	#   - Update "source_pos" if there are tricks: multi-lines invocation, changing source file
+	#   - Update "defined" if there are changes in defined values
+
 	class IncludeHandler:
 		name = '!include'
-		regexp = re.compile('!include "(?P<src>[^"]+)"')
+		regexp = re.compile(name + ' "(?P<src>[^"]+)"')
 		def process(m):
 			nonlocal source_pos
 			source_pos.append({'file': m.group('src'), 'line': 1})
@@ -53,9 +58,25 @@ def expand(source, game_dir, filename, templates_dir):
 			with open(template_path, 'r') as template_file:
 				return template_file.read() + '!return-include'
 
+	class DefaultHandler:
+		"""
+		Equivalent to !define but does nothing if the value is already defined
+		"""
+		name = '!default'
+		regexp = re.compile(name + ' "(?P<name>[^"]+)" {(?P<value>[^}]*)}', flags=re.MULTILINE)
+		def process(m):
+			nonlocal defined, source_pos
+			if m.group('name') not in defined:
+				defined[m.group('name')] = m.group('value')
+				source_pos[-1]['line'] += m.group('value').count('\n')
+			return ''
+
 	class DefineHandler:
+		"""
+		Define a value associated to a name, fails if a value is already defined for this name
+		"""
 		name = '!define'
-		regexp = re.compile('!define "(?P<name>[^"]+)" {(?P<value>[^}]*)}', flags=re.MULTILINE)
+		regexp = re.compile(name + ' "(?P<name>[^"]+)" {(?P<value>[^}]*)}', flags=re.MULTILINE)
 		def process(m):
 			nonlocal defined, source_pos
 			ensure(
@@ -64,6 +85,48 @@ def expand(source, game_dir, filename, templates_dir):
 			)
 			defined[m.group('name')] = m.group('value')
 			source_pos[-1]['line'] += m.group('value').count('\n')
+			return ''
+
+	class SquareDefineHandler:
+		"""
+		Define a value associated to a name, fails if a value is already defined for this name
+		"""
+		name = '!square-define'
+		regexp = re.compile(name + ' "(?P<name>[^"]+)" \[(?P<value>[^\]]*)\]', flags=re.MULTILINE)
+		def process(m):
+			nonlocal defined, source_pos
+			ensure(
+				m.group('name') not in defined,
+				'[{}] defining an already defined value: "{}"'.format(bt(), m.group('name'))
+			)
+			defined[m.group('name')] = m.group('value')
+			source_pos[-1]['line'] += m.group('value').count('\n')
+			return ''
+
+	class IfdefHandler:
+		"""
+		Place text only if a value is defined
+		"""
+		name = "!ifdef"
+		regexp = re.compile(name + ' "(?P<name>[^"]+)" {(?P<value>[^}]*)}', flags=re.MULTILINE)
+		def process(m):
+			nonlocal defined, source_pos
+			source_pos[-1]['line'] += m.group('value').count('\n')
+			if m.group('name') in defined:
+				return m.group('value')
+			return ''
+
+	class IfndefHandler:
+		"""
+		Place text only if a value is not defined
+		"""
+		name = "!ifndef"
+		regexp = re.compile(name + ' "(?P<name>[^"]+)" {(?P<value>[^}]*)}', flags=re.MULTILINE)
+		def process(m):
+			nonlocal defined, source_pos
+			source_pos[-1]['line'] += m.group('value').count('\n')
+			if m.group('name') not in defined:
+				return m.group('value')
 			return ''
 
 	class InputTableDefineHandler:
@@ -95,7 +158,7 @@ def expand(source, game_dir, filename, templates_dir):
 		}
 		"""
 		name = '!input-table-define'
-		regexp = re.compile('!input-table-define "(?P<name>[^"]+)" {(?P<value>[^}]*)}', flags=re.MULTILINE)
+		regexp = re.compile(name + ' "(?P<name>[^"]+)" {(?P<value>[^}]*)}', flags=re.MULTILINE)
 		def process(m):
 			nonlocal defined, source_pos
 
@@ -140,8 +203,11 @@ def expand(source, game_dir, filename, templates_dir):
 			return ''
 
 	class UndefHandler:
+		"""
+		Undefine a value, the name is free for reuse after that
+		"""
 		name = '!undef'
-		regexp = re.compile('!undef "(?P<name>[^"]+)"')
+		regexp = re.compile(name + ' "(?P<name>[^"]+)"')
 		def process(m):
 			nonlocal defined
 			ensure(
@@ -153,7 +219,7 @@ def expand(source, game_dir, filename, templates_dir):
 
 	class PlaceHandler:
 		name = '!place'
-		regexp = re.compile('!place "(?P<name>[^"]+)"')
+		regexp = re.compile(name + ' "(?P<name>[^"]+)"')
 		def process(m):
 			nonlocal defined
 			name = place_tpl_values(m.group('name'))
@@ -162,7 +228,7 @@ def expand(source, game_dir, filename, templates_dir):
 
 	class ReturnIncludeHandler:
 		name = '!return-include'
-		regexp = re.compile('!return-include')
+		regexp = re.compile(name)
 		def process(m):
 			nonlocal source_pos
 			del source_pos[-1]
@@ -179,12 +245,16 @@ def expand(source, game_dir, filename, templates_dir):
 
 	handlers = [
 		IncludeHandler,
+		DefaultHandler,
 		DefineHandler,
+		IfdefHandler,
+		IfndefHandler,
 		InputTableDefineHandler,
 		UndefHandler,
 		PlaceHandler,
 		ReturnIncludeHandler,
 		ShortPlaceHandler,
+		SquareDefineHandler,
 	]
 
 	# Scan the source to expand macros
