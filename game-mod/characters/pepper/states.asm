@@ -1165,21 +1165,34 @@ pepper_global_tick:
 		.byt >-VELOCITY_H, >VELOCITY_H
 		.byt >-VELOCITY_H_NTSC, >VELOCITY_H_NTSC
 
+	&pepper_start_witch_fly:
+	.(
+		; Select direction toward stage's center
+		lda player_a_x_screen, x
+		bne out_of_screen
+		lda player_a_x, x
+		bmi pepper_start_witch_fly_left
+		jmp pepper_start_witch_fly_right
+
+		out_of_screen:
+			bpl pepper_start_witch_fly_left
+			;jmp pepper_start_witch_fly_right ; useless, fallthrough
+	.)
 	&pepper_start_witch_fly_right:
 	.(
 		lda #DIRECTION_RIGHT2
 		sta player_a_direction, x
-		jmp pepper_start_witch_fly
+		jmp pepper_start_witch_fly_direction_set
 		;rts ; useless, jump to subroutine
 	.)
 	&pepper_start_witch_fly_left:
 	.(
 		lda #DIRECTION_LEFT2
 		sta player_a_direction, x
-		jmp pepper_start_witch_fly
+		;jmp pepper_start_witch_fly_direction_set ; useless, fallthrough
 		;rts ; useless, jump to subroutine
 	.)
-	&pepper_start_witch_fly:
+	&pepper_start_witch_fly_direction_set:
 	.(
 		; Set state
 		lda #PEPPER_STATE_WITCH_FLY
