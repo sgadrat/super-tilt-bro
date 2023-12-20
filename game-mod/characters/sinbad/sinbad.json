@@ -14416,7 +14416,7 @@
     {
       "input_routine": "smart_keep_input_dirty",
       "name": "SINBAD_STATE_SIDE_TILT_WINDUP",
-      "offground_routine": "sinbad_start_falling",
+      "offground_routine": "sinbad_offground_side_tilt",
       "onground_routine": "sinbad_global_onground",
       "onhurt_routine": "hurt_player",
       "start_routine": null,
@@ -14430,7 +14430,7 @@
       "update_routine": "sinbad_tick_side_tilt_hit",
       "input_routine": "smart_keep_input_dirty",
       "onground_routine": "sinbad_global_onground",
-      "offground_routine": "sinbad_start_falling",
+      "offground_routine": "sinbad_offground_side_tilt",
       "onhurt_routine": "hurt_player"
     },
     {
@@ -14440,7 +14440,7 @@
       "update_routine": "sinbad_tick_side_tilt_recovery",
       "input_routine": "sinbad_input_side_tilt_recovery",
       "onground_routine": "sinbad_global_onground",
-      "offground_routine": "sinbad_start_falling",
+      "offground_routine": "sinbad_offground_side_tilt",
       "onhurt_routine": "hurt_player"
     },
     {

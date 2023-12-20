@@ -1304,8 +1304,8 @@ check_in_platform:
 
 ; Jump to a callback according to player's controller state
 ;  X - Player number
-;  tmpfield1 - Callbacks table (high byte)
-;  tmpfield2 - Callbacks table (low byte)
+;  tmpfield1 - Callbacks table (lsb)
+;  tmpfield2 - Callbacks table (msb)
 ;  tmpfield3 - number of states in the callbacks table
 ;
 ;  Overwrites A, Y, tmpfield4, tmpfield5 and tmpfield6
@@ -1328,8 +1328,8 @@ controller_callbacks:
 
 ; Jump to a callback according to value in register A (linear complexity)
 ;  A - Value to check
-;  tmpfield1 - Callbacks table (high byte)
-;  tmpfield2 - Callbacks table (low byte)
+;  tmpfield1 - Callbacks table (lsb)
+;  tmpfield2 - Callbacks table (msb)
 ;  tmpfield3 - number of states in the callbacks table
 ;
 ;  Overwrites register Y, tmpfield4, tmpfield5 and tmpfield6
@@ -1344,6 +1344,12 @@ controller_callbacks:
 ;          - You can exit callbacks with JMP or falling through without problem
 ;          - You can use the stack normally
 ;          - Think as if you never left your routine, it is just an equivalent of "switch" in C
+;
+; Table format
+;  .byt VALUE1,     VALUE2,     VALUE3
+;  .byt <callback1, <callback2, <callback3
+;  .byt >callback1, >callback2, >callback3
+;  .word default_callback
 switch_linear:
 .(
 	callbacks_table = tmpfield1
@@ -1351,13 +1357,13 @@ switch_linear:
 	callback_addr = tmpfield4
 	matching_index = tmpfield6
 
-	; Initialize loop, Y on first element and A on controller's state
+	; Initialize loop, Y on first element
 	ldy #$00
 
-	check_controller_state:
-		; Compare controller state to the current table element
+	check_table_entry:
+		; Compare state to the current table element
 		cmp (callbacks_table), y
-		bne next_controller_state
+		bne next_table_entry
 
 			; Store the low byte of the callback address
 			tya                ;
@@ -1379,11 +1385,11 @@ switch_linear:
 			; Controller state is current element, jump to the callback
 			jmp (callback_addr)
 
-		next_controller_state:
+		next_table_entry:
 			; Check next element on the state table
 			iny
 			cpy num_states
-			bne check_controller_state
+			bne check_table_entry
 
 	; The state was not listed on the table, call the default callback at table's end
 	tya            ;
