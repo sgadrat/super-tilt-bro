@@ -532,11 +532,13 @@ sinbad_side_tilt_hit_end:
 	&sinbad_tick_special_charge:
 	.(
 		dec player_a_state_clock, x
-		bne end
+		bne do_tick
 			jmp sinbad_start_special_strike
 			; No return, jump to a subroutine
-		end:
-		rts
+		do_tick:
+
+		jmp sinbad_apply_ground_friction
+		;rts ; useless, jump to subroutine
 	.)
 .)
 
@@ -577,11 +579,13 @@ sinbad_side_tilt_hit_end:
 	&sinbad_tick_special_strike:
 	.(
 		dec player_a_state_clock, x
-		bne end
+		bne do_tick
 			jmp sinbad_start_helpless
 			; No return, jump to a subroutine
-		end:
-		rts
+		do_tick:
+
+		jmp sinbad_apply_ground_friction
+		;rts ; useless, jump to subroutine
 	.)
 .)
 
