@@ -21,8 +21,8 @@ extern uint8_t const MENU_MODE_SELECTION_TILESET_BANK;
 //static uint8_t const NB_OPTIONS = 5;
 static uint8_t const OPTION_LOCAL = 0;
 static uint8_t const OPTION_ONLINE = 1;
-//static uint8_t const OPTION_SUPPORT = 2;
-//static uint8_t const OPTION_CREDITS = 3;
+static uint8_t const OPTION_SOCIAL = 2;
+static uint8_t const OPTION_CREDITS = 3;
 static uint8_t const OPTION_ARCADE = 4;
 
 ///////////////////////////////////////
@@ -55,25 +55,49 @@ static void yield() {
 
 static void go_up() {
 	audio_play_interface_click();
-	static uint8_t const dest_option[] = {3, 4, 0, 2, 2};
+	static uint8_t const dest_option[] = {
+		OPTION_CREDITS, // LOCAL
+		OPTION_ARCADE, // ONLINE
+		OPTION_LOCAL, // SOCIAL
+		OPTION_SOCIAL, // CREDITS
+		OPTION_ONLINE, // ARCADE
+	};
 	*menu_state_mode_selection_current_option = dest_option[*menu_state_mode_selection_current_option];
 }
 
 static void go_down() {
 	audio_play_interface_click();
-	static uint8_t const dest_option[] = {2, 2, 3, 0, 1};
+	static uint8_t const dest_option[] = {
+		OPTION_SOCIAL, // LOCAL
+		OPTION_ARCADE, // ONLINE
+		OPTION_CREDITS, // SOCIAL
+		OPTION_LOCAL, // CREDITS
+		OPTION_ONLINE, // ARCADE
+	};
 	*menu_state_mode_selection_current_option = dest_option[*menu_state_mode_selection_current_option];
 }
 
 static void go_left() {
 	audio_play_interface_click();
-	static uint8_t const dest_option[] = {1, 0, 0, 4, 3};
+	static uint8_t const dest_option[] = {
+		OPTION_ONLINE, // LOCAL
+		OPTION_LOCAL, // ONLINE
+		OPTION_ARCADE, // SOCIAL
+		OPTION_ARCADE, // CREDITS
+		OPTION_SOCIAL, // ARCADE
+	};
 	*menu_state_mode_selection_current_option = dest_option[*menu_state_mode_selection_current_option];
 }
 
 static void go_right() {
 	audio_play_interface_click();
-	static uint8_t const dest_option[] = {1, 0, 1, 4, 3};
+	static uint8_t const dest_option[] = {
+		OPTION_ONLINE, // LOCAL
+		OPTION_LOCAL, // ONLINE
+		OPTION_ARCADE, // SOCIAL
+		OPTION_ARCADE, // CREDITS
+		OPTION_SOCIAL, // ARCADE
+	};
 	*menu_state_mode_selection_current_option = dest_option[*menu_state_mode_selection_current_option];
 }
 
@@ -109,6 +133,19 @@ static void next_screen() {
 	wrap_change_global_game_state(option_to_game_state[*menu_state_mode_selection_current_option]);
 }
 
+static void set_attribute(uint8_t* attributes_table, uint8_t x, uint8_t y, uint8_t value) {
+	// Get position of the bits to modify
+	uint8_t const attribute_index = (y/2)*8 + (x/2);
+	uint8_t const shift = (((y & 1) ? 2 : 0) + (x & 1)) << 1; // 0 (+4 if bottom) (+2 if right)
+	uint8_t const mask = 0x03 << shift;
+
+	// Set bits to zero (without touching other bits from attribute byte)
+	attributes_table[attribute_index] &= ~mask;
+
+	// Set bits to value (without touching other bits from attribute byte)
+	attributes_table[attribute_index] |= (value << shift);
+}
+
 static void show_selected_option(uint8_t shine) {
 	// Attributes-table related constants
 	static uint8_t const boxes_attributes_no_highlight[] = {
@@ -116,23 +153,24 @@ static void show_selected_option(uint8_t shine) {
 		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 	};
 	static uint8_t const boxes_attributes_no_highlight_no_network[] = {
 		/**/          ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3),
 		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3), ATT(3,3,3,3),
 		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
-		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
+		ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0), ATT(0,0,0,0),
 	};
-	static uint8_t const boxes_attributes_first_attribute_per_option[] = {0, 3, 17, 24, 27};
-	static uint8_t const boxes_attributes_nb_columns_per_option[] = {3, 4, 4, 3, 3};
-	static uint8_t const boxes_attributes_nb_rows_per_option[] = {2, 2, 1, 2, 2};
+	static uint8_t const boxes_attributes_x_pos_per_option[] = {0, 7, 0, 0, 7};
+	static uint8_t const boxes_attributes_y_pos_per_option[] = {0, 0, 5, 7, 4};
+	static uint8_t const boxes_attributes_nb_columns_per_option[] = {6, 6, 6, 6, 6};
+	static uint8_t const boxes_attributes_nb_rows_per_option[] = {4, 4, 2, 2, 5};
 	static uint8_t const boxes_attributes_buff_header[] = {0x23, 0xd1, sizeof(boxes_attributes_no_highlight)};
 
 	uint8_t const disabled_option = (no_network() && *menu_state_mode_selection_current_option == OPTION_ONLINE);
-	uint8_t const active_attribute_value = (disabled_option ? ATT(3,3,3,3) : ATT(1,1,1,1));
-	uint8_t const shiny_attribute_value = ATT(2,2,2,2);
+	uint8_t const active_attribute_value = (disabled_option ? 3 : 1);
+	uint8_t const shiny_attribute_value = 2;
 
 	// Derivate the "nothing highligthed" attribute table to highlight the good box
 	memcpy8(
@@ -140,18 +178,24 @@ static void show_selected_option(uint8_t shine) {
 		no_network() ? boxes_attributes_no_highlight_no_network : boxes_attributes_no_highlight,
 		sizeof(boxes_attributes_no_highlight)
 	);
-	uint8_t const first_attribute = boxes_attributes_first_attribute_per_option[*menu_state_mode_selection_current_option];
-	uint8_t const nb_columns = boxes_attributes_nb_columns_per_option[*menu_state_mode_selection_current_option];
-	uint8_t const nb_rows = boxes_attributes_nb_rows_per_option[*menu_state_mode_selection_current_option];
-	for (uint8_t x = 0; x < nb_columns; ++x) {
-		for (uint8_t y = 0; y < nb_rows; ++y) {
-			uint8_t const attribute_index = y * 8 + x + first_attribute;
-			mode_selection_mem_buffer[attribute_index] = active_attribute_value;
-			if (shine && x < 2) {
-				mode_selection_mem_buffer[attribute_index+1] = shiny_attribute_value;
+	uint8_t const first_column = boxes_attributes_x_pos_per_option[*menu_state_mode_selection_current_option];
+	uint8_t const first_row = boxes_attributes_y_pos_per_option[*menu_state_mode_selection_current_option];
+	uint8_t const last_column = first_column + boxes_attributes_nb_columns_per_option[*menu_state_mode_selection_current_option];
+	uint8_t const last_row = first_row + boxes_attributes_nb_rows_per_option[*menu_state_mode_selection_current_option];
+	for (uint8_t x = first_column; x < last_column; ++x) {
+		// Set column to active color
+		for (uint8_t y = first_row; y < last_row; ++y) {
+			// Set current tile to active color
+			set_attribute(mode_selection_mem_buffer, x, y, active_attribute_value);
+
+			// Set tile on the right to shiny color
+			if (shine && x < last_column - 1) {
+				set_attribute(mode_selection_mem_buffer, x+1, y, shiny_attribute_value);
 			}
 		}
-		if (shine && x < 2) {
+
+		// Draw current attribute table (partially activated, shiny on the right)
+		if (shine && x < last_column - 1) {
 			wrap_construct_nt_buffer(boxes_attributes_buff_header, mode_selection_mem_buffer);
 			yield();
 		}

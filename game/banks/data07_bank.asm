@@ -42,6 +42,12 @@ bank_data_credits_illustration_author_begin:
 #echo Credits illustration author data size:
 #print *-bank_data_credits_illustration_author_begin
 
+bank_data_mode_selection_screen_logic_begin:
+#include "game/logic/game_states/mode_selection_screen/mode_selection_screen_extra_code.asm"
+#echo
+#echo Menu mode selection logic:
+#print *-bank_data_mode_selection_screen_logic_begin
+
 bank_data07_end:
 
 #echo
