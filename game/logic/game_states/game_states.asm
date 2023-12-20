@@ -9,9 +9,7 @@ VECTOR(init_stage_selection_screen)
 VECTOR(init_character_selection_screen)
 VECTOR(init_mode_selection_screen)
 VECTOR(init_netplay_launch_screen)
-VECTOR(init_support_screen)
-VECTOR(init_support_btc_screen)
-VECTOR(init_support_paypal_screen)
+VECTOR(init_social_screen)
 VECTOR(init_online_mode_screen)
 VECTOR(init_wifi_settings_screen)
 VECTOR(init_arcade_mode)
@@ -28,9 +26,7 @@ VECTOR(stage_selection_screen_tick)
 VECTOR(character_selection_screen_tick)
 VECTOR(mode_selection_screen_tick)
 VECTOR(netplay_launch_screen_tick)
-VECTOR(support_screen_tick)
-VECTOR(support_qr_screen_tick)
-VECTOR(support_qr_screen_tick)
+VECTOR(social_screen_tick)
 VECTOR(online_mode_screen_tick)
 VECTOR(wifi_settings_screen_tick)
 VECTOR(arcade_mode_tick)
@@ -56,15 +52,10 @@ game_state_logic_begin_credits_screen:
 #echo logic size for game_states (credits_screen)
 #print *-game_state_logic_begin_credits_screen
 
-game_state_logic_begin_support_screen:
-#include "game/logic/game_states/support_screen.asm"
-#echo logic size for game_states (support_screen)
-#print *-game_state_logic_begin_support_screen
-
-game_state_logic_begin_support_qr:
-#include "game/logic/game_states/support_qr.asm"
-#echo logic size for game_states (support_qr)
-#print *-game_state_logic_begin_support_qr
+game_state_logic_begin_social_screen:
+#include "game/logic/game_states/social_screen.asm"
+#echo logic size for game_states (social_screen)
+#print *-game_state_logic_begin_social_screen
 
 game_state_logic_begin_game:
 #include "game/logic/game_states/game/game.asm"

@@ -1,10 +1,10 @@
-CHARSET_QR_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
++CHARSET_QR_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 
 ;
 ; This is actually tiles of 4x4 pixels. Main use is drawing QR codes, but could find other uses.
 ;
 
-charset_qr_code:
++charset_qr_code:
 
 ; Tileset's size in tiles (zero means 256)
 .byt (charset_qr_code_end-charset_qr_code_tiles)/8

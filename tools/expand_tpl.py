@@ -46,6 +46,17 @@ def expand(source, game_dir, filename, templates_dir):
 	#   - Update "source_pos" if there are tricks: multi-lines invocation, changing source file
 	#   - Update "defined" if there are changes in defined values
 
+	class AsciiOffsetHandler:
+		name = '!ascii-offset'
+		regexp = re.compile(name + ' (?P<offset>-?[0-9]+) "(?P<str>[^"]+)"')
+		def process(m):
+			offset = int(m.group('offset'))
+			txt = m.group('str')
+			result = '.byt '
+			for char in txt:
+				result += '${:02x},'.format(ord(char) + offset)
+			return result[:-1]
+
 	class IncludeHandler:
 		name = '!include'
 		regexp = re.compile(name + ' "(?P<src>[^"]+)"')
@@ -244,6 +255,7 @@ def expand(source, game_dir, filename, templates_dir):
 			return defined[m.group('name')]
 
 	handlers = [
+		AsciiOffsetHandler,
 		IncludeHandler,
 		DefaultHandler,
 		DefineHandler,

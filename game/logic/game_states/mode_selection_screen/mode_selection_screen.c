@@ -110,7 +110,7 @@ static void next_screen() {
 	static uint8_t const option_to_game_state[] = {
 		GAME_STATE_CONFIG,
 		GAME_STATE_ONLINE_MODE_SELECTION,
-		GAME_STATE_DONATION,
+		GAME_STATE_SOCIAL,
 		GAME_STATE_CREDITS,
 		GAME_STATE_ARCADE_MODE
 	};

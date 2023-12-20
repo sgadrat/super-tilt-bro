@@ -473,10 +473,17 @@ jukebox_zp_mem = last_c_label+1 ; $39
 jukebox_mem = $0580
 
 ;
-; DONATION labels
+; SOCIAL labels
 ;
 
-support_method = $00
+social_link = $00
+social_draw_step = $01
+social_draw_line_addr_lsb = $02
+social_draw_line_addr_msb = $03
+social_link_state = $04 ; 0 - showing links page, 1 showing a link
+
+social_mem_buffer = $0560 ; max usage - 4 bytes
+social_cursor_anim = $580
 
 ;
 ; Common menus labels

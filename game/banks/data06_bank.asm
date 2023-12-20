@@ -33,18 +33,22 @@ bank_data_charset_ascii_begin:
 #echo ASCII Charset:
 #print *-bank_data_charset_ascii_begin
 
-bank_data_menu_support_data_begin:
-#include "game/data/menu_support/screen.asm"
-#include "game/data/menu_support/tilesets.asm"
+.(
+bank_data_begin:
+#include "game/data/menu_social/screen.built.asm"
+#include "game/data/menu_social/tilesets.asm"
 #echo
-#echo Menu support data:
-#print *-bank_data_menu_support_data_begin
+#echo Menu social data:
+#print *-bank_data_begin
+.)
 
-bank_data_charset_qr_code_begin:
+.(
+bank_data_begin:
 #include "game/data/charsets/qr_code.asm"
 #echo
 #echo QR code charset:
-#print *-bank_data_charset_qr_code_begin
+#print *-bank_data_begin
+.)
 
 .(
 bank_data_begin:

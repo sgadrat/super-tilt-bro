@@ -318,6 +318,36 @@ duration
 #define ANIM_SPRITE_NORMAL_COUNT(n) .byt n
 #define ANIM_SPRITE(y,tile,attr,x) .byt <y, tile, attr, <x
 
+; Animation common code
+
+#define ANIM_INIT(state,data) .( :\
+	lda #<state :\
+	sta tmpfield11 :\
+	lda #>state :\
+	sta tmpfield12 :\
+	lda #<data :\
+	sta tmpfield13 :\
+	lda #>data :\
+	sta tmpfield14 :\
+	jsr animation_init_state :\
+.)
+
+#define ANIM_SET_SPRITES(state,first,last) .( :\
+	lda first :\
+	sta state+ANIMATION_STATE_OFFSET_FIRST_SPRITE_NUM :\
+	lda last :\
+	sta state+ANIMATION_STATE_OFFSET_LAST_SPRITE_NUM :\
+.)
+
+#define ANIM_UPDATE(state) .( :\
+	lda #<state :\
+	sta tmpfield11 :\
+	lda #>state :\
+	sta tmpfield12 :\
+	jsr animation_draw :\
+	jsr animation_tick :\
+.)
+
 ;
 ; Transition between gamestates
 ;  STATE_TRANSITION(previous,new) - ID of the transition from state "previous" and state "new"
