@@ -45,30 +45,31 @@ TOESP_MSG_SERVER_SEND_MESSAGE              = 30  ; Send message to server
 
 ; NETWORK CMDS
 TOESP_MSG_NETWORK_SCAN                     = 31  ; Scan networks around and return count
-TOESP_MSG_NETWORK_GET_SCANNED_DETAILS      = 32  ; Get scanned network details
-TOESP_MSG_NETWORK_GET_REGISTERED           = 33  ; Get registered networks status
-TOESP_MSG_NETWORK_GET_REGISTERED_DETAILS   = 34  ; Get registered network SSID
-TOESP_MSG_NETWORK_REGISTER                 = 35  ; Register network
-TOESP_MSG_NETWORK_UNREGISTER               = 36  ; Unregister network
-TOESP_MSG_NETWORK_SET_ACTIVE               = 37  ; Set active network
+TOESP_MSG_NETWORK_GET_SCAN_RESULT          = 32  ; Get result of the last scan
+TOESP_MSG_NETWORK_GET_SCANNED_DETAILS      = 33  ; Get scanned network details
+TOESP_MSG_NETWORK_GET_REGISTERED           = 34  ; Get registered networks status
+TOESP_MSG_NETWORK_GET_REGISTERED_DETAILS   = 35  ; Get registered network SSID
+TOESP_MSG_NETWORK_REGISTER                 = 36  ; Register network
+TOESP_MSG_NETWORK_UNREGISTER               = 37  ; Unregister network
+TOESP_MSG_NETWORK_SET_ACTIVE               = 38  ; Set active network
 
 ; FILE COMMANDS
-TOESP_MSG_FILE_OPEN                        = 38  ; Open working file
-TOESP_MSG_FILE_CLOSE                       = 39  ; Close working file
-TOESP_MSG_FILE_STATUS                      = 40  ; Get working file status
-TOESP_MSG_FILE_EXISTS                      = 41  ; Check if file exists
-TOESP_MSG_FILE_DELETE                      = 42  ; Delete a file
-TOESP_MSG_FILE_SET_CUR                     = 43  ; Set working file cursor position a file
-TOESP_MSG_FILE_READ                        = 44  ; Read working file (at specific position)
-TOESP_MSG_FILE_WRITE                       = 45  ; Write working file (at specific position)
-TOESP_MSG_FILE_APPEND                      = 46  ; Append data to working file
-TOESP_MSG_FILE_COUNT                       = 47  ; Count files in a specific path
-TOESP_MSG_FILE_GET_LIST                    = 48  ; Get list of existing files in a path
-TOESP_MSG_FILE_GET_FREE_ID                 = 49  ; Get an unexisting file ID in a specific path
-TOESP_MSG_FILE_GET_FS_INFO                 = 50  ; Get file system details (ESP flash or SD card)
-TOESP_MSG_FILE_GET_INFO                    = 51  ; Get file info (size + crc32)
-TOESP_MSG_FILE_DOWNLOAD                    = 52  ; Download a file from a giving URL to a specific path index / file index
-TOESP_MSG_FILE_FORMAT                      = 53  ; Format file system
+TOESP_MSG_FILE_OPEN                        = 39  ; Open working file
+TOESP_MSG_FILE_CLOSE                       = 40  ; Close working file
+TOESP_MSG_FILE_STATUS                      = 41  ; Get working file status
+TOESP_MSG_FILE_EXISTS                      = 42  ; Check if file exists
+TOESP_MSG_FILE_DELETE                      = 43  ; Delete a file
+TOESP_MSG_FILE_SET_CUR                     = 44  ; Set working file cursor position a file
+TOESP_MSG_FILE_READ                        = 45  ; Read working file (at specific position)
+TOESP_MSG_FILE_WRITE                       = 46  ; Write working file (at specific position)
+TOESP_MSG_FILE_APPEND                      = 47  ; Append data to working file
+TOESP_MSG_FILE_COUNT                       = 48  ; Count files in a specific path
+TOESP_MSG_FILE_GET_LIST                    = 49  ; Get list of existing files in a path
+TOESP_MSG_FILE_GET_FREE_ID                 = 50  ; Get an unexisting file ID in a specific path
+TOESP_MSG_FILE_GET_FS_INFO                 = 51  ; Get file system details (ESP flash or SD card)
+TOESP_MSG_FILE_GET_INFO                    = 52  ; Get file info (size + crc32)
+TOESP_MSG_FILE_DOWNLOAD                    = 53  ; Download a file from a giving URL to a specific path index / file index
+TOESP_MSG_FILE_FORMAT                      = 54  ; Format file system
 
 ;-------------------------------------------------------------------------------
 ; Commands from ESP to NES
@@ -97,7 +98,7 @@ FROMESP_MSG_SERVER_SETTINGS                = 12  ; Returns server settings (host
 FROMESP_MSG_MESSAGE_FROM_SERVER            = 13  ; Message from server
 
 ; NETWORK CMDS
-FROMESP_MSG_NETWORK_COUNT                  = 14  ; Returns number of networks found
+FROMESP_MSG_NETWORK_SCAN_RESULT            = 14  ; Returns number of networks found
 FROMESP_MSG_NETWORK_SCANNED_DETAILS        = 15  ; Returns details for a scanned network
 FROMESP_MSG_NETWORK_REGISTERED_DETAILS     = 16  ; Returns SSID for a registered network
 FROMESP_MSG_NETWORK_REGISTERED             = 17  ; Returns registered networks status

@@ -445,7 +445,7 @@ static void update_net_list() {
 
 		// Make ESP scan networks
 		wrap_esp_send_cmd(cmd_net_scan);
-		while (msg[ESP_MSG_SIZE] != 2 || msg[ESP_MSG_TYPE] != FROMESP_MSG_NETWORK_COUNT) {
+		while (msg[ESP_MSG_SIZE] != 2 || msg[ESP_MSG_TYPE] != FROMESP_MSG_NETWORK_SCAN_RESULT) {
 			yield();
 		}
 		ctx->net_count = min(msg[ESP_MSG_PAYLOAD], MAX_NETWORKS);
