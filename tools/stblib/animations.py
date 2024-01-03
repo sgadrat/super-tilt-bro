@@ -1,4 +1,4 @@
-from stblib import ensure, utils
+from stblib import ensure, utils, ValidationError
 
 class Hurtbox:
 	def __init__(self, left=0, right=0, top=0, bottom=0):
@@ -29,6 +29,11 @@ class DirectHitbox:
 		self.force_v = force_v
 
 	def check(self):
+		ensure(isinstance(self.damages, int), f'hitbox damages is of class {self.damages.__class__.__name__}')
+		ensure(isinstance(self.base_h, int), f'hitbox base_h is of class {self.base_h.__class__.__name__}')
+		ensure(isinstance(self.base_v, int), f'hitbox base_v is of class {self.base_v.__class__.__name__}')
+		ensure(isinstance(self.force_h, int), f'hitbox force_h is of class {self.force_h.__class__.__name__}')
+		ensure(isinstance(self.force_v, int), f'hitbox force_v is of class {self.force_v.__class__.__name__}')
 		ensure(-128 <= self.left and self.left <= 127)
 		ensure(-128 <= self.right and self.right <= 127)
 		ensure(-128 <= self.top and self.top <= 127)
@@ -133,6 +138,11 @@ class Animation:
 			self.frames = []
 
 	def check(self):
-		ensure(len(self.frames) > 0, 'empty animation')
-		for frame in self.frames:
-			frame.check()
+		frame_num = None
+		try:
+			ensure(len(self.frames) > 0, 'empty animation')
+			for frame_num, frame in enumerate(self.frames):
+				frame.check()
+		except ValidationError as e:
+			frame_info = '' if frame_num is None else f' frame #{frame_num}'
+			raise ValidationError(f'animation "{self.name}"{frame_info}: {e}"')
