@@ -48,7 +48,7 @@ CZ = CA+25
 #define TITLE_SCREEN_VERSION \
 	CV, CE, CR, CS, CI, CO, CN, $00, $01, \
 	C2, $00, $01, \
-	CB, CE, CT, CA, \
+	CR, CC, \
 	C0+GAME_VERSION_MINOR
 
 #if 0
@@ -99,7 +99,7 @@ CZ = CA+25
 ;    --------------- --------------- --------------- --------------- --------------- -------------- ---------------- -------------------
 .byt ZIPNT_ZEROS(8+32*2+13)
 .byt                                                                                               TITLE_SCREEN_VERSION
-.byt ZIPNT_ZEROS(4+32*3)
+.byt ZIPNT_ZEROS(6+32*3)
 title_screen_nametable_attributes:
 .byt ZIPNT_ZEROS(8+8+8+8+8+2)
 .byt                       %11110000, %11110000, %11110000, %11110000
