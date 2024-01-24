@@ -46,7 +46,7 @@ CZ = CA+25
 #define PRESS_ANY_BUTTON  CP, CR, CE, CS, CS, $00, $01, CA, CN, CY, $00, $01, CB, CU, CT, CT, CO, CN
 
 #define TITLE_SCREEN_VERSION \
-	CV, CE, CR, CS, CI, CO, CN, $00, $01, \
+	CT, CE, CS, CT, CI, CN, CG, $00, $01, \
 	C2, $00, $01, \
 	CR, CC, \
 	C0+GAME_VERSION_MINOR

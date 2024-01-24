@@ -68,7 +68,9 @@ static void start_cutscene() {
 
 	// Draw screen
 	long_construct_palettes_nt_buffer(encounter.cutscene.bank, cutscene->palette);
-	long_draw_zipped_nametable(encounter.cutscene.bank, cutscene->nametable);
+	if (cutscene->nametable != (void*)0xffff) {
+		long_draw_zipped_nametable(encounter.cutscene.bank, cutscene->nametable);
+	}
 	if (cutscene->nametable_bot != (void*)0xffff) {
 		long_draw_zipped_vram(encounter.cutscene.bank, cutscene->nametable_bot, 0x2800);
 	}
@@ -99,7 +101,7 @@ static void start_cutscene() {
 	// Call cutscene's logic
 	wrap_trampoline(encounter.cutscene.bank, code_bank(), cutscene->logic);
 
-	// Change gamestate to ourself, cutscenes are exploited alongside other gamestates
+	// Change gamestate to ourself, we just played the cutscene and now want to check next encounter like any other
 	++*arcade_mode_current_encounter;
 	wrap_change_global_game_state(GAME_STATE_ARCADE_MODE);
 }

@@ -119,15 +119,15 @@ cutscene_sinbad_story_meteor_logic:
 	; Scroll-in + Fade-in space scene
 	SET_PALETTE(0, $0f, $0f, $0c)
 	SET_PALETTE(1, $0f, $06, $06)
-	SET_PALETTE(4, $0f, $0f, $09)
+	SET_PALETTE(6, $0f, $0f, $09)
 	PLAY_FRAMES(1)
 	SET_PALETTE(0, $0c, $00, $0c)
 	SET_PALETTE(1, $07, $06, $16)
-	SET_PALETTE(4, $0c, $00, $0a)
+	SET_PALETTE(6, $0c, $00, $0a)
 	PLAY_FRAMES(1)
 	SET_PALETTE(0, $0c, $00, $1c)
 	SET_PALETTE(1, $07, $16, $27)
-	SET_PALETTE(4, $0c, $00, $1a)
+	SET_PALETTE(6, $0c, $00, $1a)
 	PLAY_FRAMES(48-40-1-1)
 
 	; Display space scene
@@ -141,21 +141,21 @@ cutscene_sinbad_story_meteor_logic:
 	; Fade out
 	SET_PALETTE(0, $0c, $00, $0c)
 	SET_PALETTE(1, $07, $06, $16)
-	SET_PALETTE(4, $0c, $00, $0a)
+	SET_PALETTE(6, $0c, $00, $0a)
 	PLAY_FRAMES(1)
 	SET_PALETTE(0, $0f, $0f, $0c)
 	SET_PALETTE(1, $0f, $06, $06)
-	SET_PALETTE(4, $0f, $0f, $09)
+	SET_PALETTE(6, $0f, $0f, $09)
 	PLAY_FRAMES(1)
 	SET_PALETTE(0, $0f, $0f, $0f)
 	SET_PALETTE(1, $0f, $0f, $0f)
-	SET_PALETTE(4, $0f, $0f, $0f)
+	SET_PALETTE(6, $0f, $0f, $0f)
 	SKIPPABLE_FRAMES(10)
 
 	; Hide sprites overlay
 	CLEAR_ANIM(2)
 	CLEAR_ANIM(3)
-	SET_PALETTE(4, $08, $1a, $20)
+	SET_PALETTE(6, $08, $16, $20)
 
 	; Copy ground tileset to VRAM
 	STOP_RENDERING

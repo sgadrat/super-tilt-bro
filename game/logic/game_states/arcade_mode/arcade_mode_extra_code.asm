@@ -36,6 +36,7 @@
 	ARCADE_TARGETS(stage_arcade_btt02_index, 20,0, 12,0)
 	ARCADE_CUTSCENE(cutscene_sinbad_story_meteor, cutscene_sinbad_story_meteor_bank)
 	ARCADE_FIGHT(0, 4, 1, stage_arcade_boss_index, 90,0, 45,0)
+	ARCADE_CUTSCENE(cutscene_sinbad_story_ending, cutscene_sinbad_story_ending_bank)
 
 +arcade_n_encounters = (* - arcade_encounters) / ENCOUNTER_ENTRY_SIZE
 .)

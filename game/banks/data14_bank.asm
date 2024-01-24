@@ -23,6 +23,14 @@ bank_data_begin:
 #print *-bank_data_begin
 .)
 
+.(
+bank_data_begin:
+#include "game/data/stages/arcade/fight_wall/stage_arcade_fight_wall.asm"
+#echo
+#echo stage arcade fight wall size:
+#print *-bank_data_begin
+.)
+
 bank_data14_end:
 
 #echo

@@ -1,4 +1,4 @@
-cutscene_sinbad_story_meteor_ground_tileset:
++cutscene_sinbad_story_meteor_ground_tileset:
 
 ; Tileset's size in tiles (zero means 256)
 .byt (cutscene_sinbad_story_meteor_ground_tileset_end-cutscene_sinbad_story_meteor_ground_tileset_tiles)/16
@@ -96,7 +96,7 @@ cutscene_sinbad_story_meteor_ground_tileset_tiles:
 .byt %10111110, %01111110, %00111110, %00111110, %11000110, %11011100, %00111100, %00000000
 cutscene_sinbad_story_meteor_ground_tileset_end:
 
-cutscene_sinbad_story_meteor_space_tileset:
++cutscene_sinbad_story_meteor_space_tileset:
 
 ; Tileset's size in tiles (zero means 256)
 .byt (cutscene_sinbad_story_meteor_space_tileset_end-cutscene_sinbad_story_meteor_space_tileset_tiles)/16
@@ -600,7 +600,7 @@ cutscene_sinbad_story_meteor_space_tileset_tiles:
 .byt %00000000, %00000000, %10000000, %01000000, %00100000, %00010000, %00001000, %00000110
 cutscene_sinbad_story_meteor_space_tileset_end:
 
-cutscene_sinbad_story_meteor_sprites_tileset:
++cutscene_sinbad_story_meteor_sprites_tileset:
 
 ; Tileset's size in tiles (zero means 256)
 .byt (cutscene_sinbad_story_meteor_sprites_tileset_end-cutscene_sinbad_story_meteor_sprites_tileset_tiles)/16

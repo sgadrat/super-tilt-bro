@@ -1,10 +1,10 @@
-cutscene_sinbad_story_meteor_palette:
++cutscene_sinbad_story_meteor_palette:
 ; Background
 .byt $0f,$19,$29,$21, $0f,$27,$21,$20, $0f,$07,$19,$17, $0f,$21,$10,$20 ; 0-grass-top, 1-cake, 2-ground, 3-cloud
 ; Sprites
 .byt $0f,$08,$1a,$20, $0f,$08,$10,$37, $0f,$08,$16,$20, $0f,$08,$37,$37 ; 0-sinbad, 1-sinbad, 2-evil-sinbad, 3-evil-sinbad
 
-cutscene_sinbad_story_meteor_nametable_ground:
++cutscene_sinbad_story_meteor_nametable_ground:
 .byt $00,$c0
 .byt
 .byt
@@ -48,7 +48,7 @@ cutscene_sinbad_story_meteor_nametable_ground:
 ; End
 .byt ZIPNT_END
 
-cutscene_sinbad_story_meteor_nametable_space:
++cutscene_sinbad_story_meteor_nametable_space:
 .byt $00,$ca
 .byt
 .byt
