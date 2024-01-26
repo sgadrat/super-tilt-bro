@@ -188,6 +188,9 @@ social_screen_tick_links_page:
 		check_one_controller:
 			lda controller_a_btns, x
 			bne next_controller
+			cmp controller_a_last_frame_btns, x
+			beq next_controller
+
 				jsr audio_play_interface_click
 
 				lda controller_a_last_frame_btns, x
@@ -270,6 +273,9 @@ social_screen_tick_link_display:
 		check_one_controller:
 			lda controller_a_btns, x
 			bne next_controller
+			cmp controller_a_last_frame_btns, x
+			beq next_controller
+
 				jsr audio_play_interface_click
 
 				lda controller_a_last_frame_btns, x
