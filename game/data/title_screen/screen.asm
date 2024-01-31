@@ -45,16 +45,24 @@ CZ = CA+25
 #define FOR_NES CF, CO, CR, $00, $01, CN, CE, CS
 #define PRESS_ANY_BUTTON  CP, CR, CE, CS, CS, $00, $01, CA, CN, CY, $00, $01, CB, CU, CT, CT, CO, CN
 
+#if GAME_VERSION_MINOR < 10
+#define VERSION_DIGITS C0+GAME_VERSION_MINOR, $00, $02
+#else
+#if GAME_VERSION_MINOR < 100
+#define VERSION_DIGITS C0+(GAME_VERSION_MINOR/10), C0+(GAME_VERSION_MINOR-((GAME_VERSION_MINOR/10)*10)), $00, $01
+#else
+VERSION_DIGIT_HUNDREDS = GAME_VERSION_MINOR / 100
+VERSION_DIGIT_TENS = (GAME_VERSION_MINOR - 100 * VERSION_DIGIT_HUNDREDS) / 10
+VERSION_DIGIT_UNITS =  GAME_VERSION_MINOR - 100 * VERSION_DIGIT_HUNDREDS - 10 * VERSION_DIGIT_TENS
+#define VERSION_DIGITS C0+VERSION_DIGIT_HUNDREDS, C0+VERSION_DIGIT_TENS, C0+VERSION_DIGIT_UNITS
+#endif
+#endif
+
 #define TITLE_SCREEN_VERSION \
-	CT, CE, CS, CT, CI, CN, CG, $00, $01, \
+	CV, CE, CR, CS, CI, CO, CN, $00, $01, \
 	C2, $00, $01, \
 	CR, CC, \
-	C0+GAME_VERSION_MINOR
-
-#if 0
-	; Use that when version_minor >= 10
-	C0+(GAME_VERSION_MINOR/10), C0+(GAME_VERSION_MINOR-((GAME_VERSION_MINOR/10)*10))
-#endif
+	VERSION_DIGITS
 
 #define ZZ1 ZIPZ
 #define ZZ2 $00,$02
@@ -99,7 +107,7 @@ CZ = CA+25
 ;    --------------- --------------- --------------- --------------- --------------- -------------- ---------------- -------------------
 .byt ZIPNT_ZEROS(8+32*2+13)
 .byt                                                                                               TITLE_SCREEN_VERSION
-.byt ZIPNT_ZEROS(6+32*3)
+.byt ZIPNT_ZEROS(4+32*3)
 title_screen_nametable_attributes:
 .byt ZIPNT_ZEROS(8+8+8+8+8+2)
 .byt                       %11110000, %11110000, %11110000, %11110000
