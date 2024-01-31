@@ -718,11 +718,15 @@ anim_duration_table(sinbad_anim_side_tilt_recovery_dur_pal-4, sinbad_side_tilt_r
 
 sinbad_input_side_tilt_recovery:
 .(
+	; After cuttable time, the player can cut the recovry by jump moves (or up-tilt, up-special)
 	lda player_a_state_clock, x
 	ldy system_index
 	cmp sinbad_side_tilt_recovery_cuttable_time, y
 	bcs ignore
-		jmp sinbad_input_idle
+		lda controller_a_btns, x
+		and #CONTROLLER_INPUT_JUMP
+		beq ignore
+			jmp sinbad_input_idle
 	ignore:
 		jmp smart_keep_input_dirty
 	;rts ; useless, no branch return
@@ -737,12 +741,7 @@ sinbad_side_tilt_hit_end:
 			jmp sinbad_start_falling
 
 		grounded:
-			lda controller_a_btns, x
-			and #CONTROLLER_INPUT_LEFT|CONTROLLER_INPUT_RIGHT
-			bne goto_sinbad_start_running
-				jmp sinbad_start_side_tilt_recovery
-			goto_sinbad_start_running:
-				jmp sinbad_start_running
+			jmp sinbad_start_side_tilt_recovery
 
 	;rts ; useless, no branch return
 .)
