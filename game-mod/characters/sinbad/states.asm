@@ -438,7 +438,7 @@ velocity_table(-{char_name_upper}_DASH_MAX_VELOCITY, {char_name}_dash_max_neg_ve
 sinbad_side_tilt_speed_update:
 .(
 	; Do not change velocity from zero, it is certainly due to offground routine
-	lda player_a_velocity_h
+	lda player_a_velocity_h, x
 	bne proceed
 		rts
 	proceed:
