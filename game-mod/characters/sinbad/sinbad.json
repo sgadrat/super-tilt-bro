@@ -5370,11 +5370,11 @@
             "left": -7,
             "top": 5,
             "right": 16,
-            "bottom": 12,
+            "bottom": 16,
             "base_h": -400,
             "base_v": -1000,
             "force_h": 0,
-            "force_v": 0,
+            "force_v": -20,
             "damages": 1,
             "enabled": true
           },
