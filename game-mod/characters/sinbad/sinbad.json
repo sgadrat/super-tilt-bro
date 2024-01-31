@@ -5607,7 +5607,7 @@
             "bottom": 7,
             "damages": 10,
             "enabled": true,
-            "force_h": -16,
+            "force_h": -10,
             "force_v": -4,
             "left": -12,
             "right": -1,
