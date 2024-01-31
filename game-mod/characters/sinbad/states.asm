@@ -379,9 +379,7 @@ sinbad_global_onground:
 ; Side tilt
 ;
 
-sinbad_unfallable_ledge_lsb = player_a_state_field1
-sinbad_unfallable_ledge_msb = player_a_state_field2
-sinbad_unfallable_platform = player_a_state_field3
+sinbad_unfallable_platform = player_a_state_field1
 
 !define "anim" {sinbad_anim_side_tilt_windup}
 !define "state" {SINBAD_STATE_SIDE_TILT_WINDUP}
@@ -394,111 +392,22 @@ sinbad_unfallable_platform = player_a_state_field3
 	cmp #DIRECTION_LEFT2
 	bne direction_right
 		direction_left:
-			lda #<platform_handlers_left
-			sta tmpfield1
-			lda #>platform_handlers_left
-			sta tmpfield2
-
 			lda {char_name}_run_init_neg_velocity_lsb, y
 			sta player_a_velocity_h_low, x
 			lda {char_name}_run_init_neg_velocity_msb, y
 			jmp set_high_byte
 		direction_right:
-			lda #<platform_handlers_right
-			sta tmpfield1
-			lda #>platform_handlers_right
-			sta tmpfield2
-
 			lda {char_name}_run_init_velocity_lsb, y
 			sta player_a_velocity_h_low, x
 			lda {char_name}_run_init_velocity_msb, y
 	set_high_byte:
 	sta player_a_velocity_h, x
 
-	; Get ledge from which we cannot fall
+	; Get platform from which we cannot fall
 	lda player_a_grounded, x
 	sta sinbad_unfallable_platform, x
-	beq not_grounded
-		pha
-		tay
 
-		lda #platform_handlers_size
-		sta tmpfield3
-		lda stage_data, y
-		jmp switch_linear
-
-	on_unknown_platform:
-		; Unknown platform should not happen, clear the stack from pushed platform offset
-		pla
-		; Fallthrough to not_grounded
-	not_grounded:
-		; There is no reason too be ungrounded, so code does not support it, fallback to falling state
-		jmp sinbad_start_falling
-
-	; Displacement between ledge and actual position sinbad stops at, in pixels
-	;  Minimum is 1 for staying on collision box.
-	;  Set to greater value to avoid appearing glitchy, only one pixel on platform feels unatural
-	SINBAD_LEDGE_REPLACE_OFFSET = 6
-
-	on_platform_facing_left:
-		pla:tay
-		lda stage_data+1, y
-		clc
-		adc #<SINBAD_LEDGE_REPLACE_OFFSET
-		sta sinbad_unfallable_ledge_lsb, x
-		lda #0
-		adc #>SINBAD_LEDGE_REPLACE_OFFSET
-		sta sinbad_unfallable_ledge_msb, x
-		rts
-
-	on_oos_platform_facing_left:
-		pla:tay
-		lda stage_data+1, y
-		clc
-		adc #<SINBAD_LEDGE_REPLACE_OFFSET
-		sta sinbad_unfallable_ledge_lsb, x
-		lda stage_data+2, y
-		adc #>SINBAD_LEDGE_REPLACE_OFFSET
-		sta sinbad_unfallable_ledge_msb, x
-		rts
-
-	on_platform_facing_right:
-		pla:tay
-		lda stage_data+2, y
-		sec
-		sbc #<SINBAD_LEDGE_REPLACE_OFFSET
-		sta sinbad_unfallable_ledge_lsb, x
-		lda #0
-		sbc #>SINBAD_LEDGE_REPLACE_OFFSET
-		sta sinbad_unfallable_ledge_msb, x
-		rts
-
-	on_oos_platform_facing_right:
-		pla:tay
-		lda stage_data+3, y
-		sec
-		sbc #<SINBAD_LEDGE_REPLACE_OFFSET
-		sta sinbad_unfallable_ledge_lsb, x
-		lda stage_data+4, y
-		sbc #>SINBAD_LEDGE_REPLACE_OFFSET
-		sta sinbad_unfallable_ledge_msb, x
-		rts
-
-	platform_handlers_left:
-		.byt STAGE_ELEMENT_PLATFORM,   STAGE_ELEMENT_SMOOTH_PLATFORM, STAGE_ELEMENT_OOS_PLATFORM,   STAGE_ELEMENT_OOS_SMOOTH_PLATFORM
-		.byt <on_platform_facing_left, <on_platform_facing_left,      <on_oos_platform_facing_left, <on_oos_platform_facing_left
-		.byt >on_platform_facing_left, >on_platform_facing_left,      >on_oos_platform_facing_left, >on_oos_platform_facing_left
-		.word on_unknown_platform
-	platform_handlers_size = (*-platform_handlers_left-1)/3
-
-	platform_handlers_right:
-		.byt STAGE_ELEMENT_PLATFORM,    STAGE_ELEMENT_SMOOTH_PLATFORM, STAGE_ELEMENT_OOS_PLATFORM,    STAGE_ELEMENT_OOS_SMOOTH_PLATFORM
-		.byt <on_platform_facing_right, <on_platform_facing_right,     <on_oos_platform_facing_right, <on_oos_platform_facing_right
-		.byt >on_platform_facing_right, >on_platform_facing_right,     >on_oos_platform_facing_right, >on_oos_platform_facing_right
-		.word on_unknown_platform
-#if (*-platform_handlers_right-1)/3 <> platform_handlers_size
-#error non-matching platform handlers size
-#endif
+	rts
 ]
 !square-define "tick" [
 	jmp {char_name}_side_tilt_speed_update
@@ -566,22 +475,193 @@ sinbad_side_tilt_speed_update:
 
 sinbad_offground_side_tilt:
 .(
-	; Cancel momentum
-	lda #0
-	sta player_a_velocity_h_low, x
-	sta player_a_velocity_h, x
+	; Get ledge position
+	sinbad_unfallable_ledge_x_lsb = tmpfield1
+	sinbad_unfallable_ledge_x_msb = tmpfield2
+	sinbad_unfallable_ledge_y_lsb = tmpfield3
+	sinbad_unfallable_ledge_y_msb = tmpfield4
+	jsr sinbad_side_tilt_unfallable_ledge
 
-	; Re place character on the ledge
-	lda #0
-	sta player_a_x_low, x
-	lda sinbad_unfallable_ledge_lsb, x
-	sta player_a_x, x
-	lda sinbad_unfallable_ledge_msb, x
-	sta player_a_x_screen, x
-	lda sinbad_unfallable_platform, x
-	sta player_a_grounded, x
+	; Check if character felt from this ledge
+	lda sinbad_unfallable_ledge_x_msb
+	cmp #$80
+	beq unatural_cause_of_going_offground
+	;TODO
 
-	rts
+		felt_from_ledge:
+			; Cancel momentum
+			lda #0
+			sta player_a_velocity_h_low, x
+			sta player_a_velocity_h, x
+
+			; Place character on the ledge
+			lda #0
+			sta player_a_x_low, x
+			lda sinbad_unfallable_ledge_x_lsb
+			sta player_a_x, x
+			lda sinbad_unfallable_ledge_x_msb
+			sta player_a_x_screen, x
+			lda sinbad_unfallable_platform, x
+			sta player_a_grounded, x
+
+			rts
+
+		unatural_cause_of_going_offground:
+			jmp sinbad_start_falling
+
+	;rts ; useless, no branch return
+.)
+
+; Get coordinates of the ledge that can't be passed in side-tilt state
+;
+; Output
+;  tmpfield1 - X position of the ledge LSB
+;  tmpfield2 - X position of the ledge MSB
+;  tmpfield3 - Y position of the ledge LSB
+;  tmpfield4 - Y position of the ledge MSB
+;
+;  If the platform no more exists, tmpfield2 is set to $80. Other values are meaningless.
+sinbad_side_tilt_unfallable_ledge:
+.(
+	sinbad_unfallable_ledge_x_lsb = tmpfield1
+	sinbad_unfallable_ledge_x_msb = tmpfield2
+	sinbad_unfallable_ledge_y_lsb = tmpfield3
+	sinbad_unfallable_ledge_y_msb = tmpfield4
+
+	; Select between left or right ledge to be impassable
+	.(
+		lda player_a_direction, x
+		cmp #DIRECTION_LEFT2
+		bne direction_right
+			direction_left:
+				lda #<platform_handlers_left
+				sta tmpfield1
+				lda #>platform_handlers_left
+				sta tmpfield2
+				jmp ok
+			direction_right:
+				lda #<platform_handlers_right
+				sta tmpfield1
+				lda #>platform_handlers_right
+				sta tmpfield2
+		ok:
+	.)
+
+	; Get ledge coordinates
+	.(
+		lda sinbad_unfallable_platform, x
+		beq not_grounded
+			pha
+			tay
+
+			lda #platform_handlers_size
+			sta tmpfield3
+			lda stage_data, y
+			jmp switch_linear
+	.)
+
+	on_unknown_platform:
+		; Unknown platform could happen if stage layout changed, and platform type is now STAGE_ELEMENT_END.
+		; Other values should not happen.
+		;  - Clear the stack from pushed platform offset, and report invalid coordinates
+		pla
+		; Fallthrough to not_grounded
+	not_grounded:
+		; There is no reason too have no unfallable platform, so code does not support it, return invalid coordinates
+		lda #$80
+		sta sinbad_unfallable_ledge_x_msb
+		rts
+
+	; Displacement between ledge and actual position sinbad stops at, in pixels
+	;  Minimum is 1 for staying on collision box.
+	;  Set to greater value to avoid appearing glitchy, only one pixel on platform feels unatural
+	SINBAD_LEDGE_REPLACE_OFFSET = 6
+
+	on_platform_facing_left:
+		pla:tay
+
+		lda stage_data+1, y
+		clc
+		adc #<SINBAD_LEDGE_REPLACE_OFFSET
+		sta sinbad_unfallable_ledge_x_lsb
+		lda #0
+		sta sinbad_unfallable_ledge_y_msb ; beware, setting y_msb here because A is zero
+		adc #>SINBAD_LEDGE_REPLACE_OFFSET
+		sta sinbad_unfallable_ledge_x_msb
+
+		lda stage_data+3, y
+		sta sinbad_unfallable_ledge_y_lsb
+
+		rts
+
+	on_oos_platform_facing_left:
+		pla:tay
+
+		lda stage_data+1, y
+		clc
+		adc #<SINBAD_LEDGE_REPLACE_OFFSET
+		sta sinbad_unfallable_ledge_x_lsb
+		lda stage_data+2, y
+		adc #>SINBAD_LEDGE_REPLACE_OFFSET
+		sta sinbad_unfallable_ledge_x_msb
+
+		lda stage_data+5, y
+		sta sinbad_unfallable_ledge_y_lsb
+		lda stage_data+6, y
+		sta sinbad_unfallable_ledge_y_msb
+
+		rts
+
+	on_platform_facing_right:
+		pla:tay
+
+		lda stage_data+2, y
+		sec
+		sbc #<SINBAD_LEDGE_REPLACE_OFFSET
+		sta sinbad_unfallable_ledge_x_lsb
+		lda #0
+		sta sinbad_unfallable_ledge_y_msb ; beware, setting y_msb here because A is zero
+		sbc #>SINBAD_LEDGE_REPLACE_OFFSET
+		sta sinbad_unfallable_ledge_x_msb
+
+		lda stage_data+3
+		sta sinbad_unfallable_ledge_y_lsb
+
+		rts
+
+	on_oos_platform_facing_right:
+		pla:tay
+
+		lda stage_data+3, y
+		sec
+		sbc #<SINBAD_LEDGE_REPLACE_OFFSET
+		sta sinbad_unfallable_ledge_x_lsb
+		lda stage_data+4, y
+		sbc #>SINBAD_LEDGE_REPLACE_OFFSET
+		sta sinbad_unfallable_ledge_x_msb
+
+		lda stage_data+5, y
+		sta sinbad_unfallable_ledge_y_lsb
+		lda stage_data+6, y
+		sta sinbad_unfallable_ledge_y_msb
+
+		rts
+
+	platform_handlers_left:
+		.byt STAGE_ELEMENT_PLATFORM,   STAGE_ELEMENT_SMOOTH_PLATFORM, STAGE_ELEMENT_OOS_PLATFORM,   STAGE_ELEMENT_OOS_SMOOTH_PLATFORM
+		.byt <on_platform_facing_left, <on_platform_facing_left,      <on_oos_platform_facing_left, <on_oos_platform_facing_left
+		.byt >on_platform_facing_left, >on_platform_facing_left,      >on_oos_platform_facing_left, >on_oos_platform_facing_left
+		.word on_unknown_platform
+	platform_handlers_size = (*-platform_handlers_left-1)/3
+
+	platform_handlers_right:
+		.byt STAGE_ELEMENT_PLATFORM,    STAGE_ELEMENT_SMOOTH_PLATFORM, STAGE_ELEMENT_OOS_PLATFORM,    STAGE_ELEMENT_OOS_SMOOTH_PLATFORM
+		.byt <on_platform_facing_right, <on_platform_facing_right,     <on_oos_platform_facing_right, <on_oos_platform_facing_right
+		.byt >on_platform_facing_right, >on_platform_facing_right,     >on_oos_platform_facing_right, >on_oos_platform_facing_right
+		.word on_unknown_platform
+#if (*-platform_handlers_right-1)/3 <> platform_handlers_size
+#error non-matching platform handlers size
+#endif
 .)
 
 anim_duration_table(sinbad_anim_side_tilt_recovery_dur_pal-4, sinbad_side_tilt_recovery_cuttable_time)
