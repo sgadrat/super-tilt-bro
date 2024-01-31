@@ -435,6 +435,11 @@ SINBAD_DASH_MAX_VELOCITY = (SINBAD_RUNNING_MAX_VELOCITY*4)/3
 velocity_table({char_name_upper}_DASH_MAX_VELOCITY, {char_name}_dash_max_velocity_msb, {char_name}_dash_max_velocity_lsb)
 velocity_table(-{char_name_upper}_DASH_MAX_VELOCITY, {char_name}_dash_max_neg_velocity_msb, {char_name}_dash_max_neg_velocity_lsb)
 
+; Displacement between ledge and actual position sinbad stops at, in pixels
+;  Minimum is 1 for staying on collision box.
+;  Set to greater value to avoid appearing glitchy, only one pixel on platform feels unatural
+SINBAD_LEDGE_REPLACE_OFFSET = 6
+
 sinbad_side_tilt_speed_update:
 .(
 	; Do not change velocity from zero, it is certainly due to offground routine
@@ -475,18 +480,67 @@ sinbad_side_tilt_speed_update:
 
 sinbad_offground_side_tilt:
 .(
-	; Get ledge position
 	sinbad_unfallable_ledge_x_lsb = tmpfield1
 	sinbad_unfallable_ledge_x_msb = tmpfield2
 	sinbad_unfallable_ledge_y_lsb = tmpfield3
 	sinbad_unfallable_ledge_y_msb = tmpfield4
-	jsr sinbad_side_tilt_unfallable_ledge
+	ledge_distance_lsb = tmpfield5
+	ledge_distance_msb = tmpfield6
+
+	; Get ledge position
+	.(
+		jsr sinbad_side_tilt_unfallable_ledge
+	.)
 
 	; Check if character felt from this ledge
-	lda sinbad_unfallable_ledge_x_msb
-	cmp #$80
-	beq unatural_cause_of_going_offground
-	;TODO
+	.(
+		; Invalid platform
+		.(
+			lda sinbad_unfallable_ledge_x_msb
+			cmp #$80
+			beq unatural_cause_of_going_offground
+		.)
+
+		; Character no more at platform's height
+		.(
+			lda player_a_y, x
+			cmp sinbad_unfallable_ledge_y_lsb
+			bne unatural_cause_of_going_offground
+			lda player_a_y_screen, x
+			cmp sinbad_unfallable_ledge_y_msb
+			bne unatural_cause_of_going_offground
+		.)
+
+		; Character too far from ledge
+		.(
+			; ledge_distance = sinbad_unfallable_ledge_x - player_x
+			lda sinbad_unfallable_ledge_x_lsb
+			sec
+			sbc player_a_x, x
+			sta ledge_distance_lsb
+			lda sinbad_unfallable_ledge_x_msb
+			sbc player_a_x_screen, x
+			sta ledge_distance_msb
+
+			; ledge_distance = abs(ledge_distance)
+			bpl distance_ok
+				eor #%11111111
+				sta ledge_distance_msb
+				lda ledge_distance_lsb
+				eor #%11111111
+				sta ledge_distance_lsb
+				inc ledge_distance_lsb
+				bne distance_ok
+					inc ledge_distance_msb
+			distance_ok:
+
+			; unatural if ledge_distance >= 8 pixels
+			lda ledge_distance_msb
+			bne unatural_cause_of_going_offground
+			lda ledge_distance_lsb
+			cmp #8+SINBAD_LEDGE_REPLACE_OFFSET
+			bcs unatural_cause_of_going_offground
+		.)
 
 		felt_from_ledge:
 			; Cancel momentum
@@ -508,6 +562,7 @@ sinbad_offground_side_tilt:
 
 		unatural_cause_of_going_offground:
 			jmp sinbad_start_falling
+	.)
 
 	;rts ; useless, no branch return
 .)
@@ -572,11 +627,6 @@ sinbad_side_tilt_unfallable_ledge:
 		sta sinbad_unfallable_ledge_x_msb
 		rts
 
-	; Displacement between ledge and actual position sinbad stops at, in pixels
-	;  Minimum is 1 for staying on collision box.
-	;  Set to greater value to avoid appearing glitchy, only one pixel on platform feels unatural
-	SINBAD_LEDGE_REPLACE_OFFSET = 6
-
 	on_platform_facing_left:
 		pla:tay
 
@@ -624,7 +674,7 @@ sinbad_side_tilt_unfallable_ledge:
 		sbc #>SINBAD_LEDGE_REPLACE_OFFSET
 		sta sinbad_unfallable_ledge_x_msb
 
-		lda stage_data+3
+		lda stage_data+3, y
 		sta sinbad_unfallable_ledge_y_lsb
 
 		rts
