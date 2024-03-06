@@ -63,7 +63,7 @@
 	sta RAINBOW_FPGA_RAM_BANKING
 
 	; Select PRG-RAM bank to be mapped at $6000 to $7fff
-	lda #%10000000 ; CuUUUUUU - PRG-RAM, bank 0
+	lda #%11000000 ; CuUUUUUU - PRG-RAM, bank 0
 	sta RAINBOW_PRG_RAM_BANKING_1_HI
 	lda #%00000000 ; LLLLLLLL - bank 0
 	sta RAINBOW_PRG_RAM_BANKING_1_LO

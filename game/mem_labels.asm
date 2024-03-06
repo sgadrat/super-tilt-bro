@@ -290,14 +290,17 @@ network_frame_diff = $bf
 ; Network login labels
 ;
 
-; TODO for now expects RAINBOW's WRAM at $6000, should fit in normal NES RAM + RAINBOW files
+; Note - It uses FPGA RAM to avoid being overiten by other game states
+;        2KB of FPGA RAM are permanently mapped to $4800-$4fff,
+;        $4800-$49ff are used for tx/rx buffers.
+;        After that this is unused stuff (except by this little chunk of memory.)
 
-network_login = $6000 ; $6000-$600f
-network_password = $6010 ; $6010-$601f
-network_logged = $6020
-network_ranked = $6021
-;$6022-$602f unused
-network_game_password = $6030 ; $6030-$603f
+network_login = $4c00 ; $4c00-$4c0f
+network_password = $4c10 ; $4c10-$4c1f
+network_logged = $4c20
+network_ranked = $4c21
+;$4c22-$4c2f unused
+network_game_password = $4c30 ; $4c30-$4c3f
 
 ;
 ; TITLE labels
