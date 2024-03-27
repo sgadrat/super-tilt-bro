@@ -8470,7 +8470,7 @@
       "frames": [
         {
           "type": "animation_frame",
-          "duration": 3,
+          "duration": 2,
           "sprites": [
             {
               "type": "animation_sprite",
@@ -8548,7 +8548,7 @@
         },
         {
           "type": "animation_frame",
-          "duration": 3,
+          "duration": 2,
           "sprites": [
             {
               "type": "animation_sprite",
@@ -8626,7 +8626,7 @@
         },
         {
           "type": "animation_frame",
-          "duration": 3,
+          "duration": 2,
           "sprites": [
             {
               "type": "animation_sprite",
@@ -8704,7 +8704,7 @@
         },
         {
           "type": "animation_frame",
-          "duration": 3,
+          "duration": 2,
           "sprites": [
             {
               "type": "animation_sprite",
@@ -8782,7 +8782,7 @@
         },
         {
           "type": "animation_frame",
-          "duration": 3,
+          "duration": 2,
           "sprites": [
             {
               "type": "animation_sprite",
@@ -8860,7 +8860,7 @@
         },
         {
           "type": "animation_frame",
-          "duration": 3,
+          "duration": 2,
           "sprites": [
             {
               "type": "animation_sprite",
@@ -8938,7 +8938,7 @@
         },
         {
           "type": "animation_frame",
-          "duration": 3,
+          "duration": 2,
           "sprites": [
             {
               "type": "animation_sprite",
