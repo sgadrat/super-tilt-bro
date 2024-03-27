@@ -167,8 +167,7 @@ static void pause_medal(uint8_t time, uint8_t n_medals) {
 }
 
 void arcade_congratz() {
-	uint8_t const TILE_0 = 246;
-	uint8_t const TILE_COLON = TILE_0 - 1;
+	uint8_t const TILE_COLON = TILE_CHAR_0 - 1;
 	uint8_t const TILE_STOCK = 0;
 	uint8_t const TILE_TINY_MEDAL_NW = TILE_STOCK+1;
 	uint8_t const TILE_TINY_MEDAL_NE = TILE_TINY_MEDAL_NW+1;
@@ -187,7 +186,8 @@ void arcade_congratz() {
 	long_construct_palettes_nt_buffer(screen_bank(), &arcade_congratz_palette);
 	long_draw_zipped_nametable(screen_bank(), &arcade_congratz_nametable);
 	long_cpu_to_ppu_copy_tileset_background(bg_tileset_bank(), &arcade_congratz_bg_tileset);
-	long_cpu_to_ppu_copy_charset_raw(charset_alphanum_bank(), &charset_alphanum + 1, 0x1000 + ppu_tile_offset(TILE_0), 3, 2, 10);
+	long_cpu_to_ppu_copy_charset_raw(charset_alphanum_bank(), &charset_alphanum + 1, 0x1000 + ppu_tile_offset(TILE_CHAR_0), 3, 2, 10);
+	long_cpu_to_ppu_copy_charset_raw(charset_alphanum_bank(), &charset_alphanum + 1 + 10*8, 0x1000 + ppu_tile_offset(TILE_CHAR_A), 1, 0, 26);
 	long_cpu_to_ppu_copy_charset_raw(charset_symbols_bank(), &char_colon, 0x1000 + ppu_tile_offset(TILE_COLON), 3, 2, 1);
 	long_cpu_to_ppu_copy_tileset(tiny_medal_bank(), &arcade_congratz_tiny_medal_tileset, 0x0000 + ppu_tile_offset(TILE_TINY_MEDAL_NW));
 
@@ -198,14 +198,14 @@ void arcade_congratz() {
 	long_cpu_to_ppu_copy_tiles_modified(sinbad_bank(), &sinbad_chr_illustrations, &modifier_remap, 0x0000 + ppu_tile_offset(TILE_STOCK), 1);
 
 	// Draw timer value
-	uint8_t const timer_header[] = {0x21, 0x0a, 7};
-	arcade_mode_bg_mem_buffer[0] = TILE_0 + *arcade_mode_counter_minutes;
+	static uint8_t const timer_header[] = {0x21, 0x0a, 7};
+	arcade_mode_bg_mem_buffer[0] = TILE_CHAR_0 + *arcade_mode_counter_minutes;
 	arcade_mode_bg_mem_buffer[1] = TILE_COLON;
-	arcade_mode_bg_mem_buffer[2] = TILE_0 + (*arcade_mode_counter_seconds / 10);
-	arcade_mode_bg_mem_buffer[3] = TILE_0 + (*arcade_mode_counter_seconds % 10);
+	arcade_mode_bg_mem_buffer[2] = TILE_CHAR_0 + (*arcade_mode_counter_seconds / 10);
+	arcade_mode_bg_mem_buffer[3] = TILE_CHAR_0 + (*arcade_mode_counter_seconds % 10);
 	arcade_mode_bg_mem_buffer[4] = TILE_COLON;
-	arcade_mode_bg_mem_buffer[5] = TILE_0 + (*arcade_mode_counter_frames / 10);
-	arcade_mode_bg_mem_buffer[6] = TILE_0 + (*arcade_mode_counter_frames % 10);
+	arcade_mode_bg_mem_buffer[5] = TILE_CHAR_0 + (*arcade_mode_counter_frames / 10);
+	arcade_mode_bg_mem_buffer[6] = TILE_CHAR_0 + (*arcade_mode_counter_frames % 10);
 	wrap_construct_nt_buffer(timer_header, arcade_mode_bg_mem_buffer);
 
 	// Draw stocks counter
@@ -213,16 +213,16 @@ void arcade_congratz() {
 	arcade_mode_bg_mem_buffer[1] = 0x15;
 	if (*arcade_mode_nb_credits_used >= 100) {
 		arcade_mode_bg_mem_buffer[2] = 3;
-		arcade_mode_bg_mem_buffer[3] = TILE_0 + CONST_HUNDREDS(*arcade_mode_nb_credits_used);
-		arcade_mode_bg_mem_buffer[4] = TILE_0 + CONST_TENS(*arcade_mode_nb_credits_used);
-		arcade_mode_bg_mem_buffer[5] = TILE_0 + CONST_UNITS(*arcade_mode_nb_credits_used);
+		arcade_mode_bg_mem_buffer[3] = TILE_CHAR_0 + CONST_HUNDREDS(*arcade_mode_nb_credits_used);
+		arcade_mode_bg_mem_buffer[4] = TILE_CHAR_0 + CONST_TENS(*arcade_mode_nb_credits_used);
+		arcade_mode_bg_mem_buffer[5] = TILE_CHAR_0 + CONST_UNITS(*arcade_mode_nb_credits_used);
 	}else if (*arcade_mode_nb_credits_used >= 10) {
 		arcade_mode_bg_mem_buffer[2] = 2;
-		arcade_mode_bg_mem_buffer[3] = TILE_0 + CONST_TENS(*arcade_mode_nb_credits_used);
-		arcade_mode_bg_mem_buffer[4] = TILE_0 + CONST_UNITS(*arcade_mode_nb_credits_used);
+		arcade_mode_bg_mem_buffer[3] = TILE_CHAR_0 + CONST_TENS(*arcade_mode_nb_credits_used);
+		arcade_mode_bg_mem_buffer[4] = TILE_CHAR_0 + CONST_UNITS(*arcade_mode_nb_credits_used);
 	}else {
 		arcade_mode_bg_mem_buffer[2] = 1;
-		arcade_mode_bg_mem_buffer[3] = TILE_0 + (*arcade_mode_nb_credits_used);
+		arcade_mode_bg_mem_buffer[3] = TILE_CHAR_0 + (*arcade_mode_nb_credits_used);
 	}
 	wrap_push_nt_buffer(arcade_mode_bg_mem_buffer);
 
@@ -287,7 +287,7 @@ void arcade_congratz() {
 	pause_medal(20, n_medals);
 
 	// Display final medal
-	uint8_t const* const medal_palette_buffers[] = {
+	static uint8_t const* const medal_palette_buffers[] = {
 		&arcade_congratz_copper_medal_buffer,
 		&arcade_congratz_silver_medal_buffer,
 		&arcade_congratz_gold_medal_buffer,
@@ -297,6 +297,19 @@ void arcade_congratz() {
 	};
 	long_construct_nt_buffer(screen_bank(), &arcade_congratz_medal_buffer_header, medal_palette_buffers[final_medal]);
 	wrap_audio_play_sfx_from_list(ptr_lsb(&SFX_DEATH_IDX));
+	pause_medal(10, n_medals);
+
+	// Display medal name
+	static uint8_t const medal_name_header[] = {0x22, 0xea, 13};
+	static uint8_t const medal_name_buffers[][13] = {
+		{0,0,0,TILE_CHAR_C,TILE_CHAR_O,TILE_CHAR_P,TILE_CHAR_P,TILE_CHAR_E,TILE_CHAR_R,0,0,0,0,},
+		{0,0,0,TILE_CHAR_S,TILE_CHAR_I,TILE_CHAR_L,TILE_CHAR_V,TILE_CHAR_E,TILE_CHAR_R,0,0,0,0,},
+		{0,0,0,0,TILE_CHAR_G,TILE_CHAR_O,TILE_CHAR_L,TILE_CHAR_D,0,0,0,0,0,},
+		{0,0,0,TILE_CHAR_M,TILE_CHAR_Y,TILE_CHAR_T,TILE_CHAR_H,TILE_CHAR_R,TILE_CHAR_I,TILE_CHAR_L,0,0,},
+		{TILE_CHAR_T,TILE_CHAR_O,TILE_CHAR_O,TILE_CHAR_L,TILE_CHAR_A,TILE_CHAR_S,TILE_CHAR_S,TILE_CHAR_I,TILE_CHAR_S,TILE_CHAR_T,TILE_CHAR_I,TILE_CHAR_U,TILE_CHAR_M,},
+		{0,0,TILE_CHAR_C,TILE_CHAR_H,TILE_CHAR_O,TILE_CHAR_C,TILE_CHAR_O,TILE_CHAR_L,TILE_CHAR_A,TILE_CHAR_T,TILE_CHAR_E,0,0,},
+	};
+	wrap_construct_nt_buffer(medal_name_header, medal_name_buffers[final_medal]);
 	pause_medal(1, n_medals);
 
 	// Wait and quit arcade mode
