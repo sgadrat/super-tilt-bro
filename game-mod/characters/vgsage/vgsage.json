@@ -7424,7 +7424,7 @@
             "top": 15,
             "right": 10,
             "bottom": 22,
-            "base_h": -128,
+            "base_h": -512,
             "base_v": -512,
             "force_h": -1,
             "force_v": -4,
