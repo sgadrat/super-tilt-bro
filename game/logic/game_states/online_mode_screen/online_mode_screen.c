@@ -1256,6 +1256,7 @@ static void next_screen() {
 					break;
 				}
 			}
+			clear_game_password();
 			*network_ranked = 0;
 			wrap_change_global_game_state(GAME_STATE_CHARACTER_SELECTION);
 			break;
@@ -1264,6 +1265,7 @@ static void next_screen() {
 				password_login(0);
 			}
 			if (*network_logged == LOGIN_LOGGED) {
+				clear_game_password();
 				*network_ranked = 1;
 				wrap_change_global_game_state(GAME_STATE_CHARACTER_SELECTION);
 			}
