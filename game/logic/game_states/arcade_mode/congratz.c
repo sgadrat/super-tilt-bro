@@ -187,8 +187,8 @@ void arcade_congratz() {
 	long_construct_palettes_nt_buffer(screen_bank(), &arcade_congratz_palette);
 	long_draw_zipped_nametable(screen_bank(), &arcade_congratz_nametable);
 	long_cpu_to_ppu_copy_tileset_background(bg_tileset_bank(), &arcade_congratz_bg_tileset);
-	long_cpu_to_ppu_copy_charset_raw(charset_alphanum_bank(), &charset_alphanum + 1, 0x1000 + ppu_tile_offset(TILE_0), 1, 2, 10);
-	long_cpu_to_ppu_copy_charset_raw(charset_symbols_bank(), &char_colon, 0x1000 + ppu_tile_offset(TILE_COLON), 1, 2, 1);
+	long_cpu_to_ppu_copy_charset_raw(charset_alphanum_bank(), &charset_alphanum + 1, 0x1000 + ppu_tile_offset(TILE_0), 3, 2, 10);
+	long_cpu_to_ppu_copy_charset_raw(charset_symbols_bank(), &char_colon, 0x1000 + ppu_tile_offset(TILE_COLON), 3, 2, 1);
 	long_cpu_to_ppu_copy_tileset(tiny_medal_bank(), &arcade_congratz_tiny_medal_tileset, 0x0000 + ppu_tile_offset(TILE_TINY_MEDAL_NW));
 
 	*tmpfield8 = 1;
