@@ -471,16 +471,21 @@ hide_player_b:
 				.)
 
 				; Store target's hurtbox
+				target_hurtbox_margin = 2
 				;lda arcade_mode_targets_y, x ; useless, value already in A
+				sec
+				sbc #target_hurtbox_margin
 				sta target_top_pixel
 				clc
-				adc #8
+				adc #8+target_hurtbox_margin*2
 				sta target_bot_pixel
 
 				lda arcade_mode_targets_x, x
+				sec
+				sbc #target_hurtbox_margin
 				sta target_left_pixel
 				;clc ; useless, previous adx should not overflow
-				adc #8
+				adc #8+target_hurtbox_margin*2
 				sta target_right_pixel
 
 				lda #0
