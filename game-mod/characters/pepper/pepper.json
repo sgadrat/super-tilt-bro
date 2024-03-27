@@ -5184,7 +5184,7 @@
     {
       "frames": [
         {
-          "duration": 4,
+          "duration": 3,
           "hitbox": null,
           "hurtbox": {
             "bottom": 16,
@@ -5262,7 +5262,7 @@
           "type": "animation_frame"
         },
         {
-          "duration": 4,
+          "duration": 3,
           "hitbox": null,
           "hurtbox": {
             "bottom": 16,
@@ -5348,7 +5348,7 @@
           "type": "animation_frame"
         },
         {
-          "duration": 4,
+          "duration": 3,
           "hitbox": null,
           "hurtbox": {
             "bottom": 16,
@@ -5434,7 +5434,7 @@
           "type": "animation_frame"
         },
         {
-          "duration": 4,
+          "duration": 3,
           "hitbox": null,
           "hurtbox": {
             "bottom": 16,
@@ -5520,7 +5520,7 @@
           "type": "animation_frame"
         },
         {
-          "duration": 4,
+          "duration": 3,
           "hitbox": null,
           "hurtbox": {
             "bottom": 16,

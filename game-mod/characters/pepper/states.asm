@@ -815,7 +815,7 @@ pepper_global_tick:
 		rts
 
 		velocity_keyframes_clock:
-		.byt 0,   12, 20
+		.byt 0,    9,  15
 		velocity_keyframes_v_lsb:
 		.byt $00, $00, $00
 		velocity_keyframes_v_msb:
