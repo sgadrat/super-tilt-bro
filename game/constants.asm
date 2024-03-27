@@ -32,6 +32,7 @@ DEFAULT_GRAVITY = $0200
 GAME_MODE_LOCAL = $00
 GAME_MODE_ONLINE = $01
 GAME_MODE_ARCADE = $02
+GAME_MODE_SERVER = $03
 
 ; States that may be started by external code, they must have a referenced start_routine
 PLAYER_STATE_THROWN = $00

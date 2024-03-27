@@ -29,9 +29,8 @@ server_bytecode_init:
 	lda #3
 	sta config_initial_stocks
 
-    lda #0
-    sta config_ai_level
-	sta config_game_mode ; 0 is local, we don't want online (1) as it implies input-lag and ignoring controller B
+	lda #GAME_MODE_SERVER
+	sta config_game_mode
 
 	lda #1
 	sta network_rollback_mode

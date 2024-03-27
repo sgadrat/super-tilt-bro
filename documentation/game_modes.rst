@@ -8,9 +8,10 @@ Game modes are a series of hooks that can modify ingame state's behavior.
 Currently implemented game modes
 ================================
 
- * ``local``: Handles the pause and the AI
- * ``online``: Handles netcode
- * ``arcade``: Handles the pause, the AI, break the target, and run to exit
+ * ``local``: Handles the pause and the AI.
+ * ``online``: Handles netcode.
+ * ``arcade``: Handles the pause, the AI, break the target, and run to exit.
+ * ``server``: Like ``local``, without pause nor AI. Used to simulate an ``online`` game server-side.
 
 Memory allocation
 =================
