@@ -198,14 +198,15 @@ void arcade_congratz() {
 	long_cpu_to_ppu_copy_tiles_modified(sinbad_bank(), &sinbad_chr_illustrations, &modifier_remap, 0x0000 + ppu_tile_offset(TILE_STOCK), 1);
 
 	// Draw timer value
-	static uint8_t const timer_header[] = {0x21, 0x0a, 7};
-	arcade_mode_bg_mem_buffer[0] = TILE_CHAR_0 + *arcade_mode_counter_minutes;
-	arcade_mode_bg_mem_buffer[1] = TILE_COLON;
-	arcade_mode_bg_mem_buffer[2] = TILE_CHAR_0 + (*arcade_mode_counter_seconds / 10);
-	arcade_mode_bg_mem_buffer[3] = TILE_CHAR_0 + (*arcade_mode_counter_seconds % 10);
-	arcade_mode_bg_mem_buffer[4] = TILE_COLON;
-	arcade_mode_bg_mem_buffer[5] = TILE_CHAR_0 + (*arcade_mode_counter_frames / 10);
-	arcade_mode_bg_mem_buffer[6] = TILE_CHAR_0 + (*arcade_mode_counter_frames % 10);
+	static uint8_t const timer_header[] = {0x21, 0x09, 8};
+	arcade_mode_bg_mem_buffer[0] = TILE_CHAR_0 + (*arcade_mode_counter_minutes / 10);
+	arcade_mode_bg_mem_buffer[1] = TILE_CHAR_0 + (*arcade_mode_counter_minutes % 10);
+	arcade_mode_bg_mem_buffer[2] = TILE_COLON;
+	arcade_mode_bg_mem_buffer[3] = TILE_CHAR_0 + (*arcade_mode_counter_seconds / 10);
+	arcade_mode_bg_mem_buffer[4] = TILE_CHAR_0 + (*arcade_mode_counter_seconds % 10);
+	arcade_mode_bg_mem_buffer[5] = TILE_COLON;
+	arcade_mode_bg_mem_buffer[6] = TILE_CHAR_0 + (*arcade_mode_counter_frames / 10);
+	arcade_mode_bg_mem_buffer[7] = TILE_CHAR_0 + (*arcade_mode_counter_frames % 10);
 	wrap_construct_nt_buffer(timer_header, arcade_mode_bg_mem_buffer);
 
 	// Draw stocks counter

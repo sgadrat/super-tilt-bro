@@ -3,11 +3,11 @@
 ; Overwrites A, X
 +arcade_mode_inc_counter
 .(
-	; Avoid going over 9min 59sec, so minutes are always in one digit
+	; Avoid going over 99min 59sec, so minutes are always in two digits
 	ldx system_index
 
 	lda arcade_mode_counter_minutes
-	cmp #9
+	cmp #99
 	bne ok
 		lda arcade_mode_counter_seconds
 		cmp #59
@@ -54,6 +54,14 @@
 	POSITION_Y = 3
 	FIRST_DIGIT_PPU_ADDR = $2000+POSITION_Y*32+POSITION_X
 
+	; Do not display if above 99 minutes, avoiding blocked timer glitch-like effect
+	lda arcade_mode_counter_minutes
+	cmp #99
+	bne ok
+		rts
+	ok:
+
+	; Display counter
 	lda #ARCADE_COLON_TILE
 	sta tmpfield1
 	lda #<FIRST_DIGIT_PPU_ADDR
@@ -89,12 +97,14 @@
 	sta nametable_buffers, x
 	inx
 
-	lda #7 ; Tile count
+	lda #8 ; Tile count
 	sta nametable_buffers, x
 	inx
 
 	; Write counter value
 	ldy arcade_mode_counter_minutes
+	lda base10_to_tile_high, y
+	jsr set_one_tile
 	lda base10_to_tile_low, y
 	jsr set_one_tile
 
