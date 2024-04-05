@@ -28,5 +28,17 @@ build_gcc() {
 	./build.sh
 }
 
+get_gcc() {
+	cd "$out_dir"
+	mkdir -p gcc-6502-bits
+	cd gcc-6502-bits
+	curl -L https://github.com/sgadrat/gcc-6502-bits/releases/download/v8.4.1-2/gcc-6502.zip > gcc-6502.zip
+	unzip gcc-6502.zip
+	rm gcc-6502.zip
+	tar xf prefix.tar
+	rm prefix.tar
+}
+
 install_gcc_build_dependencies
-build_gcc
+#build_gcc # Equivalent to get_gcc, but way slower
+get_gcc
