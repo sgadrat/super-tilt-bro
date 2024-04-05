@@ -39,3 +39,17 @@ jobs:
         path: |
           *.nes
           /tmp/*.lst
+
+  release:
+
+    runs-on: ubuntu-latest
+
+    needs: build
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: roms
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: gh-call
+        run: gh release create release-${{ github.ref_name }} --title "Test release ${{ github.ref_name }}" --notes "this is a beta release" *.nes
