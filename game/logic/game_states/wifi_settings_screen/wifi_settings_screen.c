@@ -207,14 +207,18 @@ static void display_wifi_status_message() {
 	}
 
 	// Display error code
+	uint8_t ascii_error_code[3];
 	uint8_t const error_code = msg[ESP_MSG_PAYLOAD+1];
-	if (status != ESP_WIFI_STATUS_CONNECTED && error_code != 0) {
-		uint8_t ascii_error_code[3];
+	if (status != ESP_WIFI_STATUS_CONNECTED && status != ESP_WIFI_STATUS_DISCONNECTED && error_code != 0) {
 		ascii_error_code[0] = '0' + (error_code / 100);
 		ascii_error_code[1] = '0' + CONST_TENS(error_code);
 		ascii_error_code[2] = '0' + CONST_UNITS(error_code);
-		wrap_construct_nt_buffer(error_code_buffer_header, ascii_error_code);
+	}else {
+		ascii_error_code[0] = ' ';
+		ascii_error_code[1] = ' ';
+		ascii_error_code[2] = ' ';
 	}
+	wrap_construct_nt_buffer(error_code_buffer_header, ascii_error_code);
 }
 
 static void display_wifi_status() {
