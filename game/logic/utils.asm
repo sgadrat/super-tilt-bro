@@ -1426,3 +1426,32 @@ wait_vbi:
 		bpl vblankwait
 	rts
 .)
+
+; Change a color value to a lighter version
+;  A - Original color value
+;
+; Output
+;  A - Lightened color value
+;
+; Overwrites A
++lighten_color:
+.(
+	; Skip if cannot be lightened, special handling for black
+	cmp #$0f
+	beq lighten_black
+	cmp #$30
+	bcs end
+
+		ligthen_normal:
+			; Up color to the lighter value
+			clc
+			adc #$10
+			rts
+
+		lighten_black:
+			; Change to dark-grey
+			lda #$00
+
+	end:
+	rts
+.)

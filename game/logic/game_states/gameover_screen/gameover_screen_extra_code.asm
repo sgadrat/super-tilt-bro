@@ -131,6 +131,40 @@ init_gameover_screen_extra:
 	sta tmpfield1
 	TRAMPOLINE(copy_palette_to_ppu, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
 
+	; If both players have the same character with same colors, lighten player B's colors
+	.(
+		lda config_player_a_character
+		cmp config_player_b_character
+		bne ok
+		lda config_player_a_character_palette
+		cmp config_player_b_character_palette
+		bne ok
+			ldx #$19
+			ldy #3
+			lighten_one_color:
+			.(
+				lda PPUSTATUS
+				lda #$3f
+				sta PPUADDR
+				stx PPUADDR
+
+				lda PPUDATA
+				jsr lighten_color
+				pha
+
+				lda #$3f
+				sta PPUADDR
+				stx PPUADDR
+
+				pla : sta PPUDATA
+
+				inx
+				dey
+				bne lighten_one_color
+			.)
+		ok:
+	.)
+
 	; Write winner's name
 	lda PPUSTATUS
 	lda #$20
