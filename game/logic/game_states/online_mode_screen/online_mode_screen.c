@@ -1576,7 +1576,12 @@ void init_online_mode_screen_extra() {
 	*online_mode_selection_current_option = 0;
 
 	// Enable Wi-Fi
-	esp_wait_ready();
+	while (!wrap_esp_wait_ready()) {
+		fetch_controllers();
+		if (*controller_a_btns == 0 && *controller_a_last_frame_btns == CONTROLLER_BTN_B) {
+			previous_screen();
+		}
+	}
 	esp_enable_wifi(true, false, false);
 
 	// Initialize State in WRAM

@@ -480,4 +480,16 @@ static void wrap_start_rendering(uint8_t scroll_nametable) {
 	);
 }
 
+static bool wrap_esp_wait_ready() {
+	uint8_t res;
+	asm(
+		"jsr esp_wait_ready\n\t"
+		"sta %0"
+		: "=rm"(res)
+		:
+		: "a", "x", "y", "memory"
+	);
+	return res == 0;
+}
+
 #pragma GCC diagnostic pop

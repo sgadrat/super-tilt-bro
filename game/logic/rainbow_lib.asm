@@ -168,7 +168,12 @@
 .)
 
 ; Wait for the ESP to be ready to answer messages
-; Overwrites tmpfield1 and tmpfield2
+;  If ESP does not answers message, returns after a timeout
+;
+; Output
+;  register A - 0 OK, 1 Timeout
+;
+; Overwrites registers, tmpfield1, tmpfield2
 +esp_wait_ready:
 .(
 	; Send message to get ESP status
@@ -185,12 +190,17 @@
 		ldx #<(200*140)
 		ldy #>(200*140)
 		jsr esp_wait_rx_timeout
-		beq esp_wait_ready
+		beq timeout
 
 		lda esp_rx_buffer+ESP_MSG_TYPE
 		sta RAINBOW_WIFI_RX
 		cmp #FROMESP_MSG_READY
 		bne wait_loop
 
+	; Exit with the right status
+	lda #0
+	rts
+	timeout:
+	lda #1
 	rts
 .)
