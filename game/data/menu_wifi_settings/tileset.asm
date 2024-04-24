@@ -2,7 +2,7 @@
 ; Part of the tileset under ascii characters (0x1f and below)
 ;
 
-tileset_menu_wifi_settings:
++tileset_menu_wifi_settings:
 
 ; Tileset's size in tiles (zero means 256)
 .byt (tileset_menu_wifi_settings_end-tileset_menu_wifi_settings_tiles)/16
@@ -102,17 +102,17 @@ tileset_menu_wifi_settings_end:
 ; Part of the tileset over ascii characters (0x80 and above)
 ;
 
-tileset_menu_wifi_settings_high:
++tileset_menu_wifi_settings_high:
 
 ; Tileset's size in tiles (zero means 256)
 .byt (tileset_menu_wifi_settings_high_end-tileset_menu_wifi_settings_high_tiles)/16
 
 tileset_menu_wifi_settings_high_tiles:
 
-TILE_MENU_WIFI_SETTINGS_DIALOGS_CHAR_HIDDEN = 128 + (*-tileset_menu_wifi_settings_high_tiles)/16
++TILE_MENU_WIFI_SETTINGS_DIALOGS_CHAR_HIDDEN = 128 + (*-tileset_menu_wifi_settings_high_tiles)/16
 .byt %00000000, %00011000, %00111100, %01111110, %01111110, %00111100, %00011000, %00000000
 .byt %11111111, %11100111, %11000011, %10000001, %10000001, %11000011, %11100111, %11111111
-TILE_MENU_WIFI_SETTINGS_DIALOGS_CHAR_EMPTY = 128 + (*-tileset_menu_wifi_settings_high_tiles)/16
++TILE_MENU_WIFI_SETTINGS_DIALOGS_CHAR_EMPTY = 128 + (*-tileset_menu_wifi_settings_high_tiles)/16
 .byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %11111110
 .byt %11111111, %11111111, %11111111, %11111111, %11111111, %11111111, %11111111, %00000001
 
@@ -124,7 +124,7 @@ tileset_menu_wifi_settings_high_end:
 ; Sprites tileset
 ;
 
-tileset_menu_wifi_settings_sprites:
++tileset_menu_wifi_settings_sprites:
 
 ; Tileset's size in tiles (zero means 256)
 .byt (tileset_menu_wifi_settings_sprites_end-tileset_menu_wifi_settings_sprites_tiles)/16

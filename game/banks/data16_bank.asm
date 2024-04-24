@@ -25,6 +25,24 @@ bank_data_begin:
 #print *-bank_data_begin
 .)
 
+.(
+bank_data_begin:
+#include "game/data/menu_wifi_settings/anims.asm"
+#include "game/data/menu_wifi_settings/tileset.asm"
+#include "game/data/menu_wifi_settings/screen.asm"
+#echo
+#echo WiFi settings extra data size:
+#print *-bank_data_begin
+.)
+
+.(
+bank_data_begin:
+#include "game/logic/game_states/wifi_settings_screen/wifi_settings_screen_extra_code.asm"
+#echo
+#echo WiFi settings extra code size:
+#print *-bank_data_begin
+.)
+
 bank_data16_end:
 
 #echo

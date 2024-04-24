@@ -15,6 +15,8 @@ typedef struct {
 	// NOTE Asynchronous network scan API exists, using it would allow to remove
 	//      this variable and all reference to it.
 	uint8_t blocked;
+
+	uint8_t wifi_connection_status;
 } __attribute__((__packed__)) WifiStatusCtx;
 
 typedef struct {
@@ -34,6 +36,13 @@ typedef struct {
 	};
 } __attribute__((__packed__)) PasswordWindowCtx;
 
+typedef struct {
+	uint8_t step;
+	union {
+		uint8_t window_line; //FIXME used?
+	};
+} __attribute__((__packed__)) ConnectionWindowCtx;
+
 ///////////////////////////////////////
 // Allocated memory layout
 ///////////////////////////////////////
@@ -43,16 +52,18 @@ typedef struct {
 	WifiStatusCtx wifi_status_ctx;
 	NetListCtx net_list_ctx;
 	PasswordWindowCtx password_window_ctx;
+	ConnectionWindowCtx connection_window_ctx;
 
 	uint8_t current_network; ///< ID of the selected network in the list of scanned networks
 	uint8_t password_cursor; ///< Position of the active character in the password (for edition purpose)
-	uint8_t global_input; ///< Set to 1 before a yield to prevent global input handling for this frame
+	uint8_t global_input; ///< Set to 0 before a yield to prevent global input handling for this frame
 } __attribute__((__packed__)) StateVars;
 
 typedef struct {
 	uint8_t msg_buf[64];
 	char password[17];
 	Animation cursor_anim;
+	uint8_t tmp_buf[3];
 } __attribute__((__packed__)) StateMem;
 
 _Static_assert(sizeof(StateVars) <= 0x16, "State require more zp than allocated"); //NOTE we actually have more space than that available (up to $b0)
@@ -89,6 +100,7 @@ extern uint8_t const menu_wifi_settings_anim_line_cursor;
 extern uint8_t const menu_wifi_settings_nametable;
 extern uint8_t const menu_wifi_settings_palette;
 extern uint8_t const menu_wifi_settings_password_window;
+extern uint8_t const menu_wifi_settings_connection_window;
 extern uint8_t const tileset_menu_wifi_settings;
 extern uint8_t const tileset_menu_wifi_settings_high;
 extern uint8_t const tileset_menu_wifi_settings_sprites;
@@ -103,6 +115,8 @@ static uint8_t const CURSOR_ANIM_FIRST_SPRITE = 0;
 static uint8_t const CURSOR_ANIM_LAST_SPRITE = 5;
 
 static uint8_t const NO_PASSWORD_CURSOR = 255;
+
+static uint8_t const WIFI_CONNECTION_STATUS_UNKNOWN = 255;
 
 ///////////////////////////////////////
 // Utility functions
@@ -130,12 +144,11 @@ static void draw_window_line(uint8_t const* window, uint8_t line, uint16_t posit
 	uint8_t const width = window[0];
 	uint8_t const * const line_data = window + 2 + width * line;
 
-	uint8_t nt_buff_header[3];
-	nt_buff_header[0] = u16_msb(line_pos);
-	nt_buff_header[1] = u16_lsb(line_pos);
-	nt_buff_header[2] = width;
+	mem()->tmp_buf[0] = u16_msb(line_pos);
+	mem()->tmp_buf[1] = u16_lsb(line_pos);
+	mem()->tmp_buf[2] = width;
 
-	wrap_construct_nt_buffer(nt_buff_header, line_data);
+	wrap_construct_nt_buffer(mem()->tmp_buf, line_data);
 }
 
 ///////////////////////////////////////
@@ -160,12 +173,17 @@ static void update_cursor() {
 	Animation* anim = &mem()->cursor_anim;
 
 	// Place cursor
-	if (vars()->password_cursor == NO_PASSWORD_CURSOR) {
-		anim->x = 48;
-		anim->y = 80 + vars()->current_network * 8; // tricky: voluntarily hides animation on high values (by putting it off-screen)
-	}else {
+	if (vars()->password_cursor != NO_PASSWORD_CURSOR) {
+		// Password cursor
 		anim->x = 64 + vars()->password_cursor * 8;
 		anim->y = 120;
+	}else if (vars()->connection_window_ctx.step != 0) {
+		// Connection window: hide cursor
+		anim->y = 255;
+	}else {
+		// Network selection cursor
+		anim->x = 48;
+		anim->y = 80 + vars()->current_network * 8; // tricky: voluntarily hides animation on high values (by putting it off-screen)
 	}
 
 	// Draw cursor
@@ -230,6 +248,7 @@ static void display_wifi_status() {
 	// Refresh displayed status
 	uint8_t const* msg = mem()->msg_buf;
 	if (msg[ESP_MSG_SIZE] == 3 && msg[ESP_MSG_TYPE] == FROMESP_MSG_WIFI_STATUS) {
+		vars()->wifi_status_ctx.wifi_connection_status = msg[ESP_MSG_PAYLOAD];
 		display_wifi_status_message();
 	}
 
@@ -382,6 +401,46 @@ static uint8_t password_window() {
 	return 1;
 }
 
+static uint8_t connection_window() {
+	ConnectionWindowCtx* const ctx = &vars()->connection_window_ctx;
+	uint8_t const * const window = &menu_wifi_settings_connection_window;
+	uint16_t position = 0x2146;
+
+	COROUTINE_BEGIN
+		// Forget wifi connection status (will be auto-updated on next request)
+		vars()->wifi_status_ctx.wifi_connection_status = WIFI_CONNECTION_STATUS_UNKNOWN;
+
+		// Draw window
+		for (ctx->window_line = 0; ctx->window_line < window[1]; ++ctx->window_line) {
+			draw_window_line(window, ctx->window_line, position);
+			yield_val(1);
+		}
+
+		// Wait for connection
+		while (1) {
+			// Close window if we connected
+			if (vars()->wifi_status_ctx.wifi_connection_status == ESP_WIFI_STATUS_CONNECTED)
+			{
+				ctx->step = 0;
+				return 0;
+			}
+
+			// Input processing
+			if (*controller_a_btns == 0 && *controller_a_last_frame_btns == CONTROLLER_BTN_B) {
+				audio_play_interface_click();
+				ctx->step = 0;
+				return 0;
+			}
+
+			// Refresh screen
+			yield_val(1);
+		};
+	COROUTINE_END
+
+	// Should not happen (invalid value in ctx->step)
+	return 0;
+}
+
 static void register_network_in_msg() {
 	uint8_t const * const msg = mem()->msg_buf;
 	uint8_t const ssid_len = msg[MSG_NETWORK_SSID_OFFSET];
@@ -510,6 +569,8 @@ static void update_net_list() {
 						*controller_a_last_frame_btns == CONTROLLER_BTN_START
 					)
 					{
+						asm("; Here we go\r\n");
+
 						audio_play_interface_click();
 
 						// Ask password to the user
@@ -527,6 +588,13 @@ static void update_net_list() {
 							}
 							register_network_in_msg();
 						}
+
+						// Display connection window
+						while (connection_window()) {
+							vars()->global_input = 0;
+							yield();
+						}
+						vars()->global_input = 0;
 
 						// Reset coroutine
 						ctx->step = 0;
@@ -553,8 +621,10 @@ void init_wifi_settings_screen_extra() {
 	vars()->wifi_status_ctx.not_registered = false;
 	vars()->wifi_status_ctx.refresh_timer = 0;
 	vars()->wifi_status_ctx.blocked = 0;
+	vars()->wifi_status_ctx.wifi_connection_status = WIFI_CONNECTION_STATUS_UNKNOWN;
 	vars()->net_list_ctx.step = 0;
 	vars()->password_window_ctx.step = 0;
+	vars()->connection_window_ctx.step = 0;
 	vars()->current_network = 255;
 	vars()->password_cursor = NO_PASSWORD_CURSOR;
 

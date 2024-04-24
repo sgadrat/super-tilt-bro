@@ -1,4 +1,4 @@
-menu_wifi_settings_anim_cursor:
++menu_wifi_settings_anim_cursor:
 ; Frame 1
 ANIM_FRAME_BEGIN(8)
 ANIM_DEFAULT_HEADER
@@ -47,7 +47,7 @@ ANIM_SPRITE($05, TILE_MENU_WIFI_SETTINGS_SPRITES_ARROW_VERTICAL, $81, $00)
 ANIM_ANIMATION_END
 
 ;TODO this animation is shorter than lines, animations can't be large enough. Redraw a simpler one, just an arrow on left side.
-menu_wifi_settings_anim_line_cursor:
++menu_wifi_settings_anim_line_cursor:
 ; Frame 1
 ANIM_FRAME_BEGIN(8)
 ANIM_DEFAULT_HEADER
