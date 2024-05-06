@@ -211,8 +211,7 @@ static void display_wifi_status_message() {
 	;
 
 	// Avoid printing an error status, if the cause is having no network registered
-	uint8_t const* msg = mem()->msg_buf;
-	uint8_t const status = msg[ESP_MSG_PAYLOAD];
+	uint8_t const status = vars()->wifi_status_ctx.wifi_connection_status;
 	if (status == 0xff && vars()->wifi_status_ctx.not_registered) {
 		return;
 	}
@@ -225,6 +224,7 @@ static void display_wifi_status_message() {
 	}
 
 	// Display error code
+	uint8_t const* msg = mem()->msg_buf;
 	uint8_t ascii_error_code[3];
 	uint8_t const error_code = msg[ESP_MSG_PAYLOAD+1];
 	if (status != ESP_WIFI_STATUS_CONNECTED && status != ESP_WIFI_STATUS_DISCONNECTED && error_code != 0) {
@@ -247,8 +247,8 @@ static void display_wifi_status() {
 
 	// Refresh displayed status
 	uint8_t const* msg = mem()->msg_buf;
-	if (msg[ESP_MSG_SIZE] == 3 && msg[ESP_MSG_TYPE] == FROMESP_MSG_WIFI_STATUS) {
-		vars()->wifi_status_ctx.wifi_connection_status = msg[ESP_MSG_PAYLOAD];
+	if (msg[ESP_MSG_SIZE] == 4 && msg[ESP_MSG_TYPE] == FROMESP_MSG_WIFI_STATUS) {
+		vars()->wifi_status_ctx.wifi_connection_status = msg[ESP_MSG_PAYLOAD+2];
 		display_wifi_status_message();
 	}
 
