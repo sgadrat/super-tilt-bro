@@ -31,7 +31,7 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 	sta oam_mirror+1
 	lda #$00           ; Attributes
 	sta oam_mirror+2
-	lda #177           ; X
+	lda #193           ; X
 	sta oam_mirror+3
 
 	; Place NTSC indicator
@@ -43,7 +43,7 @@ TITLE_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 		sta oam_mirror+5
 		lda #$00                 ; Attributes
 		sta oam_mirror+6
-		lda #92                  ; X
+		lda #212                 ; X
 		sta oam_mirror+7
 	ntsc_indicator_done:
 

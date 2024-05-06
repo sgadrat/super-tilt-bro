@@ -1,6 +1,6 @@
-GAME_VERSION_TYPE = 2 ; 0-alpha 1-beta 2-rc 3-release
+GAME_VERSION_TYPE = 3 ; 0-alpha 1-beta 2-rc 3-release
 GAME_VERSION_MAJOR = 2
-GAME_VERSION_MINOR = 4
+GAME_VERSION_MINOR = 0
 
 ; What is expected for the next NMI
 NMI_DRAW = 0

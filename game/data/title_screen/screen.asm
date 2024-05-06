@@ -61,7 +61,6 @@ VERSION_DIGIT_UNITS =  GAME_VERSION_MINOR - 100 * VERSION_DIGIT_HUNDREDS - 10 * 
 #define TITLE_SCREEN_VERSION \
 	CV, CE, CR, CS, CI, CO, CN, $00, $01, \
 	C2, $00, $01, \
-	CR, CC, \
 	VERSION_DIGITS
 
 #define ZZ1 ZIPZ
@@ -105,7 +104,7 @@ VERSION_DIGIT_UNITS =  GAME_VERSION_MINOR - 100 * VERSION_DIGIT_HUNDREDS - 10 * 
 .byt ZIPNT_ZEROS(13+32*5+8)
 .byt                                                     PRESS_ANY_BUTTON
 ;    --------------- --------------- --------------- --------------- --------------- -------------- ---------------- -------------------
-.byt ZIPNT_ZEROS(8+32*2+13)
+.byt ZIPNT_ZEROS(8+32*2+15)
 .byt                                                                                               TITLE_SCREEN_VERSION
 .byt ZIPNT_ZEROS(4+32*3)
 title_screen_nametable_attributes:
