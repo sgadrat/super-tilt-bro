@@ -101,6 +101,7 @@ extern uint8_t const menu_wifi_settings_nametable;
 extern uint8_t const menu_wifi_settings_palette;
 extern uint8_t const menu_wifi_settings_password_window;
 extern uint8_t const menu_wifi_settings_connection_window;
+extern uint8_t const menu_wifi_settings_connection_window_success;
 extern uint8_t const tileset_menu_wifi_settings;
 extern uint8_t const tileset_menu_wifi_settings_high;
 extern uint8_t const tileset_menu_wifi_settings_sprites;
@@ -421,8 +422,27 @@ static uint8_t connection_window() {
 			// Close window if we connected
 			if (vars()->wifi_status_ctx.wifi_connection_status == ESP_WIFI_STATUS_CONNECTED)
 			{
-				ctx->step = 0;
-				return 0;
+				// Draw success message
+				uint8_t const * const success_window = &menu_wifi_settings_connection_window_success;
+				for (ctx->window_line = 0; ctx->window_line < success_window[1]; ++ctx->window_line) {
+					draw_window_line(success_window, ctx->window_line, position);
+					yield_val(1);
+				}
+
+				// Wait for input, then go back to online menu
+				while (1) {
+					if (*controller_a_btns == 0) {
+						if (
+							*controller_a_last_frame_btns == CONTROLLER_BTN_START ||
+							*controller_a_last_frame_btns == CONTROLLER_BTN_A ||
+							*controller_a_last_frame_btns == CONTROLLER_BTN_B
+						)
+						{
+							wrap_change_global_game_state(GAME_STATE_ONLINE_MODE_SELECTION);
+						}
+					}
+					yield_val(1);
+				}
 			}
 
 			// Input processing

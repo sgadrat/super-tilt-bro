@@ -164,4 +164,17 @@ menu_wifi_settings_nametable_end:
 	.byt W3, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W5
 	.byt W3, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W5
 	.byt WC, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WE
+
+	+menu_wifi_settings_connection_window_success:
+	.byt 20, 10 ; width, height (in tiles)
+	.byt W0, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W1, W2
+	.byt W3, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W5
+	.byt W3, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W5
+	.byt W3, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W5
+	.byt W3, W4,'S','u','c','c','e','s','s','!', W4, W4, W4, W4, W4, W4, W4, W4, W4, W5
+	.byt W3, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W5
+	.byt W3, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W5
+	.byt W3, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W4, W5
+	.byt W3, W4, W4, W4, W4, W4, W7, W8, W9, WA, W4, CO, CK, W4, W4, W4, W4, W4, W4, W5
+	.byt WC, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WD, WE
 .)
