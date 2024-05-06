@@ -607,14 +607,14 @@ static void update_net_list() {
 								yield();
 							}
 							register_network_in_msg();
-						}
 
-						// Display connection window
-						while (connection_window()) {
+							// Display connection window
+							while (connection_window()) {
+								vars()->global_input = 0;
+								yield();
+							}
 							vars()->global_input = 0;
-							yield();
 						}
-						vars()->global_input = 0;
 
 						// Reset coroutine
 						ctx->step = 0;
