@@ -716,7 +716,7 @@ static bool connect_to_login_server() {
 	return true;
 }
 
-static uint8_t anonymous_login() {
+static uint8_t anonymous_login_do_it() {
 	static uint8_t const login_msg_cmd[] = {
 		// ESP header
 		3, TOESP_MSG_SERVER_SEND_MESSAGE,
@@ -759,12 +759,10 @@ static uint8_t anonymous_login() {
 			return 0;
 		}
 
-		// Reemit periodically
+		// Check timeout
 		--resend_counter;
 		if (resend_counter == 0) {
-			wrap_esp_send_cmd(login_msg_cmd);
-			anonymous_login_draw_connexion_window();
-			resend_counter = RESEND_PERIOD;
+			return 2;
 		}
 
 		// Wait one more frame
@@ -780,6 +778,16 @@ static uint8_t anonymous_login() {
 	*network_logged = LOGIN_ANONYMOUS;
 
 	return 1;
+}
+
+static bool anonymous_login() {
+	// Retry and draw "connection..." window on timeout
+	uint8_t result = anonymous_login_do_it();
+	while (result == 2) {
+		anonymous_login_draw_connexion_window();
+		result = anonymous_login_do_it();
+	}
+	return result != 0;
 }
 
 static uint8_t check_login_message(uint8_t type) {
@@ -809,7 +817,7 @@ static void password_login_send_request(uint8_t create) {
 	wrap_esp_send_cmd(online_mode_selection_mem_buffer);
 }
 
-static void password_login_process(uint8_t create) {
+static uint8_t password_login_process_do_it(uint8_t create) {
 	// Clear login fields
 	draw_dialog_string(0x2146, 3, "   connection...");
 
@@ -823,7 +831,7 @@ static void password_login_process(uint8_t create) {
 		while (true) {
 			if (*controller_a_last_frame_btns == CONTROLLER_BTN_B && *controller_a_btns == 0) {
 				hide_dialog(0x2146, 2);
-				return;
+				return 0;
 			}
 			yield();
 		}
@@ -928,11 +936,10 @@ static void password_login_process(uint8_t create) {
 			}
 		}
 
-		// Reemit periodically
+		// Check timeout
 		--resend_counter;
 		if (resend_counter == 0) {
-			password_login_send_request(create);
-			resend_counter = RESEND_PERIOD;
+			return 2;
 		}
 
 		// Wait one more frame
@@ -942,6 +949,14 @@ static void password_login_process(uint8_t create) {
 	// Update login indicator
 	draw_logged_name();
 	yield();
+
+	return 0;
+}
+
+static void password_login_process(uint8_t create) {
+	// Retry on timeout
+	while (password_login_process_do_it(create) == 2) {
+	}
 }
 
 static void init_cursor_anim(uint16_t x, uint16_t y) {
