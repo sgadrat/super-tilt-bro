@@ -38,6 +38,7 @@ static uint8_t const TILE_SPACE = 0;
 static uint8_t const TILE_ZERO = 220;
 
 static uint8_t const BG_STEP_INIT_WIFI_SCREEN = 0;
+static uint8_t const BG_STEP_INIT_WIFI_SCREEN_READ_SERVER_CONF = 15;
 static uint8_t const BG_STEP_MAP_SCREEN = 1;
 static uint8_t const BG_STEP_DRAW_MAP = 2;
 static uint8_t const BG_STEP_DRAW_MAP_2 = 3;
@@ -237,6 +238,13 @@ static void tick_bg_task() {
 		// Hide the selection bar
 		case BG_STEP_INIT_WIFI_SCREEN: {
 			set_selection_bar_title(" initialize wifi");
+			task->step = BG_STEP_DEACTIVATED;
+			break;
+		}
+
+		// Replace step title
+		case BG_STEP_INIT_WIFI_SCREEN_READ_SERVER_CONF: {
+			set_selection_bar_title("read server conf");
 			task->step = BG_STEP_DEACTIVATED;
 			break;
 		}
@@ -553,56 +561,8 @@ static void the_purge() {
 	++Task(netplay_launch_fg_task)->step;
 }
 
-static void connecting_wifi_query() {
-	static uint8_t const cmd_get_wifi_status[] = {1, TOESP_MSG_WIFI_GET_STATUS};
-	wrap_esp_send_cmd(cmd_get_wifi_status);
-	++Task(netplay_launch_fg_task)->step;
-}
-
-static void connecting_wifi_wait() {
-	if (esp_rx_message_ready()) {
-		// Check that message type is a wifi status message (the answer to our query)
-		if ((&esp_rx_buffer)[ESP_MSG_TYPE] != FROMESP_MSG_WIFI_STATUS) {
-			// Possibilities for this to happen
-			//  1. message from login server took very long: would be strange
-			//  2. message from the last game that is not finished, but our client though it was: happens on laggy connections with tons of rollback
-			// We could just ignore "1.", but this seems improbable.
-			// We certainly don't want to start a game in case "2.", mixed messages from two games would do no good.
-			Task(netplay_launch_fg_task)->step = ERROR_STATE_CRAZY_MESSAGE;
-			esp_rx_message_acknowledge();
-			return;
-		}
-
-		// Read Wi-Fi status and adapt step accordingly
-		switch((&esp_rx_buffer)[ESP_MSG_PAYLOAD]) {
-			case ESP_WIFI_STATUS_IDLE_STATUS:
-			case ESP_WIFI_STATUS_NO_SSID_AVAIL:
-			case ESP_WIFI_STATUS_SCAN_COMPLETED:
-				--Task(netplay_launch_fg_task)->step;
-				break;
-
-			case ESP_WIFI_STATUS_CONNECTED:
-				++Task(netplay_launch_fg_task)->step;
-				break;
-
-			case ESP_WIFI_STATUS_CONNECT_FAILED:
-			case ESP_WIFI_STATUS_CONNECTION_LOST:
-			case ESP_WIFI_STATUS_DISCONNECTED:
-				Task(netplay_launch_fg_task)->step = ERROR_STATE_NO_CONTACT;
-				break;
-
-			default:
-				Task(netplay_launch_fg_task)->step = ERROR_STATE_CRAZY_MESSAGE;
-				break;
-		}
-
-		// Acknowledge message reception
-		esp_rx_message_acknowledge();
-	}
-}
-
 static void select_server_query_settings() {
-	set_selection_bar_title("read server conf"); //FIXME should find an acceptable way to put it in bg task (valable for other calls to set_selection_bar_title in fg tasks
+	set_bg_state(BG_STEP_INIT_WIFI_SCREEN_READ_SERVER_CONF);
 
 	wrap_esp_send_cmd((uint8_t[]){1, TOESP_MSG_SERVER_GET_SAVED_SETTINGS});
 	++Task(netplay_launch_fg_task)->step;
@@ -946,7 +906,7 @@ static void no_contact() {
 	set_bg_state(BG_STEP_DEACTIVATED);
 	skip_frame();
 	back_on_b();
-	set_selection_bar_title("error no contact");
+	set_selection_bar_title("error no contact"); //TODO should be in a bg task (valable for other calls to set_selection_bar_title in fg tasks)
 }
 
 static void bad_ping() {
@@ -972,7 +932,6 @@ static void tick_fg_task() {
 	// State functions
 	static void (*state_functions[])() = {
 		the_purge,
-		connecting_wifi_query, connecting_wifi_wait,
 		select_server_query_settings, select_server_draw, select_server,
 		estimate_latency_prepare, estimate_latency_request, estimate_latency_wait, estimate_latency_next,
 		connection_prepare, connection_send_msg, connection_wait_msg,
