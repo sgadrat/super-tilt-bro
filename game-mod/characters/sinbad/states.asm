@@ -443,6 +443,8 @@ SINBAD_LEDGE_REPLACE_OFFSET = 6
 sinbad_side_tilt_speed_update:
 .(
 	; Do not change velocity from zero, it is certainly due to offground routine
+	lda player_a_velocity_h_low, x
+	bne proceed
 	lda player_a_velocity_h, x
 	bne proceed
 		rts
