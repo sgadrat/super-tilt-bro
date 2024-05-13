@@ -300,7 +300,7 @@ say "======================="
 # Check that rescue code did not change
 #  Rescue code cannot be safely upgraded, and first published version shall work regardless of the rest of the ROM, so avoid modifying it.
 #  Only a warning for ease of development, should be an error when carts are distributed to non-technical players.
-if [ "$rescue_rom_hash" != '109392e1f0dfee583b974fb03365fa35' ]; then
+if [ "$rescue_rom_hash" != 'dcdf6923178d5da518b890b185ce7d3c' ]; then
 	sayc 41 "WARNING: rescue code changed"
 	sayc 41 "============================"
 fi

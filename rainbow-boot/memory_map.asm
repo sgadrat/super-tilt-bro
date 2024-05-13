@@ -9,7 +9,8 @@ cursor = last_c_label + 1
 &ppuctrl_mirror = cursor : -cursor += 1
 &rescue_controller_a_btns = cursor : -cursor += 1
 &rescue_controller_b_btns = cursor : -cursor += 1
-&scroll_state = cursor : -cursor += 1
+&scroll_lock = cursor : -cursor += 1
+&scroll_position = cursor : -cursor += 1
 &txtx = cursor : -cursor += 1
 &txty = cursor : -cursor += 1
 

@@ -42,7 +42,8 @@ extern uint8_t ppuctrl_mirror;
 extern uint8_t program_page_result_flags;
 extern uint8_t program_page_result_count;
 extern uint8_t rescue_controller_a_btns;
-extern uint8_t scroll_state;
+extern uint8_t scroll_lock;
+extern uint8_t scroll_position;
 extern uint8_t const tileset_rainbow_rescue;
 extern uint8_t const tileset_rainbow_segments;
 extern uint8_t txtx;
@@ -279,18 +280,14 @@ static void scroll(uint16_t x, uint16_t y) {
 	PPUCTRL = ppuctrl | (y >= 240 ? 2 : 0) | (x >= 256 ? 1 : 0);
 }
 
-static void set_scroll(bool locked, uint16_t y) {
-	scroll_state = ((locked?0x80:0x00) | (y / 8));
-}
-
-static uint16_t scroll_pos() {
-	return ((uint16_t)(scroll_state & 0x7f)) * 8;
+static void set_scroll(bool locked, uint8_t y) {
+	scroll_lock = locked;
+	scroll_position = y;
 }
 
 static void post_vbi() {
 	rescue_fetch_controllers();
 
-	bool const scroll_lock = (scroll_state & 0x80);
 	if (!scroll_lock) {
 		if (rescue_controller_a_btns == btn_up) {
 			set_scroll(false, 0);
@@ -299,7 +296,7 @@ static void post_vbi() {
 		}
 	}
 
-	scroll(0, scroll_pos());
+	scroll(0, scroll_position);
 }
 
 static void set_attribute(uint8_t nametable, uint8_t x, uint8_t y, uint8_t value) {
@@ -325,23 +322,31 @@ static void print(char const* message, uint8_t col, uint8_t line) {
 	cpu_to_ppu((uint8_t const*)message, 0x2000 + line * 32 + col, len);
 }
 
-static void say(char const* message) {
+static void vprint(char const* message, uint8_t col, uint8_t line) {
+	uint8_t const len = strlen8(message);
+	uint16_t const pos = 0x2000 + line * 32 + col;
+
 	wait_vbi();
-	print(message, txtx, txty);
+	cpu_to_ppu((uint8_t const*)message, pos, len);
 	post_vbi();
+}
+
+static void say(char const* message) {
+	vprint(message, txtx, txty);
 }
 
 static void error_log(char const* message) {
 	uint8_t const len = strlen8(message);
 	uint8_t const col = 2;
 	uint8_t const line = 3 + log_position;
+	uint16_t const position = 0x2800 + line * 32 + col;
 	log_position += 1;
 	if (log_position > 24) {
 		log_position = 0;
 	}
 
 	wait_vbi();
-	cpu_to_ppu((uint8_t const*)message, 0x2800 + line * 32 + col, len);
+	cpu_to_ppu((uint8_t const*)message, position, len);
 	if (len < 26) {
 		for(uint8_t free = 26 - len; free > 0; --free) {
 			PPUDATA = ' ';
@@ -425,13 +430,8 @@ static void progress(char* dest, char const* prefix, uint32_t value, char const*
 
 static void fatal_error() {
 	// Tell the user it failed badly
-	wait_vbi();
-	print("FATAL ERROR.", txtx, txty+1);
-	post_vbi();
-
-	wait_vbi();
-	print("Please shutdown, and retry.", txtx, txty+2);
-	post_vbi();
+	vprint("FATAL ERROR.", txtx, txty+1);
+	vprint("Please shutdown, and retry.", txtx, txty+2);
 
 	// Wait for the system being reboot, or the user to press the secret key combinaison to try to ignore the error
 	while(true) {
@@ -443,13 +443,8 @@ static void fatal_error() {
 	}
 
 	// Clear our error messages
-	wait_vbi();
-	print("            ", txtx, txty+1);
-	post_vbi();
-
-	wait_vbi();
-	print("                           ", txtx, txty+2);
-	post_vbi();
+	vprint("            ", txtx, txty+1);
+	vprint("                           ", txtx, txty+2);
 }
 
 static void erase_game_sector(uint8_t sector_index) {
@@ -489,9 +484,7 @@ static void erase_game_sector(uint8_t sector_index) {
 		dest = strcpy8(dest, "Ignored erase fail "); //19
 		dest = uint_to_hex8(dest, sector_index); //19+2=21
 		*dest = 0; //21+1=22
-		wait_vbi();
-		print(msg, txtx, txty+3);
-		post_vbi();
+		vprint(msg, txtx, txty+3);
 	}
 }
 
@@ -556,9 +549,7 @@ static void program_game_page(uint16_t page_index) {
 			dest = strcpy8(dest, "Ignored write fail "); //19
 			dest = uint_to_hex16(dest, page_index); //19+4=23
 			*dest = 0; //23+1=24
-			wait_vbi();
-			print(msg, txtx, txty+3);
-			post_vbi();
+			vprint(msg, txtx, txty+3);
 		}
 
 		return;
@@ -652,7 +643,8 @@ void rainbow_rescue() {
 
 	// Initialize global variables
 	log_position = 0;
-	scroll_state = 0;
+	scroll_lock = false;
+	scroll_position = 0;
 
 	// Clear nametables
 	clear_nt(0x2000);
@@ -782,10 +774,8 @@ void rainbow_rescue() {
 			);
 		}
 
-		wait_vbi();
-		print(choice_text[dialog_state], box_col, choice_line);
 		last_frame_btns = rescue_controller_a_btns;
-		post_vbi();
+		vprint(choice_text[dialog_state], box_col, choice_line);
 	}
 
 	// Clear warning message while scrolling up to state
@@ -802,11 +792,12 @@ void rainbow_rescue() {
 
 	for (uint8_t step = 0; step < nb_steps; ++step) {
 		set_scroll(true, scroll_steps[step]);
-		wait_vbi();
 		if (step < 8) {
-			print("                          ", box_col, first_box_line + step);
+			vprint("                          ", box_col, first_box_line + step);
+		}else {
+			wait_vbi();
+			post_vbi();
 		}
-		post_vbi();
 	}
 	set_scroll(false, 0);
 
@@ -892,20 +883,16 @@ void rainbow_rescue() {
 	say(msg);
 
 	if (nb_errors == 0) {
-		wait_vbi();
-		print("Success", txtx, txty);
-		print("You can reboot now", txtx, txty+1);
-		post_vbi();
+		vprint("Success", txtx, txty);
+		vprint("You can reboot now", txtx, txty+1);
 	}else {
 		char* dest = msg;
 		dest = uint_to_str(dest, nb_errors);
 		dest = strcpy8(dest, " verification fails");
 		*dest = 0;
 
-		wait_vbi();
-		print("Error", txtx, txty);
-		print(msg, txtx, txty+1);
-		post_vbi();
+		vprint("Error", txtx, txty);
+		vprint(msg, txtx, txty+1);
 	}
 
 	// Loop endlessely
