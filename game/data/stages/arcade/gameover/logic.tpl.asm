@@ -37,7 +37,7 @@
 		TRAMPOLINE(cpu_to_ppu_copy_tiles_modified, #SINBAD_BANK_NUMBER, #CURRENT_BANK_NUMBER)
 	.)
 
-	; Set alphanum charset at the end of tileset, with simpler color scheme
+	; Set alphanum charset at the end of tileset
 	.(
 		lda PPUSTATUS
 		lda #$1d
@@ -50,7 +50,7 @@
 		lda #>charset_alphanum
 		sta tmpfield4
 
-		ldx #CHARSET_COLOR(0,1)
+		ldx #CHARSET_COLOR(2,1)
 
 		TRAMPOLINE(cpu_to_ppu_copy_charset, #CHARSET_ALPHANUM_BANK_NUMBER, #CURRENT_BANK_NUMBER)
 	.)
