@@ -103,7 +103,7 @@ def expand(source, game_dir, filename, templates_dir):
 		Define a value associated to a name, fails if a value is already defined for this name
 		"""
 		name = '!square-define'
-		regexp = re.compile(name + ' "(?P<name>[^"]+)" \[(?P<value>[^\]]*)\]', flags=re.MULTILINE)
+		regexp = re.compile(name + r' "(?P<name>[^"]+)" \[(?P<value>[^\]]*)\]', flags=re.MULTILINE)
 		def process(m):
 			nonlocal defined, source_pos
 			ensure(
@@ -247,7 +247,7 @@ def expand(source, game_dir, filename, templates_dir):
 
 	class ShortPlaceHandler:
 		name = '{'
-		regexp = re.compile('\{(?P<name>[a-z_]+)\}')
+		regexp = re.compile(r'\{(?P<name>[a-z_]+)\}')
 		parse_may_fail = True
 		def process(m):
 			nonlocal defined

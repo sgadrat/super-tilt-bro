@@ -79,12 +79,12 @@ def convert_gcc_to_xa(source):
 	for line_num in range(len(res)):
 		line = res[line_num]
 
-		m = re.search(':(\++)', line)
+		m = re.search(r':(\++)', line)
 		if m is not None:
 			num_forward = len(m.group(1))
 			folowing_label_index = unnamed_labels.index(min(filter(lambda x: x > line_num, unnamed_labels))) # index of the first unnamed label following this line
 			referenced_label_index = folowing_label_index + (num_forward - 1)
-			res[line_num] = re.sub(':(\++)', 'unamed_lbl_{}'.format(unnamed_labels[referenced_label_index]), line)
+			res[line_num] = re.sub(r':(\++)', 'unamed_lbl_{}'.format(unnamed_labels[referenced_label_index]), line)
 
 		m = re.search(':(-+)', line)
 		if m is not None:
