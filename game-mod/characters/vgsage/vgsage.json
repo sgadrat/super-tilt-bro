@@ -15665,7 +15665,7 @@
     },
     {
       "input_routine": "vgsage_input_walljumping",
-      "name": "VGSAGE_STATE_WALJUMPING",
+      "name": "VGSAGE_STATE_WALLJUMPING",
       "offground_routine": "dummy_routine",
       "onground_routine": "vgsage_global_onground",
       "onhurt_routine": "hurt_player",

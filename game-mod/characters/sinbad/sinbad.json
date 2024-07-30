@@ -14615,7 +14615,7 @@
     },
     {
       "input_routine": "sinbad_input_walljumping",
-      "name": "SINBAD_STATE_WALJUMPING",
+      "name": "SINBAD_STATE_WALLJUMPING",
       "offground_routine": "dummy_routine",
       "onground_routine": "sinbad_global_onground",
       "onhurt_routine": "hurt_player",

@@ -101,6 +101,7 @@ def generate_character(char, game_dir, templates_dir):
 			#include "{rel_char_dir}/character_colors.asm"
 			#include "{rel_char_dir}/properties.asm"
 			#include "{rel_char_dir}/state_events.asm"
+			#include "{rel_char_dir}/player_states_index.asm"
 			#include "{rel_char_dir}/player_states.asm"
 			#include "{rel_char_dir}/ai_data.asm"
 			#include "{rel_char_dir}/ai.asm"
@@ -242,6 +243,18 @@ def generate_character(char, game_dir, templates_dir):
 				if routine_name is not None:
 					state_events_file.write('STATE_ROUTINE({}) ; {}\n'.format(routine_name, state.name))
 			state_events_file.write('\n')
+
+	# States index
+	player_states_index_file_path = '{}/player_states_index.asm'.format(char_dir)
+	with open(player_states_index_file_path, 'w') as player_states_index_file:
+		player_states_index_file.write(';\n')
+		player_states_index_file.write('; States index\n')
+		player_states_index_file.write(';\n')
+		player_states_index_file.write('\n')
+		state_idx = 0
+		for state in char.states:
+			player_states_index_file.write('{} = {}\n'.format(state.name, state_idx))
+			state_idx += 1
 
 	# Character's logic
 	expanded_source_code = expand_macros(char.sourcecode, game_dir, char, templates_dir)
