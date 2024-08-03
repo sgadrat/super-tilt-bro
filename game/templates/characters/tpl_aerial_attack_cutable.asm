@@ -1,41 +1,28 @@
 ;
-; Cancellable grounded move
+; Aerial move
 ;
 
 ; anim - Animation of the move
 ; state - Character's state number
 ; routine - Name of the state's routines
 ; cutable_duration - Duration of the part of the animation that can be cut
-; followup - Name of the routine to call on state's end (defaults to inactive state)
 ; init - Extra init code (defaults to just returning from subroutine)
-; tick - Tick code (defaults to applying grounded friction)
-; duration - Duration of the state in frames (defaults to animation duration)
-; cut_input - Code handling input changes during the cutable part (defaults to idle input handler)
+; tick - Extra tick code (defaults to just returning from subroutine)
+; followup - Name of the routine to call on state's end (defaults to falling state)
+; cut_input - Code handling input changes during the cutable part (defaults to calling character's check_aerial_inputs)
 
-;NOTE this template could be merged with tpl_grounded_attack_followup
-;     - it adds the input routine, but does not touchother code
-;     - difficulty being computing the cutable_duration table from "duration" parameter which contains pal+ntsc variants
-;       - maybe make it two parameters, duration_pal and duration_ntsc? would disallow to use "anim duration table" macro though.
-
-!default "followup" {!place "char_name"_start_inactive_state}
-
-!default "tick" {
-	; Do not move, velocity tends toward vector (0,0)
-	jmp !place "char_name"_apply_ground_friction
-	;rts ; useless, jump to subroutine
-}
-
-!default "duration" {!place "anim"_dur_pal, !place "anim"_dur_ntsc}
-
+!default "followup" {!place "char_name"_start_falling}
 !default "cut_input" {
-	jmp !place "char_name"_input_idle
+	jmp !place "char_name"_check_aerial_inputs
 }
 
 .(
-	{anim}_dur:
-		.byt !place "duration"
+	duration:
+		.byt {anim}_dur_pal, {anim}_dur_ntsc
 
 	anim_duration_table({anim}_dur_pal-{cutable_duration}, cutable_duration)
+
+	;Note - player_a_state_field1,x is used by short hop takeover
 
 	+{char_name}_start_{routine}_left:
 	.(
@@ -54,13 +41,16 @@
 	.)
 	+{char_name}_start_{routine}:
 	.(
+		; Take over short hop logic to force a short hop if aerial is input at the begining of the jump
+		jsr {char_name}_short_hop_takeover_init
+
 		; Set state
 		lda #{state}
 		sta player_a_state, x
 
 		; Reset clock
 		ldy system_index
-		lda {anim}_dur, y
+		lda duration, y
 		sta player_a_state_clock, x
 
 		; Set the appropriate animation
@@ -68,6 +58,7 @@
 		sta tmpfield13
 		lda #>{anim}
 		sta tmpfield14
+		jmp set_player_animation
 		!ifndef "init" {
 			jmp set_player_animation
 			;rts ; useless, jump to subroutine
@@ -76,6 +67,8 @@
 			jsr set_player_animation
 			!place "init"
 		}
+
+		;rts ; useless, jump to subroutine
 	.)
 
 	+{char_name}_input_{routine}:
@@ -95,37 +88,43 @@
 
 			take_input:
 				; Allow to cut the animation
-				.(
-					!place "cut_input"
-				.)
+				!place "cut_input"
 
 		end:
 		rts
 	.)
-.)
 
-+{char_name}_tick_{routine}
-.(
+	+{char_name}_tick_{routine}:
+	.(
 #ifldef {char_name}_global_tick
-	jsr {char_name}_global_tick
+		; Global tick
+		jsr {char_name}_global_tick
 #endif
 
-	; After move's time is out, go to standing state
-	dec player_a_state_clock, x
-	bne do_tick
-		jmp {followup}
-		; No return, jump to subroutine
-	do_tick:
-
-	!place "tick"
+		; Return to falling at the end of the move
+		dec player_a_state_clock, x
+		bne tick
+			jmp {followup}
+			; No return, jump to subroutine
+		tick:
+		jsr {char_name}_short_hop_takeover_tick
+		jsr {char_name}_aerial_directional_influence
+		!ifndef "tick" {
+			jmp apply_player_gravity
+			;rts ; useless, jump to subroutine
+		}
+		!ifdef "tick" {
+			jsr apply_player_gravity
+			!place "tick"
+		}
+	.)
 .)
 
 !undef "anim"
 !undef "state"
 !undef "routine"
-!undef "followup"
-!ifdef "init" {!undef "init"}
-!undef "tick"
-!undef "duration"
 !undef "cutable_duration"
+!ifdef "init" {!undef "init"}
+!ifdef "tick" {!undef "tick"}
+!undef "followup"
 !undef "cut_input"

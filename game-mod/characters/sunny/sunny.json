@@ -4415,7 +4415,7 @@
             "base_v": -1500,
             "force_h": 0,
             "force_v": -10,
-            "damages": 1,
+            "damages": 4,
             "enabled": true
           },
           "hurtbox": {
@@ -4489,7 +4489,7 @@
             "base_v": -1500,
             "force_h": 0,
             "force_v": -10,
-            "damages": 1,
+            "damages": 4,
             "enabled": false
           },
           "hurtbox": {
@@ -4563,7 +4563,7 @@
             "base_v": -1500,
             "force_h": 0,
             "force_v": -10,
-            "damages": 1,
+            "damages": 4,
             "enabled": false
           },
           "hurtbox": {
@@ -4645,7 +4645,7 @@
             "base_v": -1500,
             "force_h": 0,
             "force_v": -10,
-            "damages": 1,
+            "damages": 4,
             "enabled": false
           },
           "hurtbox": {
@@ -6821,9 +6821,9 @@
             "top": -3,
             "right": 10,
             "bottom": 4,
-            "base_h": -200,
-            "base_v": -1000,
-            "force_h": -1,
+            "base_h": -400,
+            "base_v": -1500,
+            "force_h": -2,
             "force_v": -5,
             "damages": 3,
             "enabled": true
@@ -6887,9 +6887,9 @@
             "top": -6,
             "right": 16,
             "bottom": 1,
-            "base_h": -200,
-            "base_v": -1000,
-            "force_h": -1,
+            "base_h": -400,
+            "base_v": -1500,
+            "force_h": -2,
             "force_v": -5,
             "damages": 3,
             "enabled": false
@@ -15657,7 +15657,7 @@
       "update_routine": "sunny_tick_aerial_down"
     },
     {
-      "input_routine": "smart_keep_input_dirty",
+      "input_routine": "sunny_input_aerial_up",
       "name": "SUNNY_STATE_AERIAL_UP",
       "offground_routine": "dummy_routine",
       "onground_routine": "sunny_start_landing",

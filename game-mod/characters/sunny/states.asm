@@ -623,7 +623,8 @@ sunny_global_onground:
 !define "anim" {sunny_anim_aerial_up}
 !define "state" {SUNNY_STATE_AERIAL_UP}
 !define "routine" {aerial_up}
-!include "characters/tpl_aerial_attack.asm"
+!define "cutable_duration" {12}
+!include "characters/tpl_aerial_attack_cutable.asm"
 
 ;
 ; Aerial neutral
@@ -847,7 +848,7 @@ sunny_global_onground:
 !define "anim" {sunny_anim_up_tilt}
 !define "state" {SUNNY_STATE_UP_TILT}
 !define "routine" {up_tilt}
-!define "cuttable_duration" {20}
+!define "cutable_duration" {20}
 !define "cut_input" {
 	lda controller_a_btns, x
 	cmp #CONTROLLER_INPUT_JUMP
