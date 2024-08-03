@@ -727,36 +727,22 @@ sunny_global_onground:
 	.)
 .)
 
-.(
-	SPE_UP_PREPARATION_DURATION = 3
-	SPE_UP_POWER = $0600
+;
+; Special up
+;
 
+.(
+	;TODO moves here use tpl_aerial_attack, but may be better using tpl_aerial_attack_uncancellable
+	;     Need to adapt uncancellable API to match features in tpl_aerial_attack if so.
+
+	SPE_UP_POWER = $0600
 	velocity_table(-SPE_UP_POWER, spe_up_power_msb, spe_up_power_lsb)
 
-	&{char_name}_start_spe_up_left:
-	.(
-		lda #DIRECTION_LEFT2
-		jmp {char_name}_start_spe_up_directional
-	.)
-	&{char_name}_start_spe_up_right:
-	.(
-		lda #DIRECTION_RIGHT2
-		; Fallthrough to {char_name}_start_spe_up_directional
-	.)
-	{char_name}_start_spe_up_directional:
-	.(
-		sta player_a_direction, x
-		; Fallthrough to {char_name}_start_spe_up
-	.)
-	&sunny_start_spe_up:
-	.(
-		; Set state
-		lda #SUNNY_STATE_SPE_UP
-		sta player_a_state, x
-
-		; Reset fall speed
-		jsr reset_default_gravity
-
+	!define "anim" {sunny_anim_spe_up_prepare}
+	!define "state" {SUNNY_STATE_SPE_UP_PREPARE}
+	!define "routine" {spe_up}
+	!define "followup" {sunny_start_spe_up_jump}
+	!define "init" {
 		; Set initial velocity
 		lda #$00
 		sta player_a_velocity_h_low, x
@@ -764,86 +750,41 @@ sunny_global_onground:
 		sta player_a_velocity_v_low, x
 		sta player_a_velocity_v, x
 
-		; Reset clock
-		sta player_a_state_clock, x
+		; Reset fall speed
+		jmp reset_default_gravity
+		;rts ; useless, jump to subroutine
+	}
+	!include "characters/tpl_aerial_attack.asm"
 
-		; Set substate to "charging"
-		sta player_a_state_field1, x
-
-		; Fallthrough to set the animation
-	.)
-	set_spe_up_animation:
-	.(
-		; Set the appropriate animation
-		lda #<sunny_anim_spe_up_prepare
-		sta tmpfield13
-		lda #>sunny_anim_spe_up_prepare
-		sta tmpfield14
-		jsr set_player_animation
+	!define "anim" {sunny_anim_spe_up_jump}
+	!define "state" {SUNNY_STATE_SPE_UP_JUMP}
+	!define "routine" {spe_up_jump}
+	!define "followup" {sunny_start_helpless}
+	!define "init" {
+		; Set jumping velocity
+		ldy system_index
+		lda spe_up_power_msb, y
+		sta player_a_velocity_v, x
+		lda spe_up_power_lsb, y
+		sta player_a_velocity_v_low, x
 
 		rts
-	.)
-
-	&sunny_tick_spe_up:
-	.(
-		; Tick clock
-		inc player_a_state_clock, x
-
-		; Move if the substate is set to moving
-		lda player_a_state_field1, x
-		bne moving
-
-		; Check if there is reason to begin to move
-		lda player_a_state_clock, x
-		cmp #SPE_UP_PREPARATION_DURATION
-		bcs start_moving
-
-		not_moving:
-			jmp end
-
-		start_moving:
-			; Set substate to "moving"
-			lda #$01
-			sta player_a_state_field1, x
-
-			; Set jumping velocity
-			ldy system_index
-			lda spe_up_power_msb, y
-			sta player_a_velocity_v, x
-			lda spe_up_power_lsb, y
-			sta player_a_velocity_v_low, x
-
-			; Set the movement animation
-			lda #<sunny_anim_spe_up_jump
-			sta tmpfield13
-			lda #>sunny_anim_spe_up_jump
-			sta tmpfield14
-			jsr set_player_animation
-
-		moving:
-			; Return to falling when the top is reached
-			lda player_a_velocity_v, x
-			beq top_reached
-			bpl top_reached
-
-				; The top is not reached, stay in special upward state but apply gravity and directional influence
-				jsr sunny_aerial_directional_influence
-				jsr apply_player_gravity
-				jmp end
-
-			top_reached:
-				jsr sunny_start_helpless
-				jmp end
-
-		end:
-		rts
-	.)
+	}
+	!include "characters/tpl_aerial_attack.asm"
 .)
+
+;
+; Special down
+;
 
 !define "anim" {sunny_anim_spe_down}
 !define "state" {SUNNY_STATE_SPE_DOWN}
 !define "routine" {spe_down}
 !include "characters/tpl_aerial_attack_uncancellable.asm"
+
+;
+; Up tilt
+;
 
 !define "anim" {sunny_anim_up_tilt}
 !define "state" {SUNNY_STATE_UP_TILT}

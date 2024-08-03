@@ -2,9 +2,11 @@
 ; Aerial move
 ;
 
-; {anim} - Animation of the move
-; {state} - Character's state number
-; {routine} - Name of the state's routines
+; anim - Animation of the move
+; state - Character's state number
+; routine - Name of the state's routines
+; init - Extra init code (defaults to just returning from subroutine)
+; followup - Name of the routine to call on state's end (defaults to falling state)
 
 .(
 	duration:
@@ -46,36 +48,68 @@
 		sta tmpfield13
 		lda #>{anim}
 		sta tmpfield14
-		jmp set_player_animation
+		!ifndef "init" {
+			jmp set_player_animation
+			;rts ; useless, jump to subroutine
+		}
+		!ifdef "init" {
+			jsr set_player_animation
+			!place "init"
+		}
 
-		;rts ; useless, jump to subroutine
+		;rts ; useless, handled by init
 	.)
 .)
 
-#ifldef {char_name}_std_aerial_tick
+!ifndef "followup" {
+#ifldef !place "char_name"_std_aerial_tick
 #else
-	+{char_name}_std_aerial_tick:
+	+!place "char_name"_std_aerial_tick:
 	.(
-#ifldef {char_name}_global_tick
+#ifldef !place "char_name"_global_tick
 		; Global tick
-		jsr {char_name}_global_tick
+		jsr !place "char_name"_global_tick
 #endif
 
 		; Return to falling at the end of the move
 		dec player_a_state_clock, x
 		bne tick
-			jmp {char_name}_start_falling
+			jmp !place "char_name"_start_falling
 			; No return, jump to subroutine
 		tick:
-		jsr {char_name}_short_hop_takeover_tick
-		jsr {char_name}_aerial_directional_influence
+		jsr !place "char_name"_short_hop_takeover_tick
+		jsr !place "char_name"_aerial_directional_influence
 		jmp apply_player_gravity
 		;rts ; useless, jump to subroutine
 	.)
 #endif
 
-+{char_name}_tick_{routine} = {char_name}_std_aerial_tick
+	+!place "char_name"_tick_!place "routine" = !place "char_name"_std_aerial_tick
+}
+
+!ifdef "followup" {
+	+!place "char_name"_tick_!place "routine":
+	.(
+#ifldef !place "char_name"_global_tick
+		; Global tick
+		jsr !place "char_name"_global_tick
+#endif
+
+		; Return to falling at the end of the move
+		dec player_a_state_clock, x
+		bne tick
+			jmp !place "followup"
+			; No return, jump to subroutine
+		tick:
+		jsr !place "char_name"_short_hop_takeover_tick
+		jsr !place "char_name"_aerial_directional_influence
+		jmp apply_player_gravity
+		;rts ; useless, jump to subroutine
+	.)
+}
 
 !undef "anim"
 !undef "state"
 !undef "routine"
+!ifdef "init" {!undef "init"}
+!ifdef "followup" {!undef "followup"}
