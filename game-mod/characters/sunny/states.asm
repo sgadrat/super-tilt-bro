@@ -847,7 +847,20 @@ sunny_global_onground:
 !define "anim" {sunny_anim_up_tilt}
 !define "state" {SUNNY_STATE_UP_TILT}
 !define "routine" {up_tilt}
-!include "characters/tpl_grounded_attack.asm"
+!define "cuttable_duration" {20}
+!define "cut_input" {
+	lda controller_a_btns, x
+	cmp #CONTROLLER_INPUT_JUMP
+	beq cut
+	cmp #CONTROLLER_INPUT_JUMP_LEFT
+	beq cut
+	cmp #CONTROLLER_INPUT_JUMP_RIGHT
+	beq cut
+		rts
+	cut:
+		jmp sunny_start_jumping
+}
+!include "characters/tpl_grounded_attack_cutable.asm"
 
 !include "characters/std_friction_routines.asm"
 
