@@ -5811,7 +5811,7 @@
               "tile": "SUNNY_TILE_32",
               "attr": 64,
               "foreground": true,
-              "x": 7,
+              "x": 9,
               "y": 3
             }
           ],
@@ -5821,8 +5821,8 @@
           "duration": 3,
           "hitbox": {
             "type": "animation_direct_hitbox",
-            "left": 1,
-            "top": -2,
+            "left": 0,
+            "top": -4,
             "right": 10,
             "bottom": 5,
             "base_h": -200,
@@ -5878,7 +5878,81 @@
               "attr": 0,
               "foreground": true,
               "x": -1,
-              "y": -3
+              "y": -5
+            }
+          ],
+          "type": "animation_frame"
+        },
+        {
+          "duration": 4,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -10,
+            "top": 5,
+            "right": -2,
+            "bottom": 11,
+            "base_h": -500,
+            "base_v": 1000,
+            "force_h": -10,
+            "force_v": 20,
+            "damages": 1,
+            "enabled": false
+          },
+          "hurtbox": {
+            "bottom": 14,
+            "left": -1,
+            "right": 11,
+            "top": 1,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "attr": 0,
+              "foreground": true,
+              "tile": "SUNNY_TILE_30",
+              "type": "animation_sprite",
+              "x": -5,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_1",
+              "type": "animation_sprite",
+              "x": 3,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": true,
+              "tile": "SUNNY_TILE_22",
+              "type": "animation_sprite",
+              "x": -5,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_23",
+              "type": "animation_sprite",
+              "x": 3,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_32",
+              "attr": 128,
+              "foreground": false,
+              "x": -11,
+              "y": 4
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_36",
+              "attr": 128,
+              "foreground": false,
+              "x": -10,
+              "y": 14
             }
           ],
           "type": "animation_frame"
@@ -5893,8 +5967,8 @@
             "bottom": 14,
             "base_h": -500,
             "base_v": 1000,
-            "force_h": -5,
-            "force_v": 10,
+            "force_h": -10,
+            "force_v": 20,
             "damages": 1,
             "enabled": false
           },
