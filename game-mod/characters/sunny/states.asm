@@ -175,166 +175,42 @@ sunny_global_onground:
 ; Jab
 ;
 
-.(
-	jab1_duration:
-		.byt sunny_anim_jab1_dur_pal, sunny_anim_jab1_dur_ntsc
-	anim_duration_table(sunny_anim_jab1_dur_pal-10, jab1_cuttable_duration)
-
-	jab2_duration:
-		.byt sunny_anim_jab2_dur_pal, sunny_anim_jab2_dur_ntsc
-	anim_duration_table(sunny_anim_jab2_dur_pal-10, jab2_cuttable_duration)
-
-	jab3_duration:
-		.byt sunny_anim_jab3_dur_pal, sunny_anim_jab3_dur_ntsc
-	anim_duration_table(sunny_anim_jab3_dur_pal-9, jab3_sfx_time)
-
-	&sunny_start_jabbing:
-	.(
-		lda #SUNNY_STATE_JABBING_1
-		sta player_a_state, x
-		ldy system_index
-		lda jab1_duration, y
-		sta player_a_state_clock, x
-
-		; Set the appropriate animation
-		lda #<sunny_anim_jab1
-		sta tmpfield13
-		lda #>sunny_anim_jab1
-		sta tmpfield14
-		jsr set_player_animation
-
-		; SFX
-		jmp audio_play_strike_lite
-
-		;rts ; useless, jump to subroutine
-	.)
-
-	&sunny_start_jabbing2:
-	.(
-		lda #SUNNY_STATE_JABBING_2
-		sta player_a_state, x
-		ldy system_index
-		lda jab2_duration, y
-		sta player_a_state_clock, x
-
-		; Set the appropriate animation
-		lda #<sunny_anim_jab2
-		sta tmpfield13
-		lda #>sunny_anim_jab2
-		sta tmpfield14
-		jsr set_player_animation
-
-		; SFX
-		jmp audio_play_strike_lite
-
-		;rts ; useless, jump to subroutine
-	.)
-
-	&sunny_start_jabbing3:
-	.(
-		lda #SUNNY_STATE_JABBING_3
-		sta player_a_state, x
-		ldy system_index
-		lda jab2_duration, y
-		sta player_a_state_clock, x
-
-		; Set the appropriate animation
-		lda #<sunny_anim_jab3
-		sta tmpfield13
-		lda #>sunny_anim_jab3
-		sta tmpfield14
-		jmp set_player_animation
-
-		;rts ; useless, jump to subroutine
-	.)
-
-	&sunny_tick_jab3:
-	.(
-		; Play SFX when landing
-		ldy system_index
-		lda player_a_state_clock, x
-		cmp jab3_sfx_time, y
-		bne ok
-
-			;jsr sunny_audio_play_jab3_land ;FIXME sound effect does not exists (and this is a copy/paste of sinbad's code)
-
-		ok:
-		;Fallthrough
-	.)
-	&sunny_tick_jabbing:
-	.(
-		; Do not move, velocity tends toward vector (0,0)
-		lda #$00
-		sta tmpfield4
-		sta tmpfield3
-		sta tmpfield2
-		sta tmpfield1
-		lda #$ff
-		sta tmpfield5
-		jsr merge_to_player_velocity
-
-		; At the end of the move, return to idle state
-		dec player_a_state_clock, x
-		bne end
-			jmp sunny_start_inactive_state
-			; No return, jump to subroutine
-
-		end:
+!define "anim" {sunny_anim_jab1}
+!define "state" {SUNNY_STATE_JABBING_1}
+!define "routine" {jabbing}
+!define "cutable_duration" {8}
+!define "cut_input" {
+	; Allow to cut the animation for another jab
+	lda controller_a_btns, x
+	cmp #CONTROLLER_INPUT_JAB
+	beq cut
 		rts
-	.)
+	cut:
+		jmp sunny_start_jabbing2
+		; No return, jump to subroutine
+}
+!include "characters/tpl_grounded_attack_cutable.asm"
 
-	&sunny_input_jabbing1:
-	.(
-		ldy system_index
-		lda jab1_cuttable_duration, y
-		cmp player_a_state_clock, x
-		bcs take_input
-
-			not_yet:
-				; Keep keypress dirty, but acknowledge key release
-				;  So releasing then pressing again jab input correctly bufferises the jab input
-				lda controller_a_btns, x
-				beq end
-					jmp dumb_keep_input_dirty ; dumb as we already checked the "smart" condition for our own logic
-
-			take_input:
-				; Allow to cut the animation for another jab
-				lda controller_a_btns, x
-				cmp #CONTROLLER_INPUT_JAB
-				bne end
-					jmp sunny_start_jabbing2
-					; No return, jump to subroutine
-
-		end:
+!define "anim" {sunny_anim_jab2}
+!define "state" {SUNNY_STATE_JABBING_2}
+!define "routine" {jabbing2}
+!define "cutable_duration" {8}
+!define "cut_input" {
+	; Allow to cut the animation for another jab
+	lda controller_a_btns, x
+	cmp #CONTROLLER_INPUT_JAB
+	beq cut
 		rts
-	.)
+	cut:
+		jmp sunny_start_jabbing3
+		; No return, jump to subroutine
+}
+!include "characters/tpl_grounded_attack_cutable.asm"
 
-	&sunny_input_jabbing2:
-	.(
-		ldy system_index
-		lda jab2_cuttable_duration, y
-		cmp player_a_state_clock, x
-		bcs take_input
-
-			not_yet:
-				; Keep keypress dirty, but acknowledge key release
-				;  So releasing then pressing again jab input correctly bufferises the jab input
-				lda controller_a_btns, x
-				beq end
-					jmp dumb_keep_input_dirty ; dumb as we already checked the "smart" condition for our own logic
-
-			take_input:
-				; Allow to cut the animation for another jab
-				lda controller_a_btns, x
-				cmp #CONTROLLER_INPUT_JAB
-				bne end
-					jmp sunny_start_jabbing3
-					; No return, jump to subroutine
-
-		end:
-		rts
-	.)
-.)
+!define "anim" {sunny_anim_jab3}
+!define "state" {SUNNY_STATE_JABBING_3}
+!define "routine" {jabbing3}
+!include "characters/tpl_grounded_attack.asm"
 
 ;
 ; Side tilt

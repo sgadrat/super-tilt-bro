@@ -1,5 +1,5 @@
 ;
-; Cancellable grounded move
+; Grounded move which the end can be skipped by specific inputs
 ;
 
 ; anim - Animation of the move

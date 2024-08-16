@@ -2919,7 +2919,7 @@
             "top": 7,
             "right": 0,
             "bottom": 14,
-            "base_h": -200,
+            "base_h": 0,
             "base_v": -1000,
             "force_h": 0,
             "force_v": 0,
@@ -3092,6 +3092,98 @@
             }
           ],
           "type": "animation_frame"
+        },
+        {
+          "duration": 2,
+          "hitbox": null,
+          "hurtbox": {
+            "bottom": 16,
+            "left": -1,
+            "right": 8,
+            "top": 1,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_4",
+              "type": "animation_sprite",
+              "x": -2,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_5",
+              "type": "animation_sprite",
+              "x": 6,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_6",
+              "type": "animation_sprite",
+              "x": -2,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_7",
+              "type": "animation_sprite",
+              "x": 5,
+              "y": 8
+            }
+          ],
+          "type": "animation_frame"
+        },
+        {
+          "duration": 2,
+          "hitbox": null,
+          "hurtbox": {
+            "bottom": 16,
+            "left": -1,
+            "right": 8,
+            "top": 1,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_0",
+              "type": "animation_sprite",
+              "x": -3,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_5",
+              "type": "animation_sprite",
+              "x": 5,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_6",
+              "type": "animation_sprite",
+              "x": -3,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_7",
+              "type": "animation_sprite",
+              "x": 5,
+              "y": 8
+            }
+          ],
+          "type": "animation_frame"
         }
       ],
       "name": "sunny_anim_jab1",
@@ -3157,16 +3249,82 @@
           "duration": 2,
           "hitbox": {
             "type": "animation_direct_hitbox",
-            "left": -8,
-            "top": 7,
-            "right": 5,
-            "bottom": 14,
-            "base_h": -200,
-            "base_v": -1000,
+            "left": -3,
+            "top": -1,
+            "right": 6,
+            "bottom": 6,
+            "base_h": 0,
+            "base_v": -700,
             "force_h": 0,
             "force_v": 0,
             "damages": 1,
             "enabled": true
+          },
+          "hurtbox": {
+            "bottom": 16,
+            "left": -1,
+            "right": 12,
+            "top": 1,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_30",
+              "type": "animation_sprite",
+              "x": -3,
+              "y": 1
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_10",
+              "type": "animation_sprite",
+              "x": 5,
+              "y": 1
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_2",
+              "type": "animation_sprite",
+              "x": -3,
+              "y": 9
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_99",
+              "type": "animation_sprite",
+              "x": 5,
+              "y": 9
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_32",
+              "attr": 0,
+              "foreground": true,
+              "x": -4,
+              "y": -2
+            }
+          ],
+          "type": "animation_frame"
+        },
+        {
+          "duration": 2,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -8,
+            "top": 7,
+            "right": 5,
+            "bottom": 14,
+            "base_h": 0,
+            "base_v": -700,
+            "force_h": 0,
+            "force_v": 0,
+            "damages": 1,
+            "enabled": false
           },
           "hurtbox": {
             "bottom": 16,
@@ -3235,8 +3393,8 @@
             "top": 8,
             "right": 5,
             "bottom": 15,
-            "base_h": -200,
-            "base_v": -1000,
+            "base_h": 0,
+            "base_v": -700,
             "force_h": 0,
             "force_v": 0,
             "damages": 1,
@@ -3311,19 +3469,7 @@
         },
         {
           "duration": 2,
-          "hitbox": {
-            "type": "animation_direct_hitbox",
-            "left": -5,
-            "top": 9,
-            "right": 6,
-            "bottom": 15,
-            "base_h": -200,
-            "base_v": -1000,
-            "force_h": 0,
-            "force_v": 0,
-            "damages": 1,
-            "enabled": false
-          },
+          "hitbox": null,
           "hurtbox": {
             "bottom": 16,
             "left": -2,
@@ -3606,7 +3752,7 @@
           "type": "animation_frame"
         },
         {
-          "duration": 4,
+          "duration": 6,
           "hitbox": {
             "type": "animation_direct_hitbox",
             "left": -7,
@@ -3617,7 +3763,7 @@
             "base_v": -1000,
             "force_h": -4,
             "force_v": -20,
-            "damages": 4,
+            "damages": 2,
             "enabled": true
           },
           "hurtbox": {
@@ -15547,7 +15693,7 @@
       "update_routine": "sunny_tick_jumping"
     },
     {
-      "input_routine": "sunny_input_jabbing1",
+      "input_routine": "sunny_input_jabbing",
       "name": "SUNNY_STATE_JABBING_1",
       "offground_routine": "sunny_start_falling",
       "onground_routine": "sunny_global_onground",
@@ -15764,7 +15910,7 @@
       "onhurt_routine": "hurt_player",
       "start_routine": null,
       "type": "character_state",
-      "update_routine": "sunny_tick_jabbing"
+      "update_routine": "sunny_tick_jabbing2"
     },
     {
       "input_routine": "smart_keep_input_dirty",
@@ -15774,7 +15920,7 @@
       "onhurt_routine": "hurt_player",
       "start_routine": null,
       "type": "character_state",
-      "update_routine": "sunny_tick_jab3"
+      "update_routine": "sunny_tick_jabbing3"
     },
     {
       "input_routine": "sunny_input_respawn_platform",
