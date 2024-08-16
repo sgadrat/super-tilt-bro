@@ -735,7 +735,7 @@ sunny_global_onground:
 	;TODO moves here use tpl_aerial_attack, but may be better using tpl_aerial_attack_uncancellable
 	;     Need to adapt uncancellable API to match features in tpl_aerial_attack if so.
 
-	SPE_UP_POWER = $0600
+	SPE_UP_POWER = $0500
 	velocity_table(-SPE_UP_POWER, spe_up_power_msb, spe_up_power_lsb)
 
 	!define "anim" {sunny_anim_spe_up_prepare}

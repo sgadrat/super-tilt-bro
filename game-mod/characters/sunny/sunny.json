@@ -7377,7 +7377,7 @@
           "duration": 3,
           "hitbox": {
             "base_h": -200,
-            "base_v": -700,
+            "base_v": -1000,
             "bottom": 6,
             "damages": 1,
             "enabled": false,
@@ -7443,7 +7443,7 @@
           "duration": 3,
           "hitbox": {
             "base_h": -200,
-            "base_v": -700,
+            "base_v": -1000,
             "bottom": 3,
             "damages": 1,
             "enabled": false,
