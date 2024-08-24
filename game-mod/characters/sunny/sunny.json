@@ -6848,13 +6848,13 @@
           "type": "animation_frame"
         }
       ],
-      "name": "sunny_anim_aerial_down_ground_finish",
+      "name": "sunny_anim_aerial_down_stomp",
       "type": "animation"
     },
     {
       "frames": [
         {
-          "duration": 2,
+          "duration": 4,
           "hitbox": {
             "type": "animation_direct_hitbox",
             "left": -6,
@@ -6928,7 +6928,7 @@
           "type": "animation_frame"
         }
       ],
-      "name": "sunny_anim_aerial_down_finish",
+      "name": "sunny_anim_aerial_down_end",
       "type": "animation"
     },
     {
@@ -15875,6 +15875,46 @@
       "start_routine": null,
       "type": "character_state",
       "update_routine": "sunny_tick_aerial_down"
+    },
+    {
+      "type": "character_state",
+      "name": "SUNNY_STATE_AERIAL_DOWN_SPIN",
+      "start_routine": null,
+      "update_routine": "sunny_tick_aerial_down_spin",
+      "input_routine": "sunny_input_aerial_down_spin",
+      "onground_routine": "dummy_routine",
+      "offground_routine": "dummy_routine",
+      "onhurt_routine": "hurt_player"
+    },
+    {
+      "type": "character_state",
+      "name": "SUNNY_STATE_AERIAL_DOWN_SPIN2",
+      "start_routine": null,
+      "update_routine": "sunny_tick_aerial_down_spin2",
+      "input_routine": "sunny_input_aerial_down_spin",
+      "onground_routine": "dummy_routine",
+      "offground_routine": "dummy_routine",
+      "onhurt_routine": "hurt_player"
+    },
+    {
+      "type": "character_state",
+      "name": "SUNNY_STATE_AERIAL_DOWN_END",
+      "start_routine": null,
+      "update_routine": "sunny_tick_aerial_down_end",
+      "input_routine": "smart_keep_input_dirty",
+      "onground_routine": "sunny_start_landing",
+      "offground_routine": "dummy_routine",
+      "onhurt_routine": "hurt_player"
+    },
+    {
+      "type": "character_state",
+      "name": "SUNNY_STATE_AERIAL_DOWN_STOMP",
+      "start_routine": null,
+      "update_routine": "sunny_tick_aerial_down_stomp",
+      "input_routine": "smart_keep_input_dirty",
+      "onground_routine": "dummy_routine",
+      "offground_routine": "sunny_start_falling",
+      "onhurt_routine": "hurt_player"
     },
     {
       "input_routine": "sunny_input_aerial_up",

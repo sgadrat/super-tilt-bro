@@ -486,11 +486,108 @@ sunny_global_onground:
 ;
 ; Aerial down
 ;
+; NOTE we are using two "spin" states while one state with
+;      extended duration to 2*animation-duration would do the same.
+;      A bit wasteful, but would need to allow custom duration in
+;      tpl_aerial_attack to fix.
+;
 
 !define "anim" {sunny_anim_aerial_down}
 !define "state" {SUNNY_STATE_AERIAL_DOWN}
 !define "routine" {aerial_down}
+!define "followup" {sunny_start_aerial_down_spin}
+!define "init" {
+	lda #0
+	sta player_a_velocity_v_low, x
+	sta player_a_velocity_v, x
+	rts
+}
 !include "characters/tpl_aerial_attack.asm"
+
+!define "anim" {sunny_anim_aerial_down_spin}
+!define "state" {SUNNY_STATE_AERIAL_DOWN_SPIN}
+!define "routine" {aerial_down_spin}
+!define "followup" {sunny_start_aerial_down_spin2}
+!include "characters/tpl_aerial_attack.asm"
+
+!define "anim" {sunny_anim_aerial_down_spin}
+!define "state" {SUNNY_STATE_AERIAL_DOWN_SPIN2}
+!define "routine" {aerial_down_spin2}
+!define "followup" {sunny_aerial_down_select_end}
+!include "characters/tpl_aerial_attack.asm"
+
+!define "anim" {sunny_anim_aerial_down_end}
+!define "state" {SUNNY_STATE_AERIAL_DOWN_END}
+!define "routine" {aerial_down_end}
+!define "followup" {sunny_start_helpless}
+!include "characters/tpl_aerial_attack.asm"
+
+!define "anim" {sunny_anim_aerial_down_stomp}
+!define "state" {SUNNY_STATE_AERIAL_DOWN_STOMP}
+!define "routine" {aerial_down_stomp}
+!include "characters/tpl_grounded_attack.asm"
+
+.(
+	VELOCITY_BOOST = $fd00
+	velocity_table(VELOCITY_BOOST, velocity_boost_msb, velocity_boost_lsb)
+#if 0
+	; A bit more complexe implementation, not needed if the simple one proves sufficent
+	; Simple - set velocity when tapping A
+	; Complex - add velocity when tapping A, capping maximum result
+	VELOCITY_CAP = $fc00
+	velocity_table(VELOCITY_CAP, velocity_cap_msb, velocity_cap_lsb)
+#else
+
+	+sunny_input_aerial_down_spin:
+	.(
+#if 0
+		lda controller_a_btns, x
+		and #(CONTROLLER_BTN_DOWN | CONTROLLER_BTN_LEFT | CONTROLLER_BTN_RIGHT)^$ff
+		cmp #CONTROLLER_INPUT_JAB
+		bne end
+			ldy system_index
+			lda velocity_boost_lsb, y
+			clc
+			adc player_a_velocity_v_low, x
+			sta player_a_velocity_v_low, x
+			lda velocity_boost_msb, y
+			adc player_a_velocity_v, x
+			sta player_a_velocity_v, x
+
+			SIGNED_CMP(player_a_velocity_v_low COMMA x, player_a_velocity_v COMMA x, velocity_cap_lsb COMMA y, velocity_cap_msb COMMA y)
+			bpl end
+				lda velocity_cap_lsb, y
+				sta player_a_velocity_v_low, x
+				lda velocity_boost_msb, y
+				sta player_a_velocity_v, x
+		end:
+		rts
+#else
+		lda controller_a_btns, x
+		and #(CONTROLLER_BTN_DOWN | CONTROLLER_BTN_LEFT | CONTROLLER_BTN_RIGHT)^$ff
+		cmp #CONTROLLER_INPUT_JAB
+		bne end
+			ldy system_index
+			lda velocity_boost_lsb, y
+			sta player_a_velocity_v_low, x
+			lda velocity_boost_msb, y
+			sta player_a_velocity_v, x
+		end:
+		rts
+#endif
+	.)
+
+	&sunny_aerial_down_select_end:
+	.(
+		lda player_a_grounded, x
+		bne grounded_end
+			aerial_end:
+				jmp sunny_start_aerial_down_end
+			grounded_end:
+				jmp sunny_start_aerial_down_stomp
+		;rts ; useless, jump to subroutine
+	.)
+.)
 
 ;
 ; Aerial up
