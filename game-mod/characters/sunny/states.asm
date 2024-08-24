@@ -322,147 +322,60 @@ sunny_global_onground:
 ;
 
 .(
-	CHARGE_DURATION = 120
-	MOVING_VELOCITY_V = $0080
-	MOVING_VELOCITY_H = $0400
+	INITIAL_VELOCITY = $0300
+	velocity_table(INITIAL_VELOCITY, initial_velocity_right_msb, initial_velocity_right_lsb)
+	velocity_table(-INITIAL_VELOCITY, initial_velocity_left_msb, initial_velocity_left_lsb)
 
-	duration_table(CHARGE_DURATION, charge_duration)
-	velocity_table(-MOVING_VELOCITY_V, moving_velocity_v_msb, moving_velocity_v_lsb)
-	velocity_table(MOVING_VELOCITY_H, moving_velocity_h_msb, moving_velocity_h_lsb)
-	velocity_table(-MOVING_VELOCITY_H, moving_velocity_h_neg_msb, moving_velocity_h_neg_lsb)
+	FRICTION = $08
+	acceleration_table(FRICTION, friction_table)
 
-	&sunny_start_side_special_left:
-	.(
-		lda DIRECTION_LEFT
-		sta player_a_direction, x
-		jmp sunny_start_side_special
-		;rts ; useless, jump to subroutine
-	.)
+	!define "anim" {sunny_anim_side_special_charge}
+	!define "state" {SUNNY_STATE_SIDE_SPECIAL}
+	!define "routine" {side_special}
+	!define "followup" {sunny_start_side_special_end}
+	!define "init" {
+		; No vertical velocity
+		lda #0
+		sta player_a_velocity_v_low
+		sta player_a_velocity_v
 
-	&sunny_start_side_special_right:
-	.(
-		lda DIRECTION_RIGHT
-		sta player_a_direction, x
-		;jmp sunny_start_side_special ; useless, fallthrough
-		; Falltrhough to sunny_start_side_special
-	.)
-
-	&sunny_start_side_special:
-	.(
-		; Set state
-		lda #SUNNY_STATE_SIDE_SPECIAL
-		sta player_a_state, x
-
-		; Set initial velocity
-		lda #$00
-		sta player_a_velocity_h_low, x
-		sta player_a_velocity_h, x
-		sta player_a_velocity_v_low, x
-		sta player_a_velocity_v, x
-
-		; Reset clock
-		sta player_a_state_clock, x
-
-		; Set substate to "charging"
-		sta player_a_state_field1, x
-
-		; Fallthrough to set the animation
-	.)
-	set_side_special_animation:
-	.(
-		; Set the appropriate animation
-		lda #<sunny_anim_side_special_charge
-		sta tmpfield13
-		lda #>sunny_anim_side_special_charge
-		sta tmpfield14
-		jmp set_player_animation
-
-		;rts ; useless, jump to subroutine
-	.)
-
-	&sunny_tick_side_special:
-	.(
-		; Tick clock
-		inc player_a_state_clock, x
-
-		; Move if the substate is set to moving
-		lda player_a_state_field1, x
-		bne moving
-
-		; Check if there is reason to begin to move
+		; Fixed horizontal velocity
 		ldy system_index
-		lda player_a_state_clock, x
-		cmp charge_duration, y
-		bcs start_moving
-		lda controller_a_btns, x
-		cmp #CONTROLLER_INPUT_SPECIAL_RIGHT
-		beq not_moving
-		cmp #CONTROLLER_INPUT_SPECIAL_LEFT
-		bne start_moving
+		lda player_a_direction, x
+		bne right
+			left:
+				lda initial_velocity_left_msb, y
+				sta player_a_velocity_h, x
+				lda initial_velocity_left_lsb
+				sta player_a_velocity_h_low
+				rts
+			right:
+				lda initial_velocity_right_msb, y
+				sta player_a_velocity_h, x
+				lda initial_velocity_right_lsb
+				sta player_a_velocity_h_low
+				rts
+		;rts ; useless, no branch return
+	}
+	!define "tick" {
+		; No gravity, and specific air-friction for this move
+		lda #0
+		sta tmpfield1
+		sta tmpfield2
+		sta tmpfield3
+		sta tmpfield4
+		ldy system_index
+		lda friction_table, y
+		sta tmpfield5
+		jmp merge_to_player_velocity
+	}
+	!include "characters/tpl_grounded_attack_followup.asm"
 
-		not_moving:
-			jmp end
+	!define "anim" {sunny_anim_side_special_end}
+	!define "state" {SUNNY_STATE_SIDE_SPECIAL_END}
+	!define "routine" {side_special_end}
+	!include "characters/tpl_aerial_attack_uncancellable.asm"
 
-		start_moving:
-			; Set substate to "moving"
-			lda #$01
-			sta player_a_state_field1, x
-
-			; Store fly duration (fly_duration = 5 + charge_duration / 8)
-			;NOTE The division of duration is pal/ntsc independent, the "5" constant could be made system-specific (but it would be minor)
-			lda player_a_state_clock, x
-			lsr
-			lsr
-			lsr
-			clc
-			adc #5
-			sta player_a_state_field2, x
-
-			; Set the movement animation
-			lda #<sunny_anim_side_special_jump
-			sta tmpfield13
-			lda #>sunny_anim_side_special_jump
-			sta tmpfield14
-			jsr set_player_animation
-
-			; Reset clock
-			lda #0
-			sta player_a_state_clock, x
-
-		moving:
-			; Set vertical velocity (fixed)
-			ldy system_index
-			lda moving_velocity_v_msb, y
-			sta player_a_velocity_v, x
-			lda moving_velocity_v_lsb, y
-			sta player_a_velocity_v_low, x
-
-			; Set horizontal velocity (depending on direction)
-			lda player_a_direction, x
-			cmp DIRECTION_LEFT
-			bne right_velocity
-				left_velocity:
-					lda moving_velocity_h_neg_msb, y
-					sta player_a_velocity_h, x
-					lda moving_velocity_h_neg_lsb, y
-					jmp h_velocity_ok
-				right_velocity:
-					lda moving_velocity_h_msb, y
-					sta player_a_velocity_h, x
-					lda moving_velocity_h_lsb, y
-			h_velocity_ok:
-			sta player_a_velocity_h_low, x
-
-		; After move's time is out, go to helpless state
-		lda player_a_state_clock, x
-		cmp player_a_state_field2, x
-		bne end
-			jmp sunny_start_helpless
-			; No return, jump to subroutine
-
-		end:
-		rts
-	.)
 .)
 
 ;
