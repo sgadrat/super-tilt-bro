@@ -7879,8 +7879,8 @@
             "bottom": 12,
             "base_h": -500,
             "base_v": -700,
-            "force_h": 5,
-            "force_v": 7,
+            "force_h": -5,
+            "force_v": -7,
             "damages": 2,
             "enabled": true
           },
@@ -8056,46 +8056,46 @@
     {
       "frames": [
         {
-          "duration": 2,
+          "duration": 4,
           "hitbox": null,
           "hurtbox": {
-            "bottom": 15,
+            "bottom": 16,
             "left": 0,
-            "right": 7,
-            "top": 2,
+            "right": 11,
+            "top": 1,
             "type": "animation_hurtbox"
           },
           "sprites": [
             {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_5",
-              "type": "animation_sprite",
-              "x": -7,
-              "y": 9
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_6",
-              "type": "animation_sprite",
-              "x": 1,
-              "y": 9
-            },
-            {
               "attr": 0,
               "foreground": false,
-              "tile": "SUNNY_TILE_27",
+              "tile": "SUNNY_TILE_16",
               "type": "animation_sprite",
-              "x": 0,
+              "x": -3,
               "y": 0
             },
             {
               "attr": 0,
               "foreground": false,
-              "tile": "SUNNY_TILE_28",
+              "tile": "SUNNY_TILE_1",
               "type": "animation_sprite",
-              "x": 0,
+              "x": 5,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_8",
+              "type": "animation_sprite",
+              "x": -3,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_9",
+              "type": "animation_sprite",
+              "x": 5,
               "y": 8
             }
           ],
@@ -8103,248 +8103,46 @@
         },
         {
           "duration": 4,
-          "hitbox": {
-            "base_h": 768,
-            "base_v": -256,
-            "bottom": 17,
-            "damages": 3,
-            "enabled": true,
-            "force_h": 0,
-            "force_v": 0,
-            "left": -6,
-            "right": 5,
-            "top": 12,
-            "type": "animation_direct_hitbox"
-          },
+          "hitbox": null,
           "hurtbox": {
-            "bottom": 15,
+            "bottom": 16,
             "left": 0,
-            "right": 7,
-            "top": 2,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 129,
-              "foreground": false,
-              "tile": "SUNNY_TILE_5",
-              "type": "animation_sprite",
-              "x": -6,
-              "y": 10
-            },
-            {
-              "attr": 129,
-              "foreground": false,
-              "tile": "SUNNY_TILE_6",
-              "type": "animation_sprite",
-              "x": 2,
-              "y": 10
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_27",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_28",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 2,
-          "hitbox": {
-            "base_h": 768,
-            "base_v": -256,
-            "bottom": 11,
-            "damages": 3,
-            "enabled": false,
-            "force_h": 0,
-            "force_v": 0,
-            "left": -11,
-            "right": 0,
-            "top": 6,
-            "type": "animation_direct_hitbox"
-          },
-          "hurtbox": {
-            "bottom": 15,
-            "left": 0,
-            "right": 7,
+            "right": 11,
             "top": 1,
             "type": "animation_hurtbox"
           },
           "sprites": [
             {
-              "attr": 129,
-              "foreground": false,
-              "tile": "SUNNY_TILE_5",
-              "type": "animation_sprite",
-              "x": -11,
-              "y": 4
-            },
-            {
-              "attr": 129,
-              "foreground": false,
-              "tile": "SUNNY_TILE_6",
-              "type": "animation_sprite",
-              "x": -3,
-              "y": 4
-            },
-            {
               "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_35",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_36",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 3,
-          "hitbox": {
-            "base_h": 768,
-            "base_v": -256,
-            "bottom": 5,
-            "damages": 3,
-            "enabled": false,
-            "force_h": 0,
-            "force_v": 0,
-            "left": -10,
-            "right": 0,
-            "top": -2,
-            "type": "animation_direct_hitbox"
-          },
-          "hurtbox": {
-            "bottom": 15,
-            "left": 0,
-            "right": 7,
-            "top": 0,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 129,
-              "foreground": false,
-              "tile": "SUNNY_TILE_15",
-              "type": "animation_sprite",
-              "x": -10,
-              "y": -2
-            },
-            {
-              "attr": 129,
               "foreground": false,
               "tile": "SUNNY_TILE_16",
               "type": "animation_sprite",
-              "x": -2,
-              "y": -2
+              "x": -3,
+              "y": 3
             },
             {
               "attr": 0,
               "foreground": false,
-              "tile": "SUNNY_TILE_29",
+              "tile": "SUNNY_TILE_1",
               "type": "animation_sprite",
-              "x": 0,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_50",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 6,
-          "hitbox": {
-            "base_h": 768,
-            "base_v": -256,
-            "bottom": -1,
-            "damages": 3,
-            "enabled": false,
-            "force_h": 0,
-            "force_v": 0,
-            "left": 0,
-            "right": 5,
-            "top": -12,
-            "type": "animation_direct_hitbox"
-          },
-          "hurtbox": {
-            "bottom": 15,
-            "left": -4,
-            "right": 7,
-            "top": 0,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 129,
-              "foreground": false,
-              "tile": "SUNNY_TILE_19",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": -12
-            },
-            {
-              "attr": 129,
-              "foreground": false,
-              "tile": "SUNNY_TILE_20",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": -4
+              "x": 5,
+              "y": 3
             },
             {
               "attr": 0,
               "foreground": false,
               "tile": "SUNNY_TILE_31",
               "type": "animation_sprite",
-              "x": -8,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_32",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 0
+              "x": -3,
+              "y": 11
             },
             {
               "attr": 0,
               "foreground": false,
               "tile": "SUNNY_TILE_33",
               "type": "animation_sprite",
-              "x": -8,
-              "y": 8
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_34",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
+              "x": 5,
+              "y": 11
             }
           ],
           "type": "animation_frame"
@@ -8353,33 +8151,89 @@
           "duration": 4,
           "hitbox": null,
           "hurtbox": {
-            "bottom": 15,
+            "bottom": 16,
             "left": 0,
-            "right": 7,
-            "top": 0,
+            "right": 11,
+            "top": 1,
             "type": "animation_hurtbox"
           },
           "sprites": [
             {
-              "attr": 193,
+              "attr": 128,
               "foreground": false,
-              "tile": "SUNNY_TILE_24",
+              "tile": "SUNNY_TILE_18",
               "type": "animation_sprite",
-              "x": 0,
-              "y": -4
+              "x": -3,
+              "y": 0
             },
             {
-              "attr": 193,
+              "attr": 128,
               "foreground": false,
-              "tile": "SUNNY_TILE_23",
+              "tile": "SUNNY_TILE_19",
               "type": "animation_sprite",
-              "x": 0,
-              "y": 4
+              "x": 5,
+              "y": 0
+            },
+            {
+              "attr": 128,
+              "foreground": false,
+              "tile": "SUNNY_TILE_16",
+              "type": "animation_sprite",
+              "x": -3,
+              "y": 8
+            },
+            {
+              "attr": 128,
+              "foreground": false,
+              "tile": "SUNNY_TILE_17",
+              "type": "animation_sprite",
+              "x": 5,
+              "y": 8
+            }
+          ],
+          "type": "animation_frame"
+        }
+      ],
+      "name": "sunny_anim_spe_down_charge",
+      "type": "animation"
+    },
+    {
+      "frames": [
+        {
+          "duration": 4,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -6,
+            "top": 0,
+            "right": 16,
+            "bottom": 5,
+            "base_h": -500,
+            "base_v": -1000,
+            "force_h": -15,
+            "force_v": -30,
+            "damages": 4,
+            "enabled": true
+          },
+          "hurtbox": {
+            "bottom": 16,
+            "left": 0,
+            "right": 11,
+            "top": 1,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_28",
+              "attr": 0,
+              "foreground": false,
+              "x": -8,
+              "y": -2
             },
             {
               "attr": 0,
               "foreground": false,
-              "tile": "SUNNY_TILE_29",
+              "tile": "SUNNY_TILE_51",
               "type": "animation_sprite",
               "x": 0,
               "y": 0
@@ -8387,16 +8241,198 @@
             {
               "attr": 0,
               "foreground": false,
+              "tile": "SUNNY_TILE_52",
+              "type": "animation_sprite",
+              "x": 8,
+              "y": 0
+            },
+            {
+              "attr": 192,
+              "foreground": false,
+              "tile": "SUNNY_TILE_62",
+              "type": "animation_sprite",
+              "x": -4,
+              "y": 8
+            },
+            {
+              "attr": 192,
+              "foreground": false,
+              "tile": "SUNNY_TILE_30",
+              "type": "animation_sprite",
+              "x": 4,
+              "y": 8
+            }
+          ],
+          "type": "animation_frame"
+        },
+        {
+          "duration": 4,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -2,
+            "top": 0,
+            "right": 14,
+            "bottom": 6,
+            "base_h": -500,
+            "base_v": -1000,
+            "force_h": -15,
+            "force_v": -30,
+            "damages": 4,
+            "enabled": false
+          },
+          "hurtbox": {
+            "bottom": 16,
+            "left": 0,
+            "right": 11,
+            "top": 1,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_59",
+              "type": "animation_sprite",
+              "x": -2,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_53",
+              "type": "animation_sprite",
+              "x": 6,
+              "y": 0
+            },
+            {
+              "attr": 128,
+              "foreground": false,
+              "tile": "SUNNY_TILE_0",
+              "type": "animation_sprite",
+              "x": -3,
+              "y": 8
+            },
+            {
+              "attr": 128,
+              "foreground": false,
+              "tile": "SUNNY_TILE_5",
+              "type": "animation_sprite",
+              "x": 5,
+              "y": 8
+            }
+          ],
+          "type": "animation_frame"
+        },
+        {
+          "duration": 4,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": 0,
+            "top": 0,
+            "right": 8,
+            "bottom": 7,
+            "base_h": -500,
+            "base_v": -1000,
+            "force_h": -15,
+            "force_v": -30,
+            "damages": 4,
+            "enabled": false
+          },
+          "hurtbox": {
+            "bottom": 16,
+            "left": 0,
+            "right": 11,
+            "top": 1,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "attr": 0,
+              "foreground": false,
               "tile": "SUNNY_TILE_50",
               "type": "animation_sprite",
               "x": 0,
+              "y": 0
+            },
+            {
+              "attr": 128,
+              "foreground": false,
+              "tile": "SUNNY_TILE_30",
+              "type": "animation_sprite",
+              "x": -3,
+              "y": 8
+            },
+            {
+              "attr": 128,
+              "foreground": false,
+              "tile": "SUNNY_TILE_62",
+              "type": "animation_sprite",
+              "x": 5,
+              "y": 8
+            }
+          ],
+          "type": "animation_frame"
+        },
+        {
+          "duration": 4,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -4,
+            "top": 0,
+            "right": 12,
+            "bottom": 7,
+            "base_h": -500,
+            "base_v": -1000,
+            "force_h": -15,
+            "force_v": -30,
+            "damages": 4,
+            "enabled": false
+          },
+          "hurtbox": {
+            "bottom": 16,
+            "left": 0,
+            "right": 11,
+            "top": 1,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_60",
+              "type": "animation_sprite",
+              "x": -4,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_61",
+              "type": "animation_sprite",
+              "x": 4,
+              "y": 0
+            },
+            {
+              "attr": 192,
+              "foreground": false,
+              "tile": "SUNNY_TILE_10",
+              "type": "animation_sprite",
+              "x": -3,
+              "y": 8
+            },
+            {
+              "attr": 192,
+              "foreground": false,
+              "tile": "SUNNY_TILE_0",
+              "type": "animation_sprite",
+              "x": 5,
               "y": 8
             }
           ],
           "type": "animation_frame"
         }
       ],
-      "name": "sunny_anim_spe_down",
+      "name": "sunny_anim_spe_down_hit",
       "type": "animation"
     },
     {
@@ -8425,38 +8461,6 @@
           },
           "sprites": [
             {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_78",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_79",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_80",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 8
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_81",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 8
-            },
-            {
               "attr": 1,
               "foreground": false,
               "tile": "SUNNY_TILE_5",
@@ -8471,524 +8475,6 @@
               "type": "animation_sprite",
               "x": -11,
               "y": 5
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 2,
-          "hitbox": {
-            "base_h": -768,
-            "base_v": -768,
-            "bottom": 24,
-            "damages": 10,
-            "enabled": false,
-            "force_h": -21,
-            "force_v": -8,
-            "left": -14,
-            "right": -3,
-            "top": 16,
-            "type": "animation_direct_hitbox"
-          },
-          "hurtbox": {
-            "bottom": 13,
-            "left": -4,
-            "right": 12,
-            "top": 2,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_78",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_79",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_80",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 8
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_81",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 8
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_15",
-              "type": "animation_sprite",
-              "x": -14,
-              "y": 16
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_16",
-              "type": "animation_sprite",
-              "x": -6,
-              "y": 16
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 2,
-          "hitbox": {
-            "base_h": -768,
-            "base_v": -768,
-            "bottom": 31,
-            "damages": 10,
-            "enabled": false,
-            "force_h": -21,
-            "force_v": -8,
-            "left": 1,
-            "right": 7,
-            "top": 19,
-            "type": "animation_direct_hitbox"
-          },
-          "hurtbox": {
-            "bottom": 16,
-            "left": -2,
-            "right": 9,
-            "top": 0,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_82",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_83",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_84",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 8
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_85",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 8
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_19",
-              "type": "animation_sprite",
-              "x": 1,
-              "y": 23
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_20",
-              "type": "animation_sprite",
-              "x": 1,
-              "y": 15
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 2,
-          "hitbox": {
-            "base_h": -768,
-            "base_v": -768,
-            "bottom": 27,
-            "damages": 10,
-            "enabled": false,
-            "force_h": -21,
-            "force_v": -8,
-            "left": 12,
-            "right": 20,
-            "top": 15,
-            "type": "animation_direct_hitbox"
-          },
-          "hurtbox": {
-            "bottom": 16,
-            "left": -2,
-            "right": 9,
-            "top": 0,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_82",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_83",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_84",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 8
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_85",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 8
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_24",
-              "type": "animation_sprite",
-              "x": 12,
-              "y": 19
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_23",
-              "type": "animation_sprite",
-              "x": 12,
-              "y": 11
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 2,
-          "hitbox": {
-            "base_h": -768,
-            "base_v": -768,
-            "bottom": 11,
-            "damages": 10,
-            "enabled": false,
-            "force_h": -21,
-            "force_v": -8,
-            "left": 15,
-            "right": 27,
-            "top": 5,
-            "type": "animation_direct_hitbox"
-          },
-          "hurtbox": {
-            "bottom": 14,
-            "left": -4,
-            "right": 12,
-            "top": 3,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 192,
-              "foreground": false,
-              "tile": "SUNNY_TILE_81",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 0
-            },
-            {
-              "attr": 192,
-              "foreground": false,
-              "tile": "SUNNY_TILE_80",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 0
-            },
-            {
-              "attr": 192,
-              "foreground": false,
-              "tile": "SUNNY_TILE_79",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 8
-            },
-            {
-              "attr": 192,
-              "foreground": false,
-              "tile": "SUNNY_TILE_78",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 8
-            },
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SUNNY_TILE_5",
-              "type": "animation_sprite",
-              "x": 19,
-              "y": 3
-            },
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SUNNY_TILE_6",
-              "type": "animation_sprite",
-              "x": 11,
-              "y": 3
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 2,
-          "hitbox": {
-            "base_h": -768,
-            "base_v": -768,
-            "bottom": 0,
-            "damages": 10,
-            "enabled": false,
-            "force_h": -21,
-            "force_v": -8,
-            "left": 11,
-            "right": 23,
-            "top": -8,
-            "type": "animation_direct_hitbox"
-          },
-          "hurtbox": {
-            "bottom": 14,
-            "left": -4,
-            "right": 12,
-            "top": 3,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 192,
-              "foreground": false,
-              "tile": "SUNNY_TILE_81",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 0
-            },
-            {
-              "attr": 192,
-              "foreground": false,
-              "tile": "SUNNY_TILE_80",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 0
-            },
-            {
-              "attr": 192,
-              "foreground": false,
-              "tile": "SUNNY_TILE_79",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 8
-            },
-            {
-              "attr": 192,
-              "foreground": false,
-              "tile": "SUNNY_TILE_78",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 8
-            },
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SUNNY_TILE_15",
-              "type": "animation_sprite",
-              "x": 15,
-              "y": -8
-            },
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SUNNY_TILE_16",
-              "type": "animation_sprite",
-              "x": 7,
-              "y": -8
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 2,
-          "hitbox": {
-            "base_h": -768,
-            "base_v": -768,
-            "bottom": -3,
-            "damages": 10,
-            "enabled": false,
-            "force_h": -21,
-            "force_v": -8,
-            "left": 1,
-            "right": 6,
-            "top": -15,
-            "type": "animation_direct_hitbox"
-          },
-          "hurtbox": {
-            "bottom": 16,
-            "left": -1,
-            "right": 10,
-            "top": 0,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 192,
-              "foreground": false,
-              "tile": "SUNNY_TILE_85",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 0
-            },
-            {
-              "attr": 192,
-              "foreground": false,
-              "tile": "SUNNY_TILE_84",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 0
-            },
-            {
-              "attr": 192,
-              "foreground": false,
-              "tile": "SUNNY_TILE_83",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 8
-            },
-            {
-              "attr": 192,
-              "foreground": false,
-              "tile": "SUNNY_TILE_82",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 8
-            },
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SUNNY_TILE_19",
-              "type": "animation_sprite",
-              "x": -1,
-              "y": -15
-            },
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SUNNY_TILE_20",
-              "type": "animation_sprite",
-              "x": -1,
-              "y": -7
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 2,
-          "hitbox": {
-            "base_h": -768,
-            "base_v": -768,
-            "bottom": 1,
-            "damages": 10,
-            "enabled": false,
-            "force_h": -21,
-            "force_v": -8,
-            "left": -12,
-            "right": -4,
-            "top": -11,
-            "type": "animation_direct_hitbox"
-          },
-          "hurtbox": {
-            "bottom": 16,
-            "left": -1,
-            "right": 10,
-            "top": 0,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 192,
-              "foreground": false,
-              "tile": "SUNNY_TILE_85",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 0
-            },
-            {
-              "attr": 192,
-              "foreground": false,
-              "tile": "SUNNY_TILE_84",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 0
-            },
-            {
-              "attr": 192,
-              "foreground": false,
-              "tile": "SUNNY_TILE_83",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 8
-            },
-            {
-              "attr": 192,
-              "foreground": false,
-              "tile": "SUNNY_TILE_82",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 8
-            },
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SUNNY_TILE_24",
-              "type": "animation_sprite",
-              "x": -12,
-              "y": -11
-            },
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SUNNY_TILE_23",
-              "type": "animation_sprite",
-              "x": -12,
-              "y": -3
             }
           ],
           "type": "animation_frame"
@@ -9011,30 +8497,6 @@
           },
           "sprites": [
             {
-              "attr": 0,
-              "foreground": true,
-              "tile": "SUNNY_TILE_53",
-              "type": "animation_sprite",
-              "x": -2,
-              "y": 3
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_73",
-              "type": "animation_sprite",
-              "x": -7,
-              "y": 8
-            },
-            {
-              "attr": 65,
-              "foreground": false,
-              "tile": "SUNNY_TILE_73",
-              "type": "animation_sprite",
-              "x": 7,
-              "y": 8
-            },
-            {
               "attr": 1,
               "foreground": false,
               "tile": "SUNNY_TILE_5",
@@ -9057,532 +8519,6 @@
               "type": "animation_sprite",
               "x": 0,
               "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 2,
-          "hitbox": null,
-          "hurtbox": {
-            "bottom": 17,
-            "left": -3,
-            "right": 9,
-            "top": 1,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 0,
-              "foreground": true,
-              "tile": "SUNNY_TILE_53",
-              "type": "animation_sprite",
-              "x": -2,
-              "y": 3
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_74",
-              "type": "animation_sprite",
-              "x": -7,
-              "y": 8
-            },
-            {
-              "attr": 65,
-              "foreground": false,
-              "tile": "SUNNY_TILE_74",
-              "type": "animation_sprite",
-              "x": 7,
-              "y": 8
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_5",
-              "type": "animation_sprite",
-              "x": -6,
-              "y": 9
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_6",
-              "type": "animation_sprite",
-              "x": 2,
-              "y": 9
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_28",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 2,
-          "hitbox": null,
-          "hurtbox": {
-            "bottom": 16,
-            "left": -5,
-            "right": 7,
-            "top": 0,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 0,
-              "foreground": true,
-              "tile": "SUNNY_TILE_53",
-              "type": "animation_sprite",
-              "x": -2,
-              "y": 3
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_75",
-              "type": "animation_sprite",
-              "x": -7,
-              "y": 8
-            },
-            {
-              "attr": 65,
-              "foreground": false,
-              "tile": "SUNNY_TILE_75",
-              "type": "animation_sprite",
-              "x": 7,
-              "y": 8
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_5",
-              "type": "animation_sprite",
-              "x": -6,
-              "y": 9
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_6",
-              "type": "animation_sprite",
-              "x": 2,
-              "y": 9
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_28",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 2,
-          "hitbox": null,
-          "hurtbox": {
-            "bottom": 17,
-            "left": -3,
-            "right": 9,
-            "top": 1,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 0,
-              "foreground": true,
-              "tile": "SUNNY_TILE_53",
-              "type": "animation_sprite",
-              "x": -2,
-              "y": 3
-            },
-            {
-              "attr": 129,
-              "foreground": false,
-              "tile": "SUNNY_TILE_56",
-              "type": "animation_sprite",
-              "x": -7,
-              "y": 8
-            },
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SUNNY_TILE_56",
-              "type": "animation_sprite",
-              "x": 7,
-              "y": 8
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_5",
-              "type": "animation_sprite",
-              "x": -6,
-              "y": 9
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_6",
-              "type": "animation_sprite",
-              "x": 2,
-              "y": 9
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_28",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 2,
-          "hitbox": null,
-          "hurtbox": {
-            "bottom": 16,
-            "left": -5,
-            "right": 7,
-            "top": 0,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 0,
-              "foreground": true,
-              "tile": "SUNNY_TILE_53",
-              "type": "animation_sprite",
-              "x": -2,
-              "y": 3
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_55",
-              "type": "animation_sprite",
-              "x": -7,
-              "y": 8
-            },
-            {
-              "attr": 65,
-              "foreground": false,
-              "tile": "SUNNY_TILE_55",
-              "type": "animation_sprite",
-              "x": 7,
-              "y": 8
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_5",
-              "type": "animation_sprite",
-              "x": -6,
-              "y": 9
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_6",
-              "type": "animation_sprite",
-              "x": 2,
-              "y": 9
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_28",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 2,
-          "hitbox": null,
-          "hurtbox": {
-            "bottom": 17,
-            "left": -3,
-            "right": 9,
-            "top": 1,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 0,
-              "foreground": true,
-              "tile": "SUNNY_TILE_53",
-              "type": "animation_sprite",
-              "x": -2,
-              "y": 3
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_76",
-              "type": "animation_sprite",
-              "x": -7,
-              "y": 8
-            },
-            {
-              "attr": 65,
-              "foreground": false,
-              "tile": "SUNNY_TILE_76",
-              "type": "animation_sprite",
-              "x": 7,
-              "y": 8
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_5",
-              "type": "animation_sprite",
-              "x": -6,
-              "y": 9
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_6",
-              "type": "animation_sprite",
-              "x": 2,
-              "y": 9
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_28",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 2,
-          "hitbox": null,
-          "hurtbox": {
-            "bottom": 16,
-            "left": -5,
-            "right": 7,
-            "top": 0,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 0,
-              "foreground": true,
-              "tile": "SUNNY_TILE_53",
-              "type": "animation_sprite",
-              "x": -2,
-              "y": 3
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_25",
-              "type": "animation_sprite",
-              "x": -7,
-              "y": 8
-            },
-            {
-              "attr": 65,
-              "foreground": false,
-              "tile": "SUNNY_TILE_25",
-              "type": "animation_sprite",
-              "x": 7,
-              "y": 8
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_5",
-              "type": "animation_sprite",
-              "x": -6,
-              "y": 9
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_6",
-              "type": "animation_sprite",
-              "x": 2,
-              "y": 9
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_28",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 2,
-          "hitbox": null,
-          "hurtbox": {
-            "bottom": 17,
-            "left": -3,
-            "right": 9,
-            "top": 1,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 0,
-              "foreground": true,
-              "tile": "SUNNY_TILE_53",
-              "type": "animation_sprite",
-              "x": -2,
-              "y": 3
-            },
-            {
-              "attr": 65,
-              "foreground": false,
-              "tile": "SUNNY_TILE_26",
-              "type": "animation_sprite",
-              "x": -7,
-              "y": 8
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_26",
-              "type": "animation_sprite",
-              "x": 7,
-              "y": 8
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_5",
-              "type": "animation_sprite",
-              "x": -6,
-              "y": 9
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_6",
-              "type": "animation_sprite",
-              "x": 2,
-              "y": 9
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_28",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 2,
-          "hitbox": null,
-          "hurtbox": {
-            "bottom": 14,
-            "left": 0,
-            "right": 8,
-            "top": -2,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SUNNY_TILE_24",
-              "type": "animation_sprite",
-              "x": -3,
-              "y": -4
-            },
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SUNNY_TILE_23",
-              "type": "animation_sprite",
-              "x": -3,
-              "y": 4
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_29",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": -2
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_30",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 6
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 200,
-          "hitbox": null,
-          "hurtbox": {
-            "bottom": 8,
-            "left": 0,
-            "right": 8,
-            "top": -8,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SUNNY_TILE_24",
-              "type": "animation_sprite",
-              "x": -3,
-              "y": -10
-            },
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SUNNY_TILE_23",
-              "type": "animation_sprite",
-              "x": -3,
-              "y": -2
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_29",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": -8
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_30",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 0
             }
           ],
           "type": "animation_frame"
@@ -9631,228 +8567,6 @@
               "type": "animation_sprite",
               "x": -4,
               "y": 16
-            },
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SUNNY_TILE_26",
-              "type": "animation_sprite",
-              "x": -5,
-              "y": 15
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_35",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_36",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 3,
-          "hitbox": {
-            "base_h": -512,
-            "base_v": -512,
-            "bottom": 26,
-            "damages": 3,
-            "enabled": false,
-            "force_h": -5,
-            "force_v": -5,
-            "left": -3,
-            "right": 6,
-            "top": 15,
-            "type": "animation_direct_hitbox"
-          },
-          "hurtbox": {
-            "bottom": 15,
-            "left": 0,
-            "right": 7,
-            "top": 1,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_19",
-              "type": "animation_sprite",
-              "x": 1,
-              "y": 19
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_20",
-              "type": "animation_sprite",
-              "x": 1,
-              "y": 11
-            },
-            {
-              "attr": 129,
-              "foreground": false,
-              "tile": "SUNNY_TILE_26",
-              "type": "animation_sprite",
-              "x": -3,
-              "y": 17
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_35",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_36",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 4,
-          "hitbox": {
-            "base_h": -512,
-            "base_v": -512,
-            "bottom": 23,
-            "damages": 3,
-            "enabled": false,
-            "force_h": -5,
-            "force_v": -5,
-            "left": 5,
-            "right": 19,
-            "top": 16,
-            "type": "animation_direct_hitbox"
-          },
-          "hurtbox": {
-            "bottom": 15,
-            "left": 0,
-            "right": 7,
-            "top": 1,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 65,
-              "foreground": false,
-              "tile": "SUNNY_TILE_15",
-              "type": "animation_sprite",
-              "x": 12,
-              "y": 16
-            },
-            {
-              "attr": 65,
-              "foreground": false,
-              "tile": "SUNNY_TILE_16",
-              "type": "animation_sprite",
-              "x": 4,
-              "y": 16
-            },
-            {
-              "attr": 129,
-              "foreground": false,
-              "tile": "SUNNY_TILE_26",
-              "type": "animation_sprite",
-              "x": 5,
-              "y": 17
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_35",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_36",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        },
-        {
-          "duration": 3,
-          "hitbox": {
-            "base_h": -512,
-            "base_v": -512,
-            "bottom": 23,
-            "damages": 3,
-            "enabled": false,
-            "force_h": -5,
-            "force_v": -5,
-            "left": 1,
-            "right": 10,
-            "top": 15,
-            "type": "animation_direct_hitbox"
-          },
-          "hurtbox": {
-            "bottom": 15,
-            "left": 0,
-            "right": 7,
-            "top": 1,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 65,
-              "foreground": false,
-              "tile": "SUNNY_TILE_19",
-              "type": "animation_sprite",
-              "x": -1,
-              "y": 15
-            },
-            {
-              "attr": 65,
-              "foreground": false,
-              "tile": "SUNNY_TILE_20",
-              "type": "animation_sprite",
-              "x": -1,
-              "y": 7
-            },
-            {
-              "attr": 193,
-              "foreground": false,
-              "tile": "SUNNY_TILE_26",
-              "type": "animation_sprite",
-              "x": 3,
-              "y": 16
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_35",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 0
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_36",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
             }
           ],
           "type": "animation_frame"
@@ -15268,13 +13982,23 @@
     },
     {
       "input_routine": "smart_keep_input_dirty",
-      "name": "SUNNY_STATE_SPE_DOWN",
+      "name": "SUNNY_STATE_SPE_DOWN_CHARGE",
       "offground_routine": "dummy_routine",
       "onground_routine": "sunny_global_onground",
       "onhurt_routine": "hurt_player",
       "start_routine": null,
       "type": "character_state",
       "update_routine": "sunny_tick_spe_down"
+    },
+    {
+      "type": "character_state",
+      "name": "SUNNY_STATE_SPE_DOWN_HIT",
+      "start_routine": null,
+      "update_routine": "sunny_tick_spe_down_hit",
+      "input_routine": "smart_keep_input_dirty",
+      "onground_routine": "sunny_global_onground",
+      "offground_routine": "dummy_routine",
+      "onhurt_routine": "hurt_player"
     },
     {
       "input_routine": "sunny_input_up_tilt",
@@ -15414,30 +14138,19 @@
       "SUNNY_TILE_77",
       "SUNNY_TILE_40",
       "SUNNY_TILE_41",
-      "SUNNY_TILE_42",
       "SUNNY_TILE_50",
-      "SUNNY_TILE_37",
-      "SUNNY_TILE_38",
       "SUNNY_TILE_51",
       "SUNNY_TILE_52",
-      "SUNNY_TILE_53",
-      "SUNNY_TILE_54",
-      "SUNNY_TILE_55",
-      "SUNNY_TILE_56",
-      "SUNNY_TILE_57",
-      "SUNNY_TILE_58",
       "SUNNY_TILE_59",
+      "SUNNY_TILE_53",
       "SUNNY_TILE_60",
       "SUNNY_TILE_61",
       "SUNNY_TILE_62",
-      "SUNNY_TILE_63",
       "SUNNY_TILE_64",
+      "SUNNY_TILE_57",
+      "SUNNY_TILE_58",
       "SUNNY_TILE_65",
       "SUNNY_TILE_66",
-      "SUNNY_TILE_73",
-      "SUNNY_TILE_74",
-      "SUNNY_TILE_75",
-      "SUNNY_TILE_76",
       "SUNNY_TILE_78",
       "SUNNY_TILE_79",
       "SUNNY_TILE_80",
@@ -20893,84 +19606,84 @@
         "type": "tile",
         "representation": [
           [
+            0,
+            0,
             1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
+            1,
+            1,
+            1,
+            1,
             0
           ],
           [
             0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
+            1,
+            2,
+            2,
+            2,
+            2,
+            2,
+            1
+          ],
+          [
+            1,
+            1,
+            2,
+            2,
+            2,
+            2,
+            2,
+            1
+          ],
+          [
+            1,
+            1,
+            2,
+            2,
+            2,
+            2,
+            2,
+            1
+          ],
+          [
+            1,
+            1,
+            2,
+            2,
+            2,
+            2,
+            2,
+            1
+          ],
+          [
+            1,
+            1,
+            2,
+            2,
+            2,
+            2,
+            2,
+            1
+          ],
+          [
+            1,
+            2,
+            1,
+            1,
+            1,
+            1,
+            1,
             0
           ],
           [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
+            1,
+            1,
+            3,
+            3,
+            3,
+            1,
+            2,
+            1
           ]
         ]
       },
@@ -20979,168 +19692,83 @@
         "representation": [
           [
             0,
-            1,
-            1,
-            2,
-            2,
-            2,
-            2,
-            1
-          ],
-          [
-            0,
-            1,
-            2,
-            1,
-            2,
-            2,
-            2,
-            1
-          ],
-          [
-            0,
-            1,
-            2,
-            2,
-            2,
-            2,
-            2,
-            1
-          ],
-          [
-            0,
-            1,
-            2,
-            2,
-            2,
-            2,
-            3,
-            1
-          ],
-          [
             0,
             0,
-            1,
-            3,
-            1,
-            3,
-            3,
-            1
-          ],
-          [
             0,
-            1,
-            3,
-            3,
-            1,
-            3,
-            3,
-            1
-          ],
-          [
-            1,
-            3,
-            3,
-            1,
-            3,
-            3,
-            1,
+            0,
+            0,
+            0,
             0
           ],
           [
-            0,
             1,
             1,
-            0,
             1,
             1,
-            0,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
+            1,
+            1,
+            1,
+            1
+          ],
           [
             3,
+            1,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          [
+            1,
+            2,
+            2,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            2,
+            2,
+            2,
+            1,
+            1
+          ],
+          [
             0,
             0,
-            0,
-            0,
-            0,
-            0,
+            1,
+            2,
+            2,
+            2,
+            1,
             3
           ],
           [
             0,
+            0,
+            1,
+            1,
+            1,
+            1,
             3,
-            0,
-            0,
-            0,
-            0,
-            3,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            3,
-            3,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            3,
-            0,
-            0,
-            3,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            3,
-            0,
-            0,
-            3,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            3,
-            3,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            3,
-            0,
-            0,
-            0,
-            0,
-            3,
-            0
-          ],
-          [
-            3,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
             3
+          ],
+          [
+            0,
+            1,
+            3,
+            3,
+            3,
+            3,
+            1,
+            1
           ]
         ]
       },
@@ -21148,96 +19776,146 @@
         "type": "tile",
         "representation": [
           [
-            3,
             0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            3,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            3,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            3,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            3,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            3,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            3,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            3
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
             0,
             0,
             0,
             1,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
             2,
+            2,
+            1
+          ],
+          [
+            2,
+            1,
+            3,
+            3,
+            1,
+            2,
+            2,
+            1
+          ],
+          [
+            2,
+            2,
+            1,
+            3,
+            1,
+            2,
+            2,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            2,
+            2,
+            1,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "type": "tile",
+        "representation": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            2,
+            1,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          [
+            1,
+            2,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            0,
+            1,
+            1,
+            2,
+            2,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            3,
+            3,
             1,
             2,
             2
@@ -21245,409 +19923,19 @@
           [
             0,
             0,
-            0,
             1,
-            2,
+            3,
             3,
             1,
-            2
-          ],
-          [
-            0,
-            0,
-            0,
             1,
-            2,
-            1,
-            2,
             1
           ],
           [
             0,
             0,
             0,
-            0,
-            1,
-            3,
-            3,
-            3
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            3,
-            3,
-            1,
-            1
-          ],
-          [
-            0,
-            0,
-            1,
-            3,
-            3,
-            1,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            1,
-            3,
-            3,
-            1,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
             1,
             1,
-            1,
-            0,
-            0,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            2,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            3,
-            3,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            3,
-            3,
-            3,
-            1,
-            1,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            3,
-            3,
-            3,
-            1,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            1,
-            1,
-            1,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            1,
-            0,
-            1,
-            1,
-            1,
-            1,
-            0,
-            1
-          ],
-          [
-            1,
-            1,
-            2,
-            2,
-            2,
-            2,
-            1,
-            1
-          ],
-          [
-            1,
-            1,
-            1,
-            2,
-            1,
-            1,
-            2,
-            1
-          ],
-          [
-            3,
-            1,
-            2,
-            2,
-            3,
-            2,
-            2,
-            1
-          ],
-          [
-            1,
-            1,
-            1,
-            1,
-            1,
-            2,
-            2,
-            1
-          ],
-          [
-            1,
-            2,
-            2,
-            2,
-            2,
-            2,
-            1,
-            1
-          ],
-          [
-            0,
-            1,
-            1,
-            1,
-            1,
-            1,
-            2,
-            2
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            2,
-            2,
-            2,
-            2
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            3
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            3,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            3,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            3,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            3,
-            3,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            3,
-            3,
-            3,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
             3,
             3,
             3
@@ -21661,79 +19949,419 @@
             0,
             0,
             0,
+            1,
+            1,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            2,
+            2,
+            2,
+            1
+          ],
+          [
+            1,
+            3,
+            3,
+            1,
+            2,
+            2,
+            2,
+            1
+          ],
+          [
+            1,
+            3,
+            3,
+            1,
+            2,
+            2,
+            2,
+            1
+          ],
+          [
+            1,
+            1,
+            3,
+            1,
+            2,
+            2,
+            2,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            2,
+            1,
             0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            2,
+            2,
+            1,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "type": "tile",
+        "representation": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            2,
+            2,
+            2,
+            1,
+            3,
+            3,
+            1
+          ],
+          [
+            1,
+            2,
+            2,
+            2,
+            1,
+            3,
+            3,
+            1
+          ],
+          [
+            1,
+            2,
+            2,
+            2,
+            1,
+            3,
+            1,
+            1
+          ],
+          [
+            1,
+            2,
+            2,
+            2,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            1,
+            2,
+            2,
+            1
+          ]
+        ]
+      },
+      {
+        "type": "tile",
+        "representation": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            1
+          ],
+          [
+            2,
+            2,
+            2,
+            2,
+            2,
+            1,
+            2,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            2,
+            2,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            2,
+            1,
+            3,
+            3,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            3,
+            3,
+            1,
+            0,
+            0
+          ],
+          [
+            3,
+            3,
+            3,
+            1,
+            1,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "type": "tile",
+        "representation": [
+          [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            2,
+            1,
+            2,
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            2,
+            2,
+            2,
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            1,
+            2,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            2,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            2,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "type": "tile",
+        "representation": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            2,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            2,
+            1,
             0,
             0,
             3,
-            3
+            0,
+            0
           ],
           [
+            2,
+            2,
+            2,
+            1,
             0,
             0,
             0,
+            0
+          ],
+          [
+            2,
+            2,
+            2,
+            3,
+            1,
+            1,
             0,
+            0
+          ],
+          [
+            1,
+            2,
+            3,
+            3,
+            2,
+            3,
+            1,
+            1
+          ],
+          [
             0,
             3,
             3,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
+            1,
             3,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
+            1,
             0,
             0
           ]
@@ -21916,516 +20544,6 @@
             0,
             0,
             0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            2,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            2,
-            2,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            2,
-            2,
-            2,
-            1,
-            0,
-            0,
-            3,
-            0
-          ],
-          [
-            2,
-            2,
-            2,
-            2,
-            1,
-            3,
-            0,
-            0
-          ],
-          [
-            1,
-            2,
-            2,
-            3,
-            3,
-            2,
-            1,
-            3
-          ],
-          [
-            0,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            1,
-            0,
-            1,
-            1,
-            1,
-            1,
-            0,
-            1
-          ],
-          [
-            1,
-            1,
-            2,
-            2,
-            2,
-            2,
-            1,
-            1
-          ],
-          [
-            1,
-            1,
-            1,
-            2,
-            1,
-            1,
-            2,
-            1
-          ],
-          [
-            1,
-            2,
-            2,
-            2,
-            2,
-            2,
-            2,
-            1
-          ],
-          [
-            3,
-            1,
-            1,
-            1,
-            3,
-            2,
-            2,
-            1
-          ],
-          [
-            1,
-            1,
-            1,
-            1,
-            1,
-            2,
-            1,
-            1
-          ],
-          [
-            1,
-            2,
-            2,
-            2,
-            2,
-            1,
-            2,
-            2
-          ],
-          [
-            0,
-            1,
-            1,
-            1,
-            1,
-            1,
-            2,
-            2
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
-            1,
-            2,
-            1,
-            2,
-            2
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            2,
-            3,
-            1,
-            2
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            2,
-            1,
-            2,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            1,
-            1,
-            1,
-            3
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            3,
-            3,
-            3,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            1,
-            3,
-            3,
-            3
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            1,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            2,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            2,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            2,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            3,
-            3,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            3,
-            3,
-            1,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            3,
-            1,
-            3,
-            3,
-            1,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            1,
-            3,
-            3,
-            3,
-            1,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            1,
-            1,
-            1,
-            1,
-            0,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            2,
-            1,
-            0,
-            0,
-            3,
-            3,
-            0
-          ],
-          [
-            2,
-            2,
-            1,
-            0,
-            3,
-            3,
-            0,
-            0
-          ],
-          [
-            2,
-            2,
-            2,
-            1,
-            0,
-            0,
-            0,
-            3
-          ],
-          [
-            2,
-            2,
-            2,
-            3,
-            1,
-            3,
-            3,
-            0
-          ],
-          [
-            1,
-            3,
-            3,
-            3,
-            2,
-            3,
-            3,
-            1
-          ],
-          [
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            2,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            2,
-            2,
-            1,
-            0,
-            0,
-            3,
-            0,
-            0
-          ],
-          [
-            2,
-            2,
-            2,
-            1,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            2,
-            2,
-            2,
-            3,
-            1,
-            1,
-            0,
-            0
-          ],
-          [
-            1,
-            2,
-            3,
-            3,
-            2,
-            3,
-            1,
-            1
-          ],
-          [
-            0,
-            3,
-            3,
-            1,
-            3,
-            1,
-            0,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
             1,
             2,
             2,
@@ -22586,346 +20704,6 @@
             0,
             0,
             0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            3
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            3,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            3,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            3,
-            3
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            3,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            3
-          ],
-          [
-            0,
-            0,
-            0,
-            3,
-            0,
-            0,
-            3,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            3,
-            3,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            3,
-            3,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            3,
-            3,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            3,
-            3
           ]
         ]
       },

@@ -688,9 +688,16 @@ sunny_global_onground:
 ; Special down
 ;
 
-!define "anim" {sunny_anim_spe_down}
-!define "state" {SUNNY_STATE_SPE_DOWN}
+!define "anim" {sunny_anim_spe_down_charge}
+!define "state" {SUNNY_STATE_SPE_DOWN_CHARGE}
 !define "routine" {spe_down}
+!define "followup" {sunny_start_spe_down_hit}
+!include "characters/tpl_aerial_attack_uncancellable.asm"
+
+!define "anim" {sunny_anim_spe_down_hit}
+!define "state" {SUNNY_STATE_SPE_DOWN_HIT}
+!define "routine" {spe_down_hit}
+!define "followup" {sunny_start_helpless}
 !include "characters/tpl_aerial_attack_uncancellable.asm"
 
 ;
@@ -716,7 +723,3 @@ sunny_global_onground:
 !include "characters/tpl_grounded_attack_cutable.asm"
 
 !include "characters/std_friction_routines.asm"
-
-; Standard move names
-;{char_name}_start_down_tilt = {char_name}_start_down_tilt
-;{char_name}_start_spe_down = {char_name}_start_spe_down

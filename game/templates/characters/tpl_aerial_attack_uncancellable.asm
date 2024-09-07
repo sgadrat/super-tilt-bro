@@ -2,9 +2,12 @@
 ; Aerial move that is not cancelled by landing
 ;
 
-; {anim} - Animation of the move
-; {state} - Character's state number
-; {routine} - Name of the state's routines
+; anim - Animation of the move
+; state - Character's state number
+; routine - Name of the state's routines
+; followup - Name of the routine to call on state's end (defaults to inactive state)
+
+!default "followup" {!place "char_name"_start_inactive_state}
 
 .(
 	duration:
@@ -60,7 +63,7 @@
 
 		dec player_a_state_clock, x
 		bne end
-			jmp {char_name}_start_inactive_state
+			jmp {followup}
 			; No return, jump to subroutine
 		end:
 		rts
@@ -70,3 +73,4 @@
 !undef "anim"
 !undef "state"
 !undef "routine"
+!undef "followup"
