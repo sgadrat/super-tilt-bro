@@ -330,15 +330,37 @@ sunny_global_onground:
 	acceleration_table(FRICTION, friction_table)
 
 	!define "anim" {sunny_anim_side_special_charge}
-	!define "state" {SUNNY_STATE_SIDE_SPECIAL}
-	!define "routine" {side_special}
+	!define "state" {SUNNY_STATE_SIDE_SPECIAL_CHARGE}
+	!define "routine" {side_special_charge}
+	!define "followup" {sunny_start_side_special_hit}
+	!define "init" {
+		; No velocity
+		lda #0
+		sta player_a_velocity_v_low, x
+		sta player_a_velocity_v, x
+		sta player_a_velocity_h, x
+		sta player_a_velocity_h, x
+		rts ; useless, no branch return
+	}
+	!define "tick" {
+		; No gravity, and specific air-friction for this move
+		lda #0
+		sta tmpfield1
+		sta tmpfield2
+		sta tmpfield3
+		sta tmpfield4
+		ldy system_index
+		lda friction_table, y
+		sta tmpfield5
+		jmp merge_to_player_velocity
+	}
+	!include "characters/tpl_grounded_attack_followup.asm"
+
+	!define "anim" {sunny_anim_side_special_hit}
+	!define "state" {SUNNY_STATE_SIDE_SPECIAL_HIT}
+	!define "routine" {side_special_hit}
 	!define "followup" {sunny_start_side_special_end}
 	!define "init" {
-		; No vertical velocity
-		lda #0
-		sta player_a_velocity_v_low
-		sta player_a_velocity_v
-
 		; Fixed horizontal velocity
 		ldy system_index
 		lda player_a_direction, x
@@ -347,13 +369,13 @@ sunny_global_onground:
 				lda initial_velocity_left_msb, y
 				sta player_a_velocity_h, x
 				lda initial_velocity_left_lsb
-				sta player_a_velocity_h_low
+				sta player_a_velocity_h_low, x
 				rts
 			right:
 				lda initial_velocity_right_msb, y
 				sta player_a_velocity_h, x
 				lda initial_velocity_right_lsb
-				sta player_a_velocity_h_low
+				sta player_a_velocity_h_low, x
 				rts
 		;rts ; useless, no branch return
 	}
@@ -376,6 +398,9 @@ sunny_global_onground:
 	!define "routine" {side_special_end}
 	!include "characters/tpl_aerial_attack_uncancellable.asm"
 
+	+sunny_start_side_special = sunny_start_side_special_charge
+	+sunny_start_side_special_left = sunny_start_side_special_charge_left
+	+sunny_start_side_special_right = sunny_start_side_special_charge_right
 .)
 
 ;

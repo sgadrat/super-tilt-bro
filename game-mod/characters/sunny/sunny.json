@@ -7808,7 +7808,13 @@
             }
           ],
           "type": "animation_frame"
-        },
+        }
+      ],
+      "name": "sunny_anim_side_special_charge",
+      "type": "animation"
+    },
+    {
+      "frames": [
         {
           "duration": 4,
           "hitbox": null,
@@ -7864,17 +7870,17 @@
           "type": "animation_frame"
         },
         {
-          "duration": 10,
+          "duration": 5,
           "hitbox": {
             "type": "animation_direct_hitbox",
             "left": -6,
             "top": 5,
             "right": 10,
             "bottom": 12,
-            "base_h": 0,
-            "base_v": 0,
-            "force_h": 0,
-            "force_v": 0,
+            "base_h": -500,
+            "base_v": -700,
+            "force_h": 5,
+            "force_v": 7,
             "damages": 2,
             "enabled": true
           },
@@ -7938,7 +7944,7 @@
           "type": "animation_frame"
         }
       ],
-      "name": "sunny_anim_side_special_charge",
+      "name": "sunny_anim_side_special_hit",
       "type": "animation"
     },
     {
@@ -15081,14 +15087,24 @@
       "update_routine": "sunny_tick_special_strike"
     },
     {
-      "input_routine": "dummy_routine",
-      "name": "SUNNY_STATE_SIDE_SPECIAL",
+      "input_routine": "smart_keep_input_dirty",
+      "name": "SUNNY_STATE_SIDE_SPECIAL_CHARGE",
       "offground_routine": "dummy_routine",
       "onground_routine": "sunny_global_onground",
       "onhurt_routine": "hurt_player",
       "start_routine": null,
       "type": "character_state",
-      "update_routine": "sunny_tick_side_special"
+      "update_routine": "sunny_tick_side_special_charge"
+    },
+    {
+      "type": "character_state",
+      "name": "SUNNY_STATE_SIDE_SPECIAL_HIT",
+      "start_routine": null,
+      "update_routine": "sunny_tick_side_special_hit",
+      "input_routine": "smart_keep_input_dirty",
+      "onground_routine": "sunny_global_onground",
+      "offground_routine": "dummy_routine",
+      "onhurt_routine": "hurt_player"
     },
     {
       "type": "character_state",
@@ -15096,7 +15112,7 @@
       "start_routine": null,
       "update_routine": "sunny_tick_side_special_end",
       "input_routine": "smart_keep_input_dirty",
-      "onground_routine": "dummy_routine",
+      "onground_routine": "sunny_global_onground",
       "offground_routine": "dummy_routine",
       "onhurt_routine": "hurt_player"
     },
