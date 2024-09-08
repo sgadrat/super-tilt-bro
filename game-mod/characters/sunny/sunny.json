@@ -8438,141 +8438,53 @@
     {
       "frames": [
         {
-          "duration": 2,
-          "hitbox": {
-            "base_h": -768,
-            "base_v": -768,
-            "bottom": 11,
-            "damages": 10,
-            "enabled": true,
-            "force_h": -21,
-            "force_v": -8,
-            "left": -19,
-            "right": -6,
-            "top": 5,
-            "type": "animation_direct_hitbox"
-          },
+          "duration": 4,
+          "hitbox": null,
           "hurtbox": {
-            "bottom": 13,
-            "left": -4,
+            "bottom": 16,
+            "left": 0,
             "right": 12,
-            "top": 2,
+            "top": 0,
             "type": "animation_hurtbox"
           },
           "sprites": [
             {
-              "attr": 1,
+              "attr": 0,
               "foreground": false,
-              "tile": "SUNNY_TILE_5",
+              "tile": "SUNNY_TILE_0",
               "type": "animation_sprite",
-              "x": -19,
-              "y": 5
+              "x": -3,
+              "y": 1
             },
             {
-              "attr": 1,
+              "attr": 0,
               "foreground": false,
-              "tile": "SUNNY_TILE_6",
+              "tile": "SUNNY_TILE_1",
               "type": "animation_sprite",
-              "x": -11,
-              "y": 5
+              "x": 5,
+              "y": 1
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_20",
+              "attr": 0,
+              "foreground": false,
+              "x": -3,
+              "y": 9
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_99",
+              "attr": 0,
+              "foreground": false,
+              "x": 5,
+              "y": 9
             }
           ],
           "type": "animation_frame"
         }
       ],
       "name": "sunny_anim_special",
-      "type": "animation"
-    },
-    {
-      "frames": [
-        {
-          "duration": 2,
-          "hitbox": null,
-          "hurtbox": {
-            "bottom": 16,
-            "left": -4,
-            "right": 8,
-            "top": 0,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_5",
-              "type": "animation_sprite",
-              "x": -6,
-              "y": 9
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_6",
-              "type": "animation_sprite",
-              "x": 2,
-              "y": 9
-            },
-            {
-              "attr": 0,
-              "foreground": false,
-              "tile": "SUNNY_TILE_28",
-              "type": "animation_sprite",
-              "x": 0,
-              "y": 8
-            }
-          ],
-          "type": "animation_frame"
-        }
-      ],
-      "name": "sunny_anim_special_charge",
-      "type": "animation"
-    },
-    {
-      "frames": [
-        {
-          "duration": 4,
-          "hitbox": {
-            "base_h": -512,
-            "base_v": -512,
-            "bottom": 23,
-            "damages": 3,
-            "enabled": true,
-            "force_h": -5,
-            "force_v": -5,
-            "left": -12,
-            "right": 3,
-            "top": 16,
-            "type": "animation_direct_hitbox"
-          },
-          "hurtbox": {
-            "bottom": 15,
-            "left": 0,
-            "right": 7,
-            "top": 1,
-            "type": "animation_hurtbox"
-          },
-          "sprites": [
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_15",
-              "type": "animation_sprite",
-              "x": -12,
-              "y": 16
-            },
-            {
-              "attr": 1,
-              "foreground": false,
-              "tile": "SUNNY_TILE_16",
-              "type": "animation_sprite",
-              "x": -4,
-              "y": 16
-            }
-          ],
-          "type": "animation_frame"
-        }
-      ],
-      "name": "sunny_anim_aerial_spe",
       "type": "animation"
     }
   ],
@@ -13771,6 +13683,26 @@
       "update_routine": "sunny_tick_jabbing"
     },
     {
+      "input_routine": "sunny_input_jabbing2",
+      "name": "SUNNY_STATE_JABBING_2",
+      "offground_routine": "sunny_start_falling",
+      "onground_routine": "sunny_global_onground",
+      "onhurt_routine": "hurt_player",
+      "start_routine": null,
+      "type": "character_state",
+      "update_routine": "sunny_tick_jabbing2"
+    },
+    {
+      "input_routine": "smart_keep_input_dirty",
+      "name": "SUNNY_STATE_JABBING_3",
+      "offground_routine": "sunny_start_falling",
+      "onground_routine": "sunny_global_onground",
+      "onhurt_routine": "hurt_player",
+      "start_routine": null,
+      "type": "character_state",
+      "update_routine": "sunny_tick_jabbing3"
+    },
+    {
       "input_routine": "smart_keep_input_dirty",
       "name": "SUNNY_STATE_SIDE_TILT",
       "offground_routine": "dummy_routine",
@@ -13781,24 +13713,14 @@
       "update_routine": "sunny_tick_side_tilt"
     },
     {
-      "input_routine": "dummy_routine",
-      "name": "SUNNY_STATE_SPECIAL_CHARGE",
+      "input_routine": "smart_keep_input_dirty",
+      "name": "SUNNY_STATE_SPECIAL",
       "offground_routine": "dummy_routine",
       "onground_routine": "sunny_global_onground",
       "onhurt_routine": "hurt_player",
       "start_routine": null,
       "type": "character_state",
-      "update_routine": "sunny_tick_special_charge"
-    },
-    {
-      "input_routine": "dummy_routine",
-      "name": "SUNNY_STATE_SPECIAL_STRIKE",
-      "offground_routine": "dummy_routine",
-      "onground_routine": "sunny_global_onground",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
-      "type": "character_state",
-      "update_routine": "sunny_tick_special_strike"
+      "update_routine": "sunny_tick_special"
     },
     {
       "input_routine": "smart_keep_input_dirty",
@@ -13951,16 +13873,6 @@
       "update_routine": "sunny_tick_aerial_neutral"
     },
     {
-      "input_routine": "sunny_input_aerial_spe",
-      "name": "SUNNY_STATE_AERIAL_SPE_NEUTRAL",
-      "offground_routine": "dummy_routine",
-      "onground_routine": "sunny_start_landing",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
-      "type": "character_state",
-      "update_routine": "sunny_tick_aerial_spe"
-    },
-    {
       "input_routine": "smart_keep_input_dirty",
       "name": "SUNNY_STATE_SPE_UP_PREPARE",
       "offground_routine": "dummy_routine",
@@ -14039,26 +13951,6 @@
       "start_routine": null,
       "type": "character_state",
       "update_routine": "sunny_tick_walljumping"
-    },
-    {
-      "input_routine": "sunny_input_jabbing2",
-      "name": "SUNNY_STATE_JABBING_2",
-      "offground_routine": "sunny_start_falling",
-      "onground_routine": "sunny_global_onground",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
-      "type": "character_state",
-      "update_routine": "sunny_tick_jabbing2"
-    },
-    {
-      "input_routine": "smart_keep_input_dirty",
-      "name": "SUNNY_STATE_JABBING_3",
-      "offground_routine": "sunny_start_falling",
-      "onground_routine": "sunny_global_onground",
-      "onhurt_routine": "hurt_player",
-      "start_routine": null,
-      "type": "character_state",
-      "update_routine": "sunny_tick_jabbing3"
     },
     {
       "input_routine": "sunny_input_respawn_platform",
@@ -14146,19 +14038,8 @@
       "SUNNY_TILE_60",
       "SUNNY_TILE_61",
       "SUNNY_TILE_62",
-      "SUNNY_TILE_64",
       "SUNNY_TILE_57",
-      "SUNNY_TILE_58",
-      "SUNNY_TILE_65",
-      "SUNNY_TILE_66",
-      "SUNNY_TILE_78",
-      "SUNNY_TILE_79",
-      "SUNNY_TILE_80",
-      "SUNNY_TILE_81",
-      "SUNNY_TILE_82",
-      "SUNNY_TILE_83",
-      "SUNNY_TILE_84",
-      "SUNNY_TILE_85"
+      "SUNNY_TILE_58"
     ],
     "type": "tileset",
     "tiles": [
@@ -20289,91 +20170,6 @@
             0,
             0,
             0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            2,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            2,
-            2,
-            1,
-            0,
-            0,
-            3,
-            0,
-            0
-          ],
-          [
-            2,
-            2,
-            2,
-            1,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            2,
-            2,
-            2,
-            3,
-            1,
-            1,
-            0,
-            0
-          ],
-          [
-            1,
-            2,
-            3,
-            3,
-            2,
-            3,
-            1,
-            1
-          ],
-          [
-            0,
-            3,
-            3,
-            1,
-            3,
-            1,
-            0,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
             1,
             1,
             1,
@@ -20508,856 +20304,6 @@
           [
             0,
             3,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
-            1,
-            2,
-            2,
-            1,
-            2
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            2,
-            3,
-            1,
-            2
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            2,
-            1,
-            2,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            1,
-            3,
-            3,
-            3
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            3,
-            3,
-            1,
-            3
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            3,
-            3,
-            1,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            3,
-            3,
-            1,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            1,
-            1,
-            0,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            2,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            2,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            3,
-            1,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            3,
-            3,
-            3,
-            1,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            1,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            2,
-            2,
-            2,
-            2
-          ],
-          [
-            0,
-            0,
-            1,
-            2,
-            2,
-            2,
-            2,
-            1
-          ],
-          [
-            0,
-            0,
-            1,
-            2,
-            1,
-            3,
-            1,
-            2
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            1,
-            2,
-            1,
-            1
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            2,
-            2,
-            1,
-            1,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            2,
-            2,
-            2,
-            2,
-            1,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            2,
-            2,
-            2,
-            2,
-            1,
-            0,
-            0
-          ],
-          [
-            2,
-            1,
-            2,
-            1,
-            1,
-            1,
-            0,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
-            0,
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            3,
-            3,
-            3,
-            3
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            3,
-            3,
-            1,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            1,
-            3,
-            3,
-            3
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            1,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            2,
-            2,
-            1,
-            3,
-            3,
-            1,
-            0,
-            0
-          ],
-          [
-            1,
-            2,
-            2,
-            1,
-            3,
-            1,
-            0,
-            0
-          ],
-          [
-            1,
-            2,
-            2,
-            1,
-            1,
-            0,
-            0,
-            0
-          ],
-          [
-            3,
-            1,
-            2,
-            1,
-            1,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            1,
-            1,
-            3,
-            1,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            2,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            1,
-            2,
-            2,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            1,
-            2,
-            2,
-            2
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            2,
-            2,
-            2,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            2,
-            2,
-            1,
-            2
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            3,
-            3,
-            1,
-            1,
-            1,
-            0,
-            0,
-            0
-          ],
-          [
-            3,
-            1,
-            1,
-            1,
-            3,
-            1,
-            0,
-            0
-          ],
-          [
-            1,
-            2,
-            2,
-            2,
-            1,
-            0,
-            0,
-            0
-          ],
-          [
-            2,
-            2,
-            2,
-            1,
-            1,
-            0,
-            0,
-            0
-          ],
-          [
-            2,
-            1,
-            1,
-            3,
-            1,
-            0,
-            0,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            0,
-            0,
-            0,
-            1,
-            2,
-            1,
-            2,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            2,
-            2,
-            1,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            2,
-            2,
-            3,
-            2
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            2,
-            2,
-            1,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            1,
-            2,
-            2,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            1,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        ]
-      },
-      {
-        "type": "tile",
-        "representation": [
-          [
-            1,
-            3,
-            1,
-            3,
-            1,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            3,
-            1,
-            3,
-            1,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            3,
-            3,
-            3,
-            1,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            3,
-            3,
-            1,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            1,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
             0,
             0,
             0,

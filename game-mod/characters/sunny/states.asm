@@ -64,7 +64,7 @@ sunny_global_onground:
 	CONTROLLER_INPUT_DOWN_TILT          sunny_start_aerial_down
 	CONTROLLER_INPUT_ATTACK_UP          sunny_start_aerial_up
 	CONTROLLER_INPUT_JAB                sunny_start_aerial_neutral
-	CONTROLLER_INPUT_SPECIAL            sunny_start_aerial_spe
+	CONTROLLER_INPUT_SPECIAL            sunny_start_special
 	CONTROLLER_INPUT_SPECIAL_UP         sunny_start_spe_up
 	CONTROLLER_INPUT_SPECIAL_DOWN       sunny_start_spe_down
 	CONTROLLER_INPUT_ATTACK_UP_RIGHT    sunny_start_aerial_up_right
@@ -222,100 +222,13 @@ sunny_global_onground:
 !include "characters/tpl_grounded_attack.asm"
 
 ;
-; Grounded neutral special
+; Neutral special
 ;
 
-.(
-	SUNNY_GROUNDED_SPECIAL_CHARGE_DURATION = 20
-	duration_table(SUNNY_GROUNDED_SPECIAL_CHARGE_DURATION, duration_per_system)
-
-	&sunny_start_special:
-	.(
-		; Set the appropriate animation
-		lda #<sunny_anim_special_charge
-		sta tmpfield13
-		lda #>sunny_anim_special_charge
-		sta tmpfield14
-		jsr set_player_animation
-
-		; Set the player's state
-		lda #SUNNY_STATE_SPECIAL_CHARGE
-		sta player_a_state, x
-
-		; Stop any momentum
-		lda #$00
-		sta player_a_velocity_h_low, x
-		sta player_a_velocity_h, x
-		sta player_a_velocity_v_low, x
-		sta player_a_velocity_v, x
-
-		; Initialize the clock
-		ldy system_index
-		lda duration_per_system, y
-		sta player_a_state_clock, x
-
-		rts
-	.)
-
-	&sunny_tick_special_charge:
-	.(
-		dec player_a_state_clock, x
-		bne do_tick
-			jmp sunny_start_special_strike
-			; No return, jump to a subroutine
-		do_tick:
-
-		jmp sunny_apply_ground_friction
-		;rts ; useless, jump to subroutine
-	.)
-.)
-
-.(
-	duration_per_system:
-		.byt 2*sunny_anim_special_dur_pal, 2*sunny_anim_special_dur_ntsc
-
-	STRIKE_HEIGHT = $10
-
-	&sunny_start_special_strike:
-	.(
-
-		; Set the appropriate animation
-		lda #<sunny_anim_special
-		sta tmpfield13
-		lda #>sunny_anim_special
-		sta tmpfield14
-		jsr set_player_animation
-
-		; Set the player's state
-		lda #SUNNY_STATE_SPECIAL_STRIKE
-		sta player_a_state, x
-
-		; Place the player above ground
-		lda player_a_y, x
-		sec
-		sbc #STRIKE_HEIGHT
-		sta player_a_y, x
-
-		; Initialize the clock
-		ldy system_index
-		lda duration_per_system, y
-		sta player_a_state_clock, x
-
-		rts
-	.)
-
-	&sunny_tick_special_strike:
-	.(
-		dec player_a_state_clock, x
-		bne do_tick
-			jmp sunny_start_helpless
-			; No return, jump to a subroutine
-		do_tick:
-
-		jmp sunny_apply_ground_friction
-		;rts ; useless, jump to subroutine
-	.)
-.)
+!define "anim" {sunny_anim_special}
+!define "state" {SUNNY_STATE_SPECIAL}
+!define "routine" {special}
+!include "characters/tpl_aerial_attack_uncancellable.asm"
 
 ;
 ; Side special
@@ -545,98 +458,6 @@ sunny_global_onground:
 !define "state" {SUNNY_STATE_AERIAL_NEUTRAL}
 !define "routine" {aerial_neutral}
 !include "characters/tpl_aerial_attack.asm"
-
-;
-; Aerial special
-;
-
-.(
-	FALL_SPEED = $0100
-	FALL_ACCELERATION = $10
-
-	velocity_table(FALL_SPEED, fall_speed_msb, fall_speed_lsb)
-	velocity_table_u8(FALL_ACCELERATION, fall_acceleration)
-
-	&sunny_start_aerial_spe:
-	.(
-		; Set state
-		lda #SUNNY_STATE_AERIAL_SPE_NEUTRAL
-		sta player_a_state, x
-
-		; Set substate to "not cancelable"
-		lda #0
-		sta player_a_state_field1, x
-
-		; Fallthrough to set the animation
-	.)
-	set_aerial_spe_animation:
-	.(
-		; Set the appropriate animation
-		lda #<sunny_anim_aerial_spe
-		sta tmpfield13
-		lda #>sunny_anim_aerial_spe
-		sta tmpfield14
-		jsr set_player_animation
-
-		rts
-	.)
-
-	&sunny_tick_aerial_spe:
-	.(
-		jsr sunny_aerial_directional_influence
-
-		; Never move upward in this state
-		lda player_a_velocity_v, x
-		bpl end_max_velocity
-			lda #$00
-			sta player_a_velocity_v, x
-			sta player_a_velocity_v_low, x
-		end_max_velocity:
-
-		; Special fall speed - particularily slow
-		lda player_a_velocity_h, x
-		sta tmpfield4
-		lda player_a_velocity_h_low, x
-		sta tmpfield2
-		ldy system_index
-		lda fall_speed_msb, y
-		sta tmpfield3
-		lda fall_speed_lsb, y
-		sta tmpfield1
-		lda fall_acceleration, y
-		sta tmpfield5
-		jsr merge_to_player_velocity
-
-		rts
-	.)
-
-	&sunny_input_aerial_spe:
-	.(
-		lda player_a_state_field1, x
-		beq check_release
-
-			check_cancel:
-				; Press B again to cancel into helpless
-				lda controller_a_btns, x
-				and #CONTROLLER_BTN_B
-				beq end
-
-					jmp sunny_start_helpless
-					; No return, jump to a subroutine
-
-			check_release:
-				; Release B to pass in "cancelable" substate
-				lda controller_a_btns, x
-				and #CONTROLLER_BTN_B
-				bne end
-
-					inc player_a_state_field1, x
-					; Fallthrough
-
-		end:
-		rts
-	.)
-.)
 
 ;
 ; Special up
