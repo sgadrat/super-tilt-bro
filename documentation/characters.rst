@@ -109,3 +109,30 @@ When ``Y`` is set to ``HITBOX`` the callback is responsible for consequences of 
 Direct hitboxes will not apply parry to their opponent when colliding to a custom hitbox.
 
 When ``Y`` is set to ``HITBOX`` the hitbox type should not be changed to ``HITBOX_DISABLED`` if the result is a parry. (Quirk in the engine, relying on hitboxes staying active in parry to apply it correctly to both player. May change with a future rework of parry handling.)
+
+Memory allocation
+=================
+
+ * ``$00`` -> ``$69``: Avatar state
+ * ``$0480`` -> ``$04ff``: Avatar objects
+
+Avatar state
+------------
+
+The engine maintains all avatars state variables in an interleaved table in zero-page from $0000 to $0069. These variables are named ``player_a_*`` and ``player_b_*``, and often accessed by setting player's number in register X and using it as an index from ``player_a_xxx`` variant of the variable.
+
+Avatar objects
+--------------
+
+Character code can also manipulate 64 bytes of linear memory. These regions are named ``player_a_objects`` and ``player_b_object``, and are not interleaved. The engine interprets data in these regions as a list of avatar-independent "ojects" of different types.
+
+Object types::
+
+ * STAGE_ELEMENT_END
+ * STAGE_ELEMENT_PLATFORM
+ * STAGE_ELEMENT_SMOOTH_PLATFORM
+ * STAGE_ELEMENT_OOS_PLATFORM
+ * STAGE_ELEMENT_OOS_SMOOTH_PLATFORM
+ * STAGE_ELEMENT_BUMPER
+
+The engine does not read data after the byte indentifying a STAGE_ELEMENT_END. The memory after this byte can be freely used by character code.
