@@ -232,7 +232,7 @@ arcade_mode_target_break_animation_timer = $05ff
 arcade_mode_run_teleport_animation = $05f2 ; $05f2 to $05fe
 arcade_mode_run_teleport_timer = $05ff
 
-game_mode_state_end = $05ff ; Inclusive (game mode can safely write here)
+game_mode_state_end = $067f ; Inclusive (game mode can safely write here)
 
 ;
 ; Stage specific labels
@@ -333,10 +333,10 @@ credits_last_illustration_bank = credits_last_illustration_msb+1 ; $3d
 credits_mem_buffer = $0580 ; $0580 to $05bf (64 bytes)
 credits_cursor_anim = $05c0 ; $05c0 to $05cc
 ;$05cd to $05ff - unused
-credits_bubble_anim_1 = $068d ; to $0699
-credits_bubble_anim_2 = $069a ; to $06a6
-credits_bubble_anim_3 = $06a7 ; to $06b3
-credits_bubble_anim_4 = $06b4 ; to $06c0
+credits_bubble_anim_1 = $060d ; to $0619
+credits_bubble_anim_2 = $061a ; to $0626
+credits_bubble_anim_3 = $0627 ; to $0633
+credits_bubble_anim_4 = $0634 ; to $0640
 credits_bubble_anims = credits_bubble_anim_1
 
 ;
@@ -403,8 +403,8 @@ character_selection_player_b_cursor_anim = $05cd ; $05cd to $05d9
 character_selection_player_a_char_anim = $05da ; $05da to $05e6
 character_selection_player_b_char_anim = $05e7 ; $05e7 to $05f3
 ;$05f4-$05ff unused
-character_selection_player_a_builder_anim = $0680 ; $0680 to $068c
-character_selection_player_b_builder_anim = $068d ; $068d to $0699
+character_selection_player_a_builder_anim = $0600 ; $0600 to $060c
+character_selection_player_b_builder_anim = $060d ; $060d to $0619
 
 ;
 ; STAGE_SELECTION labels
@@ -581,50 +581,50 @@ audio_noise_sample_num = $c7
 audio_vframe_cnt = $c8 ;TODO merge it with the vframe counter for wait_next_frame
 audio_50hz = $c9 ; 0 - 60 Hz, 1 - 50 Hz
 
-audio_square1_current_opcode = $0604
-audio_square2_current_opcode = $0605
-audio_triangle_current_opcode = $0606
-audio_noise_current_opcode = $0607
-audio_square1_current_opcode_msb = $0608
-audio_square2_current_opcode_msb = $0609
-audio_triangle_current_opcode_msb = $060a
-audio_noise_current_opcode_msb = $060b
-audio_square1_wait_cnt = $060c
-audio_square2_wait_cnt = $060d
-audio_triangle_wait_cnt = $060e
-audio_noise_wait_cnt = $060f
-audio_square1_default_note_duration = $0610
-audio_square2_default_note_duration = $0611
-audio_triangle_default_note_duration = $0612
-audio_square1_apu_envelope_byte = $0613
-audio_square2_apu_envelope_byte = $0614
-audio_square1_apu_timer_low_byte = $0615
-audio_square2_apu_timer_low_byte = $0616
-audio_triangle_apu_timer_low_byte = $0617
-audio_square1_apu_timer_high_byte = $0618
-audio_square2_apu_timer_high_byte = $0619
-audio_triangle_apu_timer_high_byte = $061a
-audio_square1_apu_timer_high_byte_old = $061b
-audio_square2_apu_timer_high_byte_old = $061c
-audio_triangle_apu_timer_high_byte_old = $061d ; Actually useless for triangle, but allows to easily merge code for pulse/triangle (unused now, triangle timer is handled in a "if triangle" branch) ;TODO remove it once code is stable enough to confidently state that we'll never use it
-audio_square1_pitch_slide_lsb = $061e
-audio_square2_pitch_slide_lsb = $061f
-audio_triangle_pitch_slide_lsb = $0620
-audio_square1_pitch_slide_msb = $0621
-audio_square2_pitch_slide_msb = $0622
-audio_triangle_pitch_slide_msb = $0623
+audio_square1_current_opcode = $0684
+audio_square2_current_opcode = $0685
+audio_triangle_current_opcode = $0686
+audio_noise_current_opcode = $0687
+audio_square1_current_opcode_msb = $0688
+audio_square2_current_opcode_msb = $0689
+audio_triangle_current_opcode_msb = $068a
+audio_noise_current_opcode_msb = $068b
+audio_square1_wait_cnt = $068c
+audio_square2_wait_cnt = $068d
+audio_triangle_wait_cnt = $068e
+audio_noise_wait_cnt = $068f
+audio_square1_default_note_duration = $0690
+audio_square2_default_note_duration = $0691
+audio_triangle_default_note_duration = $0692
+audio_square1_apu_envelope_byte = $0693
+audio_square2_apu_envelope_byte = $0694
+audio_square1_apu_timer_low_byte = $0695
+audio_square2_apu_timer_low_byte = $0696
+audio_triangle_apu_timer_low_byte = $0697
+audio_square1_apu_timer_high_byte = $0698
+audio_square2_apu_timer_high_byte = $0699
+audio_triangle_apu_timer_high_byte = $069a
+audio_square1_apu_timer_high_byte_old = $069b
+audio_square2_apu_timer_high_byte_old = $069c
+audio_triangle_apu_timer_high_byte_old = $069d ; Actually useless for triangle, but allows to easily merge code for pulse/triangle (unused now, triangle timer is handled in a "if triangle" branch) ;TODO remove it once code is stable enough to confidently state that we'll never use it
+audio_square1_pitch_slide_lsb = $069e
+audio_square2_pitch_slide_lsb = $069f
+audio_triangle_pitch_slide_lsb = $06a0
+audio_square1_pitch_slide_msb = $06a1
+audio_square2_pitch_slide_msb = $06a2
+audio_triangle_pitch_slide_msb = $06a3
 
-audio_noise_apu_envelope_byte = $0624
-audio_noise_apu_period_byte = $0625 ; bit 4 used to silence the channel, so it is Ls.. PPPP with s handled by the engine
-audio_noise_pitch_slide = $0626
+audio_noise_apu_envelope_byte = $06a4
+audio_noise_apu_period_byte = $06a5 ; bit 4 used to silence the channel, so it is Ls.. PPPP with s handled by the engine
+audio_noise_pitch_slide = $06a6
 
-audio_fx_noise_pitch_slide = $0627
-audio_fx_noise_wait_cnt = $0628
-audio_fx_noise_current_opcode = $0629
-audio_fx_noise_current_opcode_msb = $062a
-audio_fx_noise_current_opcode_bank = $062b
-audio_fx_noise_apu_envelope_byte = $062c
-audio_fx_noise_apu_period_byte = $062d
+audio_fx_noise_pitch_slide = $06a7
+audio_fx_noise_wait_cnt = $06a8
+audio_fx_noise_current_opcode = $06a9
+audio_fx_noise_current_opcode_msb = $06aa
+audio_fx_noise_current_opcode_bank = $06ab
+audio_fx_noise_apu_envelope_byte = $06ac
+audio_fx_noise_apu_period_byte = $06ad
 
 ;
 ; Global labels
@@ -757,9 +757,9 @@ screen_shake_speed_h = $055e
 screen_shake_speed_v = $055f
 
 ;$0560 to $05ff may be used by game states
+;$0600 to $067f may be used by game states
 
-;$0600 to $067f may be used by audio engine, see "Audio engine labels"
-;$0680 to $06ff may be used by game states
+;$0680 to $06ff may be used by audio engine, see "Audio engine labels"
 
 network_last_known_remote_input = $07bf
 network_player_local_btns_history = $07c0 ; one byte per frame, circular buffers, 32 entries
