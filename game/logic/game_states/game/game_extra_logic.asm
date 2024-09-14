@@ -36,13 +36,30 @@
 		.)
 
 		; Ensure game state is zero
-		ldx #$00
-		txa
+		lda #0
+		ldx #ZERO_PAGE_GLOBAL_FIELDS_BEGIN
 		zero_game_state:
+			dex
 			sta $00, x
-			inx
-			cpx #ZERO_PAGE_GLOBAL_FIELDS_BEGIN
 			bne zero_game_state
+
+		ldx #NB_PLAYERS * NB_PROJECTILES_PER_PLAYER * PROJECTILE_DATA_SIZE - 1
+		;lda #0 ; useless, done above
+		deactivate_projectiles:
+			dex
+			sta player_a_projectile_1_flags, x
+			bne deactivate_projectiles
+
+#if PROJECTILE_FLAGS_DEACTIVATED <> 0
+#error above code expects PROJECTILE_FLAGS_DEACTIVATED to be zero
+#endif
+
+		ldx #last_player_state_extra-player_a_state_extra1
+		;lda #0 ; useless, done above
+		zero_extra_state:
+			dex
+			sta player_a_state_extra1
+			bne zero_extra_state
 
 		; Copy common tileset
 		;  - An empty, solid 1 tile

@@ -115,11 +115,17 @@ Memory allocation
 
  * ``$00`` -> ``$69``: Avatar state
  * ``$0480`` -> ``$04ff``: Avatar objects
+ * ``$0600`` -> ``$0641``: Avatar projectiles
 
 Avatar state
 ------------
 
 The engine maintains all avatars state variables in an interleaved table in zero-page from $0000 to $0069. These variables are named ``player_a_*`` and ``player_b_*``, and often accessed by setting player's number in register X and using it as an index from ``player_a_xxx`` variant of the variable.
+
+Most of these variables have specific meaning for the engine and are to be updated accordingly by character's code. Some are free to use for character-specific logic::
+
+ - player_x_state_fieldN: automatically restored by netcode, action templates may use it.
+ - player_x_state_extraN: character's netcode is responsible of it, action templates do not use it.
 
 Avatar objects
 --------------
@@ -136,3 +142,14 @@ Object types::
  * STAGE_ELEMENT_BUMPER
 
 The engine does not read data after the byte indentifying a STAGE_ELEMENT_END. The memory after this byte can be freely used by character code.
+
+Avatar projectiles
+------------------
+
+Character code can manipulate some projectiles per avatar. These are stored in variables ``player_a_projectiles_N_xxx`` and ``player_b_projectile_N_xxx``, and are interleaved between players. Where ``N`` is the projectile number.
+
+Useful constants::
+
+ * PROJECTILE_FLAGS_DEACTIVATED
+ * PROJECTILE_DATA_SIZE
+ * NB_PROJECTILES_PER_PLAYER

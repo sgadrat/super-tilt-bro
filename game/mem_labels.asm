@@ -175,6 +175,8 @@ stage_state_begin = $80 ; $80 to $8f
 directional_indicator_player_a_position_x_low = $90 ; $90 to $9f - unused $90 and $98
 directional_indicator_player_a_position_y_low = $a0 ; $a0 to $af - unused $a0 and $a8
 
+;NOTE constant ZERO_PAGE_GLOBAL_FIELDS_BEGIN shall point here ($b0)
+
 ;$b0 to $bf used by network engine
 ;$c0 to $c9 used by audio engine
 ;$d0 to $ff used by global labels, constants and registers ($e5 and $e6 are still free)
@@ -198,7 +200,28 @@ player_b_temporary_velocity_v_low = $056a
 player_a_temporary_velocity_v = $056b
 player_b_temporary_velocity_v = $056c
 
-;$056d-$057f unused
+; Player extra state
+player_a_state_extra1 = $056d
+player_b_state_extra1 = $056e
+player_a_state_extra2 = $056f
+player_b_state_extra2 = $0570
+player_a_state_extra3 = $0571
+player_b_state_extra3 = $0572
+player_a_state_extra4 = $0573
+player_b_state_extra4 = $0574
+player_a_state_extra5 = $0575
+player_b_state_extra5 = $0576
+player_a_state_extra6 = $0577
+player_b_state_extra6 = $0578
+player_a_state_extra7 = $0579
+player_b_state_extra7 = $057a
+player_a_state_extra8 = $057b
+player_b_state_extra8 = $057c
+player_a_state_extra9 = $057d
+player_b_state_extra9 = $057e
+last_player_state_extra = player_b_state_extra9
+
+;$057f unused
 
 players_palettes = $0580 ; $0580 to $059f - 4 nametable buffers (8 bytes each) containing avatars palettes in normal and alternate mode
 player_a_animation = $05a0 ; $05a0 to $05ac - player a's animation state
@@ -231,6 +254,32 @@ arcade_mode_target_break_animation_timer = $05ff
 
 arcade_mode_run_teleport_animation = $05f2 ; $05f2 to $05fe
 arcade_mode_run_teleport_timer = $05ff
+
+player_a_projectile_1_flags = $0600
+player_b_projectile_1_flags = $0601
+player_a_projectile_1_hitbox_left = 0x602
+player_b_projectile_1_hitbox_left = 0x603
+player_a_projectile_1_hitbox_right = 0x604
+player_b_projectile_1_hitbox_right = 0x605
+player_a_projectile_1_hitbox_top = 0x606
+player_b_projectile_1_hitbox_top = 0x607
+player_a_projectile_1_hitbox_bottom = 0x608
+player_b_projectile_1_hitbox_bottom = 0x609
+player_a_projectile_1_hitbox_left_msb = 0x60a
+player_b_projectile_1_hitbox_left_msb = 0x60b
+player_a_projectile_1_hitbox_right_msb = 0x60c
+player_b_projectile_1_hitbox_right_msb = 0x60d
+player_a_projectile_1_hitbox_top_msb = 0x60e
+player_b_projectile_1_hitbox_top_msb = 0x60f
+player_a_projectile_1_hitbox_bottom_msb = 0x610
+player_b_projectile_1_hitbox_bottom_msb = 0x611
+
+player_a_custom_hitbox_routine_lsb = player_a_hitbox_base_knock_up_v_low ; $3e
+player_b_custom_hitbox_routine_lsb = player_b_hitbox_base_knock_up_v_low ; $3f
+player_a_custom_hitbox_routine_msb = player_a_hitbox_base_knock_up_v_high ; $3a
+player_b_custom_hitbox_routine_msb = player_b_hitbox_base_knock_up_v_high ; $3b
+
+;$0642-$067f unused
 
 game_mode_state_end = $067f ; Inclusive (game mode can safely write here)
 
