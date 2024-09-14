@@ -108,7 +108,7 @@ When ``Y`` is set to ``HITBOX`` the callback is responsible for consequences of 
 
 Direct hitboxes will not apply parry to their opponent when colliding to a custom hitbox.
 
-When ``Y`` is set to ``HITBOX`` the hitbox type should not be changed to ``HITBOX_DISABLED`` if the result is a parry. (Quirk in the engine, relying on hitboxes staying active in parry to apply it correctly to both player. May change with a future rework of parry handling.)
+Note that if both hitboxes are custom, only avatar A's callback will be called. If it causes issues it should be changed to ensure character code has only to care about itself in hitbox vs hitbox scenario.
 
 Memory allocation
 =================

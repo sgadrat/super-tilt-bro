@@ -850,8 +850,7 @@ player_b_extra_tick:
 		hitstun_ok:
 
 		; Check hitbox collisions
-		ldx #$01
-		TRAMPOLINE(check_player_hit, #0, #CURRENT_BANK_NUMBER)
+		TRAMPOLINE(check_players_hit, #0, #CURRENT_BANK_NUMBER)
 
 		; Call the state update routine
 		ldx #$01

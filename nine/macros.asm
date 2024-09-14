@@ -453,6 +453,32 @@ duration
 	end_signed_cmp:\
 .)
 
+; Perform multibyte signed comparison, with "(indirect),y" indexing
+;
+; Output - N flag set if "a < b", unset otherwise
+;          C flag set if "(unsigned)a < (unsigned)b", unset otherwise
+;
+; Overwrites register A and register Y
+;
+; See also the routine with the same name (lowercase)
+#define SIGNED_CMP_INDIRECT(a_addr,a_low,a_high,b_addr,b_low,b_high) .(:\
+	ldy a_low:\
+	lda (a_addr), y:\
+:\
+	ldy b_low:\
+	cmp (b_addr), y:\
+:\
+	ldy a_high:\
+	lda (a_addr), y:\
+:\
+	ldy b_high:\
+	sbc (b_addr), y:\
+:\
+	bvc end_signed_cmp:\
+	eor #%10000000:\
+	end_signed_cmp:\
+.)
+
 ; Perform single byte signed comparison
 ;
 ; Output - N flag set if "a < b", unset otherwise

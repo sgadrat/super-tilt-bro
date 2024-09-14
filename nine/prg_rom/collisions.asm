@@ -254,6 +254,8 @@ check_top_collision:
 ;
 ; register A is set to #$00 if rectangles overlap, or to #$01 otherwise
 ; zero flag is set if rectangles overlap, or not set otherwise
+;
+; Overwrites register A
 boxes_overlap:
 .(
 	rect1_left = tmpfield1
@@ -292,6 +294,56 @@ boxes_overlap:
 	; No impossibility found, rectangles overlap at least partially
 	lda #$00
 	jmp end
+
+	; No overlap found
+	no_overlap:
+	lda #$01
+
+	end:
+	rts
+.)
+
+; Check if two rectangles collide
+;  tmpfield1,tmpfield2 - Rectangle 1 address
+;  tmpfield3,tmpfield4 - Rectangle 2 address
+;
+; register A is set to #$00 if rectangles overlap, or to #$01 otherwise
+; zero flag is set if rectangles overlap, or not set otherwise
+;
+; Overwrites register A and register Y
+interleaved_boxes_overlap:
+.(
+	rect1 = tmpfield1
+	rect2 = tmpfield3
+
+	LEFT = INTERLEAVED_HITBOX_OFFSET_LEFT - 2
+	RIGHT = INTERLEAVED_HITBOX_OFFSET_RIGHT - 2
+	TOP = INTERLEAVED_HITBOX_OFFSET_TOP - 2
+	BOTTOM = INTERLEAVED_HITBOX_OFFSET_BOTTOM - 2
+	LEFT_MSB = INTERLEAVED_HITBOX_OFFSET_LEFT_MSB - 2
+	RIGHT_MSB = INTERLEAVED_HITBOX_OFFSET_RIGHT_MSB - 2
+	TOP_MSB = INTERLEAVED_HITBOX_OFFSET_TOP_MSB - 2
+	BOTTOM_MSB = INTERLEAVED_HITBOX_OFFSET_BOTTOM_MSB - 2
+
+	; No overlap possible if right of rect2 is on the left of rect1
+	SIGNED_CMP_INDIRECT(rect2, #RIGHT, #RIGHT_MSB, rect1, #LEFT, #LEFT_MSB)
+	bmi no_overlap
+
+	; No overlap possible if right of rect1 is on the left of rect2
+	SIGNED_CMP_INDIRECT(rect1, #RIGHT, #RIGHT_MSB, rect2, #LEFT, #LEFT_MSB)
+	bmi no_overlap
+
+	; No overlap possible if bottom of rect2 is higher than top of rect1
+	SIGNED_CMP_INDIRECT(rect2, #BOTTOM, #BOTTOM_MSB, rect1, #TOP, #TOP_MSB)
+	bmi no_overlap
+
+	; No overlap possible if bottom of rect1 is higher than top of rect2
+	SIGNED_CMP_INDIRECT(rect1, #BOTTOM, #BOTTOM_MSB, rect2, #TOP, #TOP_MSB)
+	bmi no_overlap
+
+	; No impossibility found, rectangles overlap at least partially
+	lda #$00
+	rts
 
 	; No overlap found
 	no_overlap:

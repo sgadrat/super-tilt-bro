@@ -591,22 +591,12 @@ vgsage_global_onground:
 					cpy #HURTBOX
 					beq process
 
-						; Reenable our hitbox (we should not have disabled it in hitbox vs hitbox case)
-						;NOTE requirement would be made obsolete if hitbox vs hitbox collisions were not made once per player
-						lda #HITBOX_CUSTOM
-						sta player_a_hitbox_enabled, x
-
-						; Apply parry to ourself
-						ldy config_player_a_character, x
-						jsr parry_player
-
-						; Apply parry to our opponent (if it is a direct hitbox)
+						; Apply parry to both players if opponent has a direct hitbox
 						SWITCH_SELECTED_PLAYER
 						lda player_a_hitbox_enabled, x
 						cmp #HITBOX_DIRECT
 						bne ok
-							ldy config_player_a_character, x
-							TRAMPOLINE(parry_player, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
+							TRAMPOLINE(parry_players, #0, #CURRENT_BANK_NUMBER)
 						ok:
 
 						; Do not actually process hit

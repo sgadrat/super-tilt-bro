@@ -151,13 +151,7 @@ update_players:
 		bne hitstun_one_player
 
 	; Check hitbox collisions
-	;TODO optimizable, unroll loop. Or better, see check_player_hit comment
-	ldx #$00
-	hitbox_one_player:
-		jsr check_player_hit
-		inx
-		cpx #$02
-		bne hitbox_one_player
+	jsr check_players_hit
 
 	; Update both players
 	ldx #$00 ; player number
@@ -358,183 +352,73 @@ player_state_action:
 	jmp (routine_addr_lsb)
 .)
 
-; Apply player's hitbox effects
-;  register X - player number
+; Apply effects of players hitboxes and hurtboxes.
 ;
-; Overwrite all registers and all tmpfields, extra_tmpfield1
-check_player_hit:
+; Overwrites all registers, tmpfield1 to tmpfield6, tmpfield10, and tmpfield11
+; Switches current bank
+check_players_hit:
 .(
-	;TODO optimizable - hitbox vs hitbox should be checked only once, not once per player
-	; it would avoid to do the collision check twice, and simplify logic as consequences for both players would be in one place
+	; - Check hitbox-hitbox collisions
+	; - For each player:
+	;   - Check hitbox-projectile
+	;   - Check hitbox-hurtbox
 
 	; Parameters of boxes_overlap
-	striking_box_left = tmpfield1
-	striking_box_right = tmpfield2
-	striking_box_top = tmpfield3
-	striking_box_bottom = tmpfield4
-	striking_box_left_msb = tmpfield9
-	striking_box_right_msb = tmpfield10
-	striking_box_top_msb = tmpfield11
-	striking_box_bottom_msb = tmpfield12
-	smashed_box_left = tmpfield5
-	smashed_box_right = tmpfield6
-	smashed_box_top = tmpfield7
-	smashed_box_bottom = tmpfield8
-	smashed_box_left_msb = tmpfield13
-	smashed_box_right_msb = tmpfield14
-	smashed_box_top_msb = tmpfield15
-	smashed_box_bottom_msb = tmpfield16
+	striking_box = tmpfield1
+	striking_box_msb = tmpfield2
+	smashed_box = tmpfield3
+	smashed_box_msb = tmpfield4
 
 	; Parameters of onhurt callbacks
 	current_player = tmpfield10
 	opponent_player = tmpfield11
 
 	; Storage of usefull info read way earlier than used
-	striker_hitbox_type = extra_tmpfield1
-	stroke_hitbox_type = extra_tmpfield2
+	;striker_hitbox_type = tmpfield5
+	;stroke_hitbox_type = tmpfield6
 
-	; Store current player number (at stack+1)
-	txa
-	pha
+	; Check hitbox-hitbox collisions
+	.(
+		lda player_a_hitbox_enabled
+		beq ok
+		lda player_b_hitbox_enabled
+		beq ok
 
-	; Check that player's hitbox is enabled
-	lda player_a_hitbox_enabled, x
-	sta striker_hitbox_type
-	bne process_checks
-	jmp end
-	process_checks:
+			lda #<player_a_hitbox_left
+			sta striking_box
+			lda #>player_a_hitbox_left
+			sta striking_box_msb
+			lda #<player_b_hitbox_left
+			sta smashed_box
+			lda #>player_b_hitbox_left
+			sta smashed_box_msb
+			jsr interleaved_boxes_overlap
+			bne ok
 
-		check_hitbox_hitbox:
-		.(
-			; Store current player's hitbox
-			lda player_a_hitbox_left, x
-			sta striking_box_left
-			lda player_a_hitbox_left_msb, x
-			sta striking_box_left_msb
+				; Parry if both hitboxes are direct, else call custom hitbox handler
+				; Player A takes priority if both hitboxes are custom. May have to be changed to call
+				; both callbacks.
+				lda #HITBOX_CUSTOM
+				cmp player_a_hitbox_enabled
+				beq custom_hitbox_player_a
+				cmp player_b_hitbox_enabled
+				beq custom_hitbox_player_b
 
-			lda player_a_hitbox_right, x
-			sta striking_box_right
-			lda player_a_hitbox_right_msb, x
-			sta striking_box_right_msb
+					direct_hitbox:
+						; Apply parry to both players if their hitboxes are direct (custom hitboxes must take care of themselve)
+						jsr parry_players
+						jmp end
 
-			lda player_a_hitbox_top, x
-			sta striking_box_top
-			lda player_a_hitbox_top_msb, x
-			sta striking_box_top_msb
-
-			lda player_a_hitbox_bottom, x
-			sta striking_box_bottom
-			lda player_a_hitbox_bottom_msb, x
-			sta striking_box_bottom_msb
-
-			; Switch current player to select the opponent
-			SWITCH_SELECTED_PLAYER
-
-			; If opponent's hitbox is enabled, check hitbox on hitbox collisions
-			lda player_a_hitbox_enabled, x
-			bne do_hitbox_check
-			jmp check_hitbox_hurtbox
-			do_hitbox_check:
-
-				; Store opponent's hitbox
-				;lda player_a_hitbox_enabled, x ; useless, done above
-				sta stroke_hitbox_type
-
-				lda player_a_hitbox_left, x
-				sta smashed_box_left
-				lda player_a_hitbox_left_msb, x
-				sta smashed_box_left_msb
-
-				lda player_a_hitbox_right, x
-				sta smashed_box_right
-				lda player_a_hitbox_right_msb, x
-				sta smashed_box_right_msb
-
-				lda player_a_hitbox_top, x
-				sta smashed_box_top
-				lda player_a_hitbox_top_msb, x
-				sta smashed_box_top_msb
-
-				lda player_a_hitbox_bottom, x
-				sta smashed_box_bottom
-				lda player_a_hitbox_bottom_msb, x
-				sta smashed_box_bottom_msb
-
-				; Check collisions between hitbox and hitbox
-				jsr boxes_overlap
-				bne check_hitbox_hurtbox
-
-					lda striker_hitbox_type
-					cmp #HITBOX_DIRECT
-					beq direct_hitbox
-
-						custom_hitbox:
-							; Call hitbox's callback
-							SWITCH_SELECTED_PLAYER
-							ldy config_player_a_character, x
-							SWITCH_BANK(characters_bank_number COMMA y)
-							ldy #HITBOX
-							lda player_a_custom_hitbox_routine_lsb, x
-							sta tmpfield1
-							lda player_a_custom_hitbox_routine_msb, x
-							sta tmpfield2
-							jsr call_pointed_subroutine
-							jmp end
-
-						direct_hitbox:
-							; Apply parry to the stroke player if their hitbox is direct (custom hitboxes must take care of themselve)
-							lda stroke_hitbox_type
-							cmp #HITBOX_DIRECT
-							bne parry_done
-								ldy config_player_a_character, x
-								SWITCH_BANK(characters_bank_number COMMA y)
-								jsr parry_player
-							parry_done:
-							jmp end
-
-			; Unreachable - No branch returns (one jumps directly to check_hitbox_hurtbox)
-		.)
-
-		check_hitbox_hurtbox:
-		.(
-			; Store opponent's hurtbox
-			lda player_a_hurtbox_left, x
-			sta smashed_box_left
-			lda player_a_hurtbox_left_msb, x
-			sta smashed_box_left_msb
-
-			lda player_a_hurtbox_right, x
-			sta smashed_box_right
-			lda player_a_hurtbox_right_msb, x
-			sta smashed_box_right_msb
-
-			lda player_a_hurtbox_top, x
-			sta smashed_box_top
-			lda player_a_hurtbox_top_msb, x
-			sta smashed_box_top_msb
-
-			lda player_a_hurtbox_bottom, x
-			sta smashed_box_bottom
-			lda player_a_hurtbox_bottom_msb, x
-			sta smashed_box_bottom_msb
-
-			; Check collisions between hitbox and hurtbox
-			jsr boxes_overlap
-			bne end
-
-				; X = striker's index
-				SWITCH_SELECTED_PLAYER
-
-				; Select behaviour from hitbox type
-				lda striker_hitbox_type
-				cmp #HITBOX_DIRECT
-				beq direct_hitbox
-
+					custom_hitbox_player_b:
+						ldx #1
+						jmp custom_hitbox
+					custom_hitbox_player_a:
+						ldx #0
 					custom_hitbox:
-						; Call hitbox on hurtbox callback
+						; Call hitbox's callback
 						ldy config_player_a_character, x
 						SWITCH_BANK(characters_bank_number COMMA y)
-						ldy #HURTBOX
+						ldy #HITBOX
 						lda player_a_custom_hitbox_routine_lsb, x
 						sta tmpfield1
 						lda player_a_custom_hitbox_routine_msb, x
@@ -542,25 +426,101 @@ check_player_hit:
 						jsr call_pointed_subroutine
 						jmp end
 
-					direct_hitbox:
-						; Fire on-hurt event
-						stx current_player
-						SWITCH_SELECTED_PLAYER
-						stx opponent_player
-						ldy config_player_a_character, x
-						SWITCH_BANK(characters_bank_number COMMA y)
-						lda characters_onhurt_routines_table_lsb, y
-						sta tmpfield1
-						lda characters_onhurt_routines_table_msb, y
-						sta tmpfield2
-						jsr player_state_action
+		ok:
+	.)
+
+	;TODO Check hitbox-projectile collisions
+	.(
+	.)
+
+	; Check hitbox-hurtbox collisions
+	.(
+		; Check player A hitbox vs player B hurtbox
+		.(
+			lda player_a_hitbox_enabled
+			beq ok
+
+				lda #<player_a_hitbox_left
+				sta striking_box
+				lda #>player_a_hitbox_left
+				sta striking_box_msb
+				lda #<player_b_hurtbox_left
+				sta smashed_box
+				lda #>player_b_hurtbox_left
+				sta smashed_box_msb
+				jsr interleaved_boxes_overlap
+				bne ok
+
+					ldx #0
+					jsr impact_hitbox_hurtbox
+					jmp ok
+
+			ok:
 		.)
 
+		; Check player B hitbox vs player A hurtbox
+		.(
+			lda player_b_hitbox_enabled
+			beq ok
+
+				lda #<player_b_hitbox_left
+				sta striking_box
+				lda #>player_b_hitbox_left
+				sta striking_box_msb
+				lda #<player_a_hurtbox_left
+				sta smashed_box
+				lda #>player_a_hurtbox_left
+				sta smashed_box_msb
+				jsr interleaved_boxes_overlap
+				bne ok
+
+					ldx #1
+					jsr impact_hitbox_hurtbox
+					jmp ok
+
+			ok:
+		.)
+	.)
+
 	end:
-	; Reset register X to the current player
-	pla
-	tax
 	rts
+
+	; register X - striker player number
+	impact_hitbox_hurtbox:
+	.(
+		; Select behaviour from hitbox type
+		lda player_a_hitbox_enabled, x
+		cmp #HITBOX_DIRECT
+		beq direct_hitbox
+
+			custom_hitbox:
+				; Call hitbox on hurtbox callback
+				ldy config_player_a_character, x
+				SWITCH_BANK(characters_bank_number COMMA y)
+				ldy #HURTBOX
+				lda player_a_custom_hitbox_routine_lsb, x
+				sta tmpfield1
+				lda player_a_custom_hitbox_routine_msb, x
+				sta tmpfield2
+				jmp call_pointed_subroutine
+				; no return ; jump to subroutine
+
+			direct_hitbox:
+				; Fire on-hurt event
+				stx current_player
+				SWITCH_SELECTED_PLAYER
+				stx opponent_player
+				ldy config_player_a_character, x
+				SWITCH_BANK(characters_bank_number COMMA y)
+				lda characters_onhurt_routines_table_lsb, y
+				sta tmpfield1
+				lda characters_onhurt_routines_table_msb, y
+				sta tmpfield2
+				jmp player_state_action
+				; no return ; jump to subroutine
+
+		;rts ; useless, no branch return
+	.)
 .)
 
 ; Throw the hurted player depending on the hitbox hurting him
@@ -625,23 +585,12 @@ hurt_player:
 	rts
 .)
 
-; Make a player who hit an hitbox fall
-;  register X - Player number
-;  register Y - Character number
+; Make players who hit their respective hitbox fall
 ;
-;  Can overwrite any register and any tmpfield
-;  The currently selected bank must be the current character's bank
-parry_player:
+; Overwrite any register and any tmpfield
+; Switches current bank
+parry_players:
 .(
-	;TODO optimizable
-	; parry logic could be rewriten to be done only once (maybe in the "Updates that impacts both players" section)
-	; That would have benefits
-	;  - Avoid to check twice the collision between hitboxes (should be big CPU gain)
-	;  - Simplify responsibilities of direct/custom hitboxes (see characters documentation)
-
-	; Play parry sound
-	jsr audio_play_parry
-
 	; Shake the screen
 	lda #SCREENSHAKE_PARRY_INTENSITY
 	sta screen_shake_noise_h
@@ -652,23 +601,45 @@ parry_player:
 	sta screen_shake_current_x
 	sta screen_shake_current_y
 
+	; Disable hitboxes
+	lda #HITBOX_DISABLED
+	sta player_a_hitbox_enabled
+	sta player_b_hitbox_enabled
+
 	; Set player in thrown mode without momentum
 	lda #HITSTUN_PARRY_NB_FRAMES
-	sta player_a_hitstun, x
+	sta player_a_hitstun
+	sta player_b_hitstun
 
 	lda #$00
-	sta player_a_velocity_h, x
-	sta player_a_velocity_h_low, x
-	sta player_a_velocity_v, x
-	sta player_a_velocity_v_low, x
+	sta player_a_velocity_h
+	sta player_a_velocity_h_low
+	sta player_a_velocity_v
+	sta player_a_velocity_v_low
+	sta player_b_velocity_h
+	sta player_b_velocity_h_low
+	sta player_b_velocity_v
+	sta player_b_velocity_v_low
 
 	lda #PLAYER_STATE_THROWN
-	sta player_a_state, x
-	lda characters_start_routines_table_lsb, y
-	sta tmpfield1
-	lda characters_start_routines_table_msb, y
-	sta tmpfield2
-	jmp player_state_action
+	sta player_a_state
+	sta player_b_state
+
+	ldx #1
+	call_routine:
+		ldy config_player_a_character, x
+		SWITCH_BANK(characters_bank_number COMMA y)
+		lda characters_start_routines_table_lsb, y
+		sta tmpfield1
+		lda characters_start_routines_table_msb, y
+		sta tmpfield2
+		jsr player_state_action
+
+		dex
+		bpl call_routine
+
+	; Play parry sound
+	jmp audio_play_parry
 
 	;rts ; useless, jump to subroutine
 .)
