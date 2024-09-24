@@ -160,6 +160,8 @@ update_players:
 		ldy config_player_a_character, x
 		SWITCH_BANK(characters_bank_number COMMA y)
 
+		;TODO call global update routine?
+
 		; Call the state update routine
 		lda characters_update_routines_table_lsb, y
 		sta tmpfield1
@@ -360,7 +362,8 @@ check_players_hit:
 .(
 	; - Check hitbox-hitbox collisions
 	; - For each player:
-	;   - Check hitbox-projectile
+	;   - Check projectile-hitbox
+	;   - Check projectile-hurtbox
 	;   - Check hitbox-hurtbox
 
 	; Parameters of boxes_overlap
@@ -373,9 +376,8 @@ check_players_hit:
 	current_player = tmpfield10
 	opponent_player = tmpfield11
 
-	; Storage of usefull info read way earlier than used
-	;striker_hitbox_type = tmpfield5
-	;stroke_hitbox_type = tmpfield6
+	; Parameters of projectile hit callback
+	projectile_index = tmpfield12
 
 	; Check hitbox-hitbox collisions
 	.(
@@ -429,8 +431,95 @@ check_players_hit:
 		ok:
 	.)
 
-	;TODO Check hitbox-projectile collisions
+	; Check projectile collisions
 	.(
+		; Check player A projectiles vs player B hit/hurt boxes
+		.(
+#if NB_PROJECTILES_PER_PLAYER <> 1
+#error unrolled loop expects NB_PROJECTILES_PER_PLAYER to be 1
+#endif
+			lda player_a_projectile_1_flags
+			beq ok
+
+				; Store projectile's hitbox
+				lda #<player_a_projectile_1_hitbox_left
+				sta striking_box
+				lda #>player_a_projectile_1_hitbox_left
+				sta striking_box_msb
+
+				; Check projectile vs hitbox
+				lda #<player_b_hitbox_left
+				sta smashed_box
+				lda #>player_b_hitbox_left
+				sta smashed_box_msb
+				jsr interleaved_boxes_overlap
+				bne check_hurtbox
+
+					lda #0
+					sta projectile_index
+					ldx #0
+					jsr impact_projectile_hitbox
+
+				; Check projectile vs hurtbox
+				check_hurtbox:
+				lda #<player_b_hurtbox_left
+				sta smashed_box
+				lda #>player_b_hurtbox_left
+				sta smashed_box_msb
+				jsr interleaved_boxes_overlap
+				bne ok
+
+					lda #0
+					sta projectile_index
+					ldx #0
+					jsr impact_projectile_hurtbox
+
+			ok:
+		.)
+
+		; Check player B projectiles vs player A hit/hurt boxes
+		.(
+#if NB_PROJECTILES_PER_PLAYER <> 1
+#error unrolled loop expects NB_PROJECTILES_PER_PLAYER to be 1
+#endif
+			lda player_b_projectile_1_flags
+			beq ok
+
+				; Store projectile's hitbox
+				lda #<player_b_projectile_1_hitbox_left
+				sta striking_box
+				lda #>player_b_projectile_1_hitbox_left
+				sta striking_box_msb
+
+				; Check projectile vs hitbox
+				lda #<player_a_hitbox_left
+				sta smashed_box
+				lda #>player_a_hitbox_left
+				sta smashed_box_msb
+				jsr interleaved_boxes_overlap
+				bne check_hurtbox
+
+					lda #0
+					sta projectile_index
+					ldx #1
+					jsr impact_projectile_hitbox
+
+				; Check projectile vs hurtbox
+				check_hurtbox:
+				lda #<player_a_hurtbox_left
+				sta smashed_box
+				lda #>player_a_hurtbox_left
+				sta smashed_box_msb
+				jsr interleaved_boxes_overlap
+				bne ok
+
+					lda #0
+					sta projectile_index
+					ldx #1
+					jsr impact_projectile_hurtbox
+
+			ok:
+		.)
 	.)
 
 	; Check hitbox-hurtbox collisions
@@ -451,6 +540,8 @@ check_players_hit:
 				jsr interleaved_boxes_overlap
 				bne ok
 
+					lda #0
+					sta projectile_index
 					ldx #0
 					jsr impact_hitbox_hurtbox
 					jmp ok
@@ -520,6 +611,38 @@ check_players_hit:
 				; no return ; jump to subroutine
 
 		;rts ; useless, no branch return
+	.)
+
+	; Preserve striking_box and striking_box_msb
+	impact_projectile_hitbox:
+	.(
+		lda striking_box : pha
+		lda striking_box_msb : pha
+
+		ldy config_player_a_character, x
+		SWITCH_BANK(characters_bank_number COMMA y)
+		lda characters_projectile_hit_routine_lsb, y
+		sta tmpfield1
+		lda characters_projectile_hit_routine_msb, y
+		sta tmpfield2
+		ldy #HITBOX
+		jsr call_pointed_subroutine
+
+		pla : sta striking_box_msb
+		pla : sta striking_box
+	.)
+
+	impact_projectile_hurtbox:
+	.(
+		ldy config_player_a_character, x
+		SWITCH_BANK(characters_bank_number COMMA y)
+		lda characters_projectile_hit_routine_lsb, y
+		sta tmpfield1
+		lda characters_projectile_hit_routine_msb, y
+		sta tmpfield2
+		ldy #HURTBOX
+		jmp (tmpfield1)
+		;rts ; useless, jump to subroutine
 	.)
 .)
 
