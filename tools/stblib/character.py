@@ -172,7 +172,7 @@ class Ai:
 		ensure(isinstance(self.sourcecode, str))
 
 class Character:
-	def __init__(self, name='', sourcecode='', tileset=None, victory_animation=None, defeat_animation=None, menu_select_animation=None, animations=None, color_swaps=None, states=None, illustration_large=None, illustration_small=None, illustration_token=None, ai=None, netload_routine=None):
+	def __init__(self, name='', sourcecode='', tileset=None, victory_animation=None, defeat_animation=None, menu_select_animation=None, animations=None, color_swaps=None, states=None, illustration_large=None, illustration_small=None, illustration_token=None, ai=None, netload_routine=None, projectile_hit_routine=None, global_tick_routine=None):
 		self.name = name
 		self.sourcecode = sourcecode
 		self.tileset = tileset if tileset is not None else stblib.tiles.Tileset()
@@ -187,6 +187,8 @@ class Character:
 		self.illustration_token = illustration_token if illustration_token is not None else stblib.tiles.Tileset()
 		self.ai = ai if ai is not None else Ai()
 		self.netload_routine = netload_routine
+		self.projectile_hit_routine = projectile_hit_routine
+		self.global_tick_routine = global_tick_routine
 
 	def check(self):
 		ensure(isinstance(self.name, str))
@@ -245,3 +247,5 @@ class Character:
 		self.ai.check()
 
 		ensure(isinstance(self.netload_routine, str), "netload_routine shall be the label of a network state-loading routine")
+		ensure(isinstance(self.projectile_hit_routine, str), "projectile_hit_routine shall be the label of a routine")
+		ensure(isinstance(self.global_tick_routine, str), "global_tick_routine shall be the label of a routine")

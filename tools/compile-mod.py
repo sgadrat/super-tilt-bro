@@ -343,16 +343,17 @@ def generate_characters_index(characters, game_dir):
 				_w('.byt {} ; {}\n'.format(value(char), char.name.capitalize()))
 			_w('\n')
 
+		def _w_split_table(desc, name, value):
+			if desc is not None and len(desc) > 0:
+				_w('; {}\n'.format(desc))
+			_w_table('', '{}_lsb'.format(name), lambda c: '<{}'.format(value(c)))
+			_w_table('', '{}_msb'.format(name), lambda c: '>{}'.format(value(c)))
+
 		def _w_routine_table(routine_type):
-			_w_table(
+			_w_split_table(
 				'',
-				'characters_{}_routines_table_lsb'.format(routine_type),
-				lambda c: '<{}_state_{}_routines'.format(c.name, routine_type)
-			)
-			_w_table(
-				'',
-				'characters_{}_routines_table_msb'.format(routine_type),
-				lambda c: '>{}_state_{}_routines'.format(c.name, routine_type)
+				'characters_{}_routines_table'.format(routine_type),
+				lambda c: '{}_state_{}_routines'.format(c.name, routine_type)
 			)
 
 		_w('; Number of characters referenced in following tables\n')
@@ -363,70 +364,50 @@ def generate_characters_index(characters, game_dir):
 			'characters_bank_number',
 			lambda c: '{}_BANK_NUMBER'.format(c.name.upper())
 		)
-		_w_table(
+		_w_split_table(
 			'Begining of tiles data for each character',
-			'characters_tiles_data_lsb',
-			lambda c: '<{}_chr_tiles'.format(c.name)
-		)
-		_w_table(
-			'',
-			'characters_tiles_data_msb',
-			lambda c: '>{}_chr_tiles'.format(c.name)
+			'characters_tiles_data',
+			lambda c: '{}_chr_tiles'.format(c.name)
 		)
 		_w_table(
 			'Number of CHR tiles per character',
 			'characters_tiles_number',
 			lambda c: '{}_SPRITE_TILES_NUMBER'.format(c.name.upper())
 		)
-		_w_table(
+		_w_split_table(
 			'Character properties',
-			'characters_properties_lsb',
-			lambda c: '<{}_properties'.format(c.name)
+			'characters_properties',
+			lambda c: '{}_properties'.format(c.name)
 		)
-		_w_table(
+		_w_split_table(
 			'',
-			'characters_properties_msb',
-			lambda c: '>{}_properties'.format(c.name)
+			'characters_palettes',
+			lambda c: '{}_character_palettes'.format(c.name)
 		)
-		_w_table(
+		_w_split_table(
 			'',
-			'characters_palettes_lsb',
-			lambda c: '<{}_character_palettes'.format(c.name)
+			'characters_alternate_palettes',
+			lambda c: '{}_character_alternate_palettes'.format(c.name)
 		)
-		_w_table(
+		_w_split_table(
 			'',
-			'characters_palettes_msb',
-			lambda c: '>{}_character_palettes'.format(c.name)
+			'characters_weapon_palettes',
+			lambda c: '{}_weapon_palettes'.format(c.name)
 		)
-		_w_table(
-			'',
-			'characters_alternate_palettes_lsb',
-			lambda c: '<{}_character_alternate_palettes'.format(c.name)
-		)
-		_w_table(
-			'',
-			'characters_alternate_palettes_msb',
-			lambda c: '>{}_character_alternate_palettes'.format(c.name)
-		)
-		_w_table(
-			'',
-			'characters_weapon_palettes_lsb',
-			lambda c: '<{}_weapon_palettes'.format(c.name)
-		)
-		_w_table(
-			'',
-			'characters_weapon_palettes_msb',
-			lambda c: '>{}_weapon_palettes'.format(c.name)
-		)
-		_w_table(
+		_w_split_table(
 			'Routine to load character specific state from network',
-			'characters_netload_routine_lsb',
-			lambda c: '<{}'.format(c.netload_routine)
+			'characters_netload_routine',
+			lambda c: c.netload_routine
 		)
-		_w_table(
-			'',
-			'characters_netload_routine_msb',
-			lambda c: '>{}'.format(c.netload_routine)
+		_w_split_table(
+			'Routine to handle a projectile hitting the opponent',
+			'characters_projectile_hit_routine',
+			lambda c: c.projectile_hit_routine
+		)
+		_w_split_table(
+			'Routine that is called on each frame',
+			'characters_global_tick_routine',
+			lambda c: c.global_tick_routine
 		)
 
 		_w('; Begining of character\'s jump tables\n')

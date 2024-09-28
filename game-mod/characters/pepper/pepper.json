@@ -24819,5 +24819,7 @@
     "name": "pepper_anim_victory",
     "type": "animation"
   },
-  "sourcecode_file": "characters/pepper/states.asm"
+  "sourcecode_file": "characters/pepper/states.asm",
+  "global_tick_routine": "dummy_routine",
+  "projectile_hit_routine": "dummy_routine"
 }
