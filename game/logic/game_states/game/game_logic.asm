@@ -160,9 +160,15 @@ update_players:
 		ldy config_player_a_character, x
 		SWITCH_BANK(characters_bank_number COMMA y)
 
-		;TODO call global update routine?
+		; Call global update routine
+		lda characters_global_tick_routine_lsb, y
+		sta tmpfield1
+		lda characters_global_tick_routine_msb, y
+		sta tmpfield2
+		jsr call_pointed_subroutine
 
 		; Call the state update routine
+		ldy config_player_a_character, x
 		lda characters_update_routines_table_lsb, y
 		sta tmpfield1
 		lda characters_update_routines_table_msb, y

@@ -85,6 +85,22 @@ Constraints on onground routines
 Constraints on offground routines
 =================================
 
+Constraints on global tick routines
+===================================
+
+ * ``A``: output: Can be modified, input: garbage
+ * ``X``: output: Cannot be modified, input: player number
+ * ``Y``: output: Can be modified, input: garbage
+ * ``player_number``: output: can be modified, input: garbage
+
+Constraints on projectile hit routines
+======================================
+
+ * ``A``: output: Can be modified, input: garbage
+ * ``X``: output: Cannot be modified, input: projectile owner's player number
+ * ``Y``: output: Can be modified, input: hitbox type
+ * ``player_number``: output: can be modified, input: garbage
+
 Custom hitboxes
 ===============
 
