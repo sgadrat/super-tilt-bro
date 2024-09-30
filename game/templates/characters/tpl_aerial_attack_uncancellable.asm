@@ -5,6 +5,7 @@
 ; anim - Animation of the move
 ; state - Character's state number
 ; routine - Name of the state's routines
+; init - Extra init code (defaults to just returning from subroutine)
 ; followup - Name of the routine to call on state's end (defaults to inactive state)
 
 !default "followup" {!place "char_name"_start_inactive_state}
@@ -47,9 +48,16 @@
 		sta tmpfield13
 		lda #>{anim}
 		sta tmpfield14
-		jmp set_player_animation
+		!ifndef "init" {
+			jmp set_player_animation
+			;rts ; useless, jump to subroutine
+		}
+		!ifdef "init" {
+			jsr set_player_animation
+			!place "init"
+		}
 
-		;rts ; useless, jump to subroutine
+		;rts ; useless, handled by init
 	.)
 
 	+{char_name}_tick_{routine}:
@@ -73,4 +81,5 @@
 !undef "anim"
 !undef "state"
 !undef "routine"
+!ifdef "init" {!undef "init"}
 !undef "followup"

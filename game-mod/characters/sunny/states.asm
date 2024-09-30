@@ -36,6 +36,42 @@ SUNNY_WALL_JUMP_VELOCITY_H = $0100
 !include "characters/std_constant_tables.asm"
 
 ;
+; Pearl shot helpers
+;
+
+sunny_pearl_shot_spawn:
+.(
+	lda #1
+	sta player_a_projectile_1_flags, x
+	lda player_a_hurtbox_left, x
+	sta player_a_projectile_1_hitbox_left, x
+	lda player_a_hurtbox_right, x
+	sta player_a_projectile_1_hitbox_right, x
+	lda player_a_hurtbox_top, x
+	sta player_a_projectile_1_hitbox_top, x
+	lda player_a_hurtbox_bottom, x
+	sta player_a_projectile_1_hitbox_bottom, x
+	lda player_a_hurtbox_left_msb, x
+	sta player_a_projectile_1_hitbox_left_msb, x
+	lda player_a_hurtbox_right_msb, x
+	sta player_a_projectile_1_hitbox_right_msb, x
+	lda player_a_hurtbox_top_msb, x
+	sta player_a_projectile_1_hitbox_top_msb, x
+	lda player_a_hurtbox_bottom_msb, x
+	sta player_a_projectile_1_hitbox_bottom_msb, x
+	rts
+.)
+
++sunny_pearl_shot_hit:
+.(
+	lda #0
+	sta player_a_projectile_1_flags, x
+
+	tya:tax
+	jmp audio_play_sfx_from_list
+.)
+
+;
 ; Implementation
 ;
 
@@ -228,6 +264,9 @@ sunny_global_onground:
 !define "anim" {sunny_anim_special}
 !define "state" {SUNNY_STATE_SPECIAL}
 !define "routine" {special}
+!define "init" {
+	jmp sunny_pearl_shot_spawn
+}
 !include "characters/tpl_aerial_attack_uncancellable.asm"
 
 ;
@@ -253,7 +292,7 @@ sunny_global_onground:
 		sta player_a_velocity_v, x
 		sta player_a_velocity_h, x
 		sta player_a_velocity_h, x
-		rts ; useless, no branch return
+		rts
 	}
 	!define "tick" {
 		; No gravity, and specific air-friction for this move

@@ -454,17 +454,20 @@ check_players_hit:
 				sta striking_box_msb
 
 				; Check projectile vs hitbox
-				lda #<player_b_hitbox_left
-				sta smashed_box
-				lda #>player_b_hitbox_left
-				sta smashed_box_msb
-				jsr interleaved_boxes_overlap
-				bne check_hurtbox
+				lda player_b_hitbox_enabled
+				beq check_hurtbox
 
-					lda #0
-					sta projectile_index
-					ldx #0
-					jsr impact_projectile_hitbox
+					lda #<player_b_hitbox_left
+					sta smashed_box
+					lda #>player_b_hitbox_left
+					sta smashed_box_msb
+					jsr interleaved_boxes_overlap
+					bne check_hurtbox
+
+						lda #0
+						sta projectile_index
+						ldx #0
+						jsr impact_projectile_hitbox
 
 				; Check projectile vs hurtbox
 				check_hurtbox:
@@ -498,17 +501,20 @@ check_players_hit:
 				sta striking_box_msb
 
 				; Check projectile vs hitbox
-				lda #<player_a_hitbox_left
-				sta smashed_box
-				lda #>player_a_hitbox_left
-				sta smashed_box_msb
-				jsr interleaved_boxes_overlap
-				bne check_hurtbox
+				lda player_a_hitbox_enabled
+				beq check_hurtbox
 
-					lda #0
-					sta projectile_index
-					ldx #1
-					jsr impact_projectile_hitbox
+					lda #<player_a_hitbox_left
+					sta smashed_box
+					lda #>player_a_hitbox_left
+					sta smashed_box_msb
+					jsr interleaved_boxes_overlap
+					bne check_hurtbox
+
+						lda #0
+						sta projectile_index
+						ldx #1
+						jsr impact_projectile_hitbox
 
 				; Check projectile vs hurtbox
 				check_hurtbox:
@@ -636,6 +642,7 @@ check_players_hit:
 
 		pla : sta striking_box_msb
 		pla : sta striking_box
+		rts
 	.)
 
 	impact_projectile_hurtbox:

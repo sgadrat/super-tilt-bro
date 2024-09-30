@@ -20504,5 +20504,5 @@
   },
   "sourcecode_file": "characters/sunny/states.asm",
   "global_tick_routine": "dummy_routine",
-  "projectile_hit_routine": "dummy_routine"
+  "projectile_hit_routine": "sunny_pearl_shot_hit"
 }
