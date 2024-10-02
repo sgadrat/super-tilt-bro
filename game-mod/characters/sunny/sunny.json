@@ -14039,7 +14039,8 @@
       "SUNNY_TILE_61",
       "SUNNY_TILE_62",
       "SUNNY_TILE_57",
-      "SUNNY_TILE_58"
+      "SUNNY_TILE_58",
+      "SUNNY_TILE_PEARL"
     ],
     "type": "tileset",
     "tiles": [
@@ -20332,6 +20333,91 @@
             0
           ]
         ]
+      },
+      {
+        "type": "tile",
+        "representation": [
+          [
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            2,
+            3,
+            3,
+            2,
+            1,
+            0
+          ],
+          [
+            1,
+            2,
+            3,
+            3,
+            2,
+            3,
+            2,
+            1
+          ],
+          [
+            1,
+            3,
+            3,
+            3,
+            2,
+            2,
+            3,
+            1
+          ],
+          [
+            1,
+            2,
+            1,
+            2,
+            2,
+            1,
+            3,
+            1
+          ],
+          [
+            1,
+            2,
+            2,
+            1,
+            1,
+            3,
+            2,
+            1
+          ],
+          [
+            0,
+            1,
+            2,
+            3,
+            3,
+            2,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0
+          ]
+        ]
       }
     ]
   },
@@ -20503,6 +20589,6 @@
     "type": "animation"
   },
   "sourcecode_file": "characters/sunny/states.asm",
-  "global_tick_routine": "dummy_routine",
+  "global_tick_routine": "sunny_global_tick",
   "projectile_hit_routine": "sunny_pearl_shot_hit"
 }
