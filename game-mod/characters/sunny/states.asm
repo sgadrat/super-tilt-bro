@@ -125,10 +125,11 @@ sunny_pearl_sprite_oam_per_player:
 #endif
 
 	; Pearl position is used for platform collision, its hitbox should actually be offsetted to have logical positioning
-	PEARL_PROJECTILE_OFFSET_VERTICAL = 8
-	PEARL_PROJECTILE_OFFSET_HORIZONTAL = 8
-	PEARL_PROJECTILE_HEIGHT = 8
-	PEARL_PROJECTILE_WIDTH = 8
+	; Pearl width/height are actually -1 of graphics because "bottom = top + height" so zero is one line of pixels
+	PEARL_PROJECTILE_OFFSET_VERTICAL = 11
+	PEARL_PROJECTILE_OFFSET_HORIZONTAL = 11
+	PEARL_PROJECTILE_HEIGHT = 6
+	PEARL_PROJECTILE_WIDTH = 6
 
 	&sunny_pearl_shot_spawn:
 	.(
@@ -393,12 +394,17 @@ sunny_pearl_sprite_oam_per_player:
 			lda player_a_projectile_1_hitbox_left_msb, x
 			bne hide
 				display:
+					; Sprite's Y pos is hitbox top -1 to compensate sprites being on the scanline after their position
 					lda player_a_projectile_1_hitbox_top, x
-					sta oam_mirror, y
-					iny:iny:iny
-					lda player_a_projectile_1_hitbox_left, x
-					sta oam_mirror, y
-					jmp ok
+					beq hide
+						sec
+						sbc #1
+						sta oam_mirror, y
+
+						iny:iny:iny
+						lda player_a_projectile_1_hitbox_left, x
+						sta oam_mirror, y
+						jmp ok
 				hide:
 					lda #$fe
 					sta oam_mirror, y
