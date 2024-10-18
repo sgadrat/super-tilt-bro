@@ -127,7 +127,7 @@ sunny_pearl_sprite_oam_per_player:
 	; Pearl position is used for platform collision, its hitbox should actually be offsetted to have logical positioning
 	; Pearl width/height are actually -1 of graphics because "bottom = top + height" so zero is one line of pixels
 	PEARL_PROJECTILE_OFFSET_VERTICAL = 11
-	PEARL_PROJECTILE_OFFSET_HORIZONTAL = 11
+	PEARL_PROJECTILE_OFFSET_HORIZONTAL = 1
 	PEARL_PROJECTILE_HEIGHT = 6
 	PEARL_PROJECTILE_WIDTH = 6
 
