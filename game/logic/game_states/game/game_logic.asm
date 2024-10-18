@@ -1182,10 +1182,10 @@ apply_force_vector:
 ;   tmpfield7 - Horizontal base knockup (MSB)
 ;   tmpfield8 - Vertical base knockup (LSB)
 ;   tmpfield9 - Vertical base knockup (MSB)
-;   tmpfield12 - Horizontal scaling knockup (LSB)
-;   tmpfield13 - Horizontal scaling knockup (MSB)
-;   tmpfield14 - Vertical scaling knockup (LSB)
-;   tmpfield15 - Vertical scaling knockup (MSB)
+;   tmpfield12 - Horizontal scaling knockup (MSB)
+;   tmpfield13 - Vertical scaling knockup (MSB)
+;   tmpfield14 - Horizontal scaling knockup (LSB)
+;   tmpfield15 - Vertical scaling knockup (LSB)
 ;
 ; Overwrites tmpfield1-tmpfield9, tmpfield12-tmpfield15
 ; Overwrites register A, register Y
