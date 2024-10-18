@@ -338,6 +338,8 @@ update_players:
 ;  register X - Player number
 ;  tmpfield1 - Jump table address (low byte)
 ;  tmpfield2 - Jump table address (high bute)
+;
+; Overwrites A, Y, tmpfield1-tmpfield4
 player_state_action:
 .(
 	jump_table = tmpfield1
@@ -665,20 +667,19 @@ check_players_hit:
 ;  register X - Player number of the stroke (equals to tmpfield11)
 ;
 ;  Can overwrite any register and any tmpfield except tmpfield10 and tmpfield11.
-;  The currently selected bank must be the current character's bank
+;  The currently selected bank must be the stroke character's bank
 hurt_player:
 .(
 	current_player = tmpfield10
 	opponent_player = tmpfield11
 
-	; Play hit sound
-	jsr audio_play_hit
-
 	; Apply force vector to the opponent
 	jsr apply_force_vector
 
-	; Reset fall speed
-	jsr reset_default_gravity
+	; Disable the hitbox to avoid multi-hits
+	ldx current_player
+	lda #HITBOX_DISABLED
+	sta player_a_hitbox_enabled, x
 
 	; Apply damages to the opponent
 	ldx current_player
@@ -693,6 +694,22 @@ hurt_player:
 	lda #199                ;
 	apply_damages:          ;
 	sta player_a_damages, x ;
+
+	; Fallthrough to hurt_player_direct
+.)
+
+; Throw the hurted player expecting other hitbox' effects (damage, velocity,...) to have already been applied
+;  register X - Player number of the stroke (equals to tmpfield11)
+;
+;  Can overwrite any register and any tmpfield except tmpfield10 and tmpfield11.
+;  The currently selected bank must be the stroke character's bank
+hurt_player_direct:
+.(
+	current_player = tmpfield10
+	opponent_player = tmpfield11
+
+	; Reset fall speed
+	jsr reset_default_gravity
 
 	; Set opponent to thrown state
 	lda #PLAYER_STATE_THROWN
@@ -713,12 +730,10 @@ hurt_player:
 	pla
 	sta current_player
 
-	; Disable the hitbox to avoid multi-hits
-	ldx current_player
-	lda #HITBOX_DISABLED
-	sta player_a_hitbox_enabled, x
+	; Play hit sound
+	jmp audio_play_hit
 
-	rts
+	;rts ; useless, jump to subroutine
 .)
 
 ; Make players who hit their respective hitbox fall
