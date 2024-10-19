@@ -237,7 +237,8 @@ sunny_pearl_sprite_oam_per_player:
 
 				; Throw opponent
 				.(
-					jsr hurt_player_direct
+					ldy config_player_a_character, x
+					TRAMPOLINE(hurt_player_direct, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
 				.)
 
 				; Return
