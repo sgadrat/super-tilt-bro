@@ -401,7 +401,7 @@ sunny_pearl_sprite_oam_per_player:
 			lda #>platform_collision_handler
 			sta elements_action_vector+1
 			jsr stage_iterate_all_elements
-			;ldx player_number ;useless, X won't be read before being trashed again
+			;ldx player_number ;useless, X won't be read before being trashed again (and actually platform_collision_handler does not trash it)
 
 			cpy #$ff
 			bne ok
@@ -501,19 +501,21 @@ sunny_pearl_sprite_oam_per_player:
 		platform_collision_handler:
 		.(
 			; Call appropriate handler for this kind of elements
+			;stx player_number ; useless, expecting caller to already set it
 			tax
 			lda platform_specific_handlers_lsb, x
 			sta platform_specific_handler_lsb
 			lda platform_specific_handlers_msb, x
 			sta platform_specific_handler_msb
+			ldx player_number
 			jmp (platform_specific_handler_lsb)
 			; No return, the handler will rts
 
-			;    unused,         PLATFORM,             SMOOTH,         OOS_PLATFORM,  OOS_SMOOTH,     BUMPER
+			;    unused,         PLATFORM,             SMOOTH,             OOS_PLATFORM,  OOS_SMOOTH,  BUMPER
 			platform_specific_handlers_lsb:
-			.byt <dummy_routine, <one_screen_platform, <dummy_routine, <oos_platform, <dummy_routine, <one_screen_platform
+			.byt <dummy_routine, <one_screen_platform, <one_screen_smooth, <oos_platform, <oos_smooth, <one_screen_platform
 			platform_specific_handlers_msb:
-			.byt >dummy_routine, >one_screen_platform, >dummy_routine, >oos_platform, >dummy_routine, >one_screen_platform
+			.byt >dummy_routine, >one_screen_platform, >one_screen_smooth, >oos_platform, >oos_smooth, >one_screen_platform
 
 			one_screen_platform:
 			.(
@@ -552,6 +554,58 @@ sunny_pearl_sprite_oam_per_player:
 				bmi no_collision
 
 				; No collision if original position is on the left of the platform
+				SIGNED_CMP(final_x_pixel, final_x_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB COMMA y)
+				bmi no_collision
+
+				; No collision if final position is on the right of the platform
+				SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_RIGHT_MSB COMMA y, final_x_pixel, final_x_screen)
+				bmi no_collision
+
+					; Collision, stop iterating
+					sty collided_platform
+					ldy #$ff
+
+				no_collision:
+				rts
+			.)
+
+			one_screen_smooth:
+			.(
+				; No collision if projectile is above the platform
+				SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0)
+				bmi no_collision
+
+				; No collision if projectile original position is bellow the platform
+				SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0, pearl_y_pixel COMMA x, pearl_y_screen COMMA x)
+				bmi no_collision
+
+				; No collision if final position is on the left of the platform
+				SIGNED_CMP(final_x_pixel, final_x_screen, stage_data+STAGE_PLATFORM_OFFSET_LEFT COMMA y, #0)
+				bmi no_collision
+
+				; No collision if final position is on the right of the platform
+				SIGNED_CMP(stage_data+STAGE_PLATFORM_OFFSET_RIGHT COMMA y, #0, final_x_pixel, final_x_screen)
+				bmi no_collision
+
+					; Collision, stop iterating
+					sty collided_platform
+					ldy #$ff
+
+				no_collision:
+				rts
+			.)
+
+			oos_smooth:
+			.(
+				; No collision if projectile is above the platform
+				SIGNED_CMP(final_y_pixel, final_y_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB COMMA y)
+				bmi no_collision
+
+				; No collision if projectile original position is bellow the platform
+				SIGNED_CMP(stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_TOP_MSB COMMA y, pearl_y_pixel COMMA x, pearl_y_screen COMMA x)
+				bmi no_collision
+
+				; No collision if final position is on the left of the platform
 				SIGNED_CMP(final_x_pixel, final_x_screen, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_LSB COMMA y, stage_data+STAGE_OOS_PLATFORM_OFFSET_LEFT_MSB COMMA y)
 				bmi no_collision
 
