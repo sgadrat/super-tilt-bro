@@ -985,13 +985,21 @@ sunny_global_onground:
 ; Neutral special
 ;
 
-!define "anim" {sunny_anim_special}
-!define "state" {SUNNY_STATE_SPECIAL}
-!define "routine" {special}
-!define "init" {
-	jmp sunny_pearl_shot_spawn
-}
-!include "characters/tpl_aerial_attack_uncancellable.asm"
+.(
+	!define "anim" {sunny_anim_special}
+	!define "state" {SUNNY_STATE_SPECIAL}
+	!define "routine" {special}
+	!define "followup" {sunny_start_special_endlag}
+	!include "characters/tpl_aerial_attack_uncancellable.asm"
+
+	!define "anim" {sunny_anim_special_endlag}
+	!define "state" {SUNNY_STATE_SPECIAL_ENDLAG}
+	!define "routine" {special_endlag}
+	!define "init" {
+		jmp sunny_pearl_shot_spawn
+	}
+	!include "characters/tpl_aerial_attack_uncancellable.asm"
+.)
 
 ;
 ; Side special

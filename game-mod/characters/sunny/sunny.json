@@ -8438,7 +8438,7 @@
     {
       "frames": [
         {
-          "duration": 4,
+          "duration": 8,
           "hitbox": null,
           "hurtbox": {
             "bottom": 16,
@@ -8485,6 +8485,58 @@
         }
       ],
       "name": "sunny_anim_special",
+      "type": "animation"
+    },
+    {
+      "frames": [
+        {
+          "duration": 4,
+          "hitbox": null,
+          "hurtbox": {
+            "bottom": 16,
+            "left": 0,
+            "right": 12,
+            "top": 0,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_0",
+              "type": "animation_sprite",
+              "x": -3,
+              "y": 1
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_1",
+              "type": "animation_sprite",
+              "x": 5,
+              "y": 1
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_20",
+              "attr": 0,
+              "foreground": false,
+              "x": -3,
+              "y": 9
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_99",
+              "attr": 0,
+              "foreground": false,
+              "x": 5,
+              "y": 9
+            }
+          ],
+          "type": "animation_frame"
+        }
+      ],
+      "name": "sunny_anim_special_endlag",
       "type": "animation"
     }
   ],
@@ -13721,6 +13773,16 @@
       "start_routine": null,
       "type": "character_state",
       "update_routine": "sunny_tick_special"
+    },
+    {
+      "type": "character_state",
+      "name": "SUNNY_STATE_SPECIAL_ENDLAG",
+      "start_routine": null,
+      "update_routine": "sunny_tick_special_endlag",
+      "input_routine": "smart_keep_input_dirty",
+      "onground_routine": "sunny_global_onground",
+      "offground_routine": "dummy_routine",
+      "onhurt_routine": "hurt_player"
     },
     {
       "input_routine": "smart_keep_input_dirty",
