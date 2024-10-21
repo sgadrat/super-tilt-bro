@@ -138,17 +138,34 @@ sunny_pearl_sprite_oam_per_player:
 		sta player_a_projectile_1_flags, x
 
 		; Position pearl
-		lda player_a_x_low, x
-		sta pearl_x_subpixel, x
-		lda player_a_x, x
-		clc
-		adc #<-4
-		sta pearl_x_pixel, x
-		lda player_a_x_screen, x
-		adc #>-4
-		sta pearl_x_screen, x
+		.(
+			lda #0
+			sta pearl_x_subpixel, x
 
-		lda player_a_y_low, x
+			lda player_a_direction, x
+			bne right
+				left:
+					lda player_a_x, x
+					clc
+					adc #<-8
+					sta pearl_x_pixel, x
+					lda player_a_x_screen, x
+					adc #>-8
+					sta pearl_x_screen, x
+					jmp ok
+				right:
+					lda player_a_x, x
+					clc
+					adc #<8
+					sta pearl_x_pixel, x
+					lda player_a_x_screen, x
+					adc #>8
+					sta pearl_x_screen, x
+					jmp ok
+			ok:
+		.)
+
+		lda #0
 		sta pearl_y_subpixel, x
 		lda player_a_y, x
 		clc
