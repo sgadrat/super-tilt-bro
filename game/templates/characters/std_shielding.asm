@@ -135,6 +135,9 @@
 	.(
 		striker_player = tmpfield10
 		stroke_player = tmpfield11
+		default_behavior_lsb = tmpfield12
+		default_behavior_msb = tmpfield13
+		default_behavior_bank = tmpfield14
 
 		; Reduce shield's life
 		dec player_a_state_field1, x
@@ -149,7 +152,7 @@
 			;  Knockback * 2
 			;  Screen shaking * 4
 			;  Special sound
-			jsr hurt_player
+			TRAMPOLINE(default_hurt_player, default_behavior_bank, #CURRENT_BANK_NUMBER)
 			ldx stroke_player
 			asl player_a_velocity_h_low, x
 			rol player_a_velocity_h, x

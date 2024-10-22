@@ -77,7 +77,14 @@ Registers
  * ``player_number``: output: to be checked if can be modified, input: to be checked if ensured to be good
  * ``tmpfield10``: output: cannot be modified, input: Player number of the striker
  * ``tmpfield11``: output: cannot be modified, input: Player number of the stroke (equal to register X)
+ * ``tmpfield12``: output: can be modified, input: default hurt routine lsb
+ * ``tmpfield13``: output: can be modified, input: default hurt routine msb
+ * ``tmpfield14``: output: can be modified, input: default hurt routine bank
  * ``other tmpfields``: output: can be modified, input garbage
+
+``default_hurt_player`` routine is a helper to call the default hurt routine from fixed bank.
+
+Dev note: The default routine is for handling custom hitboxes and projectiles calling the onhurt routine of the opponent without setting the striker's hitbox value. Maybe we can simplify things by passing a pointer to hitbox data, allowing constant hitboxes in ROM or dynamic ones in RAM without messing with engine-controlled ``player_*_hitbox_*`` variables.
 
 Constraints on onground routines
 ================================

@@ -383,6 +383,9 @@ check_players_hit:
 	; Parameters of onhurt callbacks
 	current_player = tmpfield10
 	opponent_player = tmpfield11
+	default_onhurt_lsb = tmpfield12
+	default_onhurt_msb = tmpfield13
+	default_onhurt_bank = tmpfield14
 
 	; Parameters of projectile hit callback
 	projectile_index = tmpfield12
@@ -554,8 +557,6 @@ check_players_hit:
 				jsr interleaved_boxes_overlap
 				bne ok
 
-					lda #0
-					sta projectile_index
 					ldx #0
 					jsr impact_hitbox_hurtbox
 					jmp ok
@@ -615,8 +616,17 @@ check_players_hit:
 				stx current_player
 				SWITCH_SELECTED_PLAYER
 				stx opponent_player
+
 				ldy config_player_a_character, x
 				SWITCH_BANK(characters_bank_number COMMA y)
+
+				lda #<hurt_player
+				sta default_onhurt_lsb
+				lda #>hurt_player
+				sta default_onhurt_msb
+				lda characters_bank_number, y
+				sta default_onhurt_bank
+
 				lda characters_onhurt_routines_table_lsb, y
 				sta tmpfield1
 				lda characters_onhurt_routines_table_msb, y
@@ -661,10 +671,21 @@ check_players_hit:
 	.)
 .)
 
+; Call the default behavior from an onhurt routine
+;  tmpfield12, tmpfield13 - default behavior routine address
+;
+;  Current bank must be the default behavior routine's bank
+default_hurt_player:
+.(
+	jmp (tmpfield12)
+.)
+
 ; Throw the hurted player depending on the hitbox hurting him
 ;  tmpfield10 - Player number of the striker
 ;  tmpfield11 - Player number of the stroke
 ;  register X - Player number of the stroke (equals to tmpfield11)
+;
+;  Notably ignores tmpfield12-tmpfield14, making it a suitable default onhurt behavior.
 ;
 ;  Can overwrite any register and any tmpfield except tmpfield10 and tmpfield11.
 ;  The currently selected bank must be the stroke character's bank

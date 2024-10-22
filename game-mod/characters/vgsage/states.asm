@@ -1163,6 +1163,12 @@ vgsage_global_onground:
 						sta tmpfield1
 						lda characters_onhurt_routines_table_msb, y
 						sta tmpfield2
+						lda #<hurt_player
+						sta tmpfield12
+						lda #>hurt_player
+						sta tmpfield13
+						lda characters_bank_number, y
+						sta tmpfield14
 						TRAMPOLINE(player_state_action, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
 				hurt_ok:
 

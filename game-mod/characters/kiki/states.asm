@@ -1393,6 +1393,7 @@ kiki_start_respawn_extra:
 	.(
 		striker_player = tmpfield10
 		stroke_player = tmpfield11
+		default_behavior_bank = tmpfield14
 
 		lda stroke_player
 		pha
@@ -1414,7 +1415,7 @@ kiki_start_respawn_extra:
 			jsr kiki_start_counter_strike
 			jmp end
 		hurt:
-			jsr hurt_player
+			TRAMPOLINE(default_hurt_player, default_behavior_bank, #CURRENT_BANK_NUMBER)
 
 		end:
 		pla

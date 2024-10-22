@@ -194,13 +194,16 @@ sunny_pearl_sprite_oam_per_player:
 
 	+sunny_pearl_shot_hit:
 	.(
-		stroke_player_onhurt_table_addr = tmpfield1
-		stroke_player_onhurt_table_addr_msb = tmpfield2
+		stroke_player_onhurt_table_addr = tmpfield1     ; Not movable, parameter of far_lda_tmpfield1_y
+		stroke_player_onhurt_table_addr_msb = tmpfield2 ; Not movable, parameter of far_lda_tmpfield1_y
 		stroke_player_onhurt_handler_addr = tmpfield3
 		stroke_player_onhurt_handler_addr_msb = tmpfield4
 		stroke_player_bank = tmpfield5
-		striker_player = tmpfield10 ; Not movable, parameter of onhurt handler
-		stroke_player = tmpfield11  ; Not movable, parameter of onhurt handler
+		striker_player = tmpfield10      ; Not movable, parameter of onhurt handler
+		stroke_player = tmpfield11       ; Not movable, parameter of onhurt handler
+		default_onhurt_lsb = tmpfield12  ; Not movable, parameter of onhurt handler
+		default_onhurt_msb = tmpfield13  ; Not movable, parameter of onhurt handler
+		default_onhurt_bank = tmpfield14 ; Not movable, parameter of onhurt handler
 
 		; Disable pearl
 		lda #PROJECTILE_FLAGS_DEACTIVATED
@@ -250,20 +253,29 @@ sunny_pearl_sprite_oam_per_player:
 				asl
 				tay
 
-				lda (stroke_player_onhurt_table_addr), y
+				lda stroke_player_bank : jsr far_lda_tmpfield1_y
 				sta stroke_player_onhurt_handler_addr
 				iny
-				lda (stroke_player_onhurt_table_addr), y
+				lda stroke_player_bank : jsr far_lda_tmpfield1_y
 				sta stroke_player_onhurt_handler_addr_msb
+				;NOTE - here register X is garbage
 
 				BEQ16(hurt, #<hurt_player, #>hurt_player, stroke_player_onhurt_handler_addr, stroke_player_onhurt_handler_addr_msb)
 				BEQ16(intangible, #<dummy_routine, #>dummy_routine, stroke_player_onhurt_handler_addr, stroke_player_onhurt_handler_addr_msb)
 
 					custom_onhurt_handler:
 						; Call the custom handler
+						ldx player_number
+						stx striker_player
+						SWITCH_SELECTED_PLAYER
 						stx stroke_player
-						lda player_number
-						sta striker_player
+
+						lda #<sunny_hurt_by_pearl_default
+						sta default_onhurt_lsb
+						lda #>sunny_hurt_by_pearl_default
+						sta default_onhurt_msb
+						lda #CURRENT_BANK_NUMBER
+						sta default_onhurt_bank
 						TRAMPOLINE_POINTED(stroke_player_onhurt_handler_addr, stroke_player_onhurt_handler_addr_msb, stroke_player_bank, #CURRENT_BANK_NUMBER)
 						lda striker_player
 						rts
@@ -275,6 +287,7 @@ sunny_pearl_sprite_oam_per_player:
 						sta player_a_projectile_1_flags, x
 						rts
 
+					&sunny_normal_pearl_on_normal_hurtbox:
 					hurt:
 						; Apply knockback
 						.(
@@ -337,6 +350,20 @@ sunny_pearl_sprite_oam_per_player:
 						rts
 
 		;rts ; useless, branches return directly
+	.)
+
+	; Called by opponent custom onhurt handler when it want's to fallback to default behavior of being thrown
+	+sunny_hurt_by_pearl_default:
+	.(
+		striker_player = tmpfield10
+		stroke_player = tmpfield11
+
+		lda striker_player
+		sta player_number
+		jsr sunny_normal_pearl_on_normal_hurtbox
+		ldx stroke_player
+		stx player_number
+		rts
 	.)
 
 	+sunny_global_tick:
