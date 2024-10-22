@@ -194,73 +194,24 @@ sunny_pearl_sprite_oam_per_player:
 
 	+sunny_pearl_shot_hit:
 	.(
+		stroke_player_onhurt_table_addr = tmpfield1
+		stroke_player_onhurt_table_addr_msb = tmpfield2
+		stroke_player_onhurt_handler_addr = tmpfield3
+		stroke_player_onhurt_handler_addr_msb = tmpfield4
+		stroke_player_bank = tmpfield5
+		striker_player = tmpfield10 ; Not movable, parameter of onhurt handler
+		stroke_player = tmpfield11  ; Not movable, parameter of onhurt handler
+
 		; Disable pearl
-		lda #0
+		lda #PROJECTILE_FLAGS_DEACTIVATED
 		sta player_a_projectile_1_flags, x
+
+		; Save player number
+		stx player_number
 
 		; Select action depending on hitbox type
 		cpy #HURTBOX
-		bne strike_hitbox
-
-			strike_hurtbox:
-				; Apply knockback
-				.(
-					KNOCKUP_BASE_HORIZONTAL = -200
-					KNOCKUP_BASE_VERTICAL = -500
-					KNOCKUP_SCALING_HORIZONTAL = -1
-					KNOCKUP_SCALING_VERTICAL = -2
-					base_h_lsb = tmpfield6
-					base_h_msb = tmpfield7
-					force_h_lsb = tmpfield14
-					force_h_msb = tmpfield12
-					base_v_lsb = tmpfield8
-					base_v_msb = tmpfield9
-					force_v_lsb = tmpfield15
-					force_v_msb = tmpfield13
-
-					lda pearl_direction_h, x
-					bne right
-						left:
-							lda #<KNOCKUP_BASE_HORIZONTAL : sta base_h_lsb
-							lda #>KNOCKUP_BASE_HORIZONTAL : sta base_h_msb
-							lda #<KNOCKUP_SCALING_HORIZONTAL : sta force_h_lsb
-							lda #>KNOCKUP_SCALING_HORIZONTAL : sta force_h_msb
-							jmp ok
-						right:
-							lda #<-KNOCKUP_BASE_HORIZONTAL : sta base_h_lsb
-							lda #>-KNOCKUP_BASE_HORIZONTAL : sta base_h_msb
-							lda #<-KNOCKUP_SCALING_HORIZONTAL : sta force_h_lsb
-							lda #>-KNOCKUP_SCALING_HORIZONTAL : sta force_h_msb
-					ok:
-					lda #<KNOCKUP_BASE_VERTICAL : sta base_v_lsb
-					lda #>KNOCKUP_BASE_VERTICAL : sta base_v_msb
-					lda #<KNOCKUP_SCALING_VERTICAL : sta force_v_lsb
-					lda #>KNOCKUP_SCALING_VERTICAL : sta force_v_msb
-
-					stx player_number
-					SWITCH_SELECTED_PLAYER
-					jsr apply_force_vector_direct
-				.)
-
-				; Apply dammage
-				.(
-					ldy player_a_damages, x
-					cpy #199
-					bcs ok
-						iny
-						sty player_a_damages, x
-					ok:
-				.)
-
-				; Throw opponent
-				.(
-					ldy config_player_a_character, x
-					TRAMPOLINE(hurt_player_direct, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
-				.)
-
-				; Return
-				ldx player_number
-				rts
+		beq strike_hurtbox
 
 			strike_hitbox:
 				; Screen freeze
@@ -282,6 +233,108 @@ sunny_pearl_sprite_oam_per_player:
 
 				ldx player_number
 				rts
+
+			strike_hurtbox:
+				; Select action depending on opponent's hurt handler
+				SWITCH_SELECTED_PLAYER
+
+				ldy config_player_a_character, x
+				lda characters_onhurt_routines_table_lsb, y
+				sta stroke_player_onhurt_table_addr
+				lda characters_onhurt_routines_table_msb, y
+				sta stroke_player_onhurt_table_addr_msb
+				lda characters_bank_number, y
+				sta stroke_player_bank
+
+				lda player_a_state, x
+				asl
+				tay
+
+				lda (stroke_player_onhurt_table_addr), y
+				sta stroke_player_onhurt_handler_addr
+				iny
+				lda (stroke_player_onhurt_table_addr), y
+				sta stroke_player_onhurt_handler_addr_msb
+
+				BEQ16(hurt, #<hurt_player, #>hurt_player, stroke_player_onhurt_handler_addr, stroke_player_onhurt_handler_addr_msb)
+				BEQ16(intangible, #<dummy_routine, #>dummy_routine, stroke_player_onhurt_handler_addr, stroke_player_onhurt_handler_addr_msb)
+
+					custom_onhurt_handler:
+						; Call the custom handler
+						stx stroke_player
+						lda player_number
+						sta striker_player
+						TRAMPOLINE_POINTED(stroke_player_onhurt_handler_addr, stroke_player_onhurt_handler_addr_msb, stroke_player_bank, #CURRENT_BANK_NUMBER)
+						lda striker_player
+						rts
+
+					intangible:
+						; Changed mind, do not disable pearl
+						ldx player_number
+						lda #PROJECTILE_FLAGS_ACTIVE
+						sta player_a_projectile_1_flags, x
+						rts
+
+					hurt:
+						; Apply knockback
+						.(
+							KNOCKUP_BASE_HORIZONTAL = -200
+							KNOCKUP_BASE_VERTICAL = -500
+							KNOCKUP_SCALING_HORIZONTAL = -1
+							KNOCKUP_SCALING_VERTICAL = -2
+							base_h_lsb = tmpfield6
+							base_h_msb = tmpfield7
+							force_h_lsb = tmpfield14
+							force_h_msb = tmpfield12
+							base_v_lsb = tmpfield8
+							base_v_msb = tmpfield9
+							force_v_lsb = tmpfield15
+							force_v_msb = tmpfield13
+
+							ldx player_number
+
+							lda pearl_direction_h, x
+							bne right
+								left:
+									lda #<KNOCKUP_BASE_HORIZONTAL : sta base_h_lsb
+									lda #>KNOCKUP_BASE_HORIZONTAL : sta base_h_msb
+									lda #<KNOCKUP_SCALING_HORIZONTAL : sta force_h_lsb
+									lda #>KNOCKUP_SCALING_HORIZONTAL : sta force_h_msb
+									jmp ok
+								right:
+									lda #<-KNOCKUP_BASE_HORIZONTAL : sta base_h_lsb
+									lda #>-KNOCKUP_BASE_HORIZONTAL : sta base_h_msb
+									lda #<-KNOCKUP_SCALING_HORIZONTAL : sta force_h_lsb
+									lda #>-KNOCKUP_SCALING_HORIZONTAL : sta force_h_msb
+							ok:
+							lda #<KNOCKUP_BASE_VERTICAL : sta base_v_lsb
+							lda #>KNOCKUP_BASE_VERTICAL : sta base_v_msb
+							lda #<KNOCKUP_SCALING_VERTICAL : sta force_v_lsb
+							lda #>KNOCKUP_SCALING_VERTICAL : sta force_v_msb
+
+							SWITCH_SELECTED_PLAYER
+							jsr apply_force_vector_direct
+						.)
+
+						; Apply dammage
+						.(
+							ldy player_a_damages, x
+							cpy #199
+							bcs ok
+								iny
+								sty player_a_damages, x
+							ok:
+						.)
+
+						; Throw opponent
+						.(
+							ldy config_player_a_character, x
+							TRAMPOLINE(hurt_player_direct, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
+						.)
+
+						; Return
+						ldx player_number
+						rts
 
 		;rts ; useless, branches return directly
 	.)

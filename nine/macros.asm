@@ -494,6 +494,19 @@ duration
     end_signed_cmp:\
 .)
 
+; Jump to a label if two 16-bit numbers are equal
+;
+; Overwrites register A
+#define BEQ16(lbl, a_low, a_high, b_low, b_high) .(:\
+	lda a_low:\
+	cmp b_low:\
+	bne end_beq16:\
+	lda a_high:\
+	cmp b_high:\
+	beq lbl:\
+	end_beq16:\
+.)
+
 ; Switch current player
 ;  register X - Current player number
 ;  Result is stored in register X
