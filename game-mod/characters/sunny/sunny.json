@@ -4553,7 +4553,7 @@
           "duration": 3,
           "hitbox": {
             "type": "animation_direct_hitbox",
-            "left": -3,
+            "left": -4,
             "top": -1,
             "right": 4,
             "bottom": 9,
@@ -4617,7 +4617,7 @@
               "tile": "SUNNY_TILE_32",
               "attr": 0,
               "foreground": true,
-              "x": -3,
+              "x": -5,
               "y": -2
             }
           ],
