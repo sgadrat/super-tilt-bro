@@ -7440,6 +7440,72 @@
             }
           ],
           "type": "animation_frame"
+        },
+        {
+          "duration": 1,
+          "hitbox": {
+            "type": "animation_direct_hitbox",
+            "left": -2,
+            "top": 3,
+            "right": 5,
+            "bottom": 11,
+            "base_h": -200,
+            "base_v": -1500,
+            "force_h": 0,
+            "force_v": 0,
+            "damages": 1,
+            "enabled": true
+          },
+          "hurtbox": {
+            "bottom": 16,
+            "left": 0,
+            "right": 12,
+            "top": 2,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_0",
+              "type": "animation_sprite",
+              "x": -3,
+              "y": 1
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_1",
+              "type": "animation_sprite",
+              "x": 5,
+              "y": 1
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_20",
+              "type": "animation_sprite",
+              "x": -3,
+              "y": 9
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_99",
+              "type": "animation_sprite",
+              "x": 5,
+              "y": 9
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_32",
+              "attr": 0,
+              "foreground": true,
+              "x": -3,
+              "y": 3
+            }
+          ],
+          "type": "animation_frame"
         }
       ],
       "name": "sunny_anim_spe_up_prepare",
@@ -7451,7 +7517,7 @@
           "duration": 3,
           "hitbox": {
             "base_h": -200,
-            "base_v": -1000,
+            "base_v": -1500,
             "bottom": 4,
             "damages": 1,
             "enabled": true,
@@ -7459,7 +7525,7 @@
             "force_v": 0,
             "left": -3,
             "right": 4,
-            "top": -4,
+            "top": -2,
             "type": "animation_direct_hitbox"
           },
           "hurtbox": {
@@ -7508,7 +7574,7 @@
               "attr": 0,
               "foreground": false,
               "x": -4,
-              "y": -5
+              "y": -3
             }
           ],
           "type": "animation_frame"
@@ -7517,15 +7583,15 @@
           "duration": 3,
           "hitbox": {
             "base_h": -200,
-            "base_v": -1000,
+            "base_v": -1500,
             "bottom": 6,
-            "damages": 1,
+            "damages": 0,
             "enabled": false,
             "force_h": 0,
             "force_v": 0,
             "left": -3,
             "right": 4,
-            "top": -3,
+            "top": -2,
             "type": "animation_direct_hitbox"
           },
           "hurtbox": {
@@ -7574,7 +7640,7 @@
               "attr": 0,
               "foreground": false,
               "x": -4,
-              "y": -4
+              "y": -3
             }
           ],
           "type": "animation_frame"
@@ -7583,7 +7649,7 @@
           "duration": 3,
           "hitbox": {
             "base_h": -200,
-            "base_v": -1000,
+            "base_v": -1500,
             "bottom": 3,
             "damages": 1,
             "enabled": false,
@@ -7651,7 +7717,7 @@
             "base_h": -200,
             "base_v": -1500,
             "bottom": 4,
-            "damages": 3,
+            "damages": 1,
             "enabled": true,
             "force_h": -2,
             "force_v": -25,
@@ -7707,6 +7773,14 @@
               "foreground": false,
               "x": -4,
               "y": -5
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_36",
+              "attr": 0,
+              "foreground": false,
+              "x": -4,
+              "y": -11
             }
           ],
           "type": "animation_frame"
