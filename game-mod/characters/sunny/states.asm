@@ -1369,7 +1369,6 @@ sunny_global_onground:
 !define "anim" {sunny_anim_spe_down_hit}
 !define "state" {SUNNY_STATE_SPE_DOWN_HIT}
 !define "routine" {spe_down_hit}
-!define "followup" {sunny_start_helpless}
 !include "characters/tpl_aerial_attack_uncancellable.asm"
 
 ;
