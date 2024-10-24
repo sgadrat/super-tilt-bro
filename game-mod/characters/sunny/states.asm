@@ -215,6 +215,8 @@ sunny_pearl_sprite_oam_per_player:
 		; Select action depending on hitbox type
 		cpy #HURTBOX
 		beq strike_hurtbox
+		cpy #HITBOX
+		bne strike_otherbox
 
 			strike_hitbox:
 				; Screen freeze
@@ -235,6 +237,10 @@ sunny_pearl_sprite_oam_per_player:
 				jsr audio_play_sfx_from_list
 
 				ldx player_number
+				rts
+
+			strike_otherbox:
+				; Do not do anything aside disabling pearl
 				rts
 
 			strike_hurtbox:

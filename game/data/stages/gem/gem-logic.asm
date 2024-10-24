@@ -555,22 +555,40 @@ stage_thehunt_tick:
 	; Check if the gem got hit by a player
 	check_gem_hit:
 	.(
+		box_1_addr = stage_data + stage_thehunt_data_size
+		box_1_left = box_1_addr + 0
+		box_1_right = box_1_addr + 2
+		box_1_top = box_1_addr + 4
+		box_1_bottom = box_1_addr + 6
+		box_1_left_msb = box_1_addr + 8
+		box_1_right_msb = box_1_addr + 10
+		box_1_top_msb = box_1_addr + 12
+		box_1_bottom_msb = box_1_addr + 14
+#if box_1_bottom_msb >= $0480
+#error the hunt requires more memory than available
+#endif
+
 		; box_1 = gem's bounding box
 		lda stage_thehunt_gem_position_x_high
-		sta tmpfield1
+		sta box_1_left
 		clc
 		adc #STAGE_THEHUNT_GEM_HURTBOX_WIDTH
-		sta tmpfield2
+		sta box_1_right
 		lda stage_thehunt_gem_position_y_high
-		sta tmpfield3
+		sta box_1_top
 		clc
 		adc #STAGE_THEHUNT_GEM_HURTBOX_HEIGHT
-		sta tmpfield4
+		sta box_1_bottom
 		lda #0
-		sta tmpfield9
-		sta tmpfield10
-		sta tmpfield11
-		sta tmpfield12
+		sta box_1_left_msb
+		sta box_1_right_msb
+		sta box_1_top_msb
+		sta box_1_bottom_msb
+
+		lda #<box_1_addr
+		sta tmpfield1
+		lda #>box_1_addr
+		sta tmpfield2
 
 		; For each player, check if he hits the gem
 		ldx #0
@@ -578,38 +596,55 @@ stage_thehunt_tick:
 
 			; Skip check if hitbox is disabled
 			lda player_a_hitbox_enabled, x
+			beq check_projectiles
+
+				; box_2 = player's hitbox
+				lda player_hitbox_addr_lsb, x
+				sta tmpfield3
+				lda player_hitbox_addr_msb, x
+				sta tmpfield4
+
+				; Check collision
+				jsr interleaved_boxes_overlap
+				beq gem_hit
+
+			check_projectiles:
+#if NB_PROJECTILES_PER_PLAYER <> 1
+#error unrolled loop expects NB_PROJECTILES_PER_PLAYER to be 1
+#endif
+			lda player_a_projectile_1_flags, x
 			beq next_player
 
-			; box_2 = player's hitbox
-			lda player_a_hitbox_left, x
-			sta tmpfield5
-			lda player_a_hitbox_left_msb, x
-			sta tmpfield13
+				; box_2 = projectile's hitbox
+				lda player_projectile_hitbox_addr_lsb, x
+				sta tmpfield3
+				lda player_projectile_hitbox_addr_msb, x
+				sta tmpfield4
 
-			lda player_a_hitbox_right, x
-			sta tmpfield6
-			lda player_a_hitbox_right_msb, x
-			sta tmpfield14
-
-			lda player_a_hitbox_top, x
-			sta tmpfield7
-			lda player_a_hitbox_top_msb, x
-			sta tmpfield15
-
-			lda player_a_hitbox_bottom, x
-			sta tmpfield8
-			lda player_a_hitbox_bottom_msb, x
-			sta tmpfield16
-
-			; Check collision
-			jsr boxes_overlap
-			beq gem_hit
+				; Check collision
+				jsr interleaved_boxes_overlap
+				beq gem_hit_by_projectile
 
 			next_player:
 			inx
 			cpx #2
 			bne check_one_player
 			jmp end
+
+		; The gem got hit by a projectile, call projectile's logic
+		gem_hit_by_projectile:
+			ldy config_player_a_character, x
+			lda characters_projectile_hit_routine_lsb, y
+			sta tmpfield1
+			lda characters_projectile_hit_routine_msb, y
+			sta tmpfield2
+			lda characters_bank_number, y
+			sta tmpfield3
+
+			ldy #OTHERBOX
+			TRAMPOLINE(call_pointed_subroutine, tmpfield3, #CURRENT_BANK_NUMBER)
+
+			;Fallthrough to gem_hit
 
 		; The gem got hit, emphasis the breaking animation
 		gem_hit:
@@ -621,6 +656,16 @@ stage_thehunt_tick:
 
 		end:
 			rts
+
+		player_hitbox_addr_lsb:
+			.byt <player_a_hitbox_left, <player_b_hitbox_left
+		player_hitbox_addr_msb:
+			.byt >player_a_hitbox_left, >player_b_hitbox_left
+
+		player_projectile_hitbox_addr_lsb:
+			.byt <player_a_projectile_1_hitbox_left, <player_b_projectile_1_hitbox_left
+		player_projectile_hitbox_addr_msb:
+			.byt >player_a_projectile_1_hitbox_left, >player_b_projectile_1_hitbox_left
 	.)
 
 	; Play sound effet when the gem is exploded

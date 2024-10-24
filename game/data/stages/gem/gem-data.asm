@@ -9,6 +9,7 @@ stage_thehunt_elements:
 	SMOOTH_PLATFORM($20, $50, $82) ; left, right, top
 	SMOOTH_PLATFORM($b0, $e0, $72) ; left, right, top
 END_OF_STAGE
+stage_thehunt_data_size = * - stage_thehunt_data
 
 ;
 ; Gem explosion animation
