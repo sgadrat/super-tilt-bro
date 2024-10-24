@@ -8122,6 +8122,52 @@
             }
           ],
           "type": "animation_frame"
+        },
+        {
+          "duration": 4,
+          "hitbox": null,
+          "hurtbox": {
+            "bottom": 12,
+            "left": -1,
+            "right": 12,
+            "top": 1,
+            "type": "animation_hurtbox"
+          },
+          "sprites": [
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_4",
+              "type": "animation_sprite",
+              "x": -3,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_17",
+              "type": "animation_sprite",
+              "x": 5,
+              "y": 0
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_20",
+              "type": "animation_sprite",
+              "x": -3,
+              "y": 8
+            },
+            {
+              "attr": 0,
+              "foreground": false,
+              "tile": "SUNNY_TILE_99",
+              "type": "animation_sprite",
+              "x": 5,
+              "y": 8
+            }
+          ],
+          "type": "animation_frame"
         }
       ],
       "name": "sunny_anim_side_special_end",
