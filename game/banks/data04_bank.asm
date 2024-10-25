@@ -32,6 +32,16 @@ bank_data_config_screen_extra_begin:
 #echo Configuration screen extras:
 #print *-bank_data_config_screen_extra_begin
 
+.(
+bank_data_char_select_screen_extra_data:
+#include "game/data/menu_char_select/screen.asm"
+#include "game/data/menu_char_select/tilesets.asm"
+#include "game/data/menu_char_select/anims.asm"
+#echo
+#echo Character selection screen extra data:
+#print *-bank_data_char_select_screen_extra_data
+.)
+
 bank_data04_end:
 
 #echo

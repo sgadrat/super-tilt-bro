@@ -181,6 +181,27 @@ static void place_sprite(uint8_t sprite_idx, uint8_t y, uint8_t tile, uint8_t at
 	oam_mirror[offset+3] = x;
 }
 
+/** Read a byte in another bank */
+static uint8_t long_read_byte(uint8_t bank, uint8_t const* address) {
+	uint8_t result;
+	uint8_t address_lsb = ptr_lsb(address);
+	uint8_t address_msb = ptr_msb(address);
+	asm (
+		"lda %2\r\n"
+		"sta tmpfield1\r\n"
+		"lda %3\r\n"
+		"sta tmpfield2\r\n"
+		"lda %1\r\n"
+		"ldy #0\r\n"
+		"jsr far_lda_tmpfield1_y\r\n"
+		"sta %0"
+		: "=rm"(result)
+		: "rm"(bank), "rm"(address_lsb), "rm"(address_msb)
+		: "a", "x", "y", "memory"
+	);
+	return result;
+}
+
 #define CONST_HUNDREDS(val) ((((val) % 1000) / 100))
 #define CONST_TENS(val) ((((val) % 100) / 10))
 #define CONST_UNITS(val) ((val) % 10)

@@ -44,6 +44,9 @@ extern uint8_t const tileset_menu_char_select_sprites;
 
 extern uint8_t const CHARACTERS_NUMBER; // This is actually a value label, use the address of this variable
 extern uint8_t const CHARSET_ALPHANUM_BANK_NUMBER; // Actually a label, use its address or "charset_bank()"
+extern uint8_t const MENU_CHAR_SELECT_ANIMS_BANK; // Actually a label, use its address of "anims_bank()"
+extern uint8_t const MENU_CHAR_SELECT_SCREEN_BANK; // Actually a label, use its address or "screen_bank()"
+extern uint8_t const MENU_CHAR_SELECT_TILESETS_BANK; // Actually a lavel, use its address or "tilesets_bank()"
 extern uint8_t const SFX_COUNTDOWN_REACH_IDX; // Actually a label, use its address or "player_entering_sfx_id()"
 
 ///////////////////////////////////////
@@ -75,25 +78,14 @@ static void wrap_character_selection_construct_char_nt_buffer(uint8_t character,
 	character_selection_construct_char_nt_buffer();
 }
 
-//TODO Check if reasonable to remove this implementation, and call "get_unzipped_bytes" instead
-//     (should be slightly slower)
-static void wrap_character_selection_get_unzipped_bytes(uint8_t const* zipped, uint16_t offset, uint8_t count) {
-	*tmpfield1 = ptr_lsb(zipped);
-	*tmpfield2 = ptr_msb(zipped);
-	*tmpfield3 = u16_lsb(offset);
-	*tmpfield4 = u16_msb(offset);
-	*tmpfield5 = count;
-	character_selection_get_unzipped_bytes();
-}
-
 ///////////////////////////////////////
 // Constants specific to this file
 ///////////////////////////////////////
 
-static uint8_t const TILE_DICE_NW = 0x3b;
-static uint8_t const TILE_DICE_NE = 0x3c;
-static uint8_t const TILE_DICE_SW = 0x3d;
-static uint8_t const TILE_DICE_SE = 0x3e;
+static uint8_t const TILE_DICE_NW = 0x3c;
+static uint8_t const TILE_DICE_NE = 0x3d;
+static uint8_t const TILE_DICE_SW = 0x3e;
+static uint8_t const TILE_DICE_SE = 0x3f;
 
 static uint8_t const BG_FIRST_STEP = 0;
 static uint8_t const BG_STEP_CHAR_NAME = 0;
@@ -115,15 +107,26 @@ static uint8_t const CONTROL_ONE_PLAYER = 0;
 static uint8_t const CONTROL_TWO_PLAYERS = 1;
 static uint8_t const CONTROL_ONE_CHARACTER = 2;
 
-static uint16_t const portrait_screen_pos[] = {0x224e, 0x2290, 0x22ce, 0x2310, 0x234e};
+static uint8_t const CHARACTERS_PER_ROW = 3;
+
+static uint16_t const portrait_screen_pos[] = {
+	0x224a, 0x224e, 0x2252,
+	0x228c, 0x2290, 0x2294,
+};
 
 struct Position16 {
 	uint16_t x;
 	uint16_t y;
 };
 
-static struct Position16 const player_a_token_positions[] = {{124,143}, {112,159}, {124,175}, {112,191}, {124,207}};
-static struct Position16 const player_b_token_positions[] = {{126,151}, {114,167}, {126,183}, {114,199}, {126,215}};
+static struct Position16 const player_a_token_positions[] = {
+	{ 79,138}, {111,138}, {143,138},
+	{ 95,155}, {127,155}, {161,155}
+};
+static struct Position16 const player_b_token_positions[] = {
+	{ 80,156}, {112,156}, {143,156},
+	{ 96,174}, {128,174}, {160,174}
+};
 
 static struct Position16 const builder_anims_start_pos[] = {{32,79}, {176,79}};
 
@@ -131,8 +134,24 @@ static struct Position16 const builder_anims_start_pos[] = {{32,79}, {176,79}};
 // Utility functions
 ///////////////////////////////////////
 
+static uint8_t anims_bank() {
+	return ptr_lsb(&MENU_CHAR_SELECT_SCREEN_BANK);
+}
+
 static uint8_t charset_bank() {
 	return ptr_lsb(&CHARSET_ALPHANUM_BANK_NUMBER);
+}
+
+static uint8_t screen_bank() {
+	return ptr_lsb(&MENU_CHAR_SELECT_SCREEN_BANK);
+}
+
+static uint8_t tilesets_bank() {
+	return ptr_lsb(&MENU_CHAR_SELECT_TILESETS_BANK);
+}
+
+static uint8_t bg_tileset_size() {
+	return long_read_byte(tilesets_bank(), &tileset_menu_char_select);
 }
 
 static uint8_t player_entering_sfx_id() {
@@ -316,6 +335,10 @@ static void previous_screen() {
 	wrap_change_global_game_state(*config_game_mode == GAME_MODE_ONLINE ? GAME_STATE_ONLINE_MODE_SELECTION : GAME_STATE_CONFIG);
 }
 
+static bool is_left_facing(uint8_t character_idx) {
+	return character_idx > 2;
+}
+
 static void tick_fix_screen() {
 	struct FixScreenTaskState* task = FixScreen();
 
@@ -332,9 +355,9 @@ static void tick_fix_screen() {
 		case FIX_SCREEN_STEP_BG: {
 			// Update palette of reconstructed rows
 			static uint8_t const attribute_buffers[][7] = {
-				{0x23, 0xe2, 4, 0x00, 0x40, 0x00, 0x00},
-				{0x23, 0xea, 4, 0xaa, 0x40, 0x01, 0xaa},
-				{0x23, 0xf2, 4, 0xaa, 0x40, 0x01, 0xaa},
+				{0x23, 0xe2, 4, 0x40, 0x40, 0x40, 0x00},
+				{0x23, 0xea, 4, 0x00, 0x01, 0x01, 0x01},
+				{0x23, 0xf2, 4, 0x00, 0x00, 0x00, 0x00},
 			};
 
 			if (task->count == 12 || task->count == 8 || task->count == 4) {
@@ -347,7 +370,7 @@ static void tick_fix_screen() {
 			uint16_t const nametable_offset = 0x1c8 + 32 * task->count;
 			character_selection_mem_buffer[16] = u16_msb(0x2000 + nametable_offset);
 			character_selection_mem_buffer[17] = u16_lsb(nametable_offset);
-			wrap_character_selection_get_unzipped_bytes(&char_selection_nametable, nametable_offset, 16);
+			long_get_unzipped_bytes(screen_bank(), character_selection_mem_buffer, &char_selection_nametable, nametable_offset, 16);
 			wrap_construct_nt_buffer(character_selection_mem_buffer + 16, character_selection_mem_buffer);
 
 			if (task->count == 0) {
@@ -362,13 +385,13 @@ static void tick_fix_screen() {
 			uint8_t character_idx;
 			for (character_idx = 0; character_idx < (uint16_t)(&CHARACTERS_NUMBER); ++character_idx) {
 				// Place portrait on screen
-				uint8_t const first_tile = tileset_menu_char_select + (4 * character_idx);
+				uint8_t const first_tile = bg_tileset_size() + (4 * character_idx);
 				uint16_t const screen_pos = portrait_screen_pos[character_idx];
 				uint16_t const screen_pos_line2 = screen_pos + 32;
 				mem_buffer[0] = u16_msb(screen_pos);
 				mem_buffer[1] = u16_lsb(screen_pos);
 				mem_buffer[2] = 2;
-				if (character_idx & 1) {
+				if (is_left_facing(character_idx)) {
 					mem_buffer[3] = first_tile + 1;
 					mem_buffer[4] = first_tile;
 				}else {
@@ -380,7 +403,7 @@ static void tick_fix_screen() {
 				mem_buffer[0] = u16_msb(screen_pos_line2);
 				mem_buffer[1] = u16_lsb(screen_pos_line2);
 				mem_buffer[2] = 2;
-				if (character_idx & 1) {
+				if (is_left_facing(character_idx)) {
 					mem_buffer[3] = first_tile + 3;
 					mem_buffer[4] = first_tile + 2;
 				}else {
@@ -476,7 +499,7 @@ static void tick_bg_task(struct BgTaskState* task) {
 			builders_anim->y = builder_anims_start_pos[task->player].y;
 
 			// Compute ppu_addr/prg_addr at the begining of the tileset
-			task->ppu_addr = 0x1000 + 16 * (tileset_menu_char_select + (uint16_t)(&CHARACTERS_NUMBER) * 4 + task->player * 48);
+			task->ppu_addr = 0x1000 + 16 * (bg_tileset_size() + (uint16_t)(&CHARACTERS_NUMBER) * 4 + task->player * 48);
 			if (config_requested_player_a_character[task->player] < (uint16_t)&CHARACTERS_NUMBER) {
 				// Normal character, get its large illustration address
 				task->prg_addr = (uint8_t const*)wrap_character_selection_get_char_property(
@@ -498,7 +521,11 @@ static void tick_bg_task(struct BgTaskState* task) {
 			__attribute__((fallthrough));
 		}
 		case BG_STEP_STATUE_2:
-			copy_to_nt_buffer_from_char(config_requested_player_a_character[task->player], task->ppu_addr, STATUE_BYTES_PER_TICK, task->prg_addr);
+			if (config_requested_player_a_character[task->player] < (uint16_t)&CHARACTERS_NUMBER) {
+				copy_to_nt_buffer_from_char(config_requested_player_a_character[task->player], task->ppu_addr, STATUE_BYTES_PER_TICK, task->prg_addr);
+			}else {
+				copy_to_nt_buffer(task->ppu_addr, STATUE_BYTES_PER_TICK, tilesets_bank(), task->prg_addr);
+			}
 			++task->count;
 			if (task->count < STATUE_NB_TICKS) {
 				Anim(character_selection_player_a_builder_anim + (task->player * ANIMATION_STATE_LENGTH))->y -= 4;
@@ -639,8 +666,10 @@ static void refresh_player_palettes(uint8_t player) {
 
 static void take_input(uint8_t player_num, uint8_t controller_btns, uint8_t last_fame_btns) {
 	if (controller_btns != last_fame_btns) {
+		uint8_t const NB_ROWS = (((uint16_t)(&CHARACTERS_NUMBER) + 1) + CHARACTERS_PER_ROW - 1) / CHARACTERS_PER_ROW;
+
 		switch (controller_btns) {
-			case CONTROLLER_BTN_DOWN:
+			case CONTROLLER_BTN_RIGHT:
 				if (!character_selection_player_a_ready[player_num]) {
 					audio_play_interface_click();
 					++config_requested_player_a_character[player_num];
@@ -650,12 +679,41 @@ static void take_input(uint8_t player_num, uint8_t controller_btns, uint8_t last
 					refresh_player_character(player_num);
 				}
 				break;
-			case CONTROLLER_BTN_UP:
+			case CONTROLLER_BTN_LEFT:
 				if (!character_selection_player_a_ready[player_num]) {
 					audio_play_interface_click();
 					if (config_requested_player_a_character[player_num] > 0) {
 						--config_requested_player_a_character[player_num];
 					}else {
+						config_requested_player_a_character[player_num] = (uint16_t)(&CHARACTERS_NUMBER);
+					}
+					refresh_player_character(player_num);
+				}
+				break;
+			case CONTROLLER_BTN_DOWN:
+				if (!character_selection_player_a_ready[player_num]) {
+					audio_play_interface_click();
+					const bool is_on_last_row = config_requested_player_a_character[player_num] >= (NB_ROWS - 1) * CHARACTERS_PER_ROW;
+					if (is_on_last_row) {
+						config_requested_player_a_character[player_num] = config_requested_player_a_character[player_num] % CHARACTERS_PER_ROW;
+					}else {
+						config_requested_player_a_character[player_num] += CHARACTERS_PER_ROW;
+						if (config_requested_player_a_character[player_num] > (uint16_t)(&CHARACTERS_NUMBER)) {
+							config_requested_player_a_character[player_num] = (uint16_t)(&CHARACTERS_NUMBER);
+						}
+					}
+					refresh_player_character(player_num);
+				}
+				break;
+			case CONTROLLER_BTN_UP:
+				if (!character_selection_player_a_ready[player_num]) {
+					audio_play_interface_click();
+					if (config_requested_player_a_character[player_num] >= CHARACTERS_PER_ROW) {
+						config_requested_player_a_character[player_num] -= CHARACTERS_PER_ROW;
+					}else {
+						config_requested_player_a_character[player_num] = CHARACTERS_PER_ROW * (NB_ROWS - 1) + config_requested_player_a_character[player_num];
+					}
+					if (config_requested_player_a_character[player_num] > (uint16_t)(&CHARACTERS_NUMBER)) {
 						config_requested_player_a_character[player_num] = (uint16_t)(&CHARACTERS_NUMBER);
 					}
 					refresh_player_character(player_num);
@@ -711,7 +769,7 @@ static void take_input(uint8_t player_num, uint8_t controller_btns, uint8_t last
  */
 static void init_character_selection_screen_common() {
 	// Initial palette
-	wrap_construct_palettes_nt_buffer(&char_selection_palette);
+	long_construct_palettes_nt_buffer(screen_bank(), &char_selection_palette);
 
 	// Initialize players readiness
 	*character_selection_player_a_ready = 0;
@@ -777,8 +835,8 @@ static void init_character_selection_screen_common() {
 
 void init_character_selection_screen_extra() {
 	// Draw static part of the screen
-	wrap_draw_zipped_nametable(&char_selection_nametable);
-	wrap_cpu_to_ppu_copy_tiles((&tileset_menu_char_select)+1, 0x1000, tileset_menu_char_select);
+	long_draw_zipped_nametable(screen_bank(), &char_selection_nametable);
+	long_cpu_to_ppu_copy_tileset_background(tilesets_bank(), &tileset_menu_char_select);
 	long_cpu_to_ppu_copy_charset(charset_bank(), &charset_alphanum, 0x1dc0, 0, 1);
 
 	// Draw character portraits
@@ -788,7 +846,7 @@ void init_character_selection_screen_extra() {
 		copy_character_portrait(character_idx);
 
 		// Flip portrait if on the right column
-		if (character_idx & 1) {
+		if (is_left_facing(character_idx)) {
 			for (uint8_t tile_idx = 0; tile_idx < 5; ++tile_idx) {
 				uint8_t* byte = character_selection_mem_buffer + (16 * tile_idx);
 				for (uint8_t line_idx = 0; line_idx < 16; ++line_idx) {
@@ -799,17 +857,17 @@ void init_character_selection_screen_extra() {
 		}
 
 		// Copy portrait's tiles to the VRAM
-		uint16_t const ppu_addr = 0x1000 + 16 * (tileset_menu_char_select + 4 * character_idx);
+		uint16_t const ppu_addr = 0x1000 + 16 * (bg_tileset_size() + 4 * character_idx);
 		wrap_cpu_to_ppu_copy_tiles(character_selection_mem_buffer, ppu_addr, 4*16);
 
 		// Place portrait on screen
-		uint8_t const first_tile = tileset_menu_char_select + (4 * character_idx);
+		uint8_t const first_tile = bg_tileset_size() + (4 * character_idx);
 		uint16_t const screen_pos = portrait_screen_pos[character_idx];
 		uint16_t const screen_pos_line2 = screen_pos + 32;
 		*PPUSTATUS;
 		*PPUADDR = u16_msb(screen_pos);
 		*PPUADDR = u16_lsb(screen_pos);
-		if (character_idx & 1) {
+		if (is_left_facing(character_idx)) {
 			*PPUDATA = first_tile + 1;
 			*PPUDATA = first_tile;
 		}else {
@@ -818,7 +876,7 @@ void init_character_selection_screen_extra() {
 		}
 		*PPUADDR = u16_msb(screen_pos_line2);
 		*PPUADDR = u16_lsb(screen_pos_line2);
-		if (character_idx & 1) {
+		if (is_left_facing(character_idx)) {
 			*PPUDATA = first_tile + 3;
 			*PPUDATA = first_tile + 2;
 		}else {
@@ -841,7 +899,7 @@ void init_character_selection_screen_extra() {
 	*PPUDATA = TILE_DICE_SE;
 
 	// Init empty statues tiles
-	uint16_t const ppu_tiles_statues_addr = 0x1000 + 16 * (tileset_menu_char_select + 4*(uint16_t)(&CHARACTERS_NUMBER));
+	uint16_t const ppu_tiles_statues_addr = 0x1000 + 16 * (bg_tileset_size() + 4*(uint16_t)(&CHARACTERS_NUMBER));
 	*PPUSTATUS;
 	*PPUADDR = u16_msb(ppu_tiles_statues_addr);
 	*PPUADDR = u16_lsb(ppu_tiles_statues_addr);
@@ -855,7 +913,7 @@ void init_character_selection_screen_extra() {
 	}
 
 	// Place tiles for sprites from the menu in VRAM
-	wrap_cpu_to_ppu_copy_tiles((&tileset_menu_char_select_sprites)+1, CHARACTERS_END_TILES_OFFSET, tileset_menu_char_select_sprites);
+	long_cpu_to_ppu_copy_tileset(tilesets_bank(), &tileset_menu_char_select_sprites, CHARACTERS_END_TILES_OFFSET);
 
 	// Reset music if we come from a state with another music
 	if (*previous_global_game_state == GAME_STATE_GAMEOVER) {
@@ -892,25 +950,25 @@ void character_selection_screen_tick_extra() {
 
 	// Draw token animations
 	*player_number = 0;
-	wrap_animation_draw(character_selection_player_a_cursor_anim);
+	long_animation_draw(anims_bank(), character_selection_player_a_cursor_anim);
 	if (!*character_selection_player_a_ready) {
-		wrap_animation_tick(character_selection_player_a_cursor_anim);
+		long_animation_tick(anims_bank(), character_selection_player_a_cursor_anim);
 	}
 
 	*player_number = 1;
-	wrap_animation_draw(character_selection_player_b_cursor_anim);
+	long_animation_draw(anims_bank(), character_selection_player_b_cursor_anim);
 	if (!*character_selection_player_b_ready) {
-		wrap_animation_tick(character_selection_player_b_cursor_anim);
+		long_animation_tick(anims_bank(), character_selection_player_b_cursor_anim);
 	}
 
 	// Draw builders animations
 	*player_number = 0;
-	wrap_animation_draw(character_selection_player_a_builder_anim);
-	wrap_animation_tick(character_selection_player_a_builder_anim);
+	long_animation_draw(anims_bank(), character_selection_player_a_builder_anim);
+	long_animation_tick(anims_bank(), character_selection_player_a_builder_anim);
 
 	*player_number = 1;
-	wrap_animation_draw(character_selection_player_b_builder_anim);
-	wrap_animation_tick(character_selection_player_b_builder_anim);
+	long_animation_draw(anims_bank(), character_selection_player_b_builder_anim);
+	long_animation_tick(anims_bank(), character_selection_player_b_builder_anim);
 
 	// Move tokens
 	{

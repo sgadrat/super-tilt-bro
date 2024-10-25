@@ -1,4 +1,6 @@
-menu_character_selection_anim_p1_token:
++MENU_CHAR_SELECT_ANIMS_BANK = CURRENT_BANK_NUMBER
+
++menu_character_selection_anim_p1_token:
 ; Frame 1
 ANIM_FRAME_BEGIN(4)
 ANIM_DEFAULT_HEADER
@@ -37,7 +39,7 @@ ANIM_SPRITE($01, TILE_MENU_CHAR_SELECT_SPRITE_1, $00, $09)
 ; End of animation
 ANIM_ANIMATION_END
 
-menu_character_selection_anim_p2_token:
++menu_character_selection_anim_p2_token:
 ; Frame 1
 ANIM_FRAME_BEGIN(4)
 ANIM_DEFAULT_HEADER
@@ -76,7 +78,7 @@ ANIM_SPRITE($00, TILE_MENU_CHAR_SELECT_SPRITE_2, $00, $09)
 ; End of animation
 ANIM_ANIMATION_END
 
-menu_character_selection_anim_builders:
++menu_character_selection_anim_builders:
 ; Frame 1
 ANIM_FRAME_BEGIN(4)
 ANIM_DEFAULT_HEADER

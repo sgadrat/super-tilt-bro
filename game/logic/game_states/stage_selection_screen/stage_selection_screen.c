@@ -21,6 +21,7 @@ extern uint8_t const stages_illustration;
 
 // Labels containing values, preferably use their helper function
 extern uint8_t const stage_versus_end_index; // n_stages()
+extern uint8_t const TILE_MENU_CHAR_SELECT_STAGE_SELECTOR; // tsel()
 
 ///////////////////////////////////////
 // Stage selection's ASM functions
@@ -47,7 +48,6 @@ static uint8_t const BG_STEP_DRAW_GENERIC_BACKGROUND = 1;
 static uint8_t const BG_STEP_STAGE_PICTURE_INIT = 2;
 static uint8_t const BG_STEP_STAGE_PICTURE = 3;
 static uint8_t const BG_STEP_DEACTIVATED = 255;
-static uint8_t const TILE_MENU_CHAR_SELECT_STAGE_SELECTOR = 0x40;
 
 ///////////////////////////////////////
 // Utility functions
@@ -59,6 +59,10 @@ static struct BgTaskState* Task(uint8_t* raw) {
 
 static uint8_t n_stages() {
 	return ptr_lsb(&stage_versus_end_index);
+}
+
+static uint8_t tsel() {
+	return ptr_lsb(&TILE_MENU_CHAR_SELECT_STAGE_SELECTOR);
 }
 
 /** Set nt buffer writes in horizontal mode
@@ -131,11 +135,8 @@ static void fade_out() {
 }
 
 static void tick_bg_task() {
-	// Shorthand for tiles numbers
-	static uint8_t const tsel = TILE_MENU_CHAR_SELECT_STAGE_SELECTOR;
-
 	// Nametable buffers to construct the frame
-	static uint8_t const frame_border[] = {0x21, 0x22, 0x21, 0x21, 0x22, 0x22, 0x21, 0x22, 0x21, 0x22, 0x21, 0x22, 0x21, 0x22, 0x21, 0x22};
+	static uint8_t const frame_border[] = {0x22, 0x21, 0x22, 0x22, 0x21, 0x21, 0x22, 0x21, 0x22, 0x21, 0x22, 0x21, 0x22, 0x21, 0x22, 0x21};
 	static uint8_t const upper_frame_border_header[] = {0x21, 0xe8, 16};
 	static uint8_t const lower_frame_border_header[] = {0x23, 0x88, 16};
 	static uint8_t const frame_clear_bot[] = {0x23, 0xa8, 16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -182,7 +183,7 @@ static void tick_bg_task() {
 				if (i < first_slot || i >= last_slot) {
 					stage_selection_mem_buffer[i] = 0x00;
 				}else {
-					stage_selection_mem_buffer[i] = tsel;
+					stage_selection_mem_buffer[i] = tsel();
 				}
 			}
 			wrap_construct_nt_buffer(frame_selector_header, stage_selection_mem_buffer);

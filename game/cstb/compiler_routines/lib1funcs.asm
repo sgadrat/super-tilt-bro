@@ -842,6 +842,16 @@ no_add:
 .)
 #endif
 
+#iflused __umodqi3
+__umodqi3:
+.(
+	jsr __udivqi3
+	lda _r1
+	sta _r0
+	rts
+.)
+#endif
+
 #iflused __udivqi3
 __udivqi3:
 .(
@@ -873,16 +883,6 @@ done:
 	sta _r1
 	rts
 .)
-.)
-#endif
-
-#iflused __umodqi3
-__umodqi3:
-.(
-	jsr __udivqi3
-	lda _r1
-	sta _r0
-	rts
 .)
 #endif
 
