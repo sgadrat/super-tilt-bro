@@ -103,7 +103,6 @@ text_characters1:
 text_characters2:
 	.byt "  <CHARACTERS>  "
 	.byt "                "
-	.byt "                "
 	.byt "     SINBAD     "
 	.byt "   from Ogre3D  "
 	.byt "    By Zi Ye    "
@@ -112,8 +111,9 @@ text_characters2:
 	.byt "f. VideoGameSage"
 	.byt "  By VGS Staff  "
 	.byt "                "
-	.byt "                "
-	.byt "                "
+	.byt "     SUNNY      "
+	.byt "SuperSunnyWorld "
+	.byt "By Matt Hughson "
 
 text_special_thanks1:
 	.byt "<SPECIAL THANKS>"
