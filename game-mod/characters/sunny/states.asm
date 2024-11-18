@@ -1082,7 +1082,12 @@ sunny_global_onground:
 	!define "state" {SUNNY_STATE_SPECIAL_ENDLAG}
 	!define "routine" {special_endlag}
 	!define "init" {
-		jmp sunny_pearl_shot_spawn
+		lda player_a_projectile_1_flags, x
+		bne end
+			jmp sunny_pearl_shot_spawn
+			; No return, jump to subroutine
+		end:
+		rts
 	}
 	!include "characters/tpl_aerial_attack_uncancellable.asm"
 .)
