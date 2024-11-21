@@ -12,13 +12,284 @@
         "name": "special_side",
         "steps": [
           {
-            "duration": 60,
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
             "input": "CONTROLLER_INPUT_SPECIAL",
             "type": "character_ai_action_step"
           },
           {
-            "duration": 9,
-            "input": 0,
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "special_left",
+        "steps": [
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_SPECIAL_LEFT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "special_right",
+        "steps": [
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_SPECIAL_RIGHT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "aerial_left",
+        "steps": [
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_LEFT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_ATTACK_LEFT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 10,
+            "input": "CONTROLLER_INPUT_LEFT",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "aerial_right",
+        "steps": [
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_RIGHT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_ATTACK_RIGHT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 10,
+            "input": "CONTROLLER_INPUT_RIGHT",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "pearl_shot",
+        "steps": [
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_SPECIAL",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "pearl_approach_left",
+        "steps": [
+          {
+            "duration": 5,
+            "input": "CONTROLLER_INPUT_LEFT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_JUMP_LEFT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 5,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_SPECIAL",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 10,
+            "input": "CONTROLLER_INPUT_LEFT",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "pearl_approach_right",
+        "steps": [
+          {
+            "duration": 5,
+            "input": "CONTROLLER_INPUT_RIGHT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_JUMP_RIGHT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 5,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_SPECIAL",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 10,
+            "input": "CONTROLLER_INPUT_LEFT",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "air_spin",
+        "steps": [
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 2,
+            "input": "CONTROLLER_INPUT_DOWN_TILT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 2,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 2,
+            "input": "CONTROLLER_INPUT_DOWN_TILT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 2,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 2,
+            "input": "CONTROLLER_INPUT_DOWN_TILT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 2,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 2,
+            "input": "CONTROLLER_INPUT_DOWN_TILT",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "up_tilt",
+        "steps": [
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_ATTACK_UP",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 31,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "jump_upair_left",
+        "steps": [
+          {
+            "duration": 10,
+            "input": "CONTROLLER_INPUT_JUMP_LEFT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 28,
+            "input": "CONTROLLER_INPUT_ATTACK_UP_LEFT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
+            "type": "character_ai_action_step"
+          }
+        ],
+        "type": "character_ai_action"
+      },
+      {
+        "name": "jump_upair_right",
+        "steps": [
+          {
+            "duration": 10,
+            "input": "CONTROLLER_INPUT_JUMP_RIGHT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 28,
+            "input": "CONTROLLER_INPUT_ATTACK_UP_RIGHT",
+            "type": "character_ai_action_step"
+          },
+          {
+            "duration": 1,
+            "input": "CONTROLLER_INPUT_NONE",
             "type": "character_ai_action_step"
           }
         ],
@@ -27,61 +298,229 @@
     ],
     "attacks": [
       {
-        "action": "ai_action_left_tilt",
-        "constraints": 0,
+        "action": "ai_action_special_up",
+        "constraints": 4,
         "hitbox": {
-          "bottom": 12,
-          "left": -32,
-          "right": -12,
-          "top": -12,
+          "bottom": 3,
+          "left": -6,
+          "right": 1,
+          "top": -5,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "sunny_ai_action_special_left",
+        "constraints": 5,
+        "hitbox": {
+          "bottom": 10,
+          "left": -21,
+          "right": -9,
+          "top": 6,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "sunny_ai_action_special_right",
+        "constraints": 6,
+        "hitbox": {
+          "bottom": 10,
+          "left": 17,
+          "right": 29,
+          "top": 6,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "ai_action_down_tilt",
+        "constraints": 9,
+        "hitbox": {
+          "bottom": 16,
+          "left": -12,
+          "right": 0,
+          "top": 12,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "ai_action_down_tilt",
+        "constraints": 10,
+        "hitbox": {
+          "bottom": 16,
+          "left": 8,
+          "right": 20,
+          "top": 12,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "ai_action_left_tilt",
+        "constraints": 8,
+        "hitbox": {
+          "bottom": 15,
+          "left": -14,
+          "right": 0,
+          "top": 7,
           "type": "character_ai_hitbox"
         },
         "type": "character_ai_attack"
       },
       {
         "action": "ai_action_right_tilt",
-        "constraints": 0,
+        "constraints": 8,
         "hitbox": {
-          "bottom": 12,
-          "left": 19,
-          "right": 39,
-          "top": -12,
+          "bottom": 15,
+          "left": 8,
+          "right": 22,
+          "top": 7,
           "type": "character_ai_hitbox"
         },
         "type": "character_ai_attack"
       },
       {
-        "action": "ai_action_down_tilt",
-        "constraints": 1,
+        "action": "sunny_ai_action_aerial_left",
+        "constraints": 5,
         "hitbox": {
-          "bottom": 15,
-          "left": -5,
-          "right": -1,
-          "top": 8,
+          "bottom": 39,
+          "left": -39,
+          "right": -18,
+          "top": 38,
           "type": "character_ai_hitbox"
         },
         "type": "character_ai_attack"
       },
       {
-        "action": "ai_action_down_tilt",
-        "constraints": 2,
+        "action": "sunny_ai_action_aerial_right",
+        "constraints": 6,
         "hitbox": {
-          "bottom": 15,
-          "left": 3,
+          "bottom": 39,
+          "left": 26,
+          "right": 47,
+          "top": 38,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "sunny_ai_action_pearl_shot",
+        "constraints": 5,
+        "hitbox": {
+          "bottom": 78,
+          "left": -123,
+          "right": -40,
+          "top": 41,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "sunny_ai_action_pearl_shot",
+        "constraints": 6,
+        "hitbox": {
+          "bottom": 78,
+          "left": 44,
+          "right": 131,
+          "top": 41,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "sunny_ai_action_pearl_approach_left",
+        "constraints": 9,
+        "hitbox": {
+          "bottom": 11,
+          "left": -138,
+          "right": -126,
+          "top": 10,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "sunny_ai_action_pearl_approach_right",
+        "constraints": 10,
+        "hitbox": {
+          "bottom": 11,
+          "left": 132,
+          "right": 146,
+          "top": 10,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "sunny_ai_action_air_spin",
+        "constraints": 4,
+        "hitbox": {
+          "bottom": 4,
+          "left": -1,
+          "right": 10,
+          "top": 3,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "sunny_ai_action_up_tilt",
+        "constraints": 4,
+        "hitbox": {
+          "bottom": -10,
+          "left": -31,
+          "right": 49,
+          "top": -24,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "sunny_ai_action_up_tilt",
+        "constraints": 9,
+        "hitbox": {
+          "bottom": 3,
+          "left": -3,
+          "right": 6,
+          "top": -8,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "sunny_ai_action_up_tilt",
+        "constraints": 10,
+        "hitbox": {
+          "bottom": 3,
+          "left": 4,
           "right": 13,
-          "top": 8,
+          "top": -8,
           "type": "character_ai_hitbox"
         },
         "type": "character_ai_attack"
       },
       {
-        "action": "ai_action_special_up",
-        "constraints": 0,
+        "action": "sunny_ai_action_jump_upair_left",
+        "constraints": 9,
         "hitbox": {
-          "bottom": 8,
-          "left": -15,
-          "right": 23,
-          "top": -48,
+          "bottom": -9,
+          "left": -20,
+          "right": -7,
+          "top": -34,
+          "type": "character_ai_hitbox"
+        },
+        "type": "character_ai_attack"
+      },
+      {
+        "action": "sunny_ai_action_jump_upair_right",
+        "constraints": 10,
+        "hitbox": {
+          "bottom": -9,
+          "left": 15,
+          "right": 28,
+          "top": -34,
           "type": "character_ai_hitbox"
         },
         "type": "character_ai_attack"
@@ -5501,9 +5940,9 @@
             "right": 0,
             "bottom": 15,
             "base_h": -500,
-            "base_v": -500,
+            "base_v": -700,
             "force_h": -10,
-            "force_v": -10,
+            "force_v": -13,
             "damages": 1,
             "enabled": true
           },
