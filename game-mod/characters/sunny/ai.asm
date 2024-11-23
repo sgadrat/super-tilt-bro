@@ -54,13 +54,9 @@ sunny_ai_recover_selector:
 
 			; Set the idle action if
 			;  - the player is on hitstun
-			;  - or the platform is lower than player
 			;  - or the player is not on falling, thrown nor helpless state
 			lda player_b_hitstun
 			bne set_idle_action
-
-			SIGNED_CMP(player_b_y, player_b_y_screen, stage_data+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0)
-			bmi set_idle_action
 
 			lda player_b_state
 			cmp #SUNNY_STATE_FALLING
@@ -84,6 +80,10 @@ sunny_ai_recover_selector:
 			cmp #SUNNY_STATE_HELPLESS
 			beq set_idle_action
 
+			; Side special if the platform is lower than player
+			SIGNED_CMP(player_b_y, player_b_y_screen, stage_data+STAGE_PLATFORM_OFFSET_TOP COMMA y, #0)
+			bmi set_special_side_action
+
 			; Air jump if it is possible
 			lda player_b_num_aerial_jumps
 			cmp #SUNNY_MAX_NUM_AERIAL_JUMPS
@@ -105,7 +105,7 @@ sunny_ai_recover_selector:
 					sec
 					sbc player_b_x
 					jsr absolute_a
-					cmp #16
+					cmp #48
 					bcs set_special_side_action
 
 			; Special-up since no other action was found
