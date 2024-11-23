@@ -14586,7 +14586,7 @@
     "type": "animation"
   },
   "name": "sunny",
-  "netload_routine": "dummy_routine",
+  "netload_routine": "sunny_netload",
   "states": [
     {
       "input_routine": "sunny_input_thrown",

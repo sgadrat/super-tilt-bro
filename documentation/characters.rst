@@ -176,3 +176,5 @@ Useful constants::
  * PROJECTILE_FLAGS_DEACTIVATED
  * PROJECTILE_DATA_SIZE
  * NB_PROJECTILES_PER_PLAYER
+
+Projectiles are zero-initialized at the begining of the game, then never write again by the engine. Maintaining it and trasfering it in netcode's state is the responsibility of character's implementation.

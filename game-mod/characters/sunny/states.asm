@@ -131,6 +131,52 @@ sunny_pearl_sprite_oam_per_player:
 	PEARL_PROJECTILE_HEIGHT = 6
 	PEARL_PROJECTILE_WIDTH = 6
 
+	+sunny_netload:
+	.(
+		lda esp_rx_buffer+0, y
+		sta player_a_projectile_1_flags, x
+		beq pearl_inactive
+
+			pearl_active:
+				; Pearl-specific state
+				lda esp_rx_buffer+1, y
+				sta player_a_state_extra1, x
+				lda esp_rx_buffer+2, y
+				sta player_a_state_extra2, x
+				lda esp_rx_buffer+3, y
+				sta player_a_state_extra3, x
+				lda esp_rx_buffer+4, y
+				sta player_a_state_extra4, x
+				lda esp_rx_buffer+5, y
+				sta player_a_state_extra5, x
+				lda esp_rx_buffer+6, y
+				sta player_a_state_extra6, x
+				lda esp_rx_buffer+7, y
+				sta player_a_state_extra7, x
+				lda esp_rx_buffer+8, y
+				sta player_a_state_extra8, x
+				lda esp_rx_buffer+9, y
+				sta player_a_state_extra9, x
+
+				; Recompute pearl hitbox
+				jsr place_pearl_hitbox
+
+				; Return with updated buffer cursor
+				tya
+				clc
+				adc #10
+				tay
+
+				rts
+
+			pearl_inactive:
+				; Return with updated buffer cursor
+				iny
+				rts
+
+		;rts ; useless no branch return
+	.)
+
 	&sunny_pearl_shot_spawn:
 	.(
 		; Activate projectile
