@@ -137,13 +137,13 @@ stage_thehunt_netload:
 		; Ensure sprites consistency
 		STAGE_THEHUNT_HIDE_SPRITES ; Note, just in case we were in "buff" state previously (should be really rare)
 
-		;FIXME set X/Y position, else it won't show if in screen shake
 		lda #TILE_GEM
 		sta STAGE_THEHUNT_GEM_SPRITE_OAM+1 ; Tile number
 		lda #3
 		sta STAGE_THEHUNT_GEM_SPRITE_OAM+2 ; Attributes
+		jmp stage_thehunt_place_gem
 
-		rts
+		;rts ; useless, jump to subroutine
 	.)
 
 	gem_netload_breaking:
