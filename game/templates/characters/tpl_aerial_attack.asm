@@ -6,7 +6,18 @@
 ; state - Character's state number
 ; routine - Name of the state's routines
 ; init - Extra init code (defaults to just returning from subroutine)
+; tick - Extra tick code (defaults to just returning from subroutine) ;FIXME do not return from this one (contrarily to "tick" in other templates)
 ; followup - Name of the routine to call on state's end (defaults to falling state)
+
+!ifdef "followup" {
+	!square-default "tpl_special_tick" []
+}
+!ifdef "tick" {
+	!square-default "tpl_special_tick" []
+}
+
+!default "followup" {!place "char_name"_start_falling}
+!default "tick" {}
 
 .(
 	duration:
@@ -61,7 +72,9 @@
 	.)
 .)
 
-!ifndef "followup" {
+
+
+!ifndef "tpl_special_tick" {
 #ifldef !place "char_name"_std_aerial_tick
 #else
 	+!place "char_name"_std_aerial_tick:
@@ -87,7 +100,7 @@
 	+!place "char_name"_tick_!place "routine" = !place "char_name"_std_aerial_tick
 }
 
-!ifdef "followup" {
+!ifdef "tpl_special_tick" {
 	+!place "char_name"_tick_!place "routine":
 	.(
 #ifldef !place "char_name"_global_tick
@@ -101,6 +114,7 @@
 			jmp !place "followup"
 			; No return, jump to subroutine
 		tick:
+		!place "tick"
 		jsr !place "char_name"_short_hop_takeover_tick
 		jsr !place "char_name"_aerial_directional_influence
 		jmp apply_player_gravity
@@ -113,3 +127,5 @@
 !undef "routine"
 !ifdef "init" {!undef "init"}
 !ifdef "followup" {!undef "followup"}
+!ifdef "tick" {!undef "tick"}
+!ifdef "tpl_special_tick" {!undef "tpl_special_tick"}

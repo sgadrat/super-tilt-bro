@@ -98,6 +98,19 @@ def expand(source, game_dir, filename, templates_dir):
 			source_pos[-1]['line'] += m.group('value').count('\n')
 			return ''
 
+	class SquareDefaultHandler:
+		"""
+		Equivalent to !square-define but does nothing if the value is already defined
+		"""
+		name = '!square-default'
+		regexp = re.compile(name + r' "(?P<name>[^"]+)" \[(?P<value>[^\]]*)\]', flags=re.MULTILINE)
+		def process(m):
+			nonlocal defined, source_pos
+			if m.group('name') not in defined:
+				defined[m.group('name')] = m.group('value')
+				source_pos[-1]['line'] += m.group('value').count('\n')
+			return ''
+
 	class SquareDefineHandler:
 		"""
 		Define a value associated to a name, fails if a value is already defined for this name
@@ -266,6 +279,7 @@ def expand(source, game_dir, filename, templates_dir):
 		PlaceHandler,
 		ReturnIncludeHandler,
 		ShortPlaceHandler,
+		SquareDefaultHandler,
 		SquareDefineHandler,
 	]
 
