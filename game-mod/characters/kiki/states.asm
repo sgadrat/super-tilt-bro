@@ -32,6 +32,7 @@ KIKI_TECH_SPEED = $0400
 KIKI_WALL_JUMP_SQUAT_END = 4
 KIKI_WALL_JUMP_VELOCITY_V = $03c0
 KIKI_WALL_JUMP_VELOCITY_H = $0080
+KIKI_PARACHUTE_GRAVITY = $0080
 
 ;
 ; Constants data
@@ -40,6 +41,7 @@ KIKI_WALL_JUMP_VELOCITY_H = $0080
 !include "characters/std_constant_tables.asm"
 
 duration_table(KIKI_PLATFORM_DURATION, kiki_platform_duration)
+velocity_table(KIKI_PARACHUTE_GRAVITY, kiki_parachute_gravity_msb, kiki_parachute_gravity_lsb)
 
 kiki_wall_attributes_per_player:
 .byt 1, 3
@@ -281,19 +283,14 @@ kiki_global_tick:
 .(
 	; Handle platform's lifetime
 	.(
+		; Decrement counter, destroy platform when it would go negative
 		lda kiki_a_platform_state, x
 		and #%01111111
 		beq destroy_platform
 
 			dec_timer:
 				; Decrement platform timer
-				sec
-				sbc #1
-				sta tmpfield1
-				lda kiki_a_platform_state, x
-				and #%10000000
-				ora tmpfield1
-				sta kiki_a_platform_state, x
+				dec kiki_a_platform_state, x
 				jmp end_lifetime
 
 			destroy_platform:
@@ -398,7 +395,7 @@ kiki_global_onground:
 	CONTROLLER_INPUT_DOWN_TILT           kiki_start_down_aerial
 	CONTROLLER_INPUT_ATTACK_UP           kiki_start_up_aerial
 	CONTROLLER_INPUT_JAB                 kiki_start_neutral_aerial
-	CONTROLLER_INPUT_SPECIAL             kiki_start_top_wall
+	CONTROLLER_INPUT_SPECIAL             kiki_start_parachute_deploy
 	CONTROLLER_INPUT_SPECIAL_UP          kiki_start_down_wall
 	CONTROLLER_INPUT_SPECIAL_DOWN        kiki_start_counter_guard
 	CONTROLLER_INPUT_ATTACK_UP_RIGHT     kiki_start_up_aerial_right
@@ -1229,6 +1226,77 @@ kiki_start_respawn_extra:
 		bne end
 
 			jmp kiki_start_inactive_state
+
+		end:
+		rts
+	.)
+.)
+
+.(
+	!define "anim" {kiki_anim_parachute_deploy}
+	!define "state" {KIKI_STATE_PARACHUTE_DEPLOY}
+	!define "routine" {parachute_deploy}
+	!define "followup" {kiki_start_parachute}
+	!include "characters/tpl_aerial_attack.asm"
+
+	!define "anim" {kiki_anim_parachute}
+	!define "state" {KIKI_STATE_PARACHUTE}
+	!define "routine" {parachute}
+	!define "followup" {dummy_routine}
+	!define "init" {
+		ldy system_index
+		lda kiki_parachute_gravity_msb, y
+		sta player_a_gravity_msb, x
+		lda kiki_parachute_gravity_lsb, y
+		sta player_a_gravity_lsb, x
+		rts
+	}
+	!include "characters/tpl_aerial_attack.asm"
+
+	+kiki_input_parachute:
+	.(
+		; Allow to end parachute by pressing special button again
+		.(
+			lda controller_a_btns, x
+			cmp #CONTROLLER_INPUT_SPECIAL
+			bne ok
+				jsr reset_default_gravity
+				jmp kiki_start_inactive_state
+				; no return, jump to subroutine
+			ok:
+		.)
+
+		; Allow to act freely out of the parachute
+		.(
+			jsr kiki_check_aerial_inputs
+
+			lda player_a_state, x
+			cmp #KIKI_STATE_PARACHUTE
+			beq parachute_state
+				state_changed:
+					; Kiki changed state, reset gravity, except for counter attack  which has its own gravity tricks
+					lda player_a_state, x
+					cmp #KIKI_STATE_COUNTER_GUARD
+					beq end
+						jmp reset_default_gravity
+						; No return, jump to subroutine
+					; No return from this branch, an action has been taken no need for more logic
+				parachute_state:
+					; If we fast-falled, stop the parachute
+					ldy system_index
+					lda player_a_gravity_lsb, x
+					cmp kiki_parachute_gravity_lsb, y
+					bne fastfalling
+					lda player_a_gravity_msb, x
+					cmp kiki_parachute_gravity_msb, y
+					bne fastfalling
+						not_fastfalling:
+							jmp ok
+						fastfalling:
+							jmp kiki_start_inactive_state
+							; no return, jump to subroutine
+			ok:
+		.)
 
 		end:
 		rts
