@@ -35,14 +35,6 @@ bank_data_begin:
 #print *-bank_data_begin
 .)
 
-.(
-bank_data_begin:
-#include "game/data/stages/arcade/btt02/stage_arcade_btt02.asm"
-#echo
-#echo stage arcade btt02 size:
-#print *-bank_data_begin
-.)
-
 bank_data15_end:
 
 #echo

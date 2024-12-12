@@ -143,7 +143,7 @@ static void yield() {
 static uint32_t timestamp(uint8_t minutes, uint8_t seconds, uint8_t frames) {
 	uint8_t const frame_base = (*system_index ? 60 : 50);
 	return
-		minutes * 60 * frame_base +
+		(uint32_t)(minutes) * 60 * frame_base +
 		seconds * frame_base +
 		frames
 	;
