@@ -38,7 +38,7 @@ load_animation_addr:
 	animation_addr = tmpfield11
 
 	; Stack shenaningans to handle parameters being hardcoded after the jsr
-	lda #13
+	lda #14
 	jsr inline_parameters
 
 	; Call state initialization routine
@@ -146,7 +146,7 @@ load_animation_addr:
 	.word pos_y      ; 7 :\
 	.word velocity_h ; 9 ;TODO adapt to pal/ntsc using a lookup table and system_index :\
 	.word velocity_v ;11 ;TODO adapt to pal/ntsc using a lookup table and system_index :\
-	.word 0          ;13 ; player_number :\
+	.byt 0           ;13 ; player_number :\
 .)
 
 #define INIT_ANIM_FOR_PLAYER(index,anim,bank,direction,pos_x,pos_y,velocity_h,velocity_v,player) .( :\
@@ -159,7 +159,7 @@ load_animation_addr:
 	.word pos_y      ; 7 :\
 	.word velocity_h ; 9 ;TODO adapt to pal/ntsc using a lookup table and system_index :\
 	.word velocity_v ;11 ;TODO adapt to pal/ntsc using a lookup table and system_index :\
-	.word player     ;12 :\
+	.byt player      ;13 :\
 .)
 
 &cutscene_anim_velocity:
