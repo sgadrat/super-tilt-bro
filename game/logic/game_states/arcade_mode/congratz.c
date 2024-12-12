@@ -75,9 +75,9 @@ static uint8_t compute_final_medal(uint8_t n_medals) {
 	uint8_t final_medal = COPPER_MEDAL;
 
 	uint32_t const global_timer = timestamp(*arcade_mode_counter_minutes, *arcade_mode_counter_seconds, *arcade_mode_counter_frames);
-	if (global_timer < timestamp(1,0,0)) { // World record TAS (hypotetical for now)
+	if (global_timer < timestamp(0,48,35)) { // World record TAS
 		final_medal = CHOCOLATE_MEDAL;
-	}else if (global_timer < timestamp(1,15,0)) { // Challenging but doable by humans (world record is 1,1,38 most players fail breaking 1,20,0)
+	}else if (global_timer < timestamp(1,0,0)) { // Challenging but doable by humans (world record is 0,50,55 most players fail breaking 1,20,0)
 		final_medal = TAS_MEDAL;
 	}else {
 		// Compute score (sum of medals)
