@@ -514,6 +514,11 @@ static void wait_confirm_input() {
 }
 
 static void update_game() {
+	// Buffer usable to construct messages for draw_dialog_string
+	//  draw_dialog_string overwrites the begining of online_mode_selection_mem_buffer
+	//  we use the end of online_mode_selection_mem_buffer (which is 64 bytes long)
+	uint8_t* msg = online_mode_selection_mem_buffer + 32;
+
 #ifndef FORCE_NETWORK
 	// Deny access on emulator
 	if ((RAINBOW_MAPPER_VERSION & 0xe0) != 0) {
@@ -547,22 +552,93 @@ static void update_game() {
 	};
 	wrap_esp_send_cmd(cmd_download_update);
 
+	// Wait for the file to come
+	uint8_t file_size_clock = 25;
 	while(
 		wrap_esp_get_msg(online_mode_selection_mem_buffer) != 4 ||
-		online_mode_selection_mem_buffer[1] != FROMESP_MSG_FILE_DOWNLOAD
+		online_mode_selection_mem_buffer[ESP_MSG_TYPE] != FROMESP_MSG_FILE_DOWNLOAD
 	)
 	{
-		if (*controller_a_btns == 0 && *controller_a_last_frame_btns == CONTROLLER_BTN_B) {
-			return;
+		switch (online_mode_selection_mem_buffer[ESP_MSG_TYPE]) {
+			case FROMESP_MSG_FILE_INFO:
+				if (online_mode_selection_mem_buffer[ESP_MSG_SIZE] == 9) {
+					// Save controller state
+					uint8_t const controller_state = *controller_a_btns;
+
+					// Compute progress in percentage
+					uint32_t const file_size = 100 * u32(
+						online_mode_selection_mem_buffer[9],
+						online_mode_selection_mem_buffer[8],
+						online_mode_selection_mem_buffer[7],
+						online_mode_selection_mem_buffer[6]
+					);
+					uint32_t const final_file_size = (uint32_t)512 * (uint32_t)1024 + (uint32_t)16; // 512 KB + header
+					uint16_t const progress = file_size / final_file_size;
+
+					// Draw progress
+					memcpy8(msg, (uint8_t*)"  downloading ", 14);
+					msg[14] = '0' + CONST_HUNDREDS(progress);
+					msg[15] = '0' + CONST_TENS(progress);
+					msg[16] = '0' + CONST_UNITS(progress);
+					msg[17] = 0;
+					draw_dialog_string(0x2146, 3, (char*)msg);
+
+					// Restore controller state to not mess with input code in default case
+					*controller_a_btns = controller_state;
+
+					// Reset progress request timer
+					file_size_clock = 25;
+					break;
+				}
+
+				// Nothing was done, we can fallthrough to generic waiting code
+				__attribute__((fallthrough));
+			default:
+				if (*controller_a_btns == 0 && *controller_a_last_frame_btns == CONTROLLER_BTN_B) {
+					return;
+				}
+
+				if (file_size_clock != 255) {
+					--file_size_clock;
+					if (file_size_clock == 0) {
+						file_size_clock = 255;
+						static uint8_t const cmd_get_downloaded_file_size[] = {
+							4, TOESP_MSG_FILE_GET_INFO,
+							ESP_FILE_MODE_AUTO, ESP_FILE_PATH_ROMS, UPDATE_ROM_FILE
+						};
+						wrap_esp_send_cmd(cmd_get_downloaded_file_size);
+					}
+				}
 		}
 		yield();
 	}
 
+	// Handle the fact that a GET_FILE_INFO response can still be received
+	if (file_size_clock == 255) {
+		// Save download response
+		memcpy8(msg, online_mode_selection_mem_buffer, 5);
+
+		// Wait for the latest requested file size
+		draw_dialog_string(0x2146, 3, "   finalizing...");
+		while(
+			wrap_esp_get_msg(online_mode_selection_mem_buffer) == 0 ||
+			online_mode_selection_mem_buffer[ESP_MSG_TYPE] != FROMESP_MSG_FILE_INFO
+		)
+		{
+			if (*controller_a_btns == 0 && *controller_a_last_frame_btns == CONTROLLER_BTN_B) {
+				return;
+			}
+			yield();
+		}
+
+		// Restore download response
+		memcpy8(online_mode_selection_mem_buffer, msg, 5);
+	}
+
+	// Process download result
 	uint8_t const download_result = online_mode_selection_mem_buffer[2];
 	if (download_result != ESP_FILE_DOWNLOAD_SUCCESS) {
 		// Draw error message and wait for input before returning
-
-		uint8_t* msg = online_mode_selection_mem_buffer + 32; // buffer to construct message, draw_dialog_string uses the begining of mem_buffer, we use the end
 		switch (download_result) {
 			case ESP_FILE_DOWNLOAD_HTTP_ERROR: {
 				uint16_t const http_status = u16(online_mode_selection_mem_buffer[4], online_mode_selection_mem_buffer[3]);
