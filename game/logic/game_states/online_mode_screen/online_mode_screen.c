@@ -558,10 +558,45 @@ static void update_game() {
 		yield();
 	}
 
-	uint8_t const success = (online_mode_selection_mem_buffer[2] == ESP_FILE_DOWNLOAD_SUCCESS);
-	if (!success) {
-		// Draw "no update available" message and wait for input before returning
-		draw_dialog_string(0x2146, 3, "already up to date");
+	uint8_t const download_result = online_mode_selection_mem_buffer[2];
+	if (download_result != ESP_FILE_DOWNLOAD_SUCCESS) {
+		// Draw error message and wait for input before returning
+
+		uint8_t* msg = online_mode_selection_mem_buffer + 32; // buffer to construct message, draw_dialog_string uses the begining of mem_buffer, we use the end
+		switch (download_result) {
+			case ESP_FILE_DOWNLOAD_HTTP_ERROR: {
+				uint16_t const http_status = u16(online_mode_selection_mem_buffer[4], online_mode_selection_mem_buffer[3]);
+				if (http_status == 404) {
+					draw_dialog_string(0x2146, 3, "already up to date");
+				}else {
+					memcpy8(msg, (uint8_t*)"http error  ", 12);
+					msg[12] = '0' + CONST_HUNDREDS(http_status);
+					msg[13] = '0' + CONST_TENS(http_status);
+					msg[14] = '0' + CONST_UNITS(http_status);
+					msg[15] = 0;
+					draw_dialog_string(0x2146, 3, (char*)msg);
+				}
+				break;
+			}
+			case ESP_FILE_DOWNLOAD_NETWORK_ERROR: {
+				uint8_t const error = online_mode_selection_mem_buffer[4];
+				memcpy8(msg, (uint8_t*)"network error ", 14);
+				msg[14] = '0' + CONST_HUNDREDS(error);
+				msg[15] = '0' + CONST_TENS(error);
+				msg[16] = '0' + CONST_UNITS(error);
+				msg[17] = 0;
+				draw_dialog_string(0x2146, 3, (char*)msg);
+				break;
+			}
+			default:
+				memcpy8(msg, (uint8_t*)"download error ", 15);
+				msg[15] = '0' + CONST_HUNDREDS(download_result);
+				msg[16] = '0' + CONST_TENS(download_result);
+				msg[17] = '0' + CONST_UNITS(download_result);
+				msg[18] = 0;
+				draw_dialog_string(0x2146, 3, (char*)msg);
+		}
+
 		wait_confirm_input();
 		return;
 	}

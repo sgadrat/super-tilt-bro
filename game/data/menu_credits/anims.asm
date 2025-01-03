@@ -1,6 +1,6 @@
-MENU_CREDITS_ANIMS_BANK = CURRENT_BANK_NUMBER
++MENU_CREDITS_ANIMS_BANK = CURRENT_BANK_NUMBER
 
-menu_credits_cursor_anim:
++menu_credits_cursor_anim:
 ; Frame 1
 ANIM_FRAME_BEGIN(25)
 ANIM_DEFAULT_HEADER
@@ -15,7 +15,7 @@ ANIM_SPRITE_NORMAL_COUNT(0)
 ; End of animation
 ANIM_ANIMATION_END
 
-menu_credits_bubble_anim:
++menu_credits_bubble_anim:
 ; Frame 1
 ANIM_FRAME_BEGIN(1)
 ANIM_DEFAULT_HEADER

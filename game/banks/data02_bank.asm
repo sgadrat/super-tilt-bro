@@ -19,14 +19,6 @@ bank_data_online_mode_extra_code_begin:
 #echo Online mode extra code size:
 #print *-bank_data_online_mode_extra_code_begin
 
-bank_data_credits_data_begin:
-#include "game/data/menu_credits/anims.asm"
-#include "game/data/menu_credits/screen.asm"
-#include "game/data/menu_credits/tileset.asm"
-#echo
-#echo Credits data size:
-#print *-bank_data_credits_data_begin
-
 bank_data_charset_alphanum_fg1_bg2_begin:
 #include "game/data/tilesets/charset_alphanum_fg1_bg2.asm"
 #echo

@@ -1,10 +1,10 @@
-MENU_CREDITS_TILESET_BANK = CURRENT_BANK_NUMBER
++MENU_CREDITS_TILESET_BANK = CURRENT_BANK_NUMBER
 
 ;
 ; Background tileset
 ;
 
-menu_credits_tileset:
++menu_credits_tileset:
 
 ; Tileset's size in tiles (zero means 256)
 .byt (menu_credits_tileset_end-menu_credits_tileset_tiles)/16
@@ -64,7 +64,7 @@ menu_credits_tileset_tiles:
 .byt %00000111, %11110111, %11111111, %11101011, %11111111, %11111101, %11111011, %00000111
 .byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
 .byt %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
-MENU_CREDITS_NAVIGATION_DOT = (* - menu_credits_tileset_tiles) / 16
++MENU_CREDITS_NAVIGATION_DOT = (* - menu_credits_tileset_tiles) / 16
 .byt %00000000, %00111100, %01111110, %01111110, %01111110, %01111110, %00111100, %00000000
 .byt %11111111, %11000011, %10000001, %10000001, %10000001, %10000001, %11000011, %11111111
 menu_credits_tileset_end:
@@ -73,7 +73,7 @@ menu_credits_tileset_end:
 ; Sprites tileset
 ;
 
-menu_credits_sprites_tileset:
++menu_credits_sprites_tileset:
 
 ; Tileset's size in tiles (zero means 256)
 .byt (menu_credits_sprites_tileset_end-menu_credits_sprites_tileset_tiles)/16

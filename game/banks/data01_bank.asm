@@ -70,6 +70,16 @@ bank_data_begin:
 #print *-bank_data_begin
 .)
 
+.(
+bank_data_begin:
+#include "game/data/menu_credits/anims.asm"
+#include "game/data/menu_credits/screen.asm"
+#include "game/data/menu_credits/tileset.asm"
+#echo
+#echo Credits data size:
+#print *-bank_data_begin
+.)
+
 bank_data01_end:
 
 #echo

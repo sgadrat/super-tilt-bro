@@ -1,7 +1,7 @@
-MENU_CREDITS_SCREEN_BANK = CURRENT_BANK_NUMBER
++MENU_CREDITS_SCREEN_BANK = CURRENT_BANK_NUMBER
 
 .(
-&menu_credits_palette:
++menu_credits_palette:
 ; Background
 ;    0-title,         1-fade,          2-illustration,  3-Text/logos
 .byt $31,$0f,$21,$28, $31,$11,$21,$3c, $31,$07,$28,$32, $31,$0f,$06,$20
@@ -11,7 +11,7 @@ MENU_CREDITS_SCREEN_BANK = CURRENT_BANK_NUMBER
 
 //TODO better store only the title's layout and build this simple screen with specific logic
 //     also, we should use the "space" ascii char instead of a full-backdrop tile from tileset
-&menu_credits_nametable:
++menu_credits_nametable:
 .byt $00,$6a
 .byt
 .byt
