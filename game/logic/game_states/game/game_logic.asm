@@ -793,6 +793,11 @@ parry_players:
 	sta player_b_velocity_v
 	sta player_b_velocity_v_low
 
+	ldx #0
+	jsr reset_default_gravity
+	ldx #1
+	jsr reset_default_gravity
+
 	lda #PLAYER_STATE_THROWN
 	sta player_a_state
 	sta player_b_state
