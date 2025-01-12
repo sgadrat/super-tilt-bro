@@ -5602,13 +5602,13 @@
         {
           "duration": 200,
           "hitbox": {
-            "base_h": -768,
-            "base_v": -768,
+            "base_h": -400,
+            "base_v": -1600,
             "bottom": 7,
             "damages": 10,
             "enabled": true,
-            "force_h": -10,
-            "force_v": -4,
+            "force_h": -2,
+            "force_v": -8,
             "left": -12,
             "right": -1,
             "top": 2,
