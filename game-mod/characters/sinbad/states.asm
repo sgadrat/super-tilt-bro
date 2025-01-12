@@ -341,6 +341,7 @@ sinbad_global_onground:
 ;
 
 sinbad_unfallable_platform = player_a_state_field1
+sinbad_side_tilt_hitbox_state = player_a_state_field2
 
 !define "anim" {sinbad_anim_side_tilt_windup}
 !define "state" {SINBAD_STATE_SIDE_TILT_WINDUP}
@@ -367,6 +368,10 @@ sinbad_unfallable_platform = player_a_state_field1
 	; Get platform from which we cannot fall
 	lda player_a_grounded, x
 	sta sinbad_unfallable_platform, x
+
+	; Set hitbox in normal state
+	lda #0
+	sta sinbad_side_tilt_hitbox_state, x
 
 	rts
 ]
@@ -707,6 +712,154 @@ sinbad_side_tilt_hit_end:
 			jmp sinbad_start_side_tilt_recovery
 
 	;rts ; useless, no branch return
+.)
+
+sinbad_side_tilt_on_hit:
+.(
+	HITBOX_OK = 0
+	HITBOX_WHIFFED = 1
+
+	; Disable Hitbox
+	lda #HITBOX_DISABLED
+	sta player_a_hitbox_enabled, x
+
+	; Apply parry when not hitting opponent's hurtbox
+	.(
+		cpy #HURTBOX
+		beq process
+
+			; Apply parry to both players if opponent has a direct hitbox
+			SWITCH_SELECTED_PLAYER
+			lda player_a_hitbox_enabled, x
+			cmp #HITBOX_DIRECT
+			bne ok
+				TRAMPOLINE(parry_players, #0, #CURRENT_BANK_NUMBER)
+			ok:
+
+			; Do not actually process hit
+			rts
+
+		process:
+	.)
+
+	; Weak hit if a previous hitbox did not throw
+	.(
+		lda sinbad_side_tilt_hitbox_state, x
+		beq ok
+			;NOTE simply do nothing on weak it, could be nice to add some feedback (sound + screen-freeze?)
+			rts
+		ok:
+	.)
+
+	; Hurt opponent normally
+	.(
+		DAMAGES = 1
+		BASE_H = -800
+		FORCE_H = 0
+		BASE_V = -400
+		FORCE_V = 0
+
+		; Hurt opponent
+		.(
+			; Rewrite hitbox knockback info to match sage's punch values
+			lda #DAMAGES
+			sta player_a_hitbox_damages, x
+			lda #<BASE_V
+			sta player_a_hitbox_base_knock_up_v_low, x
+			lda #>BASE_V
+			sta player_a_hitbox_base_knock_up_v_high, x
+			lda #<FORCE_V
+			sta player_a_hitbox_force_v_low, x
+			lda #>FORCE_V
+			sta player_a_hitbox_force_v, x
+
+			lda player_a_direction, x
+			bne right
+				left:
+					lda #<BASE_H
+					sta player_a_hitbox_base_knock_up_h_low, x
+					lda #>BASE_H
+					sta player_a_hitbox_base_knock_up_h_high, x
+					lda #<FORCE_H
+					sta player_a_hitbox_force_h_low, x
+					lda #>FORCE_H
+					sta player_a_hitbox_force_h, x
+
+					jmp hitbox_ok
+
+				right:
+					lda #<-BASE_H
+					sta player_a_hitbox_base_knock_up_h_low, x
+					lda #>-BASE_H
+					sta player_a_hitbox_base_knock_up_h_high, x
+					lda #<-FORCE_H
+					sta player_a_hitbox_force_h_low, x
+					lda #>-FORCE_H
+					sta player_a_hitbox_force_h, x
+
+			hitbox_ok:
+
+			; Call opponent's onhurt routine
+			.(
+				; Save X
+				txa:pha
+
+				; Set current_player/opponent_player parameters (and switch X to the hurt player)
+				stx tmpfield10
+				SWITCH_SELECTED_PLAYER
+				stx tmpfield11
+
+				; Call opponent's onhurt callback
+				ldy config_player_a_character, x
+				lda characters_onhurt_routines_table_lsb, y
+				sta tmpfield1
+				lda characters_onhurt_routines_table_msb, y
+				sta tmpfield2
+				lda #<hurt_player
+				sta tmpfield12
+				lda #>hurt_player
+				sta tmpfield13
+				lda characters_bank_number, y
+				sta tmpfield14
+				TRAMPOLINE(player_state_action, characters_bank_number COMMA y, #CURRENT_BANK_NUMBER)
+
+				; Restore X
+				pla:tax
+			.)
+
+			; Compute screenshake
+			.(
+				SWITCH_SELECTED_PLAYER
+				lda player_a_hitstun, x
+				lsr
+				cmp #SCREEN_SAKE_MAX_DURATION
+				bcc ok
+					lda #SCREEN_SAKE_MAX_DURATION
+				ok:
+				sta screen_shake_counter
+				SWITCH_SELECTED_PLAYER
+			.)
+		.)
+	.)
+
+	; If opponent is not in thrown state, flag that next hitboxes should not throw
+	.(
+		SWITCH_SELECTED_PLAYER
+		lda player_a_state, x
+		cmp #PLAYER_STATE_THROWN
+		beq hit_connected
+
+			hit_missed:
+				SWITCH_SELECTED_PLAYER
+				lda #HITBOX_WHIFFED
+				sta sinbad_side_tilt_hitbox_state, x
+				rts ; NOTE return here as we know there is nothing more in the routine
+
+			hit_connected:
+				SWITCH_SELECTED_PLAYER
+	.)
+
+	rts
 .)
 
 ;

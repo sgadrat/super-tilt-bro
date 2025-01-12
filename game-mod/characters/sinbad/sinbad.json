@@ -5072,17 +5072,18 @@
         {
           "duration": 2,
           "hitbox": {
-            "type": "animation_direct_hitbox",
+            "type": "animation_custom_hitbox",
             "left": -7,
             "top": 5,
             "right": 16,
             "bottom": 12,
-            "base_h": -800,
-            "base_v": -400,
-            "force_h": 0,
-            "force_v": 0,
-            "damages": 1,
-            "enabled": true
+            "enabled": true,
+            "routine": "sinbad_side_tilt_on_hit",
+            "directional1": 0,
+            "directional2": 0,
+            "value1": 0,
+            "value2": 0,
+            "value3": 0
           },
           "hurtbox": {
             "bottom": 16,
@@ -5138,17 +5139,18 @@
         {
           "duration": 2,
           "hitbox": {
-            "type": "animation_direct_hitbox",
+            "type": "animation_custom_hitbox",
             "left": -7,
             "top": 0,
             "right": 13,
             "bottom": 15,
-            "base_h": -800,
-            "base_v": -400,
-            "force_h": 0,
-            "force_v": 0,
-            "damages": 1,
-            "enabled": false
+            "enabled": false,
+            "routine": "sinbad_side_tilt_on_hit",
+            "directional1": 0,
+            "directional2": 0,
+            "value1": 0,
+            "value2": 0,
+            "value3": 0
           },
           "hurtbox": {
             "bottom": 16,
@@ -5212,17 +5214,18 @@
         {
           "duration": 2,
           "hitbox": {
-            "type": "animation_direct_hitbox",
+            "type": "animation_custom_hitbox",
             "left": 0,
             "top": 0,
             "right": 12,
             "bottom": 15,
-            "base_h": -800,
-            "base_v": -400,
-            "force_h": 0,
-            "force_v": 0,
-            "damages": 1,
-            "enabled": true
+            "enabled": true,
+            "routine": "sinbad_side_tilt_on_hit",
+            "directional1": 0,
+            "directional2": 0,
+            "value1": 0,
+            "value2": 0,
+            "value3": 0
           },
           "hurtbox": {
             "bottom": 16,
@@ -5286,17 +5289,18 @@
         {
           "duration": 2,
           "hitbox": {
-            "type": "animation_direct_hitbox",
+            "type": "animation_custom_hitbox",
             "left": -2,
             "top": -2,
             "right": 12,
             "bottom": 16,
-            "base_h": -800,
-            "base_v": -400,
-            "force_h": 0,
-            "force_v": 0,
-            "damages": 1,
-            "enabled": false
+            "enabled": false,
+            "routine": "sinbad_side_tilt_on_hit",
+            "directional1": 0,
+            "directional2": 0,
+            "value1": 0,
+            "value2": 0,
+            "value3": 0
           },
           "hurtbox": {
             "bottom": 16,
@@ -5602,13 +5606,13 @@
         {
           "duration": 200,
           "hitbox": {
-            "base_h": -400,
-            "base_v": -1600,
+            "base_h": -768,
+            "base_v": -768,
             "bottom": 7,
             "damages": 10,
             "enabled": true,
-            "force_h": -2,
-            "force_v": -8,
+            "force_h": -10,
+            "force_v": -4,
             "left": -12,
             "right": -1,
             "top": 2,

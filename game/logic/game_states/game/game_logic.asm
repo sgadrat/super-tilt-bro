@@ -1354,8 +1354,6 @@ apply_force_vector_direct:
 
 	; Screenshake of duration = hitstun / 2
 	.(
-		SCREEN_SAKE_MAX_DURATION = $10
-
 		lsr
 		cmp #SCREEN_SAKE_MAX_DURATION
 		bcc ok
