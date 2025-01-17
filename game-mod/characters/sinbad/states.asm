@@ -781,7 +781,7 @@ sinbad_side_tilt_on_hit:
 					sta player_a_hitbox_base_knock_up_h_low, x
 					lda #>BASE_H
 					sta player_a_hitbox_base_knock_up_h_high, x
-					lda #FORCE_H
+					lda #<FORCE_H
 					sta player_a_hitbox_force_h_low, x
 
 					jmp hitbox_ok
@@ -791,7 +791,7 @@ sinbad_side_tilt_on_hit:
 					sta player_a_hitbox_base_knock_up_h_low, x
 					lda #>-BASE_H
 					sta player_a_hitbox_base_knock_up_h_high, x
-					lda #-FORCE_H
+					lda #<-FORCE_H
 					sta player_a_hitbox_force_h_low, x
 
 			hitbox_ok:

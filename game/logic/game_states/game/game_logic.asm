@@ -1103,6 +1103,7 @@ bump_player_common:
 		force_v_high = tmpfield13
 		force_h_low = tmpfield14
 		force_v_low = tmpfield15
+		hitstun_modifier = tmpfield16
 
 		; Vertical knockback
 		.(
@@ -1133,6 +1134,10 @@ bump_player_common:
 			lda #0
 			sta force_h_high
 		.)
+
+		; Hitstun
+		;lda #0 ; useless, done above
+		sta hitstun_modifier
 
 		; Apply knockback
 		jsr apply_force_vector_direct
@@ -1177,6 +1182,7 @@ apply_force_vector:
 	force_v = tmpfield13
 	force_h_low = tmpfield14
 	force_v_low = tmpfield15
+	hitstun_modifier = tmpfield16
 
 	; Apply force vector to the opponent
 	ldx current_player
@@ -1197,6 +1203,9 @@ apply_force_vector:
 	lda player_a_hitbox_base_knock_up_v_low, x  ;
 	sta base_v_low                              ;
 
+	lda player_a_hitbox_hitstun, x
+	sta hitstun_modifier
+
 	ldx opponent_player
 
 	;Fallthrough to apply_force_vector_direct
@@ -1212,12 +1221,13 @@ apply_force_vector:
 ;   tmpfield13 - Vertical scaling knockup (MSB)
 ;   tmpfield14 - Horizontal scaling knockup (LSB)
 ;   tmpfield15 - Vertical scaling knockup (LSB)
+;   tmpfield16 - hitstun modifier
 ;
 ; Overwrites tmpfield1-tmpfield9, tmpfield12-tmpfield15
 ; Overwrites register A, register Y
 apply_force_vector_direct:
 .(
-	;TODO optimizable - force_h and force_v are actually 8-bit signed values: implement a signed version of the "multiply8" routine and use it
+	;TODO optimizable - force_h and force_v are actually 8-bit signed values, implement a signed version of the "multiply8" routine and use it
 	multiplicand_low = tmpfield1
 	multiplicand_high = tmpfield2
 	multiplier = tmpfield3
@@ -1233,6 +1243,7 @@ apply_force_vector_direct:
 	force_v = tmpfield13
 	force_h_low = tmpfield14
 	force_v_low = tmpfield15
+	hitstun_modifier = tmpfield16
 	knockback_h_high = force_h    ; knockback_h reuses force_h memory location
 	knockback_h_low = force_h_low ; it is only writen after the last read of force_h
 	knockback_v_high = force_v     ; knockback_v reuses force_v memory location
@@ -1348,9 +1359,10 @@ apply_force_vector_direct:
 
 	asl knockback_h_low     ;
 	lda knockback_h_high    ;
-	rol                     ; Oponent player hitstun = high byte of 3 * knockback_h
-	;clc ; useless          ;   approximated, it is actually "msb(2 * knockback_h) + msb(knockback_h)"
+	rol                     ; Oponent player hitstun = high byte of 3 * knockback_h + hitstun_modifier
+	;clc ; useless          ;   approximated, it is actually "msb(2 * knockback_h) + msb(knockback_h) + hitstun_modifier"
 	adc knockback_h_high    ;   CLC ignored, should not happen, precision loss is one frame, and if knockback is this high we don't care of hitstun anyway
+	adc hitstun_modifier    ;
 	sta player_a_hitstun, x ;
 
 	; Screenshake of duration = hitstun / 2

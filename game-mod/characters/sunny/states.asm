@@ -347,6 +347,8 @@ sunny_pearl_sprite_oam_per_player:
 							KNOCKUP_BASE_VERTICAL = -500
 							KNOCKUP_SCALING_HORIZONTAL = -1
 							KNOCKUP_SCALING_VERTICAL = -2
+							HITSTUN_MODIFIER = 0
+
 							base_h_lsb = tmpfield6
 							base_h_msb = tmpfield7
 							force_h_lsb = tmpfield14
@@ -355,6 +357,7 @@ sunny_pearl_sprite_oam_per_player:
 							base_v_msb = tmpfield9
 							force_v_lsb = tmpfield15
 							force_v_msb = tmpfield13
+							hitstun_modifier = tmpfield16
 
 							ldx player_number
 
@@ -376,6 +379,7 @@ sunny_pearl_sprite_oam_per_player:
 							lda #>KNOCKUP_BASE_VERTICAL : sta base_v_msb
 							lda #<KNOCKUP_SCALING_VERTICAL : sta force_v_lsb
 							lda #>KNOCKUP_SCALING_VERTICAL : sta force_v_msb
+							lda #HITSTUN_MODIFIER : sta hitstun_modifier
 
 							SWITCH_SELECTED_PLAYER
 							jsr apply_force_vector_direct
