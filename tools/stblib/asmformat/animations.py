@@ -57,21 +57,22 @@ def frame_to_asm(frame, visibility=''):
 	return serialized
 
 def directhitbox_to_asm(hitbox, visibility=''):
-	return 'ANIM_DIRECT_HITBOX(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)\n' % (
+	return 'ANIM_DIRECT_HITBOX(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)\n' % (
 		'$01' if hitbox.enabled else '$00',
 		uintasm8(hitbox.damages),
 		intasm16(hitbox.base_h),
 		intasm16(hitbox.base_v),
-		intasm16(hitbox.force_h),
-		intasm16(hitbox.force_v),
+		intasm8(hitbox.force_h),
+		intasm8(hitbox.force_v),
 		intasm8(hitbox.left),
 		intasm8(hitbox.right),
 		intasm8(hitbox.top),
-		intasm8(hitbox.bottom)
+		intasm8(hitbox.bottom),
+		uintasm8(hitbox.hitstun),
 	)
 
 def customhitbox_to_asm(hitbox, visibility=''):
-	return 'ANIM_CUSTOM_HITBOX(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)\n' % (
+	return 'ANIM_CUSTOM_HITBOX(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)\n' % (
 		'$02' if hitbox.enabled else '$00',
 		intasm8(hitbox.left),
 		intasm8(hitbox.right),
@@ -82,7 +83,8 @@ def customhitbox_to_asm(hitbox, visibility=''):
 		intasm16(hitbox.directional2),
 		uintasm8(hitbox.value1),
 		uintasm8(hitbox.value2),
-		uintasm8(hitbox.value3)
+		uintasm8(hitbox.value3),
+		uintasm8(hitbox.value4),
 	)
 
 def sprite_to_asm(sprite, visibility=''):

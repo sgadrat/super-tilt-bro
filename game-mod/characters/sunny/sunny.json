@@ -3748,6 +3748,7 @@
         {
           "duration": 2,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -8,
             "top": 7,
@@ -4082,6 +4083,7 @@
         {
           "duration": 2,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -5,
             "top": -1,
@@ -4148,6 +4150,7 @@
         {
           "duration": 2,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -8,
             "top": 5,
@@ -4222,6 +4225,7 @@
         {
           "duration": 2,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -8,
             "top": 8,
@@ -4588,6 +4592,7 @@
         {
           "duration": 6,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -9,
             "top": -5,
@@ -5011,6 +5016,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -14,
             "top": 8,
@@ -5386,6 +5392,7 @@
         {
           "duration": 3,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -4,
             "top": -1,
@@ -5460,6 +5467,7 @@
         {
           "duration": 3,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": 2,
             "top": -8,
@@ -5534,6 +5542,7 @@
         {
           "duration": 3,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": 2,
             "top": -9,
@@ -5616,6 +5625,7 @@
         {
           "duration": 3,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": 0,
             "top": -6,
@@ -5934,6 +5944,7 @@
         {
           "duration": 5,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -13,
             "top": 7,
@@ -6276,6 +6287,7 @@
         {
           "duration": 3,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -9,
             "top": 10,
@@ -6350,6 +6362,7 @@
         {
           "duration": 30,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -9,
             "top": 10,
@@ -6654,6 +6667,7 @@
         {
           "duration": 3,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": 0,
             "top": -4,
@@ -6720,6 +6734,7 @@
         {
           "duration": 4,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -10,
             "top": 5,
@@ -6794,6 +6809,7 @@
         {
           "duration": 4,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -10,
             "top": 6,
@@ -6876,6 +6892,7 @@
         {
           "duration": 4,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -4,
             "top": 9,
@@ -7246,6 +7263,7 @@
         {
           "duration": 2,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -6,
             "top": 5,
@@ -7320,6 +7338,7 @@
         {
           "duration": 2,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -3,
             "top": 5,
@@ -7394,6 +7413,7 @@
         {
           "duration": 2,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -3,
             "top": 5,
@@ -7468,6 +7488,7 @@
         {
           "duration": 2,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -6,
             "top": 5,
@@ -7548,6 +7569,7 @@
         {
           "duration": 4,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -6,
             "top": 10,
@@ -7690,6 +7712,7 @@
         {
           "duration": 4,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -6,
             "top": 3,
@@ -7870,6 +7893,7 @@
         {
           "duration": 4,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": 0,
             "top": -3,
@@ -7936,6 +7960,7 @@
         {
           "duration": 4,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": 3,
             "top": -6,
@@ -8278,6 +8303,7 @@
         {
           "duration": 1,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -2,
             "top": 3,
@@ -8360,6 +8386,7 @@
             "left": -3,
             "right": 4,
             "top": -2,
+            "hitstun": 0,
             "type": "animation_direct_hitbox"
           },
           "hurtbox": {
@@ -8426,6 +8453,7 @@
             "left": -3,
             "right": 4,
             "top": -2,
+            "hitstun": 0,
             "type": "animation_direct_hitbox"
           },
           "hurtbox": {
@@ -8492,6 +8520,7 @@
             "left": -3,
             "right": 4,
             "top": -4,
+            "hitstun": 0,
             "type": "animation_direct_hitbox"
           },
           "hurtbox": {
@@ -8558,6 +8587,7 @@
             "left": -3,
             "right": 4,
             "top": -4,
+            "hitstun": 0,
             "type": "animation_direct_hitbox"
           },
           "hurtbox": {
@@ -8780,6 +8810,7 @@
         {
           "duration": 5,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -6,
             "top": 5,
@@ -9156,6 +9187,7 @@
         {
           "duration": 4,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -6,
             "top": 0,
@@ -9222,6 +9254,7 @@
         {
           "duration": 4,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -2,
             "top": 0,
@@ -9280,6 +9313,7 @@
         {
           "duration": 4,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": 0,
             "top": 0,
@@ -9330,6 +9364,7 @@
         {
           "duration": 4,
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -4,
             "top": 0,

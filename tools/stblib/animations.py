@@ -16,7 +16,7 @@ class Hurtbox:
 		ensure(self.top <= self.bottom)
 
 class DirectHitbox:
-	def __init__(self, enabled=False, damages=0, base_h=0, base_v=0, force_h=0, force_v=0, left=0, right=0, top=0, bottom=0):
+	def __init__(self, enabled=False, damages=0, base_h=0, base_v=0, force_h=0, force_v=0, left=0, right=0, top=0, bottom=0, hitstun=0):
 		self.enabled = enabled
 		self.left = left
 		self.right = right
@@ -27,6 +27,7 @@ class DirectHitbox:
 		self.base_v = base_v
 		self.force_h = force_h
 		self.force_v = force_v
+		self.hitstun = hitstun
 
 	def check(self):
 		ensure(isinstance(self.damages, int), f'hitbox damages is of class {self.damages.__class__.__name__}')
@@ -34,15 +35,17 @@ class DirectHitbox:
 		ensure(isinstance(self.base_v, int), f'hitbox base_v is of class {self.base_v.__class__.__name__}')
 		ensure(isinstance(self.force_h, int), f'hitbox force_h is of class {self.force_h.__class__.__name__}')
 		ensure(isinstance(self.force_v, int), f'hitbox force_v is of class {self.force_v.__class__.__name__}')
+		ensure(isinstance(self.hitstun, int), f'hitbox hitstun is of class {self.hitstun.__class__.__name__}')
 		ensure(-128 <= self.left and self.left <= 127)
 		ensure(-128 <= self.right and self.right <= 127)
 		ensure(-128 <= self.top and self.top <= 127)
 		ensure(-128 <= self.bottom and self.bottom <= 127)
 		ensure(self.left <= self.right)
 		ensure(self.top <= self.bottom)
+		ensure(0 <= self.hitstun and self.hitstun <= 255)
 
 class CustomHitbox:
-	def __init__(self, enabled=False, left=0, right=0, top=0, bottom=0, routine='', directional1=0, directional2=0, value1=0, value2=0, value3=0):
+	def __init__(self, enabled=False, left=0, right=0, top=0, bottom=0, routine='', directional1=0, directional2=0, value1=0, value2=0, value3=0, value4=0):
 		self.enabled = enabled
 		self.left = left
 		self.right = right
@@ -54,6 +57,7 @@ class CustomHitbox:
 		self.value1 = value1
 		self.value2 = value2
 		self.value3 = value3
+		self.value4 = value4
 
 	def check(self):
 		ensure(-128 <= self.left and self.left <= 127)
@@ -66,8 +70,9 @@ class CustomHitbox:
 		ensure(-32768 <= self.directional1 and self.directional1 <= 32767, 'directional1 value of {} is out of int16 bounds'.format(self.directional1))
 		ensure(-32768 <= self.directional2 and self.directional2 <= 32767, 'directional2 value of {} is out of int16 bounds'.format(self.directional2))
 		ensure(0 <= self.value1 and self.value1 <= 255, 'value1 ({}) is out of uint8 bounds'.format(self.value1))
-		ensure(0 <= self.value2 and self.value2 <= 255, 'value2 ({}) is out of uint8 bounds'.format(self.value1))
-		ensure(0 <= self.value3 and self.value3 <= 255, 'value3 ({}) is out of uint8 bounds'.format(self.value1))
+		ensure(0 <= self.value2 and self.value2 <= 255, 'value2 ({}) is out of uint8 bounds'.format(self.value2))
+		ensure(0 <= self.value3 and self.value3 <= 255, 'value3 ({}) is out of uint8 bounds'.format(self.value3))
+		ensure(0 <= self.value4 and self.value4 <= 255, 'value4 ({}) is out of uint8 bounds'.format(self.value4))
 
 class Sprite:
 	def __init__(self, y=0, tile='', attr=0, x=0, foreground=False):

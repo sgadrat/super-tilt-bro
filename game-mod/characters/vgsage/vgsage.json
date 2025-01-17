@@ -3975,6 +3975,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -21,
             "top": 6,
@@ -4287,6 +4288,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -5,
             "top": 5,
@@ -4345,6 +4347,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -5,
             "top": 5,
@@ -4403,6 +4406,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -5,
             "top": 5,
@@ -4461,6 +4465,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -5,
             "top": 5,
@@ -4519,6 +4524,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -4,
             "top": 5,
@@ -4723,6 +4729,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": 2,
             "top": -6,
@@ -4797,6 +4804,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -4,
             "top": -5,
@@ -4871,6 +4879,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -5,
             "top": -6,
@@ -4945,6 +4954,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -5,
             "top": -6,
@@ -5335,6 +5345,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -18,
             "top": 12,
@@ -5409,6 +5420,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -19,
             "top": 11,
@@ -5799,6 +5811,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -8,
             "top": 1,
@@ -5873,6 +5886,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -8,
             "top": 1,
@@ -5947,6 +5961,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -8,
             "top": 1,
@@ -6021,6 +6036,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -8,
             "top": 1,
@@ -6095,6 +6111,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -8,
             "top": 1,
@@ -6169,6 +6186,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -8,
             "top": 1,
@@ -6311,6 +6329,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -9,
             "top": 5,
@@ -6377,6 +6396,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": 0,
             "top": 5,
@@ -6451,6 +6471,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -6,
             "top": 5,
@@ -6525,6 +6546,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -13,
             "top": 5,
@@ -6853,6 +6875,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -2,
             "top": -5,
@@ -6927,6 +6950,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -6,
             "top": -5,
@@ -6993,6 +7017,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -7,
             "top": -3,
@@ -7197,6 +7222,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -4,
             "top": 16,
@@ -7271,6 +7297,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -5,
             "top": 16,
@@ -7345,6 +7372,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -5,
             "top": 16,
@@ -7419,6 +7447,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -5,
             "top": 15,
@@ -7764,7 +7793,8 @@
             "directional2": 0,
             "value1": 1,
             "value2": 0,
-            "value3": 0
+            "value3": 0,
+            "value4": 0
           },
           "hurtbox": {
             "type": "animation_hurtbox",
@@ -7839,7 +7869,8 @@
             "directional2": 0,
             "value1": 0,
             "value2": 0,
-            "value3": 0
+            "value3": 0,
+            "value4": 0
           },
           "hurtbox": {
             "type": "animation_hurtbox",
@@ -7938,7 +7969,8 @@
             "directional2": 0,
             "value1": 0,
             "value2": 0,
-            "value3": 0
+            "value3": 0,
+            "value4": 0
           },
           "hurtbox": {
             "type": "animation_hurtbox",
@@ -8037,7 +8069,8 @@
             "directional2": 0,
             "value1": 0,
             "value2": 0,
-            "value3": 0
+            "value3": 0,
+            "value4": 0
           },
           "hurtbox": {
             "type": "animation_hurtbox",
@@ -8136,7 +8169,8 @@
             "directional2": 0,
             "value1": 0,
             "value2": 0,
-            "value3": 0
+            "value3": 0,
+            "value4": 0
           },
           "hurtbox": {
             "type": "animation_hurtbox",
@@ -9074,6 +9108,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": 5,
             "top": 4,
@@ -9148,6 +9183,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": 5,
             "top": 4,
@@ -9228,6 +9264,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -4,
             "top": 3,
@@ -9614,6 +9651,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -6,
             "top": 14,
@@ -9704,6 +9742,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -6,
             "top": 14,
@@ -9794,6 +9833,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -6,
             "top": 14,
@@ -9876,6 +9916,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -6,
             "top": 14,
@@ -10196,6 +10237,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -7,
             "top": 2,
@@ -10270,6 +10312,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": 1,
             "top": 8,
@@ -10344,6 +10387,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -7,
             "top": 2,
@@ -10418,6 +10462,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": 1,
             "top": 8,
@@ -10492,6 +10537,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": -7,
             "top": 2,
@@ -10566,6 +10612,7 @@
             }
           ],
           "hitbox": {
+            "hitstun": 0,
             "type": "animation_direct_hitbox",
             "left": 1,
             "top": 8,
