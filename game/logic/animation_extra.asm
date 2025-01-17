@@ -216,9 +216,6 @@ stb_animation_draw:
 						lda (frame_vector), y
 						sta player_a_hitbox_force_h_low, x
 						iny
-						lda (frame_vector), y
-						sta player_a_hitbox_force_h, x
-						iny
 
 						jmp ok
 
@@ -266,14 +263,14 @@ stb_animation_draw:
 						adc #1
 						sta player_a_hitbox_force_h_low, x
 						iny
-						lda (frame_vector), y
-						eor #%11111111
-						adc #0
-						sta player_a_hitbox_force_h, x
-						iny
 
 				ok:
 			.)
+
+			; Hitstun modifier
+			lda (frame_vector), y
+			sta player_a_hitbox_hitstun, x
+			iny
 
 			; Top
 			lda (frame_vector), y
@@ -301,8 +298,8 @@ stb_animation_draw:
 			lda (frame_vector), y
 			sta player_a_hitbox_force_v_low, x
 			iny
-			lda (frame_vector), y
-			sta player_a_hitbox_force_v, x
+
+			; Unused
 			iny
 
 			; Damage

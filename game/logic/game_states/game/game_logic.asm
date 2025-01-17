@@ -1180,14 +1180,14 @@ apply_force_vector:
 
 	; Apply force vector to the opponent
 	ldx current_player
-	lda player_a_hitbox_force_h, x     ;
-	sta force_h                        ;
 	lda player_a_hitbox_force_h_low, x ;
-	sta force_h_low                    ; Save force vector to a player independent
-	lda player_a_hitbox_force_v, x     ; location
-	sta force_v                        ;
-	lda player_a_hitbox_force_v_low, x ;
+	sta force_h_low                    ;
+	SIGN_EXTEND()                      ;
+	sta force_h                        ; Save force vector to a player independent
+	lda player_a_hitbox_force_v_low, x ; location
 	sta force_v_low                    ;
+	SIGN_EXTEND()                      ;
+	sta force_v                        ;
 	lda player_a_hitbox_base_knock_up_h_high, x ;
 	sta base_h_high                             ;
 	lda player_a_hitbox_base_knock_up_h_low, x  ;
@@ -1217,6 +1217,7 @@ apply_force_vector:
 ; Overwrites register A, register Y
 apply_force_vector_direct:
 .(
+	;TODO optimizable - force_h and force_v are actually 8-bit signed values: implement a signed version of the "multiply8" routine and use it
 	multiplicand_low = tmpfield1
 	multiplicand_high = tmpfield2
 	multiplier = tmpfield3

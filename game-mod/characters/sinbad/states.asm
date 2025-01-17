@@ -758,6 +758,7 @@ sinbad_side_tilt_on_hit:
 		FORCE_H = 0
 		BASE_V = -400
 		FORCE_V = 0
+		HITSTUN_MODIFIER = 0
 
 		; Hurt opponent
 		.(
@@ -768,10 +769,10 @@ sinbad_side_tilt_on_hit:
 			sta player_a_hitbox_base_knock_up_v_low, x
 			lda #>BASE_V
 			sta player_a_hitbox_base_knock_up_v_high, x
-			lda #<FORCE_V
+			lda #FORCE_V
 			sta player_a_hitbox_force_v_low, x
-			lda #>FORCE_V
-			sta player_a_hitbox_force_v, x
+			lda #HITSTUN_MODIFIER
+			sta player_a_hitbox_hitstun, x
 
 			lda player_a_direction, x
 			bne right
@@ -780,10 +781,8 @@ sinbad_side_tilt_on_hit:
 					sta player_a_hitbox_base_knock_up_h_low, x
 					lda #>BASE_H
 					sta player_a_hitbox_base_knock_up_h_high, x
-					lda #<FORCE_H
+					lda #FORCE_H
 					sta player_a_hitbox_force_h_low, x
-					lda #>FORCE_H
-					sta player_a_hitbox_force_h, x
 
 					jmp hitbox_ok
 
@@ -792,10 +791,8 @@ sinbad_side_tilt_on_hit:
 					sta player_a_hitbox_base_knock_up_h_low, x
 					lda #>-BASE_H
 					sta player_a_hitbox_base_knock_up_h_high, x
-					lda #<-FORCE_H
+					lda #-FORCE_H
 					sta player_a_hitbox_force_h_low, x
-					lda #>-FORCE_H
-					sta player_a_hitbox_force_h, x
 
 			hitbox_ok:
 
