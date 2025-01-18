@@ -7222,7 +7222,7 @@
             }
           ],
           "hitbox": {
-            "hitstun": 0,
+            "hitstun": 5,
             "type": "animation_direct_hitbox",
             "left": -4,
             "top": 16,
@@ -7297,7 +7297,7 @@
             }
           ],
           "hitbox": {
-            "hitstun": 0,
+            "hitstun": 5,
             "type": "animation_direct_hitbox",
             "left": -5,
             "top": 16,
@@ -7372,7 +7372,7 @@
             }
           ],
           "hitbox": {
-            "hitstun": 0,
+            "hitstun": 5,
             "type": "animation_direct_hitbox",
             "left": -5,
             "top": 16,
@@ -7447,7 +7447,7 @@
             }
           ],
           "hitbox": {
-            "hitstun": 0,
+            "hitstun": 5,
             "type": "animation_direct_hitbox",
             "left": -5,
             "top": 15,
