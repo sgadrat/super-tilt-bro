@@ -7893,7 +7893,7 @@
         {
           "duration": 4,
           "hitbox": {
-            "hitstun": 0,
+            "hitstun": 7,
             "type": "animation_direct_hitbox",
             "left": 0,
             "top": -3,
@@ -7960,7 +7960,7 @@
         {
           "duration": 4,
           "hitbox": {
-            "hitstun": 0,
+            "hitstun": 7,
             "type": "animation_direct_hitbox",
             "left": 3,
             "top": -6,
