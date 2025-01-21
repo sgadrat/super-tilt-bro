@@ -9541,6 +9541,14 @@
       },
       {
         "colors": [
+          43,
+          58,
+          16
+        ],
+        "type": "palette"
+      },
+      {
+        "colors": [
           55,
           51,
           32
@@ -9552,14 +9560,6 @@
           49,
           32,
           32
-        ],
-        "type": "palette"
-      },
-      {
-        "colors": [
-          55,
-          56,
-          58
         ],
         "type": "palette"
       },
@@ -9599,49 +9599,49 @@
       },
       {
         "colors": [
-          8,
-          22,
-          16
-        ],
-        "type": "palette"
-      },
-      {
-        "colors": [
-          1,
-          49,
-          51
-        ],
-        "type": "palette"
-      },
-      {
-        "colors": [
-          8,
-          24,
-          41
-        ],
-        "type": "palette"
-      },
-      {
-        "colors": [
-          8,
-          15,
-          7
-        ],
-        "type": "palette"
-      },
-      {
-        "colors": [
-          8,
-          40,
+          11,
+          26,
           32
         ],
         "type": "palette"
       },
       {
         "colors": [
-          4,
+          8,
+          21,
+          39
+        ],
+        "type": "palette"
+      },
+      {
+        "colors": [
+          15,
+          17,
+          23
+        ],
+        "type": "palette"
+      },
+      {
+        "colors": [
+          15,
+          7,
+          22
+        ],
+        "type": "palette"
+      },
+      {
+        "colors": [
+          15,
+          40,
+          24
+        ],
+        "type": "palette"
+      },
+      {
+        "colors": [
+          15,
           36,
-          56
+          40
         ],
         "type": "palette"
       }
@@ -9652,6 +9652,14 @@
           8,
           16,
           55
+        ],
+        "type": "palette"
+      },
+      {
+        "colors": [
+          43,
+          41,
+          57
         ],
         "type": "palette"
       },
@@ -9668,14 +9676,6 @@
           1,
           50,
           51
-        ],
-        "type": "palette"
-      },
-      {
-        "colors": [
-          8,
-          57,
-          40
         ],
         "type": "palette"
       },
