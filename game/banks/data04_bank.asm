@@ -42,6 +42,15 @@ bank_data_char_select_screen_extra_data:
 #print *-bank_data_char_select_screen_extra_data
 .)
 
+.(
+bank_data_begin:
+#include "game/logic/game_states/social_screen/social_screen_extra_code.asm"
+#include "game/data/menu_social/anims.asm"
+#echo
+#echo Social screen extra code:
+#print *-bank_data_begin
+.)
+
 bank_data04_end:
 
 #echo
