@@ -102,6 +102,7 @@ static void start_cutscene() {
 	wrap_trampoline(encounter.cutscene.bank, code_bank(), cutscene->logic);
 
 	// Change gamestate to ourself, we just played the cutscene and now want to check next encounter like any other
+	*arcade_mode_lvl_cap = MAX_AI_LEVEL;
 	++*arcade_mode_current_encounter;
 	wrap_change_global_game_state(GAME_STATE_ARCADE_MODE);
 }
@@ -115,7 +116,7 @@ static void next_screen() {
 	*config_game_mode = GAME_MODE_ARCADE;
 
 	if (*arcade_mode_stage_type == encounter_type_fight()) {
-		*config_ai_level = min(current_encounter().fight.difficulty, 3);
+		*config_ai_level = min(current_encounter().fight.difficulty, *arcade_mode_lvl_cap);
 		*config_selected_stage = current_encounter().fight.stage;
 		*config_player_b_character_palette = current_encounter().fight.skin;
 		*config_player_b_weapon_palette = current_encounter().fight.skin;
@@ -155,6 +156,9 @@ static void gameover_screen() {
 		++*arcade_mode_nb_credits_used;
 	}
 	reinit_player_state();
+	if (*arcade_mode_lvl_cap > 1) {
+		--*arcade_mode_lvl_cap;
+	}
 
 	// Start the gameover "encounter"
 	*config_initial_stocks = 0;
@@ -195,6 +199,7 @@ void init_arcade_mode_extra() {
 	//     we expect to preserve their values while going to ingame state
 	if (*arcade_mode_current_encounter == 0) {
 		reinit_player_state();
+		*arcade_mode_lvl_cap = MAX_AI_LEVEL;
 		*arcade_mode_counter_frames = 0;
 		*arcade_mode_counter_seconds = 0;
 		*arcade_mode_counter_minutes = 0;

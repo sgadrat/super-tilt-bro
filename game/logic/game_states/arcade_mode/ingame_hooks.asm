@@ -677,6 +677,8 @@ hide_player_b:
 	; Change arcade step, only if this one is a success
 	;lda game_winner ; useless, done above
 	bne encounter_updated
+		lda #MAX_AI_LEVEL
+		sta arcade_mode_lvl_cap
 		inc arcade_mode_current_encounter
 	encounter_updated:
 

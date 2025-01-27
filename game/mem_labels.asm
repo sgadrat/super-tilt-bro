@@ -779,9 +779,10 @@ config_ingame_track = $0546
 config_player_a_present = $0547 ; 0 - player is absent, and should not impact the screen, 1 - player is there as usual
 config_player_b_present = $0548 ; 0 - player is absent, and should not impact the screen, 1 - player is there as usual
 
-;unused $0549-$054c
+;unused $0549-$054b
 
 ; Arcade mode stuff expected to be preseved by the encounter
+arcade_mode_lvl_cap = $054c
 arcade_mode_medals = $054d ; $054d to $054f
 arcade_mode_saved_counter_frames = $0550
 arcade_mode_saved_counter_seconds = $0551
