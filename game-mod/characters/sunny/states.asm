@@ -363,9 +363,9 @@ sunny_pearl_sprite_oam_per_player:
 						; Apply knockback
 						.(
 							KNOCKUP_BASE_HORIZONTAL = -200
-							KNOCKUP_BASE_VERTICAL = -500
+							KNOCKUP_BASE_VERTICAL = -800
 							KNOCKUP_SCALING_HORIZONTAL = -1
-							KNOCKUP_SCALING_VERTICAL = -2
+							KNOCKUP_SCALING_VERTICAL = -16
 							HITSTUN_MODIFIER = 0
 
 							base_h_lsb = tmpfield6
@@ -407,11 +407,14 @@ sunny_pearl_sprite_oam_per_player:
 						; Apply dammage
 						.(
 							ldy player_a_damages, x
+							iny
+							iny
+							iny
 							cpy #199
-							bcs ok
-								iny
-								sty player_a_damages, x
+							bcc ok
+								ldy #199
 							ok:
+							sty player_a_damages, x
 						.)
 
 						; Throw opponent
