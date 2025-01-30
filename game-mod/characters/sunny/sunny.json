@@ -4602,7 +4602,7 @@
             "base_v": -1000,
             "force_h": -4,
             "force_v": -20,
-            "damages": 2,
+            "damages": 3,
             "enabled": true
           },
           "hurtbox": {
@@ -5016,7 +5016,7 @@
             }
           ],
           "hitbox": {
-            "hitstun": 0,
+            "hitstun": 10,
             "type": "animation_direct_hitbox",
             "left": -14,
             "top": 8,
@@ -5026,7 +5026,7 @@
             "base_v": -1000,
             "force_h": 0,
             "force_v": -5,
-            "damages": 1,
+            "damages": 2,
             "enabled": true
           },
           "hurtbox": {
@@ -5392,13 +5392,13 @@
         {
           "duration": 3,
           "hitbox": {
-            "hitstun": 0,
+            "hitstun": 6,
             "type": "animation_direct_hitbox",
             "left": -4,
             "top": -1,
             "right": 4,
             "bottom": 9,
-            "base_h": -200,
+            "base_h": -150,
             "base_v": -1500,
             "force_h": 0,
             "force_v": -10,
@@ -5467,13 +5467,13 @@
         {
           "duration": 3,
           "hitbox": {
-            "hitstun": 0,
+            "hitstun": 6,
             "type": "animation_direct_hitbox",
             "left": 2,
             "top": -8,
             "right": 9,
             "bottom": 3,
-            "base_h": -200,
+            "base_h": -150,
             "base_v": -1500,
             "force_h": 0,
             "force_v": -10,
@@ -5542,13 +5542,13 @@
         {
           "duration": 3,
           "hitbox": {
-            "hitstun": 0,
+            "hitstun": 6,
             "type": "animation_direct_hitbox",
             "left": 2,
             "top": -9,
             "right": 9,
             "bottom": 3,
-            "base_h": -200,
+            "base_h": -150,
             "base_v": -1500,
             "force_h": 0,
             "force_v": -10,
@@ -5625,13 +5625,13 @@
         {
           "duration": 3,
           "hitbox": {
-            "hitstun": 0,
+            "hitstun": 6,
             "type": "animation_direct_hitbox",
             "left": 0,
             "top": -6,
             "right": 9,
             "bottom": 0,
-            "base_h": -200,
+            "base_h": -150,
             "base_v": -1500,
             "force_h": 0,
             "force_v": -10,
@@ -6297,7 +6297,7 @@
             "base_v": -800,
             "force_h": -5,
             "force_v": -8,
-            "damages": 1,
+            "damages": 5,
             "enabled": true
           },
           "hurtbox": {
@@ -6372,7 +6372,7 @@
             "base_v": -500,
             "force_h": -1,
             "force_v": -5,
-            "damages": 1,
+            "damages": 3,
             "enabled": false
           },
           "hurtbox": {
@@ -6677,7 +6677,7 @@
             "base_v": -500,
             "force_h": -1,
             "force_v": -3,
-            "damages": 1,
+            "damages": 2,
             "enabled": true
           },
           "hurtbox": {
@@ -6744,7 +6744,7 @@
             "base_v": 1000,
             "force_h": -10,
             "force_v": 20,
-            "damages": 1,
+            "damages": 5,
             "enabled": false
           },
           "hurtbox": {
@@ -6819,7 +6819,7 @@
             "base_v": 1000,
             "force_h": -10,
             "force_v": 20,
-            "damages": 1,
+            "damages": 5,
             "enabled": false
           },
           "hurtbox": {
@@ -6902,7 +6902,7 @@
             "base_v": -500,
             "force_h": -1,
             "force_v": -3,
-            "damages": 1,
+            "damages": 2,
             "enabled": false
           },
           "hurtbox": {
@@ -7273,7 +7273,7 @@
             "base_v": -800,
             "force_h": 0,
             "force_v": 0,
-            "damages": 1,
+            "damages": 2,
             "enabled": true
           },
           "hurtbox": {
@@ -7348,7 +7348,7 @@
             "base_v": -800,
             "force_h": 0,
             "force_v": 0,
-            "damages": 1,
+            "damages": 2,
             "enabled": false
           },
           "hurtbox": {
@@ -7423,7 +7423,7 @@
             "base_v": -800,
             "force_h": 0,
             "force_v": 0,
-            "damages": 1,
+            "damages": 2,
             "enabled": false
           },
           "hurtbox": {
@@ -7498,7 +7498,7 @@
             "base_v": -800,
             "force_h": 0,
             "force_v": 0,
-            "damages": 1,
+            "damages": 2,
             "enabled": false
           },
           "hurtbox": {
@@ -7579,7 +7579,7 @@
             "base_v": -1500,
             "force_h": -10,
             "force_v": -20,
-            "damages": 1,
+            "damages": 7,
             "enabled": true
           },
           "hurtbox": {
@@ -7721,8 +7721,8 @@
             "base_h": -300,
             "base_v": -1000,
             "force_h": -4,
-            "force_v": -15,
-            "damages": 1,
+            "force_v": -30,
+            "damages": 3,
             "enabled": true
           },
           "hurtbox": {
@@ -8446,7 +8446,7 @@
             "base_h": -200,
             "base_v": -1500,
             "bottom": 6,
-            "damages": 0,
+            "damages": 1,
             "enabled": false,
             "force_h": 0,
             "force_v": 0,
@@ -8580,7 +8580,7 @@
             "base_h": -200,
             "base_v": -1500,
             "bottom": 4,
-            "damages": 1,
+            "damages": 3,
             "enabled": true,
             "force_h": -2,
             "force_v": -40,
