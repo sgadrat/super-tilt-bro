@@ -1150,6 +1150,26 @@ sunny_global_onground:
 
 	sunny_select_special_endlag:
 	.(
+		; Allow to change Sunny's direction on ground
+		.(
+			lda player_a_grounded, x
+			beq ok
+				lda controller_a_btns, x
+				and #CONTROLLER_INPUT_LEFT | CONTROLLER_INPUT_RIGHT
+				beq ok
+					and #CONTROLLER_INPUT_LEFT
+					beq right
+						left:
+							lda #DIRECTION_LEFT2
+							jmp apply
+						right:
+							lda #DIRECTION_RIGHT2
+							;jmp apply ; useless, fallthrough
+					apply:
+						sta player_a_direction, x
+				ok:
+		.)
+
 		; Shot pearl
 		.(
 			lda player_a_projectile_1_flags, x
