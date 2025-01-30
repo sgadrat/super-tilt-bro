@@ -1500,6 +1500,9 @@ def remove_instruments(music, arp_force_absolute_notes=True):
 	def get_sequence(music, chan_type, seq_type, seq_idx):
 		if seq_idx == -1:
 			return None
+		if seq_idx not in music['macros'][chan_type][seq_type]:
+			notice(f"unknown macro for {seq_type} (id={seq_idx}): Can happen if an instrument is using a empty sequence.")
+			return None
 		return music['macros'][chan_type][seq_type][seq_idx]
 
 	def effect_key(track_idx, chan_idx):
