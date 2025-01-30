@@ -8583,10 +8583,10 @@
             "damages": 1,
             "enabled": true,
             "force_h": -2,
-            "force_v": -25,
-            "left": -3,
-            "right": 4,
-            "top": -4,
+            "force_v": -40,
+            "left": -6,
+            "right": 6,
+            "top": -9,
             "hitstun": 0,
             "type": "animation_direct_hitbox"
           },
@@ -8635,16 +8635,16 @@
               "tile": "SUNNY_TILE_32",
               "attr": 0,
               "foreground": false,
-              "x": -4,
-              "y": -5
+              "x": -6,
+              "y": -7
             },
             {
               "type": "animation_sprite",
               "tile": "SUNNY_TILE_36",
               "attr": 0,
               "foreground": false,
-              "x": -4,
-              "y": -11
+              "x": -6,
+              "y": -13
             }
           ],
           "type": "animation_frame"
@@ -9195,8 +9195,8 @@
             "bottom": 5,
             "base_h": -500,
             "base_v": -1000,
-            "force_h": -15,
-            "force_v": -30,
+            "force_h": -30,
+            "force_v": -40,
             "damages": 4,
             "enabled": true
           },
@@ -9262,8 +9262,8 @@
             "bottom": 6,
             "base_h": -500,
             "base_v": -1000,
-            "force_h": -15,
-            "force_v": -30,
+            "force_h": -30,
+            "force_v": -40,
             "damages": 4,
             "enabled": false
           },
@@ -9321,8 +9321,8 @@
             "bottom": 7,
             "base_h": -500,
             "base_v": -1000,
-            "force_h": -15,
-            "force_v": -30,
+            "force_h": -30,
+            "force_v": -40,
             "damages": 4,
             "enabled": false
           },
@@ -9372,8 +9372,8 @@
             "bottom": 7,
             "base_h": -500,
             "base_v": -1000,
-            "force_h": -15,
-            "force_v": -30,
+            "force_h": -30,
+            "force_v": -40,
             "damages": 4,
             "enabled": false
           },
