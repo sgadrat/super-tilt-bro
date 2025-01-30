@@ -1125,7 +1125,7 @@ sunny_global_onground:
 	!define "anim" {sunny_anim_special}
 	!define "state" {SUNNY_STATE_SPECIAL}
 	!define "routine" {special}
-	!define "followup" {sunny_start_special_endlag}
+	!define "followup" {sunny_select_special_endlag}
 	!include "characters/tpl_aerial_attack_uncancellable.asm"
 
 	!define "anim" {sunny_anim_special_endlag}
@@ -1139,7 +1139,33 @@ sunny_global_onground:
 		end:
 		rts
 	}
-	!include "characters/tpl_aerial_attack_uncancellable.asm"
+	!include "characters/tpl_grounded_attack_followup.asm"
+
+	!define "anim" {sunny_anim_special_endlag}
+	!define "state" {SUNNY_STATE_AERIAL_SPE_ENDLAG}
+	!define "routine" {aerial_spe_endlag}
+	!define "init" {
+		lda player_a_projectile_1_flags, x
+		bne end
+			jmp sunny_pearl_shot_spawn
+			; No return, jump to subroutine
+		end:
+		rts
+	}
+	!include "characters/tpl_aerial_attack.asm"
+
+	sunny_select_special_endlag:
+	.(
+		lda player_a_grounded, x
+		bne grounded
+			aerial:
+				jmp sunny_start_aerial_spe_endlag
+				;rts ; useless, jump to subroutine
+			grounded:
+				jmp sunny_start_special_endlag
+				;rts ; useless, jump to subroutine
+		;rts ; useless, no branch return
+	.)
 .)
 
 ;

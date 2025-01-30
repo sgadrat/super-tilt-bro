@@ -14774,6 +14774,16 @@
       "onhurt_routine": "hurt_player"
     },
     {
+      "type": "character_state",
+      "name": "SUNNY_STATE_AERIAL_SPE_ENDLAG",
+      "start_routine": null,
+      "update_routine": "sunny_tick_aerial_spe_endlag",
+      "input_routine": "smart_keep_input_dirty",
+      "onground_routine": "sunny_start_landing",
+      "offground_routine": "dummy_routine",
+      "onhurt_routine": "hurt_player"
+    },
+    {
       "input_routine": "smart_keep_input_dirty",
       "name": "SUNNY_STATE_SIDE_SPECIAL_CHARGE",
       "offground_routine": "dummy_routine",
