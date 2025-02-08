@@ -51,6 +51,14 @@ bank_data_begin:
 #print *-bank_data_begin
 .)
 
+.(
+bank_data_begin:
+#include "game/logic/game_states/gameover_screen/gameover_screen_extra_code.asm"
+#echo
+#echo Gameover screen logic size:
+#print *-bank_data_begin
+.)
+
 bank_data02_end:
 
 #echo

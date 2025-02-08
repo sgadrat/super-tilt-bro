@@ -1,8 +1,8 @@
-GAMEOVER_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
++GAMEOVER_SCREEN_EXTRA_CODE_BANK_NUMBER = CURRENT_BANK_NUMBER
 
 #define OAM_BALLOONS 4*32
 
-init_gameover_screen_extra:
++init_gameover_screen_extra:
 .(
 	; Set background tileset
 	.(
@@ -301,7 +301,7 @@ init_gameover_screen_extra:
 	.byt $ea, $f4
 .)
 
-gameover_screen_tick_extra:
++gameover_screen_tick_extra:
 .(
 	.(
 		; Check if gamepads are ready

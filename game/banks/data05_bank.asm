@@ -37,12 +37,6 @@ bank_data_stage_pit_begin:
 #echo Stage The Pit size:
 #print *-bank_data_stage_pit_begin
 
-bank_data_gameover_screen_logic_begin:
-#include "game/logic/game_states/gameover_screen/gameover_screen_extra_code.asm"
-#echo
-#echo Gameover screen logic size:
-#print *-bank_data_gameover_screen_logic_begin
-
 bank_data05_end:
 
 #echo

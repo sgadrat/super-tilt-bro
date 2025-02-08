@@ -316,9 +316,9 @@ update_players:
 		;TODO optimizable, unroll
 		ldx #0
 		generic_update_one_player:
-			; Select character's bank
-			ldy config_player_a_character, x
-			SWITCH_BANK(characters_bank_number COMMA y)
+			;;; Select character's bank
+			;;ldy config_player_a_character, x
+			;;SWITCH_BANK(characters_bank_number COMMA y)
 
 			; Generic update routines
 			stx player_number
@@ -2038,10 +2038,9 @@ move_player_handle_one_platform_down:
 ;  tmpfield5 - player's current X screen
 ;  tmpfield8 - player's current Y screen
 ;
-;  The selected bank must be the correct character's bank.
-;
-;  Call character code, which may overwrite other things - TODO clear guidelines of allowed side effects for character callbacks
-;  Overwrites tmpfield1 and tmpfield2
+;  Calls character code, which may overwrite other things - TODO clear guidelines of allowed side effects for character callbacks
+;  Changes selected bank
+;  Overwrites tmpfield1, tmpfield2 and tmpfield3
 check_player_position:
 .(
 	capped_x = tmpfield1 ; Not movable, used by particle_death_start
@@ -2054,15 +2053,36 @@ check_player_position:
 	current_y_screen = tmpfield8
 
 	; Check death
-	SIGNED_CMP(current_x_pixel, current_x_screen, #<STAGE_BLAST_LEFT, #>STAGE_BLAST_LEFT)
-	bmi set_death_state
-	SIGNED_CMP(#<STAGE_BLAST_RIGHT, #>STAGE_BLAST_RIGHT, current_x_pixel, current_x_screen)
-	bmi set_death_state
-	SIGNED_CMP(current_y_pixel, current_y_screen, #<STAGE_BLAST_TOP, #>STAGE_BLAST_TOP)
-	bmi set_death_state
-	SIGNED_CMP(#<STAGE_BLAST_BOTTOM, #>STAGE_BLAST_BOTTOM, current_y_pixel, current_y_screen)
-	bmi set_death_state
+	;;ldy config_player_a_character, x
+	;;lda characters_bank_number, y
+	;;sta character_bank
+	;;ldy config_selected_stage
+	;;TRAMPOLINE_POINTED(stages_ringout_routine_lsb COMMA y, stages_ringout_routine_msb COMMA y, stages_bank COMMA y, character_bank)
+
+	ldy config_selected_stage
+	SWITCH_BANK(stages_bank COMMA y)
+	lda stages_ringout_routine_lsb, y
+	sta tmpfield1
+	lda stages_ringout_routine_msb, y
+	sta tmpfield2
+	jsr call_pointed_subroutine
+
+	ldy config_player_a_character, x
+	SWITCH_BANK(characters_bank_number COMMA y)
+
+	lda tmpfield1
+	bne set_death_state
 	jmp check_collisions
+
+	;SIGNED_CMP(current_x_pixel, current_x_screen, #<STAGE_BLAST_LEFT, #>STAGE_BLAST_LEFT)
+	;bmi set_death_state
+	;SIGNED_CMP(#<STAGE_BLAST_RIGHT, #>STAGE_BLAST_RIGHT, current_x_pixel, current_x_screen)
+	;bmi set_death_state
+	;SIGNED_CMP(current_y_pixel, current_y_screen, #<STAGE_BLAST_TOP, #>STAGE_BLAST_TOP)
+	;bmi set_death_state
+	;SIGNED_CMP(#<STAGE_BLAST_BOTTOM, #>STAGE_BLAST_BOTTOM, current_y_pixel, current_y_screen)
+	;bmi set_death_state
+	;jmp check_collisions
 
 		set_death_state:
 		.(

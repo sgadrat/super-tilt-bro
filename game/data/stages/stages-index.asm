@@ -76,6 +76,44 @@ stages_freezed_tick_routine_msb:
 .byt >dummy_routine ; arcade run02
 .byt >dummy_routine ; arcade btt02
 
+stages_ringout_routine_lsb:
+.byt <stage_flatland_ringout_check ; Flatland
+.byt <stage_pit_ringout_check ; Pit
+.byt <stage_skyride_ringout_check ; Skyride
+.byt <stage_thehunt_ringout_check ; The Hunt
+.byt <stage_theplank_ringout_check ; The Plank
+.byt <stage_deeprock_ringout_check ; Deep Rock
+
+.byt <stage_arcade_boss_ringout_check ; arcade boss
+.byt <stage_arcade_fight_port_ringout_check ; Port
+.byt <stage_arcade_fight_town_ringout_check ; Town
+.byt <stage_arcade_fight_wall_ringout_check ; Wall
+.byt <stage_arcade_gameover_ringout_check ; Gameover
+
+.byt <stage_arcade_run01_ringout_check ; arcade run01
+.byt <stage_arcade_btt01_ringout_check ; arcade btt01
+.byt <stage_arcade_run02_ringout_check ; arcade run02
+.byt <stage_arcade_btt02_ringout_check ; arcade btt02
+
+stages_ringout_routine_msb:
+.byt >stage_flatland_ringout_check ; Flatland
+.byt >stage_pit_ringout_check ; Pit
+.byt >stage_skyride_ringout_check ; Skyride
+.byt >stage_thehunt_ringout_check ; The Hunt
+.byt >stage_theplank_ringout_check ; The Plank
+.byt >stage_deeprock_ringout_check ; Deep Rock
+
+.byt >stage_arcade_boss_ringout_check ; arcade boss
+.byt >stage_arcade_fight_port_ringout_check ; Port
+.byt >stage_arcade_fight_town_ringout_check ; Town
+.byt >stage_arcade_fight_wall_ringout_check ; Wall
+.byt >stage_arcade_gameover_ringout_check ; Gameover
+
+.byt >stage_arcade_run01_ringout_check ; arcade run01
+.byt >stage_arcade_btt01_ringout_check ; arcade btt01
+.byt >stage_arcade_run02_ringout_check ; arcade run02
+.byt >stage_arcade_btt02_ringout_check ; arcade btt02
+
 stages_nametable:
 RAW_VECTOR(nametable_flatland) ; Flatland
 RAW_VECTOR(nametable_stage_pit) ; Pit
