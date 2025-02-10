@@ -50,6 +50,14 @@ bank_data_arcade_anims_begin:
 #echo arcade animations size:
 #print *-bank_data_arcade_anims_begin
 
+.(
+bank_data_begin:
+#include "game/data/music/theme_fusolis.asm"
+#echo
+#echo theme fusolis:
+#print *-bank_data_begin
+.)
+
 bank_data09_end:
 
 #echo

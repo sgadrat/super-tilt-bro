@@ -2,6 +2,7 @@
 
 jukebox_themes_lsb:
 	.byt <music_title_info
+	.byt <music_fusolis_info
 	.byt <music_perihelium_info
 	.byt <music_sinbad_info
 	.byt <music_adventure_info
@@ -13,6 +14,7 @@ jukebox_themes_lsb:
 	.byt <music_spirit_of_chivalry_info
 jukebox_themes_msb:
 	.byt >music_title_info
+	.byt >music_fusolis_info
 	.byt >music_perihelium_info
 	.byt >music_sinbad_info
 	.byt >music_adventure_info
@@ -24,6 +26,7 @@ jukebox_themes_msb:
 	.byt >music_spirit_of_chivalry_info
 jukebox_themes_bank:
 	.byt music_title_bank
+	.byt music_fusolis_bank
 	.byt music_perihelium_bank
 	.byt music_sinbad_bank
 	.byt music_adventure_bank
@@ -35,6 +38,7 @@ jukebox_themes_bank:
 	.byt music_spirit_of_chivalry_bank
 jukebox_themes_title:
 	.asc "Super Tilt Bro.   "
+	.asc "Fusolis           "
 	.asc "Perihelium        "
 	.asc "Sinbad theme      "
 	.asc "Adventure         "
@@ -47,6 +51,7 @@ jukebox_themes_title:
 jukebox_themes_title_end:
 jukebox_themes_author:
 	.asc "Tui     "
+	.asc "LemonyB "
 	.asc "Ozzed   "
 	.asc "Kilirane"
 	.asc "Kilirane"
