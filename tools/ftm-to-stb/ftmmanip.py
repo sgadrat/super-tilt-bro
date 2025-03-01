@@ -1464,7 +1464,6 @@ def _apply_pitch_sequence(seq_pit, ref_note, music, instrument_idx, track_idx, p
 
 		# Advance sequence
 		if seq_pit['loop'] == -1:
-			sequence_step = min(sequence_step + 1, len(seq_pit['sequence']) - 1)
 			sequence_step = sequence_step + 1
 			if sequence_step >= len(seq_pit['sequence']):
 				return False
