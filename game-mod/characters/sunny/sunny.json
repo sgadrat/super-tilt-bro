@@ -5016,10 +5016,10 @@
             }
           ],
           "hitbox": {
-            "hitstun": 10,
+            "hitstun": 4,
             "type": "animation_direct_hitbox",
             "left": -14,
-            "top": 8,
+            "top": 10,
             "right": -2,
             "bottom": 15,
             "base_h": -50,
@@ -5194,6 +5194,52 @@
         {
           "type": "animation_frame",
           "duration": 4,
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_4",
+              "attr": 0,
+              "foreground": false,
+              "x": -3,
+              "y": 1
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_1",
+              "attr": 0,
+              "foreground": false,
+              "x": 5,
+              "y": 1
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_20",
+              "attr": 0,
+              "foreground": false,
+              "x": -3,
+              "y": 9
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_99",
+              "attr": 0,
+              "foreground": false,
+              "x": 5,
+              "y": 9
+            }
+          ],
+          "hitbox": null,
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": 0,
+            "top": 1,
+            "right": 11,
+            "bottom": 16
+          }
+        },
+        {
+          "type": "animation_frame",
+          "duration": 5,
           "sprites": [
             {
               "type": "animation_sprite",
@@ -14844,7 +14890,7 @@
       "update_routine": "sunny_tick_crashing"
     },
     {
-      "input_routine": "smart_keep_input_dirty",
+      "input_routine": "sunny_input_down_tilt",
       "name": "SUNNY_STATE_DOWN_TILT",
       "offground_routine": "dummy_routine",
       "onground_routine": "sunny_global_onground",

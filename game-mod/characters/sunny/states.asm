@@ -1308,7 +1308,26 @@ sunny_global_onground:
 !define "anim" {sunny_anim_down_tilt}
 !define "state" {SUNNY_STATE_DOWN_TILT}
 !define "routine" {down_tilt}
-!include "characters/tpl_grounded_attack.asm"
+!define "cutable_duration" {9}
+!define "cut_input" {
+	; Allow to cut by selected moves
+	;  Mainly to avoid chaining down-tilt into itself
+	lda controller_a_btns, x
+	and #(CONTROLLER_BTN_LEFT | CONTROLLER_BTN_RIGHT) ^ %11111111 ; Allow side-attacks by not considering left/right in following comparisons
+
+	cmp #CONTROLLER_INPUT_JAB
+	beq cut
+	cmp #CONTROLLER_INPUT_ATTACK_UP
+	beq cut
+	cmp #CONTROLLER_INPUT_SPECIAL
+	beq cut
+	cmp #CONTROLLER_INPUT_SPECIAL_UP
+	beq cut
+		rts
+	cut:
+		jmp sunny_input_idle
+}
+!include "characters/tpl_grounded_attack_cutable.asm"
 
 ;
 ; Aerial side
