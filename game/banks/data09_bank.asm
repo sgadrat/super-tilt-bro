@@ -58,6 +58,14 @@ bank_data_begin:
 #print *-bank_data_begin
 .)
 
+.(
+bank_data_begin:
+#include "game/logic/game_states/jukebox_screen/jukebox_screen_extra_logic.asm"
+#echo
+#echo Extra jukebox logic:
+#print *-bank_data_begin
+.)
+
 bank_data09_end:
 
 #echo
