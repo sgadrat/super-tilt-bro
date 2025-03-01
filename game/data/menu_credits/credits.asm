@@ -4,6 +4,7 @@ MENU_CREDITS_CREDITS_BANK = CURRENT_BANK_NUMBER
 &menu_credits_pages_illustration_lsb:
 	.byt <menu_credits_illustration_graphics
 	.byt <menu_credits_illustration_music
+	.byt <menu_credits_illustration_music
 	.byt <menu_credits_illustration_characters
 	.byt <menu_credits_illustration_characters
 	.byt <menu_credits_illustration_special_thanks
@@ -13,6 +14,7 @@ MENU_CREDITS_CREDITS_BANK = CURRENT_BANK_NUMBER
 	.byt <menu_credits_illustration_author
 &menu_credits_pages_illustration_msb:
 	.byt >menu_credits_illustration_graphics
+	.byt >menu_credits_illustration_music
 	.byt >menu_credits_illustration_music
 	.byt >menu_credits_illustration_characters
 	.byt >menu_credits_illustration_characters
@@ -24,6 +26,7 @@ MENU_CREDITS_CREDITS_BANK = CURRENT_BANK_NUMBER
 &menu_credits_pages_illustration_bank:
 	.byt MENU_CREDITS_ILLUSTRATION_GRAPHICS_BANK_NUMBER
 	.byt MENU_CREDITS_ILLUSTRATION_MUSIC_BANK_NUMBER
+	.byt MENU_CREDITS_ILLUSTRATION_MUSIC_BANK_NUMBER
 	.byt MENU_CREDITS_ILLUSTRATION_CHARACTERS_BANK_NUMBER
 	.byt MENU_CREDITS_ILLUSTRATION_CHARACTERS_BANK_NUMBER
 	.byt MENU_CREDITS_ILLUSTRATION_SPECIAL_THANKS_BANK_NUMBER
@@ -33,7 +36,8 @@ MENU_CREDITS_CREDITS_BANK = CURRENT_BANK_NUMBER
 	.byt MENU_CREDITS_ILLUSTRATION_AUTHOR_BANK_NUMBER
 &menu_credits_pages_text_lsb:
 	.byt <text_graphics
-	.byt <text_musics
+	.byt <text_musics1
+	.byt <text_musics2
 	.byt <text_characters1
 	.byt <text_characters2
 	.byt <text_special_thanks1
@@ -43,7 +47,8 @@ MENU_CREDITS_CREDITS_BANK = CURRENT_BANK_NUMBER
 	.byt <text_author
 &menu_credits_pages_text_msb:
 	.byt >text_graphics
-	.byt >text_musics
+	.byt >text_musics1
+	.byt >text_musics2
 	.byt >text_characters1
 	.byt >text_characters2
 	.byt >text_special_thanks1
@@ -70,20 +75,35 @@ text_graphics:
 	.byt "Martin Le Borgne"
 	.byt "                "
 
-text_musics:
+text_musics1:
 	.byt "     <MUSIC>    "
 	.byt "                "
 	.byt "                "
 	.byt "Adventure theme "
 	.byt "Sinbad theme    "
+	.byt "Volcano         "
+	.byt "SpiritOfChivalry"
 	.byt "    #By Kilirane"
+	.byt "                "
+	.byt "                "
+	.byt "Fusolis         "
+	.byt "    #By LemonyB."
+	.byt "                "
+
+text_musics2:
+	.byt "     <MUSIC>    "
 	.byt "                "
 	.byt "I like jump rope"
 	.byt "Perihelium      "
 	.byt "    #By Ozzed   "
 	.byt "                "
+	.byt "                "
 	.byt "Super Tilt Bro. "
+	.byt "Kiki theme      "
+	.byt "SinbadThePirate "
+	.byt "Pepper theme    "
 	.byt "    #By Tui     "
+	.byt "                "
 
 text_characters1:
 	.byt "  <CHARACTERS>  "
