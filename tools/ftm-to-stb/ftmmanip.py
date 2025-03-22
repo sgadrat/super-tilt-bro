@@ -1484,14 +1484,15 @@ def _apply_pitch_sequence(seq_pit, ref_note, music, instrument_idx, track_idx, p
 	# Inform that the sequence is handled
 	return True
 
-def remove_instruments(music, arp_force_absolute_notes=True):
+def remove_instruments(music, arp_force_absolute_notes=False):
 	"""
 	Apply instruments effects to the timeline
 
 	arp_force_absolute_notes:
 		If False and the enveloppe is impacted by pitch effect, a frequency_adjust effect will be placed to
 		allow the arpeggio to be played alongside the pitch effect.
-		This is not famitracker's behaviour, but seems expected by famistudio's exports (and more intuitive.)
+		It is expected by Famistudio's exports and is the intuitively correct behavior. It was noted to not
+		being Famitracker's behavior but is at least necessary for Fusolis theme.
 
 	Depends: get_num_channels
 	"""
@@ -1591,13 +1592,13 @@ def remove_instruments(music, arp_force_absolute_notes=True):
 						if (_apply_duty_sequence(seq_dut, ref_note, music, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx)):
 							seq_dut = None
 
-					if seq_arp is not None:
-						if (_apply_arpeggio_sequence(seq_arp, ref_note, music, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx, force_absolute_notes=arp_force_absolute_notes)):
-							seq_arp = None
-
 					if seq_pit is not None:
 						if (_apply_pitch_sequence(seq_pit, ref_note, music, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx)):
 							seq_pit = None
+
+					if seq_arp is not None:
+						if (_apply_arpeggio_sequence(seq_arp, ref_note, music, instrument_idx, track_idx, pattern_idx, row_idx, chan_idx, effect_idx, force_absolute_notes=arp_force_absolute_notes)):
+							seq_arp = None
 
 					# Remove instrument reference (only if completely handled, to keep warnings where it was partial)
 					if (
