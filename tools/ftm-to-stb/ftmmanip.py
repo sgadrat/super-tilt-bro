@@ -1411,7 +1411,6 @@ def _apply_arpeggio_sequence(seq_arp, ref_note, music, instrument_idx, track_idx
 				# Stop forcing the note if the enveloppe ended (letting pitch effect roll)
 				# WARN: May not be compatible with relative eveloppe, to be tested
 				return False
-			sequence_step = min(sequence_step + 1, len(seq_arp['sequence']) - 1)
 		else:
 			sequence_step += 1
 			if sequence_step >= len(seq_arp['sequence']):
