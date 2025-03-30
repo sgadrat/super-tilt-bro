@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: build-dep-cc65
       run: deps/build-deps.d/00-cc65.sh
     - name: build-dep-huffmunch
@@ -26,14 +26,14 @@ jobs:
       run: FORCE_INSTALLS=1 CC65_PATH=$(pwd)/deps/cc65/bin deps/build-deps.d/01-gcc.sh
     - name: build-stb
       run: XA_BIN=$(pwd)/deps/xa65-stb/xa/xa CC_BIN=$(pwd)/deps/gcc-6502-bits/prefix/bin/6502-gcc HUFFMUNCH_BIN=$(pwd)/deps/huffmunch/huffmunch XA_LST=1 ./build.sh
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: build-log
         if-no-files-found: ignore
         path: |
           build.log
           build.log.err
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: roms
         path: |
