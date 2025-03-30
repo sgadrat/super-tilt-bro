@@ -26,7 +26,7 @@ bank_data_charset_alphanum_fg1_bg2_begin:
 #print *-bank_data_charset_alphanum_fg1_bg2_begin
 
 bank_data_stage_flatland_begin:
-#include "game/data/stages/plateau/plateau.asm"
+#include "game/data/stages/flatland/stage_flatland.asm"
 #echo
 #echo Stage Flatland size:
 #print *-bank_data_stage_flatland_begin

@@ -6,13 +6,13 @@
 
 bank_data04_begin:
 
-bank_data04_stage_shelf_begin:
-#include "game/data/stages/shelf/shelf.asm"
-bank_data04_stage_shelf_end:
+bank_data04_stage_skyride_begin:
+#include "game/data/stages/skyride/stage_skyride.asm"
+bank_data04_stage_skyride_end:
 
-bank_data04_stage_gem_begin:
-#include "game/data/stages/gem/gem.asm"
-bank_data04_stage_gem_end:
+bank_data04_stage_thehunt_begin:
+#include "game/data/stages/thehunt/stage_thehunt.asm"
+bank_data04_stage_thehunt_end:
 
 bank_data04_stage_miniatures_begin:
 #include "game/data/tilesets/stage_miniatures.asm"
@@ -58,10 +58,10 @@ bank_data04_end:
 #print bank_data04_end-bank_data04_begin
 #echo
 #echo DATA04-bank Shelf size:
-#print bank_data04_stage_shelf_end-bank_data04_stage_shelf_begin
+#print bank_data04_stage_skyride_end-bank_data04_stage_skyride_begin
 #echo
 #echo DATA04-bank Gem size:
-#print bank_data04_stage_gem_end-bank_data04_stage_gem_begin
+#print bank_data04_stage_thehunt_end-bank_data04_stage_thehunt_begin
 #echo
 #echo DATA04-bank Gem size:
 #print bank_data04_stage_miniatures_end-bank_data04_stage_miniatures_begin

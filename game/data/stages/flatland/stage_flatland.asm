@@ -6,6 +6,6 @@ stage_flatland_elements:
 PLATFORM($28, $d0, $80, $ff) ; left, right, top, bot
 END_OF_STAGE
 
-#include "game/data/stages/plateau/screen.asm"
-#include "game/data/stages/plateau/illustration.asm"
-#include "game/data/stages/plateau/plateau-logic.built.asm"
+#include "game/data/stages/flatland/screen.asm"
+#include "game/data/stages/flatland/illustration.asm"
+#include "game/data/stages/flatland/logic.built.asm"

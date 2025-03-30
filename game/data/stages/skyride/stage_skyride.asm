@@ -9,6 +9,6 @@ SMOOTH_PLATFORM($90, $e0, $80) ; left, right, top
 SMOOTH_PLATFORM($48, $b0, $50) ; left, right, top
 END_OF_STAGE
 
-#include "game/data/stages/shelf/screen.asm"
-#include "game/data/stages/shelf/illustration.asm"
-#include "game/data/stages/shelf/shelf-logic.built.asm"
+#include "game/data/stages/skyride/screen.asm"
+#include "game/data/stages/skyride/illustration.asm"
+#include "game/data/stages/skyride/logic.built.asm"
