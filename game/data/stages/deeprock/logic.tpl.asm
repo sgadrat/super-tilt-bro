@@ -1,4 +1,8 @@
 !define "stage_name" {stage_deeprock}
+!define "blastline_left" {STAGE_DEEPROCK_BLAST_LEFT}
+!define "blastline_right" {STAGE_DEEPROCK_BLAST_RIGHT}
+!define "blastline_top" {STAGE_DEEPROCK_BLAST_TOP}
+!define "blastline_bottom" {STAGE_DEEPROCK_BLAST_BOTTOM}
 !include "stages/std_stage_ringout.asm"
 !undef "stage_name"
 

@@ -30,9 +30,9 @@
 #error definitions above expects 9 bytes per stage element
 #endif
 
-#define STAGE_BLAST_LEFT $ffe0
+#define STAGE_BLAST_LEFT -$0020
 #define STAGE_BLAST_RIGHT $0120
-#define STAGE_BLAST_TOP $ffe0
+#define STAGE_BLAST_TOP -$0020
 #define STAGE_BLAST_BOTTOM $00ff
 
 #define STAGE_COUNT 4

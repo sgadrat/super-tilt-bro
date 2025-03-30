@@ -41,6 +41,10 @@ STAGE_PIT_PLATFORM_START_HEIGHT = STAGE_PIT_PLATFORM_MAX_HEIGHT+((STAGE_PIT_PLAT
 .)
 
 !define "stage_name" {stage_pit}
+!define "blastline_left" {STAGE_PIT_BLAST_LEFT}
+!define "blastline_right" {STAGE_PIT_BLAST_RIGHT}
+!define "blastline_top" {STAGE_PIT_BLAST_TOP}
+!define "blastline_bottom" {STAGE_PIT_BLAST_BOTTOM}
 !include "stages/std_stage_ringout.asm"
 !undef "stage_name"
 

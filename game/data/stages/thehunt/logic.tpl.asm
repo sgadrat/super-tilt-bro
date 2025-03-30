@@ -190,6 +190,10 @@ stage_thehunt_netload:
 .)
 
 !define "stage_name" {stage_thehunt}
+!define "blastline_left" {STAGE_THEHUNT_BLAST_LEFT}
+!define "blastline_right" {STAGE_THEHUNT_BLAST_RIGHT}
+!define "blastline_top" {STAGE_THEHUNT_BLAST_TOP}
+!define "blastline_bottom" {STAGE_THEHUNT_BLAST_BOTTOM}
 !include "stages/std_stage_ringout.asm"
 !undef "stage_name"
 

@@ -1,4 +1,8 @@
 !define "stage_name" {stage_theplank}
+!define "blastline_left" {STAGE_THEPLANK_BLAST_LEFT}
+!define "blastline_right" {STAGE_THEPLANK_BLAST_RIGHT}
+!define "blastline_top" {STAGE_THEPLANK_BLAST_TOP}
+!define "blastline_bottom" {STAGE_THEPLANK_BLAST_BOTTOM}
 !include "stages/std_stage_ringout.asm"
 !undef "stage_name"
 

@@ -1,4 +1,8 @@
 !define "stage_name" {stage_flatland}
+!define "blastline_left" {STAGE_FLATLAND_BLAST_LEFT}
+!define "blastline_right" {STAGE_FLATLAND_BLAST_RIGHT}
+!define "blastline_top" {STAGE_FLATLAND_BLAST_TOP}
+!define "blastline_bottom" {STAGE_FLATLAND_BLAST_BOTTOM}
 !include "stages/std_stage_ringout.asm"
 !undef "stage_name"
 

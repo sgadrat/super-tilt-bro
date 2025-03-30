@@ -1,3 +1,8 @@
+STAGE_PIT_BLAST_LEFT = STAGE_BLAST_LEFT
+STAGE_PIT_BLAST_RIGHT = STAGE_BLAST_RIGHT
+STAGE_PIT_BLAST_TOP = STAGE_BLAST_TOP
+STAGE_PIT_BLAST_BOTTOM = STAGE_BLAST_BOTTOM
+
 stage_pit_data:
 STAGE_HEADER($1800, $e000, $80ff, $80ff, $8000, $3000) ; player_a_x, player_b_x, player_a_y, player_b_y, respawn_x, respawn_y
 OOS_PLATFORM($ffe1, $0040, $0080, $0100) ; left, right, top, bot

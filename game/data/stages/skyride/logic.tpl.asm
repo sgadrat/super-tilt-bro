@@ -1,4 +1,8 @@
 !define "stage_name" {stage_skyride}
+!define "blastline_left" {STAGE_SKYRIDE_BLAST_LEFT}
+!define "blastline_right" {STAGE_SKYRIDE_BLAST_RIGHT}
+!define "blastline_top" {STAGE_SKYRIDE_BLAST_TOP}
+!define "blastline_bottom" {STAGE_SKYRIDE_BLAST_BOTTOM}
 !include "stages/std_stage_ringout.asm"
 !undef "stage_name"
 

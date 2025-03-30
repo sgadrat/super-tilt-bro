@@ -2,6 +2,11 @@
 ; Standard stage data
 ;
 
+STAGE_THEHUNT_BLAST_LEFT = STAGE_BLAST_LEFT
+STAGE_THEHUNT_BLAST_RIGHT = STAGE_BLAST_RIGHT
+STAGE_THEHUNT_BLAST_TOP = STAGE_BLAST_TOP
+STAGE_THEHUNT_BLAST_BOTTOM = STAGE_BLAST_BOTTOM
+
 stage_thehunt_data:
 	STAGE_HEADER($5000, $a800, $a000, $a000, $7800, $7800) ; player_a_x, player_b_x, player_a_y, player_b_y, respawn_x, respawn_y
 stage_thehunt_elements:
