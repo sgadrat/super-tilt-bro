@@ -11,4 +11,4 @@ END_OF_STAGE
 
 #include "game/data/stages/shelf/screen.asm"
 #include "game/data/stages/shelf/illustration.asm"
-#include "game/data/stages/shelf/shelf-logic.asm"
+#include "game/data/stages/shelf/shelf-logic.built.asm"

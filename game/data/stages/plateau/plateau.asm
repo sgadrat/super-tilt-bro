@@ -8,4 +8,4 @@ END_OF_STAGE
 
 #include "game/data/stages/plateau/screen.asm"
 #include "game/data/stages/plateau/illustration.asm"
-#include "game/data/stages/plateau/plateau-logic.asm"
+#include "game/data/stages/plateau/plateau-logic.built.asm"

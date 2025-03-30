@@ -316,10 +316,6 @@ update_players:
 		;TODO optimizable, unroll
 		ldx #0
 		generic_update_one_player:
-			;;; Select character's bank
-			;;ldy config_player_a_character, x
-			;;SWITCH_BANK(characters_bank_number COMMA y)
-
 			; Generic update routines
 			stx player_number
 			jsr move_player
@@ -2053,12 +2049,6 @@ check_player_position:
 	current_y_screen = tmpfield8
 
 	; Check death
-	;;ldy config_player_a_character, x
-	;;lda characters_bank_number, y
-	;;sta character_bank
-	;;ldy config_selected_stage
-	;;TRAMPOLINE_POINTED(stages_ringout_routine_lsb COMMA y, stages_ringout_routine_msb COMMA y, stages_bank COMMA y, character_bank)
-
 	ldy config_selected_stage
 	SWITCH_BANK(stages_bank COMMA y)
 	lda stages_ringout_routine_lsb, y
@@ -2073,16 +2063,6 @@ check_player_position:
 	lda tmpfield1
 	bne set_death_state
 	jmp check_collisions
-
-	;SIGNED_CMP(current_x_pixel, current_x_screen, #<STAGE_BLAST_LEFT, #>STAGE_BLAST_LEFT)
-	;bmi set_death_state
-	;SIGNED_CMP(#<STAGE_BLAST_RIGHT, #>STAGE_BLAST_RIGHT, current_x_pixel, current_x_screen)
-	;bmi set_death_state
-	;SIGNED_CMP(current_y_pixel, current_y_screen, #<STAGE_BLAST_TOP, #>STAGE_BLAST_TOP)
-	;bmi set_death_state
-	;SIGNED_CMP(#<STAGE_BLAST_BOTTOM, #>STAGE_BLAST_BOTTOM, current_y_pixel, current_y_screen)
-	;bmi set_death_state
-	;jmp check_collisions
 
 		set_death_state:
 		.(

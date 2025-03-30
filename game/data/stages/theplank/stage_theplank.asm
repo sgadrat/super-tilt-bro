@@ -63,5 +63,5 @@ C_Z = C_A + 25
 .)
 
 #include "game/data/stages/theplank/screen.asm"
-#include "game/data/stages/theplank/logic.asm"
+#include "game/data/stages/theplank/logic.built.asm"
 .)

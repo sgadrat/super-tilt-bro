@@ -65,5 +65,5 @@ C_Z = C_A + 25
 .)
 
 #include "game/data/stages/deeprock/screen.asm"
-#include "game/data/stages/deeprock/logic.asm"
+#include "game/data/stages/deeprock/logic.built.asm"
 .)
