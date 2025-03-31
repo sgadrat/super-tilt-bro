@@ -44,7 +44,7 @@
 			sta tmpfield1
 			rts
 		ringout:
-			lda 1
+			lda #1
 			sta tmpfield1
 			rts
 	;rts ; useless, no branch returns
