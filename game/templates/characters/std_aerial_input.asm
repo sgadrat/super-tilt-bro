@@ -92,8 +92,13 @@
 
 	.(
 		; Refuse to do anything if under hitstun
-		lda player_a_hitstun, x
-		bne end
+		.(
+			lda player_a_hitstun, x
+			beq ok
+				jmp smart_keep_input_dirty
+				;rts ; useless, jump to subroutine
+			ok:
+		.)
 
 		; Assuming we are called from an input event
 		; Do nothing if the only changes concern the left-right buttons
