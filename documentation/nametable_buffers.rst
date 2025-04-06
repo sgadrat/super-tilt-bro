@@ -4,12 +4,12 @@ Memory usage per component
 Engine
 ------
 
-Summary::
+Summary:
 
 * Each frame: 14 bytes (unprotected)
 * Peak: 68 bytes (unprotected)
 
-Detail::
+Detail:
 
 * Each frame: 7 bytes for player A's palette
 * Each frame: 7 bytes for player B's palette
@@ -23,12 +23,12 @@ Stages
 
 Stages have to handle fadeout and screen restore. They mostly share the same code, so here is the stage's impact if not specified.
 
-Summary::
+Summary:
 
 * Each frame: 0 byte
 * Peak: 36 bytes (protected) + 0 byte (unprotected)
 
-Detail::
+Detail:
 
 * When needed (protected): 20 bytes for fadeout
 * When needed (protected): 36 bytes for repair (only if no fadeout occuring)
@@ -36,30 +36,30 @@ Detail::
 Stage: The Hunt
 ---------------
 
-Summary::
+Summary:
 
 * Each frame: 6 bytes (protected) + 0 byte (unprotected)
 * Peak: 36 bytes (protected) + 0 byte (unprotected)
 
-Detail::
+Detail:
 
 * Each frame (protected): 6 bytes for lava's palette swap
 * When needed (protected): 20 bytes for fadeout
 * When needed (protected): 36 bytes for repair
 
-Notes::
+Notes:
 
 * Will each frame do lava's animation, or fadeout, or repair (only one out of the three)
 
 Character: VGSage
 -----------------
 
-Summary::
+Summary:
 
 * Each frame: 0 byte
 * Peak: 79 bytes (protected) + 0 byte (unprotected)
 
-Detail::
+Detail:
 
 * When needed (protected): 20 bytes for fadout/fadein effects of the punch
 * When needed (protected): 36 bytes for Knight's animation

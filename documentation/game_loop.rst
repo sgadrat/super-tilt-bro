@@ -9,6 +9,7 @@ Game initialization
 ###################
 
 TODO:
+
 - What's needed to correctly init `game` state
 	- game modes, link to game_modes.rst
 	- characters

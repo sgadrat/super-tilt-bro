@@ -8,10 +8,10 @@ Game modes are a series of hooks that can modify ingame state's behavior.
 Currently implemented game modes
 ================================
 
- * ``local``: Handles the pause and the AI.
- * ``online``: Handles netcode.
- * ``arcade``: Handles the pause, the AI, break the target, and run to exit.
- * ``server``: Like ``local``, without pause nor AI. Used to simulate an ``online`` game server-side.
+* ``local``: Handles the pause and the AI.
+* ``online``: Handles netcode.
+* ``arcade``: Handles the pause, the AI, break the target, and run to exit.
+* ``server``: Like ``local``, without pause nor AI. Used to simulate an ``online`` game server-side.
 
 Memory allocation
 =================
@@ -23,11 +23,11 @@ Init hook
 
 Called after the generic initialization, but before stage initialization.
 
-The initialization sequence is::
+The initialization sequence is:
 
- * Generic initialization
- * Game mode initialization
- * Stage initialization
+* Generic initialization
+* Game mode initialization
+* Stage initialization
 
 It means that game mode can modify what as been done by generic code, and the stage can further customize it. It goes from the most generic to the more specific.
 
@@ -36,9 +36,9 @@ Pre update hook
 
 Called before anything else in the game tick.
 
-Output::
+Output:
 
- * `Carry flag``: if set when returning from the hook, the game tick will be skipped
+* ``Carry flag``: if set when returning from the hook, the game tick will be skipped
 
 Gameover hook
 =============

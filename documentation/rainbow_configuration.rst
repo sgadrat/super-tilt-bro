@@ -8,11 +8,11 @@ Most Rainbow configuration is done in ``game/logic/mapper_init.asm`` and doesn't
 Memory map
 ----------
 
- * $0000-$07ff: system memory
- * $4800-$4fff: FPGA-RAM high 2 KB (mirrors $7800-$7fff)
- * $6000-$7fff: FPGA-RAM full 8 KB
- * $8000-$bfff: Swapable bank
- * $c000-$ffff: Fixed bank
+* $0000-$07ff: system memory
+* $4800-$4fff: FPGA-RAM high 2 KB (mirrors $7800-$7fff)
+* $6000-$7fff: FPGA-RAM full 8 KB
+* $8000-$bfff: Swapable bank
+* $c000-$ffff: Fixed bank
 
 ROM banking
 -----------
