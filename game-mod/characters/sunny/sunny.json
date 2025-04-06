@@ -5201,6 +5201,52 @@
               "attr": 0,
               "foreground": false,
               "x": -3,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_1",
+              "attr": 0,
+              "foreground": false,
+              "x": 5,
+              "y": 0
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_11",
+              "attr": 0,
+              "foreground": false,
+              "x": -3,
+              "y": 8
+            },
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_99",
+              "attr": 0,
+              "foreground": false,
+              "x": 5,
+              "y": 8
+            }
+          ],
+          "hitbox": null,
+          "hurtbox": {
+            "type": "animation_hurtbox",
+            "left": 0,
+            "top": 1,
+            "right": 11,
+            "bottom": 16
+          }
+        },
+        {
+          "type": "animation_frame",
+          "duration": 4,
+          "sprites": [
+            {
+              "type": "animation_sprite",
+              "tile": "SUNNY_TILE_4",
+              "attr": 0,
+              "foreground": false,
+              "x": -3,
               "y": 1
             },
             {
