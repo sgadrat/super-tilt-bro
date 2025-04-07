@@ -11,7 +11,7 @@ local_login="${LOCAL_LOGIN:-0}"
 skip_c="${SKIP_C:-0}" # 0 - build C files, 1 - Skip files older than their ASM, 2 - Skip ALL
 skip_rescue_img="${SKIP_RESCUE_IMG:-0}"
 
-root_dir=`readlink -m $(dirname "$0")`
+root_dir=`readlink -f $(dirname "$0")`
 log_file="${root_dir}/build.log"
 
 no_network_flag='-DNO_NETWORK'
