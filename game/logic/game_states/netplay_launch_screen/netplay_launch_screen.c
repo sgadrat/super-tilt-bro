@@ -73,10 +73,9 @@ static uint8_t const CURSOR_SPRITE = 0;
 static uint8_t const SERVER_SPRITES_BEGIN = 1;
 
 static uint8_t const FIRST_ERROR_STATE = 250;
-static uint8_t const ERROR_STATE_NO_CONTACT = FIRST_ERROR_STATE;
-static uint8_t const ERROR_STATE_BAD_PING = FIRST_ERROR_STATE + 1;
-static uint8_t const ERROR_STATE_CRAZY_MESSAGE = FIRST_ERROR_STATE + 2;
-static uint8_t const ERROR_STATE_DISCONNECTED = FIRST_ERROR_STATE + 3;
+static uint8_t const ERROR_STATE_BAD_PING = FIRST_ERROR_STATE;
+static uint8_t const ERROR_STATE_CRAZY_MESSAGE = FIRST_ERROR_STATE + 1;
+static uint8_t const ERROR_STATE_DISCONNECTED = FIRST_ERROR_STATE + 2;
 
 static uint8_t const COUNTDOWN_DEACTIVATED = 255;
 static uint8_t const FADEOUT_DURATION = 15;
@@ -730,31 +729,54 @@ static void estimate_latency_prepare() {
 }
 
 static void estimate_latency_request() {
-	wrap_esp_send_cmd((uint8_t[]){2, TOESP_MSG_SERVER_PING, 1});
+	// Send STNP ping message
+	static const uint8_t PING_MSG_LENGTH = 11;
+	wrap_esp_send_cmd((uint8_t[]){PING_MSG_LENGTH, TOESP_MSG_SERVER_SEND_MESSAGE, STNP_CLI_MSG_TYPE_PING, 0,0,0,0,0,0,0,0,0});
+
+	// Next step - wait for a response
+	//  use count as a time counter
+	Task(netplay_launch_fg_task)->count = 0;
 	++Task(netplay_launch_fg_task)->step;
 }
 
 static void estimate_latency_wait() {
-	if (esp_rx_message_ready()) {
-		//TODO check message type (there could be leftover messages from the game server, like a late "GameOver")
-		// Read message
-		if ((&esp_rx_buffer)[ESP_MSG_SIZE] != 5) {
-			// Empty message means "unable to resolve host"
-			Task(netplay_launch_fg_task)->step = ERROR_STATE_NO_CONTACT;
-		}else {
-			// Store ping information
-			if ((&esp_rx_buffer)[ESP_MSG_PAYLOAD+3] != 0) {
-				// Lost ping, store it as 255
-				netplay_launch_local_ping_values[*netplay_launch_local_ping_count] = 255;
+	static uint8_t const PONG_MSG_LENGTH = 11;
+	uint8_t const wait_timeout = (*system_index ? 50 : 60); // Timeout, in frames, after which the packer is considered lost
+
+	// Tick counter
+	++Task(netplay_launch_fg_task)->count;
+
+	// Handle the reponse, or lack of response
+	bool got_ping = false;
+	if (esp_rx_message_ready() && (&esp_rx_buffer)[ESP_MSG_SIZE] == PONG_MSG_LENGTH) {
+		// Check that it is effectively a PONG
+		if (
+			(&esp_rx_buffer)[ESP_MSG_SIZE] == PONG_MSG_LENGTH &&
+			(&esp_rx_buffer)[ESP_MSG_PAYLOAD+STNP_MSG_TYPE_FIELD] == STNP_SRV_MSG_TYPE_PONG
+		)
+		{
+			// Store ping information (as 4ms unit)
+			if (*system_index) {
+				Task(netplay_launch_fg_task)->count *= 5;
 			}else {
-				// Store max returned ping (we ask for only one anyway)
-				netplay_launch_local_ping_values[*netplay_launch_local_ping_count] = (&esp_rx_buffer)[ESP_MSG_PAYLOAD+1];
+				Task(netplay_launch_fg_task)->count *= 4;
 			}
-			++*netplay_launch_local_ping_count;
+			netplay_launch_local_ping_values[*netplay_launch_local_ping_count] = Task(netplay_launch_fg_task)->count;
+			got_ping = true;
 		}
 
 		// Acknowledge message
 		esp_rx_message_acknowledge();
+	}else if (Task(netplay_launch_fg_task)->count >= wait_timeout) {
+		// Lost ping, store it as 255
+		netplay_launch_local_ping_values[*netplay_launch_local_ping_count] = 255;
+		got_ping = true;
+	}
+
+	// Handle the reception of a ping value
+	if (got_ping) {
+		// Register ping value as recorded
+		++*netplay_launch_local_ping_count;
 
 		// Advance step
 		++Task(netplay_launch_fg_task)->step;
@@ -902,18 +924,11 @@ static void wait_game() {
 	--Task(netplay_launch_fg_task)->step;
 }
 
-static void no_contact() {
-	set_bg_state(BG_STEP_DEACTIVATED);
-	skip_frame();
-	back_on_b();
-	set_selection_bar_title("error no contact"); //TODO should be in a bg task (valable for other calls to set_selection_bar_title in fg tasks)
-}
-
 static void bad_ping() {
 	set_bg_state(BG_STEP_DEACTIVATED);
 	skip_frame();
 	back_on_b();
-	set_selection_bar_title("error bad ping  ");
+	set_selection_bar_title("error bad ping  "); //TODO should be in a bg task (valable for other calls to set_selection_bar_title in fg tasks)
 }
 
 static void crazy_msg() {
@@ -939,7 +954,7 @@ static void tick_fg_task() {
 	};
 
 	static void (*error_state_functions[])() = {
-		no_contact, bad_ping, crazy_msg, disconnected
+		bad_ping, crazy_msg, disconnected
 	};
 
 	// Logic

@@ -4,12 +4,16 @@
 
 static uint16_t const STNP_CLI_MSG_TYPE_CONNECTION = 0;
 static uint16_t const STNP_CLI_MSG_TYPE_CONTROLLER_STATE = 1;
+static uint16_t const STNP_CLI_MSG_TYPE_PING = 2;
 
 static uint16_t const STNP_SRV_MSG_TYPE_CONNECTED = 0;
 static uint16_t const STNP_SRV_MSG_TYPE_START_GAME = 1;
 static uint16_t const STNP_SRV_MSG_TYPE_NEWSTATE = 2;
 static uint16_t const STNP_SRV_MSG_TYPE_GAMEOVER = 3;
 static uint16_t const STNP_SRV_MSG_TYPE_DISCONNECTED = 4;
+static uint16_t const STNP_SRV_MSG_TYPE_PONG = 5;
+
+static uint16_t const STNP_MSG_TYPE_FIELD = 0;
 
 static uint16_t const STNP_CONNECTED_FIELD_CONNECTION_QUALITY = 1;
 
