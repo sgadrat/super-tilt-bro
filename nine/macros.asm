@@ -65,6 +65,7 @@ AUDIO_OP_NOISE_HALT = 6
 AUDIO_OP_NOISE_PITCH_SLIDE_UP = 7
 AUDIO_OP_NOISE_PITCH_SLIDE_DOWN = 8
 AUDIO_OP_NOISE_EFFECT_END = 9
+AUDIO_OP_NOISE_FREQUENCY_ADJUST = 10
 
 #define CHAN_PARAMS(default_dur,duty,loop,const,volume,sweep_enabled,sweep_period,sweep_negate,sweep_shift) .byt \
 (AUDIO_OP_CHAN_PARAMS << 3) + default_dur, \
@@ -280,6 +281,10 @@ duration
 
 #define AUDIO_NOISE_EFFECT_END .byt \
 (AUDIO_OP_NOISE_EFFECT_END << 4)
+
+#define AUDIO_NOISE_FREQUENCY_ADJUST(freq,sign,duration) .byt \
+(AUDIO_OP_NOISE_FREQUENCY_ADJUST << 4) + freq, \
+(sign << 7) + duration
 
 ;
 ; Animation data representation

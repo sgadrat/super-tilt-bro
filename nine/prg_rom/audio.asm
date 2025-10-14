@@ -1352,6 +1352,67 @@ audio_music_tick:
 		rts
 	.)
 
+	opcode_noise_frequency_adjust:
+	.(
+		; OOOO TTTT  SDDD DDDD
+
+		; TTTT S - Load value as a signed byte
+		.(
+			and #%00001111
+			sta tmpfield1
+
+			iny
+			lda (current_opcode), y
+			bpl positive
+				negative:
+					lda tmpfield1
+					eor #%11111111
+					clc : adc #1
+					sta tmpfield1
+				positive:
+		.)
+
+		; Add value to APU register
+		.(
+			; Add value to PPPP part of the register, ensuring capped result
+			lda audio_noise_apu_period_byte
+			and #%00001111
+			clc : adc tmpfield1
+			bmi underflow
+			cmp #%00001111
+			bcs overflow
+			jmp ok
+
+				underflow:
+					lda #0
+					jmp ok
+
+				overflow:
+					lda #%00001111
+					;jmp ok ; fallthrough
+
+			ok:
+
+			; Store resulting PPPP part
+			sta tmpfield1
+
+			; Update register with the new PPPP part
+			lda audio_noise_apu_period_byte
+			and #%10110000
+			ora tmpfield1
+			sta audio_noise_apu_period_byte
+		.)
+
+		; DDD DDDD
+		lda (current_opcode), y
+		and #%01111111
+		sta audio_noise_wait_cnt
+
+		; Opcode size
+		lda #2
+		rts
+	.)
+
 	pulse1_opcode_routines_lsb:
 	.byt <opcode_sample_end, <opcode_chan_params, <opcode_chan_volume_low, <opcode_chan_volume_high, <opcode_play_timed_freq
 	.byt <opcode_play_note, <opcode_wait, <opcode_long_wait, <opcode_halt, <opcode_pitch_slide
@@ -1366,7 +1427,9 @@ audio_music_tick:
 	noise_opcode_routines_lsb:
 	.byt <opcode_noise_sample_end, <opcode_noise_set_volume, <opcode_noise_set_periodic, <opcode_noise_play_timed_freq, <opcode_noise_wait
 	.byt <opcode_noise_long_wait, <opcode_noise_halt, <opcode_noise_pitch_slide_up, <opcode_noise_pitch_slide_down, <opcode_noise_end_sfx
+	.byt <opcode_noise_frequency_adjust
 	noise_opcode_routines_msb:
 	.byt >opcode_noise_sample_end, >opcode_noise_set_volume, >opcode_noise_set_periodic, >opcode_noise_play_timed_freq, >opcode_noise_wait
 	.byt >opcode_noise_long_wait, >opcode_noise_halt, >opcode_noise_pitch_slide_up, >opcode_noise_pitch_slide_down, >opcode_noise_end_sfx
+	.byt >opcode_noise_frequency_adjust
 .)

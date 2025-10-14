@@ -112,6 +112,7 @@ timed_opcodes = [
 	'2a03_noise.WAIT',
 	'2a03_noise.LONG_WAIT',
 	'2a03_noise.HALT',
+	'2a03_noise.FREQUENCY_ADJUST',
 ]
 
 opcode_size = {
@@ -164,6 +165,7 @@ opcode_size = {
 	'2a03_noise.PITCH_SLIDE_UP': 1,
 	'2a03_noise.PITCH_SLIDE_DOWN': 1,
 	'2a03_noise.SET_PERIODIC': 1,
+	'2a03_noise.FREQUENCY_ADJUST': 2,
 }
 
 
@@ -1493,6 +1495,10 @@ def remove_instruments(music, arp_force_absolute_notes=False):
 		allow the arpeggio to be played alongside the pitch effect.
 		It is expected by Famistudio's exports and is the intuitively correct behavior. It was noted to not
 		being Famitracker's behavior but is at least necessary for Fusolis theme.
+
+		Tracks impacted:
+		 - Fusolis: need False
+		 - A Sage Concerto: need True (else pitch and arpeggio of instrument 07 conflict on noise channel)
 
 	Depends: get_num_channels
 	"""
@@ -3488,6 +3494,7 @@ def to_mod_format(music):
 				})
 				duration -= step
 			elif line['frequency_adjust'] is not None:
+				step = min(duration, 127)
 				if line['frequency_adjust'] == 0:
 					# This is actually not a problem, could happen if multiple logic parts played with frequency adjust
 					# Warn here because:
@@ -3495,8 +3502,28 @@ def to_mod_format(music):
 					#  - For now, only arpeggio instrument plays with frequency adjust, so it should never happen
 					#  - Ease of converting the log to a "debug" instead of "warn"
 					warn('frequency adjust of zero: ignore')
-				else:
-					warn('TODO add opcodes for frequency adjust in noise channel')
+				elif line['frequency_adjust'] > 0:
+					opcodes.append({
+						'type': 'music_sample_2a03_noise_opcode',
+						'name': 'FREQUENCY_ADJUST',
+						'parameters': [
+							line['frequency_adjust'],
+							0,
+							step
+						]
+					})
+					duration -= step
+				else: # line['frequency_adjust'] < 0
+					opcodes.append({
+						'type': 'music_sample_2a03_noise_opcode',
+						'name': 'FREQUENCY_ADJUST',
+						'parameters': [
+							-line['frequency_adjust'],
+							1,
+							step
+						]
+					})
+					duration -= step
 
 			while duration > 0:
 				if duration <= 16:

@@ -12,6 +12,7 @@ jukebox_themes_lsb:
 	.byt <music_pepper_info
 	.byt <music_spirit_of_chivalry_info
 	.byt <music_fusolis_info
+	.byt <music_sagely_concerto_info
 jukebox_themes_msb:
 	.byt >music_title_info
 	.byt >music_perihelium_info
@@ -24,6 +25,7 @@ jukebox_themes_msb:
 	.byt >music_pepper_info
 	.byt >music_spirit_of_chivalry_info
 	.byt >music_fusolis_info
+	.byt >music_sagely_concerto_info
 jukebox_themes_bank:
 	.byt music_title_bank
 	.byt music_perihelium_bank
@@ -36,6 +38,7 @@ jukebox_themes_bank:
 	.byt music_pepper_bank
 	.byt music_spirit_of_chivalry_bank
 	.byt music_fusolis_bank
+	.byt music_sagely_concerto_bank
 jukebox_themes_title:
 	.asc "Super Tilt Bro.   "
 	.asc "Perihelium        "
@@ -48,6 +51,7 @@ jukebox_themes_title:
 	.asc "Pepper theme      "
 	.asc "Spirit of chivalry"
 	.asc "Fusolis           "
+	.asc "A Sagely Concerto "
 jukebox_themes_title_end:
 jukebox_themes_author:
 	.asc "Tui                              "
@@ -60,6 +64,7 @@ jukebox_themes_author:
 	.asc "Tui                              "
 	.asc "Tui                              "
 	.asc "Kilirane                         "
+	.asc "Lemony Bard / Liam Zaffora-Reeder"
 	.asc "Lemony Bard / Liam Zaffora-Reeder"
 jukebox_themes_author_end:
 

@@ -707,8 +707,9 @@ stage_generic_init:
 		.byt <music_spirit_of_chivalry_info
 		.byt <music_fusolis_info
 		.byt <music_sinbad_info
-		.byt <music_pepper_info
 		.byt <music_volcano_info
+		.byt <music_sagely_concerto_info
+		.byt <music_pepper_info
 		.byt <music_kiki_info
 	ingame_themes_msb:
 		.byt >music_perihelium_info
@@ -717,8 +718,9 @@ stage_generic_init:
 		.byt >music_spirit_of_chivalry_info
 		.byt >music_fusolis_info
 		.byt >music_sinbad_info
-		.byt >music_pepper_info
 		.byt >music_volcano_info
+		.byt >music_sagely_concerto_info
+		.byt >music_pepper_info
 		.byt >music_kiki_info
 	ingame_themes_bank:
 		.byt music_perihelium_bank
@@ -727,8 +729,9 @@ stage_generic_init:
 		.byt music_spirit_of_chivalry_bank
 		.byt music_fusolis_bank
 		.byt music_sinbad_bank
-		.byt music_pepper_bank
 		.byt music_volcano_bank
+		.byt music_sagely_concerto_bank
+		.byt music_pepper_bank
 		.byt music_kiki_bank
 	LAST_INGAME_TRACK = ingame_themes_msb - ingame_themes_lsb - 1
 .)

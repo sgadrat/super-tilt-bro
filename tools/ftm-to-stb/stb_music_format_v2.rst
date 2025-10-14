@@ -329,6 +329,22 @@ EFFECT_END::
 
 	zzzz: reserved zero bits
 
+FREQUENCY_ADJUST::
+
+	Add a value to the frequency being played.
+
+	OOOO TTTT  SDDD DDDD
+
+	TTTT: Value to add to the frequency in APU register
+	S: Sign of the value (0: positive, add this value; 1: negative, subtract this value)
+	DDD DDDD: Duration, in display frames
+
+	If resulting frequency overflows, it is capped to %1111.
+	If resulting frequency underflows, it is capped to %0000.
+
+	The next opcode will be executed only after the specified duration. If duration is zero,
+	next opcodes will be executed immediately until one with a non-null duration is found.
+
 RAINBOW Pulse channel's opcodes
 -------------------------------
 

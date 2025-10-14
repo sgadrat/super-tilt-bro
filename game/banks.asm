@@ -85,6 +85,9 @@ rescue_declarations_begin:
 #define CURRENT_BANK_NUMBER FIRST_GAME_BANK+$10
 #include "game/banks/data16_bank.asm"
 
+#define CURRENT_BANK_NUMBER FIRST_GAME_BANK+$11
+#include "game/banks/data17_bank.asm"
+
 ;; mod banks (this line will be replaced by mod compilation tool)
 
 #define CURRENT_BANK_NUMBER FIRST_GAME_BANK+$1f
