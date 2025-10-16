@@ -27,6 +27,7 @@ jobs:
     - name: build-stb
       run: XA_BIN=$(pwd)/deps/xa65-stb/xa/xa CC_BIN=$(pwd)/deps/gcc-6502-bits/prefix/bin/6502-gcc HUFFMUNCH_BIN=$(pwd)/deps/huffmunch/huffmunch XA_LST=1 ./build.sh
     - uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: build-log
         if-no-files-found: ignore
