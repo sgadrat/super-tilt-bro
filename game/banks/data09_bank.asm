@@ -52,14 +52,6 @@ bank_data_arcade_anims_begin:
 
 .(
 bank_data_begin:
-#include "game/data/music/theme_fusolis.asm"
-#echo
-#echo theme fusolis:
-#print *-bank_data_begin
-.)
-
-.(
-bank_data_begin:
 #include "game/logic/game_states/jukebox_screen/jukebox_screen_extra_logic.asm"
 #echo
 #echo Extra jukebox logic:

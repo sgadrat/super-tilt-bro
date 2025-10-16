@@ -9,6 +9,14 @@ bank_data17_begin:
 
 .(
 bank_data_begin:
+#include "game/data/music/theme_fusolis.asm"
+#echo
+#echo theme fusolis:
+#print *-bank_data_begin
+.)
+
+.(
+bank_data_begin:
 #include "game/data/music/theme_sagely_concerto.asm"
 #echo
 #echo Theme A Sagely Concerto size:
