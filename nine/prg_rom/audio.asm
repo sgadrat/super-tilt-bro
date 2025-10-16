@@ -250,8 +250,9 @@ audio_music_extra_tick:
 	bne ok ; skip if playing on NTSC system
 	lda audio_50hz
 	bne ok ; skip if music is PAL native
-	dec audio_vframe_cnt
-	bpl ok ; skip if it is not time to do an extra tick
+
+		dec audio_vframe_cnt
+		bpl ok ; skip if it is not time to do an extra tick
 
 			lda #4
 			sta audio_vframe_cnt
@@ -278,6 +279,24 @@ audio_music_tick:
 		; Play music
 		lda audio_music_enabled
 		beq music_ok
+
+			// Skip some ticks if playing a PAL track on NTSC system to play at normal speed
+			.(
+				lda system_index
+				beq ok ; do not skip if playing on PAL system
+				lda audio_50hz
+				beq ok ; do not skip if music is NTSC native
+
+					dec audio_vframe_cnt
+					bpl ok ; skip if it is not time to do an extra tick
+
+						lda #6
+						sta audio_vframe_cnt
+						jmp music_ok
+
+				ok:
+			.)
+
 			ldx #0
 			jsr pulse_tick
 			ldx #1
