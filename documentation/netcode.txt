@@ -17,8 +17,8 @@ init {
 // Executed before every game tick
 tick {
 	local_history[network_current_frame+INPUT_LAG] = controller_a_btns
-	if controller state changed {
-		send new state to server
+	if controller state changed OR it's been a long time {
+		send controller state to server
 	}
 	if received game state from server {
 		server_current_frame = value from message

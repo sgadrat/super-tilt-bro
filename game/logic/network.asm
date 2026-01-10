@@ -29,6 +29,8 @@ network_init_stage:
 
 	; Initialize controllers state
 	sta network_last_sent_btns
+	lda #NETWORK_RESEND_BUTTONS_INTERVAL
+	sta network_resend_btns_clock
 
 	rts
 .)
@@ -51,10 +53,16 @@ network_tick_ingame:
 		lda controller_a_btns
 		sta network_player_local_btns_history, y
 
-		; Send controller's state
+		; Send controller's state (on change and regularily)
+		dec network_resend_btns_clock
+
 		;lda controller_a_btns ; useless  - "controller_a_btns" is already in register A
 		cmp network_last_sent_btns
-		beq controller_sent
+		bne send_controller
+		lda network_resend_btns_clock
+		bne controller_sent
+
+		send_controller:
 
 			; Wait mapper to be ready
 			.(
@@ -94,10 +102,15 @@ network_tick_ingame:
 
 			lda controller_a_btns ; controller state
 			sta esp_tx_buffer+ESP_MSG_PAYLOAD+9
-			sta network_last_sent_btns
 
 			; Send
 			sta RAINBOW_WIFI_TX
+
+			; Keep track
+			;lda controller_a_btns ; useless, already in A
+			sta network_last_sent_btns
+			lda #NETWORK_RESEND_BUTTONS_INTERVAL
+			sta network_resend_btns_clock
 
 		controller_sent:
 

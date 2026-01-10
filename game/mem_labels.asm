@@ -812,6 +812,9 @@ screen_shake_speed_v = $055f
 
 ;$0680 to $06ff may be used by audio engine, see "Audio engine labels"
 
+;$0700 to $0741 may be used by SHA computation
+
+network_resend_btns_clock = $07be
 network_last_known_remote_input = $07bf
 network_player_local_btns_history = $07c0 ; one byte per frame, circular buffers, 32 entries
 network_player_remote_btns_history = $07e0 ;
