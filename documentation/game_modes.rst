@@ -44,3 +44,11 @@ Gameover hook
 =============
 
 Called when the game is terminated (after the final slowdown.)
+
+It is expected to not return in nominal conditions. It should transition from ingame to another game state.
+
+If it returns it is responsible to change the ingame state variables to something correct. Special care has to be taken of:
+
+* ``Z flag``: set it to skip this frame as part of the slowdown, unset to play the frame normally,
+* ``slow_down_counter``: it is garbage when the hook is called, put it to some value to continue to slowdown or to zero to continue at normal speed,
+* ``player_*_state`` and friends: the game engine guarantees nothing on players states, especially when gameover is triggered by the game mode. Set player states in a correct state, or ensure your game mode knows their state is correct before returning.

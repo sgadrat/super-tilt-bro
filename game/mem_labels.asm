@@ -243,6 +243,7 @@ game_winner = $05db ; Set to winner's player number after the game is finished
 
 game_mode_state_begin = $05dc
 
+; Local mode stuff
 local_mode_paused = game_mode_state_begin ; $05dc
 local_mode_state_end = local_mode_paused+1
 
@@ -256,6 +257,12 @@ arcade_mode_target_break_animation_timer = $05ff
 
 arcade_mode_run_teleport_animation = $05f2 ; $05f2 to $05fe
 arcade_mode_run_teleport_timer = $05ff
+
+; Network mode stuff
+network_received_gameover = game_mode_state_begin ; $05dc
+network_resend_btns_clock = network_received_gameover+1 ; $05dd
+
+game_mode_state_end = $05ff ; Inclusive (game mode can safely write here)
 
 player_a_projectile_1_flags = $0600
 player_b_projectile_1_flags = $0601
@@ -280,8 +287,6 @@ player_b_projectile_1_hitbox_bottom_msb = $611
 ;$0614-$0635 unused (reserved for projectile 3)
 
 ;$0636-$067f unused
-
-game_mode_state_end = $067f ; Inclusive (game mode can safely write here)
 
 ;
 ; Stage specific labels
@@ -814,7 +819,6 @@ screen_shake_speed_v = $055f
 
 ;$0700 to $0741 may be used by SHA computation
 
-network_resend_btns_clock = $07be
 network_last_known_remote_input = $07bf
 network_player_local_btns_history = $07c0 ; one byte per frame, circular buffers, 32 entries
 network_player_remote_btns_history = $07e0 ;

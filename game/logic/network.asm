@@ -32,6 +32,10 @@ network_init_stage:
 	lda #NETWORK_RESEND_BUTTONS_INTERVAL
 	sta network_resend_btns_clock
 
+	; We did not yet receive any GameOver message
+	lda #0
+	sta network_received_gameover
+
 	rts
 .)
 
@@ -136,6 +140,13 @@ network_tick_ingame:
 					; Set winner according to the message
 					lda esp_rx_buffer+ESP_MSG_PAYLOAD+STNP_GAMEOVER_FIELD_WINNER_PLAYER_NUMBER
 					sta game_winner
+
+					; Acknowledge message reception
+					sta RAINBOW_WIFI_RX
+
+					; Note that we received a GameOver message from server
+					lda #1
+					sta network_received_gameover
 
 					; Jump to gameover screen, skipping any further processing
 					jmp game_mode_online_gameover

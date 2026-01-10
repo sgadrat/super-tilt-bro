@@ -1121,7 +1121,9 @@ stage_generic_init:
 			rts
 
 		next_screen:
-			; Call game mode handler for end-game. It shall never return (should call change_global_gamestate)
+			; Call game mode handler for end-game.
+			;   It should not return (expected to call change_global_gamestate)
+			;   If it returns it is responsible to let the game is a consistent state and to set Z flag as desired
 			ldx config_game_mode
 			lda game_modes_gameover_lsb, x
 			sta tmpfield1
