@@ -472,6 +472,24 @@ static void set_bg_state(uint8_t step) {
 
 static void back_on_b() {
 	if (*controller_a_btns != *controller_a_last_frame_btns && *controller_a_last_frame_btns == CONTROLLER_BTN_B) {
+		if (*netplay_launch_disconnect_on_quit) {
+			// Send abort connection message
+			esp_wait_tx();
+			uint8_t * buff = &esp_tx_buffer;
+
+			buff[0] = 6; // ESP header
+			buff[1] = TOESP_MSG_SERVER_SEND_MESSAGE;
+
+			buff[2] = STNP_CLI_MSG_TYPE_ABORT_CONNECTION; // message_type
+			buff[3] = *network_client_id_byte0; // client_id
+			buff[4] = *network_client_id_byte1;
+			buff[5] = *network_client_id_byte2;
+			buff[6] = *network_client_id_byte3;
+			buff[7] = 7; // protocol_version
+
+			esp_tx_message_send();
+		}
+
 		wrap_change_global_game_state_lite(GAME_STATE_STAGE_SELECTION, &init_stage_selection_screen);
 	}
 }
@@ -902,6 +920,9 @@ static void connection_send_msg() {
 
 	esp_tx_message_send();
 
+	// From now, quiting the netplay should send an AbortConnection message
+	*netplay_launch_disconnect_on_quit = true;
+
 	// Next step - wait for a response
 	Task(netplay_launch_fg_task)->count = NETPLAY_LAUNCH_REEMISSION_TIMER;
 	++Task(netplay_launch_fg_task)->step;
@@ -1008,6 +1029,9 @@ void init_netplay_launch_screen_extra() {
 	// Init tasks
 	set_bg_state(BG_STEP_DEACTIVATED);
 	Task(netplay_launch_fg_task)->step = 0;
+
+	// Init state
+	*netplay_launch_disconnect_on_quit = false;
 }
 
 void netplay_launch_screen_tick_extra() {
