@@ -17,6 +17,7 @@ rescue_img/
 game/cstb/mem_labels.h
 game/cstb/constants.h
 game/cstb/rainbow_constants.h
+game/cstb/stnp_constants.h
 game/data/characters/characters-index.asm
 game/data/characters/characters-data/
 game/data/tilesets/ruins.asm

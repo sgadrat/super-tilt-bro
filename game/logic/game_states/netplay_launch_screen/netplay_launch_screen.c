@@ -428,8 +428,8 @@ static void tick_bg_task() {
 				uint8_t const fps = (*system_index ? 50 : 60);
 				uint8_t const seconds_left = ((*netplay_launch_countdown + FADEOUT_DURATION) / fps);
 
-				// Audio tick when number changes
-				if (seconds_left != task->count) {
+				// Audio tick when number decreases
+				if (seconds_left < task->count) {
 					if (seconds_left != 0) {
 						wrap_audio_play_sfx_from_list(ptr_lsb(&SFX_COUNTDOWN_TICK_IDX));
 					}else {
@@ -504,29 +504,66 @@ static void got_start_game_msg() {
 	uint8_t const framerates = msg[STNP_START_GAME_FIELD_FRAMERATES];
 	*netplay_launch_rival_system = (*network_local_player_number == 1 ? framerates >> 7 : ((framerates >> 6) & 0x01));
 
-	// Activate PAL emulation if needed
-	if (*system_index == 1 && (framerates & 0x20) == 0) {
-		*system_index = 0;
-		*pal_emulation_counter = 5;
+	// Compute actual countdown duration
+	*netplay_launch_countdown = msg[STNP_START_GAME_FIELD_COUNTDOWN];
+	if (*system_index) {
+		*netplay_launch_countdown += *netplay_launch_countdown / 5;
 	}
+
+	// Acknowledge message (we will not return from this function, can't count on caller's cleanup)
+	esp_rx_message_acknowledge();
 
 	// Cut music
 	*netplay_launch_original_music_state = *audio_music_enabled;
 	audio_mute_music();
 
-	// Wait some frames
-	uint8_t const fps = (*system_index ? 50 : 60);
-	uint8_t const duration = (4 * fps);
-	*netplay_launch_countdown = duration - FADEOUT_DURATION;
-	while (*netplay_launch_countdown > 0) {
-		skip_frame();
-		--*netplay_launch_countdown;
+	// Wait for the countdown
+	if (*netplay_launch_countdown > FADEOUT_DURATION) {
+		*netplay_launch_countdown -= FADEOUT_DURATION;
+
+		// Countdown
+		while (*netplay_launch_countdown > 0) {
+			// Wait patiently
+			skip_frame();
+			--*netplay_launch_countdown;
+
+			// Check if we received another GameStart
+			if (esp_rx_message_ready()) {
+				// StartGame: Read countdown value from the message and acknowledge
+				if (
+					(&esp_rx_buffer)[ESP_MSG_TYPE] == FROMESP_MSG_MESSAGE_FROM_SERVER &&
+					(&esp_rx_buffer)[ESP_MSG_PAYLOAD+0] == STNP_SRV_MSG_TYPE_START_GAME
+				)
+				{
+					if (msg[STNP_START_GAME_FIELD_COUNTDOWN] < *netplay_launch_countdown) {
+						*netplay_launch_countdown = msg[STNP_START_GAME_FIELD_COUNTDOWN];
+					}
+				}
+
+				// Acknowledge message
+				esp_rx_message_acknowledge();
+			}
+		}
+
+		// Visual transition
+		fade_out();
+	}else {
+		// Too late for the fadeout, just wait the required number of frames
+		while (*netplay_launch_countdown > 0) {
+			skip_frame();
+			--*netplay_launch_countdown;
+		}
 	}
 
-	// Transition animation
-	fade_out();
+	// Reactivate music
 	if (*netplay_launch_original_music_state != 0) {
 		audio_unmute_music();
+	}
+
+	// Activate PAL emulation if needed
+	if (*system_index == 1 && (framerates & 0x20) == 0) {
+		*system_index = 0;
+		*pal_emulation_counter = 5;
 	}
 
 	// Go ingame
