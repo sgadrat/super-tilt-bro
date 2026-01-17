@@ -899,7 +899,7 @@ static void connection_send_msg() {
 	buff[4] = *network_client_id_byte1;
 	buff[5] = *network_client_id_byte2;
 	buff[6] = *network_client_id_byte3;
-	buff[7] = 7; // protocol_version
+	buff[7] = 8; // protocol_version
 
 	buff[8] = netplay_launch_local_ping_values[0]; // ping
 	buff[9] = netplay_launch_local_ping_values[1];
