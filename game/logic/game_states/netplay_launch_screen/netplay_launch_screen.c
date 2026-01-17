@@ -39,11 +39,13 @@ static uint8_t const TILE_ZERO = 220;
 
 static uint8_t const BG_STEP_INIT_WIFI_SCREEN = 0;
 static uint8_t const BG_STEP_INIT_WIFI_SCREEN_READ_SERVER_CONF = 15;
+
 static uint8_t const BG_STEP_MAP_SCREEN = 1;
 static uint8_t const BG_STEP_DRAW_MAP = 2;
 static uint8_t const BG_STEP_DRAW_MAP_2 = 3;
 static uint8_t const BG_STEP_DRAW_MAP_SERVERS = 4;
 static uint8_t const BG_STEP_SHOW_SERVER = 5;
+
 static uint8_t const BG_STEP_PING_SCREEN = 6;
 static uint8_t const BG_STEP_PING_SCREEN_CLEAR = 7;
 static uint8_t const BG_STEP_PING_SCREEN_DECORATE_LOCAL = 8;
@@ -53,6 +55,8 @@ static uint8_t const BG_STEP_MATCHMAKING = 11;
 static uint8_t const BG_STEP_MATCHMAKING_STATUS = 12;
 static uint8_t const BG_STEP_MATCHMAKING_CROSSPLAY = 13;
 static uint8_t const BG_STEP_COUNTDOWN = 14;
+static uint8_t const BG_STEP_BAD_PING = 16;
+static uint8_t const BG_STEP_CRAZY_MESSAGE = 17;
 static uint8_t const BG_STEP_DEACTIVATED = 255;
 
 static uint8_t const NB_KNOWN_SERVERS = 2;
@@ -455,6 +459,16 @@ static void tick_bg_task() {
 			break;
 		}
 
+		case BG_STEP_BAD_PING: {
+			set_selection_bar_title("error bad ping  ");
+			break;
+		}
+
+		case BG_STEP_CRAZY_MESSAGE: {
+			set_selection_bar_title("error crazy msg ");
+			break;
+		}
+
 		//////////////////////////////////////////////////
 		// Default handler: return to deactivated state
 		//////////////////////////////////////////////////
@@ -485,7 +499,6 @@ static void back_on_b() {
 			buff[4] = *network_client_id_byte1;
 			buff[5] = *network_client_id_byte2;
 			buff[6] = *network_client_id_byte3;
-			buff[7] = 7; // protocol_version
 
 			esp_tx_message_send();
 		}
@@ -595,7 +608,7 @@ static void got_disconnected_msg() {
 	set_bg_state(BG_STEP_DEACTIVATED);
 	skip_frame();
 	back_on_b();
-	set_selection_bar_title("  disconnected  ");
+	set_selection_bar_title("  disconnected  "); //TODO should be in a bg task (valable for other calls to set_selection_bar_title in fg tasks)
 
 	// Write error message from server, one line per frame
 	for (uint8_t line_num = 0; line_num < 12; ++line_num) {
@@ -983,17 +996,11 @@ static void wait_game() {
 }
 
 static void bad_ping() {
-	set_bg_state(BG_STEP_DEACTIVATED);
-	skip_frame();
-	back_on_b();
-	set_selection_bar_title("error bad ping  "); //TODO should be in a bg task (valable for other calls to set_selection_bar_title in fg tasks)
+	set_bg_state(BG_STEP_BAD_PING);
 }
 
 static void crazy_msg() {
-	set_bg_state(BG_STEP_DEACTIVATED);
-	skip_frame();
-	back_on_b();
-	set_selection_bar_title("error crazy msg ");
+	set_bg_state(BG_STEP_CRAZY_MESSAGE);
 }
 
 static void disconnected() {
