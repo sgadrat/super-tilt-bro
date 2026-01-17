@@ -825,9 +825,9 @@ static void estimate_latency_wait() {
 		{
 			// Store ping information (as 4ms unit)
 			if (*system_index) {
-				Task(netplay_launch_fg_task)->count *= 5;
-			}else {
 				Task(netplay_launch_fg_task)->count *= 4;
+			}else {
+				Task(netplay_launch_fg_task)->count *= 5;
 			}
 			netplay_launch_local_ping_values[*netplay_launch_local_ping_count] = Task(netplay_launch_fg_task)->count;
 			got_ping = true;
