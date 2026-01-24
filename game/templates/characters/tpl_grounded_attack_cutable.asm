@@ -5,7 +5,7 @@
 ; anim - Animation of the move
 ; state - Character's state number
 ; routine - Name of the state's routines
-; cutable_duration - Duration of the part of the animation that can be cut
+; cutable_duration - Duration of the part of the animation that CANNOT be cut
 ; followup - Name of the routine to call on state's end (defaults to inactive state)
 ; init - Extra init code (defaults to just returning from subroutine)
 ; tick - Tick code (defaults to applying grounded friction)

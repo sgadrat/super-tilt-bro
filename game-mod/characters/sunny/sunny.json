@@ -4083,7 +4083,7 @@
         {
           "duration": 2,
           "hitbox": {
-            "hitstun": 0,
+            "hitstun": 4,
             "type": "animation_direct_hitbox",
             "left": -5,
             "top": -1,
@@ -4150,7 +4150,7 @@
         {
           "duration": 2,
           "hitbox": {
-            "hitstun": 0,
+            "hitstun": 4,
             "type": "animation_direct_hitbox",
             "left": -8,
             "top": 5,
@@ -4209,7 +4209,7 @@
               "attr": 64,
               "foreground": true,
               "x": -8,
-              "y": 6
+              "y": 9
             },
             {
               "type": "animation_sprite",
@@ -4217,7 +4217,7 @@
               "attr": 0,
               "foreground": true,
               "x": -3,
-              "y": 6
+              "y": 7
             }
           ],
           "type": "animation_frame"
@@ -4225,7 +4225,7 @@
         {
           "duration": 2,
           "hitbox": {
-            "hitstun": 0,
+            "hitstun": 4,
             "type": "animation_direct_hitbox",
             "left": -8,
             "top": 8,
@@ -4665,7 +4665,7 @@
           "type": "animation_frame"
         },
         {
-          "duration": 3,
+          "duration": 2,
           "hitbox": null,
           "hurtbox": {
             "bottom": 9,
@@ -4727,7 +4727,7 @@
           "type": "animation_frame"
         },
         {
-          "duration": 3,
+          "duration": 2,
           "hitbox": null,
           "hurtbox": {
             "bottom": 10,
@@ -4773,7 +4773,7 @@
           "type": "animation_frame"
         },
         {
-          "duration": 3,
+          "duration": 2,
           "hitbox": null,
           "hurtbox": {
             "bottom": 12,
@@ -4819,7 +4819,7 @@
           "type": "animation_frame"
         },
         {
-          "duration": 3,
+          "duration": 2,
           "hitbox": null,
           "hurtbox": {
             "bottom": 16,
@@ -5016,7 +5016,7 @@
             }
           ],
           "hitbox": {
-            "hitstun": 4,
+            "hitstun": 6,
             "type": "animation_direct_hitbox",
             "left": -14,
             "top": 10,
@@ -5484,7 +5484,7 @@
         {
           "duration": 3,
           "hitbox": {
-            "hitstun": 6,
+            "hitstun": 3,
             "type": "animation_direct_hitbox",
             "left": -4,
             "top": -1,
@@ -5559,7 +5559,7 @@
         {
           "duration": 3,
           "hitbox": {
-            "hitstun": 6,
+            "hitstun": 3,
             "type": "animation_direct_hitbox",
             "left": 2,
             "top": -8,
@@ -5634,7 +5634,7 @@
         {
           "duration": 3,
           "hitbox": {
-            "hitstun": 6,
+            "hitstun": 3,
             "type": "animation_direct_hitbox",
             "left": 2,
             "top": -9,
@@ -6649,7 +6649,7 @@
     {
       "frames": [
         {
-          "duration": 8,
+          "duration": 6,
           "hitbox": null,
           "hurtbox": {
             "bottom": 16,
@@ -6765,10 +6765,10 @@
             "top": -4,
             "right": 10,
             "bottom": 5,
-            "base_h": -200,
+            "base_h": -750,
             "base_v": -500,
-            "force_h": -1,
-            "force_v": -3,
+            "force_h": -3,
+            "force_v": -2,
             "damages": 2,
             "enabled": true
           },
@@ -7811,9 +7811,9 @@
             "right": 16,
             "bottom": 11,
             "base_h": -300,
-            "base_v": -1000,
+            "base_v": -1500,
             "force_h": -4,
-            "force_v": -30,
+            "force_v": -50,
             "damages": 3,
             "enabled": true
           },

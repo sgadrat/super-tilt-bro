@@ -1096,7 +1096,7 @@ sunny_global_onground:
 !define "anim" {sunny_anim_jab1}
 !define "state" {SUNNY_STATE_JABBING_1}
 !define "routine" {jabbing}
-!define "cutable_duration" {8}
+!define "cutable_duration" {6}
 !define "cut_input" {
 	; Allow to cut the animation for another jab
 	lda controller_a_btns, x
@@ -1112,7 +1112,7 @@ sunny_global_onground:
 !define "anim" {sunny_anim_jab2}
 !define "state" {SUNNY_STATE_JABBING_2}
 !define "routine" {jabbing2}
-!define "cutable_duration" {8}
+!define "cutable_duration" {4}
 !define "cut_input" {
 	; Allow to cut the animation for another jab
 	lda controller_a_btns, x
@@ -1500,7 +1500,7 @@ sunny_global_onground:
 !define "anim" {sunny_anim_up_tilt}
 !define "state" {SUNNY_STATE_UP_TILT}
 !define "routine" {up_tilt}
-!define "cutable_duration" {20}
+!define "cutable_duration" {17}
 !define "cut_input" {
 	lda controller_a_btns, x
 	cmp #CONTROLLER_INPUT_JUMP
