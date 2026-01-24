@@ -548,7 +548,7 @@
 							.)
 
 							; Copy the line MSBs
-							ldx #8-1 ;FIXME dbg, should be 8
+							ldx #8-1
 							ldy #0
 							copy_line_msb:
 							.(
