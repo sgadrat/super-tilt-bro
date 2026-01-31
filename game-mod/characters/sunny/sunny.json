@@ -5717,7 +5717,7 @@
         {
           "duration": 3,
           "hitbox": {
-            "hitstun": 6,
+            "hitstun": 3,
             "type": "animation_direct_hitbox",
             "left": 0,
             "top": -6,
