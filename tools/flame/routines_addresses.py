@@ -20,8 +20,8 @@ if len(sys.argv) > 1:
 #
 
 re_label = re.compile('^(?P<label>[a-z0-9_-]+)( +)$')
-re_open_scope = re.compile('[ \t]+\\.\\(.*')
-re_close_scope = re.compile('[ \t]+\\.\\).*')
+re_open_scope = re.compile(r'[ \t]+\.\(.*')
+re_close_scope = re.compile(r'[ \t]+\.\).*')
 
 routines = []
 

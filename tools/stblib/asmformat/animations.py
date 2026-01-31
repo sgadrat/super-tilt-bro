@@ -106,10 +106,10 @@ def frame_bin_size(frame):
 	)
 
 RE_ANIM_LABEL = re.compile('(?P<name>([a-z]+_)?anim_[a-z_]+):')
-RE_ANIM_FRAME_BEGIN = re.compile('ANIM_FRAME_BEGIN\((?P<duration>[$%0-9a-fA-F]+)\)')
-RE_ANIM_HURTBOX = re.compile('ANIM_HURTBOX\((?P<left>[$%0-9a-fA-F]+),( *)(?P<right>[$%0-9a-fA-F]+),( *)(?P<top>[$%0-9a-fA-F]+),( *)(?P<bottom>[$%0-9a-fA-F]+)\)')
-RE_ANIM_HITBOX = re.compile('ANIM_HITBOX\((?P<enabled>[$%0-9a-fA-F]+),( *)(?P<damages>[$%0-9a-fA-F]+),( *)(?P<base_h>[$%0-9a-fA-F]+),( *)(?P<base_v>[$%0-9a-fA-F]+),( *)(?P<force_h>[$%0-9a-fA-F]+),( *)(?P<force_v>[$%0-9a-fA-F]+),( *)(?P<left>[$%0-9a-fA-F]+),( *)(?P<right>[$%0-9a-fA-F]+),( *)(?P<top>[$%0-9a-fA-F]+),( *)(?P<bottom>[$%0-9a-fA-F]+)\)')
-RE_ANIM_SPRITE = re.compile('ANIM_SPRITE(?P<type>_FOREGROUND)?\((?P<y>[$%0-9a-fA-F]+), (?P<tile>[$%0-9a-fA-Z_]+), (?P<attr>[$%0-9a-fA-F]+), (?P<x>[$%0-9a-fA-F]+)\)')
+RE_ANIM_FRAME_BEGIN = re.compile(r'ANIM_FRAME_BEGIN\((?P<duration>[$%0-9a-fA-F]+)\)')
+RE_ANIM_HURTBOX = re.compile(r'ANIM_HURTBOX\((?P<left>[$%0-9a-fA-F]+),( *)(?P<right>[$%0-9a-fA-F]+),( *)(?P<top>[$%0-9a-fA-F]+),( *)(?P<bottom>[$%0-9a-fA-F]+)\)')
+RE_ANIM_HITBOX = re.compile(r'ANIM_HITBOX\((?P<enabled>[$%0-9a-fA-F]+),( *)(?P<damages>[$%0-9a-fA-F]+),( *)(?P<base_h>[$%0-9a-fA-F]+),( *)(?P<base_v>[$%0-9a-fA-F]+),( *)(?P<force_h>[$%0-9a-fA-F]+),( *)(?P<force_v>[$%0-9a-fA-F]+),( *)(?P<left>[$%0-9a-fA-F]+),( *)(?P<right>[$%0-9a-fA-F]+),( *)(?P<top>[$%0-9a-fA-F]+),( *)(?P<bottom>[$%0-9a-fA-F]+)\)')
+RE_ANIM_SPRITE = re.compile(r'ANIM_SPRITE(?P<type>_FOREGROUND)?\((?P<y>[$%0-9a-fA-F]+), (?P<tile>[$%0-9a-fA-Z_]+), (?P<attr>[$%0-9a-fA-F]+), (?P<x>[$%0-9a-fA-F]+)\)')
 RE_ANIM_END = re.compile('ANIM_ANIMATION_END')
 
 def parse_animations(anim_file):

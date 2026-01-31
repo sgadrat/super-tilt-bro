@@ -2,8 +2,8 @@
 from stblib import ensure
 import re
 
-tile_byte = '(%|\$)(([01][01][01][01][01][01][01][01])|([0-9a-f][0-9a-f]))'
-re_tileline = re.compile('\.byt %s, %s, %s, %s, %s, %s, %s, %s' % ((tile_byte,)*8))
+tile_byte = r'(%|\$)(([01][01][01][01][01][01][01][01])|([0-9a-f][0-9a-f]))'
+re_tileline = re.compile(r'\.byt %s, %s, %s, %s, %s, %s, %s, %s' % ((tile_byte,)*8))
 
 class Tile:
 	def __init__(self, representation = None):
