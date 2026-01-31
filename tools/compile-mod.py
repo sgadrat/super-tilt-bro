@@ -55,7 +55,7 @@ def find_first_available_bank(game_dir):
 	global FIRST_AVAILABLE_BANK
 	bank_index_template_path = '{}/game/banks.asm'.format(game_dir)
 	with open(bank_index_template_path, 'r') as bank_template_file:
-		re_bank_number = re.compile('^#define CURRENT_BANK_NUMBER FIRST_GAME_BANK\+(?P<num>[$%0-9a-fA-F]+)$')
+		re_bank_number = re.compile(r'^#define CURRENT_BANK_NUMBER FIRST_GAME_BANK\+(?P<num>[$%0-9a-fA-F]+)$')
 		current_bank_number = None
 		for line_num, line in enumerate(bank_template_file):
 			if line.startswith(';; mod banks'):

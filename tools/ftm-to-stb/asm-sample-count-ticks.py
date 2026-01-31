@@ -12,12 +12,12 @@ import re
 
 DEFAULT_NOTE_DUR = 5
 
-re_play_timed_freq = re.compile('PLAY_TIMED_FREQ\([0-9]+,(?P<dur>[0-9]+)\)')
-re_play_note = re.compile('PLAY_NOTE\((?P<dir>[0-9]+),(?P<mul>[0-9]+),[0-9]+\)')
-re_play_timed_note = re.compile('PLAY_TIMED_NOTE\((?P<dur>[0-9]+),0-9]+\)')
-re_wait = re.compile('WAIT\((?P<dur>[0-9]+)\)')
-re_long_wait = re.compile('LONG_WAIT\((?P<dur>[0-9]+)\)')
-re_halt = re.compile('HALT\((?P<dur>[0-9]+)\)')
+re_play_timed_freq = re.compile(r'PLAY_TIMED_FREQ\([0-9]+,(?P<dur>[0-9]+)\)')
+re_play_note = re.compile(r'PLAY_NOTE\((?P<dir>[0-9]+),(?P<mul>[0-9]+),[0-9]+\)')
+re_play_timed_note = re.compile(r'PLAY_TIMED_NOTE\((?P<dur>[0-9]+),0-9]+\)')
+re_wait = re.compile(r'WAIT\((?P<dur>[0-9]+)\)')
+re_long_wait = re.compile(r'LONG_WAIT\((?P<dur>[0-9]+)\)')
+re_halt = re.compile(r'HALT\((?P<dur>[0-9]+)\)')
 
 re_sample_end = re.compile('SAMPLE_END')
 
